@@ -48,4 +48,4 @@ set("n", "<C-k>", "{", { noremap = true, silent = true })
 
 set("n", "<F1>", "<cmd>TransparentToggle<cr>", { noremap = true, silent = true })
 
-set("n", "<leader>nb", "<cmd>Navbuddy<cr>", { noremap = true, silent = true })
+set("n", "<leader>cb", "<cmd>Navbuddy<cr>", { noremap = true, silent = true })
