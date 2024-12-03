@@ -4,6 +4,8 @@ vim.g.maplocalleader = " "
 vim.g.have_nerd_font = true
 
 local options = {
+  number = true,
+  numberwidth = 4,
   relativenumber = true,
   showmode = false,
   mouse = "a",
@@ -13,6 +15,7 @@ local options = {
   autoindent = false,
   smartindent = true,
   cursorlineopt = "both",
+  showtabline = 2,
 
   -- TODO: Fix a Lua-script to handle the vertical cursor-column later
   cursorcolumn = false,
