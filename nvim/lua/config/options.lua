@@ -3,8 +3,12 @@ vim.g.maplocalleader = " "
 
 vim.g.have_nerd_font = true
 
-vim.opt.relativenumber = true
+local options = {
+  relativenumber = true,
+  showmode = false,
+  mouse = "a",
+}
 
-vim.opt.mouse = "a"
-
-vim.opt.showmode = false
+for option, value in pairs(options) do
+  vim.opt[option] = value
+end
