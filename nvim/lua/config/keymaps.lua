@@ -3,13 +3,12 @@ require("config._keymaps.bufferline")
 
 local set = require("utils").set
 
--- vim.api.nvim_set_keymap('n', '<S-CR>', 'kzz', { noremap = true, silent = true })
-set("n", "<CR-z>", "kzz", {})
-
 set("n", "<Left>", '<cmd>echo "Use h to move!!"<CR>')
 set("n", "<Right>", '<cmd>echo "Use l to move!!"<CR>')
 set("n", "<Up>", '<cmd>echo "Use k to move!!"<CR>')
 set("n", "<Down>", '<cmd>echo "Use j to move!!"<CR>')
+
+set("i", { "jk", "kj" }, "<Esc>", { noremap = true, desc = "Exit insert mode" })
 
 -- set("n", "<A-j>", "}zz", { noremap = true, silent = true })
 -- set("n", "<A-k>", "{zz", { noremap = true, silent = true })
@@ -28,10 +27,8 @@ set("n", "-", "<C-x>", { silent = true, desc = "Decrement integer" })
 set("n", "<leader>a", "ggVG", { desc = "Select all" })
 
 -- Jump in editor
-set("n", "<PageUp>", "<C-u>zz", { desc = "Jump up 1/2-screen" })
-set("n", "<PageDown>", "<C-d>zz", { desc = "Jump down 1/2-screen" })
-
--- set("i", { "jj", "kk", "ii" }, "<Esc>", { noremap = true, desc = "Exit insert mode" })
+set("n", { "<PageUp>", "<C-u>" }, "<C-u>zz", { desc = "Jump up 1/2-screen" })
+set("n", { "<PageDown>", "<C-d>" }, "<C-d>zz", { desc = "Jump down 1/2-screen" })
 
 -- Visual mode selections with Shift + Arrow keys
 set("n", "<S-k>", "Vk", { desc = "Select line above" })
