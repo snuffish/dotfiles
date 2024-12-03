@@ -17,7 +17,8 @@ for resource in "$SCRIPT_DIR"/*.bash; do
   fi
 done
 
+# Other system sourcing
 autoload -U +X bashcompinit && bashcompinit
 
-source "./az.completion"
-source "./tmux/init.bash"
+source "$SCRIPT_DIR/az.completion"
+source "$SCRIPT_DIR/tmux/init.bash"
