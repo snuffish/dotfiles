@@ -63,3 +63,7 @@ map("n", "dd", function()
     return "dd"
   end
 end, { noremap = true, expr = true, desc = "Don't Yank Empty Line to Clipboard" })
+
+map("n", "<Up><Up>", ":<Up>", { desc = "Goto previous command" })
+
+map("n", "GG", "Go<CR>", { desc = "Goto last line and add 2 new lines" })
