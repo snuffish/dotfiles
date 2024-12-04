@@ -1,5 +1,6 @@
 require("config._keymaps.brackets")
 require("config._keymaps.bufferline")
+require("config._keymaps.amend")
 
 local set = require("utils").set
 
