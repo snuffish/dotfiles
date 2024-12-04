@@ -2,7 +2,6 @@ require("config._keymaps.brackets")
 require("config._keymaps.bufferline")
 require("config._keymaps.amend")
 
-
 local map = require("utils").map
 
 map("n", "<Left>", '<cmd>echo "Use h to move!!"<CR>')

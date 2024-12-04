@@ -16,8 +16,3 @@ keymap.amend = require("keymap-amend")
 --     original()
 --   end
 -- end, {})
-
-vim.keymap.amend("n", "dd", function(original)
-  print("AMEND")
-  original()
-end)

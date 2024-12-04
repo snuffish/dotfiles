@@ -1,23 +1,22 @@
 local map = vim.keymap.set
 
 require("plenary.reload").reload_module("popup")
-
 local popup = require("popup")
 
--- popup.create(
---   "tempus id bibendum velit facilisis nisi at eratDapibus magna dui faucibus finibus ac odio, orci ultricies suspendisse..",
---   {
---     title = "coool",
---     line = 8,
---     col = 100,
---     pos = "topleft",
---     -- wrap = true,
---     time = 2000,
---     width = 10,
---     padding = { 0, 3, 0, 3 },
---     border = { 1, 1, 1, 1 },
---   }
--- )
+popup.create(
+  "tempus id bibendum velit facilisis nisi at eratDapibus magna dui faucibus finibus ac odio, orci ultricies suspendisse..",
+  {
+    title = "coool",
+    line = 8,
+    col = 100,
+    pos = "topleft",
+    -- wrap = true,
+    time = 2000,
+    width = 10,
+    padding = { 0, 3, 0, 3 },
+    border = { 1, 1, 1, 1 },
+  }
+)
 
 -- print(vim.fn.system({ "ls" }))
 

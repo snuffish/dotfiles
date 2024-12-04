@@ -1,6 +1,10 @@
 return {
-  'hat0uma/csvview.nvim',
+  "hat0uma/csvview.nvim",
   config = function()
-    require('csvview').setup()
-  end
+    require("csvview").setup({
+      view = {
+        display_mode = "highlight",
+      },
+    })
+  end,
 }
