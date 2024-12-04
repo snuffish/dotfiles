@@ -1,7 +1,8 @@
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
-
-vim.g.have_nerd_font = true
+local globals = {
+  mapleader = " ",
+  maplocalleader = " ",
+  have_nerd_font = true,
+}
 
 local options = {
   number = true,
@@ -21,6 +22,12 @@ local options = {
   cursorcolumn = false,
 }
 
+-- Global properties
+for option, value in pairs(globals) do
+  vim.g[option] = value
+end
+
+-- Option properties
 for option, value in pairs(options) do
   vim.opt[option] = value
 end

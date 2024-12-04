@@ -2,6 +2,7 @@ require("config._keymaps.brackets")
 require("config._keymaps.bufferline")
 require("config._keymaps.amend")
 
+
 local map = require("utils").map
 
 map("n", "<Left>", '<cmd>echo "Use h to move!!"<CR>')
@@ -52,3 +53,14 @@ map("n", "<F1>", "<cmd>TransparentToggle<cr>", { noremap = true, silent = true }
 map("n", "<leader>cb", "<cmd>Navbuddy<cr>", { noremap = true, silent = true })
 
 -- map("nv", "E", "ge", { desc = "End of word backwards" })
+
+map("x", "g/", "<esc>/\\%V", { silent = false, desc = "Search Inside Visual Selection" })
+
+map("n", "dd", function()
+  local is_empty_line = vim.api.nvim_get_current_line():match("^%s*$")
+  if is_empty_line then
+    return '"_dd'
+  else
+    return "dd"
+  end
+end, { noremap = true, expr = true, desc = "Don't Yank Empty Line to Clipboard" })
