@@ -1,6 +1,3 @@
-local utils = require("utils")
-local set = utils.set
-
 local NORMAL = {
   lineCursor = "#292E42",
   lineNr = "#7AA2F7",

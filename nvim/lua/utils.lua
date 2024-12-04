@@ -9,7 +9,7 @@ utils.str_to_obj = function(modes)
   return obj
 end
 
-utils.set = function(modes, maps, action, opts)
+utils.map = function(modes, maps, action, opts)
   modes = type(modes) == "string" and utils.str_to_obj(modes) or modes
   maps = type(maps) == "string" and { maps } or maps
 
