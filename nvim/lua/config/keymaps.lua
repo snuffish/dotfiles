@@ -11,7 +11,8 @@ map("n", "<Down>", '<cmd>echo "Use j to move!!"<CR>')
 
 map("i", { "jk", "kj" }, "<Esc>", { noremap = true, desc = "Exit insert mode" })
 
-map("n", "R", "<Esc>:%s/", { noremap = true, desc = "Regex string replace" })
+map("n", "RR", "<Esc>:%s/", { noremap = true, desc = "Regex string replace" })
+map("n", "DD", "<Esc>:g//d<Left><Left>", { noremap = true, desc = "Regex delete" })
 
 map("n", "n", "nzzzv", { desc = "Next search result (centered)" })
 map("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
