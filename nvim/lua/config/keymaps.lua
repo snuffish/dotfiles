@@ -11,12 +11,6 @@ map("n", "<Down>", '<cmd>echo "Use j to move!!"<CR>')
 
 map("i", { "jk", "kj" }, "<Esc>", { noremap = true, desc = "Exit insert mode" })
 
--- map("n", "<A-j>", "}zz", { noremap = true, silent = true })
--- map("n", "<A-k>", "{zz", { noremap = true, silent = true })
-
-map("nv", "<C-p>", ":", { noremap = true, desc = "Enter command mode" })
-map("i", "<C-p>", "<Esc>:", { noremap = true, desc = "Enter command mode" })
-
 map("n", "R", "<Esc>:%s/", { noremap = true, desc = "Regex string replace" })
 
 map("n", "n", "nzzzv", { desc = "Next search result (centered)" })
