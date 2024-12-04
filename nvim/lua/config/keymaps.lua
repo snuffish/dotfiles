@@ -45,8 +45,6 @@ map("n", "<F1>", "<cmd>TransparentToggle<cr>", { noremap = true, silent = true }
 
 map("n", "<leader>cb", "<cmd>Navbuddy<cr>", { noremap = true, silent = true })
 
--- map("nv", "E", "ge", { desc = "End of word backwards" })
-
 map("x", "g/", "<esc>/\\%V", { silent = false, desc = "Search Inside Visual Selection" })
 
 map("n", "dd", function()
