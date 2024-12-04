@@ -48,3 +48,5 @@ else
 
   alias d="echo \"$MESSAGE\""
 fi
+
+alias lzd="lazydocker"

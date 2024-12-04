@@ -59,3 +59,17 @@ end, { noremap = true, expr = true, desc = "Don't Yank Empty Line to Clipboard" 
 map("n", "<Up><Up>", ":<Up>", { desc = "Goto previous command" })
 
 map("n", "GG", "Go<CR>", { desc = "Goto last line and add 2 new lines" })
+
+map(
+  "n",
+  "<leader>v",
+  "<C-w>v<C-w>p<cmd>BufferLineCyclePrev<CR><C-w>p",
+  { desc = "Vertical split (Orginal window navigate to PreviousBuffer)" }
+)
+
+map(
+  "n",
+  "<leader>s",
+  "<C-w>s<C-w>p<cmd>BufferLineCyclePrev<CR><C-w>p",
+  { desc = "Horizontal split (Orginal window navigate to PreviousBuffer)" }
+)
