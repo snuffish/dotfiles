@@ -62,14 +62,14 @@ map(
   "n",
   "<leader>v",
   "<C-w>v<C-w>p<cmd>e #<CR><C-w>p",
-  { noremap = true, silent = false, desc = "Vertical split (Orginal window navigate to PreviousBuffer)" }
+  { noremap = true, silent = false, desc = "Vertical split (Orginal window navigate to AlternativeBuffer)" }
 )
 
 map(
   "n",
   "<leader>s",
   "<C-w>s<C-w>p<cmd>e #<CR><C-w>p",
-  { noremap = true, silent = false, desc = "Horizontal split (Orginal window navigate to PreviousBuffer)" }
+  { noremap = true, silent = false, desc = "Horizontal split (Orginal window navigate to AlternativeBuffer)" }
 )
 
 map("n", "<C-l>", "<C-w>l", { noremap = true, silent = false, desc = "Move to right window" })
