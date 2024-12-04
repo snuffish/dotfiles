@@ -38,9 +38,6 @@ map("n", "DW", 'vb"_d', { silent = true, desc = "Delete words backwards (No yank
 map("n", "x", '"_x', { silent = true, desc = "Delete char (No yanking)" })
 map("n", "X", '"_X', { silent = true, desc = "Delete char (No yanking)" })
 
-map("n", "<C-j>", "}", { noremap = true, silent = true })
-map("n", "<C-k>", "{", { noremap = true, silent = true })
-
 map("n", "<F1>", "<cmd>TransparentToggle<cr>", { noremap = true, silent = true })
 
 map("n", "<leader>cb", "<cmd>Navbuddy<cr>", { noremap = true, silent = true })
@@ -60,16 +57,22 @@ map("n", "<Up><Up>", ":<Up>", { desc = "Goto previous command" })
 
 map("n", "GG", "Go<CR>", { desc = "Goto last line and add 2 new lines" })
 
+-- Window-pane navigation
 map(
   "n",
   "<leader>v",
-  "<C-w>v<C-w>p<cmd>BufferLineCyclePrev<CR><C-w>p",
-  { desc = "Vertical split (Orginal window navigate to PreviousBuffer)" }
+  "<C-w>v<C-w>p<cmd>e #<CR><C-w>p",
+  { noremap = true, silent = false, desc = "Vertical split (Orginal window navigate to PreviousBuffer)" }
 )
 
 map(
   "n",
   "<leader>s",
-  "<C-w>s<C-w>p<cmd>BufferLineCyclePrev<CR><C-w>p",
-  { desc = "Horizontal split (Orginal window navigate to PreviousBuffer)" }
+  "<C-w>s<C-w>p<cmd>e #<CR><C-w>p",
+  { noremap = true, silent = false, desc = "Horizontal split (Orginal window navigate to PreviousBuffer)" }
 )
+
+map("n", "<C-l>", "<C-w>l", { noremap = true, silent = false, desc = "Move to right window" })
+map("n", "<C-k>", "<C-w>k", { noremap = true, silent = false, desc = "Move to upper window" })
+map("n", "<C-j>", "<C-w>j", { noremap = true, silent = false, desc = "Move to bottom window" })
+map("n", "<C-h>", "<C-w>h", { noremap = true, silent = false, desc = "Move to left window" })
