@@ -13,8 +13,11 @@ map("n", "<C-p>", ":")
 
 map("i", { "jk", "kj", "lk", "kl", "hj", "jh" }, "<Esc>", { noremap = true, desc = "Exit insert mode" })
 
-map("n", "RR", "<Esc>:%s/", { noremap = true, desc = "Regex string replace" })
-map("n", "DD", "<Esc>:g//d<Left><Left>", { noremap = true, desc = "Regex delete" })
+map("n", "RR", "<Esc>:%s/", { noremap = true, desc = "Regex string replace (global)" })
+map("x", "RR", "<Esc>:'<,'>s/", { noremap = true, desc = "Regex string replace (selection)" })
+
+map("n", "DD", "<Esc>:g//d<Left><Left>", { noremap = true, desc = "Regex delete (global)" })
+map("x", "DD", "<Esc>:'<,'>g//d<Left><Left>", { noremap = true, desc = "Regex delete (selection)" })
 
 map("n", "n", "nzzzv", { desc = "Next search result (centered)" })
 map("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
@@ -81,3 +84,8 @@ map(
 -- map("n", "<C-k>", "<C-w>k", { noremap = true, silent = false, desc = "Move to upper window" })
 -- map("n", "<C-j>", "<C-w>j", { noremap = true, silent = false, desc = "Move to bottom window" })
 -- map("n", "<C-h>", "<C-w>h", { noremap = true, silent = false, desc = "Move to left window" })
+
+map("n", "<C-l>", "<cmd>TmuxNavigateLeft<CR>", { noremap = true, desc = "Goto right Tmux Window" })
+map("n", "<C-k>", "<cmd>TmuxNavigateRight<CR>", { noremap = true, desc = "Goto right Tmux Window" })
+map("n", "<C-j>", "<cmd>TmuxNavigateDown<CR>", { noremap = true, desc = "Goto right Tmux Window" })
+map("n", "<C-h>", "<cmd>TmuxNavigateLeft<CR>", { noremap = true, desc = "Goto right Tmux Window" })
