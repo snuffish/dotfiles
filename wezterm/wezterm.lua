@@ -25,7 +25,7 @@ config.colors = {
 
 config.window_background_opacity = 0.9
 config.macos_window_background_blur = 10
-
+config.show_tabs_in_tab_bar = true
 --[[ config.leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1000 }
 
 config.keys = {

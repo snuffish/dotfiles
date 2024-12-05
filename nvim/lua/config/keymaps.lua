@@ -1,4 +1,4 @@
-require("config._keymaps.brackets")
+-- require("config._keymaps.brackets")
 require("config._keymaps.bufferline")
 require("config._keymaps.amend")
 
@@ -39,6 +39,9 @@ map("n", "<S-k>", "Vk", { desc = "Select line above" })
 map("n", "<S-j>", "Vj", { desc = "Select line below" })
 map("n", "<S-h>", "vh", { desc = "Select character left" })
 map("n", "<S-l>", "vl", { desc = "Select character right" })
+
+map("n", "{", "{zz")
+map("n", "}", "}zz")
 
 map("v", "<Tab>", "=", { silent = true, desc = "Auto-indent" })
 
