@@ -85,7 +85,7 @@ map(
 -- map("n", "<C-j>", "<C-w>j", { noremap = true, silent = false, desc = "Move to bottom window" })
 -- map("n", "<C-h>", "<C-w>h", { noremap = true, silent = false, desc = "Move to left window" })
 
-map("n", "<C-l>", "<cmd>TmuxNavigateLeft<CR>", { noremap = true, desc = "Goto right Tmux Window" })
-map("n", "<C-k>", "<cmd>TmuxNavigateRight<CR>", { noremap = true, desc = "Goto right Tmux Window" })
-map("n", "<C-j>", "<cmd>TmuxNavigateDown<CR>", { noremap = true, desc = "Goto right Tmux Window" })
-map("n", "<C-h>", "<cmd>TmuxNavigateLeft<CR>", { noremap = true, desc = "Goto right Tmux Window" })
+map("n", "<C-l>", "<cmd>TmuxNavigateLeft<CR>", { noremap = true, silent = true, desc = "Goto right Tmux Window" })
+map("n", "<C-k>", "<cmd>TmuxNavigateRight<CR>", { noremap = true, silent = true, desc = "Goto right Tmux Window" })
+map("n", "<C-j>", "<cmd>TmuxNavigateDown<CR>", { noremap = true, silent = true, desc = "Goto right Tmux Window" })
+map("n", "<C-h>", "<cmd>TmuxNavigateLeft<CR>", { noremap = true, silent = true, desc = "Goto right Tmux Window" })
