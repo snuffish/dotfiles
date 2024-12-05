@@ -5,6 +5,17 @@ return {
       sync_install = false,
       ensure_installed = {
         "html",
+        "javascript",
+        "typescript",
+        "tsx",
+        "json",
+        "css",
+        "prisma",
+        "bash",
+        "lua",
+        "vim",
+        "markdown",
+        "markdown_inline",
       },
       incremental_selection = {
         enable = true,

@@ -9,7 +9,9 @@ map("n", "<Right>", '<cmd>echo "Use l to move!!"<CR>')
 map("n", "<Up>", '<cmd>echo "Use k to move!!"<CR>')
 map("n", "<Down>", '<cmd>echo "Use j to move!!"<CR>')
 
-map("i", { "jk", "kj" }, "<Esc>", { noremap = true, desc = "Exit insert mode" })
+map("n", "<C-p>", ":")
+
+map("i", { "jk", "kj", "lk", "kl", "hj", "jh" }, "<Esc>", { noremap = true, desc = "Exit insert mode" })
 
 map("n", "RR", "<Esc>:%s/", { noremap = true, desc = "Regex string replace" })
 map("n", "DD", "<Esc>:g//d<Left><Left>", { noremap = true, desc = "Regex delete" })
@@ -63,19 +65,19 @@ map("n", "G", "Gzz")
 
 map(
   "n",
-  "<leader>v",
+  "<leader>wv",
   "<C-w>v<C-w>p<cmd>e #<CR><C-w>p",
   { noremap = true, silent = false, desc = "Vertical split (Orginal window navigate to AlternativeBuffer)" }
 )
 
 map(
   "n",
-  "<leader>s",
+  "<leader>ws",
   "<C-w>s<C-w>p<cmd>e #<CR><C-w>p",
   { noremap = true, silent = false, desc = "Horizontal split (Orginal window navigate to AlternativeBuffer)" }
 )
 
-map("n", "<C-l>", "<C-w>l", { noremap = true, silent = false, desc = "Move to right window" })
-map("n", "<C-k>", "<C-w>k", { noremap = true, silent = false, desc = "Move to upper window" })
-map("n", "<C-j>", "<C-w>j", { noremap = true, silent = false, desc = "Move to bottom window" })
-map("n", "<C-h>", "<C-w>h", { noremap = true, silent = false, desc = "Move to left window" })
+-- map("n", "<C-l>", "<C-w>l", { noremap = true, silent = false, desc = "Move to right window" })
+-- map("n", "<C-k>", "<C-w>k", { noremap = true, silent = false, desc = "Move to upper window" })
+-- map("n", "<C-j>", "<C-w>j", { noremap = true, silent = false, desc = "Move to bottom window" })
+-- map("n", "<C-h>", "<C-w>h", { noremap = true, silent = false, desc = "Move to left window" })
