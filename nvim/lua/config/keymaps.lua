@@ -13,12 +13,15 @@ map("n", "<C-p>", ":")
 
 map("i", { "jk", "kj", "lk", "kl", "hj", "jh" }, "<Esc>", { noremap = true, desc = "Exit insert mode" })
 
+-- Regex replaces
 map("n", "RR", "<Esc>:%s/", { noremap = true, desc = "Regex string replace (global)" })
 map("x", "RR", "<Esc>:'<,'>s/", { noremap = true, desc = "Regex string replace (selection)" })
 
+-- Regex deletes
 map("n", "DD", "<Esc>:g//d<Left><Left>", { noremap = true, desc = "Regex delete (global)" })
 map("x", "DD", "<Esc>:'<,'>g//d<Left><Left>", { noremap = true, desc = "Regex delete (selection)" })
 
+-- Scrolling
 map("n", "n", "nzzzv", { desc = "Next search result (centered)" })
 map("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
 
@@ -38,6 +41,11 @@ map("n", "<S-h>", "vh", { desc = "Select character left" })
 map("n", "<S-l>", "vl", { desc = "Select character right" })
 
 map("v", "<Tab>", "=", { silent = true, desc = "Auto-indent" })
+
+-- Yanking
+map("n", "yy", "_yg_", { silent = true })
+map("n", "Op", "O<Esc>p", { silent = true })
+map("n", "op", "o<Esc>p", { silent = true })
 
 -- Delete without yanking
 map("n", "DW", 'vb"_d', { silent = true, desc = "Delete words backwards (No yanking)" })
@@ -60,7 +68,6 @@ map("n", "dd", function()
 end, { noremap = true, expr = true, desc = "Don't Yank Empty Line to Clipboard" })
 
 map("n", "<Up><Up>", ":<Up>", { desc = "Goto previous command" })
-
 map("n", "GG", "Gzzo<CR>", { desc = "Goto last line and add 2 new lines" })
 
 -- Window-pane navigation
@@ -80,11 +87,7 @@ map(
   { noremap = true, silent = false, desc = "Horizontal split (Orginal window navigate to AlternativeBuffer)" }
 )
 
--- map("n", "<C-l>", "<C-w>l", { noremap = true, silent = false, desc = "Move to right window" })
--- map("n", "<C-k>", "<C-w>k", { noremap = true, silent = false, desc = "Move to upper window" })
--- map("n", "<C-j>", "<C-w>j", { noremap = true, silent = false, desc = "Move to bottom window" })
--- map("n", "<C-h>", "<C-w>h", { noremap = true, silent = false, desc = "Move to left window" })
-
+-- Tmux
 map("n", "<C-l>", "<cmd>TmuxNavigateLeft<CR>", { noremap = true, silent = true, desc = "Goto right Tmux Window" })
 map("n", "<C-k>", "<cmd>TmuxNavigateRight<CR>", { noremap = true, silent = true, desc = "Goto right Tmux Window" })
 map("n", "<C-j>", "<cmd>TmuxNavigateDown<CR>", { noremap = true, silent = true, desc = "Goto right Tmux Window" })
