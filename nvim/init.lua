@@ -7,3 +7,7 @@ require("config.autocmds")
 --     auto_attach = true,
 --   },
 -- })
+--
+--
+
+require("bookmarks")

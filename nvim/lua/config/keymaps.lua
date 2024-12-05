@@ -95,3 +95,9 @@ map("n", "<C-l>", "<cmd>TmuxNavigateLeft<CR>", { noremap = true, silent = true, 
 map("n", "<C-k>", "<cmd>TmuxNavigateRight<CR>", { noremap = true, silent = true, desc = "Goto right Tmux Window" })
 map("n", "<C-j>", "<cmd>TmuxNavigateDown<CR>", { noremap = true, silent = true, desc = "Goto right Tmux Window" })
 map("n", "<C-h>", "<cmd>TmuxNavigateLeft<CR>", { noremap = true, silent = true, desc = "Goto right Tmux Window" })
+
+-- bookmarks
+map({ "n", "v" }, "<leader>mm", "<cmd>BookmarksMark<cr>", { desc = "Mark current line into active BookmarkList." })
+map({ "n", "v" }, "<leader>mo", "<cmd>BookmarksGoto<cr>", { desc = "Go to bookmark at current active BookmarkList" })
+map({ "n", "v" }, "<leader>ma", "<cmd>BookmarksCommands<cr>", { desc = "Find and trigger a bookmark command." })
+map({ "n", "v" }, "<leader>mg", "<cmd>BookmarksGotoRecent<cr>", { desc = "Go to latest visited/created Bookmark" })
