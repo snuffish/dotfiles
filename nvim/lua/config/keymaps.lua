@@ -101,3 +101,8 @@ map({ "n", "v" }, "<leader>mm", "<cmd>BookmarksMark<cr>", { desc = "Mark current
 map({ "n", "v" }, "<leader>mo", "<cmd>BookmarksGoto<cr>", { desc = "Go to bookmark at current active BookmarkList" })
 map({ "n", "v" }, "<leader>ma", "<cmd>BookmarksCommands<cr>", { desc = "Find and trigger a bookmark command." })
 map({ "n", "v" }, "<leader>mg", "<cmd>BookmarksGotoRecent<cr>", { desc = "Go to latest visited/created Bookmark" })
+
+-- Scratch
+map("n", "<leader>.", "<cmd>Scratch<cr>", { desc = "New Scratch Bufffer" })
+map("n", "<leader>.f", "<cmd>ScratchOpen<cr>", { desc = "Open Scratch Bufffer" })
+map("n", "<leader>.s", "<cmd>ScratchOpenFzf<cr>", { desc = "Search Scratch Search" })
