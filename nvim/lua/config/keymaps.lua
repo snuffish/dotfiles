@@ -9,8 +9,6 @@ map("n", "<Right>", '<cmd>echo "Use l to move!!"<CR>')
 map("n", "<Up>", '<cmd>echo "Use k to move!!"<CR>')
 map("n", "<Down>", '<cmd>echo "Use j to move!!"<CR>')
 
-map("n", "<C-p>", ":")
-
 map("i", { "jk", "kj", "lk", "kl", "hj", "jh" }, "<Esc>", { noremap = true, desc = "Exit insert mode" })
 
 -- Regex replaces
@@ -47,8 +45,8 @@ map("v", "<Tab>", "=", { silent = true, desc = "Auto-indent" })
 
 -- Yanking
 map("n", "yy", "_yg_", { silent = true })
-map("n", "Op", "O<Esc>p", { silent = true })
-map("n", "op", "o<Esc>p", { silent = true })
+map("n", "Op", "m`O<ESC>p``", { silent = true })
+map("n", "op", "m`o<ESC>p``", { silent = true })
 
 -- Delete without yanking
 map("n", "DW", 'vb"_d', { silent = true, desc = "Delete words backwards (No yanking)" })
@@ -103,6 +101,30 @@ map({ "n", "v" }, "<leader>ma", "<cmd>BookmarksCommands<cr>", { desc = "Find and
 map({ "n", "v" }, "<leader>mg", "<cmd>BookmarksGotoRecent<cr>", { desc = "Go to latest visited/created Bookmark" })
 
 -- Scratch
-map("n", "<leader>.", "<cmd>Scratch<cr>", { desc = "New Scratch Bufffer" })
-map("n", "<leader>.f", "<cmd>ScratchOpen<cr>", { desc = "Open Scratch Bufffer" })
-map("n", "<leader>.s", "<cmd>ScratchOpenFzf<cr>", { desc = "Search Scratch Search" })
+-- map("n", "<leader>.", "<cmd>Scratch<cr>", { desc = "New Scratch Bufffer" })
+-- map("n", "<leader>.f", "<cmd>ScratchOpen<cr>", { desc = "Open Scratch Bufffer" })
+-- map("n", "<leader>.s", "<cmd>ScratchOpenFzf<cr>", { desc = "Search Scratch Search" })
+
+map("nx", ";", ":", { noremap = true })
+
+map("niv", "<leader>sk", "<cmd>Telescope keymaps<cr>", { desc = "Show Keymaps" })
+
+map("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true })
+map("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true })
+map("n", "^", "g^")
+map("n", "0", "g0")
+
+-- Go to start or end of line easier
+map("nx", "H", "^")
+map("nx", "L", "g_")
+
+-- Do not include white space characters when using $ in visual mode,
+map("x", "$", "g_")
+
+map("n", "<leader>sr", function()
+  local currentBuffer = vim.api.nvim_get_current_buf()
+  local currentFile = vim.api.nvim_buf_get_name(currentBuffer)
+
+  vim.cmd("source " .. currentFile)
+  vim.notify("Sourced file: " .. currentFile, vim.log.levels.INFO, { title = "Sourced" })
+end, { desc = "Source Current File" })

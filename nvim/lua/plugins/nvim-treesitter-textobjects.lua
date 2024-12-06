@@ -89,8 +89,8 @@ return {
     local map = require("utils").map
     local ts_repeat_move = require("nvim-treesitter.textobjects.repeatable_move")
 
-    map("nxo", ";", ts_repeat_move.repeat_last_move)
-    map("nxo", ",", ts_repeat_move.repeat_last_move_opposite)
+    -- map("nxo", ";", ts_repeat_move.repeat_last_move)
+    -- map("nxo", ",", ts_repeat_move.repeat_last_move_opposite)
 
     map("nxo", "f", ts_repeat_move.builtin_f_expr)
     map("nxo", "F", ts_repeat_move.builtin_F_expr)

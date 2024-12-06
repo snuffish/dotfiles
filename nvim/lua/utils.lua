@@ -25,4 +25,8 @@ utils.clear_cmd_line = function()
   vim.cmd('echo ""')
 end
 
+utils.contains = function(str, substr)
+  return string.find(str, substr) ~= nil
+end
+
 return utils
