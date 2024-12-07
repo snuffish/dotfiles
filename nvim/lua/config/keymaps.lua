@@ -1,3 +1,14 @@
+-- Scratch
+-- map("n", "<leader>.", "<cmd>Scratch<cr>", { desc = "New Scratch Bufffer" })
+-- map("n", "<leader>.f", "<cmd>ScratchOpen<cr>", { desc = "Open Scratch Bufffer" })
+-- map("n", "<leader>.s", "<cmd>ScratchOpenFzf<cr>", { desc = "Search Scratch Search" })
+
+-- Visual mode selections with Shift + Arrow keys
+-- map("n", "<S-k>", "Vk", { desc = "Select line above" })
+-- map("n", "<S-j>", "Vj", { desc = "Select line below" })
+-- map("n", "<S-h>", "vh", { desc = "Select character left" })
+-- map("n", "<S-l>", "vl", { desc = "Select character right" })
+
 -- require("config._keymaps.brackets")
 require("config._keymaps.bufferline")
 require("config._keymaps.amend")
@@ -8,6 +19,14 @@ map("n", "<Left>", '<cmd>echo "Use h to move!!"<CR>')
 map("n", "<Right>", '<cmd>echo "Use l to move!!"<CR>')
 map("n", "<Up>", '<cmd>echo "Use k to move!!"<CR>')
 map("n", "<Down>", '<cmd>echo "Use j to move!!"<CR>')
+
+map("n", "<leader>sr", function()
+  local currentBuffer = vim.api.nvim_get_current_buf()
+  local currentFile = vim.api.nvim_buf_get_name(currentBuffer)
+
+  vim.cmd("source " .. currentFile)
+  vim.notify("Sourced file: " .. currentFile, vim.log.levels.INFO, { title = "Sourced" })
+end, { desc = "Source Current File" })
 
 map("i", { "jk", "kj", "lk", "kl", "hj", "jh" }, "<Esc>", { noremap = true, desc = "Exit insert mode" })
 
@@ -31,12 +50,6 @@ map("n", "<leader>a", "ggVG", { desc = "Select all" })
 -- Jump in editor
 map("n", { "<PageUp>", "<C-u>" }, "<C-u>zz", { desc = "Jump up 1/2-screen" })
 map("n", { "<PageDown>", "<C-d>" }, "<C-d>zz", { desc = "Jump down 1/2-screen" })
-
--- Visual mode selections with Shift + Arrow keys
-map("n", "<S-k>", "Vk", { desc = "Select line above" })
-map("n", "<S-j>", "Vj", { desc = "Select line below" })
-map("n", "<S-h>", "vh", { desc = "Select character left" })
-map("n", "<S-l>", "vl", { desc = "Select character right" })
 
 map("n", "{", "{zz")
 map("n", "}", "}zz")
@@ -100,11 +113,6 @@ map({ "n", "v" }, "<leader>mo", "<cmd>BookmarksGoto<cr>", { desc = "Go to bookma
 map({ "n", "v" }, "<leader>ma", "<cmd>BookmarksCommands<cr>", { desc = "Find and trigger a bookmark command." })
 map({ "n", "v" }, "<leader>mg", "<cmd>BookmarksGotoRecent<cr>", { desc = "Go to latest visited/created Bookmark" })
 
--- Scratch
--- map("n", "<leader>.", "<cmd>Scratch<cr>", { desc = "New Scratch Bufffer" })
--- map("n", "<leader>.f", "<cmd>ScratchOpen<cr>", { desc = "Open Scratch Bufffer" })
--- map("n", "<leader>.s", "<cmd>ScratchOpenFzf<cr>", { desc = "Search Scratch Search" })
-
 map("nx", ";", ":", { noremap = true })
 
 map("niv", "<leader>sk", "<cmd>Telescope keymaps<cr>", { desc = "Show Keymaps" })
@@ -121,10 +129,5 @@ map("nx", "L", "g_")
 -- Do not include white space characters when using $ in visual mode,
 map("x", "$", "g_")
 
-map("n", "<leader>sr", function()
-  local currentBuffer = vim.api.nvim_get_current_buf()
-  local currentFile = vim.api.nvim_buf_get_name(currentBuffer)
-
-  vim.cmd("source " .. currentFile)
-  vim.notify("Sourced file: " .. currentFile, vim.log.levels.INFO, { title = "Sourced" })
-end, { desc = "Source Current File" })
+map("ci", "<C-a>", "<Home>")
+map("ci", "<C-d>", "<End>")
