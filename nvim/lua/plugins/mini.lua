@@ -11,6 +11,7 @@ return {
     require("mini.move").setup()
     require("mini.comment").setup()
     require("mini.bracketed").setup()
+    require("mini.icons").setup()
   end,
 }
 
