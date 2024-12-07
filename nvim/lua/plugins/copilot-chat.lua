@@ -20,6 +20,14 @@ return {
       require("render-markdown").setup({
         file_types = { "markdown", "copilot-chat" },
       })
+
+      -- Enable markdown_inline highlight group
+      vim.cmd([[
+      syntax enable
+      syntax on
+      highlight markdown_inline ctermfg=NONE guifg=NONE
+      ]])
+
       require("CopilotChat").setup({
         highlight_headers = false,
         separator = "---",
