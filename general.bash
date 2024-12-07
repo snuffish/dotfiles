@@ -25,4 +25,4 @@ alias hs="history"
 
 alias timestamp="date +%s%N | cut -b1-13"
 
-function regex { gawk 'match($0,/'$1'/, ary) {print ary['${2:-'0'}']}'; }
+# function regex { gawk 'match($0,/'$1'/, ary) {print ary['${2:-'0'}']}'; }

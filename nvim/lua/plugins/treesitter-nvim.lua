@@ -3,7 +3,7 @@ return {
   build = ":TSUpdate",
   event = { "BufReadPre", "BufNewFile" },
   dependencies = {
-    "nvim-treesitter/nvim-treesitter-textobjects"
+    "nvim-treesitter/nvim-treesitter-textobjects",
   },
   config = function()
     require("nvim-treesitter.configs").setup({
@@ -21,6 +21,7 @@ return {
         "vim",
         "markdown",
         "markdown_inline",
+        "regex",
       },
       incremental_selection = {
         enable = true,
