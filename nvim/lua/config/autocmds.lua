@@ -49,3 +49,19 @@ end, { range = true })
 vim.api.nvim_create_user_command("Test", 'echo "HEJSAN"', {
   desc = "S ome random command",
 })
+
+-- vim.api.nvim_create_user_command("Reload", function()
+--   local hls_status = vim.v.hlsearch
+--   for name, _ in pairs(package.loaded) do
+--     if name:match("^cnull") then
+--       package.loaded[name] = nil
+--       print('Loaded"  .. name')
+--     end
+--     -- print("Loaded" .. name)
+--   end
+--
+--   dofile(vim.env.MYVIMRC)
+--   if hls_status == 0 then
+--     vim.opt.hlsearch = false
+--   end
+-- end, {})

@@ -140,7 +140,7 @@ map("nxoc", "<C-d>", "<End>")
 -- vim.api.nvim_feedkeys("yab", "n", false
 
 -- Split line with X
-map("n", "X", ": substitute/\\s*\\%#\\u*/\\r/e <bar> normal! ==^<cr>", { silent = true })
+map("n", "X", ":substitute/\\s*\\%#\\u*/\\r/e <bar> normal! ==^<cr>", { silent = true })
 
 map("n", "cW", '"_ciw')
 map("n", "yW", "yiw")
