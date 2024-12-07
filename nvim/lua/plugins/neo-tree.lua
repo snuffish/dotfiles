@@ -9,6 +9,7 @@ return {
   cmd = "Neotree",
   keys = {
     { "\\", ":Neotree reveal<CR>", desc = "NeoTree reveal", silent = true },
+    { "<LocalLeader>e", "<cmd>Neotree buffers<CR>", desc = "Buffer Explorer", silent = true },
   },
   opts = {
     filesystem = {

@@ -1,5 +1,12 @@
 require("config.lazy")
 
+-- local wk = require("which-key")
+-- wk.add({
+--   {
+--     "<leader>b",
+--     hidden = true,
+--   },
+-- })
 -- function _G.ReloadConfig()
 --   local hls_status = vim.v.hlsearch
 --   for name, _ in pairs(package.loaded) do
