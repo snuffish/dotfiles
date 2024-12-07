@@ -3,8 +3,7 @@ return {
   event = "VeryLazy",
   opts = {},
   config = function()
-    local wk = require("which-key")
-    wk.add({
+    require("which-key").add({
       {
         "<leader>b",
         hidden = true,

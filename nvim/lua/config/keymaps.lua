@@ -1,3 +1,8 @@
+local map = require("utils").map
+
+-- require("config._keymaps.brackets")
+require("config._keymaps.bufferline")
+
 -- Scratch
 -- map("n", "<leader>.", "<cmd>Scratch<cr>", { desc = "New Scratch Bufffer" })
 -- map("n", "<leader>.f", "<cmd>ScratchOpen<cr>", { desc = "Open Scratch Bufffer" })
@@ -8,12 +13,6 @@
 -- map("n", "<S-j>", "Vj", { desc = "Select line below" })
 -- map("n", "<S-h>", "vh", { desc = "Select character left" })
 -- map("n", "<S-l>", "vl", { desc = "Select character right" })
-
--- require("config._keymaps.brackets")
-require("config._keymaps.bufferline")
-require("config._keymaps.amend")
-
-local map = require("utils").map
 
 map("n", "<Left>", '<cmd>echo "Use h to move!!"<CR>')
 map("n", "<Right>", '<cmd>echo "Use l to move!!"<CR>')
