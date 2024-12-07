@@ -65,6 +65,9 @@ map("n", "op", "m`o<ESC>p``", { silent = true })
 map("n", "DW", 'vb"_d', { silent = true, desc = "Delete words backwards (No yanking)" })
 map("n", "x", '"_x', { silent = true, desc = "Delete char (No yanking)" })
 map("n", "X", '"_X', { silent = true, desc = "Delete char (No yanking)" })
+map("n", "cc", '"_cc<Esc>', { silent = true, desc = "Change line (No yanking)" })
+map("n", "DD", "dd")
+map("n", "dd", '"_dd')
 
 map("n", "<F1>", "<cmd>TransparentToggle<cr>", { noremap = true, silent = true })
 
@@ -108,10 +111,10 @@ map("n", "<C-j>", "<cmd>TmuxNavigateDown<CR>", { noremap = true, silent = true, 
 map("n", "<C-h>", "<cmd>TmuxNavigateLeft<CR>", { noremap = true, silent = true, desc = "Goto right Tmux Window" })
 
 -- bookmarks
-map({ "n", "v" }, "<leader>mm", "<cmd>BookmarksMark<cr>", { desc = "Mark current line into active BookmarkList." })
-map({ "n", "v" }, "<leader>mo", "<cmd>BookmarksGoto<cr>", { desc = "Go to bookmark at current active BookmarkList" })
-map({ "n", "v" }, "<leader>ma", "<cmd>BookmarksCommands<cr>", { desc = "Find and trigger a bookmark command." })
-map({ "n", "v" }, "<leader>mg", "<cmd>BookmarksGotoRecent<cr>", { desc = "Go to latest visited/created Bookmark" })
+map("nv", "<leader>mm", "<cmd>BookmarksMark<cr>", { desc = "Mark current line into active BookmarkList." })
+map("nv", "<leader>mo", "<cmd>BookmarksGoto<cr>", { desc = "Go to bookmark at current active BookmarkList" })
+map("nv", "<leader>ma", "<cmd>BookmarksCommands<cr>", { desc = "Find and trigger a bookmark command." })
+map("nv", "<leader>mg", "<cmd>BookmarksGotoRecent<cr>", { desc = "Go to latest visited/created Bookmark" })
 
 map("nx", ";", ":", { noremap = true })
 
@@ -129,5 +132,15 @@ map("nx", "L", "g_")
 -- Do not include white space characters when using $ in visual mode,
 map("x", "$", "g_")
 
-map("ci", "<C-a>", "<Home>")
-map("ci", "<C-d>", "<End>")
+map("nxoc", "<C-a>", "<Home>")
+map("nxoc", "<C-d>", "<End>")
+
+-- copy eveything between { and ud
+-- p puts text after the cursor,
+-- P puts text before the cursor.
+-- vim.api.nvim_feedkeys("yab", "n", false
+
+-- Split line with X
+map("n", "X", ": substitute/\\s*\\%#\\s*/\\r/e <bar> normal! ==^<cr>", { silent = true })
+
+map("n", "CC", "ciw", { silent = true })
