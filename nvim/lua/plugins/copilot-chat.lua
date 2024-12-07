@@ -65,6 +65,7 @@ return {
           function()
             chat.open({
               window = {
+                title = "Quickchat - [agent: " .. chat.config.agent .. "]",
                 layout = "float",
                 relative = "cursor",
                 width = 1,
@@ -73,7 +74,7 @@ return {
               },
             })
           end,
-          desc = "Help Actions",
+          desc = "Cursor Inline Window",
         },
         {
           "<leader>cca",
