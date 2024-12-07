@@ -1,6 +1,6 @@
 local globals = {
   mapleader = " ",
-  maplocalleader = " ",
+  maplocalleader = "\\",
   have_nerd_font = true,
 }
 
