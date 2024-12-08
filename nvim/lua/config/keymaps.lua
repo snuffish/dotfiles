@@ -1,6 +1,5 @@
 local map = require("utils").map
 
--- require("config._keymaps.brackets")
 require("config._keymaps.bufferline")
 
 -- Scratch
@@ -129,8 +128,8 @@ map("nx", "L", "g_")
 -- Do not include white space characters when using $ in visual mode,
 map("x", "$", "g_")
 
-map("nxoc", "<C-a>", "<Home>")
-map("nxoc", "<C-d>", "<End>")
+-- map("nxoc", "<C-a>", "<Home>")
+-- map("nxoc", "<C-d>", "<End>")
 
 -- copy eveything between { and ud
 -- p puts text after the cursor,
