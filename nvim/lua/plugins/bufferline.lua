@@ -1,7 +1,10 @@
 return {
   "akinsho/bufferline.nvim",
   version = "*",
-  dependencies = "nvim-tree/nvim-web-devicons",
+  dependencies = {
+    "nvim-tree/nvim-web-devicons",
+    "szw/vim-maximizer",
+  },
   opts = {},
   keys = {
     {
@@ -38,6 +41,11 @@ return {
       "<LocalLeader>o",
       "<cmd>BufferLineCloseOthers<CR>",
       desc = "Close all Other Buffers",
+    },
+    {
+      "<LocalLeader>m",
+      "<cmd>MaximizerToggle<CR>",
+      desc = "Maximize/minimize a split",
     },
   },
 }

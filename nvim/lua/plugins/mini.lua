@@ -2,7 +2,19 @@ return {
   "echasnovski/mini.nvim",
   version = false,
   config = function()
-    require("mini.surround").setup()
+    require("mini.surround").setup({
+      opts = {
+        mappings = {
+          add = "gsa",
+          delete = "gsd",
+          find = "gsf",
+          find_left = "gsF",
+          highlight = "gsh",
+          replace = "gsr",
+          update_n_lines = "gsn",
+        },
+      },
+    })
     require("mini.pairs").setup()
     require("mini.ai").setup()
     require("mini.basics").setup()
