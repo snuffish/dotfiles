@@ -43,9 +43,6 @@ map(
   { noremap = true, silent = false, desc = "Horizontal split (Orginal window navigate to AlternativeBuffer)" }
 )
 
--- Go to start or end of line easier
-map("nx", "H", "^")
-map("nx", "L", "g_")
 
 -- Move cursor left/right in insert-mode
 map("ci", "<C-a>", "<Home>")

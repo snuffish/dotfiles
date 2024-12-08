@@ -45,3 +45,6 @@ map("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true })
 map("n", "^", "g^")
 map("n", "0", "g0")
 
+-- Go to start or end of line easier
+map("nx", "H", "^")
+map("nx", "L", "g_")
