@@ -3,11 +3,26 @@ return {
   event = "VeryLazy",
   opts = {},
   config = function()
-    require("which-key").add({
-      {
-        "<leader>b",
+    -- Hide these which-key mappings
+    local hidden = {
+      "<leader>b",
+      "<Left>",
+      "<Right>",
+      "<Up>",
+      "<Down>",
+    }
+
+    local wk = require("which-key")
+    for _, key in ipairs(hidden) do
+      wk.add({
+        key,
         hidden = true,
-      },
+      })
+    end
+
+    wk.add({
+      "<leader>c",
+      desc = "Code",
     })
   end,
   keys = {

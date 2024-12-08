@@ -73,8 +73,6 @@ map("n", "dd", '"_dd')
 
 map("n", "<F1>", "<cmd>TransparentToggle<cr>", { noremap = true, silent = true })
 
-map("n", "<leader>cb", "<cmd>Navbuddy<cr>", { noremap = true, silent = true })
-
 map("x", "g/", "<esc>/\\%V", { silent = false, desc = "Search Inside Visual Selection" })
 
 map("n", "dd", function()

@@ -17,7 +17,7 @@ return {
         enabled = true,
       },
       preserve_cursor_position = {
-        enabled = false,
+        enabled = true,
       },
     })
   end,

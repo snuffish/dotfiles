@@ -11,6 +11,9 @@ return {
         opts = { lsp = { auto_attach = true } },
       },
     },
+    keys = {
+      { "<leader>cn", "<cmd>Navbuddy<cr>" },
+    },
   },
   {
     "windwp/nvim-autopairs",
