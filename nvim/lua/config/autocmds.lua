@@ -9,6 +9,7 @@ local function get_cursor_position()
 end
 
 vim.api.nvim_create_user_command("Run", function(opts)
+  local x = 5
   if opts.range > 0 then
     local selected_text = vim.fn.getline(opts.line1, opts.line2)
     local command = "node -e " .. vim.fn.shellescape(table.concat(selected_text, "\n"))

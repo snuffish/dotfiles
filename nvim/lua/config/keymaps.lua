@@ -57,8 +57,12 @@ map("v", "<Tab>", "=", { silent = true, desc = "Auto-indent" })
 
 -- Yanking
 map("n", "yy", "_yg_", { silent = true })
-map("n", "Op", "m`O<ESC>p``", { silent = true })
-map("n", "op", "m`o<ESC>p``", { silent = true })
+
+vim.keymap.set({ "o", "x" }, "lp", function()
+  require("yanky.textobj").last_put()
+end, {})
+-- map("n", "Op", "m`O<ESC>p``", { silent = true })
+-- map("n", "op", "m`o<ESC>p``", { silent = true })
 
 -- Delete without yanking
 map("n", "x", '"_x', { silent = true, desc = "Delete char (No yanking)" })
