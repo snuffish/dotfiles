@@ -10,6 +10,7 @@ return {
       "<Right>",
       "<Up>",
       "<Down>",
+      "<leader>u",
     }
 
     local wk = require("which-key")
