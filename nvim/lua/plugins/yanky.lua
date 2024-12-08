@@ -1,3 +1,5 @@
+local map = require('utils').map
+
 return {
   "gbprod/yanky.nvim",
   dependencies = {
@@ -19,7 +21,14 @@ return {
       preserve_cursor_position = {
         enabled = true,
       },
+
+
+      map({ "o", "x" }, "lp", function()
+        require("yanky.textobj").last_put()
+      end, {}),
+
     })
+
   end,
   keys = {
     {
