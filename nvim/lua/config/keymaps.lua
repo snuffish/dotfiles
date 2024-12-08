@@ -140,8 +140,7 @@ map("nxoc", "<C-d>", "<End>")
 -- P puts text before the cursor.
 -- vim.api.nvim_feedkeys("yab", "n", false
 
--- Split line with X
-map("n", "X", ":substitute/\\s*\\%#\\u*/\\r/e <bar> normal! ==^<cr>", { silent = true })
+map("n", "<LocalLeader>x", ":substitutes*\\%#\\u*/\\r/e <bar> normal! ==^<cr>", { desc = "Split line", silent = true })
 
 map("n", "cW", '"_ciw')
 map("n", "yW", "yiw")
