@@ -6,6 +6,7 @@ local globals = {
   loaded_python3_provider = 0,
   loaded_ruby_provider = 0,
   autoformat = false,
+  lazyvim_picker = 'fzf'
 }
 
 local options = {

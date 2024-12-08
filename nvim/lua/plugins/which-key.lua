@@ -1,43 +1,32 @@
+local hidden_keymaps = {
+  { "<Left>", hidden = true },
+  { "<Right>", hidden = true },
+  { "<Up>", hidden = true },
+  { "<Down>", hidden = true },
+}
+
 return {
   "folke/which-key.nvim",
   event = "VeryLazy",
-  opts = {},
-  config = function()
-    -- Hide these which-key mappings
-    local hidden = {
-      "<leader>b",
-      "<Left>",
-      "<Right>",
-      "<Up>",
-      "<Down>",
-      -- "<leader>u",
-    }
-
-    local wk = require("which-key")
-    for _, key in ipairs(hidden) do
-      wk.add({
-        key,
-        hidden = true,
-      })
-    end
-
-    wk.add({
-      "<leader>c",
-      desc = "Code",
-    })
-
-    -- wk.add({
-    --   "<leader>sk",
-    --   desc = "Code",
-    -- })
-  end,
-  keys = {
-    {
-      "<leader>?",
-      function()
-        require("which-key").show({ global = false })
-      end,
-      desc = "Buffer Local Keymaps (which-key)",
+  opts_extend = { "spec" },
+  opts = {
+    spec = {
+      hidden_keymaps,
+      {
+        { "<leader>cc", group = "copilot", icon = { icon = " ", color = "yellow" } },
+        {
+          "<localleader>",
+          group = "Current Buffer",
+        },
+      },
     },
   },
+  config = function(_, opts)
+    local wk = require("which-key")
+    wk.setup(opts)
+    if not vim.tbl_isempty(opts.defaults) then
+      LazyVim.warn("which-key: opts.defaults is deprecated. Please use opts.spec instead.")
+      wk.add(opts.defaults)
+    end
+  end,
 }

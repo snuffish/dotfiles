@@ -1,10 +1,11 @@
+local mode = { 'v', 'n', 'x' }
+
 return {
   {
     "CopilotC-Nvim/CopilotChat.nvim",
     branch = "canary",
     dependencies = {
       { "github/copilot.vim" },
-      { "nvim-lua/plenary.nvim", branch = "master" },
     },
     build = "make tiktoken",
     opts = {
@@ -12,9 +13,14 @@ return {
     },
     config = function()
       require("which-key").add({
-        "<leader>cc",
-        desc = "Copilot",
-        icon = "",
+        { 
+          mode = mode,
+          {
+            "<leader>cc",
+            desc = "Copilot",
+            icon = "",
+          } 
+        }
       })
 
       require("render-markdown").setup({
@@ -55,11 +61,13 @@ return {
             chat.ask(input)
           end,
           desc = "Quick chat",
+          mode = mode
         },
         {
           "<leader>ccm",
           "<cmd>CopilotChatModels<CR>",
           desc = "Chat Models",
+          mode = mode
         },
         {
           "<leader>ccp",
@@ -67,6 +75,7 @@ return {
             fzf.pick(actions.prompt_actions())
           end,
           desc = "Prompt actions",
+          mode = mode
         },
         {
           "<leader>ccw",
@@ -83,6 +92,7 @@ return {
             })
           end,
           desc = "Cursor Inline Window",
+          mode = mode
         },
         {
           "<leader>cca",
@@ -92,19 +102,21 @@ return {
             }))
           end,
           desc = "Help Actions",
-        },
-        {
-          "<leader>ccc",
-          "<cmd>CopilotChatToggle<CR>",
-          desc = "Toggle",
-        },
-        {
-          "<leader>ccr",
-          function()
-            chat.restart()
-          end,
-          desc = "Restart Copilot",
-        },
+        }
+      },
+      {
+        "<leader>ccc",
+        "<cmd>CopilotChatToggle<CR>",
+        desc = "Toggle",
+        mode = mode
+      },
+      {
+        "<leader>ccr",
+        function()
+          chat.restart()
+        end,
+        desc = "Restart Copilot",
+        mode = mode
       }
     end,
   },
