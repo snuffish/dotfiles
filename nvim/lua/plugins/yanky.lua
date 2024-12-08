@@ -1,4 +1,4 @@
-local map = require('utils').map
+local map = require("utils").map
 
 return {
   "gbprod/yanky.nvim",
@@ -22,13 +22,10 @@ return {
         enabled = true,
       },
 
-
       map({ "o", "x" }, "lp", function()
         require("yanky.textobj").last_put()
       end, {}),
-
     })
-
   end,
   keys = {
     {
@@ -59,3 +56,9 @@ return {
     -- { "OP", "<Plug>(YankyPutBeforeFilter)", desc = "Put before applying a filter" },
   },
 }
+
+-- map("n", "Op", "m`O<ESC>p``", { silent = true })
+-- map("n", "op", "m`o<ESC>p``", { silent = true })
+
+-- Yanking
+-- map("n", "yy", "_yg_", { silent = true })
