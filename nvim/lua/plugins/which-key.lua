@@ -10,7 +10,7 @@ return {
       "<Right>",
       "<Up>",
       "<Down>",
-      "<leader>u",
+      -- "<leader>u",
     }
 
     local wk = require("which-key")
@@ -25,6 +25,11 @@ return {
       "<leader>c",
       desc = "Code",
     })
+
+    -- wk.add({
+    --   "<leader>sk",
+    --   desc = "Code",
+    -- })
   end,
   keys = {
     {

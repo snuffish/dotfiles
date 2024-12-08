@@ -1,7 +1,5 @@
 local map = require("utils").map
 
-require("config._keymaps.bufferline")
-
 -- Scratch
 -- map("n", "<leader>.", "<cmd>Scratch<cr>", { desc = "New Scratch Bufffer" })
 -- map("n", "<leader>.f", "<cmd>ScratchOpen<cr>", { desc = "Open Scratch Bufffer" })
@@ -25,8 +23,6 @@ map("n", "<leader>sr", function()
   vim.cmd("source " .. currentFile)
   vim.notify("Sourced file: " .. currentFile, vim.log.levels.INFO, { title = "Sourced" })
 end, { desc = "Source Current File" })
-
-map("i", { "jk", "kj", "lk", "kl", "hj", "jh" }, "<Esc>", { noremap = true, desc = "Exit insert mode" })
 
 -- Regex replaces
 map("n", "RR", "<Esc>:%s/", { noremap = true, desc = "Regex string replace (global)" })
@@ -100,21 +96,15 @@ map(
   { noremap = true, silent = false, desc = "Horizontal split (Orginal window navigate to AlternativeBuffer)" }
 )
 
--- Tmux
-map("n", "<C-l>", "<cmd>TmuxNavigateLeft<CR>", { noremap = true, silent = true, desc = "Goto right Tmux Window" })
-map("n", "<C-k>", "<cmd>TmuxNavigateRight<CR>", { noremap = true, silent = true, desc = "Goto right Tmux Window" })
-map("n", "<C-j>", "<cmd>TmuxNavigateDown<CR>", { noremap = true, silent = true, desc = "Goto right Tmux Window" })
-map("n", "<C-h>", "<cmd>TmuxNavigateLeft<CR>", { noremap = true, silent = true, desc = "Goto right Tmux Window" })
-
 -- bookmarks
-map("nv", "<leader>mm", "<cmd>BookmarksMark<cr>", { desc = "Mark current line into active BookmarkList." })
-map("nv", "<leader>mo", "<cmd>BookmarksGoto<cr>", { desc = "Go to bookmark at current active BookmarkList" })
-map("nv", "<leader>ma", "<cmd>BookmarksCommands<cr>", { desc = "Find and trigger a bookmark command." })
-map("nv", "<leader>mg", "<cmd>BookmarksGotoRecent<cr>", { desc = "Go to latest visited/created Bookmark" })
+-- map("nv", "<leader>mm", "<cmd>BookmarksMark<cr>", { desc = "Mark current line into active BookmarkList." })
+-- map("nv", "<leader>mo", "<cmd>BookmarksGoto<cr>", { desc = "Go to bookmark at current active BookmarkList" })
+-- map("nv", "<leader>ma", "<cmd>BookmarksCommands<cr>", { desc = "Find and trigger a bookmark command." })
+-- map("nv", "<leader>mg", "<cmd>BookmarksGotoRecent<cr>", { desc = "Go to latest visited/created Bookmark" })
 
 map("nx", ";", ":", { noremap = true })
 
-map("niv", "<leader>sk", "<cmd>Telescope keymaps<cr>", { desc = "Show Keymaps" })
+
 
 map("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true })
 map("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true })
@@ -141,3 +131,7 @@ map("n", "<LocalLeader>x", ":substitutes*\\%#\\u*/\\r/e <bar> normal! ==^<cr>", 
 map("n", "cW", '"_ciw')
 map("n", "yW", "yiw")
 map("n", "dW", '"_diw', { silent = true, desc = "Delete words backwards (No yanking)" })
+
+
+
+
