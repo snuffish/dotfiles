@@ -5,13 +5,6 @@ map("n", "<Right>", '<cmd>echo "Use l to move!!"<CR>')
 map("n", "<Up>", '<cmd>echo "Use k to move!!"<CR>')
 map("n", "<Down>", '<cmd>echo "Use j to move!!"<CR>')
 
--- require("which-key").setup {
---   -- other configurations
---   ignore_missing = true,
---   triggers_blacklist = {
---     n = { "<Left>", "<Right>", "<Up>", "<Down>" },
---   },
--- }
 
 map("nxv", ";", ":", { noremap = true })
 map("nxv", ";;", ":<C-f>", { noremap = true })

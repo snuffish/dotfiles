@@ -1,0 +1,9 @@
+Error executing luv callback:
+...share/nvim/lazy/plenary.nvim/lua/plenary/async/async.lua:18: The coroutine failed with this message: ...e/nvim/lazy/CopilotChat.nvim/lua/CopilotChat/copilot.lua:374: { "curl: option --fail-with-body: is unknown", "curl: try 'curl --help' or 'curl --manual' for more information" }
+stack traceback:
+	[C]: in function 'error'
+	...share/nvim/lazy/plenary.nvim/lua/plenary/async/async.lua:18: in function 'callback_or_next'
+	...share/nvim/lazy/plenary.nvim/lua/plenary/async/async.lua:45: in function 'callback'
+  ...are/nvim/lazy/CopilotChat.nvim/lua/CopilotChat/utils.lua:293: in function '_user_on_exit'
+	.../.local/share/nvim/lazy/plenary.nvim/lua/plenary/job.lua:241: in function '_shutdown'
+	.../.local/share/nvim/lazy/plenary.nvim/lua/plenary/job.lua:48: in function <.../.local/share/nvim/lazy/plenary.nvim/lua/plenary/job.lua:39>

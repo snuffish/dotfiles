@@ -2,29 +2,18 @@ local mode = { 'v', 'n', 'x' }
 
 return {
   {
-    "CopilotC-Nvim/CopilotChat.nvim",
-    branch = "canary",
-    dependencies = {
-      { "github/copilot.vim" },
-    },
-    build = "make tiktoken",
-    opts = {
-      debug = true,
-    },
+    "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
+    event = "InsertEnter",
     config = function()
-      require("which-key").add({
-        { 
-          mode = mode,
-          {
-            "<leader>cc",
-            desc = "Copilot",
-            icon = "",
-          } 
-        }
-      })
-
       require("render-markdown").setup({
         file_types = { "markdown", "copilot-chat" },
+      })
+      require('copilot').setup({
+        highlight_headers = false,
+        separator = '---',
+        error_header = '> [!ERROR] Error',
+        -- rest of your config
       })
 
       -- Enable markdown_inline highlight group
@@ -33,35 +22,37 @@ return {
       syntax on
       highlight markdown_inline ctermfg=NONE guifg=NONE
       ]])
-
-      require("CopilotChat").setup({
-        highlight_headers = false,
-        separator = "---",
-        error_header = "> [!ERROR] Error",
-      })
     end,
-    keys = function()
-      local chat = require("CopilotChat")
+  },
+  {
+    "CopilotC-Nvim/CopilotChat.nvim",
+    dependencies = {
+      { "github/copilot.vim" }, -- or zbirenbaum/copilot.lua
+      { "nvim-lua/plenary.nvim", branch = "master" }, -- for curl, log and async functions
+    },
+    build = "make tiktoken", -- Only on MacOS or Linux
+    keys = function ()
+      local chat = require('CopilotChat')
       local actions = require("CopilotChat.actions")
       local fzf = require("CopilotChat.integrations.fzflua")
 
       return {
         {
           "<leader>ccq",
-          function()
-            local input = vim.fn.input("Quick Chat: ")
+          function ()
+            local input = vim.fn.input("Quick chat: ")
+
 
             chat.open({
               window = {
                 layout = "float",
-                title = "Quickchat - [agent: " .. chat.config.agent .. "]",
-              },
+                title = "Quickchat = agent [" .. chat.config.agent .. "]"
+              }
             })
 
             chat.ask(input)
           end,
-          desc = "Quick chat",
-          mode = mode
+          desc = "Quickchat"
         },
         {
           "<leader>ccm",
@@ -119,5 +110,5 @@ return {
         mode = mode
       }
     end,
-  },
+  }
 }
