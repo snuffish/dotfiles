@@ -49,6 +49,7 @@ return {
           e = { -- Word with case
             { "%u[%l%d]+%f[^%l%d]", "%f[%S][%l%d]+%f[^%l%d]", "%f[%P][%l%d]+%f[^%l%d]", "^[%l%d]+%f[^%l%d]" },
             "^().*()$",
+          },
           u = gen_spec.function_call(), -- u for "Usage"
           U = gen_spec.function_call({ name_pattern = "[%w_]" }), -- without dot in function name
         },
