@@ -38,16 +38,6 @@ return {
       local ai = require("mini.ai")
       local gen_spec = ai.gen_spec
 
-      if true or false then
-        local test = 5
-        if true or false then
-          local test = 5
-          if true or false then
-            local test = 5
-          end
-        end
-      end
-
       return {
         n_lines = 500,
         custom_textobjects = {
