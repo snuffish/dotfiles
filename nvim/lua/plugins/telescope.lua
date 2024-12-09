@@ -2,7 +2,7 @@ return {
   -- {
   --   "telescope.nvim",
   --   keys = {
-  --     "<LocalLeader>sk",
+  --     "<localleader>sk",
   --     "<cmd>Telescope keymaps<cr>",
   --     desc = "Show Keymaps",
   --   },

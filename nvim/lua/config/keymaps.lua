@@ -57,8 +57,7 @@ map("n", "yW", "yiw")
 map("n", "DD", "dd")
 
 -- Local
-map("n", { "<LocalLeader>a", "<leader>a" }, "ggVG", { desc = "Select all" })
-map("n", "<LocalLeader>x", ":substitutes*\\%#\\u*/\\r/e <bar> normal! ==^<cr>", { desc = "Split line", silent = true })
+map("n", { "<localleader>a", "<leader>a" }, "ggVG", { desc = "Select all" })
+map("n", "<localleader>x", ":substitutes*\\%#\\u*/\\r/e <bar> normal! ==^<cr>", { desc = "Split line", silent = true })
 
-map("n", "<leader>a", "gsa")
-
+-- map("n", "<localleader>", "<leader><BS>,", { desc = "Local leader" })
