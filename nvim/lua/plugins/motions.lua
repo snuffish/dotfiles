@@ -38,20 +38,33 @@ return {
       local ai = require("mini.ai")
       local gen_spec = ai.gen_spec
 
+      if true or false then
+        local test = 5
+        if true or false then
+          local test = 5
+          if true or false then
+            local test = 5
+          end
+        end
+      end
+
       return {
         n_lines = 500,
         custom_textobjects = {
-          i = { gen_spec.treesitter({ a = "@conditional.outer",i = "@conditional.inner" }) },
-          f = gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }), -- function
-          c = gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }), -- class
-          t = { "<([%p%w]-)%f[^<%w][^<>]->.-</%1>", "^<.->().*()</[^/]->$" }, -- tags
-          d = { "%f[%d]%d+" }, -- digits
-          e = { -- Word with case
+          f = gen_spec.treesitter({ a = '@function.outer', i = '@function.inner' }),
+          i = gen_spec.treesitter({ a = "@conditional.outer", i = "@conditional.inner" }),
+          c = gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }),
+          t = { "<([%p%w]-)%f[^<%w][^<>]->.-</%1>", "^<.->().*()</[^/]->$" },
+          -- digits
+          d = { "%f[%d]%d+" },
+          -- Word with case
+          e = { 
             { "%u[%l%d]+%f[^%l%d]", "%f[%S][%l%d]+%f[^%l%d]", "%f[%P][%l%d]+%f[^%l%d]", "^[%l%d]+%f[^%l%d]" },
             "^().*()$",
           },
-          u = gen_spec.function_call(), -- u for "Usage"
-          U = gen_spec.function_call({ name_pattern = "[%w_]" }), -- without dot in function name
+          u = gen_spec.function_call(), 
+          -- without dot in function name
+          U = gen_spec.function_call({ name_pattern = "[%w_]" }),
         },
       }
     end,
