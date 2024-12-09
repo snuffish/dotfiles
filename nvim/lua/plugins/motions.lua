@@ -22,7 +22,7 @@ return {
         delete = "gsd",
         find = "gsf",
         find_left = "gsF",
-        highlight = "gsh",
+        highlight = "bsh",
         replace = "gsr",
         update_n_lines = "gsn",
       },
@@ -36,26 +36,21 @@ return {
     event = "VeryLazy",
     opts = function()
       local ai = require("mini.ai")
+      local gen_spec = ai.gen_spec
 
       return {
         n_lines = 500,
         custom_textobjects = {
-          o = ai.gen_spec.treesitter({ -- code block
-            a = { "@block.outer", "@conditional.outer", "@loop.outer" },
-            i = { "@block.inner", "@conditional.inner", "@loop.inner" },
-          }),
-          f = ai.gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }), -- function
-          c = ai.gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }), -- class
+          i = { gen_spec.treesitter({ a = "@conditional.outer",i = "@conditional.inner" }) },
+          f = gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }), -- function
+          c = gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }), -- class
           t = { "<([%p%w]-)%f[^<%w][^<>]->.-</%1>", "^<.->().*()</[^/]->$" }, -- tags
           d = { "%f[%d]%d+" }, -- digits
           e = { -- Word with case
             { "%u[%l%d]+%f[^%l%d]", "%f[%S][%l%d]+%f[^%l%d]", "%f[%P][%l%d]+%f[^%l%d]", "^[%l%d]+%f[^%l%d]" },
             "^().*()$",
-          },
-          i = LazyVim.mini.ai_indent, -- indent
-          g = LazyVim.mini.ai_buffer, -- buffer
-          u = ai.gen_spec.function_call(), -- u for "Usage"
-          U = ai.gen_spec.function_call({ name_pattern = "[%w_]" }), -- without dot in function name
+          u = gen_spec.function_call(), -- u for "Usage"
+          U = gen_spec.function_call({ name_pattern = "[%w_]" }), -- without dot in function name
         },
       }
     end,
@@ -67,6 +62,15 @@ return {
         end)
       end)
     end,
+  },
+  {
+    'mawkler/demicolon.nvim',
+    -- keys = { ';', ',', 't', 'f', 'T', 'F', ']', '[', ']d', '[d' }, -- Uncomment this to lazy load
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+      'nvim-treesitter/nvim-treesitter-textobjects',
+    },
+    opts = {}
   },
   {
     "folke/flash.nvim",
@@ -127,11 +131,11 @@ return {
     }
   },
 }
-  -- {
-    --   "L3MON4D3/LuaSnip",
-    --   keys = function()
-      --     -- Disable default tab keybinding in LuaSnip
-      --     return {}
-      --   end,
-      -- },
-    -- }
+-- {
+--   "L3MON4D3/LuaSnip",
+--   keys = function()
+--     -- Disable default tab keybinding in LuaSnip
+--     return {}
+--   end,
+-- },
+-- }
