@@ -8,42 +8,42 @@ return {
   opts = {},
   keys = {
     {
-      "<LocalLeader>n",
+      "<localleader>n",
       "<cmd>enew<CR>",
       desc = "Create new Buffer",
     },
     {
-      "<LocalLeader><LocalLeader>",
+      "<localleader><localleader>",
       "<cmd>FzfLua buffers<CR>",
       desc = "Switch Buffers",
     },
     {
-      "<LocalLeader><Tab>",
+      "<localleader><Tab>",
       "<cmd>BufferLineCycleNext<CR>",
       desc = "Next Buffer",
     },
     {
-      "<LocalLeader><S-Tab>",
+      "<localleader><S-Tab>",
       "<cmd>BufferLineCyclePrev<CR>",
       desc = "Previous Buffer",
     },
     {
-      "<LocalLeader>d",
+      "<localleader>d",
       "<cmd>bd<CR>",
       desc = "Delete Buffer",
     },
     {
-      "<LocalLeader>D",
+      "<localleader>D",
       "<cmd>bD<CR>",
       desc = "Delete Buffer and Window",
     },
     {
-      "<LocalLeader>o",
+      "<localleader>o",
       "<cmd>BufferLineCloseOthers<CR>",
       desc = "Close all Other Buffers",
     },
     {
-      "<LocalLeader>m",
+      "<localleader>m",
       "<cmd>MaximizerToggle<CR>",
       desc = "Maximize/minimize a split",
     },
