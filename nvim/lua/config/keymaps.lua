@@ -8,6 +8,8 @@ map("n", "<leader>sr", function()
   vim.notify("Sourced file: " .. currentFile, vim.log.levels.INFO, { title = "Sourced" })
 end, { desc = "Source Current File" })
 
+   map("n", "<leader>w", ":w<CR>", { noremap = true, silent = true, desc = "Save file" })
+
 -- Regex replaces
 map("n", "RR", "<Esc>:%s/", { noremap = true, desc = "Regex string replace (global)" })
 map("x", "RR", "<Esc>:'<,'>s/", { noremap = true, desc = "Regex string replace (selection)" })
@@ -19,7 +21,7 @@ map("x", "DD", "<Esc>:'<,'>g//d<Left><Left>", { noremap = true, desc = "Regex de
 map("n", "+", "<C-a>", { silent = true, desc = "Increment integer" })
 map("n", "-", "<C-x>", { silent = true, desc = "Decrement integer" })
 
-map("n", "<leader>a", "ggVG", { desc = "Select all" })
+map("n", { "<LocalLeader>a", "<leader>a" }, "ggVG", { desc = "Select all" })
 
 map("v", "<Tab>", "=", { silent = true, desc = "Auto-indent" })
 
@@ -42,7 +44,6 @@ map(
   "<C-w>s<C-w>p<cmd>e #<CR><C-w>p",
   { noremap = true, silent = false, desc = "Horizontal split (Orginal window navigate to AlternativeBuffer)" }
 )
-
 
 -- Move cursor left/right in insert-mode
 map("ci", "<C-a>", "<Home>")

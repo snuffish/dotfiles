@@ -1,3 +1,5 @@
+# nvim-treesitter-textobjects
+```lua
 return {
   "nvim-treesitter/nvim-treesitter-textobjects",
   lazy = true,
@@ -98,3 +100,4 @@ return {
     map("nxo", "T", ts_repeat_move.builtin_T_expr)
   end,
 }
+```
