@@ -39,10 +39,14 @@ return {
       local gen_spec = ai.gen_spec
 
       return {
-        n_lines = 500,
+        n_lines = 500.25,
+        -- Custom Treesitter AST Queries
         custom_textobjects = {
+          -- Functions
           f = gen_spec.treesitter({ a = '@function.outer', i = '@function.inner' }),
+          -- Conditional statements
           i = gen_spec.treesitter({ a = "@conditional.outer", i = "@conditional.inner" }),
+          -- Classes
           c = gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }),
           t = { "<([%p%w]-)%f[^<%w][^<>]->.-</%1>", "^<.->().*()</[^/]->$" },
           -- digits
