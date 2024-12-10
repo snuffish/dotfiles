@@ -8,7 +8,7 @@ map("n", "<Down>", '<cmd>echo "Use j to move!!"<CR>')
 
 map("nxv", ";", ":", { noremap = true })
 map("nxv", ";;", ":<C-f>", { noremap = true })
-map("tn", "q", "<cmd>q<CR>", { noremap = true })
+map("tn", "qq", "<cmd>q<CR>", { noremap = true })
 
 map("n", "{", "{zz")
 map("n", "}", "}zz")
