@@ -18,14 +18,15 @@ return {
     event = "VeryLazy",
     opts = {
       mappings = {
-        add = "gsa",
-        delete = "gsd",
-        find = "gsf",
-        find_left = "gsF",
-        highlight = "bsh",
-        replace = "gsr",
+        add = "sa",
+        delete = "ds",
+        find = "sf",
+        find_left = "sF",
+        highlight = "sh",
+        replace = "cs",
         update_n_lines = "gsn",
       },
+      n_lines = 500,
     },
     config = function(_, opts)
       require("mini.surround").setup(opts)
@@ -39,26 +40,22 @@ return {
       local gen_spec = ai.gen_spec
 
       return {
-        n_lines = 500.25,
-        -- Custom Treesitter AST Queries
+        n_lines = 500,
         custom_textobjects = {
-          -- Functions
-          f = gen_spec.treesitter({ a = '@function.outer', i = '@function.inner' }),
-          -- Conditional statements
-          i = gen_spec.treesitter({ a = "@conditional.outer", i = "@conditional.inner" }),
-          -- Classes
-          c = gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }),
-          t = { "<([%p%w]-)%f[^<%w][^<>]->.-</%1>", "^<.->().*()</[^/]->$" },
-          -- digits
-          d = { "%f[%d]%d+" },
-          -- Word with case
-          e = { 
+          i = {
+            gen_spec.treesitter({ a = "@conditional.outer",i = "@conditional.inner" }),
+          }
+          , -- function
+          f = gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }), -- function
+          c = gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }), -- class
+          t = { "<([%p%w]-)%f[^<%w][^<>]->.-</%1>", "^<.->().*()</[^/]->$" }, -- tags
+          d = { "%f[%d]%d+" }, -- digits
+          e = { -- Word with case
             { "%u[%l%d]+%f[^%l%d]", "%f[%S][%l%d]+%f[^%l%d]", "%f[%P][%l%d]+%f[^%l%d]", "^[%l%d]+%f[^%l%d]" },
             "^().*()$",
           },
-          u = gen_spec.function_call(), 
-          -- without dot in function name
-          U = gen_spec.function_call({ name_pattern = "[%w_]" }),
+          u = gen_spec.function_call(), -- u for "Usage"
+          U = gen_spec.function_call({ name_pattern = "[%w_]" }), -- without dot in function name
         },
       }
     end,
@@ -71,15 +68,15 @@ return {
       end)
     end,
   },
-  -- {
-  --   'mawkler/demicolon.nvim',
-  --   -- keys = { ';', ',', 't', 'f', 'T', 'F', ']', '[', ']d', '[d' }, -- Uncomment this to lazy load
-  --   dependencies = {
-  --     'nvim-treesitter/nvim-treesitter',
-  --     'nvim-treesitter/nvim-treesitter-textobjects',
-  --   },
-  --   opts = {}
-  -- },
+  {
+    'mawkler/demicolon.nvim',
+    -- keys = { ';', ',', 't', 'f', 'T', 'F', ']', '[', ']d', '[d' }, -- Uncomment this to lazy load
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+      'nvim-treesitter/nvim-treesitter-textobjects',
+    },
+    opts = {}
+  },
   {
     "folke/flash.nvim",
     event = "VeryLazy",
@@ -140,10 +137,10 @@ return {
   },
 }
 -- {
---   "L3MON4D3/LuaSnip",
---   keys = function()
---     -- Disable default tab keybinding in LuaSnip
---     return {}
---   end,
--- },
--- }
+  --   "L3MON4D3/LuaSnip",
+  --   keys = function()
+    --     -- Disable default tab keybinding in LuaSnip
+    --     return {}
+    --   end,
+    -- },
+    -- }

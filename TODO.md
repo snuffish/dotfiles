@@ -33,7 +33,7 @@ return {
             ["af"] = { query = "@function.outer", desc = "Select outer part of a method/function definition" },
             ["if"] = { query = "@function.inner", desc = "Select inner part of a method/function definition" },
 
-            ["ac"] = { query = "@class.outer", desc = "Select outer part of a class" },
+            ["ac"] = { query = "@class.outer", desc = "Select outer part
             ["ic"] = { query = "@class.inner", desc = "Select inner part of a class" },
           },
         },
