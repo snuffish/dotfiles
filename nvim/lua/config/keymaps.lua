@@ -69,6 +69,11 @@ map("n", "<localleader>x", ":substitutes*\\%#\\u*/\\r/e <bar> normal! ==^<cr>", 
 -- vim.api.nvim_set_keymap('n', 'sab', "@a", { noremap = true, silent = true })
 
 -- Wrap the cursors words position - (...)
+map("n", "saq", function ()
+  vim.cmd("let @z = 'viwsaq' | normal! @z")
+end)
+
+-- Wrap the cursors words position - ()
 map("n", "sab", function ()
   vim.cmd("let @z = 'viwsa(' | normal! @z")
 end)
