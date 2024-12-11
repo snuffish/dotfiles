@@ -30,6 +30,10 @@ return {
           "<localleader>",
           group = "Current Buffer",
         },
+        {
+          "<leader>m",
+          group = "Math",
+        },
       },
     }
 
