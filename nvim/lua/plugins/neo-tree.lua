@@ -8,15 +8,15 @@ return {
   },
   cmd = "Neotree",
   keys = {
-    { "\\", ":Neotree reveal<CR>", desc = "NeoTree reveal", silent = true },
+    { "<leader>e", "<cmd>Neotree reveal<CR>", desc = "NeoTree reveal", silent = true },
     { "<localleader>e", "<cmd>Neotree buffers<CR>", desc = "Buffer Explorer", silent = true },
   },
   opts = {
     filesystem = {
       window = {
         mappings = {
-          ["\\"] = "close_window",
-          ['o'] = 'open'
+          ["\\\\"] = "close_window",
+          ['<leader>'] = 'open'
         },
       },
     },
