@@ -28,15 +28,17 @@ return {
     },
   },
   keys = {
-    {
-      "<localleader>",
-      function ()
-       vim.nvim.Keymaps.set('')
-      end,
-      desc = "Buffer Local Keymaps"
-      -- "<cmd>WhichKey '<localleader>'<CR>",
-      -- { noremap = true, silent = true },
-    }
+    -- {
+    --   "<localleader>",
+    --   function ()
+    --     -- vim.api.nvim_set_keymap('n', '<localleader>', ' <BS>', { noremap = true, silent = true })
+    --     print("LOCAL")
+    --     -- vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Space><BS>,", true, true, true), 'n', true)
+    --   end,
+    --   desc = "Buffer Local Keymaps"
+    --   -- "<cmd>WhichKey '<localleader>'<CR>",
+    --   -- { noremap = true, silent = true },
+    -- }
   },
   config = function(_, opts)
     local wk = require("which-key")
