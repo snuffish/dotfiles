@@ -82,13 +82,20 @@ return {
     event = "VeryLazy",
     opts = {},
     -- stylua: ignore
-    keys = {
-      { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
-      { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
-      { "rf", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
-      { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-      { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
-    },
+    keys = function ()
+     local centerScreen = vim.api.nvim_feedkeys('zz', 'n', true)
+
+      return {
+        { "s", mode = { "n", "x", "o" }, function()
+          require("flash").jump()
+          if centerScreen then centerScreen() end
+        end, desc = "Flash" },
+        { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+        { "rf", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
+        { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+        { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+      }
+    end,
   },
   {
     "abecodes/tabout.nvim",
@@ -137,10 +144,10 @@ return {
   },
 }
 -- {
-  --   "L3MON4D3/LuaSnip",
-  --   keys = function()
-    --     -- Disable default tab keybinding in LuaSnip
-    --     return {}
-    --   end,
-    -- },
-    -- }
+--   "L3MON4D3/LuaSnip",
+--   keys = function()
+--     -- Disable default tab keybinding in LuaSnip
+--     return {}
+--   end,
+-- },
+-- }
