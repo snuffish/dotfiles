@@ -38,7 +38,7 @@ map("n", "dd", function()
     return "dd"
   end
 end, { noremap = true, expr = true, desc = "Don't Yank Empty Line to Clipboard" })
-map("n", "dW", '"_diw', { silent = true, desc = "Delete words backwards (No yanking)" })
+map("n", { 'DW', 'dW' }, '"_diw', { silent = true, desc = "Delete words backwards (No yanking)" })
 
 -- Do not include white space characters when using $ in visual mode,
 map("x", "$", "g_")
