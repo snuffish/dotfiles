@@ -28,12 +28,12 @@ return {
       desc = "Previous Buffer",
     },
     {
-      "<localleader>d",
+      "<localleader>q",
       "<cmd>bd<CR>",
       desc = "Delete Buffer",
     },
     {
-      "<localleader>D",
+      "<localleader>Q",
       "<cmd>bD<CR>",
       desc = "Delete Buffer and Window",
     },
