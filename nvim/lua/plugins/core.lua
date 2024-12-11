@@ -73,6 +73,11 @@ return {
           vim.ui.input({
             prompt = "Calculate"
           }, function (input)
+              if not input then
+                vim.notify("No input provided", vim.log.levels.ERROR)
+                return
+              end
+
               if input == "q" then
                 vim.notify("Input cancelled", vim.log.levels.INFO)
                 return
