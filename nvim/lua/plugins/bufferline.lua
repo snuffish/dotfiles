@@ -43,7 +43,12 @@ return {
       desc = "Close all Other Buffers",
     },
     {
-      "<localleader>m",
+       "<localleader>m",
+      "<cmd>MaximizerToggle<CR>",
+      desc = "Maximize/minimize a split",
+    },
+    {
+      ",m",
       "<cmd>MaximizerToggle<CR>",
       desc = "Maximize/minimize a split",
     },
