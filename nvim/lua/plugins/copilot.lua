@@ -45,7 +45,6 @@ return {
           function ()
             local input = vim.fn.input("Quick chat: ")
 
-
             chat.open({
               window = {
                 layout = "float",
@@ -53,7 +52,9 @@ return {
               }
             })
 
-            chat.ask(input)
+            chat.ask(input, {
+              selection = require('CopilotChat.select').buffer
+            })
           end,
           desc = "Quickchat"
         },
@@ -64,9 +65,24 @@ return {
           mode = mode
         },
         {
-          "<leader>ccc",
+          "<leader>ccC",
           "<cmd>CopilotChatToggle<CR>",
           desc = "Toggle Copilot",
+          mode = mode
+        },
+        {
+          "<leader>ccc",
+          function ()
+            chat.open({
+              window = {
+                title = "Quickchat - [agent: " .. chat.config.agent .. "]",
+                layout = "float",
+                relative = "editor",
+              },
+            })
+            
+          end,
+          desc = "Toggle Copilot (Overlay)",
           mode = mode
         },
         {
