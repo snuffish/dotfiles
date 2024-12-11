@@ -94,10 +94,6 @@ end, { range = true })
 -- ...ish/.local/share/nvim/lazy/popup.nvim/lua/popup/init.lua:90: in function 'create'
 -- /Users/snuffish/.terminal/nvim/lua/config/autocmds.lua:13: in function </Users/snuffish/.terminal/nvim/lua/config/autocmds.lua:4>
 
-vim.api.nvim_create_user_command("Test", 'echo "HEJSAN"', {
-  desc = "S ome random command",
-})
-
 -- vim.api.nvim_create_user_command("Reload", function()
 --   local hls_status = vim.v.hlsearch
 --   for name, _ in pairs(package.loaded) do
@@ -113,3 +109,9 @@ vim.api.nvim_create_user_command("Test", 'echo "HEJSAN"', {
 --     vim.opt.hlsearch = false
 --   end
 -- end, {})
+
+vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
+  pattern = ".env*",
+  command = "set filetype=dot"
+})
+
