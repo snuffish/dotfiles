@@ -111,11 +111,13 @@ return {
         {
           "<leader>ccw",
           function()
-            local selection = require("CopilotChat.select").visual
-            chat.open({
-              window = OverlayWindow(chat.config.agent),
-              selection = selection,
-            })
+            vim.ui.input({ prompt = "Calculate: " }, function (question)
+              local selection = require("CopilotChat.select").visual
+              chat.ask(question, {
+                window = OverlayWindow(chat.config.agent),
+                selection = selection,
+              })
+            end)
           end,
           desc = "Cursor Inline Window",
           mode = mode
