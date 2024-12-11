@@ -41,7 +41,7 @@ return {
 
       function OverlayWindow(agent)
         return {
-          title = "Quickchat - [agent: " .. agent  .. "]",
+          title = string.format("Quickchat - [agent: %s]", agent),
           layout = "float",
           relative = "editor"
         }
@@ -56,7 +56,7 @@ return {
             chat.open({
               window = {
                 layout = "float",
-                title = "Quickchat = agent [" .. chat.config.agent .. "]"
+                title = string.format("Quickchat - [agent: %s]", chat.config.agent)
               }
             })
 
@@ -111,13 +111,20 @@ return {
         {
           "<leader>ccw",
           function()
-            vim.ui.input({ prompt = "Calculate: " }, function (question)
-              local selection = require("CopilotChat.select").visual
-              chat.ask(question, {
-                window = OverlayWindow(chat.config.agent),
-                selection = selection,
-              })
-            end)
+            vim.ui.input({
+              prompt = string.format("Quickchat - [agent: %s]", chat.config.agent),
+            }, function (question)
+                if question == "q" then
+                  vim.notify("Input cancelled", vim.log.levels.INFO)
+                  return
+                end
+
+                local selection = require("CopilotChat.select").visual
+                chat.ask(question, {
+                  window = OverlayWindow(chat.config.agent),
+                  selection = selection,
+                })
+              end)
           end,
           desc = "Cursor Inline Window",
           mode = mode
