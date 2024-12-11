@@ -28,6 +28,9 @@ local options = {
   cursorcolumn = false,
 }
 
+
+
+
 -- Global properties
 for option, value in pairs(globals) do
   vim.g[option] = value

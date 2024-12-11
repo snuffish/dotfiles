@@ -65,9 +65,21 @@ return {
           mode = mode
         },
         {
+          "<leader>ccf",
+          "<cmd>CopilotChatFix<CR>",
+          desc = "Fix",
+          mode = mode
+        },
+        {
+          "<leader>cce",
+          "<cmd>CopilotChatExplain<CR>",
+          desc = "Explain",
+          mode = mode
+        },
+        {
           "<leader>ccC",
           "<cmd>CopilotChatToggle<CR>",
-          desc = "Toggle Copilot",
+          desc = "Copilot",
           mode = mode
         },
         {
@@ -80,9 +92,8 @@ return {
                 relative = "editor",
               },
             })
-            
           end,
-          desc = "Toggle Copilot (Overlay)",
+          desc = "Copilot (Overlay)",
           mode = mode
         },
         {
@@ -131,7 +142,7 @@ return {
         function()
           chat.restart()
         end,
-        desc = "Restart Copilot",
+        desc = "Restart",
         mode = mode
       }
     end,
