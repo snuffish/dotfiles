@@ -13,7 +13,12 @@ return {
     spec = {
       hidden_keymaps,
       {
-        { "<leader>cc", group = "copilot", icon = { icon = " ", color = "yellow" } },
+        {
+          "<leader>cc",
+          group = "copilot",
+          icon = { icon = " ", color = "yellow" },
+          mode = { "n", "v", "i" }
+        },
         {
           "<localleader>",
           group = "Current Buffer",
