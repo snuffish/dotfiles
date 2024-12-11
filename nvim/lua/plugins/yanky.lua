@@ -21,10 +21,6 @@ return {
       preserve_cursor_position = {
         enabled = true,
       },
-
-      map({ "o", "x" }, "lp", function()
-        require("yanky.textobj").last_put()
-      end, {}),
     })
   end,
   keys = {
@@ -42,23 +38,14 @@ return {
     { "gP", "<Plug>(YankyGPutBefore)", mode = { "n", "x" }, desc = "Put yanked text before selection" },
     { "<c-p>", "<Plug>(YankyPreviousEntry)", desc = "Select previous entry through yank history" },
     { "<c-n>", "<Plug>(YankyNextEntry)", desc = "Select next entry through yank history" },
-    { "op", "m`O<ESC><Plug>(YankyPutIndentAfterLinewise)``" },
-    { "OP", "<Plug>(YankyPutIndentBeforeLinewise)", desc = "Put indented before cursor (linewise)" },
+    { "OP", "m`O<ESC><Plug>(YankyPutIndentAfterLinewise)``", { desc = "Put yanked text above cursor posotion" }},
+    { "op", "m`o<ESC><Plug>(YankyPutIndentBeforeLinewise)``", { desc = "Put yanked text below cursor posotion" }},
+    { "lp", function() require('yanky.textobj').last_put() end, mode = { "n", "x" }, desc = "Goto last yanked put" },
 
-    -- { "op", "<Plug>(YankyPutIndentAfterLinewise)", desc = "Put indented after cursor (linewise)" },
     -- { "]P", "<Plug>(YankyPutIndentAfterLinewise)", desc = "Put indented after cursor (linewise)" },
-    -- { "[P", "<Plug>(YankyPutIndentBeforeLinewise)", desc = "Put indented before cursor (linewise)" },
     -- { ">P", "<Plug>(YankyPutIndentBeforeShiftRight)", desc = "Put before and indent right" },
     -- { "<P", "<Plug>(YankyPutIndentBeforeShiftLeft)", desc = "Put before and indent left" },
     -- { ">p", "<Plug>(YankyPutIndentAfterShiftRight)", desc = "Put and indent right" },
     -- { "<p", "<Plug>(YankyPutIndentAfterShiftLeft)", desc = "Put and indent left" },
-    -- { "op", "<Plug>(YankyPutAfterFilter)", desc = "Put after applying a filter" },
-    -- { "OP", "<Plug>(YankyPutBeforeFilter)", desc = "Put before applying a filter" },
   },
 }
-
--- map("n", "Op", "m`O<ESC>p``", { silent = true })
--- map("n", "op", "m`o<ESC>p``", { silent = true })
-
--- Yanking
--- map("n", "yy", "_yg_", { silent = true })

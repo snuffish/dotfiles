@@ -64,4 +64,26 @@ return {
       require("better_escape").setup()
     end,
   },
+  {
+    "jbyuki/quickmath.nvim",
+    keys = {
+      {
+        "<leader>mc", function ()
+          vim.ui.input({ prompt = "Calculate: " }, function (input)
+            local result, err = load("return " .. input)
+            if result then
+              local success, value = pcall(result)
+              if success then
+                vim.notify(value)
+              else
+                vim.notify("Error in calculation: " .. value, vim.log.levels.ERROR)
+              end
+            else
+              vim.notify("Invalid input: " .. err, vim.log.levels.ERROR)
+            end
+          end)
+        end
+      }
+    }
+  }
 }
