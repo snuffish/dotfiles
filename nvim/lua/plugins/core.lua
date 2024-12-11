@@ -5,10 +5,15 @@ return {
   },
   {
     "hat0uma/csvview.nvim",
+    lazy = true,
+    event = "BufRead",
     config = function()
       require("csvview").setup({
         view = {
           display_mode = "highlight",
+          fzf_options = {
+            preview_window = "right:60%",
+          },
         },
       })
     end,

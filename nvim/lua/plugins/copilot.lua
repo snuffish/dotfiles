@@ -10,10 +10,13 @@ return {
         file_types = { "markdown", "copilot-chat" },
       })
       require('copilot').setup({
+        panel = {
+          enabled = false
+        },
         highlight_headers = false,
         separator = '---',
         error_header = '> [!ERROR] Error',
-        -- rest of your config
+
       })
 
       -- Enable markdown_inline highlight group
@@ -27,10 +30,10 @@ return {
   {
     "CopilotC-Nvim/CopilotChat.nvim",
     dependencies = {
-      { "github/copilot.vim" }, -- or zbirenbaum/copilot.lua
-      { "nvim-lua/plenary.nvim", branch = "master" }, -- for curl, log and async functions
+      { "github/copilot.vim" },
+      { "nvim-lua/plenary.nvim", branch = "master" },
     },
-    build = "make tiktoken", -- Only on MacOS or Linux
+    build = "make tiktoken",
     keys = function ()
       local chat = require('CopilotChat')
       local actions = require("CopilotChat.actions")
@@ -58,6 +61,12 @@ return {
           "<leader>ccm",
           "<cmd>CopilotChatModels<CR>",
           desc = "Chat Models",
+          mode = mode
+        },
+        {
+          "<leader>ccc",
+          "<cmd>CopilotChatToggle<CR>",
+          desc = "Toggle Copilot",
           mode = mode
         },
         {

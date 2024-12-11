@@ -16,6 +16,7 @@ return {
       window = {
         mappings = {
           ["\\"] = "close_window",
+          ['o'] = 'open'
         },
       },
     },

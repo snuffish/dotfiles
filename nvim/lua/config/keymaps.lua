@@ -60,4 +60,27 @@ map("n", "DD", "dd")
 map("n", { "<localleader>a", "<leader>a" }, "ggVG", { desc = "Select all" })
 map("n", "<localleader>x", ":substitutes*\\%#\\u*/\\r/e <bar> normal! ==^<cr>", { desc = "Split line", silent = true })
 
--- map("n", "<localleader>", "<leader><BS>,", { desc = "Local leader" })
+
+-- Define a macro to be stored in register 'a'
+-- vim.cmd("let @a = 'viwsaq'")
+
+-- Map a key to execute the macro stored in register 'a'
+-- vim.api.nvim_set_keymap('n', 'saa', '@a', { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap('n', 'sab', "@a", { noremap = true, silent = true })
+
+-- Wrap the cursors words position - (...)
+map("n", "sab", function ()
+  vim.cmd("let @z = 'viwsa(' | normal! @z")
+end)
+
+-- Wrap the cursors words position - {...}
+map("n", "saB", function ()
+  vim.cmd("let @z = 'viwsa{' | normal! @z")
+end)
+
+-- Wrap the cursors words position - [...]
+map("n", "saa", function ()
+  vim.cmd("let @z = 'viwsa[' | normal! @z")
+end)
+
+
