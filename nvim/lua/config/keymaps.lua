@@ -1,3 +1,8 @@
+-- On loaded
+LazyVim.on_load("which-key.nvim", function()
+  require("config.remaps")
+end)
+
 local map = require("utils").map
 
 -- Global
@@ -9,27 +14,25 @@ map("n", "<leader>sr", function()
   vim.notify("Sourced file: " .. currentFile, vim.log.levels.INFO, { title = "Sourced" })
 end, { desc = "Source Current File" })
 
-map("n", "<leader>w", ":w<CR>", { noremap = true, silent = true, desc = "Save file" })
 
 -- Regex replaces
 map("n", "RR", "<Esc>:%s/", { noremap = true, desc = "Regex string replace (global)" })
 map("x", "RR", "<Esc>:'<,'>s/", { noremap = true, desc = "Regex string replace (selection)" })
 
 -- Regex deletes
-map("n", "DD", "<Esc>:g//d<Left><Left>", { noremap = true, desc = "Regex delete (global)" })
-map("x", "DD", "<Esc>:'<,'>g//d<Left><Left>", { noremap = true, desc = "Regex delete (selection)" })
+map("n", "DD", "<Esc>:%s//<Left>", { noremap = true, desc = "Regex delete (selection)" })
+map("x", "DD", "<Esc>:'<,'>s//<Left>", { noremap = true, desc = "Regex delete (selection)" })
 
 map("n", "+", "<C-a>", { silent = true, desc = "Increment integer" })
 map("n", "-", "<C-x>", { silent = true, desc = "Decrement integer" })
-
 
 map("v", "<Tab>", "=", { silent = true, desc = "Auto-indent" })
 
 map("n", "<F1>", "<cmd>TransparentToggle<cr>", { noremap = true, silent = true })
 
-map("x", "g/", "<esc>/\\%V", { silent = false, desc = "Search Inside Visual Selection" })
+map("x", { "/", "g/", }, "<esc>/\\%V", { silent = false, desc = "Search Inside Visual Selection" })
 
-map("n", "<Up><Up>", ":<Up>", { desc = "Goto previous command", noremap = true })
+map("n", "<C-Up><C-Up>", ":<Up>", { desc = "Goto previous command", noremap = true })
 
 map(
   "n",
@@ -49,17 +52,13 @@ map(
 map("ci", "<C-a>", "<Home>")
 map("ci", "<C-d>", "<End>")
 
-
 -- Delete without yanking
 map("n", "cW", '"_ciw')
 map("n", "yW", "yiw")
 
-map("n", "DD", "dd")
-
 -- Local
-map("n", { "<localleader>a", "<leader>a" }, "ggVG", { desc = "Select all" })
+map("n", { "<localleader>a", "<leader>a" }, "ggVG", { desc = "Select all text" })
 map("n", "<localleader>x", ":substitutes*\\%#\\u*/\\r/e <bar> normal! ==^<cr>", { desc = "Split line", silent = true })
-
 
 -- Define a macro to be stored in register 'a'
 -- vim.cmd("let @a = 'viwsaq'")
@@ -87,5 +86,3 @@ end)
 map("n", "saa", function ()
   vim.cmd("let @z = 'viwsa[' | normal! @z")
 end)
-
-

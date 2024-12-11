@@ -5,6 +5,7 @@ map("n", "<Right>", '<cmd>echo "Use l to move!!"<CR>')
 map("n", "<Up>", '<cmd>echo "Use k to move!!"<CR>')
 map("n", "<Down>", '<cmd>echo "Use j to move!!"<CR>')
 
+map("n", "<leader>w", ":w<CR>", { noremap = true, silent = true, desc = "Save file" })
 
 map("nxv", ";", ":", { noremap = true })
 map("nxv", ";;", ":<C-f>", { noremap = true })
@@ -51,3 +52,6 @@ map("n", "0", "g0")
 -- Go to start or end of line easier
 map("nx", "H", "^")
 map("nx", "L", "g_")
+
+-- map("i", "<A-Right>", "g_")
+-- map("i", "<A-Left>", "_")

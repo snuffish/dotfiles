@@ -39,7 +39,7 @@ return {
       local actions = require("CopilotChat.actions")
       local fzf = require("CopilotChat.integrations.fzflua")
 
-      function OverlayWindow(agent)
+      local OverlayWindow = function(agent)
         return {
           title = string.format("Quickchat - [agent: %s]", agent),
           layout = "float",
@@ -49,7 +49,7 @@ return {
 
       return {
         {
-          "<leader>ccq",
+          "<leader>ccQ",
           function ()
             local input = vim.fn.input("Quick chat: ")
 
@@ -109,7 +109,7 @@ return {
           mode = mode
         },
         {
-          "<leader>ccw",
+          "<leader>ccq",
           function()
             vim.ui.input({
               prompt = string.format("Quickchat - [agent: %s]", chat.config.agent),

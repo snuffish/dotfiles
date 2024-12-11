@@ -19,22 +19,42 @@ return {
     end
 
     local opts = {
-      hidden_keymaps,
       spec = {
-        {
-          "<leader>cc",
-          group = "copilot",
-          icon = { icon = " ", color = "yellow" },
-        },
-        {
-          "<localleader>",
-          group = "Current Buffer",
-        },
-        {
-          "<leader>m",
-          group = "Math",
-        },
+      {
+        "<leader>cc",
+        group = "copilot",
+        icon = { icon = " ", color = "yellow" },
       },
+      {
+        "<localleader>",
+        group = "Current Buffer",
+        icon = { icon = " ", color = "blue" }
+      },
+      {
+        "<leader>m",
+        group = "Math",
+        icon = { icon = " ", color = "green" }
+      },
+      {
+        "<leader>s",
+        group = "Search",
+        icon = { icon = " ", color = "blue" }
+      },
+      {
+        "<leader>f",
+        group = "Find",
+        icon = { icon = " ", color = "blue" }
+      },
+      {
+        "<leader>d",
+        group = "Debug",
+        icon = { icon = " ", color = "red" }
+      },
+      {
+        "<leader>b",
+        hidden = true
+      },
+    }
     }
 
     return opts
