@@ -115,3 +115,7 @@ vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
   command = "set filetype=dot"
 })
 
+vim.api.nvim_create_autocmd({ "BufEnter", "BufRead", "BufWinEnter" }, {
+  pattern = "help",
+  command = "lua print(MiniBasics.toggle_gnostic())",
+})
