@@ -39,6 +39,14 @@ return {
       local actions = require("CopilotChat.actions")
       local fzf = require("CopilotChat.integrations.fzflua")
 
+      function OverlayWindow(agent)
+        return {
+          title = "Quickchat - [agent: " .. agent  .. "]",
+          layout = "float",
+          relative = "editor"
+        }
+      end
+
       return {
         {
           "<leader>ccq",
@@ -86,11 +94,7 @@ return {
           "<leader>ccc",
           function ()
             chat.open({
-              window = {
-                title = "Quickchat - [agent: " .. chat.config.agent .. "]",
-                layout = "float",
-                relative = "editor",
-              },
+              window = OverlayWindow(chat.config.agent),
             })
           end,
           desc = "Copilot (Overlay)",
@@ -107,15 +111,10 @@ return {
         {
           "<leader>ccw",
           function()
+            local selection = require("CopilotChat.select").visual
             chat.open({
-              window = {
-                title = "Quickchat - [agent: " .. chat.config.agent .. "]",
-                layout = "float",
-                relative = "cursor",
-                width = 1,
-                height = 0.4,
-                row = 1,
-              },
+              window = OverlayWindow(chat.config.agent),
+              selection = selection,
             })
           end,
           desc = "Cursor Inline Window",
@@ -131,20 +130,20 @@ return {
           desc = "Help Actions",
         }
       },
-      {
-        "<leader>ccc",
-        "<cmd>CopilotChatToggle<CR>",
-        desc = "Toggle",
-        mode = mode
-      },
-      {
-        "<leader>ccr",
-        function()
-          chat.restart()
-        end,
-        desc = "Restart",
-        mode = mode
-      }
+        {
+          "<leader>ccc",
+          "<cmd>CopilotChatToggle<CR>",
+          desc = "Toggle",
+          mode = mode
+        },
+        {
+          "<leader>ccr",
+          function()
+            chat.restart()
+          end,
+          desc = "Restart",
+          mode = mode
+        }
     end,
   }
 }
