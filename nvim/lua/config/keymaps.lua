@@ -32,7 +32,7 @@ map("n", "<F1>", "<cmd>TransparentToggle<cr>", { noremap = true, silent = true }
 
 map("x", { "/", "g/", }, "<esc>/\\%V", { silent = false, desc = "Search Inside Visual Selection" })
 
-map("n", "<C-Up><C-Up>", ":<Up>", { desc = "Goto previous command", noremap = true })
+map("n", "<A-Up><A-Up>", ":<Up>", { desc = "Goto previous command", noremap = true })
 
 map(
   "n",
@@ -54,7 +54,7 @@ map("ci", "<C-d>", "<End>")
 
 -- Delete without yanking
 map("n", "cW", '"_ciw')
-map("n", "yW", "yiw")
+map("n", "yW", '"_yiw')
 
 -- Local
 map("n", { "<localleader>a", "<leader>a" }, "ggVG", { desc = "Select all text" })

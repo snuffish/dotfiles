@@ -30,7 +30,8 @@ map("n", "GG", "Gzzo<CR>", { desc = "Goto last line and add 2 new lines" })
 map("n", "x", '"_x', { silent = true, desc = "Delete char (No yanking)" })
 map("n", "X", '"_X', { silent = true, desc = "Delete char (No yanking)" })
 map("n", "cc", '"_cc<Esc>', { silent = true, desc = "Change line (No yanking)" })
--- map("n", "dd", '"_dd')
+map("n", "d0", '"_g^d$', { silent = true, desc = "Delete line without whitespace" })
+
 map("n", "dd", function()
   local is_empty_line = vim.api.nvim_get_current_line():match("^%s*$")
   if is_empty_line then
