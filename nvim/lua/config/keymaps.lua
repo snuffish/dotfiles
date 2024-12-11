@@ -9,7 +9,7 @@ map("n", "<leader>sr", function()
   vim.notify("Sourced file: " .. currentFile, vim.log.levels.INFO, { title = "Sourced" })
 end, { desc = "Source Current File" })
 
-   map("n", "<leader>w", ":w<CR>", { noremap = true, silent = true, desc = "Save file" })
+map("n", "<leader>w", ":w<CR>", { noremap = true, silent = true, desc = "Save file" })
 
 -- Regex replaces
 map("n", "RR", "<Esc>:%s/", { noremap = true, desc = "Regex string replace (global)" })
@@ -29,7 +29,7 @@ map("n", "<F1>", "<cmd>TransparentToggle<cr>", { noremap = true, silent = true }
 
 map("x", "g/", "<esc>/\\%V", { silent = false, desc = "Search Inside Visual Selection" })
 
-map("n", "<Up><Up>", ":<Up>", { desc = "Goto previous command" })
+map("n", "<Up><Up>", ":<Up>", { desc = "Goto previous command", noremap = true })
 
 map(
   "n",
@@ -87,4 +87,5 @@ end)
 map("n", "saa", function ()
   vim.cmd("let @z = 'viwsa[' | normal! @z")
 end)
+
 
