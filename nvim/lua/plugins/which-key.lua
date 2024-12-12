@@ -8,11 +8,16 @@ return {
       { "<Right>", hidden = true },
       { "<Up>", hidden = true },
       { "<Down>", hidden = true },
+      { "<leader>b", hidden = true }
     }
+
+    for _, keymap in ipairs(hidden_keymaps) do
+      require('utils').add_which_key(keymap)
+    end
 
     -- Hide select buffer keymaps
     for i = 1, 9 do
-      table.insert(hidden_keymaps, {
+      require('utils').add_which_key({
         string.format("<localleader>%d", i),
         hidden = true
       })
@@ -20,41 +25,37 @@ return {
 
     local opts = {
       spec = {
-      {
-        "<leader>cc",
-        group = "copilot",
-        icon = { icon = " ", color = "yellow" },
-      },
-      {
-        "<localleader>",
-        group = "Current Buffer",
-        icon = { icon = " ", color = "blue" }
-      },
-      {
-        "<leader>m",
-        group = "Math",
-        icon = { icon = " ", color = "green" }
-      },
-      {
-        "<leader>s",
-        group = "Search",
-        icon = { icon = " ", color = "blue" }
-      },
-      {
-        "<leader>f",
-        group = "Find",
-        icon = { icon = " ", color = "blue" }
-      },
-      {
-        "<leader>d",
-        group = "Debug",
-        icon = { icon = " ", color = "red" }
-      },
-      {
-        "<leader>b",
-        hidden = true
-      },
-    }
+        {
+          "<leader>cc",
+          group = "copilot",
+          icon = { icon = " ", color = "yellow" },
+        },
+        {
+          "<localleader>",
+          group = "Local Buffer",
+          icon = { icon = " ", color = "blue" }
+        },
+        {
+          "<leader>m",
+          group = "Math",
+          icon = { icon = " ", color = "green" }
+        },
+        {
+          "<leader>s",
+          group = "Search",
+          icon = { icon = " ", color = "blue" }
+        },
+        {
+          "<leader>f",
+          group = "Find",
+          icon = { icon = " ", color = "blue" }
+        },
+        {
+          "<leader>d",
+          group = "Debug",
+          icon = { icon = " ", color = "red" }
+        },
+      }
     }
 
     return opts
