@@ -66,7 +66,12 @@ return {
         string.format("<cmd>BufferLineGoToBuffer %d<CR>", i),
         desc = string.format("Go to Buffer %d", i),
       })
-    end
+
+      require('utils').add_which_key({
+        string.format("<localleader>%d", i),
+        desc = string.format("Gooooo to Buffer %d", i),
+      })
+   end
 
     return keymaps
   end,

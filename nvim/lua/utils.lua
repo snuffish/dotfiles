@@ -29,4 +29,14 @@ utils.contains = function(str, substr)
   return string.find(str, substr) ~= nil
 end
 
+-- Example of an which-key setup:
+-- data = {
+--   "<leader>key",
+--   desc = "Some description",
+--   ...
+-- }
+utils.add_which_key = function(data)
+  require('which-key').add(data)
+end
+
 return utils

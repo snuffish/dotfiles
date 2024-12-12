@@ -48,10 +48,10 @@ return {
         custom_textobjects = {
           i = {
             gen_spec.treesitter({ a = "@conditional.outer",i = "@conditional.inner" }),
-        }
+          }
           , -- function
           f = gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }), -- function
-         c = gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }), -- class
+          c = gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }), -- class
           t = { "<([%p%w]-)%f[^<%w][^<>]->.-</%1>", "^<.->().*()</[^/]->$" }, -- tags
           d = { "%f[%d]%d+" }, -- digits
           e = { -- Word with case
@@ -87,7 +87,7 @@ return {
     opts = {},
     -- stylua: ignore
     keys = function ()
-     local centerScreen = vim.api.nvim_feedkeys('zz', 'n', true)
+      local centerScreen = vim.api.nvim_feedkeys('zz', 'n', true)
 
       return {
         { "s", mode = { "n", "x", "o" }, function()

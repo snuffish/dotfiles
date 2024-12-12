@@ -5,15 +5,18 @@ end)
 
 local map = require("utils").map
 
--- Global
-map("n", "<leader>sr", function()
+
+-- Existing keymap
+map("n", {
+  "<leader>sr",
+  "<localleader>sr"
+}, function()
   local currentBuffer = vim.api.nvim_get_current_buf()
   local currentFile = vim.api.nvim_buf_get_name(currentBuffer)
 
   vim.cmd("source " .. currentFile)
   vim.notify("Sourced file: " .. currentFile, vim.log.levels.INFO, { title = "Sourced" })
 end, { desc = "Source Current File" })
-
 
 -- Regex replaces
 map("n", "RR", "<Esc>:%s/", { noremap = true, desc = "Regex string replace (global)" })
