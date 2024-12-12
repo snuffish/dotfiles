@@ -56,5 +56,23 @@ map("n", "0", "g0")
 map("nx", "H", "g^")
 map("nx", "L", "g_")
 
+map("vx", "<S-Space>", "l")
+map("vx", "<BS>", "h")
+
 -- map("i", "<A-Right>", "g_")
 -- map("i", "<A-Left>", "_")
+
+map(
+  "n",
+  "<C-w>v",
+  "<C-w>v<C-w>p<cmd>e #<CR><C-w>p",
+  { noremap = true, silent = false, desc = "Vertical split (Orginal window navigate to AlternativeBuffer)" }
+)
+
+map(
+  "n",
+  "<C-w>s",
+  "<C-w>s<C-w>p<cmd>e #<CR><C-w>p",
+  { noremap = true, silent = false, desc = "Horizontal split (Orginal window navigate to AlternativeBuffer)" }
+)
+--
