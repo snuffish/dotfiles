@@ -27,7 +27,7 @@ return {
       spec = {
         {
           "<leader>cc",
-          group = "copilot",
+          group = "Copilot",
           icon = { icon = " ", color = "yellow" },
         },
         {
