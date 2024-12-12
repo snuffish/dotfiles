@@ -67,7 +67,7 @@ return {
       require("mini.ai").setup(opts)
       LazyVim.on_load("which-key.nvim", function()
         vim.schedule(function()
-          LazyVim.mini.ai_whichkey(opts)
+           LazyVim.mini.ai_whichkey(opts)
         end)
       end)
     end,
