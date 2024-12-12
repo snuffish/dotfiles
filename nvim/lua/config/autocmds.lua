@@ -45,9 +45,18 @@ vim.api.nvim_create_autocmd("ModeChanged", {
   end,
 })
 
+vim.api.nvim_create_autocmd({ "BufEnter", "BufRead", "BufWinEnter" }, {
+  pattern = "help",
+  command = "lua print(MiniBasics.toggle_gnostic())",
+})
+
+vim.api.nvim_create_autocmd({ "BufEnter", "BufNewFile" }, {
+  pattern = ".env*",
+  command = "set filetype=conf",
+})
+
 require("plenary.reload").reload_module("popup")
 local popup = require("popup")
-
 local function get_cursor_position()
   local cursor_pos = vim.api.nvim_win_get_cursor(0) -- 0 refers to the current window
   local line = cursor_pos[1] -- Line number (1-based)
@@ -109,12 +118,8 @@ end, { range = true })
 --   end
 -- end, {})
 
-vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
-  pattern = ".env*",
-  command = "set filetype=dot"
-})
+-- vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
+--   pattern = ".env*",
+--   command = "set filetype=dot"
+-- })
 
-vim.api.nvim_create_autocmd({ "BufEnter", "BufRead", "BufWinEnter" }, {
-  pattern = "help",
-  command = "lua print(MiniBasics.toggle_gnostic())",
-})
