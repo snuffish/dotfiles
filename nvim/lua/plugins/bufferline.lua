@@ -49,6 +49,16 @@ return {
         desc = "Close all Other Buffers",
       },
       {
+        "<localleader>ol",
+        "<cmd>BufferLineCloseRight<CR>",
+        desc = "Close Buffers to the Right",
+      },
+      {
+        "<localleader>oh",
+        "<cmd>BufferLineCloseLeft<CR>",
+        desc = "Close Buffers to the Left",
+      },
+      {
         "<localleader>m",
         "<cmd>MaximizerToggle<CR>",
         desc = "Maximize/minimize a split",
