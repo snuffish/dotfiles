@@ -29,8 +29,8 @@ map("n", "GG", "Gzzo<CR>", { desc = "Goto last line and add 2 new lines" })
 -- Delete without yanking
 map("n", "x", '"_x', { silent = true, desc = "Delete char (No yanking)" })
 map("n", "X", '"_X', { silent = true, desc = "Delete char (No yanking)" })
-map("n", "cc", '"_cc<Esc>', { silent = true, desc = "Change line (No yanking)" })
-map("n", "d0", '"_g^d$', { silent = true, desc = "Delete line without whitespace" })
+map("n", "cc", '"_cc', { silent = true, desc = "Change line (No yanking)" })
+map("n", "d0", '"_g^d$', { silent = true, desc = "Delete line without whitespace (No yanking)" })
 
 map("n", "dd", function()
   local is_empty_line = vim.api.nvim_get_current_line():match("^%s*$")
@@ -51,7 +51,7 @@ map("n", "^", "g^")
 map("n", "0", "g0")
 
 -- Go to start or end of line easier
-map("nx", "H", "^")
+map("nx", "H", "g^")
 map("nx", "L", "g_")
 
 -- map("i", "<A-Right>", "g_")
