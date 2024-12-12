@@ -40,6 +40,7 @@ map("n", "dd", function()
     return "dd"
   end
 end, { noremap = true, expr = true, desc = "Don't Yank Empty Line to Clipboard" })
+
 map("n",  'DW' , '"_db', { silent = true, desc = "Delete words backwards [inclusive] (No yanking)" })
 map("n",  'DE' , '"_dB', { silent = true, desc = "Delete words backwards [exclusive] (No yanking)" })
 -- Do not include white space characters when using $ in visual mode,
