@@ -25,8 +25,8 @@ map("x", "RR", "<Esc>:'<,'>s/", { noremap = true, desc = "Regex string replace (
 map("n", "DD", "<Esc>:%s//<Left>", { noremap = true, desc = "Regex delete (selection)" })
 map("x", "DD", "<Esc>:'<,'>s//<Left>", { noremap = true, desc = "Regex delete (selection)" })
 
-map("n", "+", "<C-a>", { silent = true, desc = "Increment integer" })
-map("n", "-", "<C-x>", { silent = true, desc = "Decrement integer" })
+map("n", "+", "<C-a>", { noremap = true, silent = true, desc = "Increment integer" })
+map("n", "-", "<C-x>", { noremap = true, silent = true, desc = "Decrement integer" })
 
 map("v", "<Tab>", "=", { silent = true, desc = "Auto-indent" })
 
