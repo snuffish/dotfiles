@@ -43,7 +43,8 @@ map("n", "d0", '"_g^d$', { silent = true, desc = "Delete line without whitespace
 
 map("n", "DW", '"_db', { silent = true, desc = "Delete words backwards [inclusive] (No yanking)" })
 map("n", "DE", '"_dB', { silent = true, desc = "Delete WORDS backwards [exclusive] (No yanking)" })
-map("n", "CW", '"_T=<Space>c$', { silent = true, desc = "Change the rhs assignment of a declaration (No yanking)" })
+map("n", "CW", '"_T=<Space>cw', { silent = true, desc = "Change the rhs assignment of a declaration (No yanking)" })
+
 
 -- Do not include white space characters when using $ in visual mode,
 map("x", "$", "g_")
