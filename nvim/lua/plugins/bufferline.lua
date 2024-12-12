@@ -14,6 +14,11 @@ return {
         desc = "Create new Buffer",
       },
       {
+        ",n",
+        "<cmd>enew<CR>",
+        desc = "Create new Buffer",
+      },
+      {
         "<localleader><localleader>",
         "<cmd>FzfLua buffers<CR>",
         desc = "Switch Buffers",
