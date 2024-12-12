@@ -26,12 +26,6 @@ map("n", { "<PageDown>", "<C-d>" }, "<C-d>zz", { desc = "Jump down 1/2-screen" }
 map("n", "G", "Gzz")
 map("n", "GG", "Gzzo<CR>", { desc = "Goto last line and add 2 new lines" })
 
--- Delete without yanking
-map("n", "x", '"_x', { silent = true, desc = "Delete char (No yanking)" })
-map("n", "X", '"_X', { silent = true, desc = "Delete char (No yanking)" })
-map("n", "cc", '"_cc', { silent = true, desc = "Change line (No yanking)" })
-map("n", "d0", '"_g^d$', { silent = true, desc = "Delete line without whitespace (No yanking)" })
-
 map("n", "dd", function()
   local is_empty_line = vim.api.nvim_get_current_line():match("^%s*$")
   if is_empty_line then
@@ -39,10 +33,17 @@ map("n", "dd", function()
   else
     return "dd"
   end
-end, {  expr = true, desc = "Don't Yank Empty Line to Clipboard" })
+end, { expr = true, desc = "Don't Yank Empty Line to Clipboard" })
 
-map("n", 'DW', '"_db', { silent = true, desc = "Delete words backwards [inclusive] (No yanking)" })
-map("n", 'DE', '"_dB', { silent = true, desc = "Delete WORDS backwards [exclusive] (No yanking)" })
+-- Delete without yanking
+map("n", "x", '"_x', { silent = true, desc = "Delete char (No yanking)" })
+map("n", "X", '"_X', { silent = true, desc = "Delete char (No yanking)" })
+map("n", "cc", '"_cc', { silent = true, desc = "Change line (No yanking)" })
+map("n", "d0", '"_g^d$', { silent = true, desc = "Delete line without whitespace (No yanking)" })
+
+map("n", "DW", '"_db', { silent = true, desc = "Delete words backwards [inclusive] (No yanking)" })
+map("n", "DE", '"_dB', { silent = true, desc = "Delete WORDS backwards [exclusive] (No yanking)" })
+
 
 -- Do not include white space characters when using $ in visual mode,
 map("x", "$", "g_")
@@ -59,9 +60,6 @@ map("nx", "L", "g_")
 map("vx", "<S-Space>", "l")
 map("vx", "<BS>", "h")
 
--- map("i", "<A-Right>", "g_")
--- map("i", "<A-Left>", "_")
-
 map(
   "n",
   "<C-w>v",
@@ -75,4 +73,3 @@ map(
   "<C-w>s<C-w>p<cmd>e #<CR><C-w>p",
   { noremap = true, silent = false, desc = "Horizontal split (Orginal window navigate to AlternativeBuffer)" }
 )
---
