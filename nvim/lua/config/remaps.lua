@@ -39,13 +39,13 @@ map("n", "dd", function()
   else
     return "dd"
   end
-end, { noremap = true, expr = true, desc = "Don't Yank Empty Line to Clipboard" })
+end, {  expr = true, desc = "Don't Yank Empty Line to Clipboard" })
 
 map("n",  'DW' , '"_db', { silent = true, desc = "Delete words backwards [inclusive] (No yanking)" })
-map("n",  'DE' , '"_dB', { silent = true, desc = "Delete words backwards [exclusive] (No yanking)" })
+map("n",  'DE' , '"_dB', { silent = true, desc = "Delete WORDS backwards [exclusive] (No yanking)" })
+
 -- Do not include white space characters when using $ in visual mode,
 map("x", "$", "g_")
-
 
 map("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true })
 map("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true })
