@@ -25,14 +25,14 @@ return {
     incremental_selection = {
       enable = true,
       keymaps = {
-        init_selection = "<C-v><C-v>", 
+        init_selection = "vv",
         node_incremental = "<CR>",
         node_decremental = "<BS>",
         scope_incremental = false
       },
     },
-  },
-  config = function(_, opts)
-    require("nvim-treesitter.configs").setup(opts)
-  end,
+    config = function(_, opts)
+      require("nvim-treesitter.configs").setup(opts)
+    end,
+  }
 }
