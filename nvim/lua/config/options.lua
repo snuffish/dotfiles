@@ -1,13 +1,12 @@
 local globals = {
   mapleader = " ",
-  -- maplocalleader = ",",
   maplocalleader = "\\",
   have_nerd_font = true,
   loaded_perl_provider = 0,
   loaded_python3_provider = 0,
   loaded_ruby_provider = 0,
   autoformat = false,
-  lazyvim_picker = 'fzf'
+  lazyvim_picker = "fzf",
 }
 
 local options = {
@@ -28,9 +27,6 @@ local options = {
   -- TODO: Fix a Lua-script to handle the vertical cursor-column later
   cursorcolumn = false,
 }
-
-
-
 
 -- Global properties
 for option, value in pairs(globals) do
