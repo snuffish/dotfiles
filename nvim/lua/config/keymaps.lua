@@ -54,10 +54,6 @@ map(
 map("ci", "<C-a>", "<Home>")
 map("ci", "<C-d>", "<End>")
 
--- Delete without yanking
-map("n", "cW", '"_ciw')
-map("n", "yW", '"_yiw')
-
 -- Local
 map("n", { "<localleader>a", "<leader>a" }, "ggVG", { desc = "Select all text" })
 map("n", "gx", "i<CR><Esc>==", {  desc = "Split line", silent = true })
