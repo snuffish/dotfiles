@@ -60,7 +60,7 @@ map("n", "yW", '"_yiw')
 
 -- Local
 map("n", { "<localleader>a", "<leader>a" }, "ggVG", { desc = "Select all text" })
-map("n", "<localleader>x", "i<CR><Esc>==", { desc = "Split line", silent = true })
+map("n", "gx", "i<CR><Esc>==", {  desc = "Split line", silent = true })
 
 -- Define a macro to be stored in register 'a'
 -- vim.cmd("let @a = 'viwsaq'")

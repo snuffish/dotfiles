@@ -8,11 +8,16 @@ return {
           "SmiteshP/nvim-navic",
           "MunifTanjim/nui.nvim",
         },
-         opts = { lsp = { auto_attach = true } },
+        opts = {
+          lsp = { 
+            auto_attach = true 
+          } 
+        },
       },
     },
     keys = {
       { "<leader>cn", "<cmd>Navbuddy<cr>" },
+      { "<localleader>i", function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end, desc = "Toggle inlay hints" },
     },
   },
   {

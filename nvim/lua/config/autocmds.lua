@@ -5,7 +5,7 @@ local NORMAL = {
 
 local INSERT = {
   lineNr = "#9ECE6A",
-  lineCursor = "#505b8b",
+  lineCursor = "#3c4468",
 }
 
 local VISUAL = {
@@ -18,7 +18,7 @@ local MODE = {
   INSERT = 1,
   VISUAL = 2,
 }
-
+-- test
 vim.api.nvim_set_hl(MODE.NORMAL, "CursorLineNr", { reverse = true, bold = true, fg = NORMAL.lineNr })
 vim.api.nvim_set_hl(MODE.NORMAL, "CursorLine", { bg = NORMAL.lineCursor })
 
