@@ -87,7 +87,7 @@ return {
               if result then
                 local success, value = pcall(result)
                 if success then
-                  vim.notify(value)
+                  vim.notify(string.format("Result: %s", value))
                 else
                   vim.notify("Error in calculation: " .. value, vim.log.levels.ERROR)
                 end
