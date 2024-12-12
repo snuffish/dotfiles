@@ -25,6 +25,10 @@ return {
         highlight = "sh",
         replace = "cs",
         update_n_lines = "gsn",
+
+        suffix_last = 'l', -- Suffix to search with "prev" method
+        suffix_next = 'n', -- Suffix to search with "next" method
+
       },
       n_lines = 500,
     },
@@ -44,10 +48,10 @@ return {
         custom_textobjects = {
           i = {
             gen_spec.treesitter({ a = "@conditional.outer",i = "@conditional.inner" }),
-          }
+        }
           , -- function
           f = gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }), -- function
-          c = gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }), -- class
+         c = gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }), -- class
           t = { "<([%p%w]-)%f[^<%w][^<>]->.-</%1>", "^<.->().*()</[^/]->$" }, -- tags
           d = { "%f[%d]%d+" }, -- digits
           e = { -- Word with case
@@ -99,16 +103,16 @@ return {
   },
   {
     "abecodes/tabout.nvim",
-    opt = true, -- Set this to true if the plugin is optional
-    event = "InsertCharPre", -- Set the event to 'InsertCharPre' for better compatibility
+    opt = true, -- set this to true if the plugin is optional
+    event = "insertcharpre", -- set the event to 'insertcharpre' for better compatibility
     priority = 1000,
     opts = {
-      tabkey = "<Tab>", -- key to trigger tabout, set to an empty string to disable
-      backwards_tabkey = "<S-Tab>", -- key to trigger backwards tabout, set to an empty string to disable
+      tabkey = "<tab>", -- key to trigger tabout, set to an empty string to disable
+      backwards_tabkey = "<s-tab>", -- key to trigger backwards tabout, set to an empty string to disable
       act_as_tab = true, -- shift content if tab out is not possible
-      act_as_shift_tab = false, -- reverse shift content if tab out is not possible (if your keyboard/terminal supports <S-Tab>)
-      default_tab = "<C-t>", -- shift default action (only at the beginning of a line, otherwise <TAB> is used)
-      default_shift_tab = "<C-d>", -- reverse shift default action,
+      act_as_shift_tab = false, -- reverse shift content if tab out is not possible (if your keyboard/terminal supports <s-tab>)
+      default_tab = "<c-t>", -- shift default action (only at the beginning of a line, otherwise <tab> is used)
+      default_shift_tab = "<c-d>", -- reverse shift default action,
       enable_backwards = true, -- well ...
       completion = false, -- if the tabkey is used in a completion pum
       tabouts = {
@@ -125,9 +129,9 @@ return {
     config = function(_, opts)
       require("tabout").setup(opts)
     end,
-    dependencies = { -- These are optional
+    dependencies = { -- these are optional
       "nvim-treesitter/nvim-treesitter",
-      -- "L3MON4D3/LuaSnip",
+      -- "l3mon4d3/luasnip",
       "hrsh7th/nvim-cmp",
     },
     {
@@ -138,13 +142,13 @@ return {
         require("eolmark").setup({
           mark = " $",
         })
-        vim.api.nvim_set_hl(0, "EolMark", { link = "NonText" })
+        vim.api.nvim_set_hl(0, "eolmark", { link = "nontext" })
       end,
     }
   },
 }
 -- {
---   "L3MON4D3/LuaSnip",
+--   "l3MON4D3/LuaSnip",
 --   keys = function()
 --     -- Disable default tab keybinding in LuaSnip
 --     return {}
