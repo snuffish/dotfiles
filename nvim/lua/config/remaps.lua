@@ -74,3 +74,5 @@ map(
   "<C-w>s<C-w>p<cmd>e #<CR><C-w>p",
   { noremap = true, silent = false, desc = "Horizontal split (Orginal window navigate to AlternativeBuffer)" }
 )
+
+

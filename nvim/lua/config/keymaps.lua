@@ -8,7 +8,7 @@ local map = require("utils").map
 -- Existing keymap
 map("n", {
   "<leader>sr",
-  "<localleader>sr"
+  "<localleader>sr",
 }, function()
   local currentBuffer = vim.api.nvim_get_current_buf()
   local currentFile = vim.api.nvim_buf_get_name(currentBuffer)
@@ -32,7 +32,7 @@ map("v", "<Tab>", "=", { silent = true, desc = "Auto-indent" })
 
 map("n", "<F1>", "<cmd>TransparentToggle<cr>", { noremap = true, silent = true })
 
-map("x", { "/", "g/", }, "<esc>/\\%V", { silent = false, desc = "Search Inside Visual Selection" })
+map("x", { "/", "g/" }, "<esc>/\\%V", { silent = false, desc = "Search Inside Visual Selection" })
 
 map("n", "<A-Up><A-Up>", ":<Up>", { desc = "Goto previous command", noremap = true })
 
@@ -56,7 +56,7 @@ map("ci", "<C-d>", "<End>")
 
 -- Local
 map("n", { "<localleader>a", "<leader>a" }, "ggVG", { desc = "Select all text" })
-map("n", "gx", "i<CR><Esc>==", {  desc = "Split line", silent = true })
+map("n", "gx", "i<CR><Esc>==", { desc = "Split line", silent = true })
 
 -- Define a macro to be stored in register 'a'
 -- vim.cmd("let @a = 'viwsaq'")
@@ -66,31 +66,31 @@ map("n", "gx", "i<CR><Esc>==", {  desc = "Split line", silent = true })
 -- vim.api.nvim_set_keymap('n', 'sab', "@a", { noremap = true, silent = true })
 
 -- Wrap the cursors words position - (...)
-map("n", "saq", function ()
+map("n", "saq", function()
   vim.cmd("let @z = 'viwsaq' | normal! @z")
 end, { desc = "Wrap the cursors words position [quotes] \"`'...\"`'" })
 
 -- Wrap the cursors words position - ()
-map("n", "sab", function ()
+map("n", "sab", function()
   vim.cmd("let @z = 'viwsa(' | normal! @z")
 end, { desc = "Wrap the cursors words position - (...)" })
 
 -- Wrap the cursors words position - {...}
-map("n", "saB", function ()
+map("n", "saB", function()
   vim.cmd("let @z = 'viwsa{' | normal! @z")
 end, { desc = "Wrap the cursors words position - {...}" })
 
 -- Wrap the cursors words position - [...]
-map("n", "saa", function ()
+map("n", "saa", function()
   vim.cmd("let @z = 'viwsa[' | normal! @z")
 end, { desc = "Wrap the cursors words position - [...]" })
 
-map("n", "sat", function ()
+map("n", "sat", function()
   vim.cmd("let @z = 'sa_t' | normal! @z")
-end, { desc = "Add new tag element and add cursor betweens its open/close tag (horizontally)"})
+end, { desc = "Add new tag element and add cursor betweens its open/close tag (horizontally)" })
 
-map("n", "saT", function ()
+map("n", "saT", function()
   vim.cmd("let @z = 'sa_t' | normal! @z")
-  vim.cmd("let @z = \"i\\<CR>\\<CR>\\<Esc>k==a\" | normal! @z")
-end, { desc = "Add new tag element and add cursor betweens its open/close tag (verticaly)"})
+  vim.cmd('let @z = "i\\<CR>\\<CR>\\<Esc>k==a" | normal! @z')
+end, { desc = "Add new tag element and add cursor betweens its open/close tag (verticaly)" })
 

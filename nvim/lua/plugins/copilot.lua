@@ -85,6 +85,12 @@ return {
           mode = mode
         },
         {
+          "<leader>cce",
+          "<cmd>CopilotChatOptimize<CR>",
+          desc = "Explain",
+          mode = mode
+        },
+        {
           "<leader>ccC",
           "<cmd>CopilotChatToggle<CR>",
           desc = "Copilot",
