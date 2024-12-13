@@ -3,7 +3,6 @@ return {
   version = "*",
   dependencies = {
     "nvim-tree/nvim-web-devicons",
-    "szw/vim-maximizer",
   },
   opts = {},
   keys = function()
@@ -57,16 +56,6 @@ return {
         "<localleader>oh",
         "<cmd>BufferLineCloseLeft<CR>",
         desc = "Close Buffers to the Left",
-      },
-      {
-        "<localleader>m",
-        "<cmd>MaximizerToggle<CR>",
-        desc = "Maximize/minimize a split",
-      },
-      {
-        ",m",
-        "<cmd>MaximizerToggle<CR>",
-        desc = "Maximize/minimize a split",
       },
     }
 
