@@ -24,6 +24,7 @@ mkcd() {
 alias rm="rm -rf"
 
 alias {l,ls}="exa -la --icons --group-directories-first --color=always"
+alias lt="ls -T"
 alias cat="bat"
 
 alias find="find . -name"
