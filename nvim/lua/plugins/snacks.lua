@@ -30,7 +30,7 @@ return {
   },
   keys = {
     {
-      "<leader>ld",
+      "<leader>lq",
       "<cmd>lua require('snacks').dashboard.open()<CR>",
       desc = "Open dashboard",
     },
@@ -39,7 +39,7 @@ return {
     require("snacks").setup(opts)
 
     require("utils").add_which_key({
-      "<leader>lb",
+      "<leader>lq",
       desc = "Open Dashboard",
     })
   end,
