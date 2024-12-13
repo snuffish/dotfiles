@@ -60,6 +60,16 @@ return {
           group = "Debug",
           icon = { icon = " ", color = "red" }
         },
+        {
+          "<leader>c",
+          group = "Code",
+          icon = { icon = " ", color = "blue" }
+        },
+        {
+          "<leader>u",
+          group = "Editor",
+          icon = { icon = " ", color = "yellow" }
+        },
       }
     }
 
