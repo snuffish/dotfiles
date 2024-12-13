@@ -134,17 +134,6 @@ return {
       -- "l3mon4d3/luasnip",
       "hrsh7th/nvim-cmp",
     },
-    {
-      "aidancz/eolmark.nvim",
-      lazy = false,
-      enabled = false,
-      config = function()
-        require("eolmark").setup({
-          mark = " $",
-        })
-        vim.api.nvim_set_hl(0, "eolmark", { link = "nontext" })
-      end,
-    }
   },
 }
 -- {
