@@ -26,6 +26,11 @@ return {
     local opts = {
       spec = {
         {
+          "<leader>g",
+          group = "Git",
+          icon = { icon = "󰊢 ", color = "yellow" },
+        },
+        {
           "<leader>cc",
           group = "Copilot",
           icon = { icon = " ", color = "yellow" },
