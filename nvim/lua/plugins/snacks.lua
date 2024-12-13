@@ -1,29 +1,3 @@
--- local zen_style = Snacks.config.style("zoom_indicator", {
---   text = "▍ zoom  󰊓  ",
---   minimal = true,
---   enter = false,
---   focusable = false,
---   height = 1,
---   row = 0,
---   col = -1,
---   backdrop = false,
--- })
-
--- window = {                                                                                                                               |  ---------------------------------------------------------------------------------------------------------------------------------------------
---        width = 0.85,                                                                                                                          |  ---------------------------------------------------------------------------------------------------------------------------------------------
---        backdrop = 0.95,                                                                                                                       |  ---------------------------------------------------------------------------------------------------------------------------------------------
---        height = 1,                                                                                                                            |  ---------------------------------------------------------------------------------------------------------------------------------------------
---        options = {                                                                                                                            |  ---------------------------------------------------------------------------------------------------------------------------------------------
---          signcolumn = "no",                                                                                                                   |  ---------------------------------------------------------------------------------------------------------------------------------------------
---          number = false,                                                                                                                      |  ---------------------------------------------------------------------------------------------------------------------------------------------
---          relativenumber = true,                                                                                                               |  ---------------------------------------------------------------------------------------------------------------------------------------------
---          cursorline = false,                                                                                                                  |  ---------------------------------------------------------------------------------------------------------------------------------------------
---          cursorcolumn = false,                                                                                                                |  ---------------------------------------------------------------------------------------------------------------------------------------------
---          foldcolumn = "0",                                                                                                                    |  ---------------------------------------------------------------------------------------------------------------------------------------------
---          list = true,                                                                                                                         |  ---------------------------------------------------------------------------------------------------------------------------------------------
---        },                                                                                                                                     |  ---------------------------------------------------------------------------------------------------------------------------------------------
---      }, 
-
 return {
   "folke/snacks.nvim",
   opts = {
@@ -37,21 +11,21 @@ return {
        ███████╗██║  ██║███████╗   ██║    ╚████╔╝ ██║██║ ╚═╝ ██║           
        ╚══════╝╚═╝  ╚═╝╚══════╝   ╚═╝     ╚═══╝  ╚═╝╚═╝     ╚═╝           
 ]],
-        -- stylua: ignore
-        ---@type snacks.dashboard.Item[]
-        keys = {
-          { icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
-          { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
-          { icon = " ", key = "G", desc = "Find Text", action = ":lua Snacks.dashboard.pick('live_grep')" },
-          { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
-          { icon = " ", key = "c", desc = "Config", action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})" },
-          { icon = " ", key = "s", desc = "Restore Session", section = "session" },
-          { icon = " ", key = "x", desc = "Lazy Extras", action = ":LazyExtras" },
-          { icon = "󰊢 ", key = "g", desc = "LazyGit", action = ":LazyGit" },
-          { icon = "󰒲 ", key = "l", desc = "Lazy", action = ":Lazy" },
-          { icon = "󱌢 ", key = "m", desc = "Mason", action = ":Mason" },
-          { icon = " ", key = "q", desc = "Quit", action = ":qa" },
-        },
+          -- stylua: ignore
+          ---@type snacks.dashboard.Item[]
+          keys = {
+            { icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
+            { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
+            { icon = " ", key = "G", desc = "Find Text", action = ":lua Snacks.dashboard.pick('live_grep')" },
+            { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
+            { icon = " ", key = "c", desc = "Config", action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})" },
+            { icon = " ", key = "s", desc = "Restore Session", section = "session" },
+            { icon = " ", key = "x", desc = "Lazy Extras", action = ":LazyExtras" },
+            { icon = "󰊢 ", key = "g", desc = "LazyGit", action = ":LazyGit" },
+            { icon = "󰒲 ", key = "l", desc = "Lazy", action = ":Lazy" },
+            { icon = "󱌢 ", key = "m", desc = "Mason", action = ":Mason" },
+            { icon = " ", key = "q", desc = "Quit", action = ":qa" },
+          },
       },
     },
     scroll = {
@@ -59,25 +33,18 @@ return {
     },
     zen = {
       win = {
-        width = 200,
+        width = 0.8,
+        backdrop = { transparent = false, blend = 95 },
+        wo = {
+          winhighlight = "NormalFloat:Normal",
+        },
       },
-      style = { }
-      
-      -- win = {
-      --   enter = true,
-      --   fixbuf = false,
-      --   minimal = true,
-      --   focusable = true,
-      --   width = 1,
-      --   -- heigt = 0.85,
-      --   row = 0,
-      --   col = -1,
-      --   backdrop = false,
-      --   keys = { q = false },
-      --   wo = {
-      --     winhighlight = "NormalFloat:Normal",
-      --   },
-      -- },
+      on_open = function(win)
+        require("snacks.indent").disable()
+      end,
+      on_close = function(win)
+        require("snacks.indent").enable()
+      end,
     },
   },
   keys = {
@@ -88,17 +55,23 @@ return {
     },
     {
       "<localleader>g",
-      "<cmd>require('snacks.toggle').indent():toggle()<CR>",
+      function()
+        require("snacks.toggle").indent():toggle()
+      end,
       desc = "Toggle 'Indent Guides'",
     },
     {
       "<localleader>z",
-      "<cmd>lua require('snacks.toggle').zen():toggle()<CR>",
+      function()
+        require("snacks.toggle").zen():toggle()
+      end,
       desc = "Toggle 'Zen Mode'",
     },
     {
       "<localleader>Z",
-      "<cmd>lua require('snacks.toggle').zoom():toggle()<CR>",
+      function()
+        require("snacks.toggle").zoom():toggle()
+      end,
       desc = "Toggle 'Zoom Mode'",
     },
   },
