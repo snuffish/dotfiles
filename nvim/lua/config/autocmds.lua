@@ -12,13 +12,14 @@ end
 -- if you only want these mappings for toggle term use term://*toggleterm#* instead
 vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
 
-vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+vim.api.nvim_create_augroup("CenterScreen", { clear = true })
+vim.api.nvim_create_autocmd("CursorMoved", {
+  group = "CenterScreen",
   callback = function()
     if _G.ZenMode and _G.ZenMode.enabled then
-      require("utils").trigger_keys("zz", "n")
+      vim.cmd("normal! zz")
     end
   end,
-  desc = "Center screen on cursor move",
 })
 
 local NORMAL = {
@@ -79,14 +80,9 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufNewFile" }, {
 })
 
 require("plenary.reload").reload_module("popup")
-local popup = require("popup")
-local function get_cursor_position()
-  local cursor_pos = vim.api.nvim_win_get_cursor(0) -- 0 refers to the current window
-  local line = cursor_pos[1] -- Line number (1-based)
-  local col = cursor_pos[2] -- Column number (0-based)
+local popup = require("popup") local function get_cursor_position() local cursor_pos = vim.api.nvim_win_get_cursor(0) -- 0 refers to the current window local line = cursor_pos[1] -- Line number (1-based) local col = cursor_pos[2] -- Column number (0-based)
   print("Cursor Position: Line " .. line .. ", Column " .. (col + 1)) -- +1 to convert to 1-based column
 end
-
 vim.api.nvim_create_user_command("Run", function(opts)
   if opts.range > 0 then
     local selected_text = vim.fn.getline(opts.line1, opts.line2)
