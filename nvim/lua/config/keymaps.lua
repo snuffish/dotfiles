@@ -29,7 +29,7 @@ map("x", "DD", "<Esc>:'<,'>s//<Left>", { noremap = true, desc = "Regex delete (s
 map("n", "+", "<C-a>", { noremap = true, silent = true, desc = "Increment integer" })
 map("n", "-", "<C-x>", { noremap = true, silent = true, desc = "Decrement integer" })
 
-map("v", "<Tab>", "=", { silent = true, desc = "Auto-indent" })
+map("v", "<Tab>", "==", { silent = true, desc = "Auto-indent" })
 
 map("n", "<F1>", "<cmd>TransparentToggle<cr>", { noremap = true, silent = true })
 
