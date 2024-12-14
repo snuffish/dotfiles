@@ -12,6 +12,15 @@ end
 -- if you only want these mappings for toggle term use term://*toggleterm#* instead
 vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
 
+vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+  callback = function()
+    if _G.ZenMode and _G.ZenMode.enabled then
+      require("utils").trigger_keys("zz", "n")
+    end
+  end,
+  desc = "Center screen on cursor move",
+})
+
 local NORMAL = {
   lineCursor = "#292E42",
   lineNr = "#7AA2F7",
@@ -136,4 +145,3 @@ end, { range = true })
 --   pattern = ".env*",
 --   command = "set filetype=dot"
 -- })
-
