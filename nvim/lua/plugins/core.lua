@@ -37,30 +37,20 @@ return {
       -- log debug messages to 'auto-save.log' file in neovim cache directory, set to `true` to enable
       debug = false,
     },
+    keys = {
+    },
   },
   {
     "Wansmer/treesj",
-    dependencies = { "nvim-treesitter/nvim-treesitter" }, opts = {},
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
+    opts = {},
     keys = {
       {
         "<leader>m",
         function()
-          require("treesj").toggle(
-          )
+          require("treesj").toggle()
         end,
       },
-      -- {
-      --   "<S-Tab>",
-      --   function()
-      --     require("treesj").toggle()
-      --   end,
-      -- },
-      -- {
-      --   "<S-Tab>",
-      --   function()
-      --     require("treesj").toggle()
-      --   end,
-      -- },
     },
     config = function()
       require("treesj").setup({})
