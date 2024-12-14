@@ -50,7 +50,7 @@ return {
   },
   config = function(_, opts)
     local lualine = require("lualine")
-    local lazy_status = require("lazy.status") -- to configure lazy pending updates count
+    -- local lazy_status = require("lazy.status") -- to configure lazy pending updates count
 
     local navic = require("nvim-navic")
 
@@ -58,6 +58,33 @@ return {
       on_attach = function(client, bufnr)
         navic.attach(client, bufnr)
       end,
+      settings = {
+        clangd = {
+          arguments = {},
+          checkUpdates = true,
+          detectExtensionConflicts = true,
+          enable = true,
+          enableCodeCompletion = true,
+          enableHover = true,
+          fallbackFlags = {},
+          inactiveRegions = {},
+          onConfigChanged = function() end,
+          path = "",
+          restartAfterCrash = true,
+          semanticHighlighting = true,
+          serverCompletionRanking = true,
+          trace = "off",
+        }
+      },
+      root_dir = function() return vim.fn.getcwd() end,
+      name = "clangd",
+      autostart = true,
+      single_file_support = true,
+      -- on_new_config = function(new_config, new_root_dir) end,
+      capabilities = {},
+      cmd = { "clangd" },
+      handlers = {},
+      init_options = {}
     })
 
     require("transparent").clear_prefix("lualine")
