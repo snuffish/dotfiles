@@ -1,4 +1,5 @@
--- On loaded
+
+
 LazyVim.on_load("which-key.nvim", function()
   require("config.remaps")
 end)
@@ -93,4 +94,3 @@ map("n", "saT", function()
   vim.cmd("let @z = 'sa_t' | normal! @z")
   vim.cmd('let @z = "i\\<CR>\\<CR>\\<Esc>k==a" | normal! @z')
 end, { desc = "Add new tag element and add cursor betweens its open/close tag (verticaly)" })
-

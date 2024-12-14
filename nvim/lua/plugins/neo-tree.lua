@@ -16,7 +16,16 @@ return {
       window = {
         mappings = {
           ["\\\\"] = "close_window",
-          ['<leader>'] = 'open'
+          ['<leader>'] = 'open',
+          ['<cr>'] = 'open'
+        },
+      },
+    },
+    buffers = {
+      window = {
+        mappings = {
+          ['<leader>'] = 'open',
+          ['<cr>'] = 'open',
         },
       },
     },
