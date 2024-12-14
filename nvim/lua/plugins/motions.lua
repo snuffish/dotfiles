@@ -28,7 +28,6 @@ return {
 
         suffix_last = 'l', -- Suffix to search with "prev" method
         suffix_next = 'n', -- Suffix to search with "next" method
-
       },
       n_lines = 500,
     },
@@ -87,16 +86,18 @@ return {
     opts = {},
     -- stylua: ignore
     keys = function ()
-     local centerScreen = vim.api.nvim_feedkeys('zz', 'n', true)
+     local centerScreen = function()
+        vim.cmd('normal zz')
+      end
 
       return {
         { "s", mode = { "n", "x", "o" }, function()
           require("flash").jump()
-          if centerScreen then centerScreen() end
+          require('utils').trigger_keys('zz')
         end, desc = "Flash" },
         { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
         { "rf", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
-        { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+        { "rs", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
         { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
       }
     end,

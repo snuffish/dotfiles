@@ -8,18 +8,18 @@ return {
       { "<Right>", hidden = true },
       { "<Up>", hidden = true },
       { "<Down>", hidden = true },
-      { "<leader>b", hidden = true }
+      { "<leader>b", hidden = true },
     }
 
     for _, keymap in ipairs(hidden_keymaps) do
-      require('utils').add_which_key(keymap)
+      require("utils").add_which_key(keymap)
     end
 
     -- Hide select buffer keymaps
     for i = 1, 9 do
-      require('utils').add_which_key({
+      require("utils").add_which_key({
         string.format("<localleader>%d", i),
-        hidden = true
+        hidden = true,
       })
     end
 
@@ -38,39 +38,39 @@ return {
         {
           "<localleader>",
           group = "Local Buffer",
-          icon = { icon = " ", color = "blue" }
+          icon = { icon = " ", color = "blue" },
         },
         {
           "<leader>m",
           group = "Math",
-          icon = { icon = " ", color = "green" }
+          icon = { icon = " ", color = "green" },
         },
         {
           "<leader>s",
           group = "Search",
-          icon = { icon = " ", color = "blue" }
+          icon = { icon = " ", color = "blue" },
         },
         {
           "<leader>f",
           group = "Find",
-          icon = { icon = " ", color = "blue" }
+          icon = { icon = " ", color = "blue" },
         },
         {
           "<leader>d",
           group = "Debug",
-          icon = { icon = " ", color = "red" }
+          icon = { icon = " ", color = "red" },
         },
         {
           "<leader>c",
           group = "Code",
-          icon = { icon = " ", color = "blue" }
+          icon = { icon = " ", color = "blue" },
         },
         {
           "<leader>u",
           group = "Editor",
-          icon = { icon = " ", color = "yellow" }
+          icon = { icon = " ", color = "yellow" },
         },
-      }
+      },
     }
 
     return opts
@@ -78,10 +78,11 @@ return {
   keys = {},
   config = function(_, opts)
     local wk = require("which-key")
+
     wk.setup(opts)
     if opts.defaults and not vim.tbl_isempty(opts.defaults) then
       LazyVim.warn("which-key: opts.defaults is deprecated. Please use opts.spec instead.")
       wk.add(opts.defaults)
     end
-  end
+  end,
 }

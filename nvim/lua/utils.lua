@@ -39,4 +39,9 @@ utils.add_which_key = function(data)
   require('which-key').add(data)
 end
 
+utils.trigger_keys = function(keys, mode)
+  mode = mode or 'n'  -- Set default mode to 'n' (normal mode) if not provided
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(keys, true, true, true), mode, true)
+end
+
 return utils
