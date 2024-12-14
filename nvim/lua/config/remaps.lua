@@ -45,7 +45,6 @@ map("n", "DW", '"_db', { silent = true, desc = "Delete words backwards [inclusiv
 map("n", "DE", '"_dB', { silent = true, desc = "Delete WORDS backwards [exclusive] (No yanking)" })
 map("n", "CW", '"_T=<Space>cw', { silent = true, desc = "Change the rhs assignment of a declaration (No yanking)" })
 
-
 -- Do not include white space characters when using $ in visual mode,
 map("x", "$", "g_")
 
@@ -75,4 +74,14 @@ map(
   { noremap = true, silent = false, desc = "Horizontal split (Orginal window navigate to AlternativeBuffer)" }
 )
 
+vim.api.nvim_set_keymap("", "<leader>sr", "<cmd>FzfLua resume<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("", "<leader>sR", "<cmd>GrugFar<CR>", { noremap = true, silent = true })
 
+-- local show_leader_keys = function()
+--   require("which-key").show({
+--     keys = "<leader>",
+--   })
+-- end
+--
+-- map("nxo", " ", show_leader_keys)
+-- map("nxo", "<leader>", show_leader_keys)
