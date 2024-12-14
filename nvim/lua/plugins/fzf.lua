@@ -12,7 +12,7 @@ return {
   },
   keys = {
     {
-      "<leader>fz",
+      "<leader>fb",
       "<cmd>FzfLua<CR>",
       desc = "FzfLua BuiltIn",
     },
