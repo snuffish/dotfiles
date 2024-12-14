@@ -39,6 +39,34 @@ return {
     },
   },
   {
+    "Wansmer/treesj",
+    dependencies = { "nvim-treesitter/nvim-treesitter" }, opts = {},
+    keys = {
+      {
+        "<leader>m",
+        function()
+          require("treesj").toggle(
+          )
+        end,
+      },
+      -- {
+      --   "<S-Tab>",
+      --   function()
+      --     require("treesj").toggle()
+      --   end,
+      -- },
+      -- {
+      --   "<S-Tab>",
+      --   function()
+      --     require("treesj").toggle()
+      --   end,
+      -- },
+    },
+    config = function()
+      require("treesj").setup({})
+    end,
+  },
+  {
     "MunifTanjim/nui.nvim",
     lazy = true,
   },

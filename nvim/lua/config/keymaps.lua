@@ -1,22 +1,8 @@
-
-
 LazyVim.on_load("which-key.nvim", function()
   require("config.remaps")
 end)
 
 local map = require("utils").map
-
--- Existing keymap
-map("n", {
-  "<leader>sr",
-  "<localleader>sr",
-}, function()
-  local currentBuffer = vim.api.nvim_get_current_buf()
-  local currentFile = vim.api.nvim_buf_get_name(currentBuffer)
-
-  vim.cmd("source " .. currentFile)
-  vim.notify("Sourced file: " .. currentFile, vim.log.levels.INFO, { title = "Sourced" })
-end, { desc = "Source Current File" })
 
 -- Regex replaces
 map("n", "RR", "<Esc>:%s/", { noremap = true, desc = "Regex string replace (global)" })
@@ -94,3 +80,4 @@ map("n", "saT", function()
   vim.cmd("let @z = 'sa_t' | normal! @z")
   vim.cmd('let @z = "i\\<CR>\\<CR>\\<Esc>k==a" | normal! @z')
 end, { desc = "Add new tag element and add cursor betweens its open/close tag (verticaly)" })
+
