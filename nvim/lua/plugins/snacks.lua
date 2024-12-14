@@ -24,8 +24,10 @@ return {
             { icon = "󰊢 ", key = "g", desc = "LazyGit", action = ":LazyGit" },
             { icon = "󰒲 ", key = "l", desc = "Lazy", action = ":Lazy" },
             { icon = "󱌢 ", key = "m", desc = "Mason", action = ":Mason" },
+            { icon = " ", key = "h", desc = "Checkhealth", action = ":checkhealth" },
             { icon = " ", key = "q", desc = "Quit", action = ":qa" },
           },
+        
       },
     },
     scroll = {
