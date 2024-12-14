@@ -26,8 +26,8 @@ return {
         replace = "cs",
         update_n_lines = "gsn",
 
-        suffix_last = 'l', -- Suffix to search with "prev" method
-        suffix_next = 'n', -- Suffix to search with "next" method
+        suffix_last = "l", -- Suffix to search with "prev" method
+        suffix_next = "n", -- Suffix to search with "next" method
       },
       n_lines = 500,
     },
@@ -46,11 +46,10 @@ return {
         n_lines = 500,
         custom_textobjects = {
           i = {
-            gen_spec.treesitter({ a = "@conditional.outer",i = "@conditional.inner" }),
-        }
-          , -- function
+            gen_spec.treesitter({ a = "@conditional.outer", i = "@conditional.inner" }),
+          }, -- function
           f = gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }), -- function
-         c = gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }), -- class
+          c = gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }), -- class
           t = { "<([%p%w]-)%f[^<%w][^<>]->.-</%1>", "^<.->().*()</[^/]->$" }, -- tags
           d = { "%f[%d]%d+" }, -- digits
           e = { -- Word with case
@@ -66,19 +65,19 @@ return {
       require("mini.ai").setup(opts)
       LazyVim.on_load("which-key.nvim", function()
         vim.schedule(function()
-           LazyVim.mini.ai_whichkey(opts)
+          LazyVim.mini.ai_whichkey(opts)
         end)
       end)
     end,
   },
   {
-    'mawkler/demicolon.nvim',
+    "mawkler/demicolon.nvim",
     -- keys = { ';', ',', 't', 'f', 'T', 'F', ']', '[', ']d', '[d' }, -- Uncomment this to lazy load
     dependencies = {
-      'nvim-treesitter/nvim-treesitter',
-      'nvim-treesitter/nvim-treesitter-textobjects',
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-treesitter/nvim-treesitter-textobjects",
     },
-    opts = {}
+    opts = {},
   },
   {
     "folke/flash.nvim",
