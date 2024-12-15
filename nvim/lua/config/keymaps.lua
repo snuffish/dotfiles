@@ -1,5 +1,6 @@
 vim.keymap.set("n", "<leader>a", "ggVG", { desc = "Select all text", silent = true })
 vim.keymap.set("n", "<A-Up><A-Up>", ":<Up>", { desc = "Previous command", noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<localleader>z", "<leader>uz", { desc = "Toggle 'Zen Mode'" })
 
 -- Explorers
 vim.api.nvim_set_keymap("n", "<leader>E", "<cmd>Neotree reveal<CR>", { desc = "Neotree" })
