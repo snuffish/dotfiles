@@ -19,10 +19,5 @@ return {
   },
   config = function(_, opts)
     require("fzf-lua").setup(opts)
-
-    -- require("utils").add_which_key({
-    --   "<leader>fz",
-    --   icon = { icon = " ", color = "blue" },
-    -- })
   end,
 }

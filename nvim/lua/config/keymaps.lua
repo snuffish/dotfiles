@@ -1,3 +1,5 @@
+require("config.remaps")
+
 local map = require("config.utils").map
 
 map("n", "<leader>a", "ggVG", { desc = "Select all text", silent = true })

@@ -21,6 +21,7 @@ local options = {
   cursorlineopt = "both",
   showtabline = 2,
   scrolloff = 8,
+  timeoutlen = 300,
 }
 
 for option, value in pairs(globals) do
