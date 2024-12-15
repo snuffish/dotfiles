@@ -1,3 +1,5 @@
+# Playground directories
+__*
 tt.*
 .tests
 doc/tags
@@ -6,3 +8,5 @@ debug
 foo.*
 *.log
 data
+bookmarks.*.json
+
