@@ -80,28 +80,7 @@ return {
         ["<leader>"] = "actions.select",
         ["q"] = { "actions.close", mode = "n" },
         ["<BS>"] = { "actions.parent", mode = "n" },
-      },
-    },
-    keys = {
-      -- {
-      --   "<leader>E",
-      --   false,
-      -- },
-      -- {
-      --   "<leader>e",
-      --   false,
-      -- },
-      {
-        "<leader>E",
-        "<Cmd>Neotree reveal<CR>",
-        desc = "NeoTree",
-      },
-      {
-        "<leader>e",
-        function()
-          require("oil").toggle_float()
-        end,
-        desc = "Oil Explorer",
+        ["<Left>"] = { "actions.parent", mode = "n" },
       },
     },
   },

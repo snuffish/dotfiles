@@ -13,11 +13,11 @@ return {
       on_open = function(win)
         require("snacks.indent").disable()
         vim.cmd("normal! zM")
-        _G.ZenMode = { enabled = true }
+        -- _G.ZenMode = { enabled = true }
       end,
       on_close = function(win)
         require("snacks.indent").enable()
-        _G.ZenMode = { enabled = false }
+        -- _G.ZenMode = { enabled = false }
       end,
     },
     dashboard = {
@@ -47,29 +47,6 @@ return {
           { icon = " ", key = "q", desc = "Quit", action = ":qa" },
         },
       },
-    },
-  },
-  keys = {
-    {
-      "<localleader>g",
-      function()
-        require("snacks.toggle").indent():toggle()
-      end,
-      desc = "Toggle 'Indent Guides'",
-    },
-    {
-      "<localleader>z",
-      function()
-        require("snacks.toggle").zen():toggle()
-      end,
-      desc = "Toggle 'Zen Mode'",
-    },
-    {
-      "<localleader>Z",
-      function()
-        require("snacks.toggle").zoom():toggle()
-      end,
-      desc = "Toggle 'Zoom Mode'",
     },
   },
   config = function(_, opts)
