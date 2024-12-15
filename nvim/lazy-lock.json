@@ -1,6 +1,6 @@
 {
   "CopilotChat.nvim": { "branch": "main", "commit": "2ebe591cff06018e265263e71e1dbc4c5aa8281e" },
-  "LazyVim": { "branch": "main", "commit": "8fe3b5eec8cab66bef61a402ad3a788de1096425" },
+  "LazyVim": { "branch": "main", "commit": "c8d8dd0ab6b4db711b33a79835cbac3b389b37f4" },
   "LuaSnip": { "branch": "master", "commit": "33b06d72d220aa56a7ce80a0dd6f06c70cd82b9d" },
   "SchemaStore.nvim": { "branch": "main", "commit": "f8c2a0f5d51b800ea4625808e243d9e8f7c5e1df" },
   "ascii.nvim": { "branch": "master", "commit": "c1a315e811fa7c133f8f4827e63015a480d8a81b" },
@@ -56,7 +56,7 @@
   "refactoring.nvim": { "branch": "master", "commit": "2db6d378e873de31d18ade549c2edba64ff1c2e3" },
   "render-markdown.nvim": { "branch": "main", "commit": "0022a579ac7355966be5ade77699b88c76b6a549" },
   "smear-cursor.nvim": { "branch": "main", "commit": "2d1552a0fe8bb3b5f11db5ce84a7df2be25d7f66" },
-  "snacks.nvim": { "branch": "main", "commit": "05f736d4eb09e4db6c762b4705960f42851dccf8" },
+  "snacks.nvim": { "branch": "main", "commit": "188b04370561470323ef20347c273105abd9b54d" },
   "sqlite.lua": { "branch": "master", "commit": "d0ffd703b56d090d213b497ed4eb840495f14a11" },
   "todo-comments.nvim": { "branch": "main", "commit": "ae0a2afb47cf7395dc400e5dc4e05274bf4fb9e0" },
   "toggleterm.nvim": { "branch": "main", "commit": "87b2d6a3cab8e2bd9a0255427074285f0365398d" },
