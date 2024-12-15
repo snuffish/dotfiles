@@ -22,6 +22,13 @@ return {
         desc = "Switch to Other Buffer",
       },
       {
+        "<localleader>o",
+        function()
+          Snacks.bufdelete.other()
+        end,
+        desc = "Delete all Other Buffers",
+      },
+      {
         "<localleader>l",
         "<leader>bl",
         desc = "Delete Buffers to the Left",
