@@ -56,6 +56,7 @@
   "render-markdown.nvim": { "branch": "main", "commit": "0022a579ac7355966be5ade77699b88c76b6a549" },
   "smear-cursor.nvim": { "branch": "main", "commit": "2d1552a0fe8bb3b5f11db5ce84a7df2be25d7f66" },
   "snacks.nvim": { "branch": "main", "commit": "7281912e92ce8794911e7146b8bef931ebdc0642" },
+  "sqlite.lua": { "branch": "master", "commit": "d0ffd703b56d090d213b497ed4eb840495f14a11" },
   "todo-comments.nvim": { "branch": "main", "commit": "ae0a2afb47cf7395dc400e5dc4e05274bf4fb9e0" },
   "toggleterm.nvim": { "branch": "main", "commit": "87b2d6a3cab8e2bd9a0255427074285f0365398d" },
   "tokyonight.nvim": { "branch": "main", "commit": "45d22cf0e1b93476d3b6d362d720412b3d34465c" },
