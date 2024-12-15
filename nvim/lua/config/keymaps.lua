@@ -2,6 +2,21 @@ require("config.remaps")
 
 local map = require("config.utils").map
 
+local toggle_absolute_lineNr = function()
+  -- if vim.wo.relativenumber then
+  --   vim.wo.relativenumber = false
+  --   vim.wo.number = true
+  -- else
+  --   vim.wo.relativenumber = true
+  --   vim.wo.number = false
+  -- end
+  vim.o.statuscolumn = "%s %l %r"
+end
+
+map("n", "<localleader>a", function()
+  toggle_absolute_lineNr()
+end)
+
 map("n", "<leader>a", "ggVG", { desc = "Select all text", silent = true })
 map("n", "<A-Up><A-Up>", ":<Up>", { desc = "Previous command", noremap = true, silent = true })
 map("x", { "/", "g/" }, "<esc>/\\%V", { silent = false, desc = "Search Inside Visual Selection" })
