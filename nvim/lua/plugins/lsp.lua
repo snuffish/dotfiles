@@ -18,7 +18,7 @@ return {
     lazy = true,
     cmd = { "Outline", "OutlineOpen" },
     keys = {
-      { "<leader>o", "<cmd>Outline<CR>", desc = "Toggle outline" },
+      { "<leader>O", "<cmd>Outline<CR>", desc = "Toggle outline" },
     },
     opts = {},
     config = function()

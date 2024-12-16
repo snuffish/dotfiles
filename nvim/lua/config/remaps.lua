@@ -1,7 +1,7 @@
 local map = require("config.utils").map
 
-map("nxv", ";", ":", { noremap = true })
-map("nxv", ";;", ":<C-f>", { noremap = true })
+-- map("nxv", ";", ":", { noremap = true })
+map("nxv", "::", ":<C-f>", { noremap = true })
 map("n", { "<PageUp>", "<C-u>zz" }, "<C-u>zz", { desc = "Jump up 1/2-screen" })
 map("n", { "<PageDown>", "<C-d>zz" }, "<C-d>zz", { desc = "Jump down 1/2-screen" })
 
@@ -34,9 +34,4 @@ map("n", "d0", '"_g^d$', { noremap = true, silent = true, desc = "Delete line wi
 
 map("n", "DW", '"_db', { noremap = true, silent = true, desc = "Delete words backwards [inclusive] (No yanking)" })
 map("n", "DE", '"_dB', { noremap = true, silent = true, desc = "Delete WORDS backwards [exclusive] (No yanking)" })
-map(
-  "n",
-  "CW",
-  '"_T=<Space>cw',
-  { noremap = true, silent = true, desc = "Change the rhs assignment of a declaration (No yanking)" }
-)
+map("n", "CW", '"_T=<Space>cw', { noremap = true, silent = true, desc = "Change the rhs assignment of a declaration (No yanking)" })
