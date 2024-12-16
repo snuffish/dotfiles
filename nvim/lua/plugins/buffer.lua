@@ -10,6 +10,12 @@ return {
         desc = "Buffer",
       },
       {
+        "<localleader>d",
+        "<cmd>bdelete<CR>",
+        desc = "Delete Buffer",
+        silent = true
+      },
+      {
         "<localleader><localleader>",
         "<Cmd>FzfLua buffers sort_mru=true sort_lastused=true<CR>",
         desc = "Switch Buffer",
