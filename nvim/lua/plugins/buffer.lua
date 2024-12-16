@@ -1,5 +1,3 @@
-local trigger_keys = require("config.utils").trigger_keys
-
 return {
   "akinsho/bufferline.nvim",
   version = "*",

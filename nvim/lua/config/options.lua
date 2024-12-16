@@ -8,6 +8,7 @@ local globals = {
   lazyvim_cmp = "auto",
   ai_cmp = true,
   trouble_lualine = true,
+  autoformat = false,
 }
 
 local options = {
