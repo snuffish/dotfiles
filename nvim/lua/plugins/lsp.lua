@@ -1,16 +1,21 @@
 return {
   {
     "neovim/nvim-lspconfig",
-    opts = {
-      servers = {
-        tsserver = {
-          keys = {
-            { "<leader>co", "<cmd>TypescriptOrganizeImports<CR>", desc = "Organize Imports" },
-            { "<leader>cR", "<cmd>TypescriptRenameFile<CR>", desc = "Rename File" },
-          },
-        },
-      },
-    },
+    opts = function()
+      local keys = require("lazyvim.plugins.lsp.keymaps").get()
+      -- keys[#keys + 1] = {
+      --   "<leader>cA", false
+      -- }
+      -- keys[#keys + 1] = {
+      --   "<leader>cQ",
+      --   function()
+      --     print("HEEEEJ")
+      --   end,
+      --   -- expr = true,
+      --   desc = "MY OWN KEYMAP",
+      --   -- has = "rename",
+      -- }
+    end,
     keys = {},
   },
   {
