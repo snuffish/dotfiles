@@ -2,20 +2,10 @@ require("config.remaps")
 
 local map = require("config.utils").map
 
-local toggle_absolute_lineNr = function()
-  -- if vim.wo.relativenumber then
-  --   vim.wo.relativenumber = false
-  --   vim.wo.number = true
-  -- else
-  --   vim.wo.relativenumber = true
-  --   vim.wo.number = false
-  -- end
-  vim.o.statuscolumn = "%s %l %r"
-end
-
 map("n", "<localleader>a", function()
-  toggle_absolute_lineNr()
-end)
+  local pattern = "%s %l %r"
+  vim.o.statuscolumn = vim.o.statuscolumn ~= pattern and pattern or ""
+end, { desc = "Toggle `Absolute linenumbers`" })
 
 map("n", "<leader>a", "ggVG", { desc = "Select all text", silent = true })
 map("n", "<A-Up><A-Up>", ":<Up>", { desc = "Previous command", noremap = true, silent = true })
@@ -36,11 +26,6 @@ vim.api.nvim_set_keymap(
   { noremap = true, desc = "Oil Explorer" }
 )
 
--- Mini.Surround mapping
-vim.api.nvim_set_keymap("n", "sa", "gza", { desc = "Add surrounding" })
-vim.api.nvim_set_keymap("n", "ds", "gzd", { desc = "Delete surrounding" })
-vim.api.nvim_set_keymap("n", "cs", "gzc", { desc = "Change surrounding" })
-
 -- Regex replaces
 map("n", "RR", "<Esc>:%s/", { noremap = true, desc = "Regex string replace (global)" })
 map("x", "RR", "<Esc>:'<,'>s/", { noremap = true, desc = "Regex string replace (selection)" })
@@ -48,3 +33,9 @@ map("x", "RR", "<Esc>:'<,'>s/", { noremap = true, desc = "Regex string replace (
 -- Regex deletes
 map("n", "DD", "<Esc>:%s//<Left>", { noremap = true, desc = "Regex delete (selection)" })
 map("x", "DD", "<Esc>:'<,'>s//<Left>", { noremap = true, desc = "Regex delete (selection)" })
+
+-- Mini.Surround mapping
+vim.api.nvim_set_keymap("", "sa", "gza", { desc = "Add surrounding" })
+vim.api.nvim_set_keymap("", "ds", "gzd", { desc = "Delete surrounding" })
+vim.api.nvim_set_keymap("", "cs", "gzc", { desc = "Change surrounding" })
+
