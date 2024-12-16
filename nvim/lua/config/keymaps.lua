@@ -26,7 +26,6 @@ map("n", "DD", "<Esc>:%s//<Left>", { noremap = true, desc = "Regex delete (selec
 map("x", "DD", "<Esc>:'<,'>s//<Left>", { noremap = true, desc = "Regex delete (selection)" })
 
 -- Mini.Surround mapping
-vim.api.nvim_set_keymap("", "sa", "gza", { desc = "Add surrounding" })
+vim.api.nvim_set_keymap("", ",sa", "gza", { desc = "Add surrounding" })
 vim.api.nvim_set_keymap("", "ds", "gzd", { desc = "Delete surrounding" })
 vim.api.nvim_set_keymap("", "cs", "gzc", { desc = "Change surrounding" })
-
