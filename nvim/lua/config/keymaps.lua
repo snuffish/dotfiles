@@ -2,6 +2,8 @@ require("config.remaps")
 
 local map = require("config.utils").map
 
+vim.api.nvim_set_keymap("n", "<localleader>z", "<leader>uz", { desc = "Toggle 'Zen Mode'" })
+
 map("n", "<localleader>a", function()
   local pattern = "%s %l %r"
   vim.o.statuscolumn = vim.o.statuscolumn ~= pattern and pattern or ""
@@ -14,17 +16,6 @@ map("x", { "/", "g/" }, "<esc>/\\%V", { silent = false, desc = "Search Inside Vi
 -- Move cursor left/right in insert-mode
 map("ci", "<C-a>", "<Home>")
 map("ci", "<C-d>", "<End>")
-
-vim.api.nvim_set_keymap("n", "<localleader>z", "<leader>uz", { desc = "Toggle 'Zen Mode'" })
-
--- Explorers
-vim.api.nvim_set_keymap("n", "<leader>E", "<cmd>Neotree reveal<CR>", { noremap = true, desc = "Neotree" })
-vim.api.nvim_set_keymap(
-  "n",
-  "<leader>O",
-  "<cmd>lua require('oil').toggle_float()<CR>",
-  { noremap = true, desc = "Oil Explorer" }
-)
 
 -- Regex replaces
 map("n", "RR", "<Esc>:%s/", { noremap = true, desc = "Regex string replace (global)" })

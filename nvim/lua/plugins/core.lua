@@ -85,8 +85,7 @@ return {
     },
     keys = {
       {
-        -- TODO: Fix this
-        "<leader>O", "<cmd>lua require('oil').toggle_float()<CR>", 
+        "<leader>o", "<cmd>lua require('oil').toggle_float()<CR>", desc = "Oil Explorer"
       },
     },
   },
