@@ -83,5 +83,11 @@ return {
         ["<Left>"] = { "actions.parent", mode = "n" },
       },
     },
+    keys = {
+      {
+        -- TODO: Fix this
+        "<leader>O", "<cmd>lua require('oil').toggle_float()<CR>", 
+      },
+    },
   },
 }
