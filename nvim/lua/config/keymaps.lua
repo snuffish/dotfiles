@@ -21,7 +21,7 @@ vim.api.nvim_set_keymap("n", "<localleader>z", "<leader>uz", { desc = "Toggle 'Z
 vim.api.nvim_set_keymap("n", "<leader>E", "<cmd>Neotree reveal<CR>", { noremap = true, desc = "Neotree" })
 vim.api.nvim_set_keymap(
   "n",
-  "<leader>e",
+  "<leader>O",
   "<cmd>lua require('oil').toggle_float()<CR>",
   { noremap = true, desc = "Oil Explorer" }
 )
