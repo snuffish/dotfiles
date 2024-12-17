@@ -22,12 +22,12 @@ map("ci", "<C-d>", "<End>")
 map("n", "RR", "<Esc>:%s/", { noremap = true, desc = "Regex string replace (global)" })
 map("x", "RR", "<Esc>:'<,'>s/", { noremap = true, desc = "Regex string replace (selection)" })
 
--- Rgex deletes
+-- Regex deletes
 map("n", "DD", "<Esc>:%s//<Left>", { noremap = true, desc = "Regex delete (selection)" })
 map("x", "DD", "<Esc>:'<,'>s//<Left>", { noremap = true, desc = "Regex delete (selection)" })
 
 -- Mini.Surround mapping
 vim.api.nvim_set_keymap("", "ys", "gza", { desc = "Add surrounding" })
-vim.api.nvim_set_keymap("", "yss", "ys_", { desc = "Add surrounding (Whole row)" })
+vim.api.nvim_set_keymap("", "yss", "ys_", { desc = "Add surrounding (whole row)" })
 vim.api.nvim_set_keymap("", "ds", "gzd", { desc = "Delete surrounding" })
 vim.api.nvim_set_keymap("", "cs", "gzc", { desc = "Change surrounding" })
