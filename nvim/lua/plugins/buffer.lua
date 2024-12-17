@@ -12,7 +12,7 @@ return {
       {
         "<localleader>q",
         function()
-          require("config.utils").trigger_keys("<leader>bd")
+          vim.utils.trigger_keys("<leader>bd")
         end,
         desc = "Delete Buffer",
         silent = true,
@@ -20,7 +20,7 @@ return {
       {
         "<localleader>h",
         function()
-          require("config.utils").trigger_keys("<leader>uh")
+          vim.utils.trigger_keys("<leader>uh")
         end,
         desc = "Toggle 'Inlay Hints'",
         silent = true,

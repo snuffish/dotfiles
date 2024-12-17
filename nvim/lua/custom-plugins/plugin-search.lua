@@ -19,7 +19,7 @@ local function get_lazy_plugins()
   return plugins
 end
 
-function M.open_plugin_in_oil()
+M.open_plugin_in_oil = function()
   local plugins = get_lazy_plugins()
   local plugin_names = {}
 
@@ -29,20 +29,13 @@ function M.open_plugin_in_oil()
 
   vim.ui.select(plugin_names, { prompt = "Select a plugin:" }, function(choice)
     if choice then
-      local plugin_path = Path:new(vim.fn.stdpath("data"), "lazy", choice)
-      oil.open(plugin_path:absolute(), { float = true })
+      local plugin_path = choice
+      oil.open_float(plugin_path)
     end
   end)
 end
 
+M.setup = function()
+end
+
 return M
-
-
--- vim.api.nvim_set_keymap('n', '<leader>lp', '<cmd>lua require("plugins.plugin_search").open_plugin_in_oil()<CR>', { noremap = true, silent = true })
-
-
--- return {
---   -- Other plugins
---   { "nvim-lua/plenary.nvim" },
---   { "stevearc/oil.nvim" },
--- }
