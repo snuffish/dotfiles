@@ -2,8 +2,8 @@ require("config.remaps")
 
 local map = require("config.utils").map
 
-vim.api.nvim_set_keymap("n", "<localleader>z", "<leader>uz", { desc = "Toggle 'Zen Mode'" })
-vim.api.nvim_set_keymap("n", "<localleader>Z", "<leader>uZ", { desc = "Toggle 'Zoom Mode'" })
+vim.api.nvim_set_keymap("", "<localleader>z", "<leader>uz", { desc = "Toggle 'Zen Mode'" })
+vim.api.nvim_set_keymap("", "<localleader>Z", "<leader>uZ", { desc = "Toggle 'Zoom Mode'" })
 
 map("n", "<localleader>a", function()
   local pattern = "%s %l %r"
