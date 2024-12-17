@@ -23,7 +23,6 @@ end
 M.trigger_keys = function(keys)
   local api = vim.api
   api.nvim_feedkeys(api.nvim_replace_termcodes(keys, true, true, true), 'm', true)
-  --
 end
 
 M.find_function_by_address = function(address)
@@ -36,6 +35,10 @@ M.find_function_by_address = function(address)
     end
   end
   return nil
+end
+
+M.setup = function()
+  vim.utils = M
 end
 
 return M
