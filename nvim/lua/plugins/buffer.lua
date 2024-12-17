@@ -11,14 +11,16 @@ return {
       },
       {
         "<localleader>q",
-        "<cmd>bdelete<CR>",
+        function()
+          require("config.utils").trigger_keys("<leader>bd")
+        end,
         desc = "Delete Buffer",
-        silent = true
+        silent = true,
       },
       {
         "<localleader>h",
         function()
-          require('config.utils').trigger_keys('<leader>uh')
+          require("config.utils").trigger_keys("<leader>uh")
         end,
         desc = "Toggle 'Inlay Hints'",
         silent = true,

@@ -4,5 +4,20 @@ return {
     vim.o.timeout = true
     vim.o.timeoutlen = 300
   end,
-  opts = {},
+  opts = {
+    spec = {
+      {
+        "gs",
+        hidden = true
+      },
+      {
+        "J",
+        desc = "Join lines"
+      },
+      {
+        "Y",
+        desc = "Yank to end of line"
+      }
+    }
+  },
 }

@@ -20,9 +20,10 @@ M.map = function(modes, maps, action, opts)
   end
 end
 
-M.trigger_keys = function(keys, mode)
-  mode = mode or "n" -- Set default mode to 'n' (normal mode) if not provided
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(keys, true, true, true), mode, true)
+M.trigger_keys = function(keys)
+  local api = vim.api
+  api.nvim_feedkeys(api.nvim_replace_termcodes(keys, true, true, true), 'm', true)
+  --
 end
 
 M.find_function_by_address = function(address)

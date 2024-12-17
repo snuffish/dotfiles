@@ -3,6 +3,7 @@ require("config.remaps")
 local map = require("config.utils").map
 
 vim.api.nvim_set_keymap("n", "<localleader>z", "<leader>uz", { desc = "Toggle 'Zen Mode'" })
+vim.api.nvim_set_keymap("n", "<localleader>Z", "<leader>uZ", { desc = "Toggle 'Zoom Mode'" })
 
 map("n", "<localleader>a", function()
   local pattern = "%s %l %r"
@@ -21,11 +22,12 @@ map("ci", "<C-d>", "<End>")
 map("n", "RR", "<Esc>:%s/", { noremap = true, desc = "Regex string replace (global)" })
 map("x", "RR", "<Esc>:'<,'>s/", { noremap = true, desc = "Regex string replace (selection)" })
 
--- Regex deletes
+-- Rgex deletes
 map("n", "DD", "<Esc>:%s//<Left>", { noremap = true, desc = "Regex delete (selection)" })
 map("x", "DD", "<Esc>:'<,'>s//<Left>", { noremap = true, desc = "Regex delete (selection)" })
 
 -- Mini.Surround mapping
-vim.api.nvim_set_keymap("", ",sa", "gza", { desc = "Add surrounding" })
+vim.api.nvim_set_keymap("", "ys", "gza", { desc = "Add surrounding" })
+vim.api.nvim_set_keymap("", "yss", "ys_", { desc = "Add surrounding (Whole row)" })
 vim.api.nvim_set_keymap("", "ds", "gzd", { desc = "Delete surrounding" })
 vim.api.nvim_set_keymap("", "cs", "gzc", { desc = "Change surrounding" })
