@@ -15,6 +15,10 @@ return {
         desc = "Join lines"
       },
       {
+        "<leader>l",
+        desc = "Lazy"
+      },
+      {
         "Y",
         desc = "Yank to end of line"
       }
