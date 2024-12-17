@@ -3,6 +3,15 @@ return {
     "neovim/nvim-lspconfig",
     opts = function()
       local keys = require("lazyvim.plugins.lsp.keymaps").get()
+
+      -- return {
+      --   completion = {
+      --     trigger = {
+      --       show_on_insert_on_trigger_character = false,
+      --     },
+      --   },
+      -- }
+
       -- keys[#keys + 1] = {
       --   "<leader>cA", false
       -- }
