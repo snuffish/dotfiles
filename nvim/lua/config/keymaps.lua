@@ -30,6 +30,6 @@ vim.api.nvim_set_keymap("", "yss", "ys_", { desc = "Add surrounding (whole row)"
 vim.api.nvim_set_keymap("", "ds", "gzd", { desc = "Delete surrounding" })
 vim.api.nvim_set_keymap("", "cs", "gzc", { desc = "Change surrounding" })
 
-vim.api.nvim_set_keymap("n", "<leader>sp", "<cmd>lua require('misc.plugin-search').open_plugin_in_oil()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<leader>sp", "<cmd>lua require('custom-plugins.plugin-search').open_plugin_in_oil()<CR>", { noremap = true, silent = true })
 
 
