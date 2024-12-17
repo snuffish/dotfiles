@@ -86,7 +86,9 @@ return {
     },
     keys = {
       {
-        "<leader>o", "<cmd>lua require('oil').toggle_float()<CR>", desc = "Oil Explorer"
+        "<leader>o",
+        "<cmd>lua require('oil').toggle_float()<CR>",
+        desc = "Oil Explorer",
       },
     },
   },
