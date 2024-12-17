@@ -25,4 +25,25 @@ M.trigger_keys = function(keys, mode)
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(keys, true, true, true), mode, true)
 end
 
+M.find_function_by_address = function(address)
+  for _, keymap in ipairs(vim.api.nvim_get_keymap('n')) do
+    if keymap.callback then
+      local func = keymap.callback
+      if tostring(func):find(address) then
+        return func
+      end
+    end
+  end
+  return nil
+end
+
 return M
+
+-- local address = "0x01052ed048"
+-- local func = find_function_by_address(address)
+-- if func then
+--   local dumped_func = string.dump(func)
+--   print("Function found and dumped:", dumped_func)
+-- else
+--   print("Function not found")
+-- end

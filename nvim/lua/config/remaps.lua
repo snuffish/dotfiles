@@ -5,6 +5,7 @@ require("which-key").add({
   { "<leader>ll", "<cmd>Lazy<CR>", desc = "Open Lazy"}
 })
 
+vim.api.nvim_del_keymap("", "<localleader>h")
 
 -- map("nxv", ";", ":", { noremap = true })
 -- map("nxv", "::", ":<C-f>", { noremap = true })
