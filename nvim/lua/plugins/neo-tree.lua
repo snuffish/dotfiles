@@ -12,22 +12,15 @@ return {
     { "<localleader>e", "<cmd>Neotree buffers<CR>", desc = "Buffer Explorer", silent = true },
   },
   opts = {
-    buffers = {
-      window = {
-        mappings = {
-          ["<leader>"] = "open",
-          ["<cr>"] = "open",
-        },
+    window = {
+      mappings = {
+        ["<leader>"] = "open",
+        ["<cr>"] = "open",
+        ["o"] = "open",
       },
     },
   },
-  config = function()
-    require("neo-tree").setup({
-      window = {
-        mappings = {
-          ["o"] = "open",
-        },
-      },
-    })
+  config = function(_, opts)
+    require("neo-tree").setup(opts)
   end,
 }
