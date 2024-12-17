@@ -17,13 +17,14 @@ return {
     "echasnovski/mini.splitjoin",
     version = false,
     config = function()
-      require('mini.splitjoin').setup()end
+      require("mini.splitjoin").setup()
+    end,
   },
   {
-    'echasnovski/mini.basics',
+    "echasnovski/mini.basics",
     version = false,
     config = function()
-      require('mini.basics').setup()
-    end
+      require("mini.basics").setup()
+    end,
   },
 }
