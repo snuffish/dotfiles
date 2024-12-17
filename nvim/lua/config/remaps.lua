@@ -1,5 +1,11 @@
 local map = require("config.utils").map
 
+vim.api.nvim_del_keymap("",'<leader>l')
+require("which-key").add({
+  { "<leader>ll", "<cmd>Lazy<CR>", desc = "Open Lazy"}
+})
+
+
 -- map("nxv", ";", ":", { noremap = true })
 -- map("nxv", "::", ":<C-f>", { noremap = true })
 map("n", { "<PageUp>", "<C-u>zz" }, "<C-u>zz", { desc = "Jump up 1/2-screen" })
