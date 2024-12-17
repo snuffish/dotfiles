@@ -23,8 +23,6 @@ local options = {
   cursorlineopt = "both",
   showtabline = 2,
   scrolloff = 8,
-
-  -- TODO: Fix a Lua-script to handle the vertical cursor-column later
   cursorcolumn = false,
 }
 
