@@ -37,8 +37,9 @@ M.find_function_by_address = function(address)
   return nil
 end
 
-M.setup = function()
-  vim.utils = M
+M.setup = function(namespace)
+  namespace = namespace or "utils"
+  vim[namespace] = M
 end
 
 return M
