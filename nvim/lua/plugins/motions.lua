@@ -17,8 +17,11 @@ return {
         suffix_next = "n",
       },
       n_lines = 500,
+      custom_surroundings = {
+        ["B"] = { input = { { "%b{}" }, "^.().*().$" }, output = { left = "{", right = "}" } },
+      },
     },
-   keys = {
+    keys = {
       { "gz", "", desc = "+surround" },
     },
   },
@@ -49,11 +52,46 @@ return {
     opts = {},
     keys = function()
       return {
-        { "gf", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash Jump", },
-        { "gt", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
-        { "rf", mode = "o", function() require("flash").remote() end, desc = "Remote Flash", },
-        { "rs", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-        { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+        {
+          "gf",
+          mode = { "n", "x", "o" },
+          function()
+            require("flash").jump()
+          end,
+          desc = "Flash Jump",
+        },
+        {
+          "gt",
+          mode = { "n", "x", "o" },
+          function()
+            require("flash").treesitter()
+          end,
+          desc = "Flash Treesitter",
+        },
+        {
+          "rf",
+          mode = "o",
+          function()
+            require("flash").remote()
+          end,
+          desc = "Remote Flash",
+        },
+        {
+          "rs",
+          mode = { "o", "x" },
+          function()
+            require("flash").treesitter_search()
+          end,
+          desc = "Treesitter Search",
+        },
+        {
+          "<c-s>",
+          mode = { "c" },
+          function()
+            require("flash").toggle()
+          end,
+          desc = "Toggle Flash Search",
+        },
       }
     end,
   },
