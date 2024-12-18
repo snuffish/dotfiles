@@ -32,4 +32,17 @@ vim.api.nvim_set_keymap("", "cs", "gzc", { desc = "Change surrounding" })
 
 vim.api.nvim_set_keymap("n", "<leader>sp", "<cmd>lua require('custom-plugins.plugin-search').open_plugin_in_oil()<CR>", { noremap = true, silent = true })
 
+-- Insert/append into current text-objects
+vim.utils.map("n", "<C-i>q", function()
+  vim.cmd("TSTextobjectGotoNextStart @parameter.inner")
+end)
+
+vim.utils.map("ni", "<C-e>q", function()
+  vim.cmd("TSTextobjectGotoNextEnd @parameter.inner")
+  vim.utils.trigger_keys("i")
+end)
+
+-- vim.utils.map("n", "<C-b>", function()
+--   vim.cmd("TSTextobjectRepeatLast")
+-- end)
 
