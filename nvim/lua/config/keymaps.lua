@@ -1,8 +1,5 @@
 require("config.remaps")
 
-vim.api.nvim_set_keymap("", "<localleader>z", "<leader>uz", { desc = "Toggle 'Zen Mode'" })
-vim.api.nvim_set_keymap("", "<localleader>Z", "<leader>uZ", { desc = "Toggle 'Zoom Mode'" })
-
 vim.utils.map("n", "<localleader>a", function()
   local pattern = "%s %l %r"
   vim.o.statuscolumn = vim.o.statuscolumn ~= pattern and pattern or ""
@@ -34,14 +31,27 @@ local function map_text_object(key)
   vim.api.nvim_set_keymap("n", "<C-i>" .. key, string.format("vi%s%si", key, vim.keycode("<Esc>")), { desc = "Prepennd after " .. key })
   vim.api.nvim_set_keymap("n", "<C-e>" .. key, string.format("vi%so%sa", key, vim.keycode("<Esc>")), { desc = "Apend after " .. key })
 end
-map_text_object("q")
-map_text_object("d")
+-- map_text_object("q")
+-- map_text_object("d")
+
+-- vim.api.nvim_set_keymap("n", "iq", "viqi", {})
+vim.api.nvim_set_keymap("o", "e", "echo 'DSDSDS'", {})
+
+vim.api.nvim_set_keymap("o", "iw", "iw", { noremap = true, desc = "Inside word" })
+vim.api.nvim_set_keymap("o", "aw", "aw", { noremap = true, desc = "Around word" })
+
+-- vim.keymap.set("", jk, rhs, opts?)
 
 local test = "dsadsadasdas"
+local test = "gfgfg"
+local test = "5453gfd"
 
-vim.api.nvim_set_keymap("i", "<C-a>", string.format("vi%so%sa", key, vim.keycode("<Esc>")), { desc = "Apend after " .. key })
+-- vim.utils.map("n", "<C-e>", "<cmd>echo '1232'<CR>")
+-- vim.api.nvim_set_keymap("n", "e", ":set operatorfunc=v:lua.custom_delete_operator<CR>g@", { noremap = true, silent = true, desc = "Custom delete operator" })
+-- vim.api.nvim_set_keymap("o", "a", "<cmd>echo '12321321'<CR>", {})
 
-vim.api.nvim_set_keymap("", "cs", "gzc", {})
+-- vim.api.nvim_set_keymap("i", "<C-a>", string.format("vi%so%sa", key, vim.keycode("<Esc>")), {  })
+-- vim.api.nvim_set_keymap("", "cs", "gzc", {})
 
 -- vim.api.nvim_set_keymap("", "hq", "gzhq", { desc = "Highlight surrounding" })
 
@@ -68,4 +78,62 @@ vim.api.nvim_set_keymap("", "cs", "gzc", {})
 -- vim.utils.map("n", "<C-b>", function()
 --   vim.cmd("TSTextobjectRepeatLast")
 -- end)
+
+
+
+local function edit_operator(type)
+  -- Get the selected text
+  local start_pos = vim.fn.getpos("'<")
+  local end_pos = vim.fn.getpos("'>")
+  local lines = vim.fn.getline(start_pos[2], end_pos[2])
+  
+  -- Perform your custom operation on the selected text
+  for i, line in ipairs(lines) do
+    lines[i] = "EDIT: " .. line
+  end
+  
+  -- Replace the selected text with the modified text
+  vim.fn.setline(start_pos[2], lines)
+end
+
+-- Map the custom operator to a key
+
+-- vim.api.nvim_set_keymap("n", "ge", ":set operatorfunc=v:lua.edit_operator<CR>g@", { noremap = true, silent = true, desc = "Custom edit operator" })
+local function custom_delete_operator(type)
+  -- Get the selected text
+  local start_pos = vim.fn.getpos("'<")
+  local end_pos = vim.fn.getpos("'>")
+  local lines = vim.fn.getline(start_pos[2], end_pos[2])
+
+  -- Perform the delete operation
+  for i = start_pos[2], end_pos[2] do
+    vim.fn.setline(i, "")
+  end
+end
+
+-- Map the custom delete operator to a key
+-- vim.api.nvim_set_keymap("n", "gd", ":set operatorfunc=v:lua.custom_delete_operator<CR>g@", { noremap = true, silent = true, desc = "Custom delete operator" })
+
+
+
+
+
+
+local function custom_delete_operator(type)
+  -- Get the selected text
+  local start_pos = vim.fn.getpos("'<")
+  local end_pos = vim.fn.getpos("'>")
+  local lines = vim.fn.getline(start_pos[2], end_pos[2])
+
+  -- Perform the delete operation
+  for i = start_pos[2], end_pos[2] do
+    vim.fn.setline(i, "")
+  end
+end
+
+-- Assign the function to the global vim table
+vim.custom_delete_operator = custom_delete_operator
+
+-- Map the custom delete operator to a key
+vim.api.nvim_set_keymap("n", "e", ":set operatorfunc=v:lua.vim.custom_delete_operator<CR>g@", { noremap = true, silent = true, desc = "Custom delete operator" })
 
