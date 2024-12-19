@@ -135,6 +135,22 @@ return {
         },
       },
     },
+    keys = {
+      {
+        "<localleader>z",
+        function()
+          vim.utils.trigger_keys("<leader>uz")
+        end,
+        desc = "Toggle 'Zen Mode'",
+      },
+      {
+        "<localleader>Z",
+        function()
+          vim.utils.trigger_keys("<leader>uZ")
+        end,
+        desc = "Toggle 'Zoom Mode'",
+      }
+    },
     config = function(_, opts)
       require("snacks").setup(opts)
     end,
