@@ -41,10 +41,12 @@ vim.utils.map("n", "CW", '"_T=<Space>cw', { noremap = true, silent = true, desc 
 vim.utils.map("nxo", "m", "`", { noremap = true, silent = true })
 
 -- Remap goto next/prev
-vim.utils.map("nxo", "<C-]>", function()
+vim.utils.map("nxo", "<C-´>", function()
   vim.utils.trigger_keys("]")
 end)
 
-vim.utils.map("nxo", "<C-[>", function()
+vim.utils.map("nxo", "<C-å>", function()
   vim.utils.trigger_keys("[")
 end)
+
+
