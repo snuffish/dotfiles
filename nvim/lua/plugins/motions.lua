@@ -1,31 +1,6 @@
 return {
   { "tpope/vim-repeat", event = "VeryLazy" },
   {
-    "echasnovski/mini.surround",
-    optional = true,
-    event = "VeryLazy",
-    opts = {
-      mappings = {
-        add = "gza",
-        delete = "gzd",
-        replace = "gzc",
-        find = "gzf",
-        find_left = "gzF",
-        highlight = "gzh",
-        update_n_lines = "gzn",
-        suffix_last = "l",
-        suffix_next = "n",
-      },
-      n_lines = 500,
-      custom_surroundings = {
-        ["B"] = { input = { { "%b{}" }, "^.().*().$" }, output = { left = "{", right = "}" } },
-      },
-    },
-    keys = {
-      { "gz", "", desc = "+surround" },
-    },
-  },
-  {
     "ggandor/flit.nvim",
     enabled = true,
     keys = function()
