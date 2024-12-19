@@ -18,6 +18,14 @@ return {
         silent = true,
       },
       {
+        "<localleader>Q",
+        function()
+          vim.utils.trigger_keys("<leader>bD")
+        end,
+        desc = "Delete Buffer and Window",
+        silent = true,
+      },
+      {
         "<localleader>h",
         function()
           vim.utils.trigger_keys("<leader>uh")

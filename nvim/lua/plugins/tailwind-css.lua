@@ -23,7 +23,12 @@ return {
         "<localleader>tc",
         "<cmd>TailwindColorToggle<CR>",
         desc = "Toggle 'Color'",
-      }
+      },
+      {
+        "<localleader>ts",
+        "<cmd>TailwindSort<CR>",
+        desc = "Sort Classes",
+      },
     },
   },
   {
