@@ -8,20 +8,20 @@ return {
     spec = {
       {
         "gs",
-        hidden = true
+        hidden = true,
       },
       {
         "J",
-        desc = "Join lines"
+        desc = "Join lines",
       },
       {
         "<leader>l",
-        desc = "Lazy"
+        desc = "Lazy",
       },
       {
         "Y",
-        desc = "Yank to end of line"
-      }
-    }
+        desc = "Yank to end of line",
+      },
+    },
   },
 }

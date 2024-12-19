@@ -24,7 +24,7 @@ return {
         "<cmd>TailwindColorToggle<CR>",
         desc = "Toggle 'Color'",
       }
-    }
+    },
   },
   {
     "hrsh7th/nvim-cmp",
