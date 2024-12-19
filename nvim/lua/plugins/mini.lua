@@ -9,6 +9,8 @@ return {
         custom_textobjects = {
           F = spec_treesitter({ a = "@function.outer", i = "@function.inner" }),
           a = require("mini.ai").gen_spec.argument({ brackets = { "%b()" } }),
+          d = { "%f[%d]%d+" }, -- digits
+          i = { spec_treesitter({ a = "@conditional.outer", i = "@condition.inner" }) },
         },
       })
     end,
