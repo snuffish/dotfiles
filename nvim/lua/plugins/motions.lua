@@ -36,7 +36,7 @@ return {
           desc = "Flash Jump",
         },
         {
-          vim.g.capslock_key,
+          "gt",
           mode = { "n", "x", "o" },
           function()
             require("flash").treesitter()
@@ -52,16 +52,18 @@ return {
           desc = "Remote Flash",
         },
         {
-          "rl",
+          "l",
           mode = "o",
           function()
-            require("flash").jump({
+            require("flash").remote({
               search = { mode = "search", max_length = 0 },
-              label = { after = { 0, 0 } },
+              label = {
+                after = { 0, 0 },
+              },
               pattern = "^",
             })
           end,
-          desc = "Remote Flash",
+          desc = "Remote Flash line",
         },
         {
           "R",

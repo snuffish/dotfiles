@@ -1,6 +1,5 @@
 require("config.remaps")
 
-
 vim.api.nvim_set_keymap('n', '<leader>yf', ':let @+ = expand("%:p")<CR>', { desc = "Yank filepath to system clipboard", noremap = true, silent = true })
 
 vim.utils.map("n", "<localleader>a", function()

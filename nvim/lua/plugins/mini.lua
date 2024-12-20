@@ -1,4 +1,5 @@
-local spec_treesitter = require("mini.ai").gen_spec.treesitter
+local gen_spec = require("mini.ai").gen_spec
+local treesitter = gen_spec.treesitter
 
 return {
   {
@@ -7,10 +8,10 @@ return {
     config = function()
       require("mini.ai").setup({
         custom_textobjects = {
-          F = spec_treesitter({ a = "@function.outer", i = "@function.inner" }),
-          a = require("mini.ai").gen_spec.argument({ brackets = { "%b()" } }),
+          F = treesitter({ a = "@function.outer", i = "@function.inner" }),
+          a = gen_spec.argument({ brackets = { "%b()" } }),
           d = { "%f[%d]%d+" }, -- digits
-          i = { spec_treesitter({ a = "@conditional.outer", i = "@condition.inner" }) },
+          i = { treesitter({ a = "@conditional.outer", i = "@condition.inner" }) },
         },
       })
     end,
