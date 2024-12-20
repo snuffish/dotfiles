@@ -7,10 +7,6 @@ return {
   opts = {
     spec = {
       {
-        "gs",
-        hidden = true,
-      },
-      {
         "J",
         desc = "Join lines",
       },
@@ -19,8 +15,14 @@ return {
         desc = "Lazy",
       },
       {
-        "Y",
-        desc = "Yank to end of line",
+        "<leader>lx",
+        "<cmd>LazyExtras<CR>",
+        desc = "Lazy Extras",
+      },
+      {
+        "<leader>ll",
+        "<cmd>LazyExtras<CR>",
+        desc = "Open LazyExtras",
       },
     },
   },

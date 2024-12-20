@@ -51,5 +51,12 @@ return {
         enabled = true,
       },
     })
+
+    require("which-key").add({
+      {
+        "Y",
+        desc = "Yank to end of line",
+      },
+    })
   end,
 }

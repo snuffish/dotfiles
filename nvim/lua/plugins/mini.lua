@@ -38,6 +38,7 @@ return {
       },
     },
     keys = {
+      { "gs", false },
       { "gz", "", desc = "+surround" },
     },
   },
