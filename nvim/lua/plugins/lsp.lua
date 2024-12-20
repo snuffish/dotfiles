@@ -24,8 +24,6 @@ return {
         preset = "enter",
         ["<PageDown>"] = { "scroll_documentation_down" },
         ["<PageUp>"] = { "scroll_documentation_up" },
-        -- ["<Tab>"] = { "select_next" },
-        -- ["<S-Tab>"] = { "select_prev" },
         ["<Esc>"] = { "cancel" },
       },
       snippets = {
