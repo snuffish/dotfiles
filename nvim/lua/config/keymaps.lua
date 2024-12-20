@@ -1,5 +1,6 @@
 require("config.remaps")
 
+
 vim.api.nvim_set_keymap('n', '<leader>yf', ':let @+ = expand("%:p")<CR>', { desc = "Yank filepath to system clipboard", noremap = true, silent = true })
 
 vim.utils.map("n", "<localleader>a", function()
@@ -24,12 +25,12 @@ vim.utils.map("n", "DD", "<Esc>:%s//<Left>", { noremap = true, desc = "Regex del
 vim.utils.map("x", "DD", "<Esc>:'<,'>s//<Left>", { noremap = true, desc = "Regex delete (selection)" })
 
 -- Mini.Surround mapping
-vim.api.nvim_set_keymap("n", "ys", "gza", { desc = "Add surrounding" })
-vim.api.nvim_set_keymap("n", "yss", "ys_", { desc = "Add surrounding (whole row)" })
-vim.api.nvim_set_keymap("n", "yS", "ys$", { desc = "Add surround (from cursor to line-end)" })
-vim.api.nvim_set_keymap("v", "S", "ys", { desc = "Change surrounding" })
-vim.api.nvim_set_keymap("n", "ds", "gzd", { desc = "Delete surrounding" })
-vim.api.nvim_set_keymap("n", "cs", "gzc", { desc = "Change surrounding" })
+vim.api.nvim_set_keymap("", "ys", "gza", { desc = "Add surrounding" })
+vim.api.nvim_set_keymap("", "yss", "ys_", { desc = "Add surrounding (whole row)" })
+vim.api.nvim_set_keymap("", "yS", "ys$", { desc = "Add surround (from cursor to line-end)" })
+vim.api.nvim_set_keymap("v", "S", "ys", { desc = "Add surrounding" })
+vim.api.nvim_set_keymap("", "ds", "gzd", { desc = "Delete surrounding" })
+vim.api.nvim_set_keymap("", "cs", "gzc", { desc = "Change surrounding" })
 
 -- local function map_text_object(key)
 --   vim.api.nvim_set_keymap("n", "<C-i>" .. key, string.format("vi%s%si", key, vim.keycode("<Esc>")), { desc = "Prepennd after " .. key })
@@ -41,5 +42,7 @@ vim.api.nvim_set_keymap("n", "cs", "gzc", { desc = "Change surrounding" })
 
 -- vim.api.nvim_set_keymap("o", "iw", "iw", { noremap = true, desc = "Inside word" })
 -- vim.api.nvim_set_keymap("o", "aw", "aw", { noremap = true, desc = "Around word" })
+
+-- vim.utils.map("n", "<Char-00b4>", "<cmd>echo 55555  <CR>")
 
 

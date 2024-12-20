@@ -31,28 +31,34 @@ return {
           "`",
           mode = { "n", "x", "o" },
           function()
-            require("flash").jump()
+            require("flash").jump({
+
+            })
           end,
           desc = "Flash Jump",
         },
         {
-          "gt",
+          vim.g.capslock_key,
           mode = { "n", "x", "o" },
           function()
-            require("flash").treesitter()
+            require("flash").treesitter({
+
+            })
           end,
           desc = "Flash Treesitter",
         },
         {
-          "rf",
+          "r",
           mode = "o",
           function()
-            require("flash").remote()
+            require("flash").remote({
+
+            })
           end,
           desc = "Remote Flash",
         },
         {
-          "rs",
+          "R",
           mode = { "o", "x" },
           function()
             require("flash").treesitter_search()
