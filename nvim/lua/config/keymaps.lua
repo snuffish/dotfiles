@@ -1,6 +1,11 @@
 require("config.remaps")
 
-vim.utils.nvim_map('n', '<leader>yf', ':let @+ = expand("%:p")<CR>', { desc = "Yank filepath to system clipboard", noremap = true, silent = true })
+vim.utils.nvim_map(
+  "n",
+  "<leader>yf",
+  ':let @+ = expand("%:p")<CR>',
+  { desc = "Yank filepath to system clipboard", noremap = true, silent = true }
+)
 
 vim.utils.map("n", "<localleader>a", function()
   local pattern = "%s %l %r"
@@ -31,11 +36,6 @@ vim.utils.nvim_map("vx", "S", "ys", { desc = "Add surrounding" })
 vim.utils.nvim_map("", "ds", "gzd", { desc = "Delete surrounding" })
 vim.utils.nvim_map("", "cs", "gzc", { desc = "Change surrounding" })
 
-
-
-
-
-
 -- local function map_text_object(key)
 --   vim.api.nvim_set_keymap("n", "<C-i>" .. key, string.format("vi%s%si", key, vim.keycode("<Esc>")), { desc = "Prepennd after " .. key })
 --   vim.api.nvim_set_keymap("n", "<C-e>" .. key, string.format("vi%so%sa", key, vim.keycode("<Esc>")), { desc = "Apend after " .. key })
@@ -48,6 +48,3 @@ vim.utils.nvim_map("", "cs", "gzc", { desc = "Change surrounding" })
 -- vim.api.nvim_set_keymap("o", "aw", "aw", { noremap = true, desc = "Around word" })
 
 -- vim.utils.map("n", "<Char-00b4>", "<cmd>echo 55555  <CR>")
-
-
-
