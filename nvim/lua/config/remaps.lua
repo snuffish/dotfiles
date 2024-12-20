@@ -1,7 +1,12 @@
-vim.api.nvim_del_keymap("",'<leader>l')
-require("which-key").add({
-  { "<leader>ll", "<cmd>Lazy<CR>", desc = "Open Lazy"}
-})
+-- vim.api.nvim_del_keymap("",'<leader>l')
+-- require("which-key").add({
+--   { "<leader>ll", "<cmd>Lazy<CR>", desc = "Open Lazy"}
+-- })
+
+vim.utils.map("i", "<ESC>", "<nop>")
+
+vim.utils.map("n", vim.g.capslock_key, "i", { noremap = true, silent = true, desc = "Enter/Exit insert mode" })
+vim.utils.map("i", vim.g.capslock_key, "<ESC>", { noremap = true, silent = true, desc = "Enter/Exit insert mode" })
 
 vim.utils.map("n", { "<PageUp>", "<C-u>zz" }, "<C-u>zz", { desc = "Jump up 1/2-screen" })
 vim.utils.map("n", { "<PageDown>", "<C-d>zz" }, "<C-d>zz", { desc = "Jump down 1/2-screen" })
@@ -48,5 +53,4 @@ end)
 vim.utils.map("nxo", "<C-å>", function()
   vim.utils.trigger_keys("[")
 end)
-
 
