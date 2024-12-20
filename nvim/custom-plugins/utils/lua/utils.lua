@@ -20,6 +20,17 @@ M.map = function(modes, maps, action, opts)
   end
 end
 
+M.nvim_map = function(modes, maps, action, opts)
+  modes = type(modes) == "string" and M.str_to_obj(modes) or modes
+  maps = type(maps) == "string" and { maps } or maps
+
+  for _, mode in ipairs(modes) do
+    for _, map in ipairs(maps) do
+      vim.api.nvim_set_keymap(mode, map, action, opts)
+    end
+  end
+end
+
 M.trigger_keys = function(keys)
   local api = vim.api
   api.nvim_feedkeys(api.nvim_replace_termcodes(keys, true, true, true), 'm', true)

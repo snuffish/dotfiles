@@ -1,102 +1,91 @@
 return {
   {
     "neovim/nvim-lspconfig",
-    opts = function()
-      local keys = require("lazyvim.plugins.lsp.keymaps").get()
-
-      -- return {
-      --   completion = {
-      --     trigger = {
-      --       show_on_insert_on_trigger_character = false,
-      --     },
-      --   },
-      -- }
-
-      -- keys[#keys + 1] = {
-      --   "<leader>cA", false
-      -- }
-      -- keys[#keys + 1] = {
-      --   "<leader>cQ",
-      --   function()
-      --     print("HEEEEJ")
-      --   end,
-      --   -- expr = true,
-      --   desc = "MY OWN KEYMAP",
-      --   -- has = "rename",
-      -- }
-    end,
-    keys = {},
-  },
-  {
-    "hedyhli/outline.nvim",
-    lazy = true,
-    cmd = { "Outline", "OutlineOpen" },
-    keys = {
-      { "<leader>O", "<cmd>Outline<CR>", desc = "Toggle outline" },
-    },
-    opts = {},
-    config = function()
-      require("outline").setup({})
-    end,
-  },
-  {
-    "folke/noice.nvim",
-    optional = true,
+    dependencies = { "saghen/blink.cmp" },
     opts = {
-      presets = { inc_rename = true },
+      servers = {
+        lua_ls = {},
+      },
     },
+    config = function(_, opts)
+      local lspconfig = require("lspconfig")
+      for server, config in pairs(opts.servers) do
+        config.capabilities = require("blink.cmp").get_lsp_capabilities(config.capabilities)
+        lspconfig[server].setup(config)
+      end
+    end,
   },
   {
-    "hrsh7th/nvim-cmp",
-    dependencies = {
-      "hrsh7th/cmp-nvim-lsp",
-      "hrsh7th/cmp-buffer",
-      "hrsh7th/cmp-path",
-      "hrsh7th/cmp-cmdline",
-      "L3MON4D3/LuaSnip",
-      "saadparwaiz1/cmp_luasnip",
-    },
-    config = function()
-      local cmp = require("cmp")
-      -- require("custom_cmp_source") -- Load the custom source
-      cmp.setup({
-        snippet = {
-          expand = function(args)
-            require("luasnip").lsp_expand(args.body)
-          end,
+    "saghen/blink.cmp",
+    dependencies = "rafamadriz/friendly-snippets",
+    version = "v0.*",
+    opts = {
+      keymap = {
+        preset = "enter",
+        ["<PageDown>"] = { "scroll_documentation_down" },
+        ["<PageUp>"] = { "scroll_documentation_up" },
+        -- ["<Tab>"] = { "select_next" },
+        -- ["<S-Tab>"] = { "select_prev" },
+        ["<Esc>"] = { "cancel" },
+      },
+      snippets = {
+        -- Function to use when expanding LSP provided snippets
+        expand = function(snippet)
+          vim.snippet.expand(snippet)
+        end,
+        -- Function to use when checking if a snippet is active
+        active = function(filter)
+          return vim.snippet.active(filter)
+        end,
+        -- Function to use when jumping between tab stops in a snippet, where direction can be negative or positive
+        jump = function(direction)
+          vim.snippet.jump(direction)
+        end,
+      },
+      completion = {
+        menu = {
+          max_height = 10,
+          border = "padded",
+          draw = {},
         },
-        mapping = cmp.mapping.preset.insert({
-          ["<C-b>"] = cmp.mapping.scroll_docs(-4),
-          ["<C-f>"] = cmp.mapping.scroll_docs(4),
-          ["<C-Space>"] = cmp.mapping.complete(),
-          ["<C-e>"] = cmp.mapping.abort(),
-          ["<CR>"] = cmp.mapping.confirm({ select = true }),
-        }),
-        sources = cmp.config.sources({
-          { name = "nvim_lsp" },
-          { name = "luasnip" },
-          -- { name = "search_plugins" }, -- Add your custom source here
-        }, {
-          { name = "buffer" },
-        }),
-      })
-    end,
+        list = {
+          selection = "auto_insert"
+        }
+      },
+      appearance = {
+        use_nvim_cmp_as_default = true,
+        nerd_font_variant = "mono",
+      },
+      sources = {
+        default = { "lsp", "path", "snippets", "buffer" },
+      },
+    },
+    opts_extend = { "sources.default" },
   },
   {
-    "blink.cmp",
-    config = function()
-      require("blink.cmp").setup()
-      -- require("blink.cmp").setup({
-      --   completion = {
-      --     menu = {
-      --       draw = {
-      --         treesitter = {
-      --           -- Your treesitter configuration here
-      --         },
-      --       },
-      --     },
-      --   },
-      -- })
-    end,
+    "saghen/blink.cmp",
+    version = "v0.*",
+    -- !Important! Make sure you're using the latest release of LuaSnip
+    -- `main` does not work at the moment
+    dependencies = { "L3MON4D3/LuaSnip", version = "v2.*" },
+    opts = {
+      snippets = {
+        expand = function(snippet)
+          require("luasnip").lsp_expand(snippet)
+        end,
+        active = function(filter)
+          if filter and filter.direction then
+            return require("luasnip").jumpable(filter.direction)
+          end
+          return require("luasnip").in_snippet()
+        end,
+        jump = function(direction)
+          require("luasnip").jump(direction)
+        end,
+      },
+      sources = {
+        default = { "lsp", "path", "luasnip", "buffer" },
+      },
+    },
   },
 }
