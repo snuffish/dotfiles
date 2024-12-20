@@ -47,8 +47,8 @@ return {
           draw = {},
         },
         list = {
-          selection = "auto_insert"
-        }
+          selection = "auto_insert",
+        },
       },
       appearance = {
         use_nvim_cmp_as_default = true,
@@ -84,6 +84,25 @@ return {
       sources = {
         default = { "lsp", "path", "luasnip", "buffer" },
       },
+    },
+  },
+  {
+    "hedyhli/outline.nvim",
+    lazy = true,
+    cmd = { "Outline", "OutlineOpen" },
+    keys = {
+      { "<leader>O", "<cmd>Outline<CR>", desc = "Toggle outline" },
+    },
+    opts = {},
+    config = function()
+      require("outline").setup({})
+    end,
+  },
+  {
+    "folke/noice.nvim",
+    optional = true,
+    opts = {
+      presets = { inc_rename = true },
     },
   },
 }

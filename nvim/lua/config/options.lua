@@ -1,7 +1,7 @@
 local globals = {
   mapleader = " ",
   maplocalleader = "\\",
-  capslock_key = "<F12>",
+  capslock_key = "<M-C-F12>",
   have_nerd_font = true,
   auto_save = false,
   lazyvim_picker = "fzf",
@@ -11,7 +11,7 @@ local globals = {
   trouble_lualine = true,
   autoformat = false,
   loaded_perl_provider = 0,
-  loaded_python3_provider = 0
+  loaded_python3_provider = 0,
 }
 
 local options = {
