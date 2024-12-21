@@ -3,10 +3,11 @@
 --   { "<leader>ll", "<cmd>Lazy<CR>", desc = "Open Lazy"}
 -- })
 
+vim.keymap.del("x", "s")
 vim.utils.map("i", "<ESC>", "<nop>")
 
-vim.utils.map("n", vim.g.capslock_key, "i", { noremap = true, silent = true, desc = "Enter/Exit insert mode" })
-vim.utils.map("i", vim.g.capslock_key, "<ESC>", { noremap = true, silent = true, desc = "Enter/Exit insert mode" })
+vim.utils.map("n", vim.g.capslock_key, "i", { noremap = true, silent = true, desc = "Enter insert mode" })
+vim.utils.map("i", vim.g.capslock_key, "<Esc>", { noremap = true, silent = true, desc = "Exit insert mode" })
 
 vim.utils.map("n", { "<PageUp>", "<C-u>zz" }, "<C-u>zz", { desc = "Jump up 1/2-screen" })
 vim.utils.map("n", { "<PageDown>", "<C-d>zz" }, "<C-d>zz", { desc = "Jump down 1/2-screen" })

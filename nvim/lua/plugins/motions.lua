@@ -3,7 +3,7 @@ return {
   -- {
   --   "ggandor/flit.nvim",
   --   enabled = true,
- --   keys = function()
+  --   keys = function()
   --     local ret = {}
   --     for _, key in ipairs({ "f", "F", "t", "T" }) do
   --       table.insert(ret, { key, mode = { "n", "x", "o" } })
@@ -28,13 +28,13 @@ return {
     keys = {
       {
         "S",
-        mode = { "n", "o" },
-        false
+        mode = { "n", "o", "x" },
+        false,
       },
       {
         "s",
         mode = { "n", "o", "x" },
-        false
+        false,
       },
       {
         "s",
@@ -45,7 +45,7 @@ return {
               mode = "fuzzy",
               forward = true,
               wrap = false,
-              multi_window = false
+              multi_window = false,
             },
           })
         end,
@@ -60,14 +60,22 @@ return {
               mode = "fuzzy",
               forward = false,
               wrap = false,
-              multi_window = false
+              multi_window = false,
             },
           })
         end,
         desc = "Flash Jump",
       },
       {
-        "gt",
+        "<leader>fs",
+        mode = { "n", "x", "o" },
+        function()
+          require("flash").toggle()
+        end,
+        desc = "Toggle Flash Search",
+      },
+      {
+        "<localleader>ft",
         mode = { "n", "x", "o" },
         function()
           require("flash").treesitter()
