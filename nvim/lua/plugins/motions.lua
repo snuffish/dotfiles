@@ -78,7 +78,13 @@ return {
         "<localleader>ft",
         mode = { "n", "x", "o" },
         function()
-          require("flash").treesitter()
+          require("flash").treesitter({
+            search = { mode = "search", max_length = 0 },
+            label = {
+              after = { 0, 0 },
+            },
+            pattern = "^",
+          })
         end,
         desc = "Flash Treesitter",
       },
@@ -121,5 +127,22 @@ return {
         desc = "Toggle Flash Search",
       },
     },
+  },
+  {
+    "yamatsum/nvim-cursorline",
+    config = function()
+      require("nvim-cursorline").setup({
+        cursorline = {
+          enable = true,
+          timeout = 1000,
+          number = false,
+        },
+        cursorword = {
+          enable = true,
+          min_length = 1,
+          hl = { underline = true },
+        },
+      })
+    end,
   },
 }
