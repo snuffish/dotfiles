@@ -41,7 +41,3 @@ vim.utils.map("n", "DW", '"_db', { noremap = true, silent = true, desc = "Delete
 vim.utils.map("n", "DE", '"_dB', { noremap = true, silent = true, desc = "Delete WORDS backwards [exclusive] (No yanking)" })
 vim.utils.map("n", "CW", '"_T=<Space>cw', { noremap = true, silent = true, desc = "Change the rhs assignment of a declaration (No yanking)" })
 
--- Remap the ` key to m for Marks
-vim.utils.map("nxo", "m", "`", { noremap = true, silent = true })
-
-
