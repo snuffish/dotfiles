@@ -11,6 +11,7 @@ return {
     dependencies = {
       "nvim-lua/plenary.nvim",
     },
+    opts = { },
     keys = {
       { "<leader>lg", "<cmd>LazyGit<cr>", desc = "Open LazyGit" },
       { "<leader>sf", "<cmd>FzfLua git_files<CR>", desc = "Git by [F]files" },
@@ -26,6 +27,7 @@ return {
       })
     end,
     event = "BufRead",
+    opts = { },
     keys = {
       {
         "<leader>ld",

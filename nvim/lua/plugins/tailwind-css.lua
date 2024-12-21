@@ -7,13 +7,8 @@ return {
       "nvim-treesitter/nvim-treesitter",
       "neovim/nvim-lspconfig",
     },
-    opts = {},
+    opts = { },
     keys = {
-      {
-        "<localleader>t",
-        "",
-        desc = "TailwindCSS",
-      },
       {
         "<localleader>tf",
         "<cmd>TailwindConcealToggle<CR>",

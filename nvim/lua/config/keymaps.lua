@@ -1,6 +1,11 @@
 require("config.remaps")
 
-vim.api.nvim_set_keymap("n", "<leader>yf", ':let @+ = expand("%:p")<CR>', { desc = "Yank filepath to system clipboard", noremap = true, silent = true })
+vim.api.nvim_set_keymap(
+  "n",
+  "<leader>yf",
+  ':let @+ = expand("%:p")<CR>',
+  { desc = "Yank filepath to system clipboard", noremap = true, silent = true }
+)
 
 vim.utils.map("n", "<localleader>a", function()
   local pattern = "%s %l %r"
@@ -33,9 +38,19 @@ vim.api.nvim_set_keymap("", "ds", "gzd", { desc = "Delete surrounding" })
 vim.api.nvim_set_keymap("", "cs", "gzc", { desc = "Change surrounding" })
 
 -- Flash and navigation mappings
-vim.utils.map("i", { "<Tab>", "<S-Tab>" }, "<Esc>l", {  silent = true, desc = "Exit insert mode" })
-vim.utils.map("nx", "<Tab>", "<cmd>TSTextobjectGotoNextEnd @parameter.inner<CR>", { silent = true, desc = "Exit insert mode" })
-vim.utils.map("nx", "<S-Tab>", "<cmd>TSTextobjectGotoPreviousStart @parameter.inner<CR>", { silent = true, desc = "Exit insert mode" })
+vim.utils.map("i", { "<Tab>", "<S-Tab>" }, "<Esc>l", { silent = true, desc = "Exit insert mode" })
+vim.utils.map(
+  "nx",
+  "<Tab>",
+  "<cmd>TSTextobjectGotoNextEnd @parameter.inner<CR>",
+  { silent = true, desc = "Exit insert mode" }
+)
+vim.utils.map(
+  "nx",
+  "<S-Tab>",
+  "<cmd>TSTextobjectGotoPreviousStart @parameter.inner<CR>",
+  { silent = true, desc = "Exit insert mode" }
+)
 
 -- local function map_text_object(key)
 --   vim.api.nvim_set_keymap("n", "<C-i>" .. key, string.format("vi%s%si", key, vim.keycode("<Esc>")), { desc = "Prepennd after " .. key })
