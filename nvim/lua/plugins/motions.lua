@@ -26,16 +26,8 @@ return {
     event = "VeryLazy",
     opts = {},
     keys = {
-      {
-        "S",
-        mode = { "n", "o", "x" },
-        false,
-      },
-      {
-        "s",
-        mode = { "n", "o", "x" },
-        false,
-      },
+      { "S", false, mode = { "n", "o", "x" } },
+      { "s", false, mode = { "n", "o", "x" } },
       {
         "gfs",
         mode = { "n", "x", "o" },
@@ -47,6 +39,7 @@ return {
               wrap = false,
               multi_window = false,
             },
+            labels = "abcdefghijklmnopqrstuvwxyz",
           })
         end,
         desc = "Flash Jump",
@@ -62,6 +55,7 @@ return {
               wrap = false,
               multi_window = false,
             },
+            labels = "abcdefghijklmnopqrstuvwxyz",
           })
         end,
         desc = "Flash Jump",
@@ -101,30 +95,59 @@ return {
         mode = "o",
         function()
           require("flash").remote({
-            search = { mode = "search", max_length = 0 },
+            search = {
+              mode = "search",
+              max_length = 0,
+              forward = true,
+              wrap = false,
+              multi_window = false,
+            },
             label = {
               after = { 0, 0 },
             },
             pattern = "^",
+            labels = "abcdefghijklmnopqrstuvwxyz",
           })
         end,
         desc = "Remote Flash line",
       },
       {
-        "gfR",
-        mode = { "o", "x" },
+        "gfL",
+        mode = "o",
         function()
-          require("flash").treesitter_search()
+          require("flash").remote({
+            search = {
+              mode = "search",
+              max_length = 0,
+              forward = false,
+              wrap = false,
+              multi_window = false,
+            },
+            label = {
+              after = { 0, 0 },
+            },
+            pattern = "^",
+            labels = "abcdefghijklmnopqrstuvwxyz",
+          })
         end,
-        desc = "Treesitter Search",
+        desc = "Remote Flash line",
       },
       {
-        "<c-s>",
-        mode = { "c" },
+        "gft",
+        mode = { "o", "x" },
         function()
-          require("flash").toggle()
+          require("flash").treesitter_search({
+            search = {
+              mode = "search",
+              -- max_length = 0,
+              -- forward = false,
+              wrap = false,
+              multi_window = false,
+            },
+            labels = "abcdefghijklmnopqrstuvwxyz",
+          })
         end,
-        desc = "Toggle Flash Search",
+        desc = "Treesitter Search",
       },
     },
   },
