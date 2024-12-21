@@ -93,4 +93,9 @@ return {
       },
     },
   },
+  {
+    "kmonad/kmonad-vim"
+  }
 }
+
+

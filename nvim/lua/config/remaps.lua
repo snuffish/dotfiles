@@ -3,7 +3,7 @@
 --   { "<leader>ll", "<cmd>Lazy<CR>", desc = "Open Lazy"}
 -- })
 
-vim.utils.map("i", "<ESC>", "<nop>")
+-- vim.utils.map("i", "<ESC>", "<nop>")
 
 vim.utils.map("n", vim.g.capslock_key, "i", { noremap = true, silent = true, desc = "Enter insert mode" })
 vim.utils.map("i", vim.g.capslock_key, "<Esc>", { noremap = true, silent = true, desc = "Exit insert mode" })
@@ -44,12 +44,4 @@ vim.utils.map("n", "CW", '"_T=<Space>cw', { noremap = true, silent = true, desc 
 -- Remap the ` key to m for Marks
 vim.utils.map("nxo", "m", "`", { noremap = true, silent = true })
 
--- Remap goto next/prev
-vim.utils.map("nxo", "<C-´>", function()
-  vim.utils.trigger_keys("]")
-end)
-
-vim.utils.map("nxo", "<C-å>", function()
-  vim.utils.trigger_keys("[")
-end)
 
