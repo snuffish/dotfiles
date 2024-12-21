@@ -85,6 +85,41 @@ return {
         "<cmd>BufferLineCyclePrev<CR>",
         desc = "Previous Buffer",
       },
+      {
+        "<localleader>fs",
+        function()
+          vim.utils.trigger_keys("s")
+        end,
+        desc = "Flash Jump (forward)"
+      },
+      {
+        "<localleader>fS",
+        function()
+          vim.utils.trigger_keys("S")
+        end,
+        desc = "Flash Jump (backward)"
+      },
+      {
+        "<localleader>yl",
+        function()
+          vim.utils.trigger_keys("yl")
+        end,
+        desc = "Flash Yank Remote Line (upwards)"
+      },
+      {
+        "<localleader>yL",
+        function()
+          vim.utils.trigger_keys("yL")
+        end,
+        desc = "Flash Yank Remote Line (downwards)"
+      },
+      {
+        "<localleader>yt",
+        function()
+          vim.utils.trigger_keys("yt")
+        end,
+        desc = "Flash TreeSitter Yank Search"
+      },
     }
 
     for i = 1, 9 do
