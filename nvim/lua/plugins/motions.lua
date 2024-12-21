@@ -138,7 +138,7 @@ return {
         function()
           require("flash").treesitter_search({
             search = {
-              mode = "search",
+              mode = "fuzzy",
               -- max_length = 0,
               -- forward = false,
               wrap = false,
