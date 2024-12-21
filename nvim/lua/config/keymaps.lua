@@ -32,6 +32,11 @@ vim.api.nvim_set_keymap("x", "S", "ys", { desc = "Add surrounding" })
 vim.api.nvim_set_keymap("", "ds", "gzd", { desc = "Delete surrounding" })
 vim.api.nvim_set_keymap("", "cs", "gzc", { desc = "Change surrounding" })
 
+-- Flash and navigation mappings
+vim.utils.map("i", "<Tab>", "<Esc>l", { noremap = true, silent = true, desc = "Exit insert mode" })
+-- vim.utils.map("nx", "<Tab>", "<cmd>TSTextobjectGotoNextEnd @parameter.inner<CR>", { noremap = true, silent = true, desc = "Exit insert mode" })
+-- vim.utils.map("nx", "<S-Tab>", "<cmd>TSTextobjectGotoPreviousEnd @parameter.inner<CR>", { noremap = true, silent = true, desc = "Exit insert mode" })
+
 -- local function map_text_object(key)
 --   vim.api.nvim_set_keymap("n", "<C-i>" .. key, string.format("vi%s%si", key, vim.keycode("<Esc>")), { desc = "Prepennd after " .. key })
 --   vim.api.nvim_set_keymap("n", "<C-e>" .. key, string.format("vi%so%sa", key, vim.keycode("<Esc>")), { desc = "Apend after " .. key })
