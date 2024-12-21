@@ -37,7 +37,7 @@ return {
         false,
       },
       {
-        "s",
+        "gfs",
         mode = { "n", "x", "o" },
         function()
           require("flash").jump({
@@ -52,7 +52,7 @@ return {
         desc = "Flash Jump",
       },
       {
-        "S",
+        "gfS",
         mode = { "n", "x", "o" },
         function()
           require("flash").jump({
@@ -89,7 +89,7 @@ return {
         desc = "Flash Treesitter",
       },
       {
-        "r",
+        "gfr",
         mode = "o",
         function()
           require("flash").remote()
@@ -97,7 +97,7 @@ return {
         desc = "Remote Flash",
       },
       {
-        "l",
+        "gfl",
         mode = "o",
         function()
           require("flash").remote({
@@ -111,7 +111,7 @@ return {
         desc = "Remote Flash line",
       },
       {
-        "R",
+        "gfR",
         mode = { "o", "x" },
         function()
           require("flash").treesitter_search()
