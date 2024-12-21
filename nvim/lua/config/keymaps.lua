@@ -1,5 +1,7 @@
 require("config.remaps")
 
+vim.utils.map("i", {"jk", "kj"}, "<Esc>")
+
 vim.api.nvim_set_keymap(
   "n",
   "<leader>yf",
@@ -39,28 +41,12 @@ vim.api.nvim_set_keymap("", "cs", "gzc", { desc = "Change surrounding" })
 
 -- Flash and navigation mappings
 vim.utils.map("i", { "<Tab>", "<S-Tab>" }, "<Esc>l", { silent = true, desc = "Exit insert mode" })
-vim.utils.map(
-  "nx",
-  "<Tab>",
-  "<cmd>TSTextobjectGotoNextEnd @parameter.inner<CR>",
-  { silent = true, desc = "Exit insert mode" }
-)
-vim.utils.map(
-  "nx",
-  "<S-Tab>",
-  "<cmd>TSTextobjectGotoPreviousStart @parameter.inner<CR>",
-  { silent = true, desc = "Exit insert mode" }
-)
+vim.utils.map("nx", "<Tab>", "<cmd>TSTextobjectGotoNextEnd @parameter.inner<CR>", { silent = true, desc = "Exit insert mode" })
+vim.utils.map("nx", "<S-Tab>", "<cmd>TSTextobjectGotoPreviousStart @parameter.inner<CR>", { silent = true, desc = "Exit insert mode" })
 
--- local function map_text_object(key)
---   vim.api.nvim_set_keymap("n", "<C-i>" .. key, string.format("vi%s%si", key, vim.keycode("<Esc>")), { desc = "Prepennd after " .. key })
---   vim.api.nvim_set_keymap("n", "<C-e>" .. key, string.format("vi%so%sa", key, vim.keycode("<Esc>")), { desc = "Apend after " .. key })
--- end
+vim.api.nvim_set_keymap("", "s", "gfs", { desc = "Flash Jump (forward)" })
+vim.api.nvim_set_keymap("", "S", "gfS", { desc = "Flash Jump (backward)" })
+vim.api.nvim_set_keymap("", "yl", "ygfl", { desc = "Flash Yank Remote Line (upwards)" })
+vim.api.nvim_set_keymap("", "yL", "ygfL", { desc = "Flash Yank Remote Line (downwards)" })
+vim.api.nvim_set_keymap("", "yt", "ygft", { desc = "Flash TreeSitter Yank Search" })
 
--- map_text_object("q")
--- map_text_object("d")
-
--- vim.api.nvim_set_keymap("o", "iw", "iw", { noremap = true, desc = "Inside word" })
--- vim.api.nvim_set_keymap("o", "aw", "aw", { noremap = true, desc = "Around word" })
-
--- vim.utils.map("n", "<Char-00b4>", "<cmd>echo 55555  <CR>")

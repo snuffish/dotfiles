@@ -3,9 +3,7 @@
 --   { "<leader>ll", "<cmd>Lazy<CR>", desc = "Open Lazy"}
 -- })
 
-vim.keymap.del("x", "s")
 vim.utils.map("i", "<ESC>", "<nop>")
-vim.utils.map("i", {"jk", "kj"}, "<Esc>")
 
 vim.utils.map("n", vim.g.capslock_key, "i", { noremap = true, silent = true, desc = "Enter insert mode" })
 vim.utils.map("i", vim.g.capslock_key, "<Esc>", { noremap = true, silent = true, desc = "Exit insert mode" })
@@ -27,7 +25,6 @@ vim.utils.map("x", "$", "g_")
 
 vim.utils.map("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true })
 vim.utils.map("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true })
-vim.utils.map("n", "^", "g^")
 vim.utils.map("n", "0", "g0")
 
 -- Go to start or end of line easier

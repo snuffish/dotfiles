@@ -33,11 +33,11 @@ end
 
 M.trigger_keys = function(keys)
   local api = vim.api
-  api.nvim_feedkeys(api.nvim_replace_termcodes(keys, true, true, true), "m", true)
+  api.nvim_feedkeys(api.nvim_replace_termcodes(keys, true, true, true), 'm', true)
 end
 
 M.find_function_by_address = function(address)
-  for _, keymap in ipairs(vim.api.nvim_get_keymap("n")) do
+  for _, keymap in ipairs(vim.api.nvim_get_keymap('n')) do
     if keymap.callback then
       local func = keymap.callback
       if tostring(func):find(address) then
