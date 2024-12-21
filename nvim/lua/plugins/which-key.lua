@@ -24,6 +24,14 @@ return {
         "<cmd>LazyExtras<CR>",
         desc = "Open LazyExtras",
       },
+      {
+        "<localleader>f",
+        desc = "Flash",
+      },
+      {
+        "<localleader>t",
+        desc = "Tailwind",
+      },
     },
   },
 }

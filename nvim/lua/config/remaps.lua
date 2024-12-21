@@ -5,6 +5,7 @@
 
 vim.keymap.del("x", "s")
 vim.utils.map("i", "<ESC>", "<nop>")
+vim.utils.map("i", {"jk", "kj"}, "<Esc>")
 
 vim.utils.map("n", vim.g.capslock_key, "i", { noremap = true, silent = true, desc = "Enter insert mode" })
 vim.utils.map("i", vim.g.capslock_key, "<Esc>", { noremap = true, silent = true, desc = "Exit insert mode" })
