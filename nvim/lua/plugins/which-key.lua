@@ -27,10 +27,22 @@ return {
       {
         "<localleader>f",
         desc = "Flash",
+        icon = { icon = " ", color = "yellow" },
       },
       {
         "<localleader>t",
-        desc = "Tailwind",
+        desc = "TailwindCSS",
+        icon = { icon = "󱏿 ", color = "blue" },
+      },
+      {
+        "<leader>ld",
+        icon = { icon = " ", color = "blue" },
+        desc = "Open LazyDocker",
+      },
+      {
+        "<leader>lg",
+        icon = { icon = " ", color = "yellow" },
+        desc = "Open LazyGit",
       },
     },
   },
