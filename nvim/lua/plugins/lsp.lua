@@ -88,17 +88,17 @@ return {
     "blink.cmp",
     config = function()
       require("blink.cmp").setup()
-      -- require("blink.cmp").setup({
-      --   completion = {
-      --     menu = {
-      --       draw = {
-      --         treesitter = {
-      --           -- Your treesitter configuration here
-      --         },
-      --       },
-      --     },
-      --   },
-      -- })
+      require("blink.cmp").setup({
+        completion = {
+          menu = {
+            draw = {
+              treesitter = {
+                -- Your treesitter configuration here
+              },
+            },
+          },
+        },
+      })
     end,
   },
 }
