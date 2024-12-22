@@ -1,9 +1,6 @@
 require("config.remaps")
 
-
 vim.keymap.set("n", "´", "<nop>")
-
-vim.utils.map("i", {"jk", "kj"}, "<Esc>")
 
 vim.api.nvim_set_keymap(
   "n",
@@ -51,6 +48,15 @@ vim.api.nvim_set_keymap("", "yt", "ygft", { desc = "Flash TreeSitter Yank Search
 
 -- Navigation
 vim.utils.map("i", { "<Tab>", "<S-Tab>" }, "<Esc>l", { silent = true, desc = "Exit insert mode" })
-vim.utils.map("nx", "<Tab>", "<cmd>TSTextobjectGotoNextEnd @parameter.inner<CR>", { silent = true, desc = "Exit insert mode" })
-vim.utils.map("nx", "<S-Tab>", "<cmd>TSTextobjectGotoPreviousStart @parameter.inner<CR>", { silent = true, desc = "Exit insert mode" })
-
+vim.utils.map(
+  "nx",
+  "<Tab>",
+  "<cmd>TSTextobjectGotoNextEnd @parameter.inner<CR>",
+  { silent = true, desc = "Exit insert mode" }
+)
+vim.utils.map(
+  "nx",
+  "<S-Tab>",
+  "<cmd>TSTextobjectGotoPreviousStart @parameter.inner<CR>",
+  { silent = true, desc = "Exit insert mode" }
+)
