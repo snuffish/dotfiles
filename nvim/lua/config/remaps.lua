@@ -3,7 +3,7 @@
 --   { "<leader>ll", "<cmd>Lazy<CR>", desc = "Open Lazy"}
 -- })
 
--- vim.utils.map("i", "<ESC>", "<nop>")
+vim.utils.map("i", "<ESC>", "<nop>")
 
 vim.utils.map("n", vim.g.capslock_key, "i", { noremap = true, silent = true, desc = "Enter insert mode" })
 vim.utils.map("i", vim.g.capslock_key, "<Esc>", { noremap = true, silent = true, desc = "Exit insert mode" })
@@ -41,3 +41,10 @@ vim.utils.map("n", "DW", '"_db', { noremap = true, silent = true, desc = "Delete
 vim.utils.map("n", "DE", '"_dB', { noremap = true, silent = true, desc = "Delete WORDS backwards [exclusive] (No yanking)" })
 vim.utils.map("n", "CW", '"_T=<Space>cw', { noremap = true, silent = true, desc = "Change the rhs assignment of a declaration (No yanking)" })
 
+vim.keymap.del({ "n", "s" }, ">")
+-- vim.utils.map("nx", ">", "]")
+vim.api.nvim_set_keymap("n", ">", "]", { noremap = false })
+
+vim.keymap.del({ "n", "s" }, "<")
+vim.api.nvim_set_keymap("n", "<", "[", { noremap = false })
+-- vim.utils.map("nx", "<", "[")
