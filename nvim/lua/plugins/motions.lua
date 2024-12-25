@@ -175,4 +175,10 @@ return {
       highlight_duration = 250, -- How long should above highlight last (in ms)
     },
   },
+  -- {
+  --   "roobert/tabtree.nvim",
+  --   config = function()
+  --     require("tabtree").setup()
+  --   end,
+  -- },
 }
