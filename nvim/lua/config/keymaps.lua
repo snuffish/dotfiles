@@ -1,7 +1,5 @@
 require("config.remaps")
 
-vim.keymap.set("n", "´", "<nop>")
-
 vim.api.nvim_set_keymap(
   "n",
   "<leader>yf",
