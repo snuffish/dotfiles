@@ -38,25 +38,15 @@ vim.api.nvim_set_keymap("", "ds", "gzd", { desc = "Delete surrounding" })
 vim.api.nvim_set_keymap("", "cs", "gzc", { desc = "Change surrounding" })
 
 -- Flash.nvim mapping
-vim.api.nvim_set_keymap("", "s", "gfs", { desc = "Flash Jump (forward)" })
--- vim.api.nvim_set_keymap("", "S", "gfS", { desc = "Flash Jump (backward)" })
+vim.api.nvim_set_keymap("", "`", "gfs", { desc = "Flash Jump (forward)" })
+vim.api.nvim_set_keymap("", "``", "gfS", { desc = "Flash Jump (backward)" })
 vim.api.nvim_set_keymap("", "yl", "ygfL", { desc = "Flash Yank Remote Line" })
 vim.api.nvim_set_keymap("", "yt", "ygft", { desc = "Flash TreeSitter Yank Search" })
 
 -- Navigation
 vim.utils.map("i", { "<Tab>", "<S-Tab>" }, "<Esc>l", { silent = true, desc = "Exit insert mode" })
-vim.utils.map(
-  "nx",
-  "<Tab>",
-  "<cmd>TSTextobjectGotoNextEnd @parameter.inner<CR>",
-  { silent = true, desc = "Exit insert mode" }
-)
-vim.utils.map(
-  "nx",
-  "<S-Tab>",
-  "<cmd>TSTextobjectGotoPreviousStart @parameter.inner<CR>",
-  { silent = true, desc = "Exit insert mode" }
-)
+vim.utils.map("nx", "<Tab>", "<cmd>TSTextobjectGotoNextEnd @parameter.inner<CR>", { silent = true })
+vim.utils.map("nx", "<S-Tab>", "<cmd>TSTextobjectGotoPreviousStart @parameter.inner<CR>", { silent = true })
 
 -- Treewalker mappings
 vim.utils.map("nv", "<C-k>", "<cmd>Treewalker Up<cr>", { noremap = true, silent = true })
