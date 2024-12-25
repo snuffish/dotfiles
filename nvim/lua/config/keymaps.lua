@@ -61,9 +61,9 @@ vim.utils.map(
 )
 
 -- Treewalker mappings
-vim.keymap.set({ 'n', 'v' }, '<C-k>', '<cmd>Treewalker Up<cr>', { noremap = true, silent = true })
-vim.keymap.set({ 'n', 'v' }, '<C-j>', '<cmd>Treewalker Down<cr>', { noremap = true, silent = true })
-vim.keymap.set({ 'n', 'v' }, '<C-l>', '<cmd>Treewalker Right<cr>', { noremap = true, silent = true })
-vim.keymap.set({ 'n', 'v' }, '<C-h>', '<cmd>Treewalker Left<cr>', { noremap = true, silent = true })
-vim.keymap.set('n', '<C-S-j>', '<cmd>Treewalker SwapDown<cr>', { noremap = true, silent = true })
-vim.keymap.set('n', '<C-S-k>', '<cmd>Treewalker SwapUp<cr>', { noremap = true, silent = true })
+vim.utils.map("nv", "<C-k>", "<cmd>Treewalker Up<cr>", { noremap = true, silent = true })
+vim.utils.map("nv", "<C-j>", "<cmd>Treewalker Down<cr>", { noremap = true, silent = true })
+vim.utils.map("nv", "<C-l>", "<cmd>Treewalker Right<cr>", { noremap = true, silent = true })
+vim.utils.map("nv", "<C-h>", "<cmd>Treewalker Left<cr>", { noremap = true, silent = true })
+-- vim.keymap.set('n', '<C-S-j>', '<cmd>Treewalker SwapDown<cr>', { noremap = true, silent = true })
+-- vim.keymap.set('n', '<C-S-k>', '<cmd>Treewalker SwapUp<cr>', { noremap = true, silent = true })

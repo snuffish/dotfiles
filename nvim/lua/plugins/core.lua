@@ -100,42 +100,49 @@ return {
     "max397574/better-escape.nvim",
     config = function()
       require("better_escape").setup({
-    timeout = vim.o.timeoutlen,
-    default_mappings = true,
-    mappings = {
-        i = {
+        timeout = vim.o.timeoutlen,
+        default_mappings = true,
+        mappings = {
+          i = {
             j = {
-                k = "<Esc>",
-                j = "<Esc>",
+              k = "<Esc>",
+              j = "<Esc>",
             },
             k = {
-                k = "<Esc>",
-                j = "<Esc>",
+              k = "<Esc>",
+              j = "<Esc>",
             },
-        },
-        c = {
+          },
+          c = {
             j = {
-                k = "<Esc>",
-                j = "<Esc>",
+              k = "<Esc>",
+              j = "<Esc>",
             },
-        },
-        t = {
+          },
+          t = {
             j = {
-                k = "<C-\\><C-n>",
+              k = "<C-\\><C-n>",
             },
-        },
-        v = {
+          },
+          v = {
             j = {
-                k = "<Esc>",
+              k = "<Esc>",
             },
-        },
-        s = {
+          },
+          s = {
             j = {
-                k = "<Esc>",
+              k = "<Esc>",
             },
+          },
         },
-    },
-})
+      })
     end,
+  },
+  {
+    "aaronik/treewalker.nvim",
+    opts = {
+      highlight = true, -- Whether to briefly highlight the node after jumping to it
+      highlight_duration = 250, -- How long should above highlight last (in ms)
+    },
   },
 }
