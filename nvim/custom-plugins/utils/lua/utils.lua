@@ -1,6 +1,6 @@
 local M = {}
 
-M.str_to_obj = function(modes)
+local str_to_obj = function(modes)
   local obj = {}
   for i = 1, modes:len() do
     obj[i] = modes:sub(i, i)
@@ -10,7 +10,7 @@ M.str_to_obj = function(modes)
 end
 
 M.map = function(modes, maps, action, opts)
-  modes = type(modes) == "string" and M.str_to_obj(modes) or modes
+  modes = type(modes) == "string" and str_to_obj(modes) or modes
   maps = type(maps) == "string" and { maps } or maps
 
   for _, mode in ipairs(modes) do
@@ -21,7 +21,7 @@ M.map = function(modes, maps, action, opts)
 end
 
 M.nvim_map = function(modes, maps, action, opts)
-  modes = type(modes) == "string" and M.str_to_obj(modes) or modes
+  modes = type(modes) == "string" and str_to_obj(modes) or modes
   maps = type(maps) == "string" and { maps } or maps
 
   for _, mode in ipairs(modes) do
@@ -34,6 +34,12 @@ end
 M.trigger_keys = function(keys)
   local api = vim.api
   api.nvim_feedkeys(api.nvim_replace_termcodes(keys, true, true, true), 'm', true)
+end
+
+M.trigger_keys_fn = function(keys)
+  return function()
+    M.trigger_keys(keys)
+  end
 end
 
 M.find_function_by_address = function(address)
