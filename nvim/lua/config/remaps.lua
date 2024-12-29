@@ -1,8 +1,3 @@
--- vim.api.nvim_del_keymap("",'<leader>l')
--- require("which-key").add({
---   { "<leader>ll", "<cmd>Lazy<CR>", desc = "Open Lazy"}
--- })
-
 -- vim.utils.map("i", "<ESC>", "<nop>")
 
 -- Remap q to Q to prevent accidently pressing the recording key
@@ -11,8 +6,6 @@ vim.utils.map("n", "Q", "q", { noremap = true, silent = true })
 
 vim.utils.map("n", vim.g.capslock_key, "i", { noremap = true, silent = true, desc = "Enter insert mode" })
 vim.utils.map("i", vim.g.capslock_key, "<Esc>", { noremap = true, silent = true, desc = "Exit insert mode" })
-
-vim.utils.map("nvx", "m", "%")
 
 vim.utils.map("n", { "<PageUp>", "<C-u>zz" }, "<C-u>zz", { desc = "Jump up 1/2-screen" })
 vim.utils.map("n", { "<PageDown>", "<C-d>zz" }, "<C-d>zz", { desc = "Jump down 1/2-screen" })
@@ -76,6 +69,9 @@ vim.utils.map(
   { noremap = true, silent = true, desc = "Change the rhs assignment of a declaration (No yanking)" }
 )
 
+vim.utils.map("nvx", "m", "%")
+vim.utils.map("nvx", "M", vim.utils.trigger_keys_fn("]%"))
+
 vim.keymap.del({ "n", "s" }, ">")
 -- vim.utils.map("nx", ">", "]")
 vim.api.nvim_set_keymap("n", ">", "]", { noremap = false })
@@ -83,3 +79,6 @@ vim.api.nvim_set_keymap("n", ">", "]", { noremap = false })
 vim.keymap.del({ "n", "s" }, "<")
 vim.api.nvim_set_keymap("n", "<", "[", { noremap = false })
 -- vim.utils.map("nx", "<", "[")
+
+vim.utils.map("n", ">>", "][")
+vim.utils.map("n", "<<", "[]")
