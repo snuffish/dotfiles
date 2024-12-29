@@ -4,6 +4,8 @@
 vim.utils.map("n", "q", "<nop>", { noremap = true, silent = true })
 vim.utils.map("n", "Q", "q", { noremap = true, silent = true })
 
+vim.utils.map("oxn", { "m", "M" }, "%", { noremap = true, silent = true })
+
 vim.utils.map("n", vim.g.capslock_key, "i", { noremap = true, silent = true, desc = "Enter insert mode" })
 vim.utils.map("i", vim.g.capslock_key, "<Esc>", { noremap = true, silent = true, desc = "Exit insert mode" })
 
@@ -30,8 +32,8 @@ vim.utils.map("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true })
 vim.utils.map("n", "0", "g0")
 
 -- Amplify jk
-vim.utils.map("nx", "J", "5jzz")
-vim.utils.map("nx", "K", "5kzz")
+vim.utils.map("nx", "J", "6jzz")
+vim.utils.map("nx", "K", "6kzz")
 
 -- Go to start or end of line easier
 vim.utils.map("nx", "H", "g^")
@@ -69,15 +71,12 @@ vim.utils.map(
   { noremap = true, silent = true, desc = "Change the rhs assignment of a declaration (No yanking)" }
 )
 
-vim.utils.map("nvx", "m", "%")
-vim.utils.map("nvx", "M", vim.utils.trigger_keys_fn("]%"))
-
 vim.keymap.del({ "n", "s" }, ">")
 -- vim.utils.map("nx", ">", "]")
-vim.api.nvim_set_keymap("n", ">", "]", { noremap = false })
+vim.api.nvim_set_keymap("", ">", "]", { noremap = false })
 
 vim.keymap.del({ "n", "s" }, "<")
-vim.api.nvim_set_keymap("n", "<", "[", { noremap = false })
+vim.api.nvim_set_keymap("", "<", "[", { noremap = false })
 -- vim.utils.map("nx", "<", "[")
 
 vim.utils.map("n", ">>", "][")

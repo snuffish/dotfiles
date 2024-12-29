@@ -13,7 +13,12 @@ vim.utils.map("n", "<localleader>a", function()
 end, { desc = "Toggle `Absolute linenumbers`" })
 
 vim.utils.map("n", "<leader>a", "ggVG", { desc = "Select all text", silent = true })
-vim.utils.map("n", "<A-Up><A-Up>", vim.utils.trigger_keys_fn(":<Up>"), { desc = "Previous command", noremap = true, silent = true })
+vim.utils.map(
+  "n",
+  "<A-Up><A-Up>",
+  vim.utils.trigger_keys_fn(":<Up>"),
+  { desc = "Previous command", noremap = true, silent = true }
+)
 vim.utils.map("x", { "/", "g/" }, "<esc>/\\%V", { silent = false, desc = "Search Inside Visual Selection (backward)" })
 vim.utils.map("x", { "?", "g?" }, "<esc>?\\%V", { silent = false, desc = "Search Inside Visual Selection (forward)" })
 
@@ -50,9 +55,16 @@ vim.utils.map("nx", "<Tab>", "<cmd>TSTextobjectGotoNextEnd @parameter.inner<CR>"
 vim.utils.map("nx", "<S-Tab>", "<cmd>TSTextobjectGotoPreviousStart @parameter.inner<CR>", { silent = true })
 
 -- Treewalker mappings
-vim.utils.map("nv", "<C-k>", "<cmd>Treewalker Up<cr>", { noremap = true, silent = true })
-vim.utils.map("nv", "<C-j>", "<cmd>Treewalker Down<cr>", { noremap = true, silent = true })
-vim.utils.map("nv", "<C-l>", "<cmd>Treewalker Right<cr>", { noremap = true, silent = true })
-vim.utils.map("nv", "<C-h>", "<cmd>Treewalker Left<cr>", { noremap = true, silent = true })
+local treewalker = function(direction)
+  return function()
+    vim.cmd("Treewalker " .. direction)
+    vim.utils.trigger_keys("zz")
+  end
+end
+
+vim.utils.map("nv", "<C-k>", treewalker("Up"), { noremap = true, silent = true })
+vim.utils.map("nv", "<C-j>", treewalker("Down"), { noremap = true, silent = true })
+vim.utils.map("nv", "<C-l>", treewalker("Right"), { noremap = true, silent = true })
+vim.utils.map("nv", "<C-h>", treewalker("Left"), { noremap = true, silent = true })
 -- vim.keymap.set('n', '<C-S-j>', '<cmd>Treewalker SwapDown<cr>', { noremap = true, silent = true })
 -- vim.keymap.set('n', '<C-S-k>', '<cmd>Treewalker SwapUp<cr>', { noremap = true, silent = true })
