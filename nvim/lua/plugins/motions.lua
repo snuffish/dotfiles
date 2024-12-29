@@ -176,12 +176,6 @@ return {
     },
   },
   -- {
-  --   "nvim-treesitter/nvim-treesitter-textobjects",
-  --   config = function(_, opts)
-  --     require("nvim-treesitter.configs").setup { textobjects = opts }
-  --   end
-  -- }
-  -- {
   --   "roobert/tabtree.nvim",
   --   config = function()
   --     require("tabtree").setup()
