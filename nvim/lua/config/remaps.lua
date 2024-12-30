@@ -1,8 +1,8 @@
 -- vim.utils.map("i", "<ESC>", "<nop>")
 
-vim.utils.map("n", "<leader>l", "<nop>")
+vim.utils.map("n", "<leader>l", "<nop>", { silent = true })
 
-vim.utils.map("nvxo", ",", vim.utils.trigger_keys_fn("<localleader>"))
+vim.utils.map("nvxo", ",", vim.utils.trigger_keys_fn("<localleader>"), { nowait = true })
 
 -- Remap q to Q to prevent accidently pressing the recording key
 vim.utils.map("n", "q", "<nop>", { noremap = true, silent = true })
@@ -16,8 +16,8 @@ vim.utils.map("iv", vim.g.capslock_key, "<Esc>", { noremap = true, silent = true
 vim.utils.map("n", { "<PageUp>", "<C-u>zz" }, "<C-u>zz", { desc = "Jump up 1/2-screen" })
 vim.utils.map("n", { "<PageDown>", "<C-d>zz" }, "<C-d>zz", { desc = "Jump down 1/2-screen" })
 
-vim.utils.map("n", "{", "{zz")
-vim.utils.map("n", "}", "}zz")
+vim.utils.map("nvx", { "{", "<<" }, "{zz")
+vim.utils.map("nvx", { "{", ">>" }, "}zz")
 
 vim.utils.map("n", "n", "nzzzv", { desc = "Next search result (centered)" })
 vim.utils.map("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
@@ -83,5 +83,5 @@ vim.keymap.del({ "n", "s" }, "<")
 vim.api.nvim_set_keymap("", "<", "[", { noremap = false })
 -- vim.utils.map("nx", "<", "[")
 
-vim.utils.map("n", ">>", "][")
-vim.utils.map("n", "<<", "[]")
+-- vim.utils.map("n" ">>", "}")
+-- vim.utils.map("n", "<<", "{")

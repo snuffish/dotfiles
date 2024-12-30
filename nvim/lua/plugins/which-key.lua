@@ -12,6 +12,7 @@ return {
       -- },
       {
         "<leader>l",
+        "",
         desc = "Lazy",
       },
       {
