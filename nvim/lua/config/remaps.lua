@@ -10,14 +10,14 @@ vim.utils.map("n", "Q", "q", { noremap = true, silent = true })
 
 vim.utils.map("oxn", { "m", "M" }, "%", { noremap = true, silent = true })
 
-vim.utils.map("n", vim.g.capslock_key, "i", { noremap = true, silent = true, desc = "Enter insert mode" })
+vim.utils.map("n", vim.g.capslock_key .. vim.g.capslock_key, "i", { noremap = true, silent = true, desc = "Enter insert mode" })
 vim.utils.map("iv", vim.g.capslock_key, "<Esc>", { noremap = true, silent = true, desc = "Exit insert mode" })
 
 vim.utils.map("n", { "<PageUp>", "<C-u>zz" }, "<C-u>zz", { desc = "Jump up 1/2-screen" })
 vim.utils.map("n", { "<PageDown>", "<C-d>zz" }, "<C-d>zz", { desc = "Jump down 1/2-screen" })
 
 vim.utils.map("nvx", { "{", "<<" }, "{zz")
-vim.utils.map("nvx", { "{", ">>" }, "}zz")
+vim.utils.map("nvx", { "}", ">>" }, "}zz")
 
 vim.utils.map("n", "n", "nzzzv", { desc = "Next search result (centered)" })
 vim.utils.map("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
