@@ -5,9 +5,10 @@ return {
       local keys = require("lazyvim.plugins.lsp.keymaps").get()
 
       keys[#keys + 1] = {
-        "K", false
+        "K",
+        false,
       }
- 
+
       -- return {
       --   completion = {
       --     trigger = {
@@ -59,10 +60,11 @@ return {
       "hrsh7th/cmp-cmdline",
       "L3MON4D3/LuaSnip",
       "saadparwaiz1/cmp_luasnip",
+      "DasGandlaf/nvim-autohotkey",
     },
     config = function()
       local cmp = require("cmp")
-      -- require("custom_cmp_source") -- Load the custom source
+
       cmp.setup({
         snippet = {
           expand = function(args)
@@ -81,7 +83,7 @@ return {
         sources = cmp.config.sources({
           { name = "nvim_lsp" },
           { name = "luasnip" },
-          -- { name = "search_plugins" }, -- Add your custom source here
+          { name = "autohotkey" },
         }, {
           { name = "buffer" },
         }),
