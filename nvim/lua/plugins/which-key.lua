@@ -6,42 +6,49 @@ return {
   end,
   opts = {
     spec = {
-      {
-        "J",
-        desc = "Join lines",
-      },
+      -- {
+      --   "J",
+      --   desc = "Join lines",
+      -- },
       {
         "<leader>l",
         desc = "Lazy",
       },
       {
-        "<leader>lx",
-        "<cmd>LazyExtras<CR>",
-        desc = "Lazy Extras",
+        "<leader>ll",
+        "<cmd>Lazy<CR>",
+        desc = "Open Lazy",
       },
       {
-        "<leader>ll",
+        "<leader>lx",
         "<cmd>LazyExtras<CR>",
+        icon = { icon = "" },
         desc = "Open LazyExtras",
+      },
+      {
+        "<leader>lm",
+        "<cmd>Mason<CR>",
+        desc = "Open Mason",
+        icon = { icon = "", color = "#FF9856" }
       },
       {
         "<localleader>f",
         desc = "Flash",
-        icon = { icon = " ", color = "yellow" },
+        icon = { icon = "", color = "yellow" },
       },
       {
         "<localleader>t",
         desc = "TailwindCSS",
-        icon = { icon = "󱏿 ", color = "blue" },
+        icon = { icon = "󱏿", color = "blue" },
       },
       {
         "<leader>ld",
-        icon = { icon = " ", color = "blue" },
+        icon = { icon = "", color = "blue" },
         desc = "Open LazyDocker",
       },
       {
         "<leader>lg",
-        icon = { icon = " ", color = "yellow" },
+        icon = { icon = "", color = "yellow" },
         desc = "Open LazyGit",
       },
     },

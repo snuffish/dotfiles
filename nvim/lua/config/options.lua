@@ -1,7 +1,7 @@
 local globals = {
   mapleader = " ",
+  capslock_key = "<M-C-F5>",
   maplocalleader = "\\",
-  capslock_key = "<M-C-F12>",
   have_nerd_font = true,
   auto_save = false,
   lazyvim_picker = "fzf",

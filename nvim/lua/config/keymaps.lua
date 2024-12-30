@@ -46,7 +46,8 @@ vim.api.nvim_set_keymap("", "cs", "gzc", { desc = "Change surrounding" })
 -- Flash.nvim mapping
 vim.api.nvim_set_keymap("", "`", "gfs", { desc = "Flash Jump (forward)" })
 vim.api.nvim_set_keymap("", "``", "gfS", { desc = "Flash Jump (backward)" })
-vim.api.nvim_set_keymap("", "yl", "ygfL", { desc = "Flash Yank Remote Line" })
+vim.api.nvim_set_keymap("", "yl", "ygfL", { desc = "Flash Yank Remote Line (upwards)" })
+vim.api.nvim_set_keymap("", "yL", "ygfl", { desc = "Flash Yank Remote Line (downwards)" })
 vim.api.nvim_set_keymap("", "yt", "ygft", { desc = "Flash TreeSitter Yank Search" })
 
 -- Navigation

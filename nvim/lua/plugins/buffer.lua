@@ -10,6 +10,26 @@ return {
         desc = "Buffer",
       },
       {
+        "<localleader>s",
+        "",
+        desc = "Surround",
+      },
+      {
+        "<localleader>sa",
+        "gza",
+        desc = "Add surrounding",
+      },
+      {
+        "<localleader>sd",
+        "gzd",
+        desc = "Delete surrounding",
+      },
+      {
+        "<localleader>sc",
+        "gzc",
+        desc = "Change surrounding",
+      },
+      {
         "<localleader>q",
         function()
           vim.utils.trigger_keys("<leader>bd")
@@ -71,6 +91,13 @@ return {
         desc = "Create new Buffer",
       },
       {
+        "<localleader>d",
+        function()
+          vim.utils.trigger_keys("<leader>ud")
+        end,
+        desc = "Toggle Diagnostics",
+      },
+      {
         ",n",
         "<cmd>enew<CR>",
         desc = "Create new Buffer",
@@ -90,35 +117,35 @@ return {
         function()
           vim.utils.trigger_keys("s")
         end,
-        desc = "Flash Jump (forward)"
+        desc = "Flash Jump (forward)",
       },
       {
         "<localleader>fS",
         function()
           vim.utils.trigger_keys("S")
         end,
-        desc = "Flash Jump (backward)"
+        desc = "Flash Jump (backward)",
       },
       {
         "<localleader>yl",
         function()
           vim.utils.trigger_keys("yl")
         end,
-        desc = "Flash Yank Remote Line (upwards)"
+        desc = "Flash Yank Remote Line (upwards)",
       },
       {
         "<localleader>yL",
         function()
           vim.utils.trigger_keys("yL")
         end,
-        desc = "Flash Yank Remote Line (downwards)"
+        desc = "Flash Yank Remote Line (downwards)",
       },
       {
         "<localleader>yt",
         function()
           vim.utils.trigger_keys("yt")
         end,
-        desc = "Flash TreeSitter Yank Search"
+        desc = "Flash TreeSitter Yank Search",
       },
     }
 

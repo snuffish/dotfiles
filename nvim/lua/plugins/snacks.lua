@@ -78,8 +78,6 @@ return {
         },
         on_open = function(win)
           require("snacks.indent").disable()
-          -- vim.cmd("normal! zM")
-
           _G.ZenMode = { enabled = true }
         end,
         on_close = function(win)
