@@ -1,5 +1,9 @@
 -- vim.utils.map("i", "<ESC>", "<nop>")
 
+vim.utils.map("n", "<leader>l", "<nop>")
+
+vim.utils.map("nvxo", ",", vim.utils.trigger_keys_fn("<localleader>"))
+
 -- Remap q to Q to prevent accidently pressing the recording key
 vim.utils.map("n", "q", "<nop>", { noremap = true, silent = true })
 vim.utils.map("n", "Q", "q", { noremap = true, silent = true })
@@ -7,7 +11,7 @@ vim.utils.map("n", "Q", "q", { noremap = true, silent = true })
 vim.utils.map("oxn", { "m", "M" }, "%", { noremap = true, silent = true })
 
 vim.utils.map("n", vim.g.capslock_key, "i", { noremap = true, silent = true, desc = "Enter insert mode" })
-vim.utils.map("i", vim.g.capslock_key, "<Esc>", { noremap = true, silent = true, desc = "Exit insert mode" })
+vim.utils.map("iv", vim.g.capslock_key, "<Esc>", { noremap = true, silent = true, desc = "Exit insert mode" })
 
 vim.utils.map("n", { "<PageUp>", "<C-u>zz" }, "<C-u>zz", { desc = "Jump up 1/2-screen" })
 vim.utils.map("n", { "<PageDown>", "<C-d>zz" }, "<C-d>zz", { desc = "Jump down 1/2-screen" })
@@ -32,8 +36,8 @@ vim.utils.map("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true })
 vim.utils.map("n", "0", "g0")
 
 -- Amplify jk
-vim.utils.map("nx", "J", "6jzz")
-vim.utils.map("nx", "K", "6kzz")
+vim.utils.map("nx", "J", "5jzz")
+vim.utils.map("nx", "K", "5kzz")
 
 -- Go to start or end of line easier
 vim.utils.map("nx", "H", "g^")
