@@ -6,13 +6,9 @@ return {
   end,
   opts = {
     spec = {
-      -- {
-      --   "J",
-      --   desc = "Join lines",
-      -- },
       {
         "<leader>l",
-        "",
+        function() end,
         desc = "Lazy",
       },
       {
