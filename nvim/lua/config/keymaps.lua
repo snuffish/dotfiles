@@ -56,16 +56,27 @@ vim.utils.map("nx", "<Tab>", "<cmd>TSTextobjectGotoNextEnd @parameter.inner<CR>"
 vim.utils.map("nx", "<S-Tab>", "<cmd>TSTextobjectGotoPreviousStart @parameter.inner<CR>", { silent = true })
 
 -- Treewalker mappings
-local treewalker = function(direction)
+local Direction = {
+  UP = "Up",
+  DOWN = "Down",
+  RIGHT = "Right",
+  LEFT = "Left",
+}
+
+local function treewalker(direction)
   return function()
     vim.cmd("Treewalker " .. direction)
     vim.utils.trigger_keys("zz")
   end
 end
 
-vim.utils.map("nv", "<C-k>", treewalker("Up"), { noremap = true, silent = true })
-vim.utils.map("nv", "<C-j>", treewalker("Down"), { noremap = true, silent = true })
-vim.utils.map("nv", "<C-l>", treewalker("Right"), { noremap = true, silent = true })
-vim.utils.map("nv", "<C-h>", treewalker("Left"), { noremap = true, silent = true })
--- vim.keymap.set('n', '<C-S-j>', '<cmd>Treewalker SwapDown<cr>', { noremap = true, silent = true })
--- vim.keymap.set('n', '<C-S-k>', '<cmd>Treewalker SwapUp<cr>', { noremap = true, silent = true })
+local mappings = {
+  ["<C-k>"] = Direction.UP,
+  ["<C-j>"] = Direction.DOWN,
+  ["<C-l>"] = Direction.RIGHT,
+  ["<C-h>"] = Direction.LEFT,
+}
+
+for key, direction in pairs(mappings) do
+  vim.utils.map("nv", key, treewalker(direction), { noremap = true, silent = true })
+end
