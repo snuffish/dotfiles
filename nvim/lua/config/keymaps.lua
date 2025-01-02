@@ -37,6 +37,7 @@ vim.utils.map("x", "DD", "<Esc>:'<,'>s//<Left>", { noremap = true, desc = "Regex
 
 -- Mini.Surround mapping
 vim.api.nvim_set_keymap("", ";;", ";a_", { desc = "Add row surrounding" })
+vim.api.nvim_set_keymap("v", ";;", ";a", { desc = "Add surrounding" })
 
 -- Flash.nvim mapping
 local flash_line = function(forward)
