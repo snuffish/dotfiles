@@ -4,9 +4,6 @@ local treesitter = gen_spec.treesitter
 return {
   {
     "echasnovski/mini.surround",
-    dependencies = {
-      "folke/flash.nvim",
-    },
     opts = {
       mappings = {
         add = ";a",
@@ -24,7 +21,6 @@ return {
     {
       "folke/flash.nvim",
       opts = {
-        val = 120,
         modes = {
           char = {
             keys = { "f", "F", "t", "T" },
