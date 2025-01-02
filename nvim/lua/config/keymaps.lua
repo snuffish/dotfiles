@@ -35,6 +35,7 @@ vim.utils.map("n", "DD", "<Esc>:%s//<Left>", { noremap = true, desc = "Regex del
 vim.utils.map("x", "DD", "<Esc>:'<,'>s//<Left>", { noremap = true, desc = "Regex delete (selection)" })
 
 -- Mini.Surround mapping
+vim.api.nvim_set_keymap("", ";;", ";a_", { desc = "Add row surrounding" })
 -- vim.api.nvim_set_keymap("", "ys", "gza", { desc = "Add surrounding" })
 -- vim.api.nvim_set_keymap("", "yss", "ys_", { desc = "Add surrounding (whole row)" })
 -- vim.api.nvim_set_keymap("", "yS", "ys$", { desc = "Add surround (from cursor to line-end)" })
