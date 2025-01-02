@@ -1,7 +1,7 @@
 vim.keymap.del("n", "<leader>l")
 -- vim.utils.map("n", "<leader>l", "<nop>", { silent = true })
 
-vim.utils.map("nvxo", ",", vim.utils.trigger_keys_fn("<localleader>"), { nowait = true })
+-- vim.utils.map("nvxo", ",", vim.utils.trigger_keys_fn("<localleader>"), { nowait = true ,noremap = true})
 
 -- Remap q to Q to prevent accidently pressing the recording key
 vim.utils.map("n", "q", "<nop>", { noremap = true, silent = true })
@@ -10,12 +10,12 @@ vim.utils.map("n", "Q", "q", { noremap = true, silent = true })
 vim.utils.map("oxn", { "m", "M" }, "%", { noremap = true, silent = true })
 
 vim.utils.map("i", "<ESC>", "<nop>")
-vim.utils.map(
-  "n",
-  string.rep(vim.g.capslock_key, 2),
-  "i",
-  { noremap = true, silent = true, desc = "Enter insert mode" }
-)
+-- vim.utils.map(
+--   "n",
+--   string.rep(vim.g.capslock_key, 2),
+--   "i",
+--   { noremap = true, silent = true, desc = "Enter insert mode" }
+-- )
 vim.utils.map("iv", vim.g.capslock_key, "<Esc>", { noremap = true, silent = true, desc = "Exit insert mode" })
 
 vim.utils.map("n", { "<PageUp>", "<C-u>zz" }, "<C-u>zz", { desc = "Jump up 1/2-screen" })
@@ -46,9 +46,14 @@ vim.utils.map("nx", "H", "g^")
 vim.utils.map("nx", "L", "g_")
 
 -- Delete without yanking
+vim.utils.map("n", "xp", "xp")
+vim.utils.map("n", "XP", "xp")
 vim.utils.map("n", "x", '"_x', { noremap = true, silent = true, desc = "Delete char (No yanking)" })
 vim.utils.map("n", "X", '"_X', { noremap = true, silent = true, desc = "Delete char (No yanking)" })
 vim.utils.map("n", "cc", '"_cc', { noremap = true, silent = true, desc = "Change line (No yanking)" })
+
+vim.utils.map("i", ";;", "<C-o>", { desc = "Normal mode single operation" })
+
 vim.utils.map(
   "n",
   "d0",
@@ -77,10 +82,12 @@ vim.utils.map(
   { noremap = true, silent = true, desc = "Change the rhs assignment of a declaration (No yanking)" }
 )
 
-vim.keymap.del({ "n", "s" }, ">")
-vim.api.nvim_set_keymap("", ">", "]", { noremap = false })
-vim.utils.map("nvx", { "}", ">>" }, "}zz")
-
-vim.keymap.del({ "n", "s" }, "<")
-vim.api.nvim_set_keymap("", "<", "[", { noremap = false })
-vim.utils.map("nvx", { "{", "<<" }, "{zz")
+-- vim.keymap.del({ "n", "s" }, ">")
+-- vim.api.nvim_set_keymap("", ">", "]", { noremap = false })
+-- vim.utils.map("nvx", { "}", ">>" }, "}zz")
+--
+-- vim.keymap.del({ "n", "s" }, "<")
+-- vim.api.nvim_set_keymap("", "<", "[", { noremap = false })
+-- vim.utils.map("nvx", { "{", "<<" }, "{zz")
+--
+-- vim.utils.map("nvx", "<C-n>", vim.utils.trigger_keys_fn("g*"))
