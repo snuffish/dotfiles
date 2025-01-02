@@ -36,20 +36,28 @@ vim.utils.map("x", "DD", "<Esc>:'<,'>s//<Left>", { noremap = true, desc = "Regex
 
 -- Mini.Surround mapping
 vim.api.nvim_set_keymap("", ";;", ";a_", { desc = "Add row surrounding" })
--- vim.api.nvim_set_keymap("", "ys", "gza", { desc = "Add surrounding" })
--- vim.api.nvim_set_keymap("", "yss", "ys_", { desc = "Add surrounding (whole row)" })
--- vim.api.nvim_set_keymap("", "yS", "ys$", { desc = "Add surround (from cursor to line-end)" })
--- vim.api.nvim_set_keymap("v", "S", "ys", { desc = "Add surrounding" })
--- vim.api.nvim_set_keymap("x", "S", "ys", { desc = "Add surrounding" })
--- vim.api.nvim_set_keymap("", "ds", "gzd", { desc = "Delete surrounding" })
--- vim.api.nvim_set_keymap("", "cs", "gzc", { desc = "Change surrounding" })
 
 -- Flash.nvim mapping
--- vim.api.nvim_set_keymap("", "`", "gfs", { desc = "Flash Jump (forward)" })
--- vim.api.nvim_set_keymap("", "``", "gfS", { desc = "Flash Jump (backward)" })
--- vim.api.nvim_set_keymap("", "yl", "ygfL", { desc = "Flash Yank Remote Line (upwards)" })
--- vim.api.nvim_set_keymap("", "yL", "ygfl", { desc = "Flash Yank Remote Line (downwards)" })
--- vim.api.nvim_set_keymap("", "yt", "ygft", { desc = "Flash TreeSitter Yank Search" })
+local flash_line = function(forward)
+  return function()
+    require("flash").remote({
+      search = {
+        mode = "search",
+        max_length = 0,
+        forward = forward,
+        wrap = false,
+        multi_window = false,
+      },
+      label = {
+        after = { 0, 0 },
+      },
+      pattern = "^",
+      labels = "abcdefghijklmnopqrstuvwxyz",
+    })
+  end
+end
+vim.utils.map("o", "l", flash_line(true))
+vim.utils.map("o", "L", flash_line(false))
 
 -- Navigation
 vim.utils.map("i", { "<Tab>", "<S-Tab>" }, "<Esc>l", { silent = true, desc = "Exit insert mode" })
