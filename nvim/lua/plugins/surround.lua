@@ -18,13 +18,13 @@ return {
         ["B"] = { input = { { "%b{}" }, "^.().*().$" }, output = { left = "{", right = "}" } },
       },
     },
-    {
-      "folke/flash.nvim",
-      opts = {
-        modes = {
-          char = {
-            keys = { "f", "F", "t", "T" },
-          },
+  },
+  {
+    "folke/flash.nvim",
+    opts = {
+      modes = {
+        char = {
+          keys = { "f", "F", "t", "T" },
         },
       },
     },
