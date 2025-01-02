@@ -1,4 +1,5 @@
 require("config.remaps")
+require("config.dap")
 
 vim.api.nvim_set_keymap(
   "n",
@@ -56,8 +57,8 @@ local flash_line = function(forward)
     })
   end
 end
-vim.utils.map("o", "l", flash_line(true))
-vim.utils.map("o", "L", flash_line(false))
+vim.utils.map("o", "l", flash_line(false))
+vim.utils.map("o", "L", flash_line(true))
 
 -- Navigation
 vim.utils.map("i", { "<Tab>", "<S-Tab>" }, "<Esc>l", { silent = true, desc = "Exit insert mode" })
@@ -89,6 +90,16 @@ local mappings = {
 for key, direction in pairs(mappings) do
   vim.utils.map("nv", key, treewalker(direction), { noremap = true, silent = true })
 end
+
+-- Window navigation
+vim.utils.map("n", "<C-M-H>", "<C-w>h", { silent = true })
+vim.utils.map("n", "<C-M-J>", "<C-w>j", { silent = true })
+vim.utils.map("n", "<C-M-K>", "<C-w>k", { silent = true })
+vim.utils.map("n", "<C-M-L>", "<C-w>l", { silent = true })
+
+-- Tab navigation
+vim.utils.map("n", "<Tab>l", "<cmd>BufferLineCycleNext<CR>", { noremap = true, silent = true })
+vim.utils.map("n", "<Tab>h", "<cmd>BufferLineCyclePrev<CR>", { noremap = true, silent = true })
 
 -- vim.utils.map("n", "<C-n>", function()
 --   require("flash").jump({
