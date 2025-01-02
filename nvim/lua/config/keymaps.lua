@@ -81,3 +81,9 @@ local mappings = {
 for key, direction in pairs(mappings) do
   vim.utils.map("nv", key, treewalker(direction), { noremap = true, silent = true })
 end
+
+-- vim.utils.map("n", "<C-n>", function()
+--   require("flash").jump({
+--      pattern = vim.fn.expand("<cword>")
+--   })
+-- end)

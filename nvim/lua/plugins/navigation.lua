@@ -23,4 +23,23 @@ return {
       highlight_duration = 250, -- How long should above highlight last (in ms)
     },
   },
+  {
+    "echasnovski/mini.cursorword",
+    version = false,
+    config = function()
+      require("mini.cursorword").setup()
+    end,
+  },
+  {
+    "echasnovski/mini.jump2d",
+    version = false,
+    opts = {
+      mappings = {
+        start_jumping = "<CR>"
+      },
+    },
+    config = function(_, opts)
+      require("mini.jump2d").setup(opts)
+    end,
+  },
 }
