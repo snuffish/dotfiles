@@ -57,16 +57,10 @@ return {
   {
     "echasnovski/mini.operators",
     version = false,
-    config = function()
-      require("mini.operators").setup()
-    end,
   },
   {
     "echasnovski/mini.move",
     version = false,
-    config = function()
-      require("mini.move").setup()
-    end,
   },
   -- {
   --   "echasnovski/mini.splitjoin",
@@ -78,8 +72,10 @@ return {
   {
     "echasnovski/mini.basics",
     version = false,
-    config = function()
-      require("mini.basics").setup()
-    end,
+    opts = {
+      mappings = {
+        move_with_alt = true,
+      },
+    },
   },
 }
