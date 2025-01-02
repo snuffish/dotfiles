@@ -26,7 +26,7 @@ return {
         "<leader>lm",
         "<cmd>Mason<CR>",
         desc = "Open Mason",
-        icon = { icon = "", color = "#FF9856" }
+        icon = { icon = "", color = "#FF9856" },
       },
       {
         "<localleader>f",
