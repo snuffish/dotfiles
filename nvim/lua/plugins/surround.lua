@@ -6,7 +6,7 @@ return {
     "echasnovski/mini.surround",
     opts = {
       mappings = {
-        add = ";;",
+        add = ";a",
         delete = ";d",
         find = ";f",
         find_left = ";F",
@@ -14,7 +14,7 @@ return {
         replace = ";r",
         update_n_lines = ";n",
       },
-      ustom_surroundings = {
+      custom_surroundings = {
         ["B"] = { input = { { "%b{}" }, "^.().*().$" }, output = { left = "{", right = "}" } },
       },
     },
