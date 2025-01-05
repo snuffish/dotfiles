@@ -33,11 +33,11 @@ vim.utils.map("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true })
 vim.utils.map("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true })
 vim.utils.map("n", "0", "g0")
 
--- Amplify jk
-vim.utils.map("nx", "H", "5hzz")
+-- Amplify hjkl
 vim.utils.map("nx", "J", "5jzz")
 vim.utils.map("nx", "K", "5kzz")
-vim.utils.map("nx", "L", "5lzz")
+vim.utils.map("nx", "L", vim.utils.trigger_keys_fn("]A"))
+vim.utils.map("nx", "H", vim.utils.trigger_keys_fn("[a"))
 
 -- Delete without yanking
 vim.utils.map("n", "xp", "xp")
