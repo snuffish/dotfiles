@@ -103,12 +103,6 @@ vim.utils.map("n", "<C-M-L>", "<C-w>l", { silent = true })
 vim.utils.map("n", "<Tab>l", "<cmd>BufferLineCycleNext<CR>", { noremap = true, silent = true })
 vim.utils.map("n", "<Tab>h", "<cmd>BufferLineCyclePrev<CR>", { noremap = true, silent = true })
 
--- vim.utils.map("n", "<C-n>", function()
---   require("flash").jump({
---      pattern = vim.fn.expand("<cword>")
---   })
--- end)
-
 local symbols = { "q", "b", "t" }
 for _, s in ipairs(symbols) do
   vim.api.nvim_set_keymap("o", "l" .. s, "il" .. s, { silent = true })
