@@ -7,19 +7,15 @@ vim.keymap.del("n", "<leader>l")
 vim.utils.map("n", "q", "<nop>", { noremap = true, silent = true })
 vim.utils.map("n", "Q", "q", { noremap = true, silent = true })
 
-vim.utils.map("oxn", { "m", "M" }, "%", { noremap = true, silent = true })
+vim.utils.map("oxn", { "m", "M" }, "%", { silent = true })
 
 vim.utils.map("i", "<ESC>", "<nop>")
--- vim.utils.map(
---   "n",
---   string.rep(vim.g.capslock_key, 2),
---   "i",
---   { noremap = true, silent = true, desc = "Enter insert mode" }
--- )
 vim.utils.map("iv", vim.g.capslock_key, "<Esc>", { noremap = true, silent = true, desc = "Exit insert mode" })
 
-vim.utils.map("n", { "<PageUp>", "<C-u>zz" }, "<C-u>zz", { desc = "Jump up 1/2-screen" })
-vim.utils.map("n", { "<PageDown>", "<C-d>zz" }, "<C-d>zz", { desc = "Jump down 1/2-screen" })
+vim.utils.map("n", "<C-u>", "<C-u>zz", { desc = "Jump up 1/2-screen", noremap = true })
+vim.utils.map("n", "<C-d>", "<C-d>zz", { desc = "Jump down 1/2-screen", noremap = true })
+vim.utils.map("n", "<PageDown>", "<C-d>", { noremap = true })
+vim.utils.map("n", "<PageUp>", "<C-u>", { noremap = true })
 
 vim.utils.map("n", "n", "nzzzv", { desc = "Next search result (centered)" })
 vim.utils.map("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
@@ -38,12 +34,10 @@ vim.utils.map("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true })
 vim.utils.map("n", "0", "g0")
 
 -- Amplify jk
+vim.utils.map("nx", "H", "5hzz")
 vim.utils.map("nx", "J", "5jzz")
 vim.utils.map("nx", "K", "5kzz")
-
--- Go to start or end of line easier
-vim.utils.map("nx", "H", "g^")
-vim.utils.map("nx", "L", "g_")
+vim.utils.map("nx", "L", "5lzz")
 
 -- Delete without yanking
 vim.utils.map("n", "xp", "xp")
@@ -82,12 +76,4 @@ vim.utils.map(
   { noremap = true, silent = true, desc = "Change the rhs assignment of a declaration (No yanking)" }
 )
 
--- vim.keymap.del({ "n", "s" }, ">")
--- vim.api.nvim_set_keymap("", ">", "]", { noremap = false })
--- vim.utils.map("nvx", { "}", ">>" }, "}zz")
---
--- vim.keymap.del({ "n", "s" }, "<")
--- vim.api.nvim_set_keymap("", "<", "[", { noremap = false })
--- vim.utils.map("nvx", { "{", "<<" }, "{zz")
---
--- vim.utils.map("nvx", "<C-n>", vim.utils.trigger_keys_fn("g*"))
+vim.utils.map("n", "<leader><leader>", "<cmd>Pick files<CR>")

@@ -29,12 +29,12 @@ vim.utils.map("i", "<A-a>", "<Home>")
 vim.utils.map("i", "<A-d>", "<End>")
 
 -- Regex replaces
-vim.utils.map("n", "RR", "<Esc>:%s/", { noremap = true, desc = "Regex string replace (global)" })
-vim.utils.map("x", "RR", "<Esc>:'<,'>s/", { noremap = true, desc = "Regex string replace (selection)" })
+-- vim.utils.map("n", "RR", "<Esc>:%s/", { noremap = true, desc = "Regex string replace (global)" })
+-- vim.utils.map("x", "RR", "<Esc>:'<,'>s/", { noremap = true, desc = "Regex string replace (selection)" })
 
 -- Regex deletes
-vim.utils.map("n", "DD", "<Esc>:%s//<Left>", { noremap = true, desc = "Regex delete (selection)" })
-vim.utils.map("x", "DD", "<Esc>:'<,'>s//<Left>", { noremap = true, desc = "Regex delete (selection)" })
+-- vim.utils.map("n", "DD", "<Esc>:%s//<Left>", { noremap = true, desc = "Regex delete (selection)" })
+-- vim.utils.map("x", "DD", "<Esc>:'<,'>s//<Left>", { noremap = true, desc = "Regex delete (selection)" })
 
 -- Mini.Surround mapping
 vim.api.nvim_set_keymap("", ";;", ";a_", { desc = "Add row surrounding" })
@@ -103,12 +103,15 @@ vim.utils.map("n", "<C-M-L>", "<C-w>l", { silent = true })
 vim.utils.map("n", "<Tab>l", "<cmd>BufferLineCycleNext<CR>", { noremap = true, silent = true })
 vim.utils.map("n", "<Tab>h", "<cmd>BufferLineCyclePrev<CR>", { noremap = true, silent = true })
 
-local symbols = { "q", "b", "t" }
+local symbols = { "q", "b", "t", "[", "]", "<", ">", "(", ")", "{", "}" }
 for _, s in ipairs(symbols) do
   vim.api.nvim_set_keymap("o", "l" .. s, "il" .. s, { silent = true })
   vim.api.nvim_set_keymap("o", "l" .. string.upper(s), "al" .. s, { silent = true })
 
-  vim.api.nvim_set_keymap("o", s, "in" .. s, { silent = true })
-  vim.api.nvim_set_keymap("o", string.upper(s), "an" .. s, { silent = true })
+  vim.api.nvim_set_keymap("o", "n" .. s, "in" .. s, { silent = true })
+  vim.api.nvim_set_keymap("o", "n" .. string.upper(s), "an" .. s, { silent = true })
+
+  vim.api.nvim_set_keymap("o", s, "i" .. s, { silent = true })
+  vim.api.nvim_set_keymap("o", string.upper(s), "a" .. s, { silent = true })
 end
 
