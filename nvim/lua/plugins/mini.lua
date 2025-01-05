@@ -18,8 +18,8 @@ return {
     version = false,
     opts = {
       mappings = {
-        move_down = "<C-j>",
-        move_up = "<C-k>",
+        move_down = "<M-j>",
+        move_up = "<M-k>",
       }
     },
     config = function(_, opts)
