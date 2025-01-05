@@ -112,6 +112,6 @@ for _, s in ipairs(symbols) do
   vim.api.nvim_set_keymap("o", "n" .. string.upper(s), "an" .. s, { silent = true })
 
   vim.api.nvim_set_keymap("o", s, "i" .. s, { silent = true })
-  vim.api.nvim_set_keymap("o", string.upper(s), "a" .. s, { silent = true })
+  -- vim.api.nvim_set_keymap("o", string.upper(s), "a" .. s, { silent = true })
 end
 
