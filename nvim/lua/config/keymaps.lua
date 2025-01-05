@@ -1,3 +1,4 @@
+require("config.globals")
 require("config.remaps")
 require("config.dap")
 
@@ -107,3 +108,13 @@ vim.utils.map("n", "<Tab>h", "<cmd>BufferLineCyclePrev<CR>", { noremap = true, s
 --      pattern = vim.fn.expand("<cword>")
 --   })
 -- end)
+
+local symbols = { "q", "b", "t" }
+for _, s in ipairs(symbols) do
+  vim.api.nvim_set_keymap("o", "l" .. s, "il" .. s, { silent = true })
+  vim.api.nvim_set_keymap("o", "l" .. string.upper(s), "al" .. s, { silent = true })
+
+  vim.api.nvim_set_keymap("o", s, "in" .. s, { silent = true })
+  vim.api.nvim_set_keymap("o", string.upper(s), "an" .. s, { silent = true })
+end
+
