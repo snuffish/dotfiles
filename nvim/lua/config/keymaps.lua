@@ -59,13 +59,17 @@ local flash_line = function(forward)
     })
   end
 end
-vim.utils.map("o", "l", flash_line(false))
-vim.utils.map("o", "L", flash_line(true))
+-- vim.utils.map("o", "l", flash_line(false))
+-- vim.utils.map("o", "L", flash_line(true))
 
--- Navigation
-vim.utils.map("i", { "<Tab>", "<S-Tab>" }, "<Esc>l", { silent = true, desc = "Exit insert mode" })
-vim.utils.map("nx", "<Tab>", "<cmd>TSTextobjectGotoNextEnd @parameter.inner<CR>", { silent = true })
-vim.utils.map("nx", "<S-Tab>", "<cmd>TSTextobjectGotoPreviousStart @parameter.inner<CR>", { silent = true })
+-- Tab navigation
+vim.utils.map("n", { "<Tab>l", "<Tab><Tab>" }, "<cmd>BufferLineCycleNext<CR>", { noremap = true, silent = true })
+vim.utils.map(
+  "n",
+  { "<Tab>h", "<Tab><S-Tab>", "<S-Tab><S-Tab>" },
+  "<cmd>BufferLineCyclePrev<CR>",
+  { noremap = true, silent = true }
+)
 
 -- Treewalker mappings
 local Direction = {
@@ -94,15 +98,12 @@ for key, direction in pairs(mappings) do
 end
 
 -- Window navigation
-vim.utils.map("n", "<C-M-H>", "<C-w>h", { silent = true })
-vim.utils.map("n", "<C-M-J>", "<C-w>j", { silent = true })
-vim.utils.map("n", "<C-M-K>", "<C-w>k", { silent = true })
-vim.utils.map("n", "<C-M-L>", "<C-w>l", { silent = true })
+vim.utils.map("n", "<M-H>", "<C-w>h", { silent = true })
+vim.utils.map("n", "<M-J>", "<C-w>j", { silent = true })
+vim.utils.map("n", "<M-K>", "<C-w>k", { silent = true })
+vim.utils.map("n", "<M-L>", "<C-w>l", { silent = true })
 
--- Tab navigation
-vim.utils.map("n", "<Tab>l", "<cmd>BufferLineCycleNext<CR>", { noremap = true, silent = true })
-vim.utils.map("n", "<Tab>h", "<cmd>BufferLineCyclePrev<CR>", { noremap = true, silent = true })
-
+-- Text-Object Shortcut Custom pending-states mapping
 local symbols = { "q", "b", "t", "[", "]", "<", ">", "(", ")", "{", "}" }
 for _, s in ipairs(symbols) do
   vim.api.nvim_set_keymap("o", "l" .. s, "il" .. s, { silent = true })
@@ -114,4 +115,3 @@ for _, s in ipairs(symbols) do
   vim.api.nvim_set_keymap("o", s, "i" .. s, { silent = true })
   -- vim.api.nvim_set_keymap("o", string.upper(s), "a" .. s, { silent = true })
 end
-
