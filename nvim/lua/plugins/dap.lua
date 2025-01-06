@@ -79,7 +79,7 @@ return {
     { "<leader>dt", function() dap.terminate() end, desc = "Terminate" },
     { "<leader>dw", function() require("dap.ui.widgets").hover() end, desc = "Widgets" },
     { "<leader>de", function() dapui.eval() end, desc = "Evaluate Expression" },
-    { "<leader>dx", function() eval_modal() end, desc = "Eval/Execute Expression" },
+    { "<leader>dx", function() eval_modal() end, desc = "Execute Expression" },
   },
 
     config = function()
