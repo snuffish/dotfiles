@@ -36,8 +36,8 @@ vim.utils.map("n", "0", "g0")
 -- Amplify hjkl
 vim.utils.map("nx", "J", "5jzz")
 vim.utils.map("nx", "K", "5kzz")
-vim.utils.map("nx", "L", vim.utils.trigger_keys_fn("]A"))
-vim.utils.map("nx", "H", vim.utils.trigger_keys_fn("[a"))
+vim.utils.map("nx", "<C-h>", "<cmd>TSTextobjectGotoPreviousStart @parameter.inner<CR>")
+vim.utils.map("nx", "<C-l>", "<cmd>TSTextobjectGotoNextEnd @parameter.inner<CR>")
 
 -- Delete without yanking
 vim.utils.map("n", "xp", "xp")
@@ -76,4 +76,4 @@ vim.utils.map(
   { noremap = true, silent = true, desc = "Change the rhs assignment of a declaration (No yanking)" }
 )
 
-vim.utils.map("n", "<leader><leader>", "<cmd>Pick files<CR>")
+vim.utils.map("n", "<leader><leader>f", "<cmd>Pick files<CR>")

@@ -86,10 +86,10 @@ local function treewalker(direction)
 end
 
 local mappings = {
-  ["<C-k>"] = Direction.UP,
-  ["<C-j>"] = Direction.DOWN,
-  ["<C-l>"] = Direction.RIGHT,
-  ["<C-h>"] = Direction.LEFT,
+  ["<C-M-k>"] = Direction.UP,
+  ["<C-M-j>"] = Direction.DOWN,
+  ["<C-M-l>"] = Direction.RIGHT,
+  ["<C-M-h>"] = Direction.LEFT,
 }
 
 for key, direction in pairs(mappings) do
@@ -104,7 +104,7 @@ vim.utils.map("n", "<M-L>", "<C-w>l", { silent = true })
 
 -- Text-Object Shortcut Custom pending-states mapping
 -- local symbols = { "q", "b", "t", "[", "]", "<", ">", "(", ")", "{", "}" }
-local symbols = { "q", "b", "[", "]", "<", ">", "(", ")" }
+local symbols = { "q", "[", "]", "<", ">", "(", ")" }
 for _, s in ipairs(symbols) do
   vim.api.nvim_set_keymap("o", "l" .. s, "il" .. s, { silent = true })
   vim.api.nvim_set_keymap("o", "l" .. string.upper(s), "al" .. s, { silent = true })
