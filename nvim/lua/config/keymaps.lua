@@ -1,6 +1,5 @@
 require("config.globals")
 require("config.remaps")
-require("config.dap")
 
 vim.api.nvim_set_keymap(
   "n",
@@ -104,7 +103,8 @@ vim.utils.map("n", "<M-K>", "<C-w>k", { silent = true })
 vim.utils.map("n", "<M-L>", "<C-w>l", { silent = true })
 
 -- Text-Object Shortcut Custom pending-states mapping
-local symbols = { "q", "b", "t", "[", "]", "<", ">", "(", ")", "{", "}" }
+-- local symbols = { "q", "b", "t", "[", "]", "<", ">", "(", ")", "{", "}" }
+local symbols = { "q", "b", "[", "]", "<", ">", "(", ")" }
 for _, s in ipairs(symbols) do
   vim.api.nvim_set_keymap("o", "l" .. s, "il" .. s, { silent = true })
   vim.api.nvim_set_keymap("o", "l" .. string.upper(s), "al" .. s, { silent = true })
