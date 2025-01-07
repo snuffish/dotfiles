@@ -9,7 +9,7 @@ vim.utils.map("n", "Q", "q", { noremap = true, silent = true })
 
 vim.utils.map("oxn", { "m", "M" }, "%", { silent = true })
 
-vim.utils.map("i", "<ESC>", "<nop>")
+-- vim.utils.map("i", "<ESC>", "<nop>")
 vim.utils.map("iv", vim.g.capslock_key, "<Esc>", { noremap = true, silent = true, desc = "Exit insert mode" })
 
 vim.utils.map("n", "<C-u>", "<C-u>zz", { desc = "Jump up 1/2-screen", noremap = true })
@@ -36,8 +36,10 @@ vim.utils.map("n", "0", "g0")
 -- Amplify hjkl
 vim.utils.map("nx", "J", "5jzz")
 vim.utils.map("nx", "K", "5kzz")
-vim.utils.map("nx", "<C-h>", "<cmd>TSTextobjectGotoPreviousStart @parameter.inner<CR>")
-vim.utils.map("nx", "<C-l>", "<cmd>TSTextobjectGotoNextEnd @parameter.inner<CR>")
+vim.utils.map("nx", "H", "<cmd>TSTextobjectGotoPreviousStart @parameter.inner<CR>")
+vim.utils.map("nx", "L", "<cmd>TSTextobjectGotoNextEnd @parameter.inner<CR>")
+-- vim.utils.map("nx", "L", vim.utils.trigger_keys_fn("]A"))
+-- vim.utils.map("nx", "H", vim.utils.trigger_keys_fn("[a"))
 
 -- Delete without yanking
 vim.utils.map("n", "xp", "xp")
@@ -46,7 +48,10 @@ vim.utils.map("n", "x", '"_x', { noremap = true, silent = true, desc = "Delete c
 vim.utils.map("n", "X", '"_X', { noremap = true, silent = true, desc = "Delete char (No yanking)" })
 vim.utils.map("n", "cc", '"_cc', { noremap = true, silent = true, desc = "Change line (No yanking)" })
 
-vim.utils.map("i", ";;", "<C-o>", { desc = "Normal mode single operation" })
+vim.utils.map("i", ";;", "<C-o>", {})
+vim.utils.map("i", ";A", "<C-o><End>", {})
+vim.utils.map("i", ";o", "<C-o>o", {})
+vim.utils.map("i", ";O", "<C-o>O", {})
 
 vim.utils.map(
   "n",
