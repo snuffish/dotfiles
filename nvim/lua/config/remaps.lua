@@ -12,10 +12,8 @@ vim.utils.map("oxn", { "m", "M" }, "%", { silent = true })
 -- vim.utils.map("i", "<ESC>", "<nop>")
 vim.utils.map("iv", vim.g.capslock_key, "<Esc>", { noremap = true, silent = true, desc = "Exit insert mode" })
 
-vim.utils.map("n", "<C-u>", "<C-u>zz", { desc = "Jump up 1/2-screen", noremap = true })
-vim.utils.map("n", "<C-d>", "<C-d>zz", { desc = "Jump down 1/2-screen", noremap = true })
-vim.utils.map("n", "<PageDown>", "<C-d>", { noremap = true })
-vim.utils.map("n", "<PageUp>", "<C-u>", { noremap = true })
+vim.utils.map("n", { "<C-u>", "<PageUp>" }, "<C-u>zz", { desc = "Jump up 1/2-screen", noremap = true })
+vim.utils.map("n", { "<C-d>", "<PageDown>" }, "<C-d>zz", { desc = "Jump down 1/2-screen", noremap = true })
 
 vim.utils.map("n", "n", "nzzzv", { desc = "Next search result (centered)" })
 vim.utils.map("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
@@ -36,10 +34,8 @@ vim.utils.map("n", "0", "g0")
 -- Amplify hjkl
 vim.utils.map("nx", "J", "5jzz")
 vim.utils.map("nx", "K", "5kzz")
-vim.utils.map("nx", "H", "<cmd>TSTextobjectGotoPreviousStart @parameter.inner<CR>")
-vim.utils.map("nx", "L", "<cmd>TSTextobjectGotoNextEnd @parameter.inner<CR>")
--- vim.utils.map("nx", "L", vim.utils.trigger_keys_fn("]A"))
--- vim.utils.map("nx", "H", vim.utils.trigger_keys_fn("[a"))
+vim.utils.map("nx", "L", vim.utils.trigger_keys_fn("]A"))
+vim.utils.map("nx", "H", vim.utils.trigger_keys_fn("[a"))
 
 -- Delete without yanking
 vim.utils.map("n", "xp", "xp")
