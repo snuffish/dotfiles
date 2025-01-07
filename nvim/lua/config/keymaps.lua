@@ -86,10 +86,10 @@ local function treewalker(direction)
 end
 
 local mappings = {
-  ["<C-M-k>"] = Direction.UP,
-  ["<C-M-j>"] = Direction.DOWN,
-  ["<C-M-l>"] = Direction.RIGHT,
-  ["<C-M-h>"] = Direction.LEFT,
+  ["<C-k>"] = Direction.UP,
+  ["<C-j>"] = Direction.DOWN,
+  ["<C-l>"] = Direction.RIGHT,
+  ["<C-h>"] = Direction.LEFT,
 }
 
 for key, direction in pairs(mappings) do
@@ -97,21 +97,35 @@ for key, direction in pairs(mappings) do
 end
 
 -- Window navigation
-vim.utils.map("n", "<M-H>", "<C-w>h", { silent = true })
-vim.utils.map("n", "<M-J>", "<C-w>j", { silent = true })
-vim.utils.map("n", "<M-K>", "<C-w>k", { silent = true })
-vim.utils.map("n", "<M-L>", "<C-w>l", { silent = true })
+vim.utils.map("n", "<C-M-h>", "<C-w>h", { noremap = true, silent = true })
+vim.utils.map("n", "<C-M-j>", "<C-w>j", { noremap = true, silent = true })
+vim.utils.map("n", "<C-M-l>", "<C-w>l", { noremap = true, silent = true })
+vim.utils.map("n", "<C-M-k>", "<C-w>k", { noremap = true, silent = true })
 
 -- Text-Object Shortcut Custom pending-states mapping
 -- local symbols = { "q", "b", "t", "[", "]", "<", ">", "(", ")", "{", "}" }
-local symbols = { "q", "[", "]", "<", ">", "(", ")" }
-for _, s in ipairs(symbols) do
-  vim.api.nvim_set_keymap("o", "l" .. s, "il" .. s, { silent = true })
-  vim.api.nvim_set_keymap("o", "l" .. string.upper(s), "al" .. s, { silent = true })
+-- local symbols = { "q", "[", "]", "<", ">", "(", ")" }
+-- for _, s in ipairs(symbols) do
+--   vim.api.nvim_set_keymap("o", "l" .. s, "il" .. s, { silent = true })
+--   vim.api.nvim_set_keymap("o", "l" .. string.upper(s), "al" .. s, { silent = true })
+--
+--   vim.api.nvim_set_keymap("o", "n" .. s, "in" .. s, { silent = true })
+--   vim.api.nvim_set_keymap("o", "n" .. string.upper(s), "an" .. s, { silent = true })
+--
+--   vim.api.nvim_set_keymap("o", s, "i" .. s, { silent = true })
+--   -- vim.api.nvim_set_keymap("o", string.upper(s), "a" .. s, { silent = true })
+-- end
 
-  vim.api.nvim_set_keymap("o", "n" .. s, "in" .. s, { silent = true })
-  vim.api.nvim_set_keymap("o", "n" .. string.upper(s), "an" .. s, { silent = true })
+-- vim.utils.map("n", "<M-i>q", function()
+--   vim.utils.trigger_keys("vinq<Esc>i")
+-- end, { noremap = true, silent = true })
 
-  vim.api.nvim_set_keymap("o", s, "i" .. s, { silent = true })
-  -- vim.api.nvim_set_keymap("o", string.upper(s), "a" .. s, { silent = true })
-end
+-- local function enter_pending_mode()
+--   local key = vim.fn.getchar()
+--   if key == vim.fn.char2nr("q") then
+--     vim.utils.trigger_keys("vinq<Esc>i")
+--   end
+-- end
+--
+-- -- Map <M-i> to enter the pending mode
+-- vim.utils.map("n", "<M-i>", enter_pending_mode, { noremap = true, silent = true })

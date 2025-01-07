@@ -34,6 +34,21 @@ return {
     version = false,
     config = function()
       require("mini.ai").setup({
+        mappings = {
+          -- Main textobject prefixes
+          around = "a",
+          inside = "i",
+
+          -- Next/last variants
+          around_next = "an",
+          inside_next = "in",
+          around_last = "al",
+          inside_last = "il",
+
+          -- Move cursor to corresponding edge of `a` textobject
+          goto_left = "g[",
+          goto_right = "g]",
+        },
         custom_textobjects = {
           F = treesitter({ a = "@function.outer", i = "@function.inner" }),
           a = gen_spec.argument({ brackets = { "%b()" } }),
@@ -41,6 +56,13 @@ return {
           i = { treesitter({ a = "@conditional.outer", i = "@condition.inner" }) },
         },
       })
+
+      vim.api.nvim_set_keymap("", "<C-i><C-q>", "vinq<Esc>i", {})
+
+      -- vim.utils.map("n", "<M-i>", function()
+      --   vim.utils.trigger_keys("cin")
+      --   -- vim.utils.trigger_keys("vinq<Esc>i")
+      -- end, {})
     end,
   },
 }
