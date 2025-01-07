@@ -10,7 +10,7 @@ vim.api.nvim_set_keymap(
 
 vim.utils.map("n", "<localleader>a", function()
   local pattern = "%s %l %r"
-  vim.o.statuscolumn = vim.o.statuscolumn ~= pattern and pattern or ""
+  vim.o.statuscolumn = vim.o.statuscolumn ~= pattern and pattern or "%!v:lua.require'snacks.statuscolumn'.get()"
 end, { desc = "Toggle `Absolute linenumbers`" })
 
 vim.utils.map("n", "<leader>a", "ggVG", { desc = "Select all text", silent = true })
@@ -129,5 +129,3 @@ end
 --
 -- -- Map <M-i> to enter the pending mode
 -- vim.utils.map("n", "<M-i>", enter_pending_mode, { noremap = true, silent = true })
-
-vim.utils.map("n", "<leader><leader>f", "<cmd>Pick files<CR>")

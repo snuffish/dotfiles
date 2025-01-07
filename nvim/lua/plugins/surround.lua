@@ -57,13 +57,21 @@ return {
         },
       })
 
-      vim.api.nvim_set_keymap("", "<C-i>q", "vinq<Esc>i", {})
-      vim.api.nvim_set_keymap("", "<C-a>q", "vinqo<Esc>a", {})
+      local symbols = {
+        ["q"] = "Quotes `'\"",
+        ["b"] = "Brackets {([])}",
+        ["B"] = "Brackets {}",
+        ["a"] = "Argument",
+        ["f"] = "Function (inner)",
+        ["F"] = "Function (outer)",
+      }
 
-      -- vim.utils.map("n", "<M-i>", function()
-      --   vim.utils.trigger_keys("cin")
-      --   -- vim.utils.trigger_keys("vinq<Esc>i")
-      -- end, {})
+      for symbol, desc in pairs(symbols) do
+        vim.api.nvim_set_keymap("n", "<M-i>" .. symbol, "vin" .. symbol .. "<Esc>i", { desc = desc })
+        vim.api.nvim_set_keymap("n", "<M-a>" .. symbol, "vin" .. symbol .. "o<Esc>a", { desc = desc })
+        -- vim.api.nvim_set_keymap("n", "<M-i>" .. symbol, "g[" .. symbol .. "a", { desc = desc })
+        -- vim.api.nvim_set_keymap("n", "<M-a>" .. symbol, "g]" .. symbol .. "i", { desc = desc })
+      end
     end,
   },
 }

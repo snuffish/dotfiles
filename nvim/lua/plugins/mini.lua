@@ -22,6 +22,9 @@ return {
         move_up = "<M-k>",
       },
     },
+    keys = {
+      { "<leader><leader>f", "<cmd>Pick files<CR>" },
+    },
     config = function(_, opts)
       require("mini.pick").setup(opts)
     end,
@@ -31,7 +34,6 @@ return {
     version = false,
     config = function()
       local miniclue = require("mini.clue")
-
 
       miniclue.setup({
         window = {
