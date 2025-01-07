@@ -97,10 +97,10 @@ for key, direction in pairs(mappings) do
 end
 
 -- Window navigation
-vim.utils.map("n", "<C-M-h>", "<C-w>h", { noremap = true, silent = true })
-vim.utils.map("n", "<C-M-j>", "<C-w>j", { noremap = true, silent = true })
-vim.utils.map("n", "<C-M-l>", "<C-w>l", { noremap = true, silent = true })
-vim.utils.map("n", "<C-M-k>", "<C-w>k", { noremap = true, silent = true })
+-- vim.utils.map("n", "<C-M-h>", "<C-w>h", { noremap = true, silent = true })
+-- vim.utils.map("n", "<C-M-j>", "<C-w>j", { noremap = true, silent = true })
+-- vim.utils.map("n", "<C-M-l>", "<C-w>l", { noremap = true, silent = true })
+-- vim.utils.map("n", "<C-M-k>", "<C-w>k", { noremap = true, silent = true })
 
 -- Text-Object Shortcut Custom pending-states mapping
 -- local symbols = { "q", "b", "t", "[", "]", "<", ">", "(", ")", "{", "}" }
@@ -129,3 +129,5 @@ vim.utils.map("n", "<C-M-k>", "<C-w>k", { noremap = true, silent = true })
 --
 -- -- Map <M-i> to enter the pending mode
 -- vim.utils.map("n", "<M-i>", enter_pending_mode, { noremap = true, silent = true })
+
+vim.utils.map("n", "<leader><leader>f", "<cmd>Pick files<CR>")

@@ -76,5 +76,3 @@ vim.utils.map(
   '"_T=<Space>cw',
   { noremap = true, silent = true, desc = "Change the rhs assignment of a declaration (No yanking)" }
 )
-
-vim.utils.map("n", "<leader><leader>f", "<cmd>Pick files<CR>")
