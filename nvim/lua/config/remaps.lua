@@ -1,13 +1,14 @@
 vim.keymap.del("n", "<leader>l")
--- vim.utils.map("n", "<leader>l", "<nop>", { silent = true })
 
+-- vim.utils.map("n", "<leader>l", "<nop>", { silent = true })
 -- vim.utils.map("nvxo", ",", vim.utils.trigger_keys_fn("<localleader>"), { nowait = true ,noremap = true})
 
 -- Remap q to Q to prevent accidently pressing the recording key
 vim.utils.map("n", "q", "<nop>", { noremap = true, silent = true })
 vim.utils.map("n", "Q", "q", { noremap = true, silent = true })
 
-vim.utils.map("oxn", { "m", "M" }, "%", { silent = true })
+vim.api.nvim_set_keymap("", "m", "%", { silent = true })
+vim.api.nvim_set_keymap("", "M", "%", { silent = true })
 
 -- vim.utils.map("i", "<ESC>", "<nop>")
 vim.utils.map("iv", vim.g.capslock_key, "<Esc>", { noremap = true, silent = true, desc = "Exit insert mode" })
@@ -46,10 +47,10 @@ vim.utils.map("n", "x", '"_x', { noremap = true, silent = true, desc = "Delete c
 vim.utils.map("n", "X", '"_X', { noremap = true, silent = true, desc = "Delete char (No yanking)" })
 vim.utils.map("n", "cc", '"_cc', { noremap = true, silent = true, desc = "Change line (No yanking)" })
 
-vim.utils.map("i", ";;", "<C-o>", {})
-vim.utils.map("i", ";A", "<C-o><End>", {})
-vim.utils.map("i", ";o", "<C-o>o", {})
-vim.utils.map("i", ";O", "<C-o>O", {})
+vim.utils.map("i", ";;", "<C-o>")
+vim.utils.map("i", ";A", "<C-o><End>")
+vim.utils.map("i", ";o", "<C-o>o")
+vim.utils.map("i", ";O", "<C-o>O")
 
 vim.utils.map(
   "n",
