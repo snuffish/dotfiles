@@ -57,7 +57,8 @@ return {
         },
       })
 
-      vim.api.nvim_set_keymap("", "<C-i><C-q>", "vinq<Esc>i", {})
+      vim.api.nvim_set_keymap("", "<C-i>q", "vinq<Esc>i", {})
+      vim.api.nvim_set_keymap("", "<C-a>q", "vinqo<Esc>a", {})
 
       -- vim.utils.map("n", "<M-i>", function()
       --   vim.utils.trigger_keys("cin")
