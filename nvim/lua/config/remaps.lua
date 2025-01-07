@@ -14,6 +14,8 @@ vim.utils.map("iv", vim.g.capslock_key, "<Esc>", { noremap = true, silent = true
 
 vim.utils.map("n", { "<C-u>", "<PageUp>" }, "<C-u>zz", { desc = "Jump up 1/2-screen", noremap = true })
 vim.utils.map("n", { "<C-d>", "<PageDown>" }, "<C-d>zz", { desc = "Jump down 1/2-screen", noremap = true })
+vim.utils.map("n", "{", "{zz")
+vim.utils.map("n", "}", "}zz")
 
 vim.utils.map("n", "n", "nzzzv", { desc = "Next search result (centered)" })
 vim.utils.map("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
