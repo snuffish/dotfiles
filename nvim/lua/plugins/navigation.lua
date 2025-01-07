@@ -19,8 +19,8 @@ return {
   {
     "aaronik/treewalker.nvim",
     opts = {
-      highlight = true, -- Whether to briefly highlight the node after jumping to it
-      highlight_duration = 250, -- How long should above highlight last (in ms)
+      highlight = true,
+      highlight_duration = 250,
     },
   },
   {
@@ -40,10 +40,6 @@ return {
       view = {
         dim = true,
         n_steps_ahead = 0,
-      },
-
-      mappings = {
-        start_jumping = "<CR>",
       },
     },
     keys = {
