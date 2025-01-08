@@ -60,6 +60,7 @@ return {
     priority = 1000,
     dependencies = {
       { "nvim-tree/nvim-web-devicons", opts = {} },
+      "snuffish/utils.nvim",
     },
     opts = {
       default_file_explorer = true,
@@ -74,6 +75,7 @@ return {
         preview_split = "below",
         get_win_title = nil,
         override = function(conf)
+          vim.defer_fn(vim.utils.trigger_keys_fn("<C-p>"), 50)
           return conf
         end,
       },
@@ -89,10 +91,7 @@ return {
     keys = {
       {
         "<leader>o",
-        function()
-          require("oil").toggle_float()
-          vim.defer_fn(vim.utils.trigger_keys_fn("<C-p>"), 50)
-        end,
+        "<cmd>lua require('oil').toggle_float()<CR>",
         desc = "Oil Explorer",
       },
     },
