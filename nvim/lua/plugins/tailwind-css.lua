@@ -10,7 +10,7 @@ return {
     opts = { },
     keys = {
       {
-        "<localleader>tf",
+        "<localleader>tt",
         "<cmd>TailwindConcealToggle<CR>",
         desc = "Toggle 'Conceal'",
       },
