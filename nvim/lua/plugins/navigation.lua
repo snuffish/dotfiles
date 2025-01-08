@@ -41,10 +41,14 @@ return {
         dim = true,
         n_steps_ahead = 0,
       },
+
+      mappings = {
+        start_jumping = "<nop>",
+      },
     },
     keys = {
-      { "<CR>", "<cmd>lua MiniJump2d.start()<CR>" },
-      { "<CR><CR>", "<Cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.line_start)<CR>" },
+      -- { "<CR>", "<cmd>lua MiniJump2d.start()<CR>" },
+      { "<CR>", "<Cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.line_start)<CR>" },
     },
     config = function(_, opts)
       local jump2d = require("mini.jump2d")
