@@ -91,6 +91,7 @@
   "treewalker.nvim": { "branch": "main", "commit": "cb1c8545938c557543a2a38ce1153adae7670aad" },
   "trouble.nvim": { "branch": "main", "commit": "46cf952fc115f4c2b98d4e208ed1e2dce08c9bf6" },
   "ts-comments.nvim": { "branch": "main", "commit": "872dcfa0418f4a33b7437fb4d9f4e89f2f000d74" },
+  "vim-pairify": { "branch": "master", "commit": "6f137f53d451ee2dd22c0538a4d10fe3155c9480" },
   "which-key.nvim": { "branch": "main", "commit": "1f8d414f61e0b05958c342df9b6a4c89ce268766" },
   "yanky.nvim": { "branch": "main", "commit": "f9b905994cccf3c55f41af3a0a1f4c76c844e411" }
 }
