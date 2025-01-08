@@ -49,12 +49,12 @@ return {
         desc = "Open LazyGit",
       },
       {
-        "<M-i>",
+        "<C-i>",
         "",
         desc = "Enter insert mode",
       },
       {
-        "<M-a>",
+        "<C-a>",
         "",
         desc = "Enter append mode",
       },
