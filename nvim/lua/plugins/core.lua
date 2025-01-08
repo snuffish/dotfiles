@@ -82,6 +82,7 @@ return {
         ["q"] = { "actions.close", mode = "n" },
         ["<BS>"] = { "actions.parent", mode = "n" },
         ["<Left>"] = { "actions.parent", mode = "n" },
+        ["l"] = { "actions.select", mode = "n" },
         ["h"] = { "actions.parent", mode = "n" },
       },
     },
