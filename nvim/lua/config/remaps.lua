@@ -42,6 +42,7 @@ vim.utils.map("n", "x", '"_x', { noremap = true, silent = true, desc = "Delete c
 vim.utils.map("n", "X", '"_X', { noremap = true, silent = true, desc = "Delete char (No yanking)" })
 
 vim.utils.map("i", ";;", "<C-o>")
+vim.utils.map("i", ";a", "<End>")
 vim.utils.map("i", ";o", "<C-o>o")
 vim.utils.map("i", ";O", "<C-o>O")
 
