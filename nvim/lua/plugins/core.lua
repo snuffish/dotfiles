@@ -89,7 +89,10 @@ return {
     keys = {
       {
         "<leader>o",
-        "<cmd>lua require('oil').toggle_float()<CR>",
+        function()
+          require("oil").toggle_float()
+          vim.defer_fn(vim.utils.trigger_keys_fn("<C-p>"), 50)
+        end,
         desc = "Oil Explorer",
       },
     },
