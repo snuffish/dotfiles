@@ -1,5 +1,3 @@
-vim.keymap.del("n", "<leader>l")
-
 -- vim.utils.map("n", "<leader>l", "<nop>", { silent = true })
 -- vim.utils.map("nvxo", ",", vim.utils.trigger_keys_fn("<localleader>"), { nowait = true ,noremap = true})
 
