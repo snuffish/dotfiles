@@ -36,14 +36,12 @@ vim.utils.map("nx", "L", vim.utils.trigger_keys_fn("]A"))
 vim.utils.map("nx", "H", vim.utils.trigger_keys_fn("[a"))
 
 -- Delete without yanking
-vim.utils.map("n", "xp", "xp")
-vim.utils.map("n", "XP", "xp")
+vim.utils.map("n", "xp", "xph")
+vim.utils.map("n", "XP", "Xp")
 vim.utils.map("n", "x", '"_x', { noremap = true, silent = true, desc = "Delete char (No yanking)" })
 vim.utils.map("n", "X", '"_X', { noremap = true, silent = true, desc = "Delete char (No yanking)" })
-vim.utils.map("n", "cc", '"_cc', { noremap = true, silent = true, desc = "Change line (No yanking)" })
 
 vim.utils.map("i", ";;", "<C-o>")
-vim.utils.map("i", ";A", "<C-o><End>")
 vim.utils.map("i", ";o", "<C-o>o")
 vim.utils.map("i", ";O", "<C-o>O")
 

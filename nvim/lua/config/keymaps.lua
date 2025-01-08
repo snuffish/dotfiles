@@ -16,7 +16,7 @@ end, { desc = "Toggle `Absolute linenumbers`" })
 vim.utils.map("n", "<leader>a", "ggVG", { desc = "Select all text", silent = true })
 vim.utils.map(
   "n",
-  "<A-Up><A-Up>",
+  "<M-Up><M-Up>",
   vim.utils.trigger_keys_fn(":<Up>"),
   { desc = "Previous command", noremap = true, silent = true }
 )
@@ -24,8 +24,8 @@ vim.utils.map("x", { "/", "g/" }, "<esc>/\\%V", { silent = false, desc = "Search
 vim.utils.map("x", { "?", "g?" }, "<esc>?\\%V", { silent = false, desc = "Search Inside Visual Selection (forward)" })
 
 -- Move cursor left/right in insert-mode
-vim.utils.map("i", "<A-a>", "<Home>")
-vim.utils.map("i", "<A-d>", "<End>")
+vim.utils.map("ic", "<C-a>", "<Home>")
+vim.utils.map("ic", "<C-d>", "<End>")
 
 -- Regex replaces
 -- vim.utils.map("n", "RR", "<Esc>:%s/", { noremap = true, desc = "Regex string replace (global)" })
