@@ -8,7 +8,7 @@ return {
     spec = {
       {
         "<leader>l",
-        function() end,
+        "",
         desc = "Lazy",
       },
       {
