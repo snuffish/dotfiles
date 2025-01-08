@@ -1,12 +1,26 @@
 ﻿#Requires AutoHotkey v2.0+
+#SingleInstance
 
 SetCapsLockState "AlwaysOff"
 
-CapsLock:: {
-  Send "{Ctrl Down}"
+ih := InputHook("B L1 T1", "{Esc}")
+
+*CapsLock::
+{
+	ih.Start()
+	reason := ih.Wait()
+	if (reason = "Stopped") {
+		Send "{Esc}"
+	} else if (reason = "Max") {
+		Send "{Blind}{Ctrl down}" ih.Input
+	}
 }
 
-CapsLock up:: {
-  Send "{Ctrl Down}{Alt Down}{F5 Down}"
-  Send "{Ctrl Up}{Alt Up}{F5 Up}"
+*CapsLock up::
+{
+	if (ih.InProgress) {
+		ih.Stop()
+	} else {
+		Send "{Ctrl up}"
+	}
 }

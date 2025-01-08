@@ -48,16 +48,16 @@ return {
         icon = { icon = "", color = "yellow" },
         desc = "Open LazyGit",
       },
-      {
-        "<C-i>",
-        "",
-        desc = "Enter insert mode",
-      },
-      {
-        "<C-a>",
-        "",
-        desc = "Enter append mode",
-      },
+      -- {
+      --   "<C-i>",
+      --   "",
+      --   desc = "Enter insert mode",
+      -- },
+      -- {
+      --   "<C-a>",
+      --   "",
+      --   desc = "Enter append mode",
+      -- },
     },
   },
 }
