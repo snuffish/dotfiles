@@ -1,6 +1,5 @@
 local globals = {
   mapleader = " ",
-  capslock_key = "<M-C-F5>",
   maplocalleader = "\\",
   have_nerd_font = true,
   auto_save = false,

@@ -5,8 +5,6 @@
 vim.utils.map("n", "q", "<nop>", { noremap = true, silent = true })
 vim.utils.map("n", "Q", "q", { noremap = true, silent = true })
 
-vim.utils.map("iv", vim.g.capslock_key, "<Esc>", { noremap = true, silent = true, desc = "Exit insert mode" })
-
 vim.api.nvim_set_keymap("", "m", "%", { silent = true })
 vim.api.nvim_set_keymap("", "M", "%", { silent = true })
 
