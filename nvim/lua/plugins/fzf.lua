@@ -9,8 +9,8 @@ return {
         default = "bat",
       },
       on_create = function()
-        vim.keymap.set("t", "<M-j>", "<Down>", { silent = true, buffer = true })
-        vim.keymap.set("t", "<M-k>", "<Up>", { silent = true, buffer = true })
+        vim.keymap.set("t", "<C-j>", "<Down>", { silent = true, buffer = true })
+        vim.keymap.set("t", "<C-k>", "<Up>", { silent = true, buffer = true })
       end,
     },
   },
