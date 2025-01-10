@@ -1,6 +1,6 @@
 return {
   "akinsho/bufferline.nvim",
-  version = "*",
+  version = false,
   dependencies = "nvim-tree/nvim-web-devicons",
   keys = function()
     local keymaps = {
@@ -8,26 +8,6 @@ return {
         "<localleader>",
         "",
         desc = "Buffer",
-      },
-      {
-        "<localleader>s",
-        "",
-        desc = "Surround",
-      },
-      {
-        "<localleader>sa",
-        "gza",
-        desc = "Add surrounding",
-      },
-      {
-        "<localleader>sd",
-        "gzd",
-        desc = "Delete surrounding",
-      },
-      {
-        "<localleader>sc",
-        "gzc",
-        desc = "Change surrounding",
       },
       {
         "<localleader>q",
@@ -48,7 +28,7 @@ return {
       {
         "<localleader>h",
         function()
-          vim.utils.trigger_keys("<leader>uh")
+          vim.utils.trigger_keys_fn("<leader>uh")
         end,
         desc = "Toggle 'Inlay Hints'",
         silent = true,
@@ -65,9 +45,7 @@ return {
       },
       {
         "<localleader>o",
-        function()
-          Snacks.bufdelete.other()
-        end,
+        "<cmd>lua Snacks.bufdelete.other()<CR>",
         desc = "Delete all Other Buffers",
       },
       {
@@ -111,41 +89,6 @@ return {
         "<localleader><S-Tab>",
         "<cmd>BufferLineCyclePrev<CR>",
         desc = "Previous Buffer",
-      },
-      {
-        "<localleader>fs",
-        function()
-          vim.utils.trigger_keys("s")
-        end,
-        desc = "Flash Jump (forward)",
-      },
-      {
-        "<localleader>fS",
-        function()
-          vim.utils.trigger_keys("S")
-        end,
-        desc = "Flash Jump (backward)",
-      },
-      {
-        "<localleader>yl",
-        function()
-          vim.utils.trigger_keys("yl")
-        end,
-        desc = "Flash Yank Remote Line (upwards)",
-      },
-      {
-        "<localleader>yL",
-        function()
-          vim.utils.trigger_keys("yL")
-        end,
-        desc = "Flash Yank Remote Line (downwards)",
-      },
-      {
-        "<localleader>yt",
-        function()
-          vim.utils.trigger_keys("yt")
-        end,
-        desc = "Flash TreeSitter Yank Search",
       },
     }
 
