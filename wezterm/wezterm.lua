@@ -55,12 +55,12 @@ config.keys = {
 	{
 		key = "J",
 		mods = "CTRL",
-		action = wezterm.action.ActivatePaneDirection "Down",
+		action = wezterm.action.ActivatePaneDirection("Down"),
 	},
 	{
 		key = "K",
 		mods = "CTRL",
-		action = wezterm.action.ActivatePaneDirection "Up"
+		action = wezterm.action.ActivatePaneDirection("Up")
 	},
 }
 
