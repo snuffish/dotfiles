@@ -32,8 +32,10 @@ vim.utils.map("n", "0", "g0")
 -- Amplify hjkl
 vim.utils.map("nx", "J", "5jzz")
 vim.utils.map("nx", "K", "5kzz")
-vim.utils.map("nx", "L", vim.utils.trigger_keys_fn("]A"))
-vim.utils.map("nx", "H", vim.utils.trigger_keys_fn("[a"))
+vim.utils.map("n", "H", "<cmd>BufferLineCyclePrev<CR>")
+vim.utils.map("n", "L", "<cmd>BufferLineCycleNext<CR>")
+-- vim.utils.map("nx", "L", vim.utils.trigger_keys_fn("]A"))
+-- vim.utils.map("nx", "H", vim.utils.trigger_keys_fn("[a"))
 
 -- Delete without yanking
 vim.utils.map("n", "xp", "xph")
