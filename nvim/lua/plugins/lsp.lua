@@ -39,10 +39,9 @@ return {
     keys = {
       { "<leader>O", "<cmd>Outline<CR>", desc = "Toggle outline" },
     },
-    opts = {},
     config = function()
-      require("outline").setup({})
-    end,
+      require("outline").setup()
+    end
   },
   {
     "folke/noice.nvim",
@@ -108,4 +107,3 @@ return {
     end,
   },
 }
-
