@@ -1,4 +1,5 @@
 local wezterm = require("wezterm")
+local act = wezterm.action
 
 local config = wezterm.config_builder()
 
@@ -55,12 +56,12 @@ config.keys = {
 	{
 		key = "J",
 		mods = "CTRL",
-		action = wezterm.action.ActivatePaneDirection("Down"),
+		action = act.ActivatePaneDirection("Down"),
 	},
 	{
 		key = "K",
 		mods = "CTRL",
-		action = wezterm.action.ActivatePaneDirection("Up")
+		action = act.ActivatePaneDirection("Up")
 	},
 }
 
