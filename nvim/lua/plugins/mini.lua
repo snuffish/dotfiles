@@ -21,6 +21,8 @@ return {
         move_down = "<C-j>",
         move_up = "<C-k>",
         choose = "<CR>",
+        toggle_preview = "<C-p>",
+        toggle_info = "<Tab>",
       },
     },
     keys = {
