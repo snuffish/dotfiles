@@ -3,7 +3,7 @@
 
 -- Remap q to Q to prevent accidently pressing the recording key
 vim.utils.map("n", "q", "<nop>", { noremap = true, silent = true })
-vim.utils.map("n", "Q", "q", { noremap = true, silent = true })
+vim.utils.map("n", "<C-q>", "q", { desc = "Start/Stop Macro recording", noremap = true, silent = true })
 
 vim.api.nvim_set_keymap("", "m", "%", { silent = true })
 vim.api.nvim_set_keymap("", "M", "%", { silent = true })
