@@ -28,7 +28,7 @@ return {
       {
         "<localleader>h",
         function()
-          vim.utils.trigger_keys_fn("<leader>uh")
+          vim.utils.trigger_keys("<leader>uh")
         end,
         desc = "Toggle 'Inlay Hints'",
         silent = true,
