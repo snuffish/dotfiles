@@ -24,8 +24,10 @@ vim.utils.map("x", { "/", "g/" }, "<esc>/\\%V", { silent = false, desc = "Search
 vim.utils.map("x", { "?", "g?" }, "<esc>?\\%V", { silent = false, desc = "Search Inside Visual Selection (forward)" })
 
 -- Move cursor left/right in insert-mode
-vim.utils.map("ic", "<C-a>", "<Home>")
-vim.utils.map("ic", "<C-d>", "<End>")
+vim.utils.map("ic", "<C-a>", "<Home>", { silent = true, noremap = true })
+vim.utils.map("ic", "<C-e>", "<End>", { silent = true, noremap = true })
+vim.api.nvim_set_keymap("i", "<C-h>", "<Left>", { silent = true, noremap = true })
+vim.api.nvim_set_keymap("i", "<C-l>", "<Right>", { silent = true, noremap = true })
 
 -- Mini.Surround mapping
 vim.api.nvim_set_keymap("", "öa", ";a", { desc = "Add surrounding" })
