@@ -17,10 +17,10 @@ vim.utils.map("n", "n", "nzzzv", { desc = "Next search result (centered)" })
 vim.utils.map("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
 
 vim.utils.map("n", "G", "Gzz")
-vim.utils.map("n", "GG", vim.utils.trigger_keys_fn("G2goGzzi"), { desc = "Goto last line and add 2 new lines" })
+vim.utils.map("n", "GG", "G2goGzzi", { desc = "Goto last line and add 2 new lines" })
 
 vim.utils.map("n", "gg", "gg")
-vim.utils.map("n", "ggg", vim.utils.trigger_keys_fn("gg2gOggi"), { desc = "Goto first line and add 2 new lines" })
+vim.api.nvim_set_keymap("n", "ggg", "gg2gOggi", { desc = "Goto first line and add 2 new lines" })
 
 -- Do not include white space characters when using $ in visual mode,
 vim.utils.map("x", "$", "g_")
@@ -32,10 +32,8 @@ vim.utils.map("n", "0", "g0")
 -- Amplify hjkl
 vim.utils.map("nx", "J", "5jzz")
 vim.utils.map("nx", "K", "5kzz")
-vim.utils.map("n", "H", "<cmd>BufferLineCyclePrev<CR>")
-vim.utils.map("n", "L", "<cmd>BufferLineCycleNext<CR>")
--- vim.utils.map("nx", "L", vim.utils.trigger_keys_fn("]A"))
--- vim.utils.map("nx", "H", vim.utils.trigger_keys_fn("[a"))
+vim.api.nvim_set_keymap("", "H", "[b", {})
+vim.api.nvim_set_keymap("", "L", "]b", {})
 
 -- Delete without yanking
 vim.utils.map("n", "xp", "xph")
