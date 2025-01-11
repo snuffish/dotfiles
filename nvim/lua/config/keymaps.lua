@@ -33,7 +33,6 @@ vim.api.nvim_set_keymap("", "öd", ";d", { desc = "Delete surrounding" })
 vim.api.nvim_set_keymap("", "öf", ";f", { desc = "Find right surrounding" })
 vim.api.nvim_set_keymap("", "öF", ";F", { desc = "Find left surrounding" })
 vim.api.nvim_set_keymap("", "ör", ";r", { desc = "Replace surrounding" })
-
 vim.api.nvim_set_keymap("n", "öö", ";a_", { desc = "Add row surrounding" })
 vim.api.nvim_set_keymap("v", "öö", ";a", { desc = "Add surrounding" })
 
