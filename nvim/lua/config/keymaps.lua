@@ -38,16 +38,6 @@ vim.api.nvim_set_keymap("", "ön", ";n", { desc = "Update `MiniSurround.config.n
 vim.api.nvim_set_keymap("n", "öö", ";a_", { desc = "Add row surrounding" })
 vim.api.nvim_set_keymap("v", "öö", ";a", { desc = "Add surrounding" })
 
--- Tab navigation
--- vim.utils.map("n", { "<Tab>l", "<Tab><Tab>" }, "<cmd>BufferLineCycleNext<CR>", { noremap = true, silent = true })
-vim.utils.map(
-  "n",
-  { "<Tab>h", "<Tab><S-Tab>", "<S-Tab><S-Tab>" },
-  "<cmd>BufferLineCyclePrev<CR>",
-  { noremap = true, silent = true }
-)
-
--- Treewalker mappings
 local Direction = {
   UP = "Up",
   DOWN = "Down",
