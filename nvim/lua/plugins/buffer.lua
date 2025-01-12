@@ -48,11 +48,6 @@ return {
         desc = "Switch Buffer",
       },
       {
-        "<localleader>b",
-        "<Cmd>e #<CR>",
-        desc = "Switch to Other Buffer",
-      },
-      {
         "<localleader>o",
         "<cmd>lua Snacks.bufdelete.other()<CR>",
         desc = "Delete all Other Buffers",
@@ -75,7 +70,7 @@ return {
         desc = "Create new Buffer",
       },
       {
-        "<localleader><S-Tab>",
+        "<Tab><Tab>",
         function()
           vim.utils.trigger_keys("[b")
         end,
@@ -89,11 +84,11 @@ return {
         desc = "Previous Buffer",
       },
       {
-        "<localleader><Tab>",
+        "<S-Tab><S-Tab>",
         function()
           vim.utils.trigger_keys("]b")
         end,
-        desc = "Next Buffer",
+        desc = "Previous Buffer",
       },
       {
         "<Tab>l",
