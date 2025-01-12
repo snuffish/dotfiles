@@ -55,20 +55,40 @@ local Direction = {
   LEFT = "Left",
 }
 
-local function treewalker(direction)
-  return function()
-    vim.cmd("Treewalker " .. direction)
-    vim.utils.trigger_keys("zz")
-  end
-end
-
 local mappings = {
-  ["<C-k>"] = Direction.UP,
-  ["<C-j>"] = Direction.DOWN,
-  ["<C-l>"] = Direction.RIGHT,
-  ["<C-h>"] = Direction.LEFT,
+  ["k"] = Direction.UP,
+  ["j"] = Direction.DOWN,
+  ["l"] = Direction.RIGHT,
+  ["h"] = Direction.LEFT,
 }
 
 for key, direction in pairs(mappings) do
-  vim.utils.map("nv", key, treewalker(direction), { noremap = true, silent = true })
+  local navMap = string.format("<C-%s>", key)
+  local swapMap = string.format("<M-C-%s>", key)
+
+  vim.api.nvim_set_keymap("", navMap, "<cmd>Treewalker " .. direction .. "<cr>zz", { noremap = true, silent = true })
+
+  vim.keymap.set("n", swapMap, function()
+    vim.cmd("Treewalker Swap" .. direction)
+  end, { noremap = true, silent = true })
 end
+
+-- vim.keymap.set("n", "<C-S-j>", "<cmd>Treewalker SwapDown<cr>", { silent = true })
+-- vim.keymap.set("n", "<C-S-k>", "<cmd>Treewalker SwapUp<cr>", { silent = true })
+-- vim.keymap.set("n", "<C-S-l>", "<cmd>Treewalker SwapRight<CR>", { silent = true })
+-- vim.keymap.set("n", "<C-S-h>", "<cmd>Treewalker SwapLeft<CR>", { silent = true })
+
+-- Open compiler
+vim.api.nvim_set_keymap("n", "<F6>", "<cmd>CompilerOpen<cr>", { noremap = true, silent = true })
+
+-- Redo last selected option
+vim.api.nvim_set_keymap(
+  "n",
+  "<S-F6>",
+  "<cmd>CompilerStop<cr>" -- (Optional, to dispose all tasks before redo)
+    .. "<cmd>CompilerRedo<cr>",
+  { noremap = true, silent = true }
+)
+
+-- Toggle compiler results
+vim.api.nvim_set_keymap("n", "<S-F7>", "<cmd>CompilerToggleResults<cr>", { noremap = true, silent = true })

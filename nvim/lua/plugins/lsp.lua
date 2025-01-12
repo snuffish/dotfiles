@@ -37,11 +37,12 @@ return {
     lazy = true,
     cmd = { "Outline", "OutlineOpen" },
     keys = {
-      { "<leader>O", "<cmd>Outline<CR>", desc = "Toggle outline" },
+      { "<leader>co", "<cmd>Outline<CR>", desc = "Toggle outline" },
+      { "<leader>cs", false },
     },
     config = function()
       require("outline").setup()
-    end
+    end,
   },
   {
     "folke/noice.nvim",

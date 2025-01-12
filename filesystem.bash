@@ -32,3 +32,5 @@ alias find="find . -name"
 alias untar="tar -xvzf"
 
 alias dirsize="du -hs"
+
+
