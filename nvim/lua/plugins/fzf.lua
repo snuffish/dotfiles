@@ -2,7 +2,9 @@ return {
   "ibhagwan/fzf-lua",
   dependencies = { "nvim-tree/nvim-web-devicons" },
   opts = {
-    { "borderless_full" },
+    {
+      "borderless_full",
+    },
     winopts = {
       fullscreen = false,
       preview = {
@@ -22,7 +24,4 @@ return {
       desc = "FzfLua BuiltIn",
     },
   },
-  config = function(_, opts)
-    require("fzf-lua").setup(opts)
-  end,
 }
