@@ -11,13 +11,13 @@ return {
       },
       {
         "<localleader>q",
-        "<cmd>lua Snacks.bufdelete.delete()<CR>",
+        "<cmd>Snacks.bufdelete.delete()<CR>",
         desc = "Delete Buffer",
         silent = true,
       },
       {
         "<Tab>q",
-        "<cmd>lua Snacks.bufdelete.delete()<CR>",
+        "<cmd>Snacks.bufdelete.delete()<CR>",
         desc = "Delete Buffer",
         silent = true,
       },
@@ -43,6 +43,11 @@ return {
         desc = "Switch Buffer",
       },
       {
+        "<Tab>`",
+        "<Cmd>FzfLua buffers sort_mru=true sort_lastused=true<CR>",
+        desc = "Switch Buffer",
+      },
+      {
         "<localleader>b",
         "<Cmd>e #<CR>",
         desc = "Switch to Other Buffer",
@@ -51,21 +56,6 @@ return {
         "<localleader>o",
         "<cmd>lua Snacks.bufdelete.other()<CR>",
         desc = "Delete all Other Buffers",
-      },
-      {
-        "<localleader>l",
-        "<leader>bl",
-        desc = "Delete Buffers to the Left",
-      },
-      {
-        "<localleader>r",
-        "<Cmd>BufferLineCloseRight<CR>",
-        desc = "Delete Buffers to the Right",
-      },
-      {
-        "<localleader>r",
-        "<Cmd>BufferLineCloseRight<CR>",
-        desc = "Delete Buffers to the Right",
       },
       {
         "<localleader>n",
@@ -99,6 +89,12 @@ return {
     }
 
     for i = 1, 9 do
+      table.insert(keymaps, {
+        string.format("<localleader>%d", i),
+        string.format("<cmd>BufferLineGoToBuffer %d<CR>", i),
+        desc = string.format("Go to Buffer %d", i),
+      })
+
       table.insert(keymaps, {
         string.format("<localleader>%d", i),
         string.format("<cmd>BufferLineGoToBuffer %d<CR>", i),
