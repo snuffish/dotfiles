@@ -46,9 +46,11 @@ vim.utils.map("i", ";a", "<End>")
 vim.utils.map("i", ";o", "<C-o>o")
 vim.utils.map("i", ";O", "<C-o>O")
 
+vim.utils.map("n", "DD", "d^", { noremap = true, silent = true, desc = "Delete line without whitespace (No yanking)" })
+
 vim.utils.map(
   "n",
   "d0",
   '"_g^d$',
-  { noremap = true, silent = true, desc = "Delete line without whitespace (No yanking)" }
+  { noremap = true, silent = true, desc = "Delete from cursor to white non-whitespace character" }
 )

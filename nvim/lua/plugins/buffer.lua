@@ -75,16 +75,32 @@ return {
         desc = "Create new Buffer",
       },
       {
+        "<localleader><S-Tab>",
+        function()
+          vim.utils.trigger_keys("[b")
+        end,
+        desc = "Previous Buffer",
+      },
+      {
+        "<Tab>h",
+        function()
+          vim.utils.trigger_keys("[b")
+        end,
+        desc = "Previous Buffer",
+      },
+      {
         "<localleader><Tab>",
-        "]b",
-        -- "<cmd>BufferLineCycleNext<CR>",
+        function()
+          vim.utils.trigger_keys("]b")
+        end,
         desc = "Next Buffer",
       },
       {
-        "<localleader><S-Tab>",
-        "[b",
-        "<cmd>BufferLineCyclePrev<CR>",
-        desc = "Previous Buffer",
+        "<Tab>l",
+        function()
+          vim.utils.trigger_keys("]b")
+        end,
+        desc = "Next Buffer",
       },
     }
 
@@ -96,7 +112,7 @@ return {
       })
 
       table.insert(keymaps, {
-        string.format("<localleader>%d", i),
+        string.format("<Tab>%d", i),
         string.format("<cmd>BufferLineGoToBuffer %d<CR>", i),
         desc = string.format("Go to Buffer %d", i),
       })
