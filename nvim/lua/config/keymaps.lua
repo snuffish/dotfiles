@@ -1,4 +1,3 @@
-require("config.globals")
 require("config.remaps")
 
 vim.api.nvim_set_keymap(
