@@ -62,16 +62,6 @@ return {
           desc = "Surround",
         },
       },
-      -- {
-      --   "<C-i>",
-      --   "",
-      --   desc = "Enter insert mode",
-      -- },
-      -- {
-      --   "<C-a>",
-      --   "",
-      --   desc = "Enter append mode",
-      -- },
     },
   },
 }
