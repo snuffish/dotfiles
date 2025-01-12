@@ -52,11 +52,11 @@ return {
       },
     })
 
-    require("which-key").add({
-      {
-        "Y",
-        desc = "Yank to end of line",
-      },
-    })
+    -- require("which-key").add({
+    --   {
+    --     "Y",
+    --     desc = "Yank to end of line",
+    --   },
+    -- })
   end,
 }

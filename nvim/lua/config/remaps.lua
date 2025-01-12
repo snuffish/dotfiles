@@ -17,10 +17,10 @@ vim.utils.map("n", "n", "nzzzv", { desc = "Next search result (centered)" })
 vim.utils.map("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
 
 vim.utils.map("n", "G", "Gzz")
-vim.utils.map("n", "GG", "G2goGzzi", { desc = "Goto last line and add 2 new lines" })
+vim.utils.map("n", "GG", vim.utils.trigger_keys_fn("G2goGzzi"), { desc = "Goto last line and add 2 new lines" })
 
 vim.utils.map("n", "gg", "gg")
-vim.api.nvim_set_keymap("n", "ggg", "gg2gOggi", { desc = "Goto first line and add 2 new lines" })
+vim.utils.map("n", "ggg", vim.utils.trigger_keys_fn("gg2gOggi"), { desc = "Goto first line and add 2 new lines" })
 
 -- Do not include white space characters when using $ in visual mode,
 vim.utils.map("x", "$", "g_")
@@ -46,7 +46,8 @@ vim.utils.map("i", ";a", "<End>")
 vim.utils.map("i", ";o", "<C-o>o")
 vim.utils.map("i", ";O", "<C-o>O")
 
-vim.utils.map("n", "DD", "d^", { noremap = true, silent = true, desc = "Delete line without whitespace (No yanking)" })
+vim.utils.map("n", "DD", '"_d^', { noremap = true, silent = true, desc = "Delete characters from cursor to first whitespace (No yanking)" })
+vim.utils.map("n", "CC", '"_c^', { noremap = true, silent = true, desc = "Change character from cursor to first whitespace (No yanking)" })
 
 vim.utils.map(
   "n",
