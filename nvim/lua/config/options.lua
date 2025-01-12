@@ -1,6 +1,7 @@
 local globals = {
   mapleader = " ",
   maplocalleader = "\\",
+  map_surround_leader = "ö",
   have_nerd_font = true,
   auto_save = false,
   lazyvim_picker = "fzf",

@@ -29,6 +29,7 @@ vim.api.nvim_set_keymap("i", "<C-h>", "<Left>", { silent = true, noremap = true 
 vim.api.nvim_set_keymap("i", "<C-l>", "<Right>", { silent = true, noremap = true })
 
 -- Mini.Surround mapping
+local sr_key = vim.g.map_surround_leader
 
 local surround_mappings = {
   { key = "a", desc = "Add surrounding" },
@@ -43,12 +44,13 @@ for _, mapping in ipairs(surround_mappings) do
   local key = mapping.key
   local desc = mapping.desc
 
-  vim.api.nvim_set_keymap("", "ö" .. key, ";" .. key, { desc = desc })
+  vim.api.nvim_set_keymap("", sr_key .. key, ";" .. key, { desc = desc })
 end
 
-vim.api.nvim_set_keymap("n", "öö", ";a_", { desc = "Add row surrounding" })
-vim.api.nvim_set_keymap("v", "öö", ";a", { desc = "Add surrounding" })
+vim.api.nvim_set_keymap("n", string.rep(sr_key, 2), ";a_", { desc = "Add row surrounding" })
+vim.api.nvim_set_keymap("v", string.rep(sr_key, 2), ";a", { desc = "Add surrounding" })
 
+-- TreeWalker mapping
 local Direction = {
   UP = "Up",
   DOWN = "Down",
