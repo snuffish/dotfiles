@@ -7,26 +7,40 @@ return {
   opts = {
     spec = {
       {
-        "<leader>l",
-        "",
-        desc = "Lazy",
-      },
-      {
-        "<leader>ll",
-        "<cmd>Lazy<CR>",
-        desc = "Open Lazy",
-      },
-      {
-        "<leader>lx",
-        "<cmd>LazyExtras<CR>",
-        icon = { icon = "" },
-        desc = "Open LazyExtras",
-      },
-      {
-        "<leader>lm",
-        "<cmd>Mason<CR>",
-        desc = "Open Mason",
-        icon = { icon = "", color = "#FF9856" },
+        {
+          "<leader>l",
+          "",
+          desc = "Lazy",
+        },
+        {
+          {
+            "<leader>ll",
+            "<cmd>Lazy<CR>",
+            desc = "Open Lazy",
+          },
+          {
+            "<leader>lx",
+            "<cmd>LazyExtras<CR>",
+            icon = { icon = "" },
+            desc = "Open LazyExtras",
+          },
+          {
+            "<leader>lm",
+            "<cmd>Mason<CR>",
+            desc = "Open Mason",
+            icon = { icon = "", color = "#FF9856" },
+          },
+          {
+            "<leader>ld",
+            icon = { icon = "", color = "blue" },
+            desc = "Open LazyDocker",
+          },
+          {
+            "<leader>lg",
+            icon = { icon = "", color = "yellow" },
+            desc = "Open LazyGit",
+          },
+        },
       },
       {
         "<localleader>f",
@@ -39,24 +53,14 @@ return {
         icon = { icon = "󱏿", color = "blue" },
       },
       {
-        "<leader>ld",
-        icon = { icon = "", color = "blue" },
-        desc = "Open LazyDocker",
-      },
-      {
-        "<leader>lg",
-        icon = { icon = "", color = "yellow" },
-        desc = "Open LazyGit",
-      },
-      {
-        "ö",
-        icon = { icon = "" },
-        desc = "Surround",
-      },
-      {
-        ";",
-        icon = { icon = "" },
-        desc = "Surround",
+        {
+          "ö",
+          desc = "Surround",
+        },
+        {
+          ";",
+          desc = "Surround",
+        },
       },
       -- {
       --   "<C-i>",

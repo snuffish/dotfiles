@@ -120,7 +120,7 @@ return {
         sections = {
           {
             section = "terminal",
-            cmd = "chafa ~/.config/nvim/avatar.png --format ansi --size 65x50; sleep .1",
+            cmd = "chafa ~/.config/nvim/avatar.png --format ansi --size 71x50; sleep .1",
             pane = 2,
             indent = 4,
             width = 65,

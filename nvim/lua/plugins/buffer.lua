@@ -11,9 +11,13 @@ return {
       },
       {
         "<localleader>q",
-        function()
-          vim.utils.trigger_keys("<leader>bd")
-        end,
+        "<cmd>lua Snacks.bufdelete.delete()<CR>",
+        desc = "Delete Buffer",
+        silent = true,
+      },
+      {
+        "<Tab>q",
+        "<cmd>lua Snacks.bufdelete.delete()<CR>",
         desc = "Delete Buffer",
         silent = true,
       },
@@ -82,11 +86,13 @@ return {
       },
       {
         "<localleader><Tab>",
-        "<cmd>BufferLineCycleNext<CR>",
+        "]b",
+        -- "<cmd>BufferLineCycleNext<CR>",
         desc = "Next Buffer",
       },
       {
         "<localleader><S-Tab>",
+        "[b",
         "<cmd>BufferLineCyclePrev<CR>",
         desc = "Previous Buffer",
       },
