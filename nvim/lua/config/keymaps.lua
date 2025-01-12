@@ -34,8 +34,8 @@ local sr_key = vim.g.map_surround_leader
 local surround_mappings = {
   { key = "a", desc = "Add surrounding" },
   { key = "d", desc = "Delete surrounding" },
-  { key = "f", desc = "Find left surrounding" },
-  { key = "F", desc = "Find left surrounding" },
+  { key = "f", desc = "Find Right surrounding" },
+  { key = "F", desc = "Find Left surrounding" },
   { key = "h", desc = "Highlight surrounding" },
   { key = "n", desc = "Update `MiniSurround.config.n_lines`" },
 }
