@@ -7,3 +7,4 @@ _G.bt = function()
 end
 
 vim.print = _G.dd
+P = vim.print

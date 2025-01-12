@@ -11,13 +11,13 @@ return {
       },
       {
         "<localleader>q",
-        "<cmd>Snacks.bufdelete.delete()<CR>",
+        "<cmd>lua Snacks.bufdelete.delete()<CR>",
         desc = "Delete Buffer",
         silent = true,
       },
       {
         "<Tab>q",
-        "<cmd>Snacks.bufdelete.delete()<CR>",
+        "<cmd>lua Snacks.bufdelete.delete()<CR>",
         desc = "Delete Buffer",
         silent = true,
       },
@@ -53,6 +53,11 @@ return {
         desc = "Delete all Other Buffers",
       },
       {
+        "<Tab>o",
+        "<cmd>lua Snacks.bufdelete.other()<CR>",
+        desc = "Delete all Other Buffers",
+      },
+      {
         "<localleader>n",
         "<cmd>enew<CR>",
         desc = "Create new Buffer",
@@ -72,20 +77,6 @@ return {
       {
         "<Tab><Tab>",
         function()
-          vim.utils.trigger_keys("[b")
-        end,
-        desc = "Previous Buffer",
-      },
-      {
-        "<Tab>h",
-        function()
-          vim.utils.trigger_keys("[b")
-        end,
-        desc = "Previous Buffer",
-      },
-      {
-        "<S-Tab><S-Tab>",
-        function()
           vim.utils.trigger_keys("]b")
         end,
         desc = "Previous Buffer",
@@ -96,6 +87,20 @@ return {
           vim.utils.trigger_keys("]b")
         end,
         desc = "Next Buffer",
+      },
+      {
+        "<S-Tab><S-Tab>",
+        function()
+          vim.utils.trigger_keys("[b")
+        end,
+        desc = "Previous Buffer",
+      },
+      {
+        "<Tab>h",
+        function()
+          vim.utils.trigger_keys("[b")
+        end,
+        desc = "Previous Buffer",
       },
     }
 
