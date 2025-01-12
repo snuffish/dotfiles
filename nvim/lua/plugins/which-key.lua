@@ -48,6 +48,16 @@ return {
         icon = { icon = "", color = "yellow" },
         desc = "Open LazyGit",
       },
+      {
+        "ö",
+        icon = { icon = "" },
+        desc = "Surround",
+      },
+      {
+        ";",
+        icon = { icon = "" },
+        desc = "Surround",
+      },
       -- {
       --   "<C-i>",
       --   "",
