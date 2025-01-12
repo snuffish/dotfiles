@@ -106,6 +106,12 @@ return {
 
     for i = 1, 9 do
       table.insert(keymaps, {
+        string.format("<localleader>%d", i),
+        string.format("<cmd>BufferLineGoToBuffer %d<CR>", i),
+        desc = string.format("Go to Buffer %d", i),
+      })
+
+      table.insert(keymaps, {
         string.format("<Tab>%d", i),
         string.format("<cmd>BufferLineGoToBuffer %d<CR>", i),
         desc = string.format("Go to Buffer %d", i),
