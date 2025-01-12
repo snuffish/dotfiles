@@ -29,12 +29,23 @@ vim.api.nvim_set_keymap("i", "<C-h>", "<Left>", { silent = true, noremap = true 
 vim.api.nvim_set_keymap("i", "<C-l>", "<Right>", { silent = true, noremap = true })
 
 -- Mini.Surround mapping
-vim.api.nvim_set_keymap("", "öa", ";a", { desc = "Add surrounding" })
-vim.api.nvim_set_keymap("", "öd", ";d", { desc = "Delete surrounding" })
-vim.api.nvim_set_keymap("", "öf", ";f", { desc = "Find right surrounding" })
-vim.api.nvim_set_keymap("", "öF", ";F", { desc = "Find left surrounding" })
-vim.api.nvim_set_keymap("", "öh", ";h", { desc = "Highlight surrounding" })
-vim.api.nvim_set_keymap("", "ön", ";n", { desc = "Update `MiniSurround.config.n_lines`" })
+
+local surround_mappings = {
+  { key = "a", desc = "Add surrounding" },
+  { key = "d", desc = "Delete surrounding" },
+  { key = "f", desc = "Find left surrounding" },
+  { key = "F", desc = "Find left surrounding" },
+  { key = "h", desc = "Highlight surrounding" },
+  { key = "n", desc = "Update `MiniSurround.config.n_lines`" },
+}
+
+for _, mapping in ipairs(surround_mappings) do
+  local key = mapping.key
+  local desc = mapping.desc
+
+  vim.api.nvim_set_keymap("", "ö" .. key, ";" .. key, { desc = desc })
+end
+
 vim.api.nvim_set_keymap("n", "öö", ";a_", { desc = "Add row surrounding" })
 vim.api.nvim_set_keymap("v", "öö", ";a", { desc = "Add surrounding" })
 
@@ -45,14 +56,26 @@ local Direction = {
   LEFT = "Left",
 }
 
-local mappings = {
+local treewalker_mappikngs = {
   ["k"] = Direction.UP,
   ["j"] = Direction.DOWN,
   ["l"] = Direction.RIGHT,
   ["h"] = Direction.LEFT,
 }
 
-for key, direction in pairs(mappings) do
-  vim.api.nvim_set_keymap("", string.format("<C-%s>", key), "<cmd>Treewalker " .. direction .. "<cr>zz", { noremap = true, silent = true })
-  vim.api.nvim_set_keymap("", string.format("<M-C-%s>", key), "<cmd>Treewalker Swap" .. direction .. "<cr>zz", { noremap = true, silent = true })
+for _, m in ipairs({ "n", "v" }) do
+  for key, direction in pairs(treewalker_mappikngs) do
+    vim.api.nvim_set_keymap(
+      m,
+      string.format("<C-%s>", key),
+      "<cmd>Treewalker " .. direction .. "<cr>zz",
+      { noremap = true, silent = true }
+    )
+    vim.api.nvim_set_keymap(
+      m,
+      string.format("<M-C-%s>", key),
+      "<cmd>Treewalker Swap" .. direction .. "<cr>zz",
+      { noremap = true, silent = true }
+    )
+  end
 end

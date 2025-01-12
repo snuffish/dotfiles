@@ -35,7 +35,7 @@ return {
     --     }
     --   }
     -- })
-    
+
     vim.print(opts)
 
     require("neo-tree").setup(opts)
