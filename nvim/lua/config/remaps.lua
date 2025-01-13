@@ -3,12 +3,7 @@ vim.utils.map("n", "q", "<nop>", { noremap = true, silent = true })
 vim.utils.map("n", "<C-q>", "q", { desc = "Start/Stop Macro recording", noremap = true, silent = true })
 
 vim.utils.map("n", "<leader>n", "<nop>", { noremap = true, silent = true })
-vim.utils.map(
-  "n",
-  "<leader>nn",
-  "<cmd>lua Snacks.notifier.show_history()<CR>",
-  { noremap = true, silent = true, desc = "Notifications" }
-)
+vim.utils.map("n", "<leader>nn", "<cmd>lua Snacks.notifier.show_history()<CR>", { noremap = true, silent = true , desc = "Notifications"})
 
 vim.api.nvim_set_keymap("", "m", "%", { silent = true })
 vim.api.nvim_set_keymap("", "M", "%", { silent = true })
@@ -51,18 +46,8 @@ vim.utils.map("i", ";a", "<End>")
 vim.utils.map("i", ";o", "<C-o>o")
 vim.utils.map("i", ";O", "<C-o>O")
 
-vim.utils.map(
-  "n",
-  "DD",
-  '"_d^',
-  { noremap = true, silent = true, desc = "Delete characters from cursor to first whitespace (No yanking)" }
-)
-vim.utils.map(
-  "n",
-  "CC",
-  '"_c^',
-  { noremap = true, silent = true, desc = "Change character from cursor to first whitespace (No yanking)" }
-)
+vim.utils.map("n", "DD", '"_d^', { noremap = true, silent = true, desc = "Delete characters from cursor to first whitespace (No yanking)" })
+vim.utils.map("n", "CC", '"_c^', { noremap = true, silent = true, desc = "Change character from cursor to first whitespace (No yanking)" })
 
 vim.utils.map(
   "n",
