@@ -1,16 +1,16 @@
 local M = {}
 
-local str_to_obj = function(modes)
-  local obj = {}
-  for i = 1, modes:len() do
-    obj[i] = modes:sub(i, i)
+local stringToChars = function(modes)
+  local arr = {}
+  for c in modes:gmatch(".") do
+    arr[#arr + 1] = c
   end
 
-  return obj
+  return arr
 end
 
 M.map = function(modes, maps, action, opts)
-  modes = type(modes) == "string" and str_to_obj(modes) or modes
+  modes = stringToChars(modes)
   maps = type(maps) == "string" and { maps } or maps
 
   for _, mode in ipairs(modes) do
@@ -21,7 +21,7 @@ M.map = function(modes, maps, action, opts)
 end
 
 M.nvim_map = function(modes, maps, action, opts)
-  modes = type(modes) == "string" and str_to_obj(modes) or modes
+  modes = stringToChars(modes)
   maps = type(maps) == "string" and { maps } or maps
 
   for _, mode in ipairs(modes) do
@@ -62,6 +62,23 @@ end
 M.get_current_bufnr = function()
   local current_bufnr = vim.api.nvim_get_current_buf()
   return current_bufnr
+end
+
+M.get_all_buffers = function()
+  local buffers = vim.api.nvim_list_bufs()
+  return buffers
+end
+
+M.get_all_buffers_content = function()
+  local buffers = vim.api.nvim_list_bufs()
+  local buffers_content = {}
+
+  for _, buf in ipairs(buffers) do
+    local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+    table.insert(buffers_content, {buf = buf, content = lines})
+  end
+
+  return buffers_content
 end
 
 return M

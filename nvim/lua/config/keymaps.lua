@@ -81,3 +81,19 @@ for _, m in ipairs({ "n", "v" }) do
     )
   end
 end
+
+local get_buf_content = function()
+  local buf = vim.utils.get_current_bufnr()
+  vim.print(buf)
+  local buffers_content = {}
+
+  local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+  table.insert(buffers_content, { buf = buf, content = lines })
+
+  vim.print(buffers_content)
+end
+
+vim.utils.map("n", "<F5>", function()
+  vim.print("SDS")
+  get_buf_content()
+end)
