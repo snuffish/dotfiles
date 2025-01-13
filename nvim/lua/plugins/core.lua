@@ -174,4 +174,101 @@ return {
       },
     },
   },
+  {
+    "vuki656/package-info.nvim",
+    requires = { "MunifTanjim/nui.nvim" },
+    opts = {
+      icons = {
+        enabled = true,
+        style = {
+          up_to_date = "| ",
+          outdated = "| ",
+          invalid = "| ",
+        },
+      },
+      colors = {
+        up_to_date = "green",
+        outdated = "blue",
+        invalid = "red",
+      },
+      package_manager = "npm",
+    },
+    keys = function()
+      local package_info = require("package-info")
+      local opts = {
+        noremap = true,
+        silent = true,
+      }
+
+      local mappings = {
+        {
+          "<leader>ns",
+          package_info.show,
+          "Show",
+        },
+        {
+          "<leader>nh",
+          package_info.hide,
+          "Hide",
+        },
+        {
+          "<leader>nh",
+          package_info.toggle,
+          "Hide",
+        },
+        {
+          "<leader>nu",
+          package_info.update,
+          "Update",
+        },
+        {
+          "<leader>nd",
+          package_info.delete,
+          "Delete",
+        },
+        {
+          "<leader>ni",
+          package_info.install,
+          "Install",
+        },
+        {
+          "<leader>nv",
+          package_info.change_version,
+          "Change version",
+        },
+      }
+
+      local function merge_tables(t1, t2)
+        for k, v in pairs(t2) do
+          t1[k] = v
+        end
+
+        return t1
+      end
+
+      local ret = {}
+      for _, map in ipairs(mappings) do
+        local struct = {
+          map[1],
+          map[2],
+          desc = map[3],
+        }
+
+        table.insert(ret, merge_tables(struct, opts))
+      end
+
+      return ret
+    end,
+    config = function(_, opts)
+      require("package-info").setup(opts)
+
+      require("telescope").setup({
+        extensions = {
+          package_info = {
+            theme = "ivy",
+          },
+        },
+      })
+    end,
+  },
 }
