@@ -48,6 +48,11 @@ return {
         icon = { icon = "", color = "yellow" },
       },
       {
+        "<leader>n",
+        desc = "NPM",
+        icon = { icon = "", color = "red" },
+      },
+      {
         "<localleader>t",
         desc = "TailwindCSS",
         icon = { icon = "󱏿", color = "blue" },
