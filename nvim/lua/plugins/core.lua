@@ -236,6 +236,11 @@ return {
           package_info.change_version,
           "Change version",
         },
+        {
+          "<leader>np",
+          "<cmd>Telescope package_info<CR>",
+          "Package info",
+        },
       }
 
       local function merge_tables(t1, t2)
