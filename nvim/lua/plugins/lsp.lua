@@ -33,6 +33,22 @@ return {
     keys = {},
   },
   {
+    "yioneko/nvim-vtsls",
+    opts = {},
+    config = function()
+      -- require("nvim-vtls").setup({})
+      --
+      -- require("vtsls").commands.organize_imports(
+      --   vim.utils.get_current_bufnr(),
+      --   on_resolve,
+      --   on_reject
+      -- )
+      --
+      -- function on_resolve() end
+      -- function on_reject() end
+    end,
+  },
+  {
     "hedyhli/outline.nvim",
     lazy = true,
     cmd = { "Outline", "OutlineOpen" },

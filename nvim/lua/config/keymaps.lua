@@ -97,3 +97,5 @@ vim.utils.map("n", "<F5>", function()
   vim.print("SDS")
   get_buf_content()
 end)
+
+vim.api.nvim_set_keymap("", "<leader>cO", "<cmd>Outline<CR>", { noremap = true, silent = true })
