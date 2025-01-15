@@ -276,4 +276,11 @@ return {
       })
     end,
   },
+  {
+    "nvzone/typr",
+    cmd = "TyprStats",
+    dependencies = "nvzone/volt",
+    opts = {},
+  },
 }
+-- djsakdjsasd fds fgdsaf hgdsa 

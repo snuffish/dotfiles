@@ -1,5 +1,9 @@
 return {
   {
+    "christoomey/vim-tmux-navigator",
+    lazy = false,
+  },
+  {
     "yamatsum/nvim-cursorline",
     config = function()
       require("nvim-cursorline").setup({

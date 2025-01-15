@@ -2,6 +2,8 @@
 vim.utils.map("n", "q", "<nop>", { noremap = true, silent = true })
 vim.utils.map("n", "<C-q>", "q", { desc = "Start/Stop Macro recording", noremap = true, silent = true })
 
+vim.utils.map("n", "<D-d>", "<cmd>lua print(349284938493)<CR>", { noremap = true, silent = true })
+
 vim.utils.map("n", "<leader>n", "<nop>", { noremap = true, silent = true })
 vim.utils.map("n", "<leader>nn", "<cmd>lua Snacks.notifier.show_history()<CR>", { noremap = true, silent = true , desc = "Notifications"})
 
@@ -10,8 +12,8 @@ vim.api.nvim_set_keymap("", "M", "%", { silent = true })
 
 vim.utils.map("n", { "<C-u>", "<PageUp>" }, "<C-u>zz", { desc = "Jump up 1/2-screen", noremap = true })
 vim.utils.map("n", { "<C-d>", "<PageDown>" }, "<C-d>zz", { desc = "Jump down 1/2-screen", noremap = true })
-vim.utils.map("n", "{", "{zz")
 vim.utils.map("n", "}", "}zz")
+vim.utils.map("n", "{", "{zz")
 
 vim.utils.map("n", "n", "nzzzv", { desc = "Next search result (centered)" })
 vim.utils.map("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
@@ -30,6 +32,8 @@ vim.utils.map("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true })
 vim.utils.map("n", "0", "g0")
 
 -- Amplify hjkl
+-- vim.utils.map("n", "K", "<nop>", { noremap = true, silent = true })
+-- vim.utils.map("n", "J", "<nop>", { noremap = true, silent = true })
 vim.utils.map("nx", "J", "5jzz")
 vim.utils.map("nx", "K", "5kzz")
 vim.api.nvim_set_keymap("", "H", "[b", {})
