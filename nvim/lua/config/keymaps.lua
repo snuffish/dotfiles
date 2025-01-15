@@ -29,6 +29,7 @@ for _, m in ipairs({ "n", "v" }) do
       "<cmd>Treewalker " .. direction .. "<cr>zz",
       { noremap = true, silent = true }
     )
+    -- TODO: Fix correct keymaps for Swap
     -- vim.api.nvim_set_keymap(
     --   m,
     --   string.format("<C-M-%s>", key),
