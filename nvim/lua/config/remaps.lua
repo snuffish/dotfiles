@@ -36,8 +36,8 @@ vim.utils.map("n", "0", "g0")
 -- vim.utils.map("n", "J", "<nop>", { noremap = true, silent = true })
 vim.utils.map("nx", "J", "5jzz")
 vim.utils.map("nx", "K", "5kzz")
-vim.api.nvim_set_keymap("", "H", "[b", {})
-vim.api.nvim_set_keymap("", "L", "]b", {})
+-- vim.api.nvim_set_keymap("", "H", "[b", {})
+-- vim.api.nvim_set_keymap("", "L", "]b", {})
 
 -- Delete without yanking
 vim.utils.map("n", "xp", "xph")
