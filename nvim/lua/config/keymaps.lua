@@ -7,37 +7,42 @@ vim.api.nvim_set_keymap("", "<C-j>", "<cmd>TmuxNavigateDown<CR>", { desc = "Wind
 vim.api.nvim_set_keymap("", "<C-k>", "<cmd>TmuxNavigateUp<CR>", { desc = "Window up" })
 
 -- TreeWalker mapping
-local Direction = {
-  UP = "Up",
-  DOWN = "Down",
-  RIGHT = "Right",
-  LEFT = "Left",
-}
+-- local Direction = {
+--   UP = "Up",
+--   DOWN = "Down",
+--   RIGHT = "Right",
+--   LEFT = "Left",
+-- }
 
-local treewalker_mappikngs = {
-  ["K"] = Direction.UP,
-  ["J"] = Direction.DOWN,
-  ["L"] = Direction.RIGHT,
-  ["H"] = Direction.LEFT,
-}
+-- local treewalker_mappikngs = {
+--   ["K"] = Direction.UP,
+--   ["J"] = Direction.DOWN,
+--   ["L"] = Direction.RIGHT,
+--   ["H"] = Direction.LEFT,
+-- }
 
-for _, m in ipairs({ "n", "v" }) do
-  for key, direction in pairs(treewalker_mappikngs) do
-    vim.api.nvim_set_keymap(
-      m,
-      string.format("<C-M-%s>", key),
-      "<cmd>Treewalker " .. direction .. "<cr>zz",
-      { noremap = true, silent = true }
-    )
-    -- TODO: Fix correct keymaps for Swap
-    -- vim.api.nvim_set_keymap(
-    --   m,
-    --   string.format("<C-M-%s>", key),
-    --   "<cmd>Treewalker Swap" .. direction .. "<cr>zz",
-    --   { noremap = true, silent = true }
-    -- )
- end
-end
+vim.api.nvim_set_keymap("", "<M-C-J>", "<cmd>Treewalker Down<CR>zz", {})
+vim.api.nvim_set_keymap("", "<M-C-K>", "<cmd>Treewalker Up<CR>zz", {})
+vim.api.nvim_set_keymap("", "<M-C-H>", "<cmd>Treewalker Left<CR>zz", {})
+vim.api.nvim_set_keymap("", "<M-C-L>", "<cmd>Treewalker Right<CR>zz", {})
+
+-- for _, m in ipairs({ "n", "v" }) do
+--   for key, direction in pairs(treewalker_mappikngs) do
+--     vim.api.nvim_set_keymap(
+--       m,
+--       string.format("<M-C-%s>"),
+--       "<cmd>Treewalker " .. direction .. "<cr>zz",
+--       { noremap = true, silent = true }
+--     )
+--     -- TODO: Fix correct keymaps for Swap
+--     -- vim.api.nvim_set_keymap(
+--     --   m,
+--     --   string.format("<C-M-%s>", key),
+--     --   "<cmd>Treewalker Swap" .. direction .. "<cr>zz",
+--     --   { noremap = true, silent = true }
+--     -- )
+--  end
+-- end
 
 vim.api.nvim_set_keymap(
   "n",
