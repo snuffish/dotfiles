@@ -1,5 +1,8 @@
 return {
   {
+    "giuxtaposition/blink-cmp-copilot",
+  },
+  {
     "neovim/nvim-lspconfig",
     opts = function()
       local keys = require("lazyvim.plugins.lsp.keymaps").get()
@@ -99,7 +102,7 @@ return {
         sources = cmp.config.sources({
           { name = "nvim_lsp" },
           { name = "luasnip" },
-          { name = "autohotkey" },
+          -- { name = "autohotkey" },
         }, {
           { name = "buffer" },
         }),
