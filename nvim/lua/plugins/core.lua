@@ -157,7 +157,7 @@ return {
   },
   { -- This plugin
     "Zeioth/compiler.nvim",
-    cmd = { "CompilerOpen", "CompilerToggleResults", "CompilerRedo" },
+    cmd = { "CompilerToggleResults", "CompilerOpen", "CompilerRedo" },
     dependencies = { "stevearc/overseer.nvim", "nvim-telescope/telescope.nvim" },
     opts = {},
   },
@@ -282,5 +282,52 @@ return {
     dependencies = "nvzone/volt",
     opts = {},
   },
+  {
+    "nvim-neorg/neorg",
+    lazy = false,
+    version = "*",
+    config = function()
+      require("neorg").setup({
+        load = {
+          ["core.defaults"] = {},
+          ["core.concealer"] = {},
+          ["core.dirman"] = {
+            config = {
+              workspaces = {
+                notes = "~/notes",
+              },
+              default_workspace = "notes",
+            },
+          },
+        },
+      })
+
+      vim.wo.foldlevel = 99
+      vim.wo.conceallevel = 2
+    end,
+  },
+  {
+    "rest-nvim/rest.nvim",
+    ft = "http",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      opts = function(_, opts)
+        opts.ensure_installed = opts.ensure_installed or {}
+        table.insert(opts.ensure_installed, "http")
+      end,
+    },
+    config = function()
+      -- Define a function to set the keybindings
+      local function set_http_keymaps()
+        local _opts = { noremap = true, silent = true }
+        vim.api.nvim_buf_set_keymap(0, "n", "<localleader>r", "<cmd>Rest run<CR>", _opts)
+      end
+
+      -- Create an autocmd to set the keybindings for http filetypes
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "http",
+        callback = set_http_keymaps,
+      })
+    end,
+  },
 }
--- djsakdjsasd fds fgdsaf hgdsa 
