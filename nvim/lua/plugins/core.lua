@@ -75,7 +75,7 @@ return {
         preview_split = "below",
         get_win_title = nil,
         override = function(conf)
-          vim.defer_fn(vim.utils.trigger_keys_fn("<C-p>"), 50)
+          vim.defer_fn(vim.utils.trigger_keys_fn("<C-p>"), 150)
           return conf
         end,
       },
