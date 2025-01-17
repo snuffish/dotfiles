@@ -28,13 +28,13 @@ for key, direction in pairs(treewalker_mappings) do
     "<cmd>Treewalker " .. direction .. "<cr>zz",
     { noremap = true, silent = true }
   )
-  -- TODO: Fix correct keymaps for Swap
-  -- vim.api.nvim_set_keymap(
-  --   m,
-  --   string.format("<C-M-%s>", key),
-  --   "<cmd>Treewalker Swap" .. direction .. "<cr>zz",
-  --   { noremap = true, silent = true }
-  -- )
+
+  vim.api.nvim_set_keymap(
+    "",
+    "<cmd>Treewalker Swap" .. direction .. "<cr>zz",
+    string.format("<M-C-%s>", key),
+    { noremap = true, silent = true }
+  )
 end
 
 vim.api.nvim_set_keymap(
