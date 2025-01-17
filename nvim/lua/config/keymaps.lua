@@ -6,43 +6,36 @@ vim.api.nvim_set_keymap("", "<C-l>", "<cmd>TmuxNavigateRight<CR>", { desc = "Win
 vim.api.nvim_set_keymap("", "<C-j>", "<cmd>TmuxNavigateDown<CR>", { desc = "Window down" })
 vim.api.nvim_set_keymap("", "<C-k>", "<cmd>TmuxNavigateUp<CR>", { desc = "Window up" })
 
--- TreeWalker mapping
--- local Direction = {
---   UP = "Up",
---   DOWN = "Down",
---   RIGHT = "Right",
---   LEFT = "Left",
--- }
+-- Treewalker mapping
+local Direction = {
+  UP = "Up",
+  DOWN = "Down",
+  RIGHT = "Right",
+  LEFT = "Left",
+}
 
--- local treewalker_mappikngs = {
---   ["K"] = Direction.UP,
---   ["J"] = Direction.DOWN,
---   ["L"] = Direction.RIGHT,
---   ["H"] = Direction.LEFT,
--- }
+local treewalker_mappings = {
+  ["K"] = Direction.UP,
+  ["J"] = Direction.DOWN,
+  ["L"] = Direction.RIGHT,
+  ["H"] = Direction.LEFT,
+}
 
-vim.api.nvim_set_keymap("", "<M-C-J>", "<cmd>Treewalker Down<CR>zz", {})
-vim.api.nvim_set_keymap("", "<M-C-K>", "<cmd>Treewalker Up<CR>zz", {})
-vim.api.nvim_set_keymap("", "<M-C-H>", "<cmd>Treewalker Left<CR>zz", {})
-vim.api.nvim_set_keymap("", "<M-C-L>", "<cmd>Treewalker Right<CR>zz", {})
-
--- for _, m in ipairs({ "n", "v" }) do
---   for key, direction in pairs(treewalker_mappikngs) do
---     vim.api.nvim_set_keymap(
---       m,
---       string.format("<M-C-%s>"),
---       "<cmd>Treewalker " .. direction .. "<cr>zz",
---       { noremap = true, silent = true }
---     )
---     -- TODO: Fix correct keymaps for Swap
---     -- vim.api.nvim_set_keymap(
---     --   m,
---     --   string.format("<C-M-%s>", key),
---     --   "<cmd>Treewalker Swap" .. direction .. "<cr>zz",
---     --   { noremap = true, silent = true }
---     -- )
---  end
--- end
+for key, direction in pairs(treewalker_mappings) do
+  vim.api.nvim_set_keymap(
+    "",
+    string.format("<M-S-%s>", key),
+    "<cmd>Treewalker " .. direction .. "<cr>zz",
+    { noremap = true, silent = true }
+  )
+  -- TODO: Fix correct keymaps for Swap
+  -- vim.api.nvim_set_keymap(
+  --   m,
+  --   string.format("<C-M-%s>", key),
+  --   "<cmd>Treewalker Swap" .. direction .. "<cr>zz",
+  --   { noremap = true, silent = true }
+  -- )
+end
 
 vim.api.nvim_set_keymap(
   "n",
@@ -94,21 +87,5 @@ end
 
 vim.api.nvim_set_keymap("n", string.rep(sr_key, 2), ";a_", { desc = "Add row surrounding" })
 vim.api.nvim_set_keymap("v", string.rep(sr_key, 2), ";a", { desc = "Add surrounding" })
-
-local get_buf_content = function()
-  local buf = vim.utils.get_current_bufnr()
-  vim.print(buf)
-  local buffers_content = {}
-
-  local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-  table.insert(buffers_content, { buf = buf, content = lines })
-
-  vim.print(buffers_content)
-end
-
--- vim.utils.map("n", "<F5>", function()
---   vim.print("SDS")
---   get_buf_content()
--- end)
 
 vim.api.nvim_set_keymap("", "<leader>cO", "<cmd>Outline<CR>", { noremap = true, silent = true })
