@@ -22,3 +22,4 @@ autoload -U +X bashcompinit && bashcompinit
 
 source "$SCRIPT_DIR/az.completion"
 source "$SCRIPT_DIR/tmux/init.bash"
+xmodmap "$SCRIPT_DIR/.Xmodmap"
