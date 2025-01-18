@@ -32,4 +32,18 @@ return {
       require("mini.pick").setup(opts)
     end,
   },
+  {
+    "echasnovski/mini.bracketed",
+    version = false,
+    config = function()
+      require("mini.bracketed").setup()
+    end,
+  },
+  {
+    "echasnovski/mini.splitjoin",
+    version = false,
+    config = function()
+      require("mini.splitjoin").setup()
+    end
+  },
 }
