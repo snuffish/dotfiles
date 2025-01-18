@@ -66,32 +66,10 @@ vim.api.nvim_set_keymap("i", "<C-h>", "<Left>", { silent = true, noremap = true 
 vim.api.nvim_set_keymap("i", "<C-l>", "<Right>", { silent = true, noremap = true })
 
 -- Mini.Surround mapping
-local sr_key = vim.g.map_surround_leader
+vim.api.nvim_set_keymap("n", ";;", ";a_", { desc = "Add row surrounding" })
+vim.api.nvim_set_keymap("v", ";;", ";a", { desc = "Add surrounding" })
 
-local surround_mappings = {
-  { key = "a", desc = "Add Surrounding" },
-  { key = "d", desc = "Delete Surrounding" },
-  { key = "f", desc = "Find Right Surrounding" },
-  { key = "F", desc = "Find Left Surrounding" },
-  { key = "h", desc = "Highlight Surrounding" },
-  { key = "r", desc = "Replace Surrounding" },
-  { key = "n", desc = "Update `MiniSurround.config.n_lines`" },
-}
-
-for _, mapping in ipairs(surround_mappings) do
-  local key = mapping.key
-  local desc = mapping.desc
-
-  vim.api.nvim_set_keymap("", sr_key .. key, ";" .. key, { desc = desc })
-end
-
-for _, key in pairs({ sr_key, ";" }) do
-  vim.api.nvim_set_keymap("n", string.rep(key, 2), ";a_", { desc = "Add row surrounding" })
-  vim.api.nvim_set_keymap("v", string.rep(key, 2), ";a", { desc = "Add surrounding" })
-end
-
--- Move to textobject
--- vim.api.nvim_set_keymap("", "]q", ";fq", { desc = "Quote" })
--- vim.api.nvim_set_keymap("", "[q", ";Fq", { desc = "Quote" })
-
-vim.api.nvim_set_keymap("", "<leader>cO", "<cmd>Outline<CR>", { noremap = true, silent = true })
+vim.utils.map('n', ';w', function()
+  vim.cmd('normal! viw')
+  vim.utils.trigger_keys(";;")
+end, { desc = "Add surrounding on <cword>", noremap = true, silent = true })
