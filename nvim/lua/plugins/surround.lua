@@ -56,8 +56,6 @@ return {
           i = { treesitter({ a = "@conditional.outer", i = "@condition.inner" }) },
         },
       })
-
-      -- vim.api.nvim_set_keymap("", "gå", "g[", { silent = true, noremap = true })
     end,
   },
 }
