@@ -90,4 +90,8 @@ for _, key in pairs({ sr_key, ";" }) do
   vim.api.nvim_set_keymap("v", string.rep(key, 2), ";a", { desc = "Add surrounding" })
 end
 
+-- Move to textobject
+-- vim.api.nvim_set_keymap("", "]q", ";fq", { desc = "Quote" })
+-- vim.api.nvim_set_keymap("", "[q", ";Fq", { desc = "Quote" })
+
 vim.api.nvim_set_keymap("", "<leader>cO", "<cmd>Outline<CR>", { noremap = true, silent = true })
