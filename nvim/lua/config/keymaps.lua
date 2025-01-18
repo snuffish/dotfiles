@@ -85,7 +85,9 @@ for _, mapping in ipairs(surround_mappings) do
   vim.api.nvim_set_keymap("", sr_key .. key, ";" .. key, { desc = desc })
 end
 
-vim.api.nvim_set_keymap("n", string.rep(sr_key, 2), ";a_", { desc = "Add row surrounding" })
-vim.api.nvim_set_keymap("v", string.rep(sr_key, 2), ";a", { desc = "Add surrounding" })
+for _, key in pairs({ sr_key, ";" }) do
+  vim.api.nvim_set_keymap("n", string.rep(key, 2), ";a_", { desc = "Add row surrounding" })
+  vim.api.nvim_set_keymap("v", string.rep(key, 2), ";a", { desc = "Add surrounding" })
+end
 
 vim.api.nvim_set_keymap("", "<leader>cO", "<cmd>Outline<CR>", { noremap = true, silent = true })

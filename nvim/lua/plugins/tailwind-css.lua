@@ -1,13 +1,14 @@
 return {
   {
     "luckasRanarison/tailwind-tools.nvim",
+    ft = "typescriptreact",
     name = "tailwind-tools",
     build = ":UpdateRemotePlugins",
     dependencies = {
       "nvim-treesitter/nvim-treesitter",
       "neovim/nvim-lspconfig",
     },
-    opts = { },
+    opts = {},
     keys = {
       {
         "<localleader>tt",

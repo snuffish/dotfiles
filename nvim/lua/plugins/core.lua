@@ -176,6 +176,7 @@ return {
   },
   {
     "vuki656/package-info.nvim",
+    ft = "package*.json",
     requires = { "MunifTanjim/nui.nvim" },
     opts = {
       icons = {

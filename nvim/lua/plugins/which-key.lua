@@ -28,7 +28,7 @@ return {
             "<leader>lm",
             "<cmd>Mason<CR>",
             desc = "Open Mason",
-            icon = { icon = "", color = "#FF9856" },
+            icon = { icon = "", color = "cyan" },
           },
           {
             "<leader>ld",
@@ -41,11 +41,6 @@ return {
             desc = "Open LazyGit",
           },
         },
-      },
-      {
-        "<localleader>f",
-        desc = "Flash",
-        icon = { icon = "", color = "yellow" },
       },
       {
         "<leader>n",
