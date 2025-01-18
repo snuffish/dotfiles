@@ -57,7 +57,7 @@ return {
         },
       })
 
-      vim.api.nvim_set_keymap("", "gå", "g[", { silent = true, noremap = true })
+      -- vim.api.nvim_set_keymap("", "gå", "g[", { silent = true, noremap = true })
     end,
   },
 }

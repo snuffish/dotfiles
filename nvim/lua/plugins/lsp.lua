@@ -4,11 +4,41 @@ return {
   },
   {
     "neovim/nvim-lspconfig",
+    dependencies = {
+      {
+        "hedyhli/outline.nvim",
+        cmd = { "Outline", "OutlineOpen" },
+        keys = {
+          { "<localleader>o", "<cmd>Outline<CR>", desc = "Toggle outline" },
+        },
+        config = function()
+          require("outline").setup({
+            preview_window = {
+              auto_preview = true,
+              live = true,
+            },
+            outline_window = {
+              auto_jump = true,
+            },
+            -- symbols = {
+            --   icon_fetcher = function(kind, bufnr, symbol)
+            --     return kind:sub(1, 1)
+            --   end,
+            -- },
+          })
+        end,
+      },
+    },
     opts = function()
       local keys = require("lazyvim.plugins.lsp.keymaps").get()
 
       keys[#keys + 1] = {
         "K",
+        false,
+      }
+
+      keys[#keys + 1] = {
+        "o",
         false,
       }
 
@@ -59,18 +89,6 @@ return {
       --
       -- function on_resolve() end
       -- function on_reject() end
-    end,
-  },
-  {
-    "hedyhli/outline.nvim",
-    lazy = true,
-    cmd = { "Outline", "OutlineOpen" },
-    keys = {
-      { "<leader>co", "<cmd>Outline<CR>", desc = "Toggle outline" },
-      { "<leader>cs", false },
-    },
-    config = function()
-      require("outline").setup()
     end,
   },
   {

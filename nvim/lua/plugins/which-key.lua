@@ -53,14 +53,8 @@ return {
         icon = { icon = "󱏿", color = "blue" },
       },
       {
-        {
-          "ö",
-          desc = "Surround",
-        },
-        {
-          ";",
-          desc = "Surround",
-        },
+        ";",
+        desc = "Surround",
       },
     },
   },
