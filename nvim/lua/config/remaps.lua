@@ -2,8 +2,6 @@
 vim.utils.map("n", "q", "<nop>", { noremap = true, silent = true })
 vim.utils.map("n", "<C-q>", "q", { desc = "Start/Stop Macro recording", noremap = true, silent = true })
 
-vim.utils.map("n", "<D-d>", "<cmd>lua print(349284938493)<CR>", { noremap = true, silent = true })
-
 vim.utils.map("n", "<leader>n", "<nop>", { noremap = true, silent = true })
 vim.utils.map(
   "n",
@@ -37,12 +35,8 @@ vim.utils.map("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true })
 vim.utils.map("n", "0", "g0")
 
 -- Amplify hjkl
--- vim.utils.map("n", "K", "<nop>", { noremap = true, silent = true })
--- vim.utils.map("n", "J", "<nop>", { noremap = true, silent = true })
 vim.utils.map("nx", "J", "5jzz")
 vim.utils.map("nx", "K", "5kzz")
--- vim.api.nvim_set_keymap("", "H", "[b", {})
--- vim.api.nvim_set_keymap("", "L", "]b", {})
 
 -- Delete without yanking
 vim.utils.map("n", "xp", "xph")
