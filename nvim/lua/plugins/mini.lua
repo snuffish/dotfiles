@@ -16,6 +16,7 @@ return {
   {
     "echasnovski/mini.pick",
     version = false,
+    lazy = false,
     opts = {
       mappings = {
         move_down = "<C-j>",
