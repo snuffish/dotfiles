@@ -72,6 +72,7 @@ return {
           MiniAi.move_cursor("left", "a", "q", { search_method = "cover_or_prev" })
         end,
         mode = { "n", "v", "x" },
+        desc = "Goto next start @quote"
       },
       {
         "[Q",
@@ -79,6 +80,7 @@ return {
           MiniAi.move_cursor("right", "a", "q", { search_method = "cover_or_prev" })
         end,
         mode = { "n", "v", "x" },
+        desc = "Goto next end @quote"
       },
       {
         "]q",
@@ -86,6 +88,7 @@ return {
           vim.utils.trigger_keys("g[q")
         end,
         mode = { "n", "v", "x" },
+        desc = "Goto next start @quote"
       },
       {
         "]Q",
@@ -93,6 +96,7 @@ return {
           vim.utils.trigger_keys("g]q")
         end,
         mode = { "n", "v", "x" },
+        desc = "Goto next end @quote"
       },
     },
   },
