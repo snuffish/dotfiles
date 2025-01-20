@@ -25,4 +25,4 @@ source "$SCRIPT_DIR/tmux/init.bash"
 
 # xmodmap
 # xmodmap -e "keysym Meta_L = ISO_Level3_Shift"
-# xmodmap "$SCRIPT_DIR/.Xmodmap"
+xmodmap "$SCRIPT_DIR/.Xmodmap"

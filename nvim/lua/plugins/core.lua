@@ -86,6 +86,14 @@ return {
         ["<Left>"] = { "actions.parent", mode = "n" },
         ["l"] = { "actions.select", mode = "n" },
         ["h"] = { "actions.parent", mode = "n" },
+        ["s"] = {
+          function()
+            require("oil").save({
+              confirm = true,
+            })
+          end,
+          desc = "Save"
+        },
       },
     },
     keys = {
@@ -343,7 +351,7 @@ return {
             enable = true,
             keymaps = {
               -- Your custom capture.
-              ["iq"] = "@quote.inner",
+              -- ["ix"] = "@parameter.outer",
             },
           },
         },
@@ -380,6 +388,6 @@ return {
     "Olical/conjure",
     init = function()
       vim.g["conjure#mapping#doc_word"] = "gk"
-    end
+    end,
   },
 }

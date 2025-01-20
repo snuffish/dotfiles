@@ -1,5 +1,6 @@
-keycode 34 = bracketleft braceleft aring Aring bracketleft braceleft dead_diaeresis dead_abovering
 keycode 35 = bracketright braceright bracketright braceright bracketright braceright
-keycode 47 = semicolon colon odiaeresis Odiaeresis semicolon colon dead_acute dead_doubleacute
+
+! keycode 34 = bracketleft braceleft aring Aring bracketleft braceleft dead_diaeresis dead_abovering
+! keycode 47 = semicolon colon odiaeresis Odiaeresis semicolon colon dead_acute dead_doubleacute
 
 ! keycode  47 = odiaeresis Odiaeresis semicolon colon semicolon colon dead_acute dead_doubleacute
