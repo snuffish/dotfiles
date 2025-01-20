@@ -49,7 +49,7 @@ vim.utils.map("n", "<localleader>a", function()
   vim.o.statuscolumn = vim.o.statuscolumn ~= pattern and pattern or "%!v:lua.require'snacks.statuscolumn'.get()"
 end, { desc = "Toggle `Absolute linenumbers`" })
 
-vim.utils.map("n", "<leader>a", "ggVG", { desc = "Select all text", silent = true })
+vim.utils.map("n", "<leader>a", vim.utils.trigger_keys_fn("vag"), { noremap = true, silent = true, desc = "Select all text" })
 vim.utils.map(
   "n",
   "<M-Up><M-Up>",
