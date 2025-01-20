@@ -37,8 +37,8 @@ vim.utils.map("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true })
 vim.utils.map("n", "0", "g0")
 
 -- Amplify hjkl
-vim.utils.map("nx", "J", "5jzz")
-vim.utils.map("nx", "K", "5kzz")
+vim.utils.map("nx", "J", "5jzz", { noremap = true, silent = true })
+vim.utils.map("nx", "K", "5kzz", { noremap = true, silent = true })
 
 -- Delete without yanking
 vim.utils.map("n", "xp", "xph")
