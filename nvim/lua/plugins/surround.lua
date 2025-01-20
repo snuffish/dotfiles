@@ -69,34 +69,14 @@ return {
       {
         "[q",
         function()
-          if not MiniAi then
-            MiniAi = require("mini.ai")
-          end
-
-          MiniAi.config.search_method = "cover_or_prev"
-
-          vim.utils.trigger_keys("g[q")
-
-          vim.defer_fn(function()
-            MiniAi.config.search_method = "cover_or_next"
-          end, 150)
+          MiniAi.move_cursor("left", "a", "q", { search_method = "cover_or_prev" })
         end,
         mode = { "n", "v", "x" },
       },
       {
         "[Q",
         function()
-          if not MiniAi then
-            MiniAi = require("mini.ai")
-          end
-
-          MiniAi.config.search_method = "cover_or_prev"
-
-          vim.utils.trigger_keys("g]q")
-
-          vim.defer_fn(function()
-            MiniAi.config.search_method = "cover_or_next"
-          end, 150)
+          MiniAi.move_cursor("right", "a", "q", { search_method = "cover_or_prev" })
         end,
         mode = { "n", "v", "x" },
       },
