@@ -1,11 +1,4 @@
-print("111")
+local myvar = "testar"
+myvar = myvar.."xxx"
 
-
-
-print("222")
-
-
-print("333")
-
-
-
+print(myvar)
