@@ -92,7 +92,7 @@ return {
               confirm = true,
             })
           end,
-          desc = "Save"
+          desc = "Save",
         },
       },
     },
@@ -389,5 +389,12 @@ return {
     init = function()
       vim.g["conjure#mapping#doc_word"] = "gk"
     end,
+  },
+  {
+    "folke/trouble.nvim",
+    keys = {
+      { "[q", false },
+      { "]q", false },
+    },
   },
 }

@@ -69,7 +69,15 @@ vim.api.nvim_set_keymap("i", "<C-l>", "<Right>", { silent = true, noremap = true
 vim.api.nvim_set_keymap("n", ";;", ";a_", { desc = "Add row surrounding" })
 vim.api.nvim_set_keymap("v", ";;", ";a", { desc = "Add surrounding" })
 
-vim.utils.map('n', ';w', function()
+vim.utils.map("n", ";w", function()
   vim.cmd('normal! viw')
   vim.utils.trigger_keys(";;")
 end, { desc = "Add surrounding on <cword>", noremap = true, silent = true })
+
+-- vim.utils.map("nvx", "]q", function()
+--   vim.utils.trigger_keys("g[q")
+-- end, { noremap = true, silent = true })
+--
+-- vim.utils.map("nvx", "]Q", function()
+--   vim.utils.trigger_keys("g]q")
+-- end, { noremap = true, silent = true })
