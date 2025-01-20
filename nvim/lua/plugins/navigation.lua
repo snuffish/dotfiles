@@ -1,3 +1,6 @@
+local gen_spec = require("mini.ai").gen_spec
+local treesitter = gen_spec.treesitter
+
 return {
   {
     "christoomey/vim-tmux-navigator",

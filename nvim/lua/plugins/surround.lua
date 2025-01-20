@@ -64,6 +64,59 @@ return {
           end,
         },
       })
+
+      -- vim.utils.map("n", "[x", function()
+      --   MiniAi.config.search_method = "prev"
+      --   vim.utils.trigger_keys("g[q")
+      --   MiniAi.config.search_method = "cover_or_next"
+      -- end)
     end,
+    keys = {
+      -- {
+      --   "[q",
+      --   function()
+      --     if not MiniAi then
+      --       MiniAi = require("mini.ai")
+      --     end
+      --
+      --     MiniAi.config.search_method = "prev"
+      --
+      --     vim.utils.trigger_keys("g[q")
+      --
+      --     vim.defer_fn(function()
+      --       MiniAi.config.search_method = "cover_or_next"
+      --     end, 150)
+      --   end,
+      -- },
+      -- {
+      --   "[Q",
+      --   function()
+      --     if not MiniAi then
+      --       MiniAi = require("mini.ai")
+      --     end
+      --
+      --     MiniAi.config.search_method = "prev"
+      --
+      --     vim.utils.trigger_keys("g]q")
+      --
+      --     vim.defer_fn(function()
+      --       MiniAi.config.search_method = "next"
+      --       -- MiniAi.config.search_method = "cover_or_next"
+      --     end, 150)
+      --   end,
+      -- },
+      {
+        "]q",
+        function()
+          vim.utils.trigger_keys("g[q")
+        end,
+      },
+      {
+        "]Q",
+        function()
+          vim.utils.trigger_keys("g]q")
+        end,
+      },
+    },
   },
 }
