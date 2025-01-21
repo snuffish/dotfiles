@@ -51,12 +51,6 @@ end, { desc = "Toggle `Absolute linenumbers`" })
 
 vim.utils.map(
   "n",
-  "<leader>a",
-  vim.utils.trigger_keys_fn("vag"),
-  { noremap = true, silent = true, desc = "Select all text" }
-)
-vim.utils.map(
-  "n",
   "<M-Up><M-Up>",
   vim.utils.trigger_keys_fn(":<Up>"),
   { desc = "Previous command", noremap = true, silent = true }
@@ -73,4 +67,3 @@ vim.api.nvim_set_keymap("i", "<C-l>", "<Right>", { silent = true, noremap = true
 -- Mini.Surround mapping
 vim.api.nvim_set_keymap("n", ";;", ";a_", { desc = "Add row surrounding" })
 vim.api.nvim_set_keymap("v", ";;", ";a", { desc = "Add surrounding" })
-
