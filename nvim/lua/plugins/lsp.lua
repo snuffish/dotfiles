@@ -42,38 +42,19 @@ return {
         false,
       }
 
-      -- return {
-      --   servers = {
-      --     tsserver = {
-      --       keys = {
-      --         { "<leader>cq", "<cmd>print(5555)<CR>", desc = "Test Setting here" },
-      --       },
-      --     },
-      --   },
-      -- }
+      keys[#keys + 1] = {
+        "gK",
+        vim.lsp.buf.hover,
+        desc = "Hover",
+      }
 
-      -- return {
-      --   completion = {
-      --     trigger = {
-      --       show_on_insert_on_trigger_character = false,
-      --     },
-      --   },
-      -- }
-
-      -- keys[#keys + 1] = {
-      --   "<leader>cA", false
-      -- }
-      -- keys[#keys + 1] = {
-      --   "<leader>cQ",
-      --   function()
-      --     print("HEEEEJ")
-      --   end,
-      --   -- expr = true,
-      --   desc = "MY OWN KEYMAP",
-      --   -- has = "rename",
-      -- }
+      keys[#keys + 1] = {
+        "gH",
+        vim.lsp.buf.signature_help,
+        desc = "Signature Help",
+        has = "signatureHelp",
+      }
     end,
-    keys = {},
   },
   {
     "yioneko/nvim-vtsls",
