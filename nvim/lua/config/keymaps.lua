@@ -49,7 +49,12 @@ vim.utils.map("n", "<localleader>a", function()
   vim.o.statuscolumn = vim.o.statuscolumn ~= pattern and pattern or "%!v:lua.require'snacks.statuscolumn'.get()"
 end, { desc = "Toggle `Absolute linenumbers`" })
 
-vim.utils.map("n", "<leader>a", vim.utils.trigger_keys_fn("vag"), { noremap = true, silent = true, desc = "Select all text" })
+vim.utils.map(
+  "n",
+  "<leader>a",
+  vim.utils.trigger_keys_fn("vag"),
+  { noremap = true, silent = true, desc = "Select all text" }
+)
 vim.utils.map(
   "n",
   "<M-Up><M-Up>",
@@ -68,9 +73,4 @@ vim.api.nvim_set_keymap("i", "<C-l>", "<Right>", { silent = true, noremap = true
 -- Mini.Surround mapping
 vim.api.nvim_set_keymap("n", ";;", ";a_", { desc = "Add row surrounding" })
 vim.api.nvim_set_keymap("v", ";;", ";a", { desc = "Add surrounding" })
-
-vim.utils.map("n", ";w", function()
-  vim.cmd('normal! viw')
-  vim.utils.trigger_keys(";;")
-end, { desc = "Add surrounding on <cword>", noremap = true, silent = true })
 
