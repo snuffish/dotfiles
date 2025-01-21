@@ -80,8 +80,9 @@ return {
         end,
       },
       keymaps = {
-        ["<leader>"] = "actions.select",
         ["q"] = { "actions.close", mode = "n" },
+        ["<Esc>"] = { "actions.close", mode = "n" },
+        ["<leader>"] = "actions.select",
         ["<BS>"] = { "actions.parent", mode = "n" },
         ["<Left>"] = { "actions.parent", mode = "n" },
         ["l"] = { "actions.select", mode = "n" },
@@ -169,7 +170,7 @@ return {
     dependencies = { "stevearc/overseer.nvim", "nvim-telescope/telescope.nvim" },
     opts = {},
   },
-  { -- The task runner we use
+  {
     "stevearc/overseer.nvim",
     commit = "68a2d344cea4a2e11acfb5690dc8ecd1a1ec0ce0",
     cmd = { "CompilerOpen", "CompilerToggleResults", "CompilerRedo" },
@@ -327,63 +328,73 @@ return {
       end,
     },
     config = function()
-      -- Define a function to set the keybindings
+      local opts = { noremap = true, silent = true, buffer = 0 }
+
       local function set_http_keymaps()
-        local _opts = { noremap = true, silent = true }
-        vim.api.nvim_buf_set_keymap(0, "n", "<localleader>r", "<cmd>Rest run<CR>", _opts)
+        vim.utils.map("n", "<localleader>r", "<cmd>Rest run<CR>", opts)
       end
 
-      -- Create an autocmd to set the keybindings for http filetypes
       vim.api.nvim_create_autocmd("FileType", {
         pattern = "http",
         callback = set_http_keymaps,
       })
-    end,
-  },
-  {
-    "nvim-treesitter/nvim-treesitter-textobjects",
-    event = "VeryLazy",
-    enabled = true,
-    config = function()
-      require("nvim-treesitter.configs").setup({
-        textobjects = {
-          select = {
-            enable = true,
-            keymaps = {
-              -- Your custom capture.
-              -- ["ix"] = "@parameter.outer",
-            },
-          },
-        },
-      })
-      -- If treesitter is already loaded, we need to run config again for textobjects
-      -- if LazyVim.is_loaded("nvim-treesitter") then
-      --   local opts = LazyVim.opts("nvim-treesitter")
-      --   require("nvim-treesitter.configs").setup({ textobjects = opts.textobjects })
-      -- end
 
-      -- When in diff mode, we want to use the default
-      -- vim text objects c & C instead of the treesitter ones.
-      -- local move = require("nvim-treesitter.textobjects.move") ---@type table<string,fun(...)>
-      -- local configs = require("nvim-treesitter.configs")
-      -- for name, fn in pairs(move) do
-      --   if name:find("goto") == 1 then
-      --     move[name] = function(q, ...)
-      --       if vim.wo.diff then
-      --         local config = configs.get_module("textobjects.move")[name] ---@type table<string,string>
-      --         for key, query in pairs(config or {}) do
-      --           if q == query and key:find("[%]%[][cC]") then
-      --             vim.cmd("normal! " .. key)
-      --             return
-      --           end
-      --         end
-      --       end
-      --       return fn(q, ...)
-      --     end
-      --   end
-      -- end
+      local function set_nvim_rest_results_keymaps()
+        vim.utils.map("n", "q", vim.utils.trigger_keys_fn("<C-w><C-q>"), opts)
+        vim.utils.map("n", "]", vim.utils.trigger_keys_fn("L"), opts)
+        vim.utils.map("n", "[", vim.utils.trigger_keys_fn("H"), opts)
+      end
+
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "rest_nvim_result",
+        callback = set_nvim_rest_results_keymaps,
+      })
     end,
   },
+  -- {
+  --   "nvim-treesitter/nvim-treesitter-textobjects",
+  --   event = "VeryLazy",
+  --   enabled = true,
+  --   config = function()
+  --     require("nvim-treesitter.configs").setup({
+  --       textobjects = {
+  --         select = {
+  --           enable = true,
+  --           keymaps = {
+  --             -- Your custom capture.
+  --             -- ["ix"] = "@parameter.outer",
+  --           },
+  --         },
+  --       },
+  --     })
+  --     -- If treesitter is already loaded, we need to run config again for textobjects
+  --     -- if LazyVim.is_loaded("nvim-treesitter") then
+  --     --   local opts = LazyVim.opts("nvim-treesitter")
+  --     --   require("nvim-treesitter.configs").setup({ textobjects = opts.textobjects })
+  --     -- end
+  --
+  --     -- When in diff mode, we want to use the default
+  --     -- vim text objects c & C instead of the treesitter ones.
+  --     -- local move = require("nvim-treesitter.textobjects.move") ---@type table<string,fun(...)>
+  --     -- local configs = require("nvim-treesitter.configs")
+  --     -- for name, fn in pairs(move) do
+  --     --   if name:find("goto") == 1 then
+  --     --     move[name] = function(q, ...)
+  --     --       if vim.wo.diff then
+  --     --         local config = configs.get_module("textobjects.move")[name] ---@type table<string,string>
+  --     --         for key, query in pairs(config or {}) do
+  --     --           if q == query and key:find("[%]%[][cC]") then
+  --     --             vim.cmd("normal! " .. key)
+  --     --             return
+  --     --           end
+  --     --         end
+  --     --       end
+  --     --       return fn(q, ...)
+  --     --     end
+  --     --   end
+  --     -- end
+  --   end,
+  -- },
   {
     "Olical/conjure",
     init = function()

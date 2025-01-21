@@ -74,10 +74,3 @@ vim.utils.map("n", ";w", function()
   vim.utils.trigger_keys(";;")
 end, { desc = "Add surrounding on <cword>", noremap = true, silent = true })
 
--- vim.utils.map("nvx", "]q", function()
---   vim.utils.trigger_keys("g[q")
--- end, { noremap = true, silent = true })
---
--- vim.utils.map("nvx", "]Q", function()
---   vim.utils.trigger_keys("g]q")
--- end, { noremap = true, silent = true })

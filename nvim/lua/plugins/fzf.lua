@@ -23,5 +23,11 @@ return {
       "<cmd>FzfLua<CR>",
       desc = "FzfLua BuiltIn",
     },
+    {
+      "g/",
+      "<cmd>FzfLua grep_cword<CR>",
+      mode = { "n" },
+      desc = "Grep <cword>",
+    },
   },
 }
