@@ -152,6 +152,7 @@ return {
   },
   {
     "tris203/hawtkeys.nvim",
+    enable = false,
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",

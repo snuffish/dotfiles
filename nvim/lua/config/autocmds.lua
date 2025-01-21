@@ -26,7 +26,7 @@ local MODE = {
   INSERT = 1,
   VISUAL = 2,
 }
--- test
+
 vim.api.nvim_set_hl(MODE.NORMAL, "CursorLineNr", { reverse = false, bold = true, fg = NORMAL.lineNr })
 vim.api.nvim_set_hl(MODE.NORMAL, "CursorLine", { bg = NORMAL.lineCursor })
 
