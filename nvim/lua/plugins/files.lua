@@ -18,8 +18,6 @@ local harpoon_modal = function()
     end
   end
 
-  P(menu_items)
-
   local menu = Menu({
     position = "50%",
     -- relative = "cursor",
@@ -41,20 +39,16 @@ local harpoon_modal = function()
     lines = menu_items,
     max_width = 20,
     keymap = {
-      focus_next = { "j", "<Down>", "<Tab>" },
-      focus_prev = { "k", "<Up>", "<S-Tab>" },
-      close = {
-        { "<Esc>", "<C-e>" },
-        { "<Esc>", "q" },
-      },
-      submit = { "<CR>", "<Space>" },
+      focus_next = { "j", "<C-j>", "<Down>", "<Tab>" },
+      focus_prev = { "k", "<C-k>", "<Up>", "<S-Tab>" },
+      close = { "<Esc>", "<C-q>", "q" },
+      submit = { "<CR>", "<C-e>", "<Space>" },
     },
     on_close = function()
       print("Menu Closed!")
     end,
     on_submit = function(item)
-      local fileId = item.fileId
-      harpoon:list():select(fileId)
+      harpoon:list():select(item.fileId)
     end,
   })
 
