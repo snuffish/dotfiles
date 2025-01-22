@@ -9,7 +9,7 @@ local harpoon_modal = function()
     if item.value ~= "" then
       table.insert(
         menu_items,
-        Menu.item(item.value, {
+        Menu.item(string.format("%d %s", fileId, item.value), {
           fileId = fileId,
         })
       )
@@ -27,7 +27,7 @@ local harpoon_modal = function()
     border = {
       style = "single",
       text = {
-        top = "Buffers",
+        top = "Harpoon Buffers",
         top_align = "center",
       },
     },
