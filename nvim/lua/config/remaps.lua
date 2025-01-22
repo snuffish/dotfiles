@@ -75,3 +75,10 @@ vim.utils.map(
   '"_dg^',
   { noremap = true, silent = true, desc = "Delete from cursor to white non-whitespace character" }
 )
+
+vim.utils.map(
+  "n",
+  "c0",
+  '"_cg^',
+  { noremap = true, silent = true, desc = "Delete from cursor to white non-whitespace character" }
+)
