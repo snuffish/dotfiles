@@ -73,12 +73,19 @@ vim.utils.map(
   "n",
   "d0",
   '"_dg^',
-  { noremap = true, silent = true, desc = "Delete from cursor to white non-whitespace character" }
+  { noremap = true, silent = true, desc = "Delete from cursor to first white non-whitespace character" }
 )
 
 vim.utils.map(
   "n",
   "c0",
   '"_cg^',
-  { noremap = true, silent = true, desc = "Delete from cursor to white non-whitespace character" }
+  { noremap = true, silent = true, desc = "Change from cursor to first white non-whitespace character" }
+)
+
+vim.utils.map(
+  "n",
+  "y0",
+  "y^",
+  { noremap = true, silent = true, desc = "Yank from cursor to first white non-whitespace character" }
 )
