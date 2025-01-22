@@ -56,6 +56,11 @@ return {
         ";",
         desc = "Surround",
       },
+      {
+        "<leader>r",
+        desc = "Replace",
+        icon = { icon = "", color = "orange" },
+      },
     },
   },
 }
