@@ -1,14 +1,22 @@
 local gen_spec = require("mini.ai").gen_spec
 local treesitter = gen_spec.treesitter
 
-local ai_motion = function(textobject)
+local ai_motion = function(textobject, search_method)
   local mode = { "n", "x", "o" }
+
+  local search_method_param = function(direction)
+    if search_method == "cover" then
+      return "cover_or_" .. direction
+    end
+
+    return direction
+  end
 
   return {
     {
       "[" .. textobject,
       function()
-        MiniAi.move_cursor("left", "a", textobject, { search_method = "cover_or_prev" })
+        MiniAi.move_cursor("left", "a", textobject, { search_method = search_method_param("prev") })
       end,
       mode = mode,
       desc = "Goto next start @" .. textobject,
@@ -16,7 +24,7 @@ local ai_motion = function(textobject)
     {
       "[" .. textobject:upper(),
       function()
-        MiniAi.move_cursor("right", "a", textobject, { search_method = "cover_or_prev" })
+        MiniAi.move_cursor("right", "a", textobject, { search_method = search_method_param("prev") })
       end,
       mode = mode,
       desc = "Goto next end @" .. textobject:upper(),
@@ -24,7 +32,7 @@ local ai_motion = function(textobject)
     {
       "]" .. textobject,
       function()
-        MiniAi.move_cursor("left", "a", textobject, { search_method = "cover_or_next" })
+        MiniAi.move_cursor("left", "a", textobject, { search_method = search_method_param("next") })
       end,
       mode = mode,
       desc = "Goto next start @" .. textobject,
@@ -32,7 +40,7 @@ local ai_motion = function(textobject)
     {
       "]" .. textobject:upper(),
       function()
-        MiniAi.move_cursor("right", "a", textobject, { search_method = "cover_or_next" })
+        MiniAi.move_cursor("right", "a", textobject, { search_method = search_method_param("next") })
       end,
       mode = mode,
       desc = "Goto next end @" .. textobject:upper(),
@@ -112,7 +120,7 @@ return {
         return t1
       end
 
-      local quotes = ai_motion("q")
+      local quotes = ai_motion("q", "cover")
       local brackets = ai_motion("b")
 
       local keys = TableConcat(quotes, brackets)
