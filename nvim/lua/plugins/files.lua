@@ -35,7 +35,11 @@ local harpoon_modal = function()
       winhighlight = "Normal:Normal,FloatBorder:Normal",
     },
   }, {
-    lines = menu_items,
+    lines = #menu_items == 0 and {
+      Menu.item("  No items found", {
+        fileId = -1,
+      }),
+    } or menu_items,
     max_width = 20,
     keymap = {
       focus_next = { "j", "<C-j>", "<Down>", "<Tab>" },
@@ -47,6 +51,10 @@ local harpoon_modal = function()
       print("Menu Closed!")
     end,
     on_submit = function(item)
+      if item.fileId == -1 then
+        return
+      end
+
       harpoon:list():select(item.fileId)
     end,
   })
