@@ -29,6 +29,7 @@ local harpoon_modal = function()
       text = {
         top = "Harpoon Buffers",
         top_align = "center",
+        bottom = "[ e - enter | a - add | c - clear | n - next | p - prev ]",
       },
     },
     win_options = {
@@ -36,7 +37,7 @@ local harpoon_modal = function()
     },
   }, {
     lines = #menu_items == 0 and {
-      Menu.item("  No items found"),
+      Menu.item("  No buffers found"),
     } or menu_items,
     max_width = 20,
     keymap = {
@@ -45,9 +46,9 @@ local harpoon_modal = function()
       close = { "q", "<Esc>", "<C-q>" },
       submit = { "e", "<CR>", "<C-e>", "<Space>" },
     },
-    on_close = function()
-      print("Menu Closed!")
-    end,
+    -- on_close = function()
+    --   print("Menu Closed!")
+    -- end,
     on_submit = function(item)
       if not item.fileId then
         return
