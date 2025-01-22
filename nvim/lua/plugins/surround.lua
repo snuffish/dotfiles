@@ -105,19 +105,17 @@ return {
       })
     end,
     keys = function()
+      function TableConcat(t1, t2)
+        for i = 1, #t2 do
+          t1[#t1 + 1] = t2[i]
+        end
+        return t1
+      end
+
       local quotes = ai_motion("q")
       local brackets = ai_motion("b")
 
-      local keys = {}
-
-      for _, value in ipairs(quotes) do
-        keys[#keys + 1] = value
-      end
-
-      for _, value in ipairs(brackets) do
-        keys[#keys + 1] = value
-      end
-
+      local keys = TableConcat(quotes, brackets)
       return keys
     end,
   },
