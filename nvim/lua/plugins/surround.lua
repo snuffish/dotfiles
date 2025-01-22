@@ -14,12 +14,12 @@ local ai_motion = function(textobject)
       desc = "Goto next start @" .. textobject,
     },
     {
-      "[" .. string.upper(textobject),
+      "[" .. textobject:upper(),
       function()
         MiniAi.move_cursor("right", "a", textobject, { search_method = "cover_or_prev" })
       end,
       mode = mode,
-      desc = "Goto next end @" .. string.upper(textobject),
+      desc = "Goto next end @" .. textobject:upper(),
     },
     {
       "]" .. textobject,
@@ -30,12 +30,12 @@ local ai_motion = function(textobject)
       desc = "Goto next start @" .. textobject,
     },
     {
-      "]" .. string.upper(textobject),
+      "]" .. textobject:upper(),
       function()
         MiniAi.move_cursor("right", "a", textobject, { search_method = "cover_or_next" })
       end,
       mode = mode,
-      desc = "Goto next end @" .. string.upper(textobject),
+      desc = "Goto next end @" .. textobject:upper(),
     },
   }
 end
@@ -93,7 +93,7 @@ return {
           a = gen_spec.argument({ brackets = { "%b()" } }),
           d = { "%f[%d]%d+" }, -- digits
           i = { treesitter({ a = "@conditional.outer", i = "@condition.inner" }) },
-          g = function()
+          g = function() -- Whole buffer
             local from = { line = 1, col = 1 }
             local to = {
               line = vim.fn.line("$"),
