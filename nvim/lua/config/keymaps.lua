@@ -62,3 +62,8 @@ vim.utils.map("n", ";w", function()
   vim.cmd("normal! viw")
   vim.utils.trigger_keys(";;")
 end, { desc = "Add surrounding on <cword>", noremap = true, silent = true })
+
+vim.utils.map("n", "<C-f>", function()
+  local jump2d = require("mini.jump2d")
+  jump2d.start(jump2d.builtin_opts.line_start)
+end, { noremap = true })

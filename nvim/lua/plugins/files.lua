@@ -32,26 +32,25 @@ local harpoon_modal = function()
       },
     },
     win_options = {
-      winhighlight = "Normal:Normal,FloatBorder:Normal",
+      -- winhighlight = "Normal:Normal,FloatBorder:Normal",
+      winhighlight = "Normal:Normal",
     },
   }, {
     lines = #menu_items == 0 and {
-      Menu.item("  No items found", {
-        fileId = -1,
-      }),
+      Menu.item("  No items found"),
     } or menu_items,
     max_width = 20,
     keymap = {
       focus_next = { "j", "<C-j>", "<Down>", "<Tab>" },
       focus_prev = { "k", "<C-k>", "<Up>", "<S-Tab>" },
-      close = { "<Esc>", "<C-q>", "q" },
-      submit = { "<CR>", "<C-e>", "<Space>" },
+      close = { "q", "<Esc>", "<C-q>" },
+      submit = { "e", "<CR>", "<C-e>", "<Space>" },
     },
     on_close = function()
       print("Menu Closed!")
     end,
     on_submit = function(item)
-      if item.fileId == -1 then
+      if not item.fileId then
         return
       end
 
@@ -76,51 +75,33 @@ return {
 
       vim.keymap.set("n", "<C-e>", function()
         harpoon_modal()
-      end)
+      end, { desc = "Toggle Harpoon Buffers" })
 
-      vim.keymap.set("n", "<leader>a", function()
+      vim.keymap.set("n", "<C-e>a", function()
         harpoon:list():add()
-      end)
-      -- vim.keymap.set("n", "<C-e>", function()
-      --   P(harpoon:list())
-      --   vim.ui.select({ "tabs", "spaces" }, {
-      --     prompt = "Select tabs or spaces:",
-      --     format_item = function(item)
-      --       return "I'd like to choose " .. item
-      --     end,
-      --   }, function(choice)
-      --     if choice == "spaces" then
-      --       vim.o.expandtab = true
-      --     else
-      --       vim.o.expandtab = false
-      --     end
-      --   end)
-      -- end)
+        print("Added to Harpoon list")
+      end, { desc = "Add buffer to Harpoon" })
 
-      vim.keymap.set("n", "<leader>1", function()
-        harpoon:list():select(1)
-      end)
+      vim.keymap.set("n", "<C-e>c", function()
+        harpoon:list():clear()
+        print("Harpoon list cleared")
+      end, { desc = "Clear Harpoon list" })
 
-      vim.keymap.set("n", "<leader>2", function()
-        harpoon:list():select(2)
-      end)
-
-      vim.keymap.set("n", "<leader>3", function()
-        harpoon:list():select(3)
-      end)
-
-      vim.keymap.set("n", "<leader>4", function()
-        harpoon:list():select(4)
-      end)
+      for i = 1, 4 do
+        vim.keymap.set("n", "<leader>" .. i, function()
+          harpoon:list():select(i)
+        end, { desc = "Harpoon file " .. i, silent = true, noremap = true })
+      end
 
       -- Toggle previous & next buffers stored within Harpoon list
-      vim.keymap.set("n", "<C-S-P>", function()
-        harpoon:list():prev()
-      end)
-      vim.keymap.set("n", "<C-S-N>", function()
+      vim.keymap.set("n", "<C-e>n", function()
         harpoon:list():next()
       end)
-      --
+
+      vim.keymap.set("n", "<C-e>p", function()
+        harpoon:list():prev()
+      end)
+
       -- -- basic telescope configuration
       -- local conf = require("telescope.config").values
       -- local function toggle_telescope(harpoon_files)
@@ -144,7 +125,6 @@ return {
       -- vim.keymap.set("n", "<C-e>", function()
       --   toggle_telescope(harpoon:list())
       -- end, { desc = "Open harpoon window" })
-      --
     end,
   },
 }
