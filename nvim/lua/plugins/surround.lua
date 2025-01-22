@@ -1,6 +1,45 @@
 local gen_spec = require("mini.ai").gen_spec
 local treesitter = gen_spec.treesitter
 
+local ai_motion = function(textobject)
+  local mode = { "n", "x", "o" }
+
+  return {
+    {
+      "[" .. textobject,
+      function()
+        MiniAi.move_cursor("left", "a", textobject, { search_method = "cover_or_prev" })
+      end,
+      mode = mode,
+      desc = "Goto next start @" .. textobject,
+    },
+    {
+      "[" .. string.upper(textobject),
+      function()
+        MiniAi.move_cursor("right", "a", textobject, { search_method = "cover_or_prev" })
+      end,
+      mode = mode,
+      desc = "Goto next end @" .. string.upper(textobject),
+    },
+    {
+      "]" .. textobject,
+      function()
+        MiniAi.move_cursor("left", "a", textobject, { search_method = "cover_or_next" })
+      end,
+      mode = mode,
+      desc = "Goto next start @" .. textobject,
+    },
+    {
+      "]" .. string.upper(textobject),
+      function()
+        MiniAi.move_cursor("right", "a", textobject, { search_method = "cover_or_next" })
+      end,
+      mode = mode,
+      desc = "Goto next end @" .. string.upper(textobject),
+    },
+  }
+end
+
 return {
   {
     "echasnovski/mini.surround",
@@ -65,39 +104,21 @@ return {
         },
       })
     end,
-    keys = {
-      {
-        "[q",
-        function()
-          MiniAi.move_cursor("left", "a", "q", { search_method = "cover_or_prev" })
-        end,
-        mode = { "n", "v", "x", "o" },
-        desc = "Goto next start @quote"
-      },
-      {
-        "[Q",
-        function()
-          MiniAi.move_cursor("right", "a", "q", { search_method = "cover_or_prev" })
-        end,
-        mode = { "n", "v", "x", "o" },
-        desc = "Goto next end @quote"
-      },
-      {
-        "]q",
-        function()
-          MiniAi.move_cursor("left", "a", "q", { search_method = "cover_or_next" })
-        end,
-        mode = { "n", "v", "x", "o" },
-        desc = "Goto next start @quote"
-      },
-      {
-        "]Q",
-        function()
-          MiniAi.move_cursor("right", "a", "q", { search_method = "cover_or_next" })
-        end,
-        mode = { "n", "v", "x", "o" },
-        desc = "Goto next end @quote"
-      },
-    },
+    keys = function()
+      local quotes = ai_motion("q")
+      local brackets = ai_motion("b")
+
+      local keys = {}
+
+      for _, value in ipairs(quotes) do
+        keys[#keys + 1] = value
+      end
+
+      for _, value in ipairs(brackets) do
+        keys[#keys + 1] = value
+      end
+
+      return keys
+    end,
   },
 }
