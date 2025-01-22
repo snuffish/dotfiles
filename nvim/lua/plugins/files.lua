@@ -20,7 +20,6 @@ local harpoon_modal = function()
 
   local menu = Menu({
     position = "50%",
-    -- relative = "cursor",
     size = {
       width = 100,
       height = 5,
