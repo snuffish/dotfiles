@@ -32,8 +32,7 @@ local harpoon_modal = function()
       },
     },
     win_options = {
-      -- winhighlight = "Normal:Normal,FloatBorder:Normal",
-      winhighlight = "Normal:Normal",
+      winhighlight = "Normal:Normal,FloatBorder:Normal",
     },
   }, {
     lines = #menu_items == 0 and {
