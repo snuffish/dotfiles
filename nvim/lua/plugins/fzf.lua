@@ -43,6 +43,10 @@ return {
       false,
     },
     {
+      "\\",
+      false,
+    },
+    {
       "<leader>fz",
       "<cmd>FzfLua<CR>",
       desc = "FzfLua BuiltIn",

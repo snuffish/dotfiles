@@ -39,12 +39,12 @@ return {
       },
       {
         "<localleader><localleader>",
-        "<Cmd>FzfLua buffers sort_mru=true sort_lastused=true<CR>",
-        desc = "Switch Buffer",
+        "<cmd>lua Snacks.picker.buffers()<CR>",
+        desc = "Buffers",
       },
       {
         "<Tab>`",
-        "<Cmd>FzfLua buffers sort_mru=true sort_lastused=true<CR>",
+        "<cmd>lua Snacks.picker.buffers()<CR>",
         desc = "Switch Buffer",
       },
       {
