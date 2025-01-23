@@ -39,7 +39,8 @@ return {
 
       keys[#keys + 1] = {
         "gr",
-        Snacks.picker.lsp_references
+        Snacks.picker.lsp_references,
+        desc = "References",
       }
 
       keys[#keys + 1] = {
