@@ -136,28 +136,46 @@ return {
     },
     keys = {
       {
+        "<leader>sp",
+        "<cmd>lua Snacks.picker.pick()<CR>",
+        desc = "Pickers",
+      },
+
+      {
         "<leader>lg",
         "<cmd>lua Snacks.lazygit()<cr>",
-        desc = "Open LazyGit"
+        desc = "Open LazyGit",
       },
       {
         "<leader>gf",
         "<cmd>lua Snacks.lazygit.log_file()<cr>",
-        desc = "Git Current File History"
+        desc = "Git Current File History",
       },
       {
         "<localleader>z",
-        function()
-          vim.utils.trigger_keys("<leader>uz")
-        end,
+        "<cmd>lua Snacks.zen.zen()<CR>",
         desc = "Toggle 'Zen Mode'",
       },
       {
         "<localleader>Z",
-        function()
-          vim.utils.trigger_keys("<leader>uZ")
-        end,
+        "<cmd>lua Snacks.zen.zoom()<CR>",
         desc = "Toggle 'Zoom Mode'",
+      },
+      {
+        "g/",
+        "<cmd>lua Snacks.picker.grep_word()<CR>",
+        mode = { "n" },
+        desc = "Grep <cword>",
+      },
+      {
+        "<leader>sk",
+        "<cmd>lua Snacks.picker.keymaps()<CR>",
+        desc = "Keymaps",
+      },
+      {
+        "<leader>su",
+        "<cmd>lua Snacks.picker.und󰠣o()<CR>",
+        desc = "Undo",
       },
     },
     config = function(_, opts)

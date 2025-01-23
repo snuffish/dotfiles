@@ -31,7 +31,7 @@ vim.utils.map("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
 vim.utils.map("n", "G", "Gzz")
 vim.utils.map("n", "GG", vim.utils.trigger_keys_fn("G2goGzzi"), { desc = "Goto last line and add 2 new lines" })
 
-vim.utils.map("n", "gg", "gg")
+vim.utils.map("n", "gg", "gg_")
 vim.utils.map("n", "ggg", vim.utils.trigger_keys_fn("gg2gOggi"), { desc = "Goto first line and add 2 new lines" })
 
 -- Do not include white space characters when using $ in visual mode,
