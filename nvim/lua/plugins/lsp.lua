@@ -37,10 +37,10 @@ return {
         false,
       }
 
-      -- keys[#keys + 1] = {
-      --   "gr",
-      --   false,
-      -- }
+      keys[#keys + 1] = {
+        "gr",
+        Snacks.picker.lsp_references
+      }
 
       keys[#keys + 1] = {
         "o",
