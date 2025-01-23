@@ -1,5 +1,14 @@
 return {
   {
+    "MagicDuck/grug-far.nvim",
+    keys = {
+      {
+        "<leader>sr",
+        false
+      },
+    },
+  },
+  {
     "okuuva/auto-save.nvim",
     cmd = "ASToggle", -- optional for lazy loading on command
     event = { "InsertLeave", "TextChanged" }, -- optional for lazy loading on trigger events

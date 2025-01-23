@@ -121,10 +121,9 @@ return {
       end
 
       local quotes = ai_motion("q", "cover")
-      local brackets = ai_motion("b")
-
-      local keys = TableConcat(quotes, brackets)
-      return keys
+      -- local brackets = ai_motion("b")
+      -- local keys = TableConcat(quotes, brackets)
+      return quotes
     end,
   },
 }

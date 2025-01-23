@@ -15,8 +15,8 @@ local treewalker_mappings = {
 
 for key, direction in pairs(treewalker_mappings) do
   vim.utils.map(
-    "",
-    string.format("<M-S-%s>", key),
+    "n",
+    string.format("<C-M-%s>", key),
     "<cmd>Treewalker " .. direction .. "<cr>zz",
     { noremap = true, silent = true }
   )

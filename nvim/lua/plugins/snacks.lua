@@ -90,9 +90,19 @@ return {
         desc = "Pickers",
       },
       {
-        "<leader>sR",
+        "<leader>sr",
         "<cmd>lua Snacks.picker.resume()<CR>",
         desc = "Resume",
+      },
+      {
+        "<leader>fr",
+        "<cmd>lua Snacks.picker.recent()<CR>",
+        desc = "Recent",
+      },
+      {
+        "<leader>/",
+        "<cmd>lua Snacks.picker.grep()<CR>",
+        desc = "Grep (Root Dir)",
       },
       {
         "<leader>sh",
@@ -108,6 +118,11 @@ return {
         "<leader>fb",
         "<cmd>lua Snacks.picker.buffers()<CR>",
         desc = "Buffers",
+      },
+      {
+        "<leader>fg",
+        "<cmd>lua Snacks.picker.git_files()<CR>",
+        desc = "Find files (git-files)",
       },
       {
         "<leader>sb",

@@ -1,5 +1,6 @@
 return {
   "ibhagwan/fzf-lua",
+  enable = false,
   dependencies = { "nvim-tree/nvim-web-devicons" },
   opts = {
     {
@@ -24,6 +25,18 @@ return {
     },
     {
       "<leader>sh",
+      false,
+    },
+    {
+      "<leader>fg",
+      false,
+    },
+    {
+      "<leader>fr",
+      false,
+    },
+    {
+      "<leader>/",
       false,
     },
     {
