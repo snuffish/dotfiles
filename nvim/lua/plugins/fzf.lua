@@ -35,6 +35,10 @@ return {
       false,
     },
     {
+      "<leader>fb",
+      false,
+    },
+    {
       "<leader><leader>",
       false,
     },

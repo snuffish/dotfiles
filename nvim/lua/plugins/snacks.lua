@@ -11,7 +11,7 @@ return {
           input = {
             keys = {
               ["<C-p>"] = { "toggle_preview", mode = { "i", "n" } },
-              ["<A-p>"] = false
+              ["<A-p>"] = false,
             },
           },
         },
@@ -102,6 +102,11 @@ return {
       {
         "<leader><leader>",
         "<cmd>lua Snacks.picker.files()<CR>",
+        desc = "Find files",
+      },
+      {
+        "<leader>fb",
+        "<cmd>lua Snacks.picker.buffers()<CR>",
         desc = "Find files",
       },
       {
