@@ -50,6 +50,7 @@ return {
             { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
             { icon = " ", key = "G", desc = "Find Text", action = ":lua Snacks.dashboard.pick('live_grep')" },
             { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
+            { icon = " ", key = "p", desc = "Projects", action = ":lua Snacks.picker.projects()" },
             {
               icon = " ",
               key = "c",
@@ -121,9 +122,7 @@ return {
       },
       {
         "<leader>sb",
-        function()
-          require("snacks.picker").grep_buffers()
-        end,
+        "<cmd>lua Snacks.picker.grep_buffers()<CR>",
         desc = "Buffer",
       },
       {
@@ -151,6 +150,12 @@ return {
         "<cmd>lua Snacks.picker.grep_word()<CR>",
         mode = { "n" },
         desc = "Grep <cword>",
+      },
+      {
+        "<leader>/",
+        "<cmd>lua Snacks.picker.grep()<CR>",
+        mode = { "n" },
+        desc = "Grep Files",
       },
       {
         "<leader>sk",
