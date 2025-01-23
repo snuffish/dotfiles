@@ -23,7 +23,19 @@ return {
       false,
     },
     {
+      "<leader>sh",
+      false,
+    },
+    {
       "<leader>sR",
+      false,
+    },
+    {
+      "<leader>sb",
+      false,
+    },
+    {
+      "<leader><leader>",
       false,
     },
     {
