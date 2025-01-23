@@ -136,6 +136,16 @@ return {
     },
     keys = {
       {
+        "<leader>lg",
+        "<cmd>lua Snacks.lazygit()<cr>",
+        desc = "Open LazyGit"
+      },
+      {
+        "<leader>gf",
+        "<cmd>lua Snacks.lazygit.log_file()<cr>",
+        desc = "Git Current File History"
+      },
+      {
         "<localleader>z",
         function()
           vim.utils.trigger_keys("<leader>uz")
@@ -148,10 +158,30 @@ return {
           vim.utils.trigger_keys("<leader>uZ")
         end,
         desc = "Toggle 'Zoom Mode'",
-      }
+      },
     },
     config = function(_, opts)
       require("snacks").setup(opts)
     end,
+  },
+  {
+    "mgierada/lazydocker.nvim",
+    dependencies = { "akinsho/toggleterm.nvim" },
+    config = function()
+      require("lazydocker").setup({
+        border = "curved",
+      })
+    end,
+    event = "BufRead",
+    opts = {},
+    keys = {
+      {
+        "<leader>ld",
+        function()
+          require("lazydocker").open()
+        end,
+        desc = "Open LazyDocker",
+      },
+    },
   },
 }

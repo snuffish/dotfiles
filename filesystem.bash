@@ -33,4 +33,4 @@ alias untar="tar -xvzf"
 
 alias dirsize="du -hs"
 
-
+alias .ghostty='cd "$HOME/Library/Application Support/com.mitchellh.ghostty"'
