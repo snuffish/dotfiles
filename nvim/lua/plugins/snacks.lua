@@ -95,14 +95,9 @@ return {
         desc = "Resume",
       },
       {
-        "<leader>fr",
+        "<leader>sR",
         "<cmd>lua Snacks.picker.recent()<CR>",
         desc = "Recent",
-      },
-      {
-        "<leader>/",
-        "<cmd>lua Snacks.picker.grep()<CR>",
-        desc = "Grep (Root Dir)",
       },
       {
         "<leader>sh",
