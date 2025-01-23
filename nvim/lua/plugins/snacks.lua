@@ -140,7 +140,11 @@ return {
         "<cmd>lua Snacks.picker.pick()<CR>",
         desc = "Pickers",
       },
-
+      {
+        "<leader>sR",
+        "<cmd>lua Snacks.picker.resume()<CR>",
+        desc = "Resume",
+      },
       {
         "<leader>lg",
         "<cmd>lua Snacks.lazygit()<cr>",
