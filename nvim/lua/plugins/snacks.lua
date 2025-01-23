@@ -107,7 +107,7 @@ return {
       {
         "<leader>fb",
         "<cmd>lua Snacks.picker.buffers()<CR>",
-        desc = "Find files",
+        desc = "Buffers",
       },
       {
         "<leader>sb",
