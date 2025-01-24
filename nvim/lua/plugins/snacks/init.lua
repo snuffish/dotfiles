@@ -20,9 +20,14 @@ return {
         desc = "Open LazyGit",
       },
       {
-        "<leader>gf",
+        "<leader>gl",
         "<cmd>lua Snacks.picker.git_log_file()<cr>",
-        desc = "Git Current File History",
+        desc = "Current File History",
+      },
+      {
+        "<leader>gs",
+        "<cmd>lua Snacks.picker.git_status()<cr>",
+        desc = "Status",
       },
     },
   },

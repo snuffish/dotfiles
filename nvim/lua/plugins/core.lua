@@ -122,7 +122,7 @@ return {
     config = function()
       require("better_escape").setup({
         timeout = vim.o.timeoutlen,
-        default_mappings = true,
+        default_mappings = false,
         mappings = {
           i = {
             j = {
@@ -140,11 +140,6 @@ return {
               j = "<Esc>",
             },
           },
-          t = {
-            j = {
-              k = "<C-\\><C-n>",
-            },
-          },
           v = {
             j = {
               k = "<Esc>",
@@ -158,21 +153,6 @@ return {
         },
       })
     end,
-  },
-  {
-    "tris203/hawtkeys.nvim",
-    enable = false,
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-treesitter/nvim-treesitter",
-    },
-    opts = {
-      customMaps = {
-        ["lazy"] = {
-          method = "lazy",
-        },
-      },
-    },
   },
   {
     "Zeioth/compiler.nvim",
