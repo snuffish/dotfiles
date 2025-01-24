@@ -20,7 +20,15 @@ return {
   },
   keys = {
     {
+      "<leader>sc",
+      false,
+    },
+    {
       "<leader>sk",
+      false,
+    },
+    {
+      "<leader>fc",
       false,
     },
     {

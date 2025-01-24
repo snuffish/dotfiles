@@ -108,6 +108,27 @@ return {
         desc = "Pickers",
       },
       {
+        "<leader>sc",
+        function()
+          Snacks.picker.grep({
+            finder = "lazy_spec",
+            live = true,
+            title = "Grep Config Files",
+          })
+        end,
+        desc = "Grep Config Files",
+      },
+      {
+        "<leader>fc",
+        function()
+          Snacks.picker.files({
+            cwd = vim.fn.stdpath("config"),
+            title = "Config Files",
+          })
+        end,
+        desc = "Find Config Files",
+      },
+      {
         "<leader>sr",
         "<cmd>lua Snacks.picker.resume()<CR>",
         desc = "Resume",
