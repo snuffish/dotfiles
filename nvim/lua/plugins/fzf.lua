@@ -12,9 +12,9 @@ return {
         default = "bat",
       },
       on_create = function()
-        vim.keymap.set("t", "<C-j>", "<Down>", { silent = true, buffer = true })
-        vim.keymap.set("t", "<C-k>", "<Up>", { silent = true, buffer = true })
-        vim.keymap.set("t", "<C-Space>", "<CR>", { silent = true, buffer = true })
+        vim.utils.map("t", "<C-j>", "<Down>", { silent = true, buffer = true })
+        vim.utils.map("t", "<C-k>", "<Up>", { silent = true, buffer = true })
+        vim.utils.map("t", "<C-Space>", "<CR>", { silent = true, buffer = true })
       end,
     },
   },

@@ -139,32 +139,32 @@ return {
 
       harpoon:setup()
 
-      vim.keymap.set("n", "<C-e>", function()
+      vim.utils.map("n", "<C-e>", function()
         harpoon_modal()
       end, { desc = "Toggle Harpoon Buffers" })
 
-      vim.keymap.set("n", "<C-e>a", function()
+      vim.utils.map("n", "<C-e>a", function()
         harpoon:list():add()
         print("Added to Harpoon list")
       end, { desc = "Add buffer to Harpoon" })
 
-      vim.keymap.set("n", "<C-e>c", function()
+      vim.utils.map("n", "<C-e>c", function()
         harpoon:list():clear()
         print("Harpoon list cleared")
       end, { desc = "Clear Harpoon list" })
 
       for i = 1, 4 do
-        vim.keymap.set("n", "<leader>" .. i, function()
+        vim.utils.map("n", "<leader>" .. i, function()
           harpoon:list():select(i)
         end, { desc = "Harpoon file " .. i, silent = true, noremap = true })
       end
 
       -- Toggle previous & next buffers stored within Harpoon list
-      vim.keymap.set("n", "<C-e>n", function()
+      vim.utils.map("n", "<C-e>n", function()
         harpoon:list():next()
       end)
 
-      vim.keymap.set("n", "<C-e>p", function()
+      vim.utils.map("n", "<C-e>p", function()
         harpoon:list():prev()
       end)
 
