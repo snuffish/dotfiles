@@ -91,6 +91,7 @@ return {
           return vim.fn.getreg("v")
         end
 
+        ---@diagnostic disable-next-line: missing-fields
         Snacks.picker.grep({
           search = get_visual_selection(),
           live = false,
