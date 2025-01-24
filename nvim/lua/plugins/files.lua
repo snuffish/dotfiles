@@ -63,6 +63,71 @@ end
 
 return {
   {
+    "stevearc/oil.nvim",
+    event = "VeryLazy",
+    priority = 1000,
+    dependencies = {
+      "nvim-tree/nvim-web-devicons",
+      "snuffish/utils.nvim",
+    },
+    opts = {
+      default_file_explorer = true,
+      float = {
+        padding = 2,
+        max_width = 200,
+        max_height = 0,
+        border = "rounded",
+        win_options = {
+          winblend = 5,
+        },
+        preview_split = "below",
+        get_win_title = nil,
+        override = function(conf)
+          vim.defer_fn(vim.utils.trigger_keys_fn("<C-p>"), 150)
+          return conf
+        end,
+      },
+      keymaps = {
+        ["q"] = { "actions.close", mode = "n" },
+        ["<Esc>"] = { "actions.close", mode = "n" },
+        ["<leader>"] = "actions.select",
+        ["<BS>"] = { "actions.parent", mode = "n" },
+        ["<Left>"] = { "actions.parent", mode = "n" },
+        ["l"] = { "actions.select", mode = "n" },
+        ["h"] = { "actions.parent", mode = "n" },
+        ["s"] = {
+          function()
+            require("oil").save({
+              confirm = true,
+            })
+          end,
+          desc = "Save",
+        },
+      },
+    },
+    keys = {
+      {
+        "<leader>o",
+        "<cmd>lua require('oil').toggle_float()<CR>",
+        desc = "Oil Explorer",
+      },
+    },
+  },
+  {
+    "echasnovski/mini.pick",
+    version = false,
+    lazy = false,
+    opts = {
+      mappings = {
+        move_down = "<C-j>",
+        move_up = "<C-k>",
+        choose = "<CR>",
+        toggle_preview = "<C-p>",
+        toggle_info = "<Tab>",
+      },
+    },
+  },
+  {
     "ThePrimeagen/harpoon",
     enabled = false,
     branch = "harpoon2",

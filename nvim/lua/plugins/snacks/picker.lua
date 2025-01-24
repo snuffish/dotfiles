@@ -115,5 +115,15 @@ return {
       "<cmd>lua Snacks.picker.und󰠣o()<CR>",
       desc = "Undo",
     },
+    {
+      "<localleader><localleader>",
+      "<cmd>lua Snacks.picker.buffers()<CR>",
+      desc = "Buffers",
+    },
+    {
+      "<Tab><Space>",
+      "<cmd>lua Snacks.picker.buffers()<CR>",
+      desc = "Buffers",
+    },
   },
 }

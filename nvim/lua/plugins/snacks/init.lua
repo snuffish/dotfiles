@@ -2,6 +2,7 @@ return {
   require("plugins.snacks.dashboard"),
   require("plugins.snacks.picker"),
   require("plugins.snacks.zen"),
+  require("plugins.snacks.scope"),
   {
     "ibhagwan/fzf-lua",
     keys = {
