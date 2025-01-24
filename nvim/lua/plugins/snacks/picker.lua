@@ -25,7 +25,9 @@ return {
     {
       "<leader>sc",
       function()
+        ---@diagnostic disable-next-line: missing-fields
         Snacks.picker.grep({
+          ---@diagnostic disable-next-line: assign-type-mismatch
           cwd = vim.fn.stdpath("config"),
           title = "Grep Config Files",
         })
@@ -35,7 +37,9 @@ return {
     {
       "<leader>fc",
       function()
+        ---@diagnostic disable-next-line: missing-fields
         Snacks.picker.files({
+          ---@diagnostic disable-next-line: assign-type-mismatch
           cwd = vim.fn.stdpath("config"),
           title = "Config Files",
         })
