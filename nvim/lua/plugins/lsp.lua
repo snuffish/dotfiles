@@ -11,22 +11,16 @@ return {
         keys = {
           { "<localleader>o", "<cmd>Outline<CR>", desc = "Toggle outline" },
         },
-        config = function()
-          require("outline").setup({
-            preview_window = {
-              auto_preview = true,
-              live = true,
-            },
-            outline_window = {
-              auto_jump = true,
-            },
-            -- symbols = {
-            --   icon_fetcher = function(kind, bufnr, symbol)
-            --     return kind:sub(1, 1)
-            --   end,
-            -- },
-          })
-        end,
+        opts = {
+          outline_window = {
+            auto_jump = true,
+            auto_close = true,
+          },
+          preview_window = {
+            auto_preview = true,
+            live = true,
+          },
+        },
       },
     },
     opts = function()
