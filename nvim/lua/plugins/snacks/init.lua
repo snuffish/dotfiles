@@ -40,9 +40,37 @@ return {
         pattern = "VeryLazy",
         callback = function()
           vim.defer_fn(function()
+            vim.utils.remove_map("nxo", "]i")
+            vim.utils.remove_map("nxo", "[i")
+
             vim.ui.select = Snacks.picker.select
             Snacks.toggle.inlay_hints():set(false)
-          end, 250)
+
+            -- Snacks.Scope mapping
+            vim.utils.map("nxo", "[e", function()
+              ---@diagnostic disable-next-line: missing-fields
+              Snacks.scope.jump({
+                min_size = 1, -- allow single line scopes
+                bottom = false,
+                cursor = false,
+                edge = true,
+                treesitter = { blocks = { enabled = false } },
+                desc = "jump to top edge of scope",
+              })
+            end, { desc = "jump to top edge of scope" })
+
+            vim.utils.map("nxo", "]e", function()
+              ---@diagnostic disable-next-line: missing-fields
+              Snacks.scope.jump({
+                min_size = 1, -- allow single line scopes
+                bottom = true,
+                cursor = false,
+                edge = true,
+                treesitter = { blocks = { enabled = false } },
+                desc = "jump to bottom edge of scope",
+              })
+            end, { desc = "jump to bottom edge of scope" })
+          end, 500)
 
           _G.dd = function(...)
             Snacks.debug.inspect(...)
