@@ -66,34 +66,3 @@ vim.utils.map("n", "<C-f>", function()
   jump2d.start(jump2d.builtin_opts.line_start)
   vim.utils.trigger_keys("zz")
 end, { noremap = true })
-
-LazyVim.on_load("snacks.scope.keymap", function()
-  local nxo = { "n", "x", "o" }
-  vim.keymap.del(nxo, "]e")
-  vim.keymap.del(nxo, "[e")
-end)
-
--- Snacks.Scope mapping
-vim.utils.map("nxo", "]e", function()
-  ---@diagnostic disable-next-line: missing-fields
-  Snacks.scope.jump({
-    min_size = 1, -- allow single line scopes
-    bottom = false,
-    cursor = false,
-    edge = true,
-    treesitter = { blocks = { enabled = false } },
-    desc = "jump to top edge of scope",
-  })
-end, { desc = "jump to top edge of scope" })
-
-vim.utils.map("nxo", "[e", function()
-  ---@diagnostic disable-next-line: missing-fields
-  Snacks.scope.jump({
-    min_size = 1, -- allow single line scopes
-    bottom = true,
-    cursor = false,
-    edge = true,
-    treesitter = { blocks = { enabled = false } },
-    desc = "jump to bottom edge of scope",
-  })
-end, { desc = "jump to bottom edge of scope" })
