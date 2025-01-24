@@ -53,8 +53,13 @@ vim.api.nvim_create_autocmd("ModeChanged", {
   end,
 })
 
+vim.api.nvim_create_autocmd({ "FileType", "BufEnter" }, {
+  pattern = "*",
+  command = "lua Snacks.toggle.inlay_hints():set(false)",
+})
+
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = {"help", "markdown"},
+  pattern = { "help", "markdown" },
   command = "lua Snacks.toggle.diagnostics():set(false)",
 })
 
