@@ -3,6 +3,59 @@ return {
   require("plugins.snacks.picker"),
   require("plugins.snacks.zen"),
   {
+    "folke/snacks.nvim",
+    opts = {
+      scope = {
+        enabled = true,
+      },
+      toggle = {
+        enabled = true,
+      },
+      statuscolumn = {
+        enabled = true,
+      },
+    },
+    keys = {
+      {
+        "<leader>lg",
+        "<cmd>lua Snacks.lazygit()<cr>",
+        desc = "Open LazyGit",
+      },
+      {
+        "<leader>gl",
+        "<cmd>lua Snacks.picker.git_log_file()<cr>",
+        desc = "Current File History",
+      },
+      {
+        "<leader>gs",
+        "<cmd>lua Snacks.picker.git_status()<cr>",
+        desc = "Status",
+      },
+    },
+    init = function()
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "VeryLazy",
+        callback = function()
+          vim.defer_fn(function()
+            vim.ui.select = Snacks.picker.select
+            Snacks.toggle.inlay_hints():set(false)
+          end, 250)
+
+          _G.dd = function(...)
+            Snacks.debug.inspect(...)
+          end
+
+          _G.bt = function()
+            Snacks.debug.backtrace()
+          end
+
+          vim.print = _G.dd
+          P = vim.print
+        end,
+      })
+    end,
+  },
+  {
     "ibhagwan/fzf-lua",
     keys = {
       {
@@ -62,34 +115,6 @@ return {
   {
     "MaximilianLloyd/ascii.nvim",
     requires = { "MunifTanjim/nui.nvim" },
-  },
-  {
-    "folke/snacks.nvim",
-    opts = {
-      scroll = {
-        enabled = false,
-      },
-      scope = {
-        enabled = false,
-      },
-    },
-    keys = {
-      {
-        "<leader>lg",
-        "<cmd>lua Snacks.lazygit()<cr>",
-        desc = "Open LazyGit",
-      },
-      {
-        "<leader>gl",
-        "<cmd>lua Snacks.picker.git_log_file()<cr>",
-        desc = "Current File History",
-      },
-      {
-        "<leader>gs",
-        "<cmd>lua Snacks.picker.git_status()<cr>",
-        desc = "Status",
-      },
-    },
   },
   {
     "mgierada/lazydocker.nvim",

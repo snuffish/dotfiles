@@ -76,12 +76,3 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufNewFile" }, {
     vim.diagnostic.enable(false)
   end,
 })
-
--- Disable inlay-hints on new buffer
-vim.api.nvim_create_autocmd({ "BufEnter", "BufNewFile" }, {
-  pattern = "*",
-  callback = function()
-    local toggle = require("snacks.toggle")
-    toggle.inlay_hints():set(false)
-  end,
-})

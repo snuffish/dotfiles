@@ -7,6 +7,7 @@ return {
           keys = {
             ["<C-p>"] = { "toggle_preview", mode = { "i", "n" } },
             ["<C-q>"] = { "close", mode = { "i", "n" } },
+            ["qq"] = { "close", mode = { "i" } },
             ["<C-c>"] = false,
             ["<A-p>"] = false,
           },
