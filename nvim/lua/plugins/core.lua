@@ -64,57 +64,6 @@ return {
     end,
   },
   {
-    "stevearc/oil.nvim",
-    event = "VeryLazy",
-    priority = 1000,
-    dependencies = {
-      { "nvim-tree/nvim-web-devicons", opts = {} },
-      "snuffish/utils.nvim",
-    },
-    opts = {
-      default_file_explorer = true,
-      float = {
-        padding = 2,
-        max_width = 200,
-        max_height = 0,
-        border = "rounded",
-        win_options = {
-          winblend = 5,
-        },
-        preview_split = "below",
-        get_win_title = nil,
-        override = function(conf)
-          vim.defer_fn(vim.utils.trigger_keys_fn("<C-p>"), 150)
-          return conf
-        end,
-      },
-      keymaps = {
-        ["q"] = { "actions.close", mode = "n" },
-        ["<Esc>"] = { "actions.close", mode = "n" },
-        ["<leader>"] = "actions.select",
-        ["<BS>"] = { "actions.parent", mode = "n" },
-        ["<Left>"] = { "actions.parent", mode = "n" },
-        ["l"] = { "actions.select", mode = "n" },
-        ["h"] = { "actions.parent", mode = "n" },
-        ["s"] = {
-          function()
-            require("oil").save({
-              confirm = true,
-            })
-          end,
-          desc = "Save",
-        },
-      },
-    },
-    keys = {
-      {
-        "<leader>o",
-        "<cmd>lua require('oil').toggle_float()<CR>",
-        desc = "Oil Explorer",
-      },
-    },
-  },
-  {
     "kmonad/kmonad-vim",
   },
   {
@@ -278,9 +227,9 @@ return {
   },
   {
     "nvzone/typr",
-    cmd = "TyprStats",
     dependencies = "nvzone/volt",
     opts = {},
+    cmd = { "Typr", "TyprStats" },
   },
   {
     "nvim-neorg/neorg",

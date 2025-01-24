@@ -38,11 +38,6 @@ return {
         silent = true,
       },
       {
-        "<localleader><localleader>",
-        "<cmd>lua Snacks.picker.buffers()<CR>",
-        desc = "Buffers",
-      },
-      {
         "<Tab>`",
         "<cmd>lua Snacks.picker.buffers()<CR>",
         desc = "Switch Buffer",
@@ -73,13 +68,6 @@ return {
         ",n",
         "<cmd>enew<CR>",
         desc = "Create new Buffer",
-      },
-      {
-        "<Tab><Tab>",
-        function()
-          vim.utils.trigger_keys("]b")
-        end,
-        desc = "Previous Buffer",
       },
       {
         "<Tab>l",
