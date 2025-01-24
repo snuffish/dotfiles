@@ -1,7 +1,6 @@
 return {
   {
     "snuffish/utils.nvim",
-    dir = "~/.config/nvim/custom-plugins/utils",
   },
   {
     "snuffish/plugin-search.nvim",

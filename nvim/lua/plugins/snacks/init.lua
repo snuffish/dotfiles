@@ -43,6 +43,17 @@ return {
             vim.utils.remove_map("nxo", "]i")
             vim.utils.remove_map("nxo", "[i")
 
+            local modes = { "n", "x", "o" }
+            for _, mode in ipairs(modes) do
+              vim.keymap.set(mode, "[i", "g^ae", { desc = "Jump to end of scope" })
+            end
+
+            vim.utils.map("nxo", { "[i", "<F1>" }, "g^ae", { desc = "Jump to end of scope" })
+
+            vim.keymap.set("n", "[i", "g^ae", { desc = "Jump to end of scope" })
+            vim.keymap.set("x", "[i", "g^ae", { desc = "Jump to end of scope" })
+            vim.keymap.set("o", "[i", "g^ae", { desc = "Jump to end of scope" })
+
             vim.ui.select = Snacks.picker.select
             Snacks.toggle.inlay_hints():set(false)
 
