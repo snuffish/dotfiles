@@ -2,7 +2,6 @@ return {
   require("plugins.snacks.dashboard"),
   require("plugins.snacks.picker"),
   require("plugins.snacks.zen"),
-  require("plugins.snacks.scope"),
   {
     "ibhagwan/fzf-lua",
     keys = {
@@ -70,6 +69,9 @@ return {
       scroll = {
         enabled = false,
       },
+      scope = {
+        enabled = false,
+      },
     },
     keys = {
       {
@@ -92,21 +94,18 @@ return {
   {
     "mgierada/lazydocker.nvim",
     dependencies = { "akinsho/toggleterm.nvim" },
+    event = "BufRead",
+    keys = {
+      {
+        "<leader>ld",
+        "<cmd>Lazydocker<CR>",
+        desc = "Open LazyDocker",
+      },
+    },
     config = function()
       require("lazydocker").setup({
         border = "curved",
       })
     end,
-    event = "BufRead",
-    opts = {},
-    keys = {
-      {
-        "<leader>ld",
-        function()
-          require("lazydocker").open()
-        end,
-        desc = "Open LazyDocker",
-      },
-    },
   },
 }
