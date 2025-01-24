@@ -11,6 +11,8 @@ return {
           input = {
             keys = {
               ["<C-p>"] = { "toggle_preview", mode = { "i", "n" } },
+              ["<C-q>"] = { "close", mode = { "i", "n" } },
+              ["<C-c>"] = false,
               ["<A-p>"] = false,
             },
           },
