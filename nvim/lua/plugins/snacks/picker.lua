@@ -23,9 +23,9 @@ return {
     {
       "<leader>sc",
       function()
-        Snacks.picker.lazy({
+        Snacks.picker.grep({
+          cwd = vim.fn.stdpath("config"),
           title = "Grep Config Files",
-          search = "",
         })
       end,
       desc = "Grep Config Files",
