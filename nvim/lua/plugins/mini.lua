@@ -26,9 +26,6 @@ return {
         toggle_info = "<Tab>",
       },
     },
-    keys = {
-      { "<leader><leader>f", "<cmd>Pick files<CR>" },
-    },
     config = function(_, opts)
       require("mini.pick").setup(opts)
     end,

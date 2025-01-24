@@ -21,7 +21,7 @@ return {
       },
       {
         "<leader>gf",
-        "<cmd>lua Snacks.lazygit.log_file()<cr>",
+        "<cmd>lua Snacks.picker.git_log_file()<cr>",
         desc = "Git Current File History",
       },
     },
