@@ -45,8 +45,6 @@ vim.utils.map(
   vim.utils.trigger_keys_fn(":<Up>"),
   { desc = "Previous command", noremap = true, silent = true }
 )
-vim.utils.map("x", { "/", "g/" }, "<esc>/\\%V", { silent = false, desc = "Search Inside Visual Selection (backward)" })
-vim.utils.map("x", { "?", "g?" }, "<esc>?\\%V", { silent = false, desc = "Search Inside Visual Selection (forward)" })
 
 -- Move cursor left/right in insert-mode
 vim.utils.map("ic", "<C-a>", "<Home>", { silent = true, noremap = true })
