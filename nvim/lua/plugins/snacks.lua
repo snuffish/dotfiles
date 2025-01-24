@@ -110,10 +110,9 @@ return {
       {
         "<leader>sc",
         function()
-          Snacks.picker.grep({
-            finder = "lazy_spec",
-            live = true,
+          Snacks.picker.lazy({
             title = "Grep Config Files",
+            search = "",
           })
         end,
         desc = "Grep Config Files",
