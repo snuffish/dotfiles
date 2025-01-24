@@ -1,6 +1,6 @@
 return {
   "ibhagwan/fzf-lua",
-  enable = false,
+  -- enabled = false,
   dependencies = { "nvim-tree/nvim-web-devicons" },
   opts = {
     {
@@ -21,6 +21,10 @@ return {
   keys = {
     {
       "<leader>sc",
+      false,
+    },
+    {
+      "<leader>gs",
       false,
     },
     {
