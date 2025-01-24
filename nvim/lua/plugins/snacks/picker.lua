@@ -46,7 +46,7 @@ return {
       desc = "Resume",
     },
     {
-      "<leader>sR",
+      "<leader>fr",
       "<cmd>lua Snacks.picker.recent()<CR>",
       desc = "Recent",
     },
