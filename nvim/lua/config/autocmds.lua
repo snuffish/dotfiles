@@ -53,26 +53,12 @@ vim.api.nvim_create_autocmd("ModeChanged", {
   end,
 })
 
--- vim.api.nvim_create_autocmd("ModeChanged", {
---   callback = function()
---     local mode = vim.vn.mode()
---     print(mode)
---   end,
--- })
-
-vim.api.nvim_create_autocmd({ "BufEnter", "BufRead", "BufWinEnter" }, {
-  pattern = "help",
-  command = "lua print(MiniBasics.toggle_gnostic())",
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = {"help", "markdown"},
+  command = "lua Snacks.toggle.diagnostics():set(false)",
 })
 
 vim.api.nvim_create_autocmd({ "BufEnter", "BufNewFile" }, {
   pattern = ".env*",
   command = "set filetype=conf",
-})
-
-vim.api.nvim_create_autocmd({ "BufEnter", "BufNewFile" }, {
-  pattern = "*.md",
-  callback = function()
-    vim.diagnostic.enable(false)
-  end,
 })

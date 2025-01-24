@@ -47,7 +47,7 @@ return {
             for _, mode in ipairs(modes) do
               vim.keymap.set(mode, "[i", "g^ae", { desc = "Jump to end of scope" })
             end
-
+            
             vim.utils.map("nxo", { "[i", "<F1>" }, "g^ae", { desc = "Jump to end of scope" })
 
             vim.keymap.set("n", "[i", "g^ae", { desc = "Jump to end of scope" })
