@@ -45,7 +45,7 @@ return {
           {
             "<leader>lp",
             "<cmd>lua Snacks.picker.projects()<CR>",
-            icon = { icon = " ", color = "azure" },
+            icon = { icon = " ", color = "azure" },
             desc = "Open Projects",
           },
         },
