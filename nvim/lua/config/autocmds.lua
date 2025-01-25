@@ -59,7 +59,7 @@ vim.api.nvim_create_autocmd({ "FileType", "BufEnter" }, {
 })
 
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "help", "conf" },
+  pattern = { "help", "markdown", "conf" },
   command = "lua Snacks.toggle.diagnostics():set(false)",
 })
 
