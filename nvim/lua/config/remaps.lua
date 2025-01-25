@@ -20,6 +20,8 @@ vim.utils.map("n", { "<C-u>", "<PageUp>" }, "<C-u>zz", { desc = "Jump up 1/2-scr
 vim.utils.map("n", { "<C-d>", "<PageDown>" }, "<C-d>zz", { desc = "Jump down 1/2-screen", noremap = true })
 vim.utils.map("n", "}", "}zz")
 vim.utils.map("n", "{", "{zz")
+vim.utils.map("n", ")", ")zz")
+vim.utils.map("n", "(", "(zz")
 
 vim.utils.map("n", "n", "nzzzv", { desc = "Next search result (centered)" })
 vim.utils.map("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
@@ -93,5 +95,5 @@ vim.utils.map(
   "n",
   "yy",
   vim.utils.trigger_keys_fn("gMyg^Y`y"),
-  { noremap = true, silent = true, desc = "Yank from cursor to first white non-whitespace character" }
+  { noremap = true, silent = true, desc = "Yank row" }
 )
