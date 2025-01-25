@@ -129,10 +129,11 @@ return {
   },
   {
     "ThePrimeagen/harpoon",
-    enabled = false,
+    enabled = true,
     branch = "harpoon2",
     dependencies = {
       "nvim-lua/plenary.nvim",
+      "snuffish/utils.nvim",
     },
     config = function()
       local harpoon = require("harpoon")
