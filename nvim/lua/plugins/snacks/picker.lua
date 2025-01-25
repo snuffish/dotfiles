@@ -6,7 +6,7 @@ return {
       win = {
         input = {
           keys = {
-           [vim.g.map_ctrl_tab] = { "confirm", mode = { "i", "n" } },
+            [vim.g.map_ctrl_tab] = { "confirm", mode = { "i", "n" } },
             ["<C-p>"] = { "toggle_preview", mode = { "i", "n" } },
             ["<C-q>"] = { "close", mode = { "i", "n" } },
             ["qq"] = { "close", mode = { "i" } },

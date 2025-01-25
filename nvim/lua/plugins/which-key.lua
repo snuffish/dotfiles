@@ -4,7 +4,9 @@ return {
     vim.o.timeout = true
     vim.o.timeoutlen = 300
   end,
+  ---@type wk.Opts
   opts = {
+    ---@type wk.Spec
     spec = {
       {
         {
@@ -40,6 +42,12 @@ return {
             icon = { icon = "", color = "yellow" },
             desc = "Open LazyGit",
           },
+          {
+            "<leader>lp",
+            "<cmd>lua Snacks.picker.projects()<CR>",
+            icon = { icon = " ", color = "azure" },
+            desc = "Open Projects",
+          },
         },
       },
       {
@@ -63,4 +71,22 @@ return {
       },
     },
   },
+  config = function(_, opts)
+    require("which-key").setup(opts)
+  end,
 }
+
+--
+-- - red
+-- - green
+-- - blue
+-- - yellow
+-- - magenta
+-- - cyan
+-- - white
+-- - black
+-- - gray
+-- - orange
+-- - purple
+-- - pink
+-- - brown

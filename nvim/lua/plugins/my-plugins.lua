@@ -12,7 +12,7 @@ return {
     },
     keys = {
       {
-        "<leader>lp",
+        "<leader>sP",
         "<cmd>SearchPlugin<CR>",
         desc = "Search Plugins",
       },
