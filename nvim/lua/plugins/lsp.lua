@@ -22,6 +22,9 @@ return {
           },
         },
       },
+      {
+        "WhoIsSethDaniel/mason-tool-installer.nvim"
+      }
     },
     opts = function()
       local keys = require("lazyvim.plugins.lsp.keymaps").get()
@@ -54,6 +57,29 @@ return {
         desc = "Signature Help",
         has = "signatureHelp",
       }
+    end,
+    config = function()
+      require("mason-lspconfig").setup({
+        automatic_installation = true,
+        ensure_installed = {
+          "jdtls",
+        },
+      })
+
+      local lspconfig = require("lspconfig")
+
+      local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+      require("mason-lspconfig").setup_handlers({
+        function(server_name)
+          if server_name ~= "jdtls" then
+            lspconfig[server_name].setup({
+              on_attach = lsp_attach,
+              capabilities = lsp_capabilities,
+            })
+          end
+        end,
+      })
     end,
   },
   {
