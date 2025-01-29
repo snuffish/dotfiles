@@ -47,6 +47,8 @@ map \r <Action>(ReformatCode)
 map U <C-R>
 
 map <leader>d <Action>(Debug)
+map <leader>c <Action>(Stop)
+
 map <leader>f <Action>(GotoFile)
 map <leader>r <Action>(RenameElement)
 map <leader>z <Action>(ToggleDistractionFreeMode)
@@ -54,7 +56,6 @@ map <leader>z <Action>(ToggleDistractionFreeMode)
 map <leader>o <Action>(FileStructurePopup)
 map <leader>h <Action>(Vcs.ShowTabbedFileHistory)
 
-map \b <Action>(ToggleLineBreakpoint)
 
 map <A-j> <Action>(MoveStatementDown)
 map <A-k> <Action>(MoveStatementUp)
@@ -62,3 +63,18 @@ map <A-k> <Action>(MoveStatementUp)
 map <leader>e :NERDTree<CR>
 
 map s <Action>(flash.search)
+
+"Debug mappings
+map <leader>db <Action>(ToggleLineBreakpoint)
+map <leader>de :action EvaluateExpression<CR>
+
+nmap <C-j> :action StepOver<CR>
+nmap <C-k> :action Resume<CR>
+nmap <C-h> :action StepOut<CR>
+nmap <C-l> :action ForceStepInto<CR>
+
+imap <C-l> <Right>
+imap <C-k> <Up>
+imap <C-j> <Down>
+imap <C-h> <Left>
+
