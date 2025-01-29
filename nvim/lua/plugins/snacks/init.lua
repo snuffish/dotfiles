@@ -20,6 +20,10 @@ return {
     },
     keys = {
       {
+        "<leader>S",
+        false,
+      },
+      {
         "<leader>lg",
         "<cmd>lua Snacks.lazygit()<cr>",
         desc = "Open LazyGit",
@@ -34,6 +38,11 @@ return {
         "<cmd>lua Snacks.picker.git_status()<cr>",
         desc = "Status",
       },
+      {
+        "<leader>bs",
+        "<cmd>lua Snacks.scratch.select()<CR>",
+        desc = "Select Scratch Buffer",
+      },
     },
     init = function()
       vim.api.nvim_create_autocmd("User", {
@@ -45,7 +54,19 @@ return {
 
             vim.ui.select = Snacks.picker.select
 
-            -- Snacks.Scope mapping
+            vim.utils.map("nxo", "[E", function()
+              ---@diagnostic disable-next-line: missing-fields
+              Snacks.scope.jump({
+                min_size = 1, -- allow single line scopes
+                bottom = false,
+                cursor = false,
+                edge = true,
+                siblings = true,
+                treesitter = { blocks = { enabled = false } },
+                desc = "jump to top edge of scope",
+              })
+            end, { desc = "jump to top edge of scope" })
+
             vim.utils.map("nxo", "[e", function()
               ---@diagnostic disable-next-line: missing-fields
               Snacks.scope.jump({
@@ -69,6 +90,20 @@ return {
                 desc = "jump to bottom edge of scope",
               })
             end, { desc = "jump to bottom edge of scope" })
+
+            vim.utils.map("nxo", "]E", function()
+              ---@diagnostic disable-next-line: missing-fields
+              Snacks.scope.jump({
+                min_size = 1, -- allow single line scopes
+                bottom = true,
+                cursor = false,
+                edge = true,
+                siblings = true,
+                treesitter = { blocks = { enabled = false } },
+                desc = "jump to bottom edge of scope",
+              })
+            end, { desc = "jump to bottom edge of scope" })
+
           end, 500)
 
           _G.dd = function(...)

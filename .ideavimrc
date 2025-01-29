@@ -1,0 +1,58 @@
+" .ideavimrc is a configuration file for IdeaVim plugin. It uses
+"   the same commands as the original .vimrc configuration.
+" You can find a list of commands here: https://jb.gg/h38q75
+" Find more examples here: https://jb.gg/share-ideavimrc
+" Enable IdeaVim plugins https://jb.gg/ideavim-plugins
+
+" Vim plugins
+Plug 'machakann/vim-highlightedyank'
+Plug 'tpope/vim-commentary'
+Plug 'preservim/nerdtree'
+Plug 'tpope/vim-surround'
+Plug 'justinmk/vim-sneak'
+"Plug 'vim-matchit'
+
+set mini-ai
+set easymotion
+set sneak
+set peekaboo
+"set functiontextobj
+"set matchit
+
+let mapleader = ' '
+let g:NERDTreeMapNewFile = 'a'
+
+set number relativenumber
+set scrolloff=5
+set incsearch
+
+" Remaps
+map K 5kzz
+map J 5jzz
+
+map <PageDown> <C-d>zz
+map <PageUp> <C-u>zz
+
+map <C-d> <C-d>zz
+map <C-u> <C-u>zz
+
+map m %
+map M %
+
+" Mappings
+map <leader>cr :action IdeaVim.ReloadVimRc.reload<CR>
+
+map \r <Action>(ReformatCode)
+
+map <leader>d <Action>(Debug)
+map <leader>f <Action>(GotoFile)
+map <leader>r <Action>(RenameElement)
+
+map \b <Action>(ToggleLineBreakpoint)
+
+map <A-j> <Action>(MoveStatementDown)
+map <A-k> <Action>(MoveStatementUp)
+
+map <leader>e :NERDTree<CR>
+
+map s <Action>(flash.search)

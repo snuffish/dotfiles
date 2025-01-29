@@ -22,14 +22,14 @@ return {
     { "<c-n>", "<Plug>(YankyNextEntry)", desc = "Select next entry through yank history" },
     { "OP", "m`O<ESC><Plug>(YankyPutIndentAfterLinewise)``", { desc = "Put yanked text above cursor posotion" } },
     { "op", "m`o<ESC><Plug>(YankyPutIndentBeforeLinewise)``", { desc = "Put yanked text below cursor posotion" } },
-    {
-      "lp",
-      function()
-        require("yanky.textobj").last_put()
-      end,
-      mode = { "n", "x" },
-      desc = "Goto last yanked put",
-    },
+    -- {
+    --   "lp",
+    --   function()
+    --     require("yanky.textobj").last_put()
+    --   end,
+    --   mode = { "n", "x" },
+    --   desc = "Goto last yanked put",
+    -- },
 
     -- { "]P", "<Plug>(YankyPutIndentAfterLinewise)", desc = "Put indented after cursor (linewise)" },
     -- { ">P", "<Plug>(YankyPutIndentBeforeShiftRight)", desc = "Put before and indent right" },
