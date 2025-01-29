@@ -44,9 +44,15 @@ map <leader>cr :action IdeaVim.ReloadVimRc.reload<CR>
 
 map \r <Action>(ReformatCode)
 
+map U <C-R>
+
 map <leader>d <Action>(Debug)
 map <leader>f <Action>(GotoFile)
 map <leader>r <Action>(RenameElement)
+map <leader>z <Action>(ToggleDistractionFreeMode)
+
+map <leader>o <Action>(FileStructurePopup)
+map <leader>h <Action>(Vcs.ShowTabbedFileHistory)
 
 map \b <Action>(ToggleLineBreakpoint)
 
