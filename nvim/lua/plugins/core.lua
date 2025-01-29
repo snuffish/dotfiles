@@ -55,6 +55,7 @@ return {
   { "xiyaowong/transparent.nvim" },
   {
     "m4xshen/hardtime.nvim",
+    enabled = false,
     dependencies = { "MunifTanjim/nui.nvim" },
     opts = {
       cmdheight = 2,
