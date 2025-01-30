@@ -16,6 +16,8 @@ vim.utils.map(
 vim.api.nvim_set_keymap("", "m", "%", { silent = true })
 vim.api.nvim_set_keymap("", "M", "%", { silent = true })
 
+vim.api.nvim_set_keymap("", "U", "<C-R>", { silent = true })
+
 vim.utils.map("n", { "<C-u>", "<PageUp>" }, "<C-u>zz", { desc = "Jump up 1/2-screen", noremap = true })
 vim.utils.map("n", { "<C-d>", "<PageDown>" }, "<C-d>zz", { desc = "Jump down 1/2-screen", noremap = true })
 vim.utils.map("n", "}", "}zz")
