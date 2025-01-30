@@ -1,5 +1,9 @@
 require("config.remaps")
 
+vim.utils.map("n", "<leader><leader>x", "<cmd>source %<CR>", { noremap = true })
+vim.utils.map("n", "<leader>x", ":.lua<CR>", { noremap = true })
+vim.utils.map("v", "<leader>x", ":<CR>", { noremap = true })
+
 -- Tmux navigation
 vim.api.nvim_set_keymap("", "<C-h>", "<cmd>TmuxNavigateLeft<CR>", { desc = "Window left" })
 vim.api.nvim_set_keymap("", "<C-l>", "<cmd>TmuxNavigateRight<CR>", { desc = "Window right" })
@@ -61,8 +65,8 @@ vim.utils.map("n", ";w", function()
   vim.utils.trigger_keys(";;")
 end, { desc = "Add surrounding on <cword>", noremap = true, silent = true })
 
-vim.utils.map("n", "<C-f>", function()
-  local jump2d = require("mini.jump2d")
-  jump2d.start(jump2d.builtin_opts.line_start)
-  vim.utils.trigger_keys("zz")
-end, { noremap = true })
+-- vim.utils.map("n", "<C-f>", function()
+--   local jump2d = require("mini.jump2d")
+--   jump2d.start(jump2d.builtin_opts.line_start)
+--   vim.utils.trigger_keys("zz")
+-- end, { noremap = true })

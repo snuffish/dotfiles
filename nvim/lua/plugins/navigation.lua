@@ -54,8 +54,14 @@ return {
       },
     },
     keys = {
-      -- { "<CR>", "<cmd>lua MiniJump2d.start()<CR>" },
-      { "<CR>", "<Cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.line_start)<CR>" },
+      {
+        "<C-f>",
+        function()
+          local jump2d = require("mini.jump2d")
+          jump2d.start(jump2d.builtin_opts.line_start)
+          vim.utils.trigger_keys("zz")
+        end,
+      },
     },
     config = function(_, opts)
       local jump2d = require("mini.jump2d")
@@ -66,7 +72,7 @@ return {
         hooks = { after_jump = jump_line_start.hooks.after_jump },
       })
 
-      require("mini.jump2d").setup(opts)
+      jump2d.setup(opts)
     end,
   },
   {
