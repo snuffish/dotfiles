@@ -139,6 +139,22 @@ config.keys = {
 	-- },
 }
 
+local launch_menu = {}
+
+if wezterm.target_triple == "x86_64-pc-windows-msvc" then
+    table.insert(launch_menu, {
+        label = "PowerShell",
+        args = { "pwsh.exe", "-nol" },
+      })
+    table.insert(launch_menu, {
+        label = "MSYS UCRT64",
+        args = { "cmd.exe ", "/k", "C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -ucrt64 -shell bash" },
+      })
+    config.default_prog = { "pwsh", "-nol" }
+end
+
+config.launch_menu = launch_menu
+
 -- The filled in variant of the < symbol
 local SOLID_LEFT_ARROW = wezterm.nerdfonts.pl_right_hard_divider
 
