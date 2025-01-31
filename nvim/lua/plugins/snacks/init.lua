@@ -17,6 +17,9 @@ return {
       statuscolumn = {
         enabled = true,
       },
+      explorer = {
+        enabled = true,
+      },
     },
     keys = {
       {
