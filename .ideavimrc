@@ -4,7 +4,10 @@
 " Find more examples here: https://jb.gg/share-ideavimrc
 " Enable IdeaVim plugins https://jb.gg/ideavim-plugins
 
-" Vim plugins
+" Set leader key to space
+let mapleader = ' '
+
+""""""""""""""""""""""""Plugins""""""""""""""""""""""""
 Plug 'machakann/vim-highlightedyank'
 Plug 'tpope/vim-commentary'
 Plug 'preservim/nerdtree'
@@ -13,68 +16,117 @@ Plug 'justinmk/vim-sneak'
 "Plug 'vim-matchit'
 
 set mini-ai
-set easymotion
+"set easymotion
 set sneak
 set peekaboo
-"set functiontextobj
+"set functiontextoba
 "set matchit
-
-let mapleader = ' '
-let g:NERDTreeMapNewFile = 'a'
 
 set number relativenumber
 set scrolloff=5
 set incsearch
 
-" Remaps
-map K 5kzz
-map J 5jzz
-
-map <PageDown> <C-d>zz
-map <PageUp> <C-u>zz
-
-map <C-d> <C-d>zz
-map <C-u> <C-u>zz
-
-map m %
-map M %
-
-" Mappings
-map <leader>cr :action IdeaVim.ReloadVimRc.reload<CR>
-
-map \r <Action>(ReformatCode)
-
-map U <C-R>
-
-map <leader>d <Action>(Debug)
-map <leader>c <Action>(Stop)
-
-map <leader>f <Action>(GotoFile)
-map <leader>r <Action>(RenameElement)
-map <leader>z <Action>(ToggleDistractionFreeMode)
-
-map <leader>o <Action>(FileStructurePopup)
-map <leader>h <Action>(Vcs.ShowTabbedFileHistory)
-
-
-map <A-j> <Action>(MoveStatementDown)
-map <A-k> <Action>(MoveStatementUp)
-
-map <leader>e :NERDTree<CR>
-
-map s <Action>(flash.search)
-
-"Debug mappings
-map <leader>db <Action>(ToggleLineBreakpoint)
-map <leader>de :action EvaluateExpression<CR>
-
-nmap <C-j> :action StepOver<CR>
-nmap <C-k> :action Resume<CR>
-nmap <C-h> :action StepOut<CR>
-nmap <C-l> :action ForceStepInto<CR>
+""""""""""""""""""""""""Remaps"""""""""""""""""""""""""
+nnoremap K 5kzz
+nnoremap J 5jzz
+nnoremap L gt
+nnoremap H gT
 
 imap <C-l> <Right>
 imap <C-k> <Up>
 imap <C-j> <Down>
 imap <C-h> <Left>
 
+inoremap <C-e> <End>
+inoremap <C-a> <Home>
+
+nnoremap x "_x
+nnoremap X "_X
+
+nnoremap Y y$
+nnoremap y0 y^
+nnoremap c0 "_cg^
+nnoremap d0 "_dg^
+
+nnoremap <PageDown> <C-d>zz
+nnoremap <PageUp> <C-u>zz
+nnoremap } }zz
+nnoremap { {zz
+nnoremap ( (zz
+nnoremap ) )zz
+nnoremap n nzzzv
+nnoremap N Nzzzv
+map gg gg_
+
+nnoremap <C-d> <C-d>zz
+nnoremap <C-u> <C-u>zz
+
+nnoremap q <nop>
+nnoremap <C-q> q
+
+map m %
+map M %
+
+"""""""""""""""""""""""Mappings""""""""""""""""""""""""
+map <leader>R <Action>(IdeaVim.ReloadVimRc.reload)
+
+map gmm yyp
+
+map ` <Plug>(acejump-linemarks)
+
+map <leader>ff <Action>(GotoFile)
+map <leader><leader> <Action>(SearchEverywhere)
+map <leader>fr <Action>(RecentFiles)
+map <leader>a <Action>(GotoAction)
+map <leader>s <Action>(GotoSymbol)
+map <leader>z <Action>(ToggleDistractionFreeMode)
+
+nnoremap <S-CR> a<CR><Esc>k$
+
+"""""""""""""""""""""""""LSP"""""""""""""""""""""""""""
+map gr <Action>(ShowUsages)
+map gi <Action>(GotoImplementation)
+map gD <Action>(GotoTypeDeclaration)
+map <leader>cf <Action>(ReformatCode)
+
+""""""""""""""""""""""""Code"""""""""""""""""""""""""""
+map <leader>nc <Action>(NewClass)
+map <leader>ng <Action>(Generate)
+map <leader>ns <Action>(NewScratchFile)
+map <leader>cr <Action>(RenameElement)
+
+map <leader>sw <Action>(SurroundWith)
+map <leader>co <Action>(OptimizeImports)
+
+map <A-j> <Action>(MoveStatementDown)
+map <A-k> <Action>(MoveStatementUp)
+
+map <leader>o <Action>(FileStructurePopup)
+map <leader>h <Action>(Vcs.ShowTabbedFileHistory)
+
+"""""""""""""""""""""""Window""""""""""""""""""""""""""
+nmap <C-w><C-q> <Action>(CloseEditor)
+"nmap <A-l> <C-W>l
+"nmap <A-k> <C-W>k
+"nmap <A-j> <C-W>j
+"nmap <A-h> <C-W>h
+
+""""""""""""""""""""""Debug/Run""""""""""""""""""""""""
+map <leader>rr <Action>(Run)
+map <leader>rd <Action>(Debug)
+"map <leader>dq <Action>(Stop)
+map <leader>dq :action Stop<CR><A-q>
+
+map <leader>db <Action>(ToggleLineBreakpoint)
+map <leader>de <Action>(EvaluateExpression)
+map <leader>dB <Action>(ViewBreakpoints)
+
+nmap <C-j> <Action>(StepOver)
+nmap <C-k> <Action>(Resume)
+nmap <C-h> <Action>(StepOut)
+nmap <C-l> <Action>(ForceStepInto)
+
+""""""""""""""""""""""Navigation"""""""""""""""""""""""
+map s <Action>(flash.search)
+
+map <leader>e :NERDTree<CR>
