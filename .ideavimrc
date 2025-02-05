@@ -7,6 +7,9 @@
 " Set leader key to space
 let mapleader = ' '
 
+" Show all other Vim actions in WhichKey
+let g:WhichKey_ShowVimActions = "false"
+
 """"""""""""""""""""""""Plugins""""""""""""""""""""""""
 Plug 'machakann/vim-highlightedyank'
 Plug 'tpope/vim-commentary'
@@ -15,6 +18,7 @@ Plug 'tpope/vim-surround'
 Plug 'justinmk/vim-sneak'
 "Plug 'vim-matchit'
 
+set which-key
 set mini-ai
 "set easymotion
 set sneak
@@ -25,6 +29,7 @@ set peekaboo
 set number relativenumber
 set scrolloff=5
 set incsearch
+set notimeout
 
 """"""""""""""""""""""""Remaps"""""""""""""""""""""""""
 nnoremap K 5kzz
@@ -67,21 +72,45 @@ nnoremap <C-q> q
 map m %
 map M %
 
+let g:WhichKeyDesc_selectAll = "vag Select whole buffer"
+map vag GVgg
+
+"""""""""""""""""""""""Sections""""""""""""""""""""""""
+let g:WhichKeyDesc_goto = "g Goto"
+let g:WhichKeyDesc_code = "<leader>c Code"
+let g:WhichKeyDesc_new = "<leader>n New"
+let g:WhichKeyDesc_run = "<leader>r Run"
+let g:WhichKeyDesc_debug = "<leader>d Debug"
+let g:WhichKeyDesc_search = "<leader>s Search"
+let g:WhichKeyDesc_files = "<leader>f Files"
+let g:WhichKeyDesc_multiply = "gm Multiply operator"
+
 """""""""""""""""""""""Mappings""""""""""""""""""""""""
+let g:WhichKeyDesc_reload = "<leader>R Reload vimrc"
 map <leader>R <Action>(IdeaVim.ReloadVimRc.reload)
 
+let g:WhichKeyDesc_multiplyline = "gmm Multiply line"
 map gmm yyp
 
-map ` <Plug>(acejump-linemarks)
+"map ` <Plug>(acejump-linemarks)
+map ` <Action>(AceTargetAction)
 
-map <leader>ff <Action>(GotoFile)
-map <leader><leader> <Action>(SearchEverywhere)
+let g:WhichKeyDesc_gotofile = "<leader><leader> GotoFile"
+map <leader><leader> <Action>(GotoFile)
 map <leader>fr <Action>(RecentFiles)
-map <leader>a <Action>(GotoAction)
-map <leader>s <Action>(GotoSymbol)
+map <leader>sa <Action>(GotoAction)
+map <leader>ss <Action>(GotoSymbol)
+map <leader>/ <Action>(FindInPath)
+
+let g:WhichKeyDesc_zenmode = "<leader>z ZenMode"
 map <leader>z <Action>(ToggleDistractionFreeMode)
 
 nnoremap <S-CR> a<CR><Esc>k$
+
+""""""""""""""""""""""""Fuzzy""""""""""""""""""""""""""
+map <leader>ff <Action>(com.mituuz.fuzzier.Fuzzier)
+map <leader>gf <Action>(com.mituuz.fuzzier.FuzzierVCS)
+map <leader>mf <Action>(com.mituuz.fuzzier.FuzzyMover)
 
 """""""""""""""""""""""""LSP"""""""""""""""""""""""""""
 map gr <Action>(ShowUsages)
@@ -96,12 +125,16 @@ map <leader>ns <Action>(NewScratchFile)
 map <leader>cr <Action>(RenameElement)
 
 map <leader>sw <Action>(SurroundWith)
+
+let g:WhichKeyDesc_optimizeImports = "<leader>co OptimizeImports"
 map <leader>co <Action>(OptimizeImports)
 
 map <A-j> <Action>(MoveStatementDown)
 map <A-k> <Action>(MoveStatementUp)
 
+let g:WhichKeyDesc_code = "<leader>o Outline"
 map <leader>o <Action>(FileStructurePopup)
+
 map <leader>h <Action>(Vcs.ShowTabbedFileHistory)
 
 """""""""""""""""""""""Window""""""""""""""""""""""""""
@@ -114,12 +147,11 @@ nmap <C-w><C-q> <Action>(CloseEditor)
 """"""""""""""""""""""Debug/Run""""""""""""""""""""""""
 map <leader>rr <Action>(Run)
 map <leader>rd <Action>(Debug)
-"map <leader>dq <Action>(Stop)
-map <leader>dq :action Stop<CR><A-q>
+map <leader>dq <Action>(Stop)
 
 map <leader>db <Action>(ToggleLineBreakpoint)
 map <leader>de <Action>(EvaluateExpression)
-map <leader>dB <Action>(ViewBreakpoints)
+map <leader>dd <Action>(ViewBreakpoints)
 
 nmap <C-j> <Action>(StepOver)
 nmap <C-k> <Action>(Resume)
@@ -129,4 +161,5 @@ nmap <C-l> <Action>(ForceStepInto)
 """"""""""""""""""""""Navigation"""""""""""""""""""""""
 map s <Action>(flash.search)
 
+let g:WhichKeyDesc_nerdtree = "<leader>e NerdTree"
 map <leader>e :NERDTree<CR>
