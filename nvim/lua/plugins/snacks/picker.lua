@@ -1,3 +1,11 @@
+local local_buffers = function()
+  Snacks.picker.buffers({
+    layout = {
+      preset = "select",
+    },
+  })
+end
+
 return {
   "folke/snacks.nvim",
   ---@type snacks.Config
@@ -14,10 +22,23 @@ return {
             ["<A-p>"] = false,
           },
         },
+        list = {
+          keys = {
+            ["h"] = { "explorer_up", mode = { "n" } },
+            ["<leader>"] = { "confirm", mode = { "n" } },
+            ["<C-p>"] = { "toggle_preview", mode = { "i", "n" } },
+            ["<A-p>"] = false,
+          },
+        },
       },
     },
   },
   keys = {
+    {
+      "<leader>e",
+      "<cmd>lua Snacks.picker.explorer()<CR>",
+      desc = "Explorer",
+    },
     {
       "<leader>sp",
       "<cmd>lua Snacks.picker.pick()<CR>",
@@ -53,7 +74,7 @@ return {
       desc = "Resume",
     },
     {
-      "<leader>s.",
+      "<leader>fr",
       "<cmd>lua Snacks.picker.recent()<CR>",
       desc = "Recent",
     },
@@ -69,8 +90,18 @@ return {
     },
     {
       "<leader>fb",
-      "<cmd>lua Snacks.picker.buffers()<CR>",
+      local_buffers,
       desc = "Buffers",
+    },
+    {
+      "<Tab><Space>",
+      local_buffers,
+      desc = "Buffers",
+    },
+    {
+      "<Tab>`",
+      local_buffers,
+      desc = "Switch Buffer",
     },
     {
       "<leader>fg",
@@ -125,11 +156,6 @@ return {
     },
     {
       "<localleader><localleader>",
-      "<cmd>lua Snacks.picker.buffers()<CR>",
-      desc = "Buffers",
-    },
-    {
-      "<Tab><Space>",
       "<cmd>lua Snacks.picker.buffers()<CR>",
       desc = "Buffers",
     },
