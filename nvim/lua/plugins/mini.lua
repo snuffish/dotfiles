@@ -87,17 +87,19 @@ return {
           inside = "i",
 
           -- Next/last variants
-          around_next = "na",
-          inside_next = "ni",
-          around_last = "la",
-          inside_last = "li",
+          around_next = "an",
+          inside_next = "in",
+          around_last = "al",
+          inside_last = "il",
 
           -- Move cursor to corresponding edge of `a` textobject
           goto_left = "g[",
           goto_right = "g]",
         },
 
-        n_lines = 50,
+        n_lines = 250,
+
+        search_method = "cover_or_next",
 
         custom_textobjects = {
           F = treesitter({ a = "@function.outer", i = "@function.inner" }),

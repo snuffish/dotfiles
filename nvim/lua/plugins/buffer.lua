@@ -38,11 +38,6 @@ return {
         silent = true,
       },
       {
-        "<Tab>`",
-        "<cmd>lua Snacks.picker.buffers()<CR>",
-        desc = "Switch Buffer",
-      },
-      {
         "<localleader>o",
         "<cmd>lua Snacks.bufdelete.other()<CR>",
         desc = "Delete all Other Buffers",
