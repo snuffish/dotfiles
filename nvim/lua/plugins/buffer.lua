@@ -72,6 +72,13 @@ return {
         desc = "Next Buffer",
       },
       {
+        "<Tab><Tab>",
+        function()
+          vim.utils.trigger_keys("]b")
+        end,
+        desc = "Next Buffer",
+      },
+      {
         "<S-Tab><S-Tab>",
         function()
           vim.utils.trigger_keys("[b")
