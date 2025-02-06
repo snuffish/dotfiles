@@ -70,3 +70,6 @@ end, { desc = "Add surrounding on <cword>", noremap = true, silent = true })
 --   jump2d.start(jump2d.builtin_opts.line_start)
 --   vim.utils.trigger_keys("zz")
 -- end, { noremap = true })
+
+-- vim.utils.map("c", "<C-j>", "<Tab>", { noremap = true, silent = true })
+-- vim.utils.map("c", "<C-k>", "<S-Tab>", { noremap = true, silent = true })
