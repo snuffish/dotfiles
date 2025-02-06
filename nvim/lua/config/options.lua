@@ -4,7 +4,6 @@ local globals = {
   map_ctrl_tab = "<M-Bslash>\\",
   have_nerd_font = true,
   auto_save = false,
-  lazyvim_picker = "fzf",
   snacks_animate = false,
   lazyvim_cmp = "auto",
   ai_cmp = true,
