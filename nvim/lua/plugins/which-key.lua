@@ -9,6 +9,11 @@ return {
     ---@type wk.Spec
     spec = {
       {
+        "<localleader>",
+        "",
+        desc = "Local Leader",
+      },
+      {
         {
           "<leader>l",
           "",

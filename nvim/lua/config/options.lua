@@ -1,6 +1,7 @@
 local globals = {
   mapleader = " ",
-  maplocalleader = "\\",
+  -- maplocalleader = "\\",
+  maplocalleader = ",",
   map_ctrl_tab = "<M-Bslash>\\",
   have_nerd_font = true,
   auto_save = false,
