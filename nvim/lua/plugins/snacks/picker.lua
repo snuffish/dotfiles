@@ -115,25 +115,6 @@ return {
     },
     {
       "g/",
-      function()
-        local function get_visual_selection()
-          -- Yank current visual selection into the 'v' register
-          -- NOTE: that this makes no effort to preserve this register
-          vim.cmd('noau normal! "vy"')
-          return vim.fn.getreg("v")
-        end
-
-        ---@diagnostic disable-next-line: missing-fields
-        Snacks.picker.grep({
-          search = get_visual_selection(),
-          live = false,
-        })
-      end,
-      mode = { "x" },
-      desc = "Grep visual selection",
-    },
-    {
-      "g/",
       "<cmd>lua Snacks.picker.grep_word()<CR>",
       mode = { "n" },
       desc = "Grep <cword>",
