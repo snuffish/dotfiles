@@ -23,8 +23,8 @@ return {
         },
       },
       {
-        "WhoIsSethDaniel/mason-tool-installer.nvim"
-      }
+        "WhoIsSethDaniel/mason-tool-installer.nvim",
+      },
     },
     opts = function()
       local keys = require("lazyvim.plugins.lsp.keymaps").get()
@@ -58,46 +58,48 @@ return {
         has = "signatureHelp",
       }
     end,
-    config = function()
-      require("mason-lspconfig").setup({
-        automatic_installation = true,
-        ensure_installed = {
-          "jdtls",
-        },
-      })
-
-      -- local lspconfig = require("lspconfig")
-
-      -- local capabilities = require("cmp_nvim_lsp").default_capabilities()
-      --
-      -- require("mason-lspconfig").setup_handlers({
-      --   function(server_name)
-      --     if server_name ~= "jdtls" then
-      --       lspconfig[server_name].setup({
-      --         on_attach = lsp_attach,
-      --         capabilities = lsp_capabilities,
-      --       })
-      --     end
-      --   end,
-      -- })
-    end,
+    -- config = function()
+    --   require("mason-lspconfig").setup({
+    --     automatic_installation = true,
+    --     ensure_installed = {
+    --       "jdtls",
+    --       "vtsls",
+    --       "tailwindcss-language-server",
+    --     },
+    --   })
+    --
+    --   -- local lspconfig = require("lspconfig")
+    --
+    --   -- local capabilities = require("cmp_nvim_lsp").default_capabilities()
+    --   --
+    --   -- require("mason-lspconfig").setup_handlers({
+    --   --   function(server_name)
+    --   --     if server_name ~= "jdtls" then
+    --   --       lspconfig[server_name].setup({
+    --   --         on_attach = lsp_attach,
+    --   --         capabilities = lsp_capabilities,
+    --   --       })
+    --   --     end
+    --   --   end,
+    --   -- })
+    -- end,
   },
-  {
-    "yioneko/nvim-vtsls",
-    opts = {},
-    config = function()
-      -- require("nvim-vtls").setup({})
-      --
-      -- require("vtsls").commands.organize_imports(
-      --   vim.utils.get_current_bufnr(),
-      --   on_resolve,
-      --   on_reject
-      -- )
-      --
-      -- function on_resolve() end
-      -- function on_reject() end
-    end,
-  },
+  -- {
+  --   "yioneko/nvim-vtsls",
+  --   opts = {},
+  --   config = function()
+  --     -- require("nvim-vtls").setup({})
+  --     --
+  --     -- require("vtsls").commands.organize_imports(
+  --     --   vim.utils.get_current_bufnr(),
+  --     --   on_resolve,
+  --     --   on_reject
+  --     -- )
+  --     --
+  --     -- function on_resolve() end
+  --     -- function on_reject() end
+  --   end,
+  -- },
   {
     "folke/noice.nvim",
     optional = true,
