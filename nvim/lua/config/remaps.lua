@@ -13,6 +13,8 @@ vim.utils.map(
   { noremap = true, silent = true, desc = "Notifications" }
 )
 
+vim.api.nvim_set_keymap("", "\\", "<localleader>", { silent = true })
+
 vim.api.nvim_set_keymap("", "m", "%", { silent = true })
 vim.api.nvim_set_keymap("", "M", "%", { silent = true })
 
