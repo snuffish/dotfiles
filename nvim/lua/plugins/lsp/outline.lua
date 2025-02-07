@@ -19,5 +19,8 @@ return {
       --   only = 2,
       -- },
     },
+    keymaps = {
+      toggle_preview = "e",
+    },
   },
 }
