@@ -116,7 +116,7 @@ return {
     {
       "g/",
       "<cmd>lua Snacks.picker.grep_word()<CR>",
-      mode = { "n" },
+      mode = { "n", "v", "x" },
       desc = "Grep <cword>",
     },
     {
