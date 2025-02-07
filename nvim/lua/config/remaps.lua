@@ -1,6 +1,6 @@
 -- Remap q to Q to prevent accidently pressing the recording key
 vim.utils.map("n", "q", "<nop>", { noremap = true, silent = true })
-vim.utils.map("n", "<C-q>", "q", { desc = "Start/Stop Macro recording", noremap = true, silent = true })
+vim.utils.map("n", "<C-A-q>", "q", { desc = "Start/Stop Macro recording", noremap = true, silent = true })
 
 vim.utils.map("n", "m", "<nop>", { noremap = true, silent = true })
 vim.utils.map("n", "gM", "m", { desc = "Add marks", noremap = true, silent = true })

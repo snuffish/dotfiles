@@ -1,11 +1,13 @@
 return {
-  require("plugins.snacks.dashboard"),
-  require("plugins.snacks.picker"),
-  require("plugins.snacks.zen"),
   {
     "folke/snacks.nvim",
     priority = 1000,
     lazy = false,
+    dependencies = {
+      require("plugins.snacks.dashboard"),
+      require("plugins.snacks.picker"),
+      require("plugins.snacks.zen"),
+    },
     ---@type snacks.Config
     opts = {
       scope = {
@@ -106,7 +108,6 @@ return {
                 desc = "jump to bottom edge of scope",
               })
             end, { desc = "jump to bottom edge of scope" })
-
           end, 500)
 
           _G.dd = function(...)
