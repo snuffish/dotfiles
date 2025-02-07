@@ -53,6 +53,12 @@ return {
             icon = { icon = " ", color = "azure" },
             desc = "Open Projects",
           },
+          {
+            "<leader>lq",
+            "<cmd>lua Snacks.dashboard.open()<CR>",
+            icon = { icon = "󰕮 ", color = "azure" },
+            desc = "Open Dashboard",
+          },
         },
       },
       {
