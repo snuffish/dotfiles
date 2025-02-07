@@ -35,11 +35,6 @@ return {
   },
   keys = {
     {
-      "<leader>e",
-      "<cmd>lua Snacks.picker.explorer()<CR>",
-      desc = "Explorer",
-    },
-    {
       "<leader>sp",
       "<cmd>lua Snacks.picker.pick()<CR>",
       desc = "Pickers",
