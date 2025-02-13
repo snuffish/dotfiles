@@ -6,6 +6,17 @@ return {
   },
   opts = {
     ring = { storage = "sqlite" },
+    highlight = {
+      on_put = true,
+      on_yank = true,
+      timer = 500,
+    },
+    textobj = {
+      enabled = true,
+    },
+    preserve_cursor_position = {
+      enabled = true,
+    },
   },
   keys = {
     {
@@ -23,40 +34,11 @@ return {
     { "OP", "m`O<ESC><Plug>(YankyPutIndentAfterLinewise)``", { desc = "Put yanked text above cursor posotion" } },
     { "op", "m`o<ESC><Plug>(YankyPutIndentBeforeLinewise)``", { desc = "Put yanked text below cursor posotion" } },
     -- {
-    --   "lp",
+    --   "<leader>p",
     --   function()
-    --     require("yanky.textobj").last_put()
+    --     require("telescope").extensions.yank_history.yank_history()
     --   end,
-    --   mode = { "n", "x" },
-    --   desc = "Goto last yanked put",
+    --   {},
     -- },
-
-    -- { "]P", "<Plug>(YankyPutIndentAfterLinewise)", desc = "Put indented after cursor (linewise)" },
-    -- { ">P", "<Plug>(YankyPutIndentBeforeShiftRight)", desc = "Put before and indent right" },
-    -- { "<P", "<Plug>(YankyPutIndentBeforeShiftLeft)", desc = "Put before and indent left" },
-    -- { ">p", "<Plug>(YankyPutIndentAfterShiftRight)", desc = "Put and indent right" },
-    -- { "<p", "<Plug>(YankyPutIndentAfterShiftLeft)", desc = "Put and indent left" },
   },
-  config = function()
-    require("yanky").setup({
-      highlight = {
-        on_put = true,
-        on_yank = true,
-        timer = 500,
-      },
-      textobj = {
-        enabled = true,
-      },
-      preserve_cursor_position = {
-        enabled = true,
-      },
-    })
-
-    -- require("which-key").add({
-    --   {
-    --     "Y",
-    --     desc = "Yank to end of line",
-    --   },
-    -- })
-  end,
 }

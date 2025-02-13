@@ -55,3 +55,5 @@ vim.utils.map("ic", "<C-a>", "<Home>", { silent = true, noremap = true })
 vim.utils.map("ic", "<C-e>", "<End>", { silent = true, noremap = true })
 vim.api.nvim_set_keymap("i", "<C-h>", "<Left>", { silent = true, noremap = true })
 vim.api.nvim_set_keymap("i", "<C-l>", "<Right>", { silent = true, noremap = true })
+
+vim.utils.map("n", "DM", "V%d", { noremap = true , desc = "Visual-Line delete match"})

@@ -70,19 +70,6 @@ vim.utils.map("i", ";O", "<C-o>O")
 
 vim.utils.map(
   "n",
-  "DD",
-  '"_dg^',
-  { noremap = true, silent = true, desc = "Delete characters from cursor to first whitespace (No yanking)" }
-)
-vim.utils.map(
-  "n",
-  "CC",
-  '"_cg^',
-  { noremap = true, silent = true, desc = "Change character from cursor to first whitespace (No yanking)" }
-)
-
-vim.utils.map(
-  "n",
   "d0",
   '"_dg^',
   { noremap = true, silent = true, desc = "Delete from cursor to first white non-whitespace character" }
@@ -93,6 +80,13 @@ vim.utils.map(
   "c0",
   '"_cg^',
   { noremap = true, silent = true, desc = "Change from cursor to first white non-whitespace character" }
+)
+
+vim.utils.map(
+  "n",
+  "y0",
+  "y^",
+  { noremap = true, silent = true, desc = "Delete from cursor to first white non-whitespace character" }
 )
 
 vim.utils.map(
