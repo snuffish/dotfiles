@@ -55,21 +55,3 @@ vim.utils.map("ic", "<C-a>", "<Home>", { silent = true, noremap = true })
 vim.utils.map("ic", "<C-e>", "<End>", { silent = true, noremap = true })
 vim.api.nvim_set_keymap("i", "<C-h>", "<Left>", { silent = true, noremap = true })
 vim.api.nvim_set_keymap("i", "<C-l>", "<Right>", { silent = true, noremap = true })
-
--- Mini.Surround mapping
-vim.api.nvim_set_keymap("n", ";;", ";a_", { desc = "Add row surrounding" })
-vim.api.nvim_set_keymap("v", ";;", ";a", { desc = "Add surrounding" })
-
-vim.utils.map("n", ";w", function()
-  vim.cmd("normal! viw")
-  vim.utils.trigger_keys(";;")
-end, { desc = "Add surrounding on <cword>", noremap = true, silent = true })
-
--- vim.utils.map("n", "<C-f>", function()
---   local jump2d = require("mini.jump2d")
---   jump2d.start(jump2d.builtin_opts.line_start)
---   vim.utils.trigger_keys("zz")
--- end, { noremap = true })
-
--- vim.utils.map("c", "<C-j>", "<Tab>", { noremap = true, silent = true })
--- vim.utils.map("c", "<C-k>", "<S-Tab>", { noremap = true, silent = true })
