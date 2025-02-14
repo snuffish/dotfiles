@@ -98,6 +98,13 @@ return {
         },
       },
     },
+    keys = {
+      {
+        "S",
+        mode = { "x", "o" },
+        false
+      },
+    },
   },
   {
     "echasnovski/mini.ai",

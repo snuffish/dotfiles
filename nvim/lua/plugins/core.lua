@@ -128,100 +128,6 @@ return {
     },
   },
   {
-    "vuki656/package-info.nvim",
-    ft = "package.json",
-    requires = { "MunifTanjim/nui.nvim" },
-    opts = {
-      icons = {
-        enabled = true,
-        style = {
-          up_to_date = "| ",
-          outdated = "| ",
-          invalid = "| ",
-        },
-      },
-      colors = {
-        up_to_date = "green",
-        outdated = "blue",
-        invalid = "red",
-      },
-      package_manager = "npm",
-    },
-    keys = function()
-      local package_info = require("package-info")
-      local opts = {
-        noremap = true,
-        silent = true,
-      }
-
-      local mappings = {
-        {
-          "<leader>nt",
-          package_info.toggle,
-          "Toggle",
-        },
-        {
-          "<leader>nu",
-          package_info.update,
-          "Update",
-        },
-        {
-          "<leader>nd",
-          package_info.delete,
-          "Delete",
-        },
-        {
-          "<leader>ni",
-          package_info.install,
-          "Install",
-        },
-        {
-          "<leader>nv",
-          package_info.change_version,
-          "Change version",
-        },
-        {
-          "<leader>np",
-          "<cmd>Telescope package_info<CR>",
-          "Package info",
-        },
-      }
-
-      local function merge_tables(t1, t2)
-        for k, v in pairs(t2) do
-          t1[k] = v
-        end
-
-        return t1
-      end
-
-      local ret = {}
-      for _, map in ipairs(mappings) do
-
-        local struct = {
-          map[1],
-          map[2],
-          desc = map[3],
-        }
-
-        table.insert(ret, merge_tables(struct, opts))
-      end
-
-      return ret
-    end,
-    config = function(_, opts)
-      require("package-info").setup(opts)
-
-      require("telescope").setup({
-        extensions = {
-          package_info = {
-            theme = "ivy",
-          },
-        },
-      })
-    end,
-  },
-  {
     "nvzone/typr",
     dependencies = "nvzone/volt",
     opts = {},
@@ -298,20 +204,5 @@ return {
       { "[q", false },
       { "]q", false },
     },
-  },
-  {
-    "Bekaboo/dropbar.nvim",
-    -- optional, but required for fuzzy finder support
-    dependencies = {
-      "nvim-telescope/telescope-fzf-native.nvim",
-      build = "make",
-    },
-    config = function()
-      local dropbar_api = require("dropbar.api")
-      vim.keymap.set("n", "<leader>;", dropbar_api.pick, { desc = "Pick symbols in winbar" })
-      vim.keymap.set("n", "<localleader>;", dropbar_api.pick, { desc = "Pick symbols in winbar" })
-      vim.keymap.set("n", "[;", dropbar_api.goto_context_start, { desc = "Go to start of current context" })
-      vim.keymap.set("n", "];", dropbar_api.select_next_context, { desc = "Select next context" })
-    end,
   },
 }
