@@ -156,19 +156,9 @@ return {
 
       local mappings = {
         {
-          "<leader>ns",
-          package_info.show,
-          "Show",
-        },
-        {
-          "<leader>nh",
-          package_info.hide,
-          "Hide",
-        },
-        {
-          "<leader>nh",
+          "<leader>nt",
           package_info.toggle,
-          "Hide",
+          "Toggle",
         },
         {
           "<leader>nu",
