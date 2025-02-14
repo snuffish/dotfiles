@@ -26,11 +26,6 @@ for key, direction in pairs(treewalker_mappings) do
   )
 end
 
-vim.utils.map("n", "<leader>rl", "<cmd>Treewalker SwapRight<CR>", { desc = "SwapRight", noremap = true })
-vim.utils.map("n", "<leader>rh", "<cmd>Treewalker SwapLeft<CR>", { desc = "SwapLeft", noremap = true })
-vim.utils.map("n", "<leader>rj", "<cmd>Treewalker SwapDown<CR>", { desc = "SwapDown", noremap = true })
-vim.utils.map("n", "<leader>rk", "<cmd>Treewalker SwapUp<CR>", { desc = "SwapUp", noremap = true })
-
 vim.api.nvim_set_keymap(
   "n",
   "<leader>yf",
@@ -56,4 +51,10 @@ vim.utils.map("ic", "<C-e>", "<End>", { silent = true, noremap = true })
 vim.api.nvim_set_keymap("i", "<C-h>", "<Left>", { silent = true, noremap = true })
 vim.api.nvim_set_keymap("i", "<C-l>", "<Right>", { silent = true, noremap = true })
 
-vim.utils.map("n", "DM", "V%d", { noremap = true , desc = "Visual-Line delete match"})
+vim.utils.map("n", "DM", "V%d", { noremap = true, desc = "Visual-Line delete match" })
+
+vim.utils.map("n", "S", function()
+  local jump2d = require("mini.jump2d")
+  jump2d.start(jump2d.builtin_opts.line_start)
+  vim.utils.trigger_keys("zz")
+end, { silent = true })

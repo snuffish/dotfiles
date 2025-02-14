@@ -44,6 +44,12 @@ return {
       highlight = true,
       highlight_duration = 250,
     },
+    keys = {
+      { "gsl", "<cmd>Treewalker SwapRight<CR>", noremap = true, desc = "SwapRight" },
+      { "gsh", "<cmd>Treewalker SwapLeft<CR>", noremap = true, desc = "SwapLeft" },
+      { "gsj", "<cmd>Treewalker SwapDown<CR>", noremap = true, desc = "SwapDown" },
+      { "gsk", "<cmd>Treewalker SwapUp<CR>", noremap = true, desc = "SwapUp" },
+    },
   },
   {
     "echasnovski/mini.cursorword",
@@ -66,16 +72,6 @@ return {
 
       mappings = {
         start_jumping = "<nop>",
-      },
-    },
-    keys = {
-      {
-        "<C-f>",
-        function()
-          local jump2d = require("mini.jump2d")
-          jump2d.start(jump2d.builtin_opts.line_start)
-          vim.utils.trigger_keys("zz")
-        end,
       },
     },
     config = function(_, opts)
