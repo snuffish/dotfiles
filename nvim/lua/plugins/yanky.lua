@@ -23,8 +23,8 @@ return {
     { "y", "<Plug>(YankyYank)", mode = { "n", "x" }, desc = "Yank text" },
     { "p", "<Plug>(YankyPutAfter)", mode = { "n", "x" }, desc = "Put yanked text after cursor" },
     { "P", "<Plug>(YankyPutBefore)", mode = { "n", "x" }, desc = "Put yanked text before cursor" },
-    { "gp", "<Plug>(YankyPutAfterFilter)", mode = { "n", "x" }, desc = "Put yanked text on line above" },
-    { "gP", "<Plug>(YankyPutBeforeFilter)", mode = { "n", "x" }, desc = "Put yanked text on line below" },
+    { "gp", "<Plug>(YankyPutAfterFilterJoined)", mode = { "n", "x" }, desc = "Put yanked text on line above" },
+    { "gP", "<Plug>(YankyPutBeforeFilterJoined)", mode = { "n", "x" }, desc = "Put yanked text on line below" },
     {
       "lp",
       function()
