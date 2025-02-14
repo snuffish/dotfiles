@@ -126,9 +126,9 @@ return {
 
         custom_textobjects = {
           -- Whole word
-          W = { "()()%f[%w]%w+()[ \t]*()" },
+          w = { "()()%f[%w]%w+()[ \t]*()" },
           -- Word with camel-case support
-          w = {
+          W = {
             {
               "%u[%l%d]+%f[^%l%d]",
               "%f[%S][%l%d]+%f[^%l%d]",
