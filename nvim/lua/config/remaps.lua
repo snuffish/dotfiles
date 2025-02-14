@@ -89,9 +89,4 @@ vim.utils.map(
   { noremap = true, silent = true, desc = "Delete from cursor to first white non-whitespace character" }
 )
 
-vim.utils.map(
-  "n",
-  "yy",
-  vim.utils.trigger_keys_fn("gMyg^Y`y"),
-  { noremap = true, silent = true, desc = "Yank row" }
-)
+vim.utils.map("n", "yy", vim.utils.trigger_keys_fn("gMyg^Y`y"), { noremap = true, silent = true, desc = "Yank row" })
