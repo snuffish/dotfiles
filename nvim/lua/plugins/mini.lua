@@ -87,7 +87,6 @@ return {
       vim.keymap.set("x", "S", [[:<C-u>lua MiniSurround.add('visual')<CR>]], { silent = true })
 
       vim.keymap.set("n", "yss", "ys_", { remap = true, desc = "Surround line" })
-      vim.keymap.set("n", "yw", "ysiw", { remap = true, desc = "Surround <cword>" })
     end,
   },
   {
