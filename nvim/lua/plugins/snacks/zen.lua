@@ -1,7 +1,7 @@
 return {
   "folke/snacks.nvim",
-  ---@type snacks.Config
   opts = {
+    ---@type snacks.zen
     zen = {
       win = {
         width = 0.8,

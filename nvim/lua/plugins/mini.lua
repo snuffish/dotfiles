@@ -126,11 +126,25 @@ return {
         search_method = "cover_or_next",
 
         custom_textobjects = {
+          -- Whole word
+          W = { "()()%f[%w]%w+()[ \t]*()" },
+          -- Word with camel-case support
+          w = {
+            {
+              "%u[%l%d]+%f[^%l%d]",
+              "%f[%S][%l%d]+%f[^%l%d]",
+              "%f[%P][%l%d]+%f[^%l%d]",
+              "^[%l%d]+%f[^%l%d]",
+            },
+            "^().*()$",
+          },
           F = treesitter({ a = "@function.outer", i = "@function.inner" }),
           a = gen_spec.argument({ brackets = { "%b()" } }),
-          d = { "%f[%d]%d+" }, -- digits
+          -- digits
+          d = { "%f[%d]%d+" },
           i = { treesitter({ a = "@conditional.outer", i = "@condition.inner" }) },
-          g = function() -- Whole buffer
+          -- Whole buffer
+          g = function()
             local from = { line = 1, col = 1 }
             local to = {
               line = vim.fn.line("$"),

@@ -10,6 +10,9 @@ return {
     },
     ---@type snacks.Config
     opts = {
+      image = {
+        enabled = true,
+      },
       scope = {
         enabled = true,
       },
