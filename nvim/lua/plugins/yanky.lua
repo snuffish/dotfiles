@@ -19,20 +19,14 @@ return {
     },
   },
   keys = {
-    {
-      "<leader>p",
-      "<cmd>YankyRingHistory<CR>",
-      desc = "Open Yank History",
-    },
+    { "<leader>p", "<cmd>YankyRingHistory<CR>", desc = "Open Yank History" },
     { "y", "<Plug>(YankyYank)", mode = { "n", "x" }, desc = "Yank text" },
     { "p", "<Plug>(YankyPutAfter)", mode = { "n", "x" }, desc = "Put yanked text after cursor" },
     { "P", "<Plug>(YankyPutBefore)", mode = { "n", "x" }, desc = "Put yanked text before cursor" },
-    { "gp", "<Plug>(YankyGPutAfter)", mode = { "n", "x" }, desc = "Put yanked text after selection" },
-    { "gP", "<Plug>(YankyGPutBefore)", mode = { "n", "x" }, desc = "Put yanked text before selection" },
+    { "gp", "<Plug>(YankyPutAfterFilter)", mode = { "n", "x" }, desc = "Put yanked text on line above" },
+    { "gP", "<Plug>(YankyPutBeforeFilter)", mode = { "n", "x" }, desc = "Put yanked text on line below" },
     { "<c-p>", "<Plug>(YankyPreviousEntry)", desc = "Select previous entry through yank history" },
     { "<c-n>", "<Plug>(YankyNextEntry)", desc = "Select next entry through yank history" },
-    { "OP", "m`O<ESC><Plug>(YankyPutIndentAfterLinewise)``", { desc = "Put yanked text above cursor posotion" } },
-    { "op", "m`o<ESC><Plug>(YankyPutIndentBeforeLinewise)``", { desc = "Put yanked text below cursor posotion" } },
     -- {
     --   "<leader>p",
     --   function()
