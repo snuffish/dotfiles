@@ -25,6 +25,14 @@ return {
     { "P", "<Plug>(YankyPutBefore)", mode = { "n", "x" }, desc = "Put yanked text before cursor" },
     { "gp", "<Plug>(YankyPutAfterFilter)", mode = { "n", "x" }, desc = "Put yanked text on line above" },
     { "gP", "<Plug>(YankyPutBeforeFilter)", mode = { "n", "x" }, desc = "Put yanked text on line below" },
+    {
+      "lp",
+      function()
+        require("yanky.textobj").last_put()
+      end,
+      mode = { "n", "o", "x" },
+      desc = "Visual select last yanked Put",
+    },
     { "<c-p>", "<Plug>(YankyPreviousEntry)", desc = "Select previous entry through yank history" },
     { "<c-n>", "<Plug>(YankyNextEntry)", desc = "Select next entry through yank history" },
     -- {
