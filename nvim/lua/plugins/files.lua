@@ -93,6 +93,7 @@ return {
         ["<leader>"] = "actions.select",
         ["<BS>"] = { "actions.parent", mode = "n" },
         ["<Left>"] = { "actions.parent", mode = "n" },
+        ["<Right>"] = "actions.select",
         ["l"] = { "actions.select", mode = "n" },
         ["h"] = { "actions.parent", mode = "n" },
         ["s"] = {
