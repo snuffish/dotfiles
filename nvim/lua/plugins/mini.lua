@@ -102,7 +102,7 @@ return {
       {
         "S",
         mode = { "x", "o" },
-        false
+        false,
       },
     },
   },
@@ -201,6 +201,13 @@ return {
     version = false,
     config = function()
       require("mini.splitjoin").setup()
+    end,
+  },
+  {
+    "echasnovski/mini.comment",
+    version = false,
+    config = function()
+      require("mini.comment").setup()
     end,
   },
 }
