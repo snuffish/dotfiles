@@ -16,7 +16,7 @@ vim.utils.map(
 vim.api.nvim_set_keymap("", "\\", "<localleader>", { silent = true })
 
 vim.api.nvim_set_keymap("", "m", "%", { silent = true })
-vim.api.nvim_set_keymap("", "M", "%", { silent = true })
+vim.api.nvim_set_keymap("", "M", "V%", { silent = true })
 
 vim.api.nvim_set_keymap("", "U", "<C-R>", { silent = true })
 
