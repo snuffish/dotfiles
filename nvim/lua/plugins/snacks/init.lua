@@ -8,7 +8,7 @@ return {
       require("plugins.snacks.picker"),
       require("plugins.snacks.zen"),
     },
-    ---@type snacks.Config
+    ---@type snacks.config
     opts = {
       image = {
         enabled = true,
@@ -28,43 +28,43 @@ return {
     },
     keys = {
       {
-        "<leader>S",
+        "<leader>s",
         false,
       },
       {
         "<leader>lg",
-        "<cmd>lua Snacks.lazygit()<cr>",
-        desc = "Open LazyGit",
+        "<cmd>lua snacks.lazygit()<cr>",
+        desc = "open lazygit",
       },
       {
         "<leader>gl",
-        "<cmd>lua Snacks.picker.git_log_file()<cr>",
-        desc = "Current File History",
+        "<cmd>lua snacks.picker.git_log_file()<cr>",
+        desc = "current file history",
       },
       {
         "<leader>gs",
-        "<cmd>lua Snacks.picker.git_status()<cr>",
-        desc = "Status",
+        "<cmd>lua snacks.picker.git_status()<cr>",
+        desc = "status",
       },
       {
         "<leader>bs",
-        "<cmd>lua Snacks.scratch.select()<CR>",
-        desc = "Select Scratch Buffer",
+        "<cmd>lua snacks.scratch.select()<cr>",
+        desc = "select scratch buffer",
       },
     },
     init = function()
-      vim.api.nvim_create_autocmd("User", {
-        pattern = "VeryLazy",
+      vim.api.nvim_create_autocmd("user", {
+        pattern = "verylazy",
         callback = function()
           vim.defer_fn(function()
             vim.utils.remove_map("nxo", "]i")
             vim.utils.remove_map("nxo", "[i")
 
-            vim.ui.select = Snacks.picker.select
+            vim.ui.select = snacks.picker.select
 
-            vim.utils.map("nxo", "[E", function()
+            vim.utils.map("nxo", "[e", function()
               ---@diagnostic disable-next-line: missing-fields
-              Snacks.scope.jump({
+              snacks.scope.jump({
                 min_size = 1, -- allow single line scopes
                 bottom = false,
                 cursor = false,
@@ -77,7 +77,7 @@ return {
 
             vim.utils.map("nxo", "[e", function()
               ---@diagnostic disable-next-line: missing-fields
-              Snacks.scope.jump({
+              snacks.scope.jump({
                 min_size = 1, -- allow single line scopes
                 bottom = false,
                 cursor = false,
@@ -89,7 +89,7 @@ return {
 
             vim.utils.map("nxo", "]e", function()
               ---@diagnostic disable-next-line: missing-fields
-              Snacks.scope.jump({
+              snacks.scope.jump({
                 min_size = 1, -- allow single line scopes
                 bottom = true,
                 cursor = false,
@@ -99,9 +99,9 @@ return {
               })
             end, { desc = "jump to bottom edge of scope" })
 
-            vim.utils.map("nxo", "]E", function()
+            vim.utils.map("nxo", "]e", function()
               ---@diagnostic disable-next-line: missing-fields
-              Snacks.scope.jump({
+              snacks.scope.jump({
                 min_size = 1, -- allow single line scopes
                 bottom = true,
                 cursor = false,
@@ -113,16 +113,16 @@ return {
             end, { desc = "jump to bottom edge of scope" })
           end, 500)
 
-          _G.dd = function(...)
-            Snacks.debug.inspect(...)
+          _g.dd = function(...)
+            snacks.debug.inspect(...)
           end
 
-          _G.bt = function()
-            Snacks.debug.backtrace()
+          _g.bt = function()
+            snacks.debug.backtrace()
           end
 
-          vim.print = _G.dd
-          P = vim.print
+          vim.print = _g.dd
+          p = vim.print
         end,
       })
     end,
@@ -163,7 +163,7 @@ return {
         false,
       },
       {
-        "<leader>sR",
+        "<leader>sr",
         false,
       },
       {
@@ -185,18 +185,18 @@ return {
     },
   },
   {
-    "MaximilianLloyd/ascii.nvim",
-    requires = { "MunifTanjim/nui.nvim" },
+    "maximilianlloyd/ascii.nvim",
+    requires = { "muniftanjim/nui.nvim" },
   },
   {
     "mgierada/lazydocker.nvim",
     dependencies = { "akinsho/toggleterm.nvim" },
-    event = "BufRead",
+    event = "bufread",
     keys = {
       {
         "<leader>ld",
-        "<cmd>Lazydocker<CR>",
-        desc = "Open LazyDocker",
+        "<cmd>lazydocker<cr>",
+        desc = "open lazydocker",
       },
     },
     config = function()
