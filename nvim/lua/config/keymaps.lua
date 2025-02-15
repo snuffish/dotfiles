@@ -10,22 +10,6 @@ vim.api.nvim_set_keymap("", "<C-l>", "<cmd>TmuxNavigateRight<CR>", { desc = "Win
 vim.api.nvim_set_keymap("", "<C-j>", "<cmd>TmuxNavigateDown<CR>", { desc = "Window down" })
 vim.api.nvim_set_keymap("", "<C-k>", "<cmd>TmuxNavigateUp<CR>", { desc = "Window up" })
 
-local treewalker_mappings = {
-  ["K"] = "Up",
-  ["J"] = "Down",
-  ["L"] = "Right",
-  ["H"] = "Left",
-}
-
-for key, direction in pairs(treewalker_mappings) do
-  vim.utils.map(
-    "n",
-    string.format("<C-M-%s>", key),
-    "<cmd>Treewalker " .. direction .. "<cr>zz",
-    { noremap = true, silent = true }
-  )
-end
-
 vim.api.nvim_set_keymap(
   "n",
   "<leader>yf",

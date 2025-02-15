@@ -14,6 +14,11 @@ return {
         desc = "Local Leader",
       },
       {
+        "gs",
+        "",
+        desc = "Treewalker Swap",
+      },
+      {
         {
           "<leader>l",
           "",
@@ -72,10 +77,6 @@ return {
         icon = { icon = "󱏿", color = "blue" },
       },
       {
-        ";",
-        desc = "Surround",
-      },
-      {
         "<leader>r",
         desc = "Replace",
         icon = { icon = "", color = "orange" },
@@ -86,18 +87,3 @@ return {
     require("which-key").setup(opts)
   end,
 }
-
---
--- - red
--- - green
--- - blue
--- - yellow
--- - magenta
--- - cyan
--- - white
--- - black
--- - gray
--- - orange
--- - purple
--- - pink
--- - brown

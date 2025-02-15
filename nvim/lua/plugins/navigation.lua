@@ -45,10 +45,14 @@ return {
       highlight_duration = 250,
     },
     keys = {
-      { "gsl", "<cmd>Treewalker SwapRight<CR>", noremap = true, desc = "SwapRight" },
-      { "gsh", "<cmd>Treewalker SwapLeft<CR>", noremap = true, desc = "SwapLeft" },
-      { "gsj", "<cmd>Treewalker SwapDown<CR>", noremap = true, desc = "SwapDown" },
-      { "gsk", "<cmd>Treewalker SwapUp<CR>", noremap = true, desc = "SwapUp" },
+      { "<C-m-l>", "<cmd>Treewalker Right<CR>", noremap = true, desc = "Right" },
+      { "<C-m-h>", "<cmd>Treewalker Left<CR>", noremap = true, desc = "Left" },
+      { "<C-m-j>", "<cmd>Treewalker Down<CR>", noremap = true, desc = "Down" },
+      { "<C-m-k>", "<cmd>Treewalker Up<CR>", noremap = true, desc = "Up" },
+      { "gsl", "<cmd>Treewalker SwapRight<CR>", noremap = true, desc = "Swap Right" },
+      { "gsh", "<cmd>Treewalker SwapLeft<CR>", noremap = true, desc = "Swap Left" },
+      { "gsj", "<cmd>Treewalker SwapDown<CR>", noremap = true, desc = "Swap Down" },
+      { "gsk", "<cmd>Treewalker SwapUp<CR>", noremap = true, desc = "Swap Up" },
     },
   },
   {
