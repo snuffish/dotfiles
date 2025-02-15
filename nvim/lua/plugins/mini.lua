@@ -52,15 +52,6 @@ return {
   {
     "echasnovski/mini.surround",
     opts = {
-      -- mappings = {
-      --   add = ";a",
-      --   delete = ";d",
-      --   find = ";f",
-      --   find_left = ";F",
-      --   highlight = ";h",
-      --   replace = ";r",
-      --   update_n_lines = ";n",
-      -- },
       mappings = {
         add = "ys",
         delete = "ds",
@@ -144,6 +135,9 @@ return {
             },
             "^().*()$",
           },
+          -- Tweak function call to not detect dot in function name
+          f = gen_spec.function_call({ name_pattern = "[%w_]" }),
+          -- Function definition
           F = treesitter({ a = "@function.outer", i = "@function.inner" }),
           a = gen_spec.argument({ brackets = { "%b()" } }),
           -- digits
@@ -183,11 +177,6 @@ return {
     -- },
     config = function()
       require("mini.operators").setup()
-
-      -- require("which-key").add({
-      --   "gs",
-      --   desc = "Treewalker Swap",
-      -- })
     end,
   },
   {
