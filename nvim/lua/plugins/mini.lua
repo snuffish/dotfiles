@@ -178,8 +178,16 @@ return {
   {
     "echasnovski/mini.operators",
     version = false,
+    -- keys = {
+    --   { "gss", false },
+    -- },
     config = function()
       require("mini.operators").setup()
+
+      -- require("which-key").add({
+      --   "gs",
+      --   desc = "Treewalker Swap",
+      -- })
     end,
   },
   {
