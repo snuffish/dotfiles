@@ -80,7 +80,7 @@ vim.utils.map(
 vim.utils.map(
   "n",
   "y0",
-  "y^",
+  "mzy^`z",
   { noremap = true, silent = true, desc = "Delete from cursor to first white non-whitespace character" }
 )
 
