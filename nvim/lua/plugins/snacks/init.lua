@@ -113,6 +113,9 @@ return {
             end, { desc = "jump to bottom edge of scope" })
           end, 500)
 
+          _g = _g or {}
+          snacks = snacks or {}
+
           _g.dd = function(...)
             snacks.debug.inspect(...)
           end
