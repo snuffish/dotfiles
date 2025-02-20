@@ -1,5 +1,7 @@
 require("config.remaps")
 
+vim.utils.map("n", "<F1>", ":", { noremap = true, silent = true })
+
 vim.utils.map("n", "<leader><leader>x", "<cmd>source %<CR>", { noremap = true })
 vim.utils.map("n", "<leader>x", ":.lua<CR>", { noremap = true })
 vim.utils.map("v", "<leader>x", ":<CR>", { noremap = true })
@@ -30,7 +32,8 @@ vim.utils.map(
 )
 
 -- Move cursor left/right in insert-mode
-vim.utils.map("ic", "<C-a>", "<Home>", { silent = true, noremap = true })
+-- vim.utils.map("ic", "<C-a>", "<Home>", { silent = true, noremap = true })
+vim.utils.map("ic", "<C-a>", "<Esc>g^i", { silent = true, noremap = true })
 vim.utils.map("ic", "<C-e>", "<End>", { silent = true, noremap = true })
 vim.api.nvim_set_keymap("i", "<C-h>", "<Left>", { silent = true, noremap = true })
 vim.api.nvim_set_keymap("i", "<C-l>", "<Right>", { silent = true, noremap = true })
