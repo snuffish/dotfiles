@@ -1,4 +1,4 @@
-P(vim.g.neovide_version)
+vim.print(vim.g.neovide_version)
 
 -- vim.o.guifont = "Source Code Pro:h14"
 
@@ -29,10 +29,12 @@ vim.g.neovide_title_text_color = "pink"
 
 vim.g.neovide_cursor_vfx_mode = "ripple"
 
+vim.g.neovide_scroll_animation_length = 0
+-- vim.g.neovide_cursor_animation_length = 0
+
 vim.keymap.set("n", "<D-s>", ":w<CR>") -- Save
 vim.keymap.set("v", "<D-c>", '"+y') -- Copy
 vim.keymap.set("n", "<D-v>", '"+P') -- Paste normal mode
 vim.keymap.set("v", "<D-v>", '"+P') -- Paste visual mode
 vim.keymap.set("c", "<D-v>", "<C-R>+") -- Paste command mode
 vim.keymap.set("i", "<D-v>", '<ESC>l"+Pli') -- Paste insert mode
-
