@@ -1,10 +1,10 @@
 #!/bin/bash
 
-alias reload="source ~/.bashrc"
-# if [[ "$SHELL" == "/bin/bash" ]]; then
-# else
-#   alias reload="source ~/.zshrc"
-# fi
+if [[ "$SHELL" == "/bin/bash" ]]; then
+  alias reload="source ~/.bashrc"
+else
+  alias reload="source ~/.zshrc"
+fi
 
 alias pwdc="pwd | \pbcopy && echo 'Copied \"\$(pwd)\" to clipboard'"
 
