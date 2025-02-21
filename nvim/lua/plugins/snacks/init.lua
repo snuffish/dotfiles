@@ -33,34 +33,34 @@ return {
       },
       {
         "<leader>lg",
-        "<cmd>lua snacks.lazygit()<cr>",
+        "<cmd>lua Snacks.lazygit()<cr>",
         desc = "open lazygit",
       },
       {
         "<leader>gl",
-        "<cmd>lua snacks.picker.git_log_file()<cr>",
+        "<cmd>lua Snacks.picker.git_log_file()<cr>",
         desc = "current file history",
       },
       {
         "<leader>gs",
-        "<cmd>lua snacks.picker.git_status()<cr>",
+        "<cmd>lua Snacks.picker.git_status()<cr>",
         desc = "status",
       },
       {
         "<leader>bs",
-        "<cmd>lua snacks.scratch.select()<cr>",
+        "<cmd>lua Snacks.scratch.select()<cr>",
         desc = "select scratch buffer",
       },
     },
     init = function()
       vim.api.nvim_create_autocmd("user", {
-        pattern = "VeryLazy",
+        pattern = "verylazy",
         callback = function()
           vim.defer_fn(function()
             vim.utils.remove_map("nxo", "]i")
             vim.utils.remove_map("nxo", "[i")
 
-            vim.ui.select = snacks.picker.select
+            vim.ui.select = Snacks.picker.select
 
             vim.utils.map("nxo", "[e", function()
               ---@diagnostic disable-next-line: missing-fields
@@ -77,7 +77,7 @@ return {
 
             vim.utils.map("nxo", "[e", function()
               ---@diagnostic disable-next-line: missing-fields
-              snacks.scope.jump({
+              Snacks.scope.jump({
                 min_size = 1, -- allow single line scopes
                 bottom = false,
                 cursor = false,
@@ -89,7 +89,7 @@ return {
 
             vim.utils.map("nxo", "]e", function()
               ---@diagnostic disable-next-line: missing-fields
-              snacks.scope.jump({
+              Snacks.scope.jump({
                 min_size = 1, -- allow single line scopes
                 bottom = true,
                 cursor = false,
@@ -114,18 +114,18 @@ return {
           end, 500)
 
           _g = _g or {}
-          snacks = snacks or {}
+          Snacks = Snacks or {}
 
           _g.dd = function(...)
-            snacks.debug.inspect(...)
+            Snacks.debug.inspect(...)
           end
 
           _g.bt = function()
-            snacks.debug.backtrace()
+            Snacks.debug.backtrace()
           end
 
           vim.print = _g.dd
-          p = vim.print
+          P = vim.print
         end,
       })
     end,
