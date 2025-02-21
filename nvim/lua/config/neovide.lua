@@ -38,3 +38,12 @@ vim.keymap.set("n", "<D-v>", '"+P') -- Paste normal mode
 vim.keymap.set("v", "<D-v>", '"+P') -- Paste visual mode
 vim.keymap.set("c", "<D-v>", "<C-R>+") -- Paste command mode
 vim.keymap.set("i", "<D-v>", '<ESC>l"+Pli') -- Paste insert mode
+
+-- Remap keys
+vim.api.nvim_set_keymap("", "å", "[", {})
+vim.api.nvim_set_keymap("", "ö", ";", {})
+vim.api.nvim_set_keymap("", "Ö", ":", {})
+vim.api.nvim_set_keymap("", "ä", "'", {})
+vim.api.nvim_set_keymap("", "Ä", '"', {})
+vim.api.nvim_set_keymap("", "Å", "{", {})
+
