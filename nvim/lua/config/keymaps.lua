@@ -2,7 +2,6 @@ require("config.remaps")
 
 vim.utils.map("n", "<F1>", ":", { noremap = true, silent = true })
 
-vim.utils.map("n", "<leader><leader>x", "<cmd>source %<CR>", { noremap = true })
 vim.utils.map("n", "<leader>x", ":.lua<CR>", { noremap = true })
 vim.utils.map("v", "<leader>x", ":<CR>", { noremap = true })
 
