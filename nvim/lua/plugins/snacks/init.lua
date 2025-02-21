@@ -54,7 +54,7 @@ return {
     },
     init = function()
       vim.api.nvim_create_autocmd("user", {
-        pattern = "verylazy",
+        pattern = "VeryLazy",
         callback = function()
           vim.defer_fn(function()
             vim.utils.remove_map("nxo", "]i")
