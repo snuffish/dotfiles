@@ -10,8 +10,11 @@ return {
     "Bekaboo/dropbar.nvim",
     -- optional, but required for fuzzy finder support
     dependencies = {
-      "nvim-telescope/telescope-fzf-native.nvim",
-      build = "make",
+      {
+        "nvim-telescope/telescope-fzf-native.nvim",
+        build = "make",
+      },
+      "snuffish/utils.nvim",
     },
     config = function()
       local dropbar_api = require("dropbar.api")
@@ -22,12 +25,7 @@ return {
         dropbar_api.goto_context_start,
         { desc = "Goto previous Context" }
       )
-      vim.utils.map(
-        "n",
-        { "<localleader>.n", "]." },
-        dropbar_api.select_next_context,
-        { desc = "Select next context" }
-      )
+      vim.utils.map("n", { "<localleader>.n", "]." }, dropbar_api.select_next_context, { desc = "Select next context" })
     end,
   },
   {

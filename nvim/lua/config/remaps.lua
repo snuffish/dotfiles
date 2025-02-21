@@ -5,6 +5,7 @@ vim.utils.map("n", "<C-A-q>", "q", { desc = "Start/Stop Macro recording", norema
 vim.utils.map("n", "m", "<nop>", { noremap = true, silent = true })
 vim.utils.map("n", "gM", "m", { desc = "Add marks", noremap = true, silent = true })
 
+vim.utils.map("n", "<leader>l", "<nop>", { noremap = true, silent = true })
 vim.utils.map("n", "<leader>n", "<nop>", { noremap = true, silent = true })
 vim.utils.map(
   "n",
