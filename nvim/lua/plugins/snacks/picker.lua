@@ -84,11 +84,6 @@ return {
       desc = "Find files",
     },
     {
-      "<leader>fb",
-      local_buffers,
-      desc = "Buffers",
-    },
-    {
       "<Tab><Space>",
       local_buffers,
       desc = "Buffers",
@@ -127,8 +122,8 @@ return {
     },
     {
       "<leader>su",
-      "<cmd>lua Snacks.picker.und󰠣o()<CR>",
-      desc = "Undo",
+      "<cmd>lua Snacks.picker.undo()<CR>",
+      desc = "Undotree",
     },
     {
       "<localleader><localleader>",
