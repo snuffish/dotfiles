@@ -101,7 +101,7 @@ return {
 
             vim.utils.map("nxo", "]e", function()
               ---@diagnostic disable-next-line: missing-fields
-              snacks.scope.jump({
+              Snacks.scope.jump({
                 min_size = 1, -- allow single line scopes
                 bottom = true,
                 cursor = false,
