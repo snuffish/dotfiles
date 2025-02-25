@@ -68,6 +68,7 @@
   "package-info.nvim": { "branch": "master", "commit": "3de4f3569ce60e248707df042b72769b3ec343b8" },
   "persistence.nvim": { "branch": "main", "commit": "f6aad7dde7fcf54148ccfc5f622c6d5badd0cc3d" },
   "plenary.nvim": { "branch": "master", "commit": "857c5ac632080dba10aae49dba902ce3abf91b35" },
+  "rei.nvim": { "branch": "main", "commit": "b5a5b254bd5d1a0a978a8c7da5b20d79f3aa81d9" },
   "rest.nvim": { "branch": "main", "commit": "81dc7df4b39c4ba1e85ac0752dabb23bd5fdde7e" },
   "snacks.nvim": { "branch": "main", "commit": "bd0f46be9ae963d1a2ea12e53aedc633e1d726db" },
   "sqlite.lua": { "branch": "master", "commit": "b487fcc8937b683942a1f7d9662fcf50ca5acd58" },
