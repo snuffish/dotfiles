@@ -94,6 +94,11 @@ return {
       desc = "Switch Buffer",
     },
     {
+      "<localleader><localleader>",
+      local_buffers,
+      desc = "Buffers",
+    },
+    {
       "<leader>fg",
       "<cmd>lua Snacks.picker.git_files()<CR>",
       desc = "Find files (git-files)",
@@ -124,11 +129,6 @@ return {
       "<leader>su",
       "<cmd>lua Snacks.picker.undo()<CR>",
       desc = "Undotree",
-    },
-    {
-      "<localleader><localleader>",
-      "<cmd>lua Snacks.picker.buffers()<CR>",
-      desc = "Buffers",
     },
     {
       vim.g.map_ctrl_tab,
