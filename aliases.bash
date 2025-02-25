@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 if [[ $OS == "Mac" && $USERNAME == "snuffish" ]]; then
   # Mac
   export DEVICE="MAC"
@@ -9,6 +10,8 @@ if [[ $OS == "Mac" && $USERNAME == "snuffish" ]]; then
   alias .tmp="cd /tmp"
   alias .up="cd $HOME/UnityProjects"
 else
+  OS="$(lsb_release -is)"
+
   # Home PC (Windows)
   export DEVICE="HOME"
   alias {C,C:}="cd /c/"
@@ -16,7 +19,11 @@ else
   alias .up="D: && cd UnityProjects"
   alias .p="cd $HOME/Projects"
   alias {.v,.vgr}="D: && cd VGR"
-  alias {open,o}="explorer.exe"
+  if [[ $OS == "ManjaroLinux" ]]; then
+    alias {open,o}="nautilus"
+  else
+    alias {open,o}="explorer.exe"
+  fi
   alias .tmp="cd $HOME/.tmp"
   alias .d="cd $HOME/OneDrive/Desktop"
   alias reboot="sudo psshutdown -rf -t 0"
