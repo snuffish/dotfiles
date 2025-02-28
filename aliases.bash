@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 if [[ $OS == "Mac" && $USERNAME == "snuffish" ]]; then
   # Mac
   export DEVICE="MAC"
@@ -19,17 +18,27 @@ else
   alias .up="D: && cd UnityProjects"
   alias .p="cd $HOME/Projects"
   alias {.v,.vgr}="D: && cd VGR"
-  if [[ $OS == "ManjaroLinux" ]]; then
-    alias {open,o}="nautilus"
-  else
-    alias {open,o}="explorer.exe"
-  fi
   alias .tmp="cd $HOME/.tmp"
   alias .d="cd $HOME/OneDrive/Desktop"
   alias reboot="sudo psshutdown -rf -t 0"
   alias findport="tcpview"
 
   nvm use v20.11.0
+fi
+
+if [[ $OS == "ManjaroLinux" ]]; then
+  function open() {
+    PATH=$1
+    if [ -z "$1" ]; then
+      PATH="."
+    fi
+
+    nautilus "$PATH"
+  }
+
+  alias o="open"
+else
+  alias o="explorer.exe"
 fi
 
 alias .config="$HOME/.config"
