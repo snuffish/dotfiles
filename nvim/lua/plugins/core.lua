@@ -205,17 +205,8 @@ return {
       { "]q", false },
     },
   },
-  {
-    "lafarr/hierarchy.nvim",
-    opts = {
-      -- depths = 10,
-    },
-    keys = {
-      { "gt", mode = { "n" }, "<cmd>FunctionReferences<CR>", desc = "FunctionReferences" },
-    },
-  },
-  {
-    "slyces/hierarchy.nvim",
-    dependencies = { "nvim-treesitter/nvim-treesitter" },
-  },
+  -- {
+  --   "slyces/hierarchy.nvim",
+  --   dependencies = { "nvim-treesitter/nvim-treesitter" },
+  -- },
 }

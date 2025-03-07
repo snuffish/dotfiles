@@ -11,14 +11,3 @@ vim.api.nvim_set_keymap("v", "<D-v>", "<C-R>+", { noremap = true, silent = true 
 
 vim.cmd("highlight Folded guibg=#022037")
 
-vim.api.nvim_create_autocmd({ "LspAttach" }, {
-  -- group = "Hierarchy",
-  desc = "Set up the :FunctionReferences user command",
-  callback = function()
-    local opts = {
-      -- Your opts here
-    }
-    require("hierarchy").setup(opts)
-  end,
-})
-
