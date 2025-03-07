@@ -28,4 +28,4 @@ source "$SCRIPT_DIR/tmux/init.bash"
 xmodmap "$SCRIPT_DIR/.Xmodmap"
 
 # Set nvim as the default viewer for Manpages
-MANPAGER='nvim +Man!' man
+export MANPAGER='nvim +Man!'
