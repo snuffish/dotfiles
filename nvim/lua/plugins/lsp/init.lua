@@ -13,6 +13,7 @@ return {
     dependencies = {
       require("plugins.lsp.cmp"),
       require("plugins.lsp.outline"),
+      require("plugins.lsp.hierarchy"),
       "WhoIsSethDaniel/mason-tool-installer.nvim",
     },
     opts = function()
