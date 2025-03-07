@@ -214,4 +214,8 @@ return {
       { "gt", mode = { "n" }, "<cmd>FunctionReferences<CR>", desc = "FunctionReferences" },
     },
   },
+  {
+    "slyces/hierarchy.nvim",
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
+  },
 }
