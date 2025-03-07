@@ -36,3 +36,4 @@ alias dirsize="du -hs"
 alias .ghostty='cd "$HOME/Library/Application Support/com.mitchellh.ghostty"'
 
 alias space="du -d1 -h 2>/dev/null | sort -h"
+
