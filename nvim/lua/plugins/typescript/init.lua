@@ -1,5 +1,16 @@
 return {
   {
+    "BibekBhusal0/nvim-shadcn",
+    dependencies = {
+      "nvim-telescope/telescope.nvim",
+    },
+    config = function()
+      require("nvim-shadcn").setup({
+        -- Configuration options here
+      })
+    end,
+  },
+  {
     "vuki656/package-info.nvim",
     ft = "package.json",
     requires = { "MunifTanjim/nui.nvim" },
