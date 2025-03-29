@@ -2,6 +2,7 @@ local local_buffers = function()
   Snacks.picker.buffers({
     layout = {
       preset = "select",
+      preview = true,
     },
   })
 end
