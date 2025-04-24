@@ -6,7 +6,6 @@ else
   alias reload="source ~/.zshrc"
 fi
 
-
 alias pbcopy='xclip -selection clipboard'
 alias pbpaste='xclip -selection clipboard -o'
 
