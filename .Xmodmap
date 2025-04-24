@@ -4,3 +4,6 @@ keycode 35 = bracketright braceright bracketright braceright bracketright bracer
 ! keycode 47 = semicolon colon odiaeresis Odiaeresis semicolon colon dead_acute dead_doubleacute
 
 ! keycode  47 = odiaeresis Odiaeresis semicolon colon semicolon colon dead_acute dead_doubleacute
+
+! keycode 64 = NoSymbol
+! keycode 36 = NoSymbol

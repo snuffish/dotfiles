@@ -4,6 +4,8 @@
 " Find more examples here: https://jb.gg/share-ideavimrc
 " Enable IdeaVim plugins https://jb.gg/ideavim-plugins
 
+" Show all actions `:actionlist`
+
 " Set leader key to space
 let mapleader = ' '
 
@@ -32,10 +34,10 @@ set incsearch
 set notimeout
 
 """"""""""""""""""""""""Remaps"""""""""""""""""""""""""
-nnoremap K 5kzz
-nnoremap J 5jzz
-nnoremap L gt
-nnoremap H gT
+map K 5kzz
+map J 5jzz
+map L <Action>(NextTab)
+map H <Action>(PreviousTab)
 
 imap <C-l> <Right>
 imap <C-k> <Up>
@@ -70,7 +72,7 @@ nnoremap q <nop>
 nnoremap <C-q> q
 
 map m %
-map M %
+map M V%
 
 let g:WhichKeyDesc_selectAll = "vag Select whole buffer"
 map vag GVgg
@@ -116,13 +118,19 @@ map <leader>mf <Action>(com.mituuz.fuzzier.FuzzyMover)
 map gr <Action>(ShowUsages)
 map gi <Action>(GotoImplementation)
 map gD <Action>(GotoTypeDeclaration)
+map gt <Action>(CallHierarchy)
 map <leader>cf <Action>(ReformatCode)
 
 """"""""""""""""""""""""Code"""""""""""""""""""""""""""
-map <leader>nc <Action>(NewClass)
 map <leader>ng <Action>(Generate)
 map <leader>ns <Action>(NewScratchFile)
 map <leader>cr <Action>(RenameElement)
+
+if has('ide') && &ide =~? 'clion'
+    map <leader>nc <Action>(CIDR.Lang.Cpp.NewClass)
+else
+    map <leader>nc <Action>(NewClass)
+endif
 
 map <leader>sw <Action>(SurroundWith)
 

@@ -6,10 +6,11 @@ else
   alias reload="source ~/.zshrc"
 fi
 
-alias pwdc="pwd | \pbcopy && echo 'Copied \"\$(pwd)\" to clipboard'"
 
 alias pbcopy='xclip -selection clipboard'
 alias pbpaste='xclip -selection clipboard -o'
+
+alias pwdc="pwd|pbcopy"
 
 alias c="clear"
 
