@@ -142,6 +142,8 @@ map <A-k> <Action>(MoveStatementUp)
 
 let g:WhichKeyDesc_code = "<leader>o Outline"
 map <leader>o <Action>(FileStructurePopup)
+map <leader>O <Action>(ActivateStructureToolWindow)
+
 
 map <leader>h <Action>(Vcs.ShowTabbedFileHistory)
 
@@ -151,6 +153,9 @@ nmap <C-w><C-q> <Action>(CloseEditor)
 "nmap <A-k> <C-W>k
 "nmap <A-j> <C-W>j
 "nmap <A-h> <C-W>h
+
+""""""""""""""""""""""Terminal"""""""""""""""""""""""""
+map <C-/> <Action>(ActivateTerminalToolWindow)
 
 """"""""""""""""""""""Debug/Run""""""""""""""""""""""""
 map <leader>rr <Action>(Run)
