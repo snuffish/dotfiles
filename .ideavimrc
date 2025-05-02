@@ -4,6 +4,9 @@
 " Find more examples here: https://jb.gg/share-ideavimrc
 " Enable IdeaVim plugins https://jb.gg/ideavim-plugins
 
+" Find VimActions in IDE Editor
+":aaction VimFindActionIdAction
+
 " Set leader key to space
 let mapleader = ' '
 
@@ -32,10 +35,10 @@ set incsearch
 set notimeout
 
 """"""""""""""""""""""""Remaps"""""""""""""""""""""""""
-nnoremap K 5kzz
-nnoremap J 5jzz
-nnoremap L gt
-nnoremap H gT
+noremap K 5kzz
+noremap J 5jzz
+noremap L gt
+noremap H gT
 
 imap <C-l> <Right>
 imap <C-k> <Up>
@@ -49,7 +52,7 @@ nnoremap x "_x
 nnoremap X "_X
 
 nnoremap Y y$
-nnoremap y0 y^
+nnoremap y0 mzy^`zh
 nnoremap c0 "_cg^
 nnoremap d0 "_dg^
 
@@ -96,16 +99,19 @@ map gmm yyp
 map ` <Action>(AceTargetAction)
 
 let g:WhichKeyDesc_gotofile = "<leader><leader> GotoFile"
+map <leader>/ <Action>(FindInPath)
 map <leader><leader> <Action>(GotoFile)
 map <leader>fr <Action>(RecentFiles)
-map <leader>sa <Action>(GotoAction)
+map <leader>a <Action>(GotoAction)
 map <leader>ss <Action>(GotoSymbol)
-map <leader>/ <Action>(FindInPath)
 
 let g:WhichKeyDesc_zenmode = "<leader>z ZenMode"
 map <leader>z <Action>(ToggleDistractionFreeMode)
 
 nnoremap <S-CR> a<CR><Esc>k$
+
+"Search for the cursors <cword>
+map g/ :normal! viw<CR><Action>(FindInPath)
 
 """"""""""""""""""""""""Fuzzy""""""""""""""""""""""""""
 map <leader>ff <Action>(com.mituuz.fuzzier.Fuzzier)
@@ -114,6 +120,7 @@ map <leader>mf <Action>(com.mituuz.fuzzier.FuzzyMover)
 
 """""""""""""""""""""""""LSP"""""""""""""""""""""""""""
 map gr <Action>(ShowUsages)
+map gt <Action>(CallHierarchy)
 map gi <Action>(GotoImplementation)
 map gD <Action>(GotoTypeDeclaration)
 map <leader>cf <Action>(ReformatCode)
@@ -121,7 +128,7 @@ map <leader>cf <Action>(ReformatCode)
 """"""""""""""""""""""""Code"""""""""""""""""""""""""""
 map <leader>nc <Action>(NewClass)
 map <leader>ng <Action>(Generate)
-map <leader>ns <Action>(NewScratchFile)
+map <leader>ns <Action>(NewScratchBuffer)
 map <leader>cr <Action>(RenameElement)
 
 map <leader>sw <Action>(SurroundWith)
@@ -132,13 +139,15 @@ map <leader>co <Action>(OptimizeImports)
 map <A-j> <Action>(MoveStatementDown)
 map <A-k> <Action>(MoveStatementUp)
 
-let g:WhichKeyDesc_code = "<leader>o Outline"
+let g:WhichKeyDesc_outline = "<leader>o Outline"
 map <leader>o <Action>(FileStructurePopup)
 
 map <leader>h <Action>(Vcs.ShowTabbedFileHistory)
 
 """""""""""""""""""""""Window""""""""""""""""""""""""""
-nmap <C-w><C-q> <Action>(CloseEditor)
+nmap <C-w><C-q> <Action>(CloseContent)
+nmap <leader>ai <Action>(ActivateAIAssistantToolWindow)
+nmap <leader>x <Action>(ActivateProblemsViewToolWindow)
 "nmap <A-l> <C-W>l
 "nmap <A-k> <C-W>k
 "nmap <A-j> <C-W>j
