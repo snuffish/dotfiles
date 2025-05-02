@@ -35,10 +35,10 @@ set incsearch
 set notimeout
 
 """"""""""""""""""""""""Remaps"""""""""""""""""""""""""
-noremap K 5kzz
-noremap J 5jzz
-noremap L gt
-noremap H gT
+map K 5kzz
+map J 5jzz
+map L <Action>(NextTab)
+map H <Action>(PreviousTab)
 
 imap <C-l> <Right>
 imap <C-k> <Up>
@@ -73,7 +73,7 @@ nnoremap q <nop>
 nnoremap <C-q> q
 
 map m %
-map M %
+map M V%
 
 let g:WhichKeyDesc_selectAll = "vag Select whole buffer"
 map vag GVgg
@@ -120,16 +120,21 @@ map <leader>mf <Action>(com.mituuz.fuzzier.FuzzyMover)
 
 """""""""""""""""""""""""LSP"""""""""""""""""""""""""""
 map gr <Action>(ShowUsages)
-map gt <Action>(CallHierarchy)
 map gi <Action>(GotoImplementation)
 map gD <Action>(GotoTypeDeclaration)
+map gt <Action>(CallHierarchy)
 map <leader>cf <Action>(ReformatCode)
 
 """"""""""""""""""""""""Code"""""""""""""""""""""""""""
-map <leader>nc <Action>(NewClass)
 map <leader>ng <Action>(Generate)
 map <leader>ns <Action>(NewScratchBuffer)
 map <leader>cr <Action>(RenameElement)
+
+if has('ide') && &ide =~? 'clion'
+    map <leader>nc <Action>(CIDR.Lang.Cpp.NewClass)
+else
+    map <leader>nc <Action>(NewClass)
+endif
 
 map <leader>sw <Action>(SurroundWith)
 
@@ -141,6 +146,8 @@ map <A-k> <Action>(MoveStatementUp)
 
 let g:WhichKeyDesc_outline = "<leader>o Outline"
 map <leader>o <Action>(FileStructurePopup)
+map <leader>O <Action>(ActivateStructureToolWindow)
+
 
 map <leader>h <Action>(Vcs.ShowTabbedFileHistory)
 
@@ -152,6 +159,9 @@ nmap <leader>x <Action>(ActivateProblemsViewToolWindow)
 "nmap <A-k> <C-W>k
 "nmap <A-j> <C-W>j
 "nmap <A-h> <C-W>h
+
+""""""""""""""""""""""Terminal"""""""""""""""""""""""""
+map <C-/> <Action>(ActivateTerminalToolWindow)
 
 """"""""""""""""""""""Debug/Run""""""""""""""""""""""""
 map <leader>rr <Action>(Run)
