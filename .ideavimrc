@@ -130,7 +130,9 @@ map <leader>ng <Action>(Generate)
 map <leader>ns <Action>(NewScratchBuffer)
 map <leader>cr <Action>(RenameElement)
 
-if has('ide') && &ide =~? 'clion'
+if has('ide') && &ide =~? 'webstorm'
+    map <leader>nc <Action>(NewFile)
+elseif has('ide') && &ide =~? 'clion'
     map <leader>nc <Action>(CIDR.Lang.Cpp.NewClass)
 else
     map <leader>nc <Action>(NewClass)
