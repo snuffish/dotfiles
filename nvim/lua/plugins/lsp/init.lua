@@ -9,12 +9,12 @@ return {
     },
   },
   {
-    "neovim/nvim-lspconfig",
+    "mason-org/mason.nvim",
     dependencies = {
       require("plugins.lsp.cmp"),
       require("plugins.lsp.outline"),
       require("plugins.lsp.hierarchy"),
-      "WhoIsSethDaniel/mason-tool-installer.nvim",
+      -- "WhoIsSethDaniel/mason-tool-installer.nvim",
     },
     opts = function()
       local keys = require("lazyvim.plugins.lsp.keymaps").get()

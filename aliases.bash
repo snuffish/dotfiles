@@ -27,13 +27,14 @@ else
 fi
 
 if [[ $OS == "ManjaroLinux" ]]; then
+
   function open() {
     PATH=$1
     if [ -z "$1" ]; then
       PATH="."
     fi
 
-    nautilus "$PATH"
+    /usr/bin/nautilus "$PATH"
   }
 
   alias o="open"
