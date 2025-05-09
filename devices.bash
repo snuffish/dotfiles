@@ -1,25 +1,39 @@
 #!/usr/bin/env bash
 
-function CHECK_CONNECTED_DEVICE() {
-  echo "Now CONNECT/UNPLUG the device and press Enter to continue..."
-  read DUMMY_VAR
-  DEVICES_PLUGGED_IN=$(\ls -d /dev/*)
+function detect_device_changes() {
+  # Create temporary files for comparison
+  local temp_file_before
+  local temp_file_after
+  temp_file_before=$(mktemp)
+  temp_file_after=$(mktemp)
 
-  echo "Now UNPLUG/CONNECT the device and press Enter to continue..."
-  read DUMMY_VAR
-  DEVICES_DISCONNECTED=$(\ls -d /dev/*)
+  # Cleanup temp-files on exit or error
+  trap 'rm -f "$temp_file_before" "$temp_file_after"' EXIT
 
-  TEMP_FILE1=$(mktemp)
-  TEMP_FILE2=$(mktemp)
+  # First state
+  echo "Step 1: Prepare the initial state of your device."
+  echo "Press Enter when ready..."
+  read -r _
 
-  echo "$DEVICES_PLUGGED_IN" > "$TEMP_FILE1"
-  echo "$DEVICES_DISCONNECTED" > "$TEMP_FILE2"
+  local devices_before
+  devices_before=$(\ls -d /dev/*)
 
-  echo "Differences (devices that were removed or added):"
-  diff "$TEMP_FILE1" "$TEMP_FILE2"
+  # Second state
+  echo "Step 2: Now CONNECT or DISCONNECT your device."
+  echo "Press Enter when done..."
+  read -r _
 
-  # Clean up
-  rm "$TEMP_FILE1" "$TEMP_FILE2"
+  local devices_after
+  devices_after=$(\ls -d /dev/*)
+
+  # Save device lists to files
+  echo "$devices_before" > "$temp_file_before"
+  echo "$devices_after" > "$temp_file_after"
+  
+  # Display results
+  echo "Results - Devices that were added or removed:"
+  diff "$temp_file_before" "$temp_file_after"
 }
 
-alias devcheck=CHECK_CONNECTED_DEVICE
+# Create a user-friendly alias
+alias devcheck=detect_device_changes
