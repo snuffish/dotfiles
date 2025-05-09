@@ -5,13 +5,16 @@
 " Enable IdeaVim plugins https://jb.gg/ideavim-plugins
 
 " Find VimActions in IDE Editor
-":aaction VimFindActionIdAction
+":action VimFindActionIdAction
 
 " Set leader key to space
 let mapleader = ' '
 
 " Show all other Vim actions in WhichKey
 let g:WhichKey_ShowVimActions = "false"
+
+""""""""""""""""""""""""Handlers"""""""""""""""""""""""
+"sethandler <C-C> n-v:ide i:vim
 
 """"""""""""""""""""""""Plugins""""""""""""""""""""""""
 Plug 'machakann/vim-highlightedyank'
@@ -104,6 +107,8 @@ map <leader><leader> <Action>(GotoFile)
 map <leader>fr <Action>(RecentFiles)
 map <leader>a <Action>(GotoAction)
 map <leader>ss <Action>(GotoSymbol)
+"map <leader>cr <Action>(RenameFile)
+
 
 let g:WhichKeyDesc_zenmode = "<leader>z ZenMode"
 map <leader>z <Action>(ToggleDistractionFreeMode)
