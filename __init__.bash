@@ -2,6 +2,9 @@
 
 SCRIPT_DIR="$HOME/.terminal"
 
+# Unlock the ssh-keychain for no password-promts on new sessions
+eval `keychain --eval --agents ssh id_ed25519`
+
 # Load all utils
 echo "\n### Utils ###"
 for util in "$SCRIPT_DIR"/utils/*.bash; do
