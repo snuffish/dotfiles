@@ -165,6 +165,10 @@ nmap <C-w><C-q> <Action>(CloseContent)
 nmap <leader>ai <Action>(ActivateAIAssistantToolWindow)
 nmap <leader>aj <Action>(ActivateElectroJunToolWindowToolWindow)
 
+nmap ZQ <Action>(CloseAllEditorsButActive)
+nmap ZL <Action>(CloseAllToTheRight)
+nmap ZH <Action>(CloseAllToTheLeft)
+
 nmap <leader>x <Action>(ActivateProblemsViewToolWindow)
 "nmap <A-l> <C-W>l
 "nmap <A-k> <C-W>k
