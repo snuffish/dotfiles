@@ -12,6 +12,8 @@ let mapleader = ' '
 
 " Show all other Vim actions in WhichKey
 let g:WhichKey_ShowVimActions = "false"
+"nmap <KEYBIND> <Action>(VimFindActionIdAction)
+
 
 """"""""""""""""""""""""Handlers"""""""""""""""""""""""
 "sethandler <C-C> n-v:ide i:vim
@@ -105,7 +107,7 @@ let g:WhichKeyDesc_gotofile = "<leader><leader> GotoFile"
 map <leader>/ <Action>(FindInPath)
 map <leader><leader> <Action>(GotoFile)
 map <leader>fr <Action>(RecentFiles)
-map <leader>a <Action>(GotoAction)
+"map <leader>a <Action>(GotoAction)
 map <leader>ss <Action>(GotoSymbol)
 "map <leader>cr <Action>(RenameFile)
 
@@ -161,6 +163,8 @@ map <leader>h <Action>(Vcs.ShowTabbedFileHistory)
 """""""""""""""""""""""Window""""""""""""""""""""""""""
 nmap <C-w><C-q> <Action>(CloseContent)
 nmap <leader>ai <Action>(ActivateAIAssistantToolWindow)
+nmap <leader>aj <Action>(ActivateElectroJunToolWindowToolWindow)
+
 nmap <leader>x <Action>(ActivateProblemsViewToolWindow)
 "nmap <A-l> <C-W>l
 "nmap <A-k> <C-W>k
