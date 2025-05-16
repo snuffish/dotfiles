@@ -28,11 +28,6 @@ function gp() {
   g push origin
 }
 
-# Pull/fetch everything
-# alias gpa="ls | xargs -I{} git -C {} pull"
 alias gpa="git-pull-all"
-# function gpa() {
-#   git branch -r | grep -v '\->' | sed "s,\x1B\[[0-9;]*[a-zA-Z],,g" | while read remote; do git branch --track "${remote#origin/}" "$remote"; done
-# }
 
 alias {gcb,gb}="git branch | fzf --preview 'git show --color=always {-1}' --bind 'enter:become(git checkout {-1})' --height 50% --layout reverse"
