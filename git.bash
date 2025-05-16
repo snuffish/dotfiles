@@ -13,7 +13,7 @@ alias gd="g diff -w"
 alias gch="g checkout"
 
 alias gclean="g clean -fdx"
-alias gl="lazygit"
+alias lg="lazygit"
 
 # Create and push a tag to Bitbcket
 function gt() {
