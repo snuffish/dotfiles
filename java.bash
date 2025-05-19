@@ -17,5 +17,5 @@ alias mvnCompileWithDependencies="mvn clean compile assembly:single"
 alias intellij="idea64"
 
 # Set default running Java version
-useJava1.8
+#useJava1.8
 echo "Using Java: $JAVA_HOME"
