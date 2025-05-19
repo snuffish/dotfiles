@@ -31,7 +31,7 @@ set mini-ai
 "set easymotion
 set sneak
 set peekaboo
-"set functiontextoba
+set functiontextobj
 "set matchit
 
 set number relativenumber
