@@ -181,7 +181,10 @@ map <C-/> <Action>(ActivateTerminalToolWindow)
 
 """"""""""""""""""""""Debug/Run""""""""""""""""""""""""
 map <leader>rr <Action>(Run)
-map <leader>rd <Action>(Debug)
+
+"map <leader>rd <Action>(Debug)
+map <leader>rd <Action>(target-platformio-upload-monitor)
+
 map <leader>dq <Action>(Stop)
 
 map <leader>db <Action>(ToggleLineBreakpoint)
