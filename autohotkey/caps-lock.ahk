@@ -1,4 +1,8 @@
-﻿#Requires AutoHotkey v2.0+
+﻿; Disable CapsLock
+; When CapsLock is `Tap` pressed - invoke <Esc> key
+; When CapsLock is `Held` pressed - invoke hold on <LCtrl> key
+
+#Requires AutoHotkey v2.0+
 #SingleInstance
 
 SetCapsLockState "AlwaysOff"
