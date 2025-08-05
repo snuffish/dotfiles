@@ -169,7 +169,7 @@ let g:WhichKeyDesc_file_opt_copy_path = "<leader>fy Copy Absolute Path"
 map <leader>fp <Action>(ShowFilePath)
 let g:WhichKeyDesc_file_opt_show_path = "<leader>fp Show File Path"
 
-"""""""""""""""""""""""Window""""""""""""""""""""""""""
+""""""""""""""""""""""Window""""""""""""""""""""""""""
 nmap <C-w><C-q> <Action>(CloseContent)
 nmap <leader>ai <Action>(ActivateAIAssistantToolWindow)
 nmap <leader>aj <Action>(ActivateElectroJunToolWindowToolWindow)
@@ -179,6 +179,9 @@ nmap ZL <Action>(CloseAllToTheRight)
 nmap ZH <Action>(CloseAllToTheLeft)
 
 nmap <leader>x <Action>(ActivateProblemsViewToolWindow)
+
+nmap <C-w><C-u> <Action>(Unsplit)
+
 "nmap <A-l> <C-W>l
 "nmap <A-k> <C-W>k
 "nmap <A-j> <C-W>j
@@ -207,4 +210,8 @@ map s <Action>(flash.search)
 let g:WhichKeyDesc_nerdtree = "<leader>e NerdTree"
 map <leader>e :NERDTree<CR>
 
-map <leader>wv <C-w>v<C-w><C-w>
+map [[ <Action>(MethodUp)
+map ]] <Action>(MethodDown)
+
+vnoremap < <gv
+vnoremap > >gv
