@@ -11,6 +11,7 @@ alias pbpaste='xclip -selection clipboard -o'
 
 alias pwdc="pwd|pbcopy"
 
+alias q="exit"
 alias c="clear"
 
 alias wget="wget -c"
