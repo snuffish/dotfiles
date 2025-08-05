@@ -136,6 +136,7 @@ map <leader>cf <Action>(ReformatCode)
 map <leader>ng <Action>(Generate)
 map <leader>nb <Action>(NewScratchBuffer)
 map <leader>cr <Action>(RenameElement)
+map <leader>rc <Action>(Debugger.ReloadFile)
 
 if has('ide') && &ide =~? 'webstorm'
     map <leader>nc <Action>(NewFile)
