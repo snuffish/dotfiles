@@ -12,6 +12,10 @@ let mapleader = ' '
 let g:WhichKey_ShowVimActions = "false"
 "nmap <KEYBIND> <Action>(VimFindActionIdAction)
 
+"function! TestFunction(x)
+"    echo a:x
+"endfunction
+
 
 """"""""""""""""""""""""Handlers"""""""""""""""""""""""
 "sethandler <C-C> n-v:ide i:vim
@@ -126,6 +130,9 @@ map <leader>gf <Action>(com.mituuz.fuzzier.FuzzierVCS)
 map <leader>mf <Action>(com.mituuz.fuzzier.FuzzyMover)
 
 """""""""""""""""""""""""LSP"""""""""""""""""""""""""""
+
+map <leader>ct
+
 map gr <Action>(ShowUsages)
 map gi <Action>(GotoImplementation)
 map gD <Action>(GotoTypeDeclaration)
