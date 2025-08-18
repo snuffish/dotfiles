@@ -132,7 +132,6 @@ map <leader>mf <Action>(com.mituuz.fuzzier.FuzzyMover)
 """""""""""""""""""""""""LSP"""""""""""""""""""""""""""
 
 map <leader>ct
-
 map gr <Action>(ShowUsages)
 map gi <Action>(GotoImplementation)
 map gD <Action>(GotoTypeDeclaration)
@@ -143,7 +142,7 @@ map <leader>cf <Action>(ReformatCode)
 map <leader>ng <Action>(Generate)
 map <leader>nb <Action>(NewScratchBuffer)
 map <leader>cr <Action>(RenameElement)
-map <leader>rc <Action>(Debugger.ReloadFile)
+map <leader>fc <Action>(Debugger.ReloadFile)
 
 if has('ide') && &ide =~? 'webstorm'
     map <leader>nc <Action>(NewFile)
@@ -165,11 +164,8 @@ let g:WhichKeyDesc_outline = "<leader>o Outline"
 map <leader>o <Action>(FileStructurePopup)
 map <leader>O <Action>(ActivateStructureToolWindow)
 
-map <leader>fh <Action>(LocalHistory.ShowHistory)
-let g:WhichKeyDesc_file_opt_history = "<leader>fh Show Local History"
-
-map <leader>fl <Action>(RecentLocations)
-let g:WhichKeyDesc_file_opt_show_recent_locations = "<leader>fl Recent Locations"
+map <leader>fl <Action>(LocalHistory.ShowHistory)
+let g:WhichKeyDesc_file_opt_history = "<leader>fl Show Local History"
 
 map <leader>fy <Action>(CopyAbsolutePath)
 let g:WhichKeyDesc_file_opt_copy_path = "<leader>fy Copy Absolute Path"
@@ -189,6 +185,8 @@ nmap ZH <Action>(CloseAllToTheLeft)
 nmap <leader>x <Action>(ActivateProblemsViewToolWindow)
 
 nmap <C-w><C-u> <Action>(Unsplit)
+
+nmap <leader>gb <Action>(Annotate)
 
 "nmap <A-l> <C-W>l
 "nmap <A-k> <C-W>k
