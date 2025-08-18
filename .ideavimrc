@@ -197,9 +197,10 @@ nmap <leader>gb <Action>(Annotate)
 map <C-/> <Action>(ActivateTerminalToolWindow)
 
 """"""""""""""""""""""Debug/Run""""""""""""""""""""""""
-map <leader>rr <Action>(Run)
-map <leader>rd <Action>(Debug)
-map <leader>dq <Action>(Stop)
+nmap <leader>rr <Action>(Run)
+nmap <leader>rd <Action>(Debug)
+nmap <leader>dq <Action>(Stop)
+nmap <leader>rb <Action>(Build)
 
 map <leader>db <Action>(ToggleLineBreakpoint)
 map <leader>de <Action>(EvaluateExpression)
