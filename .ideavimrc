@@ -140,7 +140,7 @@ map <leader>cf <Action>(ReformatCode)
 
 """"""""""""""""""""""""Code"""""""""""""""""""""""""""
 map <leader>ng <Action>(Generate)
-map <leader>nb <Action>(NewScratchBuffer)
+map <leader>nb <Action>(NewScratchFile)
 map <leader>cr <Action>(RenameElement)
 map <leader>fc <Action>(Debugger.ReloadFile)
 
