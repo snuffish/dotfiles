@@ -200,6 +200,7 @@ map <C-/> <Action>(ActivateTerminalToolWindow)
 nmap <leader>rr <Action>(Run)
 nmap <leader>rd <Action>(Debug)
 nmap <leader>dq <Action>(Stop)
+nmap <leader>rc <Action>(Clean)
 nmap <leader>rb <Action>(Build)
 
 map <leader>db <Action>(ToggleLineBreakpoint)
