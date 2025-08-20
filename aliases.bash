@@ -8,6 +8,7 @@ if [[ $OS == "Mac" && $USERNAME == "snuffish" ]]; then
   alias .d="cd $HOME/Desktop"
   alias .tmp="cd /tmp"
   alias .up="cd $HOME/UnityProjects"
+  alias reboot="sudo reboot now"
 else
   OS="$(lsb_release -is)"
 
