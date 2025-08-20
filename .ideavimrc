@@ -139,8 +139,9 @@ map gt <Action>(CallHierarchy)
 map <leader>cf <Action>(ReformatCode)
 
 """"""""""""""""""""""""Code"""""""""""""""""""""""""""
-map <leader>ng <Action>(Generate)
 map <leader>nb <Action>(NewScratchFile)
+map <leader>nn <Action>(NewScratchBuffer)
+map <leader>ng <Action>(Generate)
 map <leader>cr <Action>(RenameElement)
 map <leader>fc <Action>(Debugger.ReloadFile)
 
@@ -223,3 +224,9 @@ map ]] <Action>(MethodDown)
 
 vnoremap < <gv
 vnoremap > >gv
+
+""""""""""""""""""""""DataGrip"""""""""""""""""""""""""
+if has('ide') && &ide =~? 'datagrip'
+    nmap <leader><leader> <Action>(GotoDatabaseObject)
+endif
+
