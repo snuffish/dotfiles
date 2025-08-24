@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ $OS == "Mac" && $USERNAME == "snuffish" ]]; then
+if [[ $OS == "Mac" || $OS = "ManjaroLinuox" ]]; then
   # Mac
   export DEVICE="MAC"
   alias {open,o}="open"
@@ -9,7 +9,7 @@ if [[ $OS == "Mac" && $USERNAME == "snuffish" ]]; then
   alias .tmp="cd /tmp"
   alias .up="cd $HOME/UnityProjects"
   alias reboot="sudo reboot now"
-else
+elif [[ $OS = "Windows" ]]; then
   OS="$(lsb_release -is)"
 
   # Home PC (Windows)
