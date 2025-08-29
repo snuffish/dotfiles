@@ -32,3 +32,6 @@ source "$SCRIPT_DIR/tmux/init.bash"
 
 # Set nvim as the default viewer for Manpages
 export MANPAGER='nvim +Man!'
+
+# Set up fzf key bindings and fuzzy completion
+source <(fzf --zsh)
