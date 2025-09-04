@@ -186,10 +186,14 @@ nmap ZH <Action>(CloseAllToTheLeft)
 nmap <leader>x <Action>(ActivateProblemsViewToolWindow)
 
 nmap <C-w><C-u> <Action>(Unsplit)
-nmap <C-w><C-h> <Action>(SplitHorizontally)
+nmap <C-w><C-h> <Action>(SplitVertically)
+"nmap <C-w><C-h> <Action>(SplitHorizontally)
+"nmap <C-w><C-v> <Action>(SplitVertically)
 
 nmap <leader>gb <Action>(Annotate)
 nmap <leader>tt <Action>(ActivateTODOToolWindow)
+
+nmap <M-q> <Action>(HideActiveWindow)
 
 "nmap <A-l> <C-W>l
 "nmap <A-k> <C-W>k
@@ -197,7 +201,8 @@ nmap <leader>tt <Action>(ActivateTODOToolWindow)
 "nmap <A-h> <C-W>h
 
 """"""""""""""""""""""Terminal"""""""""""""""""""""""""
-map <C-/> <Action>(ActivateTerminalToolWindow)
+nmap <M-d> <Action>(ActivateDebugToolWindow)
+nmap <C-/> <Action>(ActivateTerminalToolWindow)
 
 """"""""""""""""""""""Debug/Run""""""""""""""""""""""""
 map <leader>rr <Action>(Run)
