@@ -191,7 +191,7 @@ nmap <C-w><C-h> <Action>(SplitVertically)
 "nmap <C-w><C-v> <Action>(SplitVertically)
 
 nmap <leader>gb <Action>(Annotate)
-nmap <leader>tt <Action>(ActivateTODOToolWindow)
+nmap <leader>td <Action>(ActivateTODOToolWindow)
 
 nmap <M-q> <Action>(HideActiveWindow)
 
@@ -217,6 +217,8 @@ nmap <C-j> <Action>(StepOver)
 nmap <C-k> <Action>(Resume)
 nmap <C-h> <Action>(StepOut)
 nmap <C-l> <Action>(ForceStepInto)
+
+nmap <leader>tt <Action>(StreamTracerAction)
 
 """"""""""""""""""""""Navigation"""""""""""""""""""""""
 map s <Action>(flash.search)
