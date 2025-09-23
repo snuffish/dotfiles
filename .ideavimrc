@@ -76,8 +76,6 @@ nnoremap N Nzzzv
 map gg gg_
 
 nnoremap <C-d> <C-d>zz
-nnoremap <C-u> <C-u>zz
-
 nnoremap q <nop>
 nnoremap <C-q> q
 
