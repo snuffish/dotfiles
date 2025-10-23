@@ -8,7 +8,7 @@ if [[ $OS == "Mac" || $OS = "ManjaroLinuox" ]]; then
   alias .d="cd $HOME/Desktop"
   alias .tmp="cd /tmp"
   alias .up="cd $HOME/UnityProjects"
-  alias reboot="sudo reboot now"
+  alias reboot="sudo reboot -r -h now"
 elif [[ $OS = "Windows" ]]; then
   OS="$(lsb_release -is)"
 
