@@ -50,7 +50,7 @@ end
 
 return {
   {
-    "echasnovski/mini.surround",
+    "nvim-mini/mini.surround",
     opts = {
       mappings = {
         add = "ys",
@@ -98,7 +98,7 @@ return {
     },
   },
   {
-    "echasnovski/mini.ai",
+    "nvim-mini/mini.ai",
     version = false,
     config = function()
       require("mini.ai").setup({
@@ -170,7 +170,7 @@ return {
     end,
   },
   {
-    "echasnovski/mini.operators",
+    "nvim-mini/mini.operators",
     version = false,
     -- keys = {
     --   { "gss", false },
@@ -180,28 +180,28 @@ return {
     end,
   },
   {
-    "echasnovski/mini.basics",
+    "nvim-mini/mini.basics",
     version = false,
     config = function()
       require("mini.basics").setup()
     end,
   },
   -- {
-  --   "echasnovski/mini.bracketed",
+  --   "nvim-mini/mini.bracketed",
   --   version = false,
   --   config = function()
   --     require("mini.bracketed").setup()
   --   end,
   -- },
   {
-    "echasnovski/mini.splitjoin",
+    "nvim-mini/mini.splitjoin",
     version = false,
     config = function()
       require("mini.splitjoin").setup()
     end,
   },
   {
-    "echasnovski/mini.comment",
+    "nvim-mini/mini.comment",
     version = false,
     config = function()
       require("mini.comment").setup()
