@@ -51,6 +51,11 @@ return {
         "<cmd>lua Snacks.scratch.select()<cr>",
         desc = "select scratch buffer",
       },
+      {
+        "gr",
+        "<cmd>lua Snacks.picker.lsp_references<cr>",
+        desc = "Search references",
+      },
     },
     init = function()
       vim.api.nvim_create_autocmd("user", {
