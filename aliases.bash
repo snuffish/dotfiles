@@ -4,7 +4,6 @@ if [[ $OS == "Mac" || $OS = "ManjaroLinuox" ]]; then
   # Mac
   export DEVICE="MAC"
   alias {open,o}="open"
-  alias .p="cd $HOME/Projects"
   alias .d="cd $HOME/Desktop"
   alias .tmp="cd /tmp"
   alias .up="cd $HOME/UnityProjects"
@@ -17,7 +16,6 @@ elif [[ $OS = "Windows" ]]; then
   alias {C,C:}="cd /c/"
   alias {D,D:}="cd /mnt/d/"
   alias .up="D: && cd UnityProjects"
-  alias .p="cd $HOME/Projects"
   alias {.v,.vgr}="D: && cd VGR"
   alias .tmp="cd $HOME/.tmp"
   alias .d="cd $HOME/OneDrive/Desktop"
@@ -28,7 +26,6 @@ elif [[ $OS = "Windows" ]]; then
 fi
 
 if [[ $OS == "ManjaroLinux" ]]; then
-
   function open() {
     PATH=$1
     if [ -z "$1" ]; then
@@ -43,4 +40,5 @@ else
   alias o="explorer.exe"
 fi
 
+alias .p="cd $HOME/Projects"
 alias .config="$HOME/.config"
