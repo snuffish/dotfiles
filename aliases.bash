@@ -4,7 +4,6 @@ if [[ $OS == "Mac" || $OS = "ManjaroLinuox" ]]; then
   # Mac
   export DEVICE="MAC"
   alias {open,o}="open"
-  alias .d="cd $HOME/Desktop"
   alias .tmp="cd /tmp"
   alias .up="cd $HOME/UnityProjects"
   alias reboot="sudo reboot now"
@@ -18,7 +17,6 @@ elif [[ $OS = "Windows" ]]; then
   alias .up="D: && cd UnityProjects"
   alias {.v,.vgr}="D: && cd VGR"
   alias .tmp="cd $HOME/.tmp"
-  alias .d="cd $HOME/OneDrive/Desktop"
   alias reboot="sudo psshutdown -rf -t 0"
   alias findport="tcpview"
 
@@ -40,5 +38,6 @@ else
   alias o="explorer.exe"
 fi
 
+alias .d="cd $HOME/Desktop"
 alias .p="cd $HOME/Projects"
 alias .config="$HOME/.config"
