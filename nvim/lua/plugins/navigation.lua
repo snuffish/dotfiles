@@ -64,14 +64,14 @@ return {
     },
   },
   {
-    "echasnovski/mini.cursorword",
+    "nvim-mini/mini.cursorword",
     version = false,
     config = function()
       require("mini.cursorword").setup()
     end,
   },
   {
-    "echasnovski/mini.jump2d",
+    "nvim-mini/mini.jump2d",
     version = false,
     opts = {
       allowed_lines = { cursor_before = true },

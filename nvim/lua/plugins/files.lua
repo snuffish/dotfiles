@@ -115,7 +115,7 @@ return {
     },
   },
   {
-    "echasnovski/mini.pick",
+    "nvim-mini/mini.pick",
     version = false,
     lazy = false,
     opts = {
