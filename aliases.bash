@@ -34,6 +34,8 @@ if [[ $OS == "ManjaroLinux" ]]; then
   }
 
   alias o="open"
+elif [[ $OSTYPE == 'darwin'* ]]; then
+  alias o="open"
 else
   alias o="explorer.exe"
 fi
