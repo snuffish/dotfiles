@@ -1,6 +1,6 @@
 #!/bin/bash
 
-alias code="cursor"
+# alias code="cursor"
 
 alias tf="tail -f"
 findPort() {
