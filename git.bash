@@ -25,7 +25,15 @@ function gp() {
   if [ -n "$1" ]; then
     gc "$1"
   fi
-  g push origin
+
+  # Check if the current branch has an upstream branch
+  CURRENT_BRANCH=$(git symbolic-ref --short HEAD)
+  if [ -z "$(git config branch.${CURRENT_BRANCH}.remote)" ]; then
+    echo "No upstream branch set for ${CURRENT_BRANCH}. Setting it now..."
+    git push --set-upstream origin "$CURRENT_BRANCH"
+  else
+    g push origin
+  fi
 }
 
 alias gpa="git-pull-all"
