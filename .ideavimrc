@@ -182,6 +182,7 @@ nmap <leader>aj <Action>(ActivateElectroJunToolWindowToolWindow)
 nmap ZQ <Action>(CloseAllEditorsButActive)
 nmap ZL <Action>(CloseAllToTheRight)
 nmap ZH <Action>(CloseAllToTheLeft)
+nmap zA <Action>(ExpandAllRegions)
 
 nmap <leader>x <Action>(ActivateProblemsViewToolWindow)
 
