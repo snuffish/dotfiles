@@ -10,6 +10,7 @@ alias g="git"
 alias gst="g status"
 alias gc="g commit --no-verify -m"
 alias gd="g diff -w"
+alias gds="g diff --stat"
 alias gch="g checkout"
 
 alias gclean="g clean -fdx"
