@@ -15,6 +15,16 @@ alias gch="g checkout"
 alias gclean="g clean -fdx"
 alias lg="lazygit"
 
+function gdw() {
+  SEARCH=$1
+  if [[ ! $SEARCH ]]; then
+    echo "Usage: gdw <string>"
+    return
+  fi
+
+  gd *$SEARCH*
+}
+
 # Create and push a tag to Bitbcket
 function gt() {
   g tag "$1" && g push origin "$1"
