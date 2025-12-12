@@ -1,3 +1,5 @@
+---@diagnostic disable: undefined-global
+-- cspell:ignore nvim
 require("config.lazy")
 
 if vim.g.neovide then
