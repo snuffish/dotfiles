@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global
 return {
   {
     "folke/snacks.nvim",
@@ -58,18 +59,18 @@ return {
       },
     },
     init = function()
-      vim.api.nvim_create_autocmd("user", {
+      vim.api.nvim_create_autocmd("User", {
         pattern = "VeryLazy",
         callback = function()
           vim.defer_fn(function()
-            vim.utils.remove_map("nxo", "]i")
-            vim.utils.remove_map("nxo", "[i")
+            vim.keymap.del({ "n", "x", "o" }, "]i")
+            vim.keymap.del({ "n", "x", "o" }, "[i")
 
             vim.ui.select = Snacks.picker.select
 
-            vim.utils.map("nxo", "[e", function()
+            vim.keymap.set({ "n", "x", "o" }, "[e", function()
               ---@diagnostic disable-next-line: missing-fields
-              snacks.scope.jump({
+              Snacks.scope.jump({
                 min_size = 1, -- allow single line scopes
                 bottom = false,
                 cursor = false,
@@ -80,38 +81,13 @@ return {
               })
             end, { desc = "jump to top edge of scope" })
 
-            vim.utils.map("nxo", "[e", function()
-              ---@diagnostic disable-next-line: missing-fields
-              Snacks.scope.jump({
-                min_size = 1, -- allow single line scopes
-                bottom = false,
-                cursor = false,
-                edge = true,
-                treesitter = { blocks = { enabled = false } },
-                desc = "jump to top edge of scope",
-              })
-            end, { desc = "jump to top edge of scope" })
-
-            vim.utils.map("nxo", "]e", function()
+            vim.keymap.set({ "n", "x", "o" }, "]e", function()
               ---@diagnostic disable-next-line: missing-fields
               Snacks.scope.jump({
                 min_size = 1, -- allow single line scopes
                 bottom = true,
                 cursor = false,
                 edge = true,
-                treesitter = { blocks = { enabled = false } },
-                desc = "jump to bottom edge of scope",
-              })
-            end, { desc = "jump to bottom edge of scope" })
-
-            vim.utils.map("nxo", "]e", function()
-              ---@diagnostic disable-next-line: missing-fields
-              Snacks.scope.jump({
-                min_size = 1, -- allow single line scopes
-                bottom = true,
-                cursor = false,
-                edge = true,
-                siblings = true,
                 treesitter = { blocks = { enabled = false } },
                 desc = "jump to bottom edge of scope",
               })
