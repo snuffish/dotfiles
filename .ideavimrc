@@ -76,6 +76,8 @@ nnoremap N Nzzzv
 map gg gg_
 
 nnoremap <C-d> <C-d>zz
+nnoremap <C-u> <C-u>zz
+
 nnoremap q <nop>
 nnoremap <C-q> q
 
@@ -180,13 +182,14 @@ nmap <leader>aj <Action>(ActivateElectroJunToolWindowToolWindow)
 nmap ZQ <Action>(CloseAllEditorsButActive)
 nmap ZL <Action>(CloseAllToTheRight)
 nmap ZH <Action>(CloseAllToTheLeft)
+nmap zA <Action>(ExpandAllRegions)
 
 nmap <leader>x <Action>(ActivateProblemsViewToolWindow)
 
 nmap <C-w><C-u> <Action>(Unsplit)
 nmap <C-w><C-h> <Action>(SplitVertically)
-"nmap <C-w><C-h> <Action>(SplitHorizontally)
-"nmap <C-w><C-v> <Action>(SplitVertically)
+nmap <C-w><C-d> <Action>(SplitHorizontally)
+nmap <C-w><C-h> <Action>(SplitVertically)
 
 nmap <leader>gb <Action>(Annotate)
 nmap <leader>td <Action>(ActivateTODOToolWindow)
@@ -207,6 +210,8 @@ map <leader>rr <Action>(Run)
 map <leader>rd <Action>(Debug)
 map <leader>dq <Action>(Stop)
 
+map <leader>rf <Action>(Debugger.ReloadFile)
+
 map <leader>db <Action>(ToggleLineBreakpoint)
 map <leader>de <Action>(EvaluateExpression)
 map <leader>dd <Action>(ViewBreakpoints)
@@ -222,6 +227,7 @@ else
 endif
 
 nmap <leader>tt <Action>(StreamTracerAction)
+nmap <leader>dg <Action>(SmartStepInto)
 
 """"""""""""""""""""""Navigation"""""""""""""""""""""""
 map s <Action>(flash.search)
