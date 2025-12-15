@@ -12,7 +12,7 @@ alias gc="g commit --no-verify -m"
 alias gd="g diff -w"
 alias gds="g diff --stat"
 alias gch="g checkout"
-alias grh="g reset --hard && glcean"
+alias grh="g reset --hard && gclean"
 
 alias gclean="g clean -fdx"
 alias lg="lazygit"
