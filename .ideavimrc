@@ -219,12 +219,7 @@ map <leader>dd <Action>(ViewBreakpoints)
 nmap <C-j> <Action>(StepOver)
 nmap <C-k> <Action>(Resume)
 nmap <C-h> <Action>(StepOut)
-
-if has('ide') && &ide =~? 'rider'
-    nmap <C-l> <Action>(StepInto)
-else
-    nmap <C-l> <Action>(ForceStepInto)
-endif
+nmap <C-l> <Action>(ForceStepInto)
 
 nmap <leader>tt <Action>(StreamTracerAction)
 nmap <leader>dg <Action>(SmartStepInto)
