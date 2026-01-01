@@ -43,3 +43,4 @@ fi
 alias .d="cd $HOME/Desktop"
 alias .p="cd $HOME/Projects"
 alias .config="$HOME/.config"
+alias .piop="$HOME/Documents/PlatformIO/Projects"
