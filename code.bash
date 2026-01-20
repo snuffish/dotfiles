@@ -1,6 +1,6 @@
 #!/bin/bash
 
-alias code="cursor"
+alias code="antigravity"
 
 alias tf="tail -f"
 findPort() {
