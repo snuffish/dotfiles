@@ -12,3 +12,5 @@ RESOURCE_GROUP_PROD="rg-prode406d490"
 alias meligo_prod_tail="az webapp log tail --name $WEBAPP_NAME_PROD --resource-group $RESOURCE_GROUP_PROD"
 alias meligo_prod_backend_tail="az webapp log tail --name api-tm8s-plan-stage-001 --resource-group rg-tm8s-plan-stage-001"
 
+alias meligo.se_tail="az webapp log tail --name webapp-devb286d811 --resource-group rg-dev225ef1fe"
+
