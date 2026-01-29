@@ -50,4 +50,4 @@ function gp() {
 
 alias gpa="git-pull-all"
 
-alias {gcb,gb}="git branch | fzf --preview 'git show --color=always {-1}' --bind 'enter:become(git checkout {-1})' --height 50% --layout reverse"
+alias {gcb,gb}="git branch --all | fzf --preview 'git show --color=always {-1}' --bind 'enter:become(git checkout {-1})' --height 50% --layout reverse"
