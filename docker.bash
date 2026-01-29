@@ -3,7 +3,7 @@
 alias d="docker"
 
 # Prune environemnt
-alias dprune="docker system prune --volumes"
+alias dprune="docker system prune -af --volumes"
 alias dprunevolumes="docker volume prune"
 
 # System
