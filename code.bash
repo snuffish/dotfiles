@@ -15,4 +15,4 @@ alias process="sudo ps aux | grep $process_name"
 alias header="curl -I -L"
 alias portListener="sudo netstat -tolpn"
 
-alias tsd="ts-node-dev --respawn"
+alias tsd="tsx watch"
