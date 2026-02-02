@@ -14,7 +14,7 @@ alias gds="g diff --stat"
 alias gch="g checkout"
 alias grh="g reset --hard && gclean"
 
-alias gclean="g clean -fdx"
+alias gclean="g clean -f"
 alias lg="lazygit"
 
 function gdw() {
