@@ -145,7 +145,7 @@ map <leader>cr <Action>(RenameElement)
 map <leader>fc <Action>(Debugger.ReloadFile)
 map <leader>nf <Action>(NewFile)
 
-if has('ide') && &ide =~? 'webstorm' || &ide =~? 'jetbrains rider'
+if has('ide') && &ide =~? 'webstorm' || &ide =~? 'rider'
     map <leader>nc <Action>(NewFile)
 elseif has('ide') && &ide =~? 'clion'
     map <leader>nc <Action>(CIDR.Lang.Cpp.NewClass)
