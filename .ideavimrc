@@ -219,7 +219,7 @@ map <leader>dd <Action>(ViewBreakpoints)
 nmap <C-j> <Action>(StepOver)
 nmap <C-k> <Action>(Resume)
 nmap <C-h> <Action>(StepOut)
-nmap <C-l> <Action>(ForceStepInto)
+nmap <C-l> <Action>(StepInto)
 
 nmap <leader>tt <Action>(StreamTracerAction)
 nmap <leader>dg <Action>(SmartStepInto)
