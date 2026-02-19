@@ -201,8 +201,11 @@ nmap <M-q> <Action>(HideActiveWindow)
 "nmap <A-j> <C-W>j
 "nmap <A-h> <C-W>h
 
+""""""""""""""""""""""Git"""""""""""""""""""""""""
+nmap <leader>gd <Action>(Git.CompareWithBranch)
+
 """"""""""""""""""""""Terminal"""""""""""""""""""""""""
-nmap <M-d> <Action>(ActivateDebugToolWindow)
+nmap <M-d> <Action>(ActivateDebugToolWindow)
 nmap <C-/> <Action>(ActivateTerminalToolWindow)
 
 """"""""""""""""""""""Debug/Run""""""""""""""""""""""""
