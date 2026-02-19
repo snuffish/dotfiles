@@ -16,7 +16,6 @@ alias grh="g reset --hard && gclean"
 
 alias gclean="g clean -f"
 
-# LazyGit
 alias lg="lazygit"
 alias lgs="lg status"
 
