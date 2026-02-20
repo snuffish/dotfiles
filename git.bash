@@ -18,6 +18,8 @@ alias gclean="g clean -f"
 
 alias lg="lazygit"
 alias lgs="lg status"
+alias lgl="lg log"
+alias gb="lg branch"
 
 
 function gdw() {
@@ -53,4 +55,4 @@ function gp() {
 
 alias gpa="git-pull-all"
 
-alias {gcb,gb}="git branch --all | fzf --header 'Select branch to checkout:' --preview 'git show --color=always {-1}' --bind 'enter:become(git checkout {-1})' --height 50% --layout reverse"
+alias gbb="git branch --all | fzf --header 'Select branch to checkout:' --preview 'git show --color=always {-1}' --bind 'enter:become(git checkout {-1})' --height 50% --layout reverse"
