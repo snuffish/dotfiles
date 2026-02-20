@@ -1,9 +1,7 @@
 #!/bin/bash
 
 # Add ssh-key
-# if [[ $OS == "Mac" && $SHELL_ENV == "ZSH" && $USERNAME == "snuffish" ]]; then
-#     eval && ssh-add "$HOME/.ssh/id_rsa"
-# fi
+eval && ssh-add "$HOME/.ssh/id_rsa"
 
 alias g="git"
 
@@ -20,7 +18,6 @@ alias lg="lazygit"
 alias lgs="lg status"
 alias lgl="lg log"
 alias gb="lg branch"
-
 
 function gdw() {
   SEARCH=$1

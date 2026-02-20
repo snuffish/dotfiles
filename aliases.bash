@@ -1,41 +1,38 @@
 #!/bin/bash
 
-if [[ $OS == "Mac" || $OS = "ManjaroLinuox" ]]; then
+if [[ $ENV_PROFILE == "Mac" || $ENV_PROFILE = "Linux" ]]; then
   # Mac
   export DEVICE="MAC"
-  alias {open,o}="open"
+  alias o="open"
   alias .tmp="cd /tmp"
-  alias .up="cd $HOME/UnityProjects"
+  alias .up='cd $HOME/UnityProjects'
   alias reboot="sudo reboot now"
-elif [[ $OS = "Windows" ]]; then
-  OS="$(lsb_release -is)"
-
+elif [[ $ENV_PROFILE = "Windows" ]]; then
   # Home PC (Windows)
   export DEVICE="HOME"
-  alias {C,C:}="cd /c/"
-  alias {D,D:}="cd /mnt/d/"
+  alias C='cd /c/'
+  alias 'C:'=C
+  alias D='cd /mnt/d/'
+  alias 'D:'=D
   alias .up="D: && cd UnityProjects"
-  alias {.v,.vgr}="D: && cd VGR"
-  alias .tmp="cd $HOME/.tmp"
+  alias .tmp='cd $HOME/.tmp'
   alias reboot="sudo psshutdown -rf -t 0"
   alias findport="tcpview"
-
-  nvm use v20.11.0
 fi
 
-if [[ $OS == "Linux" ]]; then
+if [[ $ENV_PROFILE == "Linux" ]]; then
   function open() {
     /usr/bin/nautilus --new-window "$1"
   }
 
   alias o="open"
-elif [[ $OSTYPE == 'darwin'* ]]; then
+elif [[ $ENV_PROFILE == 'darwin'* ]]; then
   alias o="open"
 else
   alias o="explorer.exe"
 fi
 
-alias .d="cd $HOME/Desktop"
-alias .p="cd $HOME/Projects"
-alias .config="$HOME/.config"
-alias .piop="$HOME/Documents/PlatformIO/Projects"
+alias .d='cd $HOME/Desktop'
+alias .p='cd $HOME/Projects'
+alias .config='$HOME/.config'
+alias .piop='$HOME/Documents/PlatformIO/Projects'

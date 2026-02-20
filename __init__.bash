@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ ! "$ENV_PROFILE" ]]; then
-  echo "Missing Environment variable \$ENV_PROFILE in your ~\.zshrc | ~\.bashrc | ~\.bash_profile | ..."
+  echo 'Missing Environment variable $ENV_PROFILE in your ~\.zshrc | ~\.bashrc | ~\.bash_profile | ...'
   exit 1
 fi
 
@@ -9,18 +9,23 @@ echo "[ENV_PROFILE: $ENV_PROFILE]"
 
 SCRIPT_DIR="$HOME/.terminal"
 
+function header() {
+  printf "\n### %s ###\n" "$1"
+}
+
 # Unlock the ssh-keychain for no password-promts on new sessions
-eval `keychain --eval --agents ssh id_ed25519`
+eval "keychain --eval --agents ssh id_ed25519"
 
 # Load all utils
-echo "\n### Utils ###"
+header "Utils"
 for util in "$SCRIPT_DIR"/utils/*.bash; do
+  # shellcheck source=/dev/null
   source "$util"
-  echo "Loaded => $util"
+  printf "Loaded => %s\n" "$util"
 done
 
 # Load all resources
-echo "\n### Environment ###"
+header "Environment"
 for resource in "$SCRIPT_DIR"/*.bash; do
   if grep -v --silent --quiet "__init__" <<<"$resource"; then
     loadSource "$resource"
@@ -41,4 +46,5 @@ source "$SCRIPT_DIR/tmux/init.bash"
 export MANPAGER='nvim +Man!'
 
 # Set up fzf key bindings and fuzzy completion
+# shellcheck source=/dev/null
 source <(fzf --zsh)

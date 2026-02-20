@@ -1,3 +1,5 @@
+#!/bin/bash
+
 DATA=$(tmux list-windows -a | fzf --reverse | sed 's/: .*//g')
 
 # Check if DATA is empty
