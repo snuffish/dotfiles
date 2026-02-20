@@ -25,12 +25,7 @@ fi
 
 if [[ $OS == "Linux" ]]; then
   function open() {
-    PATH=$1
-    if [ -z "$1" ]; then
-      PATH="."
-    fi
-
-    nautilus --new-window "$PATH"
+    /usr/bin/nautilus --new-window "$1"
   }
 
   alias o="open"
