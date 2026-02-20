@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if [[ ! "$ENV_PROFILE" ]]; then
+  echo "Missing Environment variable \$ENV_PROFILE in your ~\.zshrc | ~\.bashrc | ~\.bash_profile | ..."
+  exit 1
+fi
+
+echo "[ENV_PROFILE: $ENV_PROFILE]"
+
 SCRIPT_DIR="$HOME/.terminal"
 
 # Unlock the ssh-keychain for no password-promts on new sessions
