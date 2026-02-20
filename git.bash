@@ -3,6 +3,7 @@
 # Add ssh-key
 eval && ssh-add "$HOME/.ssh/id_rsa"
 
+# Git
 alias g="git"
 
 alias gst="g status"
@@ -12,12 +13,17 @@ alias gds="g diff --stat"
 alias gch="g checkout"
 alias grh="g reset --hard && gclean"
 
+alias gpa="git-pull-all"
+alias gb="git branch --all | fzf --header 'Select branch to checkout:' --preview 'git show --color=always {-1}' --bind 'enter:become(git checkout {-1})' --height 50% --layout reverse"
+
 alias gclean="g clean -f"
 
+# LazyGit
 alias lg="lazygit"
 alias lgs="lg status"
 alias lgl="lg log"
-alias gb="lg branch"
+alias lgb="lg branch"
+alias lgst="lg stash"
 
 function gdw() {
   SEARCH=$1
@@ -50,6 +56,3 @@ function gp() {
   fi
 }
 
-alias gpa="git-pull-all"
-
-alias gbb="git branch --all | fzf --header 'Select branch to checkout:' --preview 'git show --color=always {-1}' --bind 'enter:become(git checkout {-1})' --height 50% --layout reverse"
