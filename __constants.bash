@@ -1,6 +1,8 @@
 #!/bin/bash
 
-export USERNAME=$(whoami)
+USERNAME=$(whoami)
+
+export USERNAME
 export PATH="$PATH:/usr/libexec/"
 export TLDR_AUTO_UPDATE_DISABLED=true
 

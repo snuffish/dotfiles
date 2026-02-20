@@ -27,9 +27,9 @@ function detect_device_changes() {
   devices_after=$(\ls -d /dev/*)
 
   # Save device lists to files
-  echo "$devices_before" > "$temp_file_before"
-  echo "$devices_after" > "$temp_file_after"
-  
+  echo "$devices_before" >"$temp_file_before"
+  echo "$devices_after" >"$temp_file_after"
+
   # Display results
   echo "Results - Devices that were added or removed:"
   diff "$temp_file_before" "$temp_file_after"
