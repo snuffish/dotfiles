@@ -23,14 +23,14 @@ elif [[ $OS = "Windows" ]]; then
   nvm use v20.11.0
 fi
 
-if [[ $OS == "ManjaroLinux" ]]; then
+if [[ $OS == "Linux" ]]; then
   function open() {
     PATH=$1
     if [ -z "$1" ]; then
       PATH="."
     fi
 
-    /usr/bin/nautilus "$PATH"
+    nautilus --new-window "$PATH"
   }
 
   alias o="open"
