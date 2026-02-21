@@ -6,7 +6,6 @@ eval && ssh-add "$HOME/.ssh/id_rsa"
 # Git
 alias g="git"
 
-alias gst="g status"
 alias gc="g commit --no-verify -m"
 alias gd="g diff -w"
 alias gds="g diff --stat"
@@ -18,9 +17,11 @@ alias gb="git branch --all | fzf --header 'Select branch to checkout:' --preview
 
 alias gclean="g clean -f"
 
+alias gwip="g add . && gc wip && g"
+
 # LazyGit
 alias lg="lazygit"
-alias lgs="lg status"
+alias gst="lg status"
 alias lgl="lg log"
 alias lgb="lg branch"
 alias lgst="lg stash"
