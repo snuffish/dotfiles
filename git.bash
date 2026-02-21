@@ -17,7 +17,7 @@ alias gb="git branch --all | fzf --header 'Select branch to checkout:' --preview
 
 alias gclean="g clean -f"
 
-alias gwip="g add . && gc wip && g"
+alias gwip="g add . && gc wip && gp"
 
 # LazyGit
 alias lg="lazygit"
