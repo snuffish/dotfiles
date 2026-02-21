@@ -21,7 +21,7 @@ alias gwip="g add . && g status && gc wip && gp"
 
 # LazyGit
 alias lg="lazygit"
-alias gst="lg status"
+alias gs="lg status"
 alias lgl="lg log"
 alias lgb="lg branch"
 alias lgst="lg stash"
