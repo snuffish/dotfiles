@@ -6,9 +6,6 @@ else
   alias reload="source ~/.zshrc"
 fi
 
-alias pbcopy='xclip -selection clipboard'
-alias pbpaste='xclip -selection clipboard -o'
-
 alias pwdc="pwd|pbcopy"
 
 alias q="exit"
@@ -27,5 +24,3 @@ alias hs="history"
 alias timestamp="date +%s%N | cut -b1-13"
 
 alias xmod="xmodmap ~/.terminal/.Xmodmap"
-
-# function regex { gawk 'match($0,/'$1'/, ary) {print ary['${2:-'0'}']}'; }
