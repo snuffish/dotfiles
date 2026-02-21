@@ -17,6 +17,7 @@ alias gb="git branch --all | fzf --header 'Select branch to checkout:' --preview
 
 alias gclean="g clean -f"
 
+alias gst="g status"
 alias gwip="g add . && g status && gc wip && gp"
 
 # LazyGit
@@ -33,7 +34,7 @@ function gdw() {
     return
   fi
 
-  gd *$SEARCH*
+  gd "*$SEARCH*"
 }
 
 # Create and push a tag to Bitbcket
