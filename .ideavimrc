@@ -144,6 +144,11 @@ map <leader>nb <Action>(NewScratchFile)
 map <leader>cr <Action>(RenameElement)
 map <leader>fc <Action>(Debugger.ReloadFile)
 map <leader>nf <Action>(NewFile)
+map <leader>nn <Action>(NewScratchFile)
+
+if has('ide') && &ide =~? 'datagrip'
+    nmap <leader>ns <Action>(Jdbc.OpenConsole.New.Generate)
+endif
 
 if has('ide') && &ide =~? 'webstorm' || &ide =~? 'rider'
     map <leader>nc <Action>(NewFile)
@@ -173,6 +178,9 @@ let g:WhichKeyDesc_file_opt_copy_path = "<leader>fy Copy Absolute Path"
 
 map <leader>fp <Action>(ShowFilePath)
 let g:WhichKeyDesc_file_opt_show_path = "<leader>fp Show File Path"
+
+""""""""""""""""""""""""AI""""""""""""""""""""""""""""
+map <leader>aa <Action>(AIAssistant.Editor.AskAiAssistantInEditor)
 
 """"""""""""""""""""""Editor""""""""""""""""""""""""""
 nmap <C-w><C-q> <Action>(CloseContent)
