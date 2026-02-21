@@ -144,6 +144,7 @@ map <leader>nb <Action>(NewScratchFile)
 map <leader>cr <Action>(RenameElement)
 map <leader>fc <Action>(Debugger.ReloadFile)
 map <leader>nf <Action>(NewFile)
+map <leader>nn <Action>(NewScratchFile)
 
 if has('ide') && &ide =~? 'webstorm' || &ide =~? 'rider'
     map <leader>nc <Action>(NewFile)
