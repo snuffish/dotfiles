@@ -3,9 +3,17 @@
 # Add ssh-key
 eval && ssh-add "$HOME/.ssh/id_rsa"
 
+# LazyGit
+alias lg="lazygit"
+alias gs="lg status"
+alias lgl="lg log"
+alias lgb="lg branch"
+alias lgst="lg stash"
+
 # Git
 alias g="git"
 
+alias gp="g pull"
 alias gc="g commit --no-verify -m"
 alias gd="g diff -w"
 alias gds="g diff --stat"
@@ -18,14 +26,8 @@ alias gb="git branch --all | fzf --header 'Select branch to checkout:' --preview
 alias gclean="g clean -f"
 
 alias gst="g status"
-alias gwip="g add . && g status && gc wip && gp"
+alias gwip="g add . && g status && gc wip && gP"
 
-# LazyGit
-alias lg="lazygit"
-alias gs="lg status"
-alias lgl="lg log"
-alias lgb="lg branch"
-alias lgst="lg stash"
 
 function gdw() {
   SEARCH=$1
@@ -43,7 +45,7 @@ function gt() {
 }
 
 # Commit and push the changes
-function gp() {
+function gP() {
   if [ -n "$1" ]; then
     gc "$1"
   fi
