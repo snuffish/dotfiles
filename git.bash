@@ -3,9 +3,17 @@
 # Add ssh-key
 eval && ssh-add "$HOME/.ssh/id_rsa"
 
+# LazyGit
+alias lg="lazygit"
+alias gs="lg status"
+alias lgl="lg log"
+alias lgb="lg branch"
+alias lgst="lg stash"
+
 # Git
 alias g="git"
 
+alias gp="g pull"
 alias gc="g commit --no-verify -m"
 alias gd="g diff -w"
 alias gds="g diff --stat"
