@@ -18,14 +18,14 @@ alias gb="git branch --all | fzf --header 'Select branch to checkout:' --preview
 alias gclean="g clean -f"
 
 alias gst="g status"
-alias gwip="g add . && g status && gc wip && gp"
+alias gwip="g add . && g status && gc wip && gP"
 
 # LazyGit
 alias lg="lazygit"
 alias gs="lg status"
 alias lgl="lg log"
 alias lgb="lg branch"
-alias lgst="lg stash"
+alias gsT="lg stash"
 
 function gdw() {
   SEARCH=$1
@@ -43,7 +43,7 @@ function gt() {
 }
 
 # Commit and push the changes
-function gp() {
+function gP() {
   if [ -n "$1" ]; then
     gc "$1"
   fi
