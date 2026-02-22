@@ -130,8 +130,7 @@ map <leader>gf <Action>(com.mituuz.fuzzier.FuzzierVCS)
 map <leader>mf <Action>(com.mituuz.fuzzier.FuzzyMover)
 
 """""""""""""""""""""""""LSP"""""""""""""""""""""""""""
-
-map <leader>ct
+map <leader>ct <Action>(EditorToggleUseSoftWraps)
 map gr <Action>(ShowUsages)
 map gi <Action>(GotoImplementation)
 map gD <Action>(GotoTypeDeclaration)
@@ -139,6 +138,7 @@ map gt <Action>(CallHierarchy)
 map <leader>cf <Action>(ReformatCode)
 
 """"""""""""""""""""""""Code"""""""""""""""""""""""""""
+map <leader>w <Action>(EditorToggleUseSoftWraps)
 map <leader>ng <Action>(Generate)
 map <leader>nb <Action>(NewScratchFile)
 map <leader>cr <Action>(RenameElement)
