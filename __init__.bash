@@ -14,7 +14,8 @@ function header() {
 }
 
 # Unlock the ssh-keychain for no password-promts on new sessions
-eval "keychain --eval --agents ssh id_ed25519"
+eval "keychain --eval ssh ~./ssh/id_ed25519"
+eval "keychain --eval ssh ~./ssh/id_rsa"
 
 # Load all utils
 header "Utils"
