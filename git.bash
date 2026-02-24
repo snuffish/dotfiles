@@ -13,7 +13,7 @@ alias lgst="lg stash"
 # Git
 alias g="git"
 
-alias gp="g pull"
+alias gP="g pull"
 alias gc="g commit --no-verify -m"
 alias gd="g diff -w"
 alias gds="g diff --stat"
