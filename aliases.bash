@@ -28,8 +28,6 @@ if [[ $ENV_PROFILE == "Linux" ]]; then
   alias o="open"
 elif [[ $ENV_PROFILE == 'darwin'* ]]; then
   alias o="open"
-else
-  alias o="explorer.exe"
 fi
 
 alias .d='cd $HOME/Desktop'
