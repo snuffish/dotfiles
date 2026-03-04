@@ -212,8 +212,14 @@ nmap <M-q> <Action>(HideActiveWindow)
 """"""""""""""""""""""Git"""""""""""""""""""""""""
 nmap <leader>gd <Action>(Git.CompareWithBranch)
 
+" Normal mode only
+"nnoremap <leader>gf <Action>(Vcs.ShowTabbedFileHistory)
+
+" Visual selection only
+"xnoremap <leader>gf <Action>(Vcs.ShowHistoryForBlock)
+
 """"""""""""""""""""""Terminal"""""""""""""""""""""""""
-nmap <M-d> <Action>(ActivateDebugToolWindow)
+nmap <M-d> <Action>(ActivateDebugToolWindow)
 nmap <C-/> <Action>(ActivateTerminalToolWindow)
 
 """"""""""""""""""""""Debug/Run""""""""""""""""""""""""
