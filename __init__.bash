@@ -17,6 +17,10 @@ function header() {
 eval "keychain --eval ssh ~./ssh/id_ed25519"
 eval "keychain --eval ssh ~./ssh/id_rsa"
 
+# Load/export .env
+# header "Environment variables (.env)"
+# source "$SCRIPT_DIR/.env"
+
 # Load all utils
 header "Utils"
 for util in "$SCRIPT_DIR"/utils/*.bash; do
