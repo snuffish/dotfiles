@@ -10,6 +10,9 @@ alias lgl="lg log"
 alias lgb="lg branch"
 alias lgst="lg stash"
 
+# LazyPulumi
+alias lazyp="lazy-pulumi"
+
 # Git
 alias g="git"
 
@@ -27,13 +30,6 @@ alias gclean="g clean -f"
 
 alias gst="g status"
 alias gwip="g add . && g status && gc wip && gP"
-
-# LazyGit
-alias lg="lazygit"
-alias gs="lg status"
-alias lgl="lg log"
-alias lgb="lg branch"
-alias gsT="lg stash"
 
 function gdw() {
   SEARCH=$1
