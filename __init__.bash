@@ -18,7 +18,7 @@ eval "keychain --eval ssh ~./ssh/id_ed25519"
 eval "keychain --eval ssh ~./ssh/id_rsa"
 
 header "Environment variables (.env)"
-source "$SCRIPT_DIR/.env"
+source "$SCRIPT_DIR/.env.bash"
 
 # Load all utils
 header "Utils"
