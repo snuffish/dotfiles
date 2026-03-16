@@ -17,8 +17,6 @@ function header() {
 eval "keychain --eval ssh ~./ssh/id_ed25519"
 eval "keychain --eval ssh ~./ssh/id_rsa"
 
-header "Environment variables (.env)"
-source "$SCRIPT_DIR/.env.bash"
 
 # Load all utils
 header "Utils"
@@ -28,9 +26,12 @@ for util in "$SCRIPT_DIR"/utils/*.bash; do
   printf "Loaded => %s\n" "$util"
 done
 
+header "Environment variables"
+loadSource "$SCRIPT_DIR/.env.bash"
+
 # Load all resources
 header "Environment"
-for resource in "$SCRIPT_DIR"/[^.]*.bash; do
+for resource in "$SCRIPT_DIR"/*.bash; do
   if grep -v --silent --quiet "__init__" <<<"$resource"; then
     loadSource "$resource"
   fi
