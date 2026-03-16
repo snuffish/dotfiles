@@ -30,7 +30,7 @@ done
 
 # Load all resources
 header "Environment"
-for resource in "$SCRIPT_DIR"/*.bash; do
+for resource in "$SCRIPT_DIR"/[^.]*.bash; do
   if grep -v --silent --quiet "__init__" <<<"$resource"; then
     loadSource "$resource"
   fi
