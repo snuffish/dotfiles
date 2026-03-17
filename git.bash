@@ -29,7 +29,7 @@ alias gb="git branch --all | fzf --header 'Select branch to checkout:' --preview
 alias gclean="g clean -f"
 
 alias gst="g status"
-alias gwip="g add . && g status && gc wip && gP"
+alias gcwip="g add . && g status && gc wip && gP"
 
 function gdw() {
   SEARCH=$1
