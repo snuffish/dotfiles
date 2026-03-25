@@ -10,9 +10,6 @@ alias lgl="lg log"
 alias lgb="lg branch"
 alias lgst="lg stash"
 
-# LazyPulumi
-alias lazyp="lazy-pulumi"
-
 # Git
 alias g="git"
 
