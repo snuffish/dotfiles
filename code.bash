@@ -1,6 +1,8 @@
 #!/bin/bash
 
-alias code="antigravity"
+ag() {
+  nohup antigravity "$@" >/dev/null 2>&1 &
+}
 
 alias tf="tail -f"
 findPort() {
