@@ -13,7 +13,6 @@ function header() {
   printf "\n### %s ###\n" "$1"
 }
 
-#
 # Unlock the ssh-keychain for no password-promts on new sessions
 eval "keychain --eval ssh ~./ssh/id_ed25519"
 eval "keychain --eval ssh ~./ssh/id_rsa"
