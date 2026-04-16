@@ -5,15 +5,19 @@ ag() {
 }
 
 agp() {
+  local dir="$HOME/.config/Antigravity/User"
   (
-    cd "$HOME/.gemini/antigravity" || exit
-    g add .
-    gc "push" || echo "No changes to commit"
-    gp
+    cd "$dir" || exit
+    git add .
+    git commit -m "push" || echo "No changes to commit"
+    git push
   )
 }
 
-alias agpull='git -C "$HOME/.gemini/antigravity" pull'
+agpull() {
+  local dir="$HOME/.config/Antigravity/User"
+  git -C "$dir" pull
+}
 
 alias tf="tail -f"
 findPort() {
