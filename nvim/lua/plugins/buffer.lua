@@ -10,6 +10,12 @@ return {
       silent = true,
     },
     {
+      "<leader>bq",
+      "<cmd>lua Snacks.bufdelete.delete()<CR>",
+      desc = "Delete Buffer",
+      silent = true,
+    },
+    {
       "<localleader>h",
       function()
         vim.utils.trigger_keys("<leader>uh")
