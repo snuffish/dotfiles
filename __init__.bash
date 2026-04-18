@@ -17,6 +17,7 @@ function header() {
 eval "keychain --eval ssh ~./ssh/id_ed25519"
 eval "keychain --eval ssh ~./ssh/id_rsa"
 
+alias sudo="sudo "
 
 # Load all utils
 header "Utils"
