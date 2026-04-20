@@ -1,17 +1,11 @@
 #!/bin/bash
 
-typeset -A AG_DIRS
-AG_DIRS=(
-  Linux "$HOME/.config/Antigravity/User"
-  Mac "$HOME/Library/Application Support/Antigravity/User"
-)
-
 ag() {
   nohup antigravity "$@" >/dev/null 2>&1 &
 }
 
 agp() {
-  local dir="${AG_DIRS[$ENV_PROFILE]}"
+  local dir="$AG_USER_DIR"
   (
     cd "$dir" || exit
     git add .
@@ -21,7 +15,7 @@ agp() {
 }
 
 agpull() {
-  local dir="${AG_DIRS[$ENV_PROFILE]}"
+  local dir="$AG_USER_DIR"
   git -C "$dir" pull
 }
 
