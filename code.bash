@@ -5,18 +5,21 @@ ag() {
 }
 
 agp() {
-  local dir="$AG_USER_DIR"
+  echo "[AG_USER_DIR] $AG_USER_DIR"
   (
-    cd "$dir" || exit
-    git add .
+    cd "$AG_USER_DIR" || exit
+    git add . && echo "[*] Adding files"
+    echo "[*] Commiting files"
     git commit -m "push" || echo "No changes to commit"
+    echo "[*] Pushing files"
     git push
   )
 }
 
 agpull() {
-  local dir="$AG_USER_DIR"
-  git -C "$dir" pull
+  echo "[AG_USER_DIR] $AG_USER_DIR"
+  echo "[*] Pulling"
+  git -C "$AG_USER_DIR" pull
 }
 
 alias tf="tail -f"
