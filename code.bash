@@ -10,7 +10,7 @@ agp() {
     cd "$AG_USER_DIR" || exit
     git add . && echo "[*] Adding files"
     echo "[*] Commiting files"
-    git commit -m "push" || echo "No changes to commit" && exit
+    git commit -m "push" || echo "No changes to commit"
     echo "[*] Pushing files"
     git push
   )
