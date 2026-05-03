@@ -6,6 +6,11 @@ else
   alias reload="source ~/.zshrc"
 fi
 
+if [[ $ENV_PROFILE == "Linux" ]]; then
+  alias pbcopy="wl-copy"
+  alias pbpaste="wl-paste"
+fi
+
 alias pwdc="pwd|pbcopy"
 
 alias q="exit"
