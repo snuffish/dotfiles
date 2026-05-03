@@ -11,7 +11,7 @@
 [[ $(aliasExists "..") -eq 0 ]] && alias ..="cd .."
 
 if [[ $ENV_PROFILE == "Linux" ]]; then
-  alias .disken="cd /run/media/snuffish/Disken"
+  alias .disken="cd /mnt/disken"
 fi
 
 alias .tmp='cd "$HOME/.tmp"'
