@@ -10,6 +10,10 @@
 [[ $(aliasExists ".") -eq 0 ]] && alias .='cd "$HOME"'
 [[ $(aliasExists "..") -eq 0 ]] && alias ..="cd .."
 
+if [[ $ENV_PROFILE == "Linux" ]]; then
+  alias .disken="cd /run/media/snuffish/Disken"
+fi
+
 alias .tmp='cd "$HOME/.tmp"'
 alias .logs='cd "$HOME/.logs"'
 
@@ -18,6 +22,7 @@ alias -- -="cd -"
 mkcd() {
   mkdir -p "$@" && cd "$_" || return
 }
+
 
 alias rm="rm -rf"
 
