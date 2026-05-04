@@ -23,7 +23,6 @@ mkcd() {
   mkdir -p "$@" && cd "$_" || return
 }
 
-
 alias rm="rm -rf"
 
 alias ls="exa -la --icons --group-directories-first --color=always"
@@ -42,4 +41,8 @@ alias .ghostty='cd "$HOME/Library/Application Support/com.mitchellh.ghostty"'
 
 alias space="du -d1 -h 2>/dev/null | sort -h"
 
-alias diskspace='df -h -x squashfs -x tmpfs -x devtmpfs'
+if [[ $ENV_PROFILE == "Linux" ]]; then
+  alias diskspace='df -h -x squashfs -x tmpfs -x devtmpfs'
+else
+  alias diskspace="df -h /"
+fi
