@@ -227,6 +227,10 @@ map <leader>rr <Action>(Run)
 map <leader>rd <Action>(Debug)
 map <leader>dq <Action>(Stop)
 
+if has('ide') && &ide =~? 'rider'
+    map <leader>rD <Action>(RiderUnitTestDebugContextAction)
+endif
+
 map <leader>rf <Action>(Debugger.ReloadFile)
 
 map <leader>db <Action>(ToggleLineBreakpoint)
