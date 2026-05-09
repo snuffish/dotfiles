@@ -33,7 +33,7 @@ run_fzf_json() {
   local title=""
   local key=""
 
-  # Hantera flaggor och argument
+  # Parse arguments
   while [[ $# -gt 0 ]]; do
     case "$1" in
     -t | --title)
@@ -51,35 +51,37 @@ run_fzf_json() {
     esac
   done
 
-  # Om ingen fil angavs, använd standardfilen i skriptets mapp
+  # Fallback to default file in script directory if no path provided
   config_file="${config_file:-$script_dir/commands.json}"
 
-  # Valideringar
+  # Validation
   if [[ ! -f "$config_file" ]]; then
-    echo "Fel: Hittade inte JSON-filen: $config_file"
+    echo "Error: JSON file not found at $config_file"
     return 1
   fi
 
   if [[ -z "$key" ]]; then
-    echo "Fel: Ange en nyckel (t.ex. 'dev' eller 'git')."
+    echo "Usage: run_fzf_json [file.json] <key> [--title 'Custom Title']"
     return 1
   fi
 
-  # Kontrollera om nyckeln faktiskt finns i filen
+  # Check if the key exists in the JSON
   if ! jq -e ".[\"$key\"]" "$config_file" >/dev/null 2>&1; then
-    echo "Fel: Nyckeln '$key' hittades inte i $config_file"
+    echo "Error: Key '$key' not found in $config_file"
     return 1
   fi
 
-  local fzf_header="${title:-Run ($key):}"
+  # Set header: use provided title or fallback to the key name
+  local fzf_header="${title:-Select command ($key):}"
 
-  # Hämta namn i originalordning
+  # Extract keys in original order using keys_unsorted
   local choice_name=$(jq -j ".[\"$key\"] | keys_unsorted[] + \"\\u0000\"" "$config_file" |
     fzf --read0 --height 40% --reverse --header "$fzf_header")
 
+  # Execute the command if a choice was made
   if [[ -n "$choice_name" ]]; then
     local cmd=$(jq -r ".[\"$key\"][\"$choice_name\"]" "$config_file")
-    echo "Run: $cmd"
+    echo "Executing: $cmd"
     eval "$cmd"
   fi
 }
