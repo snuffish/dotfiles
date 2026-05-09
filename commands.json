@@ -1,0 +1,8 @@
+{
+  "meligo": {
+    "test frontend tail": "az webapp log tail --name $MELIGO_TEST_WEBAPP_NAME --resource-group $MELIGO_TEST_RESOUCE_GROUP",
+    "test backend tail": "az webapp log tail --name MELIGO_TEST_API --resource-group MELIGO_TEST_API_RG",
+    "prod frontend tail": "az webapp log tail --name $MELIGO_PROD_WEBAPP_NAME --resource-group $MELIGO_PROD_RESOURCE_GROUP",
+    "prod backend tail": "az webapp log tail --name MELIGO_PROD_API --resource-group MELIGO_PROD_API_RG"
+  }
+}
