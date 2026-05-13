@@ -204,6 +204,8 @@ nmap <leader>td <Action>(ActivateTODOToolWindow)
 
 nmap <M-q> <Action>(HideActiveWindow)
 
+nmap <leader>bb <Action>(ToggleBookmark)
+
 "nmap <A-l> <C-W>l
 "nmap <A-k> <C-W>k
 "nmap <A-j> <C-W>j
