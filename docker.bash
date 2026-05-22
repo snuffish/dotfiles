@@ -36,4 +36,4 @@ function tagDockerImage() {
   docker tag "$CONTAINER" "$REPOSITORY/$TAG"
 }
 
-alias lzd="lazydocker"
+alias ld="lazydocker"
