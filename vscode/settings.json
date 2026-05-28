@@ -1,0 +1,273 @@
+{
+  /* --- Vim Emulation Configuration --- */
+  "vim.leader": " ",
+
+  // Emulate vim plugins
+  "vim.surround": true,
+  "vim.sneak": true,
+  "vim.commentary": true,
+  "vim.highlightedyank.enable": true,
+
+  // Vim behavior options
+  "vim.number": true,
+  "vim.relativenumber": true,
+  "vim.scrolloff": 5,
+  "vim.incsearch": true,
+  "vim.smartcase": true,
+  "vim.timeout": 99999, // Simulates notimeout
+
+  /* --- Normal Mode Bindings --- */
+  "vim.normalModeKeyBindingsNonRecursive": [
+    // Basic Navigation & Tab Control
+    { "before": ["K"], "after": ["5", "k", "z", "z"] },
+    { "before": ["J"], "after": ["5", "j", "z", "z"] },
+    { "before": ["L"], "commands": ["workbench.action.nextEditor"] },
+    { "before": ["H"], "commands": ["workbench.action.previousEditor"] },
+
+    // Editing operations
+    { "before": ["x"], "after": ["\"", "_", "x"] },
+    { "before": ["X"], "after": ["\"", "_", "X"] },
+    { "before": ["Y"], "after": ["y", "$"] },
+    { "before": ["y", "0"], "after": ["m", "z", "y", "^", "`", "z", "h"] },
+    { "before": ["c", "0"], "after": ["\"", "_", "c", "g", "^"] },
+    { "before": ["d", "0"], "after": ["\"", "_", "d", "g", "^"] },
+
+    // Center screen on movements
+    { "before": ["<PageDown>"], "after": ["<C-d>", "z", "z"] },
+    { "before": ["<PageUp>"], "after": ["<C-u>", "z", "z"] },
+    { "before": ["}"], "after": ["}", "z", "z"] },
+    { "before": ["{"], "after": ["{", "z", "z"] },
+    { "before": ["("], "after": ["(", "z", "z"] },
+    { "before": [")"], "after": [")", "z", "z"] },
+    { "before": ["n"], "after": ["n", "z", "z", "z", "v"] },
+    { "before": ["N"], "after": ["N", "z", "z", "z", "v"] },
+    { "before": ["g", "g"], "after": ["g", "g", "_"] },
+    { "before": ["<C-d>"], "after": ["<C-d>", "z", "z"] },
+    { "before": ["<C-u>"], "after": ["<C-u>", "z", "z"] },
+
+    // Disable recording macro by default, map to Ctrl+q
+    { "before": ["q"], "commands": [""] },
+    { "before": ["<C-q>"], "after": ["q"] },
+
+    // Matching pairs
+    { "before": ["m"], "after": ["%"] },
+    { "before": ["M"], "after": ["V", "%"] },
+    { "before": ["v", "a", "g"], "after": ["G", "V", "g", "g"] },
+
+    // Line duplication
+    { "before": ["g", "m", "m"], "after": ["y", "y", "p"] },
+
+    // File / Search / Goto Actions
+    {
+      "before": ["<leader>", "/"],
+      "commands": ["workbench.action.findInFiles"],
+    },
+    {
+      "before": ["<leader>", "<leader>"],
+      "commands": ["workbench.action.quickOpen"],
+    },
+    {
+      "before": ["<leader>", "f", "r"],
+      "commands": ["workbench.action.openRecent"],
+    },
+    {
+      "before": ["<leader>", "s", "s"],
+      "commands": ["workbench.action.showAllSymbols"],
+    },
+    { "before": ["<leader>", "c", "r"], "commands": ["editor.action.rename"] },
+    {
+      "before": ["<leader>", "z"],
+      "commands": ["workbench.action.toggleZenMode"],
+    },
+    { "before": ["<S-Enter>"], "after": ["a", "<enter>", "<Esc>", "k", "$"] },
+    { "before": ["g", "/"], "commands": ["workbench.action.findInFiles"] },
+
+    // LSP / Navigation
+    {
+      "before": ["<leader>", "c", "t"],
+      "commands": ["editor.action.toggleWordWrap"],
+    },
+    { "before": ["g", "r"], "commands": ["editor.action.goToReferences"] },
+    { "before": ["g", "i"], "commands": ["editor.action.goToImplementation"] },
+    { "before": ["g", "D"], "commands": ["editor.action.goToTypeDefinition"] },
+    { "before": ["g", "t"], "commands": ["editor.showCallHierarchy"] },
+    {
+      "before": ["<leader>", "c", "f"],
+      "commands": ["editor.action.formatDocument"],
+    },
+
+    // Code & Workspace
+    {
+      "before": ["<leader>", "w"],
+      "commands": ["editor.action.toggleWordWrap"],
+    },
+    {
+      "before": ["<leader>", "n", "g"],
+      "commands": ["editor.action.sourceAction"],
+    },
+    {
+      "before": ["<leader>", "n", "b"],
+      "commands": ["workbench.action.files.newUntitledFile"],
+    },
+    {
+      "before": ["<leader>", "n", "f"],
+      "commands": ["workbench.action.files.newUntitledFile"],
+    },
+    {
+      "before": ["<leader>", "n", "n"],
+      "commands": ["workbench.action.files.newUntitledFile"],
+    },
+    {
+      "before": ["<leader>", "s", "w"],
+      "commands": ["editor.action.surroundWithSnippet"],
+    },
+    {
+      "before": ["<leader>", "c", "o"],
+      "commands": ["editor.action.organizeImports"],
+    },
+    { "before": ["<A-j>"], "commands": ["editor.action.moveLinesDownAction"] },
+    { "before": ["<A-k>"], "commands": ["editor.action.moveLinesUpAction"] },
+
+    // Outline / Structure
+    {
+      "before": ["<leader>", "o"],
+      "commands": ["workbench.action.gotoSymbol"],
+    },
+    { "before": ["<leader>", "O"], "commands": ["outline.focus"] },
+    { "before": ["<leader>", "f", "l"], "commands": ["timeline.focus"] }, // Native Local History / Timeline
+    { "before": ["<leader>", "f", "y"], "commands": ["copyFilePath"] },
+    {
+      "before": ["<leader>", "f", "p"],
+      "commands": ["workbench.files.action.showActiveFileInExplorer"],
+    },
+
+    // AI Integrations
+    { "before": ["<leader>", "a", "a"], "commands": ["inlineChat.start"] },
+    {
+      "before": ["<leader>", "a", "i"],
+      "commands": ["workbench.action.chat.focus"],
+    },
+
+    // Split / Window Management
+    {
+      "before": ["<C-w>", "<C-q>"],
+      "commands": ["workbench.action.closeActiveEditor"],
+    },
+    {
+      "before": ["Z", "Q"],
+      "commands": ["workbench.action.closeOtherEditors"],
+    },
+    {
+      "before": ["Z", "L"],
+      "commands": ["workbench.action.closeEditorsToTheRight"],
+    },
+    {
+      "before": ["Z", "H"],
+      "commands": ["workbench.action.closeEditorsToTheLeft"],
+    },
+    { "before": ["z", "A"], "commands": ["editor.unfoldAll"] },
+    {
+      "before": ["<leader>", "x"],
+      "commands": ["workbench.actions.view.problems"],
+    },
+    {
+      "before": ["<C-w>", "<C-u>"],
+      "commands": ["workbench.action.joinAllGroups"],
+    },
+    {
+      "before": ["<C-w>", "<C-h>"],
+      "commands": ["workbench.action.splitEditor"],
+    },
+    {
+      "before": ["<C-w>", "<C-d>"],
+      "commands": ["workbench.action.splitEditorDown"],
+    },
+
+    // Extensions & Tools
+    {
+      "before": ["<leader>", "g", "b"],
+      "commands": ["gitlens.toggleFileBlame"],
+    }, // Requires GitLens extension
+    { "before": ["<leader>", "t", "d"], "commands": ["todo-tree.focus"] }, // Requires Todo Tree extension
+    { "before": ["<M-q>"], "commands": ["workbench.action.closeSidebar"] },
+    { "before": ["<leader>", "b", "b"], "commands": ["bookmarks.toggle"] }, // Requires Bookmarks extension
+    {
+      "before": ["<leader>", "g", "d"],
+      "commands": ["git.compareWithSelected"],
+    },
+
+    // Terminal / Debug Control
+    { "before": ["<M-d>"], "commands": ["workbench.view.debug"] },
+    {
+      "before": ["<C-/>"],
+      "commands": ["workbench.action.terminal.toggleTerminal"],
+    },
+    {
+      "before": ["<leader>", "r", "r"],
+      "commands": ["workbench.action.debug.run"],
+    },
+    {
+      "before": ["<leader>", "r", "d"],
+      "commands": ["workbench.action.debug.start"],
+    },
+    {
+      "before": ["<leader>", "d", "q"],
+      "commands": ["workbench.action.debug.stop"],
+    },
+    {
+      "before": ["<leader>", "r", "f"],
+      "commands": ["workbench.action.debug.restart"],
+    },
+    {
+      "before": ["<leader>", "d", "b"],
+      "commands": ["editor.action.toggleBreakpoint"],
+    },
+    {
+      "before": ["<leader>", "d", "e"],
+      "commands": ["workbench.debug.action.focusWatchView"],
+    },
+    {
+      "before": ["<leader>", "d", "d"],
+      "commands": ["workbench.debug.action.focusBreakpointsView"],
+    },
+    { "before": ["<C-j>"], "commands": ["workbench.action.debug.stepOver"] },
+    { "before": ["<C-k>"], "commands": ["workbench.action.debug.continue"] },
+    { "before": ["<C-h>"], "commands": ["workbench.action.debug.stepOut"] },
+    { "before": ["<C-l>"], "commands": ["workbench.action.debug.stepInto"] },
+
+    // Method Navigation
+    {
+      "before": ["[", "["],
+      "commands": ["gotoNextPreviousMember.previousMember"],
+    }, // Requires Go to Next/Previous Member extension
+    { "before": ["]", "]"], "commands": ["gotoNextPreviousMember.nextMember"] },
+  ],
+
+  /* --- Visual Mode Bindings --- */
+  "vim.visualModeKeyBindingsNonRecursive": [
+    { "before": ["K"], "after": ["5", "k", "z", "z"] },
+    { "before": ["J"], "after": ["5", "j", "z", "z"] },
+    { "before": ["L"], "commands": ["workbench.action.nextEditor"] },
+    { "before": ["H"], "commands": ["workbench.action.previousEditor"] },
+    { "before": ["g", "g"], "after": ["g", "g", "_"] },
+    { "before": ["m"], "after": ["%"] },
+    { "before": ["M"], "after": ["V", "%"] },
+    { "before": ["<"], "after": ["<", "g", "v"] },
+    { "before": [">"], "after": [">", "g", "v"] },
+  ],
+
+  /* --- Insert Mode Bindings --- */
+  "vim.insertModeKeyBindings": [
+    { "before": ["<C-l>"], "after": ["<Right>"] },
+    { "before": ["<C-k>"], "after": ["<Up>"] },
+    { "before": ["<C-j>"], "after": ["<Down>"] },
+    { "before": ["<C-h>"], "after": ["<Left>"] },
+    { "before": ["<C-e>"], "commands": ["cursorEnd"] },
+    { "before": ["<C-a>"], "commands": ["cursorLineStart"] },
+  ],
+  "editor.lineNumbers": "on",
+  "editor.cursorSurroundingLines": 5,
+  "editor.inlineSuggest.enabled": false,
+  "geminicodeassist.inlineSuggestions.enableAuto": false,
+  "geminicodeassist.inlineSuggestions.nextEditPredictions": false,
+}
