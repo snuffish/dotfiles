@@ -265,7 +265,7 @@
     { "before": ["<C-e>"], "commands": ["cursorEnd"] },
     { "before": ["<C-a>"], "commands": ["cursorLineStart"] },
   ],
-  "editor.lineNumbers": "on",
+  "editor.lineNumbers": "relative",
   "editor.cursorSurroundingLines": 5,
   "editor.inlineSuggest.enabled": false,
   "geminicodeassist.inlineSuggestions.enableAuto": false,
