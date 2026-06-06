@@ -92,6 +92,7 @@ let g:WhichKeyDesc_goto = "g Goto"
 let g:WhichKeyDesc_code = "<leader>c Code"
 let g:WhichKeyDesc_new = "<leader>n New"
 let g:WhichKeyDesc_run = "<leader>r Run"
+
 let g:WhichKeyDesc_debug = "<leader>d Debug"
 let g:WhichKeyDesc_search = "<leader>s Search"
 let g:WhichKeyDesc_files = "<leader>f Files"
@@ -143,8 +144,12 @@ map <leader>ng <Action>(Generate)
 map <leader>nb <Action>(NewScratchFile)
 map <leader>cr <Action>(RenameElement)
 map <leader>fc <Action>(Debugger.ReloadFile)
-map <leader>nf <Action>(NewFile)
-map <leader>nn <Action>(NewScratchFile)
+
+if has('ide') && &ide =~? 'webstorm' || &ide =~? 'rider'
+    map <leader>nf <Action>(NewElementSamePlace)
+else
+    map <leader>nf <Action>(NewFile)
+endif
 
 if has('ide') && &ide =~? 'datagrip'
     nmap <leader>ns <Action>(Jdbc.OpenConsole.New.Generate)

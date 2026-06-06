@@ -7,8 +7,8 @@
   "vim.commentary": true,
   "vim.highlightedyank.enable": true,
   // Vim behavior options
-  "vim.number": true,
-  "vim.relativenumber": true,
+  // "vim.number": true,
+  // "vim.relativenumber": true,
   "vim.scrolloff": 5,
   "vim.incsearch": true,
   "vim.smartcase": true,
@@ -863,6 +863,14 @@
         "gotoNextPreviousMember.nextMember"
       ]
     },
+    {
+      "before": [
+        "s"
+      ],
+      "commands": [
+        "flash-vscode.start"
+      ]
+    },
   ],
   /* --- Visual Mode Bindings --- */
   "vim.visualModeKeyBindingsNonRecursive": [
@@ -1004,9 +1012,13 @@
       ]
     },
   ],
-  "editor.lineNumbers": "relative",
   "editor.cursorSurroundingLines": 5,
   "editor.inlineSuggest.enabled": false,
   "geminicodeassist.inlineSuggestions.enableAuto": false,
   "geminicodeassist.inlineSuggestions.nextEditPredictions": false,
+  "editor.lineNumbers": "relative",
+  "flash-vscode.caseSensitive": false,
+  "gitlens.ai.model": "gitkraken",
+  "gitlens.ai.gitkraken.model": "gemini:gemini-2.5-flash",
+  "gitlens.currentLine.enabled": false
 }
