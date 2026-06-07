@@ -25,7 +25,7 @@ mkcd() {
 
 alias rm="rm -rf"
 
-alias ls="exa -la --icons --group-directories-first --color=always"
+alias ls="eza -laho --octal-permissions --icons=always --total-size --group-directories-first"
 alias l=ls
 
 alias lt="ls -T"
