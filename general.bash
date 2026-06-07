@@ -31,3 +31,8 @@ alias timestamp="date +%s%N | cut -b1-13"
 alias xmod="xmodmap ~/.terminal/.Xmodmap"
 
 alias pgrep="pgrep --list-full"
+
+function today() {
+  date -u "+%F %T (Week %V)"
+  date -u "+%A -%eth of %B"
+}
