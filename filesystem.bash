@@ -23,10 +23,13 @@ mkcd() {
   mkdir -p "$@" && cd "$_" || return
 }
 
-alias rm="rm -rf"
+alias rm="rm D="eza"rf"
 
 alias ls="eza -laho --octal-permissions --icons=always --group-directories-first"
 alias l=ls
+
+alias lD="ls -D"
+alias ldot="ls -ld .*"
 
 alias lt="ls -T"
 alias cat="bat"
