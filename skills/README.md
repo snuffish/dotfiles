@@ -11,7 +11,7 @@ collisions.
 
 ## Layout
 
-```
+```plaintext
 skills/
   <general skills>/          # reusable across any project (e.g. modern-csharp)
   Projects/
