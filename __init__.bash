@@ -22,13 +22,18 @@ alias sudo="sudo "
 # Load all utils
 header "Utils"
 for util in "$SCRIPT_DIR"/utils/*.bash; do
-  # shellcheck source=/dev/null
-  source "$util"
+  if [[ -f "$util" ]]; then
+    source "$util"
+  fi
   printf "Loaded => %s\n" "$util"
 done
 
 header "Environment variables"
-loadSource "$SCRIPT_DIR/.env.bash"
+for env_file in "$SCRIPT_DIR"/.env*; do
+  if [[ -f "$env_file" ]]; then
+    loadSource "$env_file"
+  fi
+done
 
 # Load all resources
 header "Environment"
