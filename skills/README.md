@@ -83,10 +83,3 @@ done
 ```bash
 ls -la ~/.claude/skills | grep -c '\-> .*/.terminal/skills/'   # expect 24
 ```
-
-## Provenance notes
-
-- Skill bodies are verbatim copies of the project sources, except:
-  - `modern-csharp` — deliberately generalized (title + description) from the backend's `modern-csharp` skill; the C# 14 idioms apply to any C# project, though some examples still use PRIIS types for illustration.
-  - `Projects/GR.PRIIS/backend-dry` — authored to match the `dry` skill referenced in the backend `AGENTS.md`; every pattern maps to symbols that exist in the repo.
-- The backend `AGENTS.md` also references a `dotnet-best-practices` skill, but no `SKILL.md` exists for it in the source repo, so it was not brought over.
