@@ -42,6 +42,7 @@ import { useListSuppliersQuery } from '../../../store/api';
 Before building a custom component, check `source/priis-web/src/components/` — the project wraps many Radix primitives there.
 
 **Radix Themes** for layout and typography:
+
 ```tsx
 import { Badge, Flex, Grid, Heading, Separator, Text } from '@radix-ui/themes';
 
@@ -109,6 +110,7 @@ Use **Radix Themes CSS tokens** for spacing, colors, and typography — do not h
 Every modal follows a three-step registration process:
 
 **Step 1** — Add a key to `source/priis-web/src/features/modals/priis-modal-keys.ts`:
+
 ```typescript
 export const PriisModalKeys = {
     // ...existing...
@@ -117,6 +119,7 @@ export const PriisModalKeys = {
 ```
 
 **Step 2** — Register the component in `source/priis-web/src/features/modals/components/priis-modals.tsx`:
+
 ```typescript
 import { CreateSupplierNoteModal } from '~features/supplier/create-supplier-note-modal';
 
@@ -127,6 +130,7 @@ const modalMap: Record<string, React.ComponentType<never>> = {
 ```
 
 **Step 3** — Dispatch to open:
+
 ```typescript
 import { openModal } from '~features/modals/modal-slice';
 
@@ -196,6 +200,7 @@ Radix UI handles most accessibility requirements (ARIA roles, keyboard navigatio
 ## 8. Swedish Text — Everything Visible Must Be Swedish
 
 **All user-visible text must be in Swedish.** This includes:
+
 - Labels, headings, descriptions
 - Button text
 - Placeholder text
@@ -222,11 +227,13 @@ Standard error messages: use `ErrorMessages.*` from `~strings/error-messages` �
 ## 9. Mobile Responsiveness
 
 Breakpoints (defined in `source/priis-web/src/globals.css`):
+
 - Mobile: `< 768px`
 - Tablet: `768px – 1024px`
 - Desktop: `> 1024px`
 
 Use the media query hooks for conditional rendering:
+
 ```typescript
 import { useIsMobile, useIsTablet, useIsDesktop } from '~/hooks/use-breakpoints';
 
@@ -235,6 +242,7 @@ return isMobile ? <MobileView /> : <DesktopView />;
 ```
 
 For routes that don't support mobile, wrap with `MobileGuard`:
+
 ```tsx
 import { MobileGuard } from '~components/mobile-guard';
 
