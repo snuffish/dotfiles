@@ -501,10 +501,10 @@ Check changed `.ts/.tsx` files for:
    git add source/GR.PRIIS.API/Features/... source/GR.PRIIS.Library/...
    ```
 
-2. **Commit format:** `#<work-item-id>: <short English description>`
+2. **Commit format:** `#<work-item-id>: <Swedish work item title>`
 
    ```text
-   #28048: Add operation note endpoint and frontend form
+   #28048: Begär ändring av totalt antal platser
    ```
 
 3. **Push and create draft PR:**
