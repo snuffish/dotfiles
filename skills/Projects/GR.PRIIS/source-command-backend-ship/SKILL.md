@@ -14,6 +14,7 @@ Use this skill when the user asks to run the migrated source command `ship`.
 Ship your current work in one go: create or confirm a branch, run pre-commit validation, commit, push, and open a draft PR — all following the [PRIIS workflow skill](../skills/workflow/SKILL.md) conventions.
 
 **Usage:**
+
 ```
 /ship [work-item-id]
 /ship 28048
@@ -38,6 +39,7 @@ Ship your current work in one go: create or confirm a branch, run pre-commit val
 Determine the repo root: run `git rev-parse --show-toplevel` from the current working directory.
 
 Then run:
+
 - `git -C <repo-root> status --short` — list staged and unstaged files
 - `git -C <repo-root> branch --show-current` — current branch name
 - `git -C <repo-root> log --oneline -5` — recent commits for context
@@ -49,6 +51,7 @@ Report a one-line summary: branch name, staged file count, unstaged file count.
 ## Step 2 — Resolve work item ID
 
 Determine the implementing Task or Bug ID using this priority:
+
 1. Command argument (if provided)
 2. Current branch name — extract the numeric ID from `<prefix>/<id>_<slug>` (e.g. `feature/28048_my-feature` → `28048`)
 3. Ask the user: "Which ADO Task or Bug ID is this work for?"
@@ -72,6 +75,7 @@ Derive the branch name from the work item:
 Full format: `<prefix>/<id>_<english-kebab-slug>` (see [workflow skill §1](../skills/workflow/SKILL.md))
 
 Examples:
+
 ```
 feature/28048_rename-category-for-adult-hvb
 bugfix/28110_fix-null-category-seed-mapping
@@ -79,6 +83,7 @@ bugfix/28110_fix-null-category-seed-mapping
 
 - If already on a correctly named branch → confirm and continue.
 - If on any other branch (including `main`): show the proposed branch name, ask the user to confirm or adjust, then run:
+
   ```bash
   git -C <repo-root> checkout -b <branch-name>
   ```
@@ -106,14 +111,17 @@ Stop and report any failure — **do not proceed to commit until all three pass.
 Show the full diff (`git -C <repo-root> diff` and `git -C <repo-root> diff --staged`) and ask the user which files to include.
 
 **Never use `git add -A` or `git add .`** — stage only the confirmed files explicitly:
+
 ```bash
 git -C <repo-root> add <file1> <file2> ...
 ```
 
 Commit using the format from [workflow skill §3](../skills/workflow/SKILL.md):
+
 ```
 #<work_item_id>: <short English description>
 ```
+
 - Imperative present tense ("Add filtering" not "Added filtering")
 - English only
 - Derived from the work item title
@@ -138,13 +146,18 @@ Report success or any errors before continuing.
 
 Otherwise:
 
-1. Read `docs/pull_request_template.md` from the repo root to get the current PR body template.
-2. Determine the target branch ([workflow skill §9](../skills/workflow/SKILL.md)):
+1. Determine the target branch ([workflow skill §9](../skills/workflow/SKILL.md)):
    - `feature/` and `bugfix/` → `refs/heads/main`
    - `hotfix/` → the `release/X.Y.Z` branch it was cut from
+2. **Generate the PR body using the `pr-summary` skill:**
+   - Load and follow the `pr-summary` skill (`/Users/snuffish/.terminal/skills/pr-summary/SKILL.md`) in full.
+   - Use `git diff $(git merge-base HEAD origin/main)...HEAD` to compute the diff for the branch.
+   - Compose the PR body following all rules from the `pr-summary` skill (classification, summary, key impacts, resolved line).
+   - Include the `Bug description` section only for `bugfix/` and `hotfix/` branches; omit it entirely for `feature/` branches.
+   - End with `Resolved: #<id>`.
 3. Compose the PR:
    - **Title:** `#<id>: <description>` (same as commit message)
-   - **Body:** fill in the template. Include the `Bug description` section only for `bugfix/` and `hotfix/` branches; omit it entirely for `feature/` branches. End with `Resolved: #<id>`.
+   - **Body:** the output from the `pr-summary` skill above
    - **isDraft:** `true`
    - **Labels:** add `Bugfix` label when the work item type is Bug
 4. Call `mcp__azure-devops__repo_create_pull_request` with `repositoryId = "GR.PRIIS.Backend"`, `project = "PRIIS"`.
