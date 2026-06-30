@@ -17,7 +17,15 @@ Before anything else, determine:
 2. **Work item type:** User Story, Task, or Bug — and the implementing **Task or Bug** ID (not the parent story).
 3. **Affected domains:** Which feature folder(s) are involved (e.g. `Operations`, `Matching`, `RegisterTickets`).
 
-If the user provided a work item ID, fetch it now via `mcp__azure-devops__wit_get_work_item` (project: `PRIIS`) to read the full title and description. Use that to sharpen your understanding before planning.
+If the user provided a work item ID, fetch it now using the CLI:
+
+```bash
+az boards work-item show --id <ID> --org https://grutbildning.visualstudio.com --output json
+```
+
+Read the full title and description from the output to sharpen your understanding before planning.
+
+> **Rule:** Always use `az boards` / `az repos` CLI for all ADO operations (work items, PRs, queries). Never open the browser for work item lookups unless the content is only available via UI (e.g. attachments, screenshots).
 
 ---
 
@@ -503,9 +511,16 @@ Check changed `.ts/.tsx` files for:
    - Branch format: `feature/<id>_<english-kebab-slug>`
    - PR title = commit message
    - PR body: fill in `docs/pull_request_template.md` template; end with `Resolved: #<id>`
-   - Use `mcp__azure-devops__repo_create_pull_request` (not `az repos pr create`)
-   - Link work item via `mcp__azure-devops__wit_link_work_item_to_pull_request`
-   - Move work item to `Pull Request` state via `mcp__azure-devops__wit_update_work_item`
+   - Create PR via CLI:
+     ```bash
+     az repos pr create --org https://grutbildning.visualstudio.com --project PRIIS \
+       --title "#<id>: <description>" --draft --work-items <id>
+     ```
+   - Move work item to `Pull Request` state:
+     ```bash
+     az boards work-item update --id <id> --state "Pull Request" \
+       --org https://grutbildning.visualstudio.com
+     ```
 
 ---
 
@@ -537,5 +552,7 @@ Do **not** re-summarize the walkthrough in the chat response — just point the 
 | TUnit filter flag | `--filter "FullyQualifiedName~..."` | `--treenode-filter "/*/*/ClassName/*"` |
 | TUnit assertions | `Assert.Equal(x, y)` | `await Assert.That(x).IsEqualTo(y)` |
 | PR mutation | `git add .` | `git add <specific files>` |
-| ADO operations | `az repos pr create` | `mcp__azure-devops__repo_create_pull_request` |
+| ADO work item lookup | Browser navigation | `az boards work-item show --id <ID> --org https://grutbildning.visualstudio.com` |
+| ADO PR creation | Browser navigation | `az repos pr create --org https://grutbildning.visualstudio.com --project PRIIS` |
+| ADO state update | Browser navigation | `az boards work-item update --id <ID> --state "..." --org https://grutbildning.visualstudio.com` |
 | Error messages in code | English | Swedish |
