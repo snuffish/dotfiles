@@ -77,7 +77,6 @@ Use the structure below. If the repo supplies its own PR template, honour that s
 
 <!-- Include ONLY for bug fix or hotfix branches. Explain what the bug was, why it happened, and how it was resolved. Remove this section entirely for all other PR types. -->
 
-Resolved: #<work_item_id>
 ```
 
 **Composition rules:**
@@ -86,7 +85,6 @@ Resolved: #<work_item_id>
 - **PR Summary**: 2–3 sentences maximum; state *what*, *why*, and *impact*. Avoid filler.
 - **Key impacts**: label each bullet with the area, component, or file using a backtick-wrapped label. 2–5 bullets is the normal range — do not pad. Each bullet should say something specific and non-obvious.
 - **Bug description**: include only for `bugfix/` and `hotfix/` branches. **Remove the section entirely** for `feature/`, refactoring, or other PR types.
-- **Resolved line**: always include when a work item ID is known, at the bottom of the body. Format: `Resolved: #<id>`.
 - **Language**: write in English unless the project clearly uses another language for PR descriptions.
 - **Tone**: clear, professional, concise — written for a reviewer who knows the codebase but not the exact intent of this change.
 
@@ -110,6 +108,5 @@ Do **not** add extra commentary around the block unless the user asks a question
 
 - **Do not summarise commit messages verbatim.** Read the actual diff and describe the intent, not the mechanics.
 - **Do not fabricate details** not present in the diff (e.g., "this improves performance by 30%").
-- **Do not include the `Resolved:` line** if no ticket ID was found and the user has not provided one.
 - **If the diff is ambiguous**, inspect the changed files directly rather than guessing from filenames alone.
 - **Match the project's terminology**: if the codebase uses specific domain terms (e.g. "ticket", "suggestion", "matching"), use them in the summary rather than generic synonyms.
