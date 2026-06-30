@@ -72,7 +72,7 @@ All user-visible text must be Swedish. Flag files with obvious English strings.
 ### 10. SystemAction Sync
 
 Read `source/priis-web/src/enums/systemAction.ts` and list all enum values.
-If the backend repo is accessible at `d:\GR.PRIIS.Backend`, cross-check against `source/GR.PRIIS.Library/Common/Users/AccessRules/SystemActionTexts.cs` for missing entries.
+Cross-check against the backend at `/Users/snuffish/Projects/GR/GR.PRIIS.Backend/source/GR.PRIIS.Library/Common/Users/AccessRules/SystemActionTexts.cs` for missing entries.
 Flag any values present in one but not the other.
 
 ---
