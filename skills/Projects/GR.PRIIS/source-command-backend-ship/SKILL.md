@@ -123,17 +123,16 @@ Show the full diff (`git -C <repo-root> diff` and `git -C <repo-root> diff --sta
 git -C <repo-root> add <file1> <file2> ...
 ```
 
-Commit using the format from [workflow skill §3](../skills/workflow/SKILL.md):
+Commit using the format:
 
 ```
-#<work_item_id>: <short English description>
+#<work_item_id>: <Swedish work item title>
 ```
 
-- Imperative present tense ("Add filtering" not "Added filtering")
-- English only
-- Derived from the work item title
+- Use the work item's Swedish title directly (do not translate to English).
+- Same for the PR title.
 
-Example: `#28048: Rename category for adult HVB`
+Example: `#28048: Begär ändring av totalt antal platser`
 
 ---
 
