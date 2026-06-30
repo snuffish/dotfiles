@@ -508,7 +508,7 @@ Check changed `.ts/.tsx` files for:
    ```
 
 3. **Push and create draft PR:**
-   - Branch format: `feature/<id>_<english-kebab-slug>`
+   - Branch format: `feature/<id>_<english-kebab-slug>` (e.g., `feature/30048_add-oppenvard-barn-q4` — notice the underscore after the ID, but hyphens/kebab-case for the rest of the slug, NOT underscores like `add_oppenvard_barn_q4`)
    - PR title = commit message
    - PR body: fill in `docs/pull_request_template.md` template; end with `Resolved: #<id>`
    - Create PR via CLI:

@@ -79,6 +79,7 @@ Derive the branch name from the work item:
 | Bug → targets a release branch | `hotfix/` — ask the user if unsure |
 
 Full format: `<prefix>/<id>_<english-kebab-slug>` (see [workflow skill §1](../skills/workflow/SKILL.md))
+Notice that there is an underscore immediately after the ID, but the rest of the slug MUST use hyphens (kebab-case) and NOT underscores (e.g. `feature/30048_add-oppenvard-barn-q4`, NOT `feature/30048_add_oppenvard_barn_q4`).
 
 Examples:
 
@@ -191,7 +192,7 @@ az repos pr create \
   --work-items <id>
 ```
 
-4. Move work item state to `Pull Request`:
+1. Move work item state to `Pull Request`:
 
 ```bash
 az boards work-item update \
