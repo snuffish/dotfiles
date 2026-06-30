@@ -556,8 +556,8 @@ Add only usings actually needed by the migrated code.
 
 After the build is clean, delete all original xUnit files:
 
-```powershell
-Remove-Item "tests/GR.PRIIS.API.IntegrationTests/{arg}/{File}.cs"
+```bash
+rm tests/GR.PRIIS.API.IntegrationTests/{arg}/{File}.cs
 ```
 
 ---
@@ -566,10 +566,13 @@ Remove-Item "tests/GR.PRIIS.API.IntegrationTests/{arg}/{File}.cs"
 
 ```bash
 # Must be zero errors, zero warnings
-dotnet build tests/GR.PRIIS.API.IntegrationTests.TUnit --configuration Release
+dotnet build --project tests/GR.PRIIS.API.IntegrationTests.TUnit --configuration Release
 
-# TUnit uses Microsoft.Testing.Platform — use dotnet run, not dotnet test
-dotnet run --project tests/GR.PRIIS.API.IntegrationTests.TUnit --configuration Release --no-build
+# Run the migrated tests (use --treenode-filter to scope to the migrated class)
+dotnet test --project tests/GR.PRIIS.API.IntegrationTests.TUnit --configuration Release --treenode-filter "/*/*/MigratedClassName/*"
+
+# Or run all integration tests
+dotnet test --project tests/GR.PRIIS.API.IntegrationTests.TUnit --configuration Release
 ```
 
 Report pass/fail count. Fix all failures before declaring done.

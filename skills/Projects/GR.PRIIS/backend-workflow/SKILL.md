@@ -172,42 +172,45 @@ Create one PR per repo. For cross-repo changes (Backend + Frontend), each PR lin
 
 ---
 
-## 10. ADO Tooling — MCP Server vs CLI
+## 10. ADO Tooling — CLI Commands
 
-**Always prefer the `mcp__azure-devops__*` MCP tools over `az repos` / `az boards` CLI commands.** The CLI silently truncates multi-line descriptions and has other quoting issues on Windows; the MCP tools do not.
+**Always use the `az boards` / `az repos` CLI for all ADO operations.** The CLI is consistent, scriptable, and works on all platforms.
 
-Fall back to `az` only for operations not covered by the MCP server (e.g. pipeline triggers).
+```bash
+# Common ADO constants
+ORG=https://grutbildning.visualstudio.com
+PROJECT=PRIIS
+REPO_BACKEND=GR.PRIIS.Backend
+REPO_FRONTEND=GR.PRIIS.Frontend
+```
 
 ### Common operations
 
-| Operation | MCP tool |
+| Operation | Command |
 |---|---|
-| Create PR | `mcp__azure-devops__repo_create_pull_request` |
-| Update PR description / title / status | `mcp__azure-devops__repo_update_pull_request` |
-| Get PR by ID | `mcp__azure-devops__repo_get_pull_request_by_id` |
-| Link PR to work item | `mcp__azure-devops__wit_link_work_item_to_pull_request` |
-| Move work item state | `mcp__azure-devops__wit_update_work_item` |
-| Create work item | `mcp__azure-devops__wit_create_work_item` |
-| Add work item comment | `mcp__azure-devops__wit_add_work_item_comment` |
-| Get work item | `mcp__azure-devops__wit_get_work_item` |
-
-### Parameters always required
-
-- `repositoryId`: use the repo name (`"GR.PRIIS.Backend"`) — not the GUID
-- `project`: `"PRIIS"` — required whenever `repositoryId` is a name
+| Fetch work item | `az boards work-item show --id <ID> --org $ORG` |
+| Update work item state | `az boards work-item update --id <ID> --state "Pull Request" --org $ORG` |
+| Create work item | `az boards work-item create --type Task --title "..." --org $ORG --project $PROJECT` |
+| Create PR | `az repos pr create --org $ORG --project $PROJECT --repository $REPO --title "..." --draft true` |
+| List open PRs for branch | `az repos pr list --org $ORG --project $PROJECT --repository $REPO --source-branch <branch>` |
+| Link PR to work item | Add `--work-items <ID>` to the `az repos pr create` command |
 
 ### PR creation example
 
+```bash
+az repos pr create \
+  --org https://grutbildning.visualstudio.com \
+  --project PRIIS \
+  --repository GR.PRIIS.Backend \
+  --source-branch feature/28048_my-branch \
+  --target-branch main \
+  --title "#28048: My PR title" \
+  --description "$(cat pr_body.md)" \
+  --draft true \
+  --work-items 28048
 ```
-mcp__azure-devops__repo_create_pull_request(
-  repositoryId = "GR.PRIIS.Backend",
-  project      = "PRIIS",
-  sourceBranch = "refs/heads/feature/28048_my-branch",
-  targetBranch = "refs/heads/main",
-  title        = "#28048: My PR title",
-  description  = "... full markdown body ..."
-)
-```
+
+> **Note:** For wiki operations (release notes) there is no `az` equivalent — use `mcp__azure-devops__wiki_*` tools in that context only.
 
 ---
 

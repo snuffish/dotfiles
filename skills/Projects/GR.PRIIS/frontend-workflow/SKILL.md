@@ -180,6 +180,26 @@ If `src/enums/systemAction.ts` is modified:
 
 ---
 
+## 11. ADO Tooling — CLI Commands
+
+**Always use the `az boards` / `az repos` CLI for all ADO operations.**
+
+```bash
+# Common ADO constants
+ORG=https://grutbildning.visualstudio.com
+PROJECT=PRIIS
+REPO=GR.PRIIS.Frontend
+```
+
+| Operation | Command |
+|---|---|
+| Fetch work item | `az boards work-item show --id <ID> --org $ORG` |
+| Update work item state | `az boards work-item update --id <ID> --state "Pull Request" --org $ORG` |
+| Create PR | `az repos pr create --org $ORG --project $PROJECT --repository $REPO --source-branch <branch> --target-branch main --title "..." --draft true --work-items <ID>` |
+| List open PRs for branch | `az repos pr list --org $ORG --project $PROJECT --repository $REPO --source-branch <branch> --status active` |
+
+---
+
 ## Quick Reference
 
 ```

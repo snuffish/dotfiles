@@ -70,7 +70,7 @@ dotnet test --configuration Release
 Report failures by project and test name. If only touching a specific feature, you may run the focused test project:
 
 ```bash
-dotnet test tests/GR.PRIIS.API.IntegrationTests.TUnit --configuration Release
+dotnet test --project tests/GR.PRIIS.API.IntegrationTests.TUnit --configuration Release
 ```
 
 ---

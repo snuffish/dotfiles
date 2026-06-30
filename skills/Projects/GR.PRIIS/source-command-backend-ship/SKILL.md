@@ -56,7 +56,13 @@ Determine the implementing Task or Bug ID using this priority:
 2. Current branch name — extract the numeric ID from `<prefix>/<id>_<slug>` (e.g. `feature/28048_my-feature` → `28048`)
 3. Ask the user: "Which ADO Task or Bug ID is this work for?"
 
-Fetch the work item via `mcp__azure-devops__wit_get_work_item` (project: `PRIIS`) and confirm its type, title, and state.
+Fetch the work item via CLI:
+
+```bash
+az boards work-item show --id <ID> --org https://grutbildning.visualstudio.com --output json
+```
+
+Confirm its type, title, and state from the output.
 
 **If the work item is a User Story:** stop and tell the user that the branch must target an implementing **Task or Bug**, not a User Story directly. Ask for the child task or bug ID. (See [workflow skill §7 — Work Item Intake](../skills/workflow/SKILL.md).)
 
@@ -142,12 +148,24 @@ Report success or any errors before continuing.
 
 ## Step 7 — Create draft PR
 
-**Check for an existing PR first:** call `mcp__azure-devops__repo_list_pull_requests_by_repo_or_project` with `repositoryId = "GR.PRIIS.Backend"`, `project = "PRIIS"`, `sourceRefName = "refs/heads/<branch-name>"`. If an open PR already exists, report its URL and skip creation.
+**Check for an existing PR first:**
+
+```bash
+az repos pr list \
+  --org https://grutbildning.visualstudio.com \
+  --project PRIIS \
+  --repository GR.PRIIS.Backend \
+  --source-branch <branch-name> \
+  --status active \
+  --output json
+```
+
+If an open PR already exists, report its URL and skip creation.
 
 Otherwise:
 
 1. Determine the target branch ([workflow skill §9](../skills/workflow/SKILL.md)):
-   - `feature/` and `bugfix/` → `refs/heads/main`
+   - `feature/` and `bugfix/` → `main`
    - `hotfix/` → the `release/X.Y.Z` branch it was cut from
 2. **Generate the PR body using the `pr-summary` skill:**
    - Load and follow the `pr-summary` skill (`/Users/snuffish/.terminal/skills/pr-summary/SKILL.md`) in full.
@@ -155,13 +173,31 @@ Otherwise:
    - Compose the PR body following all rules from the `pr-summary` skill (classification, summary, key impacts, resolved line).
    - Include the `Bug description` section only for `bugfix/` and `hotfix/` branches; omit it entirely for `feature/` branches.
    - End with `Resolved: #<id>`.
-3. Compose the PR:
+3. Create the PR via CLI:
    - **Title:** `#<id>: <description>` (same as commit message)
    - **Body:** the output from the `pr-summary` skill above
    - **isDraft:** `true`
-   - **Labels:** add `Bugfix` label when the work item type is Bug
-4. Call `mcp__azure-devops__repo_create_pull_request` with `repositoryId = "GR.PRIIS.Backend"`, `project = "PRIIS"`.
-5. Call `mcp__azure-devops__wit_link_work_item_to_pull_request` to link the work item to the new PR.
-6. Call `mcp__azure-devops__wit_update_work_item` to set the work item state to `Pull Request`.
+
+```bash
+az repos pr create \
+  --org https://grutbildning.visualstudio.com \
+  --project PRIIS \
+  --repository GR.PRIIS.Backend \
+  --source-branch <branch-name> \
+  --target-branch <target-branch> \
+  --title "#<id>: <description>" \
+  --description "<PR body>" \
+  --draft true \
+  --work-items <id>
+```
+
+4. Move work item state to `Pull Request`:
+
+```bash
+az boards work-item update \
+  --id <id> \
+  --state "Pull Request" \
+  --org https://grutbildning.visualstudio.com
+```
 
 Report the PR URL on success.
