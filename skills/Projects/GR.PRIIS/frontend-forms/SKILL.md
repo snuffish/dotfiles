@@ -5,27 +5,20 @@ description: "[Project: GR.PRIIS.Frontend] Form patterns for GR.PRIIS.Frontend �
 
 # Forms — react-hook-form + Zod v4
 
-Every form in this project uses react-hook-form with Zod v4 for validation. The two most common mistakes are the wrong Zod import path and the wrong resolver import — both are covered first.
+Every form in this project uses react-hook-form with Zod v4 for validation. The standard `zod` package installed in the workspace is version v4. Use standard imports for both Zod and the resolver.
 
 ---
 
-## 1. Critical Imports — These Are Always Wrong Without the `/v4`
+## 1. Critical Imports — Standard zod and `@hookform/resolvers/zod`
 
 ```typescript
-// ✅ CORRECT — always use 'zod/v4'
-import { z } from 'zod/v4';
-
-// ❌ WRONG — 'zod' without /v4 uses Zod v3 API (project uses v4)
-import { z } from 'zod';
-import { z } from 'zod/v3';
-```
-
-```typescript
-// ✅ CORRECT — project's custom resolver that works with Zod v4
-import { zodResolver } from '~/utility/validation/zod-v4-resolver';
-
-// ❌ WRONG — the standard @hookform resolver is for Zod v3
+// ✅ CORRECT — always use standard 'zod' and the standard hookform resolver
+import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+
+// ❌ WRONG — do NOT import from 'zod/v4' or use custom resolver
+import { z } from 'zod/v4';
+import { zodResolver } from '~/utility/validation/zod-v4-resolver';
 ```
 
 ---
@@ -36,7 +29,7 @@ Place schemas in `source/priis-web/src/features/{domain}/schema.ts`. Export both
 
 ```typescript
 // source/priis-web/src/features/supplier/schema.ts
-import { z } from 'zod/v4';
+import z from 'zod';
 import { ErrorMessages } from '~strings/error-messages';
 
 export const createSupplierNoteSchema = z.object({
@@ -60,7 +53,7 @@ export type UpdateSupplierNoteFormValues = z.infer<typeof updateSupplierNoteSche
 When form fields depend on a selected type, use `z.discriminatedUnion`:
 
 ```typescript
-import { z } from 'zod/v4';
+import z from 'zod';
 import { SupplierType } from '~enums/supplierType';
 
 const municipalitySchema = z.object({
@@ -91,13 +84,13 @@ The discriminated union enables TypeScript to narrow the type based on the selec
 
 ```typescript
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { z } from 'zod/v4';
-import { zodResolver } from '~/utility/validation/zod-v4-resolver';
+import z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { createSupplierNoteSchema, CreateSupplierNoteFormValues } from './schema';
 
 function CreateSupplierNoteForm({ supplierId, onSuccess }: Props) {
     const form = useForm<CreateSupplierNoteFormValues>({
-        resolver: zodResolver(createSupplierNoteSchema as z.ZodType<CreateSupplierNoteFormValues>),
+        resolver: zodResolver(createSupplierNoteSchema),
         defaultValues: {
             content: '',
             type: 'internal',
@@ -214,8 +207,8 @@ Check `source/priis-web/src/components/form/` for all available `Controlled.*` v
 ## 9. Anti-Patterns
 
 ```
-❌ import { z } from 'zod'                       — must be 'zod/v4'
-❌ import { zodResolver } from '@hookform/resolvers/zod'  — use '~/utility/validation/zod-v4-resolver'
+❌ import { z } from 'zod/v4'                      — use standard 'zod' instead
+❌ import { zodResolver } from '~/utility/validation/zod-v4-resolver'  — use '@hookform/resolvers/zod'
 ❌ English validation messages                    — Swedish only
 ❌ Schema defined inline in component             — put in features/{domain}/schema.ts
 ❌ Forgetting shouldUnregister: true for conditional fields
