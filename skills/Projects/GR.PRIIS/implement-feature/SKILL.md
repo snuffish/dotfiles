@@ -7,6 +7,9 @@ description: "Orchestrator skill for implementing a new feature end-to-end in th
 
 This skill orchestrates the complete lifecycle of a feature implementation in the `priis.se` workspace. Execute every phase in order. Do not skip a phase.
 
+> [!IMPORTANT]
+> **No Automatic Pull Requests / Code Shipping:** Never push branches (`git push`) or create Pull Requests (`az repos pr create`) automatically without explicit user approval. Always present your staged files, branch names, commit messages, and PR descriptions to the user in the chat for review first, and await explicit approval before shipping.
+
 ---
 
 ## Phase 0 — Identify Scope
@@ -24,6 +27,12 @@ az boards work-item show --id <ID> --org https://grutbildning.visualstudio.com -
 ```
 
 Read the full title and description from the output to sharpen your understanding before planning.
+
+If the work item's `System.AssignedTo` field is unassigned (null or missing in the JSON), assign the ticket to yourself (the logged-in Azure user) using the CLI:
+
+```bash
+az boards work-item update --id <ID> --assigned-to "$(az account show --query user.name -o tsv)" --org https://grutbildning.visualstudio.com
+```
 
 > **Rule:** Always use `az boards` / `az repos` CLI for all ADO operations (work items, PRs, queries). Never open the browser for work item lookups unless the content is only available via UI (e.g. attachments, screenshots).
 
@@ -111,21 +120,22 @@ Set `request_feedback: true`, `user_facing: true` on the artifact.
 Once approved, create `task.md` in the artifact brain directory. Break work into component-level items:
 
 ```markdown
-- [ ] Backend
+- [ ] Implement Backend
   - [ ] Add SystemAction enum value (if needed)
   - [ ] Scaffold endpoint + validator
   - [ ] Implement library factory method
   - [ ] Write TUnit integration tests
   - [ ] EF Core migration (if needed)
-  - [ ] dotnet format
-  - [ ] dotnet build --configuration Release
-  - [ ] dotnet test --configuration Release
-- [ ] Frontend
+- [ ] Implement Frontend
   - [ ] RTK Query endpoint builder + tags
   - [ ] Form schema (zod/v4)
   - [ ] Component
   - [ ] Route file (if new page)
   - [ ] Playwright test IDs
+- [ ] Verification & Formatting (Run post-initial implementation)
+  - [ ] dotnet format
+  - [ ] dotnet build --configuration Release
+  - [ ] dotnet test --configuration Release
   - [ ] organize-imports + lint + build
 ```
 
@@ -493,6 +503,9 @@ Check changed `.ts/.tsx` files for:
 
 > Read `backend-workflow` and/or `frontend-workflow` skills. Alternatively, run `/ship <work-item-id>` which automates this phase.
 
+> [!IMPORTANT]
+> **User Approval Required for Branch Push and PR Creation:** Do NOT push branches (`git push`) or create Pull Requests (`az repos pr create`) automatically. You must present the planned branch name, commit message, staged files, and PR title/description to the user in the chat for review first, and await explicit approval before running those commands.
+
 ### Manual steps
 
 1. **Stage selectively** — never `git add -A`:
@@ -508,15 +521,18 @@ Check changed `.ts/.tsx` files for:
    ```
 
 3. **Push and create draft PR:**
-   - Branch format: `feature/<id>_<english-kebab-slug>` (e.g., `feature/30048_add-oppenvard-barn-q4` — notice the underscore after the ID, but hyphens/kebab-case for the rest of the slug, NOT underscores like `add_oppenvard_barn_q4`)
-   - PR title = commit message
-   - PR body: fill in `docs/pull_request_template.md` template; end with `Resolved: #<id>`
+    - Branch format: `feature/<id>_<english-kebab-slug>` (e.g., `feature/30048_add-oppenvard-barn-q4` — notice the underscore after the ID, but hyphens/kebab-case for the rest of the slug, NOT underscores like `add_oppenvard_barn_q4`). **CRITICAL: The slug MUST always be in English. Never use Swedish in branch names.**
+    - PR title = commit message
+   - PR body: fill in `docs/pull_request_template.md` template; end with `Resolved: #<id>`. If PRs are created for both Frontend and Backend, add `This PR relates to: !<other-pr-id>` at the end of the PR description to link them together.
    - Create PR via CLI:
+
      ```bash
      az repos pr create --org https://grutbildning.visualstudio.com --project PRIIS \
        --title "#<id>: <description>" --draft --work-items <id>
      ```
+
    - Move work item to `Pull Request` state:
+
      ```bash
      az boards work-item update --id <id> --state "Pull Request" \
        --org https://grutbildning.visualstudio.com
