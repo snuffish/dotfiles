@@ -98,6 +98,7 @@ var dto = new FooDto { Id = f.Id, Name = f.Name };
 ```
 
 **Do NOT use records for:**
+
 - EF Core entities (EF needs mutable tracked objects with `private set` for state changes)
 - Domain objects that have command methods (`SetStatus()`, etc.)
 - Objects with complex equality semantics
@@ -279,6 +280,25 @@ RuleFor(x => x.Phone)
 private static readonly Regex PhonePattern = new(@"^\+?[0-9\s\-\(\)]{7,20}$");
 ```
 
+## 11. Local Functions over Anonymous Lambdas (IDE0039)
+
+When defining a delegate variable (e.g., for passing to an assertion in testing or for scoped helper execution), use a C# local function instead of assigning an anonymous lambda to a variable.
+
+**PascalCase Naming Rule**: Local functions are treated as methods and **MUST** start with an uppercase letter (PascalCase), not camelCase.
+
+```csharp
+// ✅ Correct (Local Function - PascalCase)
+async Task Act()
+{
+    await service.ExecuteAsync();
+}
+var ex = await Assert.That(Act).Throws<Exception>();
+
+// ❌ Forbidden (Anonymous Lambda or camelCase Local Function)
+var act = async () => await service.ExecuteAsync();
+async Task act() { await service.ExecuteAsync(); }
+```
+
 ---
 
 ## Quick Reference: Forbidden → Preferred
@@ -293,3 +313,4 @@ private static readonly Regex PhonePattern = new(@"^\+?[0-9\s\-\(\)]{7,20}$");
 | `static class FooExtensions { public static ... this Foo }` | `extension(Foo foo) { ... }` |
 | `new Regex(pattern)` static field | `[GeneratedRegex] partial` method |
 | `throw new ArgumentException(...)` for expected failures | `return SystemResult.Failure(...)` |
+| `var act = async () => ...` | `async Task Act() { ... }` (PascalCase local function) |
