@@ -22,11 +22,11 @@ skills/
 
 ## Inventory
 
-25 skills total — 3 general + 22 under `Projects/GR.PRIIS/`.
+26 skills total — 4 general + 22 under `Projects/GR.PRIIS/`.
 
 | Group                            | Count | Skills                                                                                                                |
 | -------------------------------- | :---: | -------------------------------------------------------------------------------------------------------------------- |
-| General (top level)              |   3   | `code-review`, `modern-csharp`, `pr-summary`                                                                         |
+| General (top level)              |   4   | `code-review`, `modern-csharp`, `pr-summary`, `refine`                                                               |
 | `GR.PRIIS/backend-*`             |   7   | `dry`, `ef-core`, `fastendpoints`, `notifications`, `signalr`, `testing`, `workflow`                                 |
 | `GR.PRIIS/frontend-*`            |   6   | `component-patterns`, `forms`, `routing`, `rtk-query`, `testing`, `workflow`                                          |
 | `GR.PRIIS/source-command-backend-*`  | 6 | `health-check`, `migrate-to-tunit`, `release-notes`, `scaffold`, `ship`, `verify`                                    |
