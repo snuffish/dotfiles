@@ -526,17 +526,15 @@ Check changed `.ts/.tsx` files for:
    - PR body: fill in `docs/pull_request_template.md` template; end with `Resolved: #<id>`. If PRs are created for both Frontend and Backend, add `This PR relates to: !<other-pr-id>` at the end of the PR description to link them together.
    - Create PR via CLI:
 
-     ```bash
-     az repos pr create --org https://grutbildning.visualstudio.com --project PRIIS \
-       --title "#<id>: <description>" --draft --work-items <id>
-     ```
+      ```bash
+      az repos pr create --org https://grutbildning.visualstudio.com --project PRIIS --title "#<id>: <description>" --draft --work-items <id>
+      ```
 
    - Move work item to `Pull Request` state:
 
-     ```bash
-     az boards work-item update --id <id> --state "Pull Request" \
-       --org https://grutbildning.visualstudio.com
-     ```
+      ```bash
+      az boards work-item update --id <id> --state "Pull Request" --org https://grutbildning.visualstudio.com
+      ```
 
 ---
 

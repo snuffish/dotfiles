@@ -198,16 +198,7 @@ REPO_FRONTEND=GR.PRIIS.Frontend
 ### PR creation example
 
 ```bash
-az repos pr create \
-  --org https://grutbildning.visualstudio.com \
-  --project PRIIS \
-  --repository GR.PRIIS.Backend \
-  --source-branch feature/28048_my-branch \
-  --target-branch main \
-  --title "#28048: My PR title" \
-  --description "$(cat pr_body.md)" \
-  --draft true \
-  --work-items 28048
+az repos pr create --org https://grutbildning.visualstudio.com --project PRIIS --repository GR.PRIIS.Backend --source-branch feature/28048_my-branch --target-branch main --title "#28048: My PR title" --description "$(cat pr_body.md)" --draft true --work-items 28048
 ```
 
 > **Note:** For wiki operations (release notes) there is no `az` equivalent — use `mcp__azure-devops__wiki_*` tools in that context only.

@@ -27,14 +27,14 @@ Before proposing any refinement, you **MUST** investigate past conversation tran
 
 ### Step-by-Step Search Protocol
 
-1. **Identify Conversation ID**: The current conversation ID is available in the `<user_information>` block. All transcripts are stored in `<appDataDir>/brain/<conversation-id>/.system_generated/logs/transcript.jsonl`.
-2. **Scan the Brain Directory**: Run recursive `grep` commands on `/Users/snuffish/.gemini/antigravity-ide/brain/` using terminal commands (e.g., `run_command` with `grep`) to search for references to the target code being refined:
+1. **Identify Conversation ID**: The current conversation ID is available in the `<user_information>` block. All transcripts are stored in `<app_data_dir>/brain/<conversation-id>/.system_generated/logs/transcript.jsonl`.
+2. **Scan the Brain Directory**: Run recursive `grep` commands on `<app_data_dir>/brain/` using terminal commands (e.g., `run_command` with `grep`) to search for references to the target code being refined:
    - The names of files, classes, methods, or components you are currently auditing/refining.
    - Specific keywords, APIs, or error messages related to the code.
    - Generic search command (replace `<target_name_or_keyword>` with your active file or search term):
 
      ```bash
-     grep -rnwi "<target_name_or_keyword>" /Users/snuffish/.gemini/antigravity-ide/brain/ --exclude-dir=node_modules
+     grep -rnwi "<target_name_or_keyword>" <app_data_dir>/brain/ --exclude-dir=node_modules
      ```
 
 3. **Analyze Past Transcripts**:
@@ -53,7 +53,7 @@ For auditing criteria and guidelines, **DO NOT** reinvent the rules. Instead, dy
 
 ### General & Review Guidelines
 
-- **Code Review Standards**: Load and read [code-review](file:///Users/snuffish/.terminal/skills/code-review/SKILL.md) to reuse the diff-gathering strategy, key review dimensions (Correctness, Security, Readability), and severity definitions (🔴 Critical, 🟡 Important, 🟢 Minor).
+- **Code Review Standards**: Load and read [code-review](../code-review/SKILL.md) to reuse the diff-gathering strategy, key review dimensions (Correctness, Security, Readability), and severity definitions (🔴 Critical, 🟡 Important, 🟢 Minor).
 
 ### Project & Tech-Specific Guidelines
 
@@ -76,7 +76,7 @@ After completing the analysis and cross-referencing with both the history and ex
 
 When proposing or implementing refinements, you **MUST ALWAYS** enter `Planning Mode` before modifying any source code files. Follow this sequence:
 
-1. **Create the Implementation Plan**: Document your findings, historical context, and proposed modifications in the `implementation_plan.md` artifact (saved under the active conversation directory `/Users/snuffish/.gemini/antigravity-ide/brain/<conversation-id>/implementation_plan.md`).
+1. **Create the Implementation Plan**: Document your findings, historical context, and proposed modifications in the `implementation_plan.md` artifact (saved under the active conversation directory `<app_data_dir>/brain/<conversation-id>/implementation_plan.md`).
 2. **Request Feedback**: Set `UserFacing = true` and `RequestFeedback = true` in the plan's `ArtifactMetadata`.
 3. **Halt for Approval**: Stop and wait for the user's explicit approval/feedback on the proposed changes. Do not modify any code files in the workspace until the plan is approved.
 4. **Execute**: Once the user approves, proceed to edit the files and implement the refinements.

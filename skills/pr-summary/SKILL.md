@@ -140,8 +140,7 @@ Derive the host from the git remote (`git remote -v`), then find the open PR who
   ```bash
   ORG=https://<org>.visualstudio.com
   BR=$(git branch --show-current)
-  az repos pr list --org "$ORG" --project <PROJECT> --repository <REPO> \
-    --source-branch "$BR" --status active --query "[0].pullRequestId" -o tsv
+  az repos pr list --org "$ORG" --project <PROJECT> --repository <REPO> --source-branch "$BR" --status active --query "[0].pullRequestId" -o tsv
   ```
 
 - **GitHub** (remote host contains `github.com`) — use `gh`:
