@@ -46,25 +46,20 @@ The `backend-`/`frontend-` prefix distinguishes the two apps within the single G
 
 Every project-specific skill is also **gated in its `description`**: it opens with `[Project: GR.PRIIS.X]` and closes with `Load ONLY when working on the GR.PRIIS.X project or in the GR repository.`
 
-## Activating
-
-### 1. Direct workspace loading (e.g. Antigravity / Gemini)
-
-Load these skills directly by registering their paths in the workspace configuration (e.g. `.agents/skills.json`):
+Load these skills directly by registering their paths in the workspace configuration (e.g. `.agents/skills.json`), replacing `<global_skills_dir>` with the absolute path to your local skills registry (e.g. `/Users/snuffish/.terminal/skills` on macOS/Linux or `C:\Users\username\.terminal\skills` on Windows):
 
 ```json
 {
   "entries": [
-    { "path": "/Users/snuffish/.terminal/skills" },
-    { "path": "/Users/snuffish/.terminal/skills/Projects/GR.PRIIS" }
+    { "path": "<global_skills_dir>" },
+    { "path": "<global_skills_dir>/Projects/GR.PRIIS" }
   ]
 }
 ```
 
-### 2. Flat-loader symlinking (e.g. Claude CLI)
+Some loaders (like `~/.claude/skills` on macOS/Linux or `%USERPROFILE%\.claude\skills` on Windows) expect a **flat** root — each skill a direct child (`root/<name>/SKILL.md`), with no grouping folders. To activate from this grouped staging tree, symlink the specific skills you want.
 
-Some loaders (like `~/.claude/skills`) expect a **flat** root — each skill a direct child (`root/<name>/SKILL.md`), with no grouping folders. To activate from this grouped staging tree, symlink the specific skills you want.
-
+#### macOS / Linux (Bash/Zsh)
 ```bash
 # A single skill:
 ln -s ~/.terminal/skills/Projects/GR.PRIIS/backend-ef-core ~/.claude/skills/backend-ef-core
@@ -76,9 +71,22 @@ find ~/.terminal/skills -name SKILL.md -print0 | while IFS= read -r -d '' f; do
 done
 ```
 
+#### Windows (PowerShell)
+```powershell
+# A single skill:
+New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\skills\backend-ef-core" -Value "$env:USERPROFILE\.terminal\skills\Projects\GR.PRIIS\backend-ef-core"
+
+# Every skill in the tree (general + all projects), flattened by name:
+Get-ChildItem -Path "$env:USERPROFILE\.terminal\skills" -Filter "SKILL.md" -Recurse | ForEach-Object {
+    $srcDir = $_.DirectoryName
+    $destDir = Join-Path "$env:USERPROFILE\.claude\skills" $_.Directory.Name
+    New-Item -ItemType SymbolicLink -Path $destDir -Value $srcDir -Force
+}
+```
+
 (If the loader globs recursively — `skills/**/SKILL.md` — point it at this root directly and the grouping is honored as-is.)
 
-**Current live state:** all 24 skills are flat-symlinked into `~/.claude/skills/`, each pointing back into this tree. Verify with:
+**Current live state:** all 24 skills are flat-symlinked into the flat skills directory, each pointing back into this tree. Verify on macOS/Linux with:
 
 ```bash
 ls -la ~/.claude/skills | grep -c '\-> .*/.terminal/skills/'   # expect 24
