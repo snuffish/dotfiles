@@ -9,6 +9,8 @@ Use this skill whenever the user requests a pull request (PR) summary, PR descri
 
 > **Never** produce an implementation plan. Go straight to gathering context and writing the summary.
 
+> **Always compose from scratch.** Derive the summary **only** from the current diff (Steps 1–3). Treat any existing PR description as **stale by default** — never read it to seed, anchor, echo, or partially reuse the new summary, and never let its structure, wording, or omissions shape yours. Compose as if the PR had no description yet. In update mode this is a **full replacement**, not an edit of the old text.
+
 ---
 
 ## Invocation modes — preview vs update
@@ -157,14 +159,14 @@ Handle these edge cases explicitly — do **not** guess:
 
 ### 5.2 — Show what will be replaced, then update
 
-1. Fetch and show the **current** description first, so the overwrite is visible:
+1. Fetch and show the **current** description first, purely as a transparency read-back so the overwrite is visible:
    - ADO: `az repos pr show --id <id> --org "$ORG" --query description -o tsv`
    - GitHub: `gh pr view <id> --json body -q .body`
 
-   If the existing description contains hand-written content you did not author and your summary would discard it, surface that and confirm before overwriting.
+   Treat it as **stale** and replace it in full — it is shown for the record, never used as input for the new summary (see the *Always compose from scratch* principle above). Do not pause to reconcile with, preserve, or merge in the old text; the `update` keyword is the authorization to overwrite.
 2. Write the composed body to a **temp file** — never inline it in the shell command. PR bodies contain backticks and `!`, which the shell tries to expand (command substitution / history expansion) and corrupts the text; a file avoids all escaping. Prefer writing the file with the editor tool rather than `echo`/heredoc.
 3. Apply the update from the file:
-   - ADO: `az repos pr update --id <id> --org "$ORG" --description "$(cat /tmp/pr-<id>.md)"`
+   - ADO: `az repos pr update --id <id> --org "$ORG" --description "$(cat /tmp/pr-<id>.md)"` — ADO caps the description at **4000 characters**; if the update is rejected for length, condense the body (tighten prose, collapse sub-bullets) and retry rather than truncating mid-sentence or splitting across fields.
    - GitHub: `gh pr edit <id> --body-file /tmp/pr-<id>.md`
 4. **Verify**: re-fetch the description and confirm the first lines match, then report the PR URL. Only claim success after the read-back confirms it.
 
