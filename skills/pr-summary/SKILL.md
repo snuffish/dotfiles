@@ -110,6 +110,11 @@ Use the structure below. If the repo supplies its own PR template, honour that s
 - **Language**: write in English unless the project clearly uses another language for PR descriptions.
 - **Tone**: clear, professional, concise — written for a reviewer who knows the codebase but not the exact intent of this change.
 - **Footer trailer lines**: if the platform uses trailer lines (e.g. `Resolved: #xxxx`, `This PR relates to: !xxxx`), keep them at the very bottom after a `---` divider — with `Resolved:` first and the paired-PR relation link (`This PR relates to:`) **last**.
+- **Length budget — max 4000 characters**: the complete body (headings, bullets, footer included) must fit within **4000 characters** — Azure DevOps hard-caps PR descriptions at that size, and staying under it keeps the summary scannable on any platform. Compose within the budget from the start; when over, **condense rather than truncate**:
+  1. tighten prose and drop redundant qualifiers,
+  2. collapse nested sub-bullets back into their parent bullet,
+  3. merge overlapping Key-impacts bullets,
+  4. only as a last resort shorten the Bug description — never cut mid-sentence and never drop the footer trailer lines.
 
 ---
 
@@ -124,6 +129,8 @@ Wrap the final PR body in a fenced markdown block so the user can copy-paste it 
 ````
 
 Do **not** add extra commentary around the block unless the user asks a question. The output should be immediately paste-ready. **In update mode**, still show this block (so the user sees what was pushed), then continue to Step 5 to write it to the live PR.
+
+**Before printing, verify the length budget**: measure the composed body (e.g. write it to a temp file and `wc -m`) and confirm it is **≤ 4000 characters**. If it exceeds the budget, condense per the Step 3 length rules and re-measure — do not print an over-budget body.
 
 ---
 
@@ -166,7 +173,7 @@ Handle these edge cases explicitly — do **not** guess:
    Treat it as **stale** and replace it in full — it is shown for the record, never used as input for the new summary (see the *Always compose from scratch* principle above). Do not pause to reconcile with, preserve, or merge in the old text; the `update` keyword is the authorization to overwrite.
 2. Write the composed body to a **temp file** — never inline it in the shell command. PR bodies contain backticks and `!`, which the shell tries to expand (command substitution / history expansion) and corrupts the text; a file avoids all escaping. Prefer writing the file with the editor tool rather than `echo`/heredoc.
 3. Apply the update from the file:
-   - ADO: `az repos pr update --id <id> --org "$ORG" --description "$(cat /tmp/pr-<id>.md)"` — ADO caps the description at **4000 characters**; if the update is rejected for length, condense the body (tighten prose, collapse sub-bullets) and retry rather than truncating mid-sentence or splitting across fields.
+   - ADO: `az repos pr update --id <id> --org "$ORG" --description "$(cat /tmp/pr-<id>.md)"` — ADO caps the description at **4000 characters**. The Step 3 length budget should already guarantee this; if the update is still rejected for length, condense per the Step 3 rules and retry rather than truncating mid-sentence or splitting across fields.
    - GitHub: `gh pr edit <id> --body-file /tmp/pr-<id>.md`
 4. **Verify**: re-fetch the description and confirm the first lines match, then report the PR URL. Only claim success after the read-back confirms it.
 
