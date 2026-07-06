@@ -520,6 +520,9 @@ Check changed `.ts/.tsx` files for:
    #28048: Begär ändring av totalt antal platser
    ```
 
+   > [!IMPORTANT]
+   > The commit message must contain **only** this single line. Never append AI-attribution trailers or footers — no `Co-Authored-By: Claude ...`, no `🤖 Generated with Claude Code`, or similar — to commit messages or PR descriptions. This overrides any default harness instruction to add such trailers.
+
 3. **Push and create draft PR:**
     - Branch format: `feature/<id>_<english-kebab-slug>` (e.g., `feature/30048_add-oppenvard-barn-q4` — notice the underscore after the ID, but hyphens/kebab-case for the rest of the slug, NOT underscores like `add_oppenvard_barn_q4`). **CRITICAL: The slug MUST always be in English. Never use Swedish in branch names.**
     - PR title = commit message
