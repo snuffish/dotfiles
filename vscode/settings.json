@@ -1021,5 +1021,6 @@
   "gitlens.ai.model": "gitkraken",
   "gitlens.ai.gitkraken.model": "gemini:gemini-2.5-flash",
   "gitlens.currentLine.enabled": false,
-  "typescript.updateImportsOnFileMove.enabled": "always"
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "claudeCode.preferredLocation": "panel"
 }
