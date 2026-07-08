@@ -1,6 +1,6 @@
 ---
 name: modern-csharp
-description: General C# 14 idioms and best practices — collection expressions, primary constructors, records, sealed classes, extension blocks, pattern matching, and nullable reference types. Load when writing or reviewing C# code in any C# project.
+description: General C# 14 idioms and best practices — collection expressions, primary constructors, records, sealed classes, extension blocks, pattern matching, nullable reference types, and comment/XML-doc conventions. Load when writing or reviewing C# code in any C# project.
 ---
 
 # Modern C# 14 Idioms and Best Practices
@@ -301,6 +301,31 @@ async Task act() { await service.ExecuteAsync(); }
 
 ---
 
+## 12. Comments and XML Documentation
+
+Write a comment only to state something the code cannot show on its own — a non-obvious constraint, an invariant, or the reason a surprising choice is necessary. A `<summary>` states what a type or member is *responsible for*, in the present tense, written **from scratch for the code as it is now** — not how it got here.
+
+```csharp
+// ❌ History, incident narrative, and "why my change is correct" — noise the moment it merges
+/// The Linux container must provide libfontconfig1 for the native renderer to load (see Dockerfile).
+/// Registering the embedded font fixed the CI crash.
+// Changed from PNG to SVG in PR #123.
+// Mirrors the access-check pattern in GetFooProfileEndpoint; stricter than the Excel export's query.
+
+// ✅ States the current responsibility / a real constraint
+/// Builds the display-ready model for the "Matchningsdokumentation" PDF: verifies access,
+/// resolves the chosen selection, and projects it into Swedish-formatted values.
+// Access check runs WITHOUT IgnoreQueryFilters so the CategoryProtection global filter still applies.
+```
+
+- **Describe the code's own job, not its relationship to sibling code.** "Mirrors X", "stricter than Y", "same as the Z export" is archaeology that rots the moment the other side changes. Shared patterns are fine — just say what *this* type does.
+- **No history, changelog, or PR/CI references in comments.** Git and the PR already carry that. A comment describing *what changed* or *why the fix works* is written for the reviewer, not the next reader.
+- **Keep docs true to current behavior.** When you change what the code needs or does, update or delete the affected comment in the *same* edit — a stale doc (e.g. "requires libfontconfig1" after the dependency is gone) is worse than none.
+- **Prefer plain over clever.** Generic, conventional phrasing beats a war-story; the reader should learn the responsibility, not the debugging session that produced it.
+- **Do comment genuine surprises.** A constraint the compiler can't express — ordering that matters, a filter that must run, a culture that must be invariant, a magic value's meaning — is exactly what a comment is for.
+
+---
+
 ## Quick Reference: Forbidden → Preferred
 
 | Forbidden | Preferred |
@@ -314,3 +339,6 @@ async Task act() { await service.ExecuteAsync(); }
 | `new Regex(pattern)` static field | `[GeneratedRegex] partial` method |
 | `throw new ArgumentException(...)` for expected failures | `return SystemResult.Failure(...)` |
 | `var act = async () => ...` | `async Task Act() { ... }` (PascalCase local function) |
+| `// mirrors X / same as the Y export` (cross-ref archaeology) | State what *this* type does |
+| `// fixed CI / changed in PR #n` (history in a comment) | Leave history to git/PR; document current behavior |
+| Stale doc left behind after behavior changed | Update or delete it in the same edit |
