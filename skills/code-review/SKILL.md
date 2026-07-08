@@ -113,3 +113,5 @@ For every 🔴 and 🟡 finding, provide a concrete code block or diff showing t
 - If a **context or hook** is changed, verify that all components using it still receive the correct contract.
 - If **prop mutation** is spotted (directly modifying a prop object), flag it as 🟡 — use a local `const` copy instead.
 - If the same **type is defined in more than one file**, flag it as a DRY violation.
+- If a **comment or XML `<summary>` narrates history or an incident** (PR/ticket numbers, "fixed the CI crash", "changed from X to Y", "why this fix works") or **cross-references sibling code as justification** ("mirrors X", "stricter than the Y export"), flag it as 🟢 — comments should state the code's current responsibility or a real constraint, not its backstory.
+- If a change alters what code does or needs but **leaves a now-inaccurate comment/doc in place** (e.g. a documented dependency that was removed), flag the stale comment as 🟡 — a wrong doc is worse than none.
