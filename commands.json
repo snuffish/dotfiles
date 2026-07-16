@@ -4,5 +4,9 @@
     "test backend tail": "az webapp log tail --name api-tm8s-plan-test-001 --resource-group rg-tm8s-plan-test-001",
     "prod frontend tail": "az webapp log tail --name $MELIGO_PROD_WEBAPP_NAME --resource-group $MELIGO_PROD_RESOURCE_GROUP",
     "prod backend tail": "az webapp log tail --name api-tm8s-plan-stage-001 --resource-group rg-tm8s-plan-stage-001"
+  },
+  "gr": {
+    "[SSH] priis-docker01": "ssh -i ~/.ssh/gr_rsa christoffer.engman@priis-docker01.gr.internal",
+    "[SSH] priis-docker02": "ssh -i ~/.ssh/gr_rsa christoffer.engman@priis-docker02.gr.internal"
   }
 }
