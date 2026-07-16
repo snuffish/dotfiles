@@ -4,5 +4,9 @@
     "test backend tail": "az webapp log tail --name MELIGO_TEST_API --resource-group MELIGO_TEST_API_RG",
     "prod frontend tail": "az webapp log tail --name $MELIGO_PROD_WEBAPP_NAME --resource-group $MELIGO_PROD_RESOURCE_GROUP",
     "prod backend tail": "az webapp log tail --name MELIGO_PROD_API --resource-group MELIGO_PROD_API_RG"
+  },
+  "gr": {
+    "[SSH] priis-docker01": "ssh -i ~/.ssh/gr_rsa GR_DOCKER01_SSH",
+    "[SSH] priis-docker02": "ssh -i ~/.ssh/gr_rsa GR_DOCKER02_SSH"
   }
 }
