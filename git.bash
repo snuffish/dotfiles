@@ -28,7 +28,7 @@ alias gclean="g clean -f"
 alias gst="g status"
 alias gcwip="g add . && g status && gc wip && gp"
 
-alias meligo="run_fzf_json ~/.terminal/commands.json meligo"
+alias meligo="run_fzf_json meligo --title 'Meligo Azure Logs'"
 
 function gdw() {
   SEARCH=$1
