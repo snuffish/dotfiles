@@ -76,7 +76,12 @@ run_fzf_json() {
 
   # Extract keys in original order using keys_unsorted
   local choice_name=$(jq -j ".[\"$key\"] | keys_unsorted[] + \"\\u0000\"" "$config_file" |
-    fzf --read0 --height 40% --reverse --header "$fzf_header")
+    fzf --read0 --height 40% --reverse --header "$fzf_header" \
+      --preview "jq -r --arg k \"$key\" --arg c {} '.[\$k][\$c]' \"$config_file\"" \
+      --preview-window "down:3:wrap" \
+      --preview-label " Command " \
+      --preview-label-pos "2" \
+      --color "preview-border:gray")
 
   # Execute the command if a choice was made
   if [[ -n "$choice_name" ]]; then
