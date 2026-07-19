@@ -7,7 +7,6 @@
 [[ $(aliasExists ".terminal") -eq 0 ]] && alias .terminal='cd "$HOME/.terminal"'
 [[ $(aliasExists ".t") -eq 0 ]] && alias .t='cd "$HOME/.terminal"'
 
-[[ $(aliasExists ".") -eq 0 ]] && alias .='cd "$HOME"'
 [[ $(aliasExists "..") -eq 0 ]] && alias ..="cd .."
 
 if [[ $ENV_PROFILE == "Linux" ]]; then
@@ -23,18 +22,30 @@ mkcd() {
   mkdir -p "$@" && cd "$_" || return
 }
 
-alias rm="rm -rf"
+if command -v eza >/dev/null 2>&1; then
+  alias ls="eza -laho --octal-permissions --icons=always --group-directories-first"
+  alias l=ls
+  alias lD="ls -D"
+  alias ldot="ls -ld .*"
+  alias lt="ls -T"
+else
+  alias ls="ls -la --color=auto"
+  alias l=ls
+fi
 
-alias ls="eza -laho --octal-permissions --icons=always --group-directories-first"
-alias l=ls
+if command -v bat >/dev/null 2>&1; then
+  alias cat="bat"
+elif command -v batcat >/dev/null 2>&1; then
+  alias cat="batcat"
+fi
 
-alias lD="ls -D"
-alias ldot="ls -ld .*"
-
-alias lt="ls -T"
-alias cat="bat"
-
-alias find="find . -name"
+ff() {
+  if [[ -z "$1" ]]; then
+    echo "Usage: ff <filename_pattern>"
+    return 1
+  fi
+  find . -name "$1"
+}
 
 alias untar="tar -xvzf"
 

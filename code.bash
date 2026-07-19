@@ -30,7 +30,13 @@ findPort() {
 
 alias killPort="npx kill-port"
 
-alias process="sudo ps aux | grep $process_name"
+process() {
+  if [[ -z "$1" ]]; then
+    echo "Usage: process <process_name>"
+    return 1
+  fi
+  sudo ps aux | grep -i "$1"
+}
 
 alias header="curl -I -L"
 alias portListener="sudo netstat -tolpn"
