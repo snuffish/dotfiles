@@ -18,11 +18,11 @@ alias c="clear"
 
 alias wget="wget -c"
 
-alias ps="ps aux | grep -v grep | grep -i -e VSZ -e"
+alias psg="ps aux | grep -v grep | grep -i"
 
 alias sysinfo="lsb_release -a"
 
-alias myip="curl ipinfo.io/json &> /dev/null | jq '.'"
+alias myip="curl -s ipinfo.io/json | jq '.'"
 
 alias hs="history"
 

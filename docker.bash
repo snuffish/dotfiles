@@ -6,8 +6,8 @@ alias dprunevolumes="docker volume prune"
 
 # System
 alias dsize="docker system df"
-alias dclearContainers="docker rmi $(docker images -f "dangling=true" -q)"
-alias dclearVolumes="docker volume rm $(docker volume ls -qf dangling=true)"
+alias dclearContainers="docker images -f dangling=true -q | xargs -r docker rmi"
+alias dclearVolumes="docker volume ls -qf dangling=true | xargs -r docker volume rm"
 
 # Shortcuts
 # alias di="d images"
@@ -23,7 +23,7 @@ alias dclearVolumes="docker volume rm $(docker volume ls -qf dangling=true)"
 alias dip="docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'"
 
 function dockerExecuteIteration() {
-  docker exec -it $1 bash
+  docker exec -it "$1" bash
 }
 
 function tagDockerImage() {
