@@ -17,8 +17,11 @@
 #   - fzf: For the interactive fuzzy finder.
 #
 # Configuration:
-#   Expects a 'commands.json' file in the same directory as this script
-#   (/home/snuffish/.terminal/utils/commands.json).
+#   Defaults to searching for 'commands.json' in:
+#   1. Script directory ($script_dir/commands.json)
+#   2. Terminal config root ($script_dir/../commands.json)
+#   3. Home terminal directory (~/.terminal/commands.json)
+#
 #   The JSON should follow this structure:
 #   {
 #     "key_name": {
@@ -37,8 +40,13 @@ run_fzf_json() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
     -t | --title)
-      title="$2"
-      shift 2
+      if [[ -n "$2" && "$2" != -* ]]; then
+        title="$2"
+        shift 2
+      else
+        echo "Error: Option $1 requires a non-empty argument."
+        return 1
+      fi
       ;;
     *.json)
       config_file="$1"
@@ -51,8 +59,19 @@ run_fzf_json() {
     esac
   done
 
-  # Fallback to default file in script directory if no path provided
-  config_file="${config_file:-$script_dir/commands.json}"
+  # Expand tilde in config_file if present
+  config_file="${config_file/#\~/$HOME}"
+
+  # Fallback: search standard config locations if path not specified
+  if [[ -z "$config_file" ]]; then
+    if [[ -f "$script_dir/commands.json" ]]; then
+      config_file="$script_dir/commands.json"
+    elif [[ -f "$script_dir/../commands.json" ]]; then
+      config_file="$script_dir/../commands.json"
+    elif [[ -f "$HOME/.terminal/commands.json" ]]; then
+      config_file="$HOME/.terminal/commands.json"
+    fi
+  fi
 
   # Validation
   if [[ ! -f "$config_file" ]]; then
@@ -65,8 +84,8 @@ run_fzf_json() {
     return 1
   fi
 
-  # Check if the key exists in the JSON
-  if ! jq -e ".[\"$key\"]" "$config_file" >/dev/null 2>&1; then
+  # Check if the key exists in the JSON safely using --arg
+  if ! jq -e --arg k "$key" '.[$k] != null' "$config_file" >/dev/null 2>&1; then
     echo "Error: Key '$key' not found in $config_file"
     return 1
   fi
@@ -75,7 +94,8 @@ run_fzf_json() {
   local fzf_header="${title:-Select command ($key):}"
 
   # Extract keys in original order using keys_unsorted
-  local choice_name=$(jq -j ".[\"$key\"] | keys_unsorted[] + \"\\u0000\"" "$config_file" |
+  local choice_name
+  choice_name=$(jq -j --arg k "$key" '.[$k] | keys_unsorted[] + "\u0000"' "$config_file" |
     fzf --read0 --height 40% --reverse --header "$fzf_header" \
       --preview "jq -r --arg k \"$key\" --arg c {} '.[\$k][\$c]' \"$config_file\"" \
       --preview-window "down:3:wrap" \
@@ -85,7 +105,8 @@ run_fzf_json() {
 
   # Execute the command if a choice was made
   if [[ -n "$choice_name" ]]; then
-    local cmd=$(jq -r ".[\"$key\"][\"$choice_name\"]" "$config_file")
+    local cmd
+    cmd=$(jq -r --arg k "$key" --arg c "$choice_name" '.[$k][$c]' "$config_file")
     echo "Executing: $cmd"
     eval "$cmd"
   fi
