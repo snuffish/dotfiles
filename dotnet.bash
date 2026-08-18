@@ -1,3 +1,5 @@
 #!/bin/bash
 
-alias dnr="dr"
+alias dnr="dotnet run"
+alias dnb="dotnet build"
+alias dnt="dotnet test"
