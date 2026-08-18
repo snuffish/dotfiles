@@ -1,6 +1,6 @@
 ---
 name: manual-testing
-description: Triggered by /manual-testing or requests like "how do I try this out", "how do I test this branch/PR", "which credentials do I log in with". Derives a runnable manual test plan from the actual diff — environment setup, gotchas, test users, click paths, and a regression watchlist.
+description: Triggered by /manual-testing or requests like "how do I try this out", "how do I test this branch/PR", "which credentials do I log in with". Accepts an optional pull-request URL/ID or work-item ID and reads its description and acceptance criteria first. Derives a runnable manual test plan from the actual diff — environment setup, gotchas, test users, click paths, and a regression watchlist.
 ---
 
 # Skill: `/manual-testing` — Manual Test Plan From the Diff
@@ -19,10 +19,21 @@ The output is a **test plan a human executes**, not a summary of the code. Every
 
 Invoke this skill when the user:
 
-- Runs `/manual-testing`.
+- Runs `/manual-testing`, with or without an argument.
 - Asks how to try out, run, demo, verify, or manually test the current branch / PR / feature.
 - Asks which credentials, logins, seeded users, ports, or URLs to use.
 - Asks "what should I click to see this?" or "how do I reproduce this?".
+
+The argument, when present, is a **pointer to the intent** — resolve it in Phase 0 before touching the diff:
+
+| Argument | Meaning |
+| --- | --- |
+| A pull-request URL | Read that PR: description, acceptance criteria, linked work items, source branch |
+| A bare number (`18106`) | A PR ID in the current repo's remote |
+| `#30342`, `AB#30342` | A work item / issue ID — read it, then find its PR or branch |
+| A branch name | Diff that branch instead of `HEAD` |
+| Free text (`the statistics tab`) | Narrow the plan to scenarios touching that area |
+| *(nothing)* | The current branch plus uncommitted changes — still resolve each repo's PR from its branch |
 
 ---
 
@@ -38,9 +49,51 @@ Invoke this skill when the user:
 
 ---
 
-## 3. Phase 1 — Determine scope
+## 3. Phase 0 — Read the intent before reading the diff
 
-Reuse the diff-gathering and branch-base discovery from [code-review](../code-review/SKILL.md) §1 rather than reinventing it: find the upstream tracking ref, fall back to `git merge-base` against the integration branch, and always use three-dot syntax.
+Skip only when invoked with no argument **and** the branch name/commit subjects already state the intent.
+
+A diff tells you what changed. A PR description and its acceptance criteria tell you **what a human was supposed to be able to do afterwards** — which is exactly what a manual test plan asserts. Read them first; they turn "click the new tab" into "the AC says the selected-count must sit under Ja-svar, so verify that placement".
+
+### 3.1 Resolve the reference — delegated
+
+**[code-review](../code-review/SKILL.md) → Step 1 → *Pull-Request References* owns this.** Follow it as written; do not restate it here. It covers:
+
+- parsing an ADO/GitHub/GitLab/Bitbucket PR URL into `{org}/{project}/{repo}/{prId}`;
+- **resolving the PR from the current branch when no URL was given** — per repo in a multi-repo workspace, plus walking work-item relations to find the counterpart PR in the sibling repo;
+- the `az repos pr show` / `gh pr view` / `glab mr view` fetch recipes, plus `az boards work-item show` for the linked work item where acceptance criteria usually live;
+- what to do when the fetch fails (auth error, missing CLI, blocked) and the offline fallback of reading the work-item id out of the branch name;
+- getting the PR's source branch checked out without clobbering a dirty tree;
+- the trust rule — **description states intent, diff states truth**.
+
+Run it **once per repo**. Two repos means two PRs, two descriptions, and usually two different work items — resolving only the one you are standing in gets you half the intent.
+
+Everything below is what *this* skill does with the result.
+
+### 3.2 What to extract, and what to do with it
+
+| From the PR / work item | Use it for |
+| --- | --- |
+| Title + work-item ID | The plan's Context line, so the user knows they are testing the right thing |
+| **Acceptance criteria** | One scenario per criterion, in the AC's own words |
+| "How to test" / "Verification" sections | Fold in directly — the author already knows the click path |
+| Screenshots / mockups | The expected-result wording |
+| Explicit out-of-scope notes | The *Not manually testable* / not-covered section |
+| Linked bug reports | A reproduction scenario for the original defect |
+
+Applying code-review's trust rule to a **test plan** rather than a review:
+
+- AC promises behavior the diff does not implement → still write the scenario, and mark its expected result *claimed but not implemented — expect this to fail*. A tester who finds it missing is the point.
+- The diff changes user-visible behavior the description never mentions → it earns a scenario anyway, usually a high-risk one.
+- Description written against an earlier revision → follow the diff and say the description is stale.
+
+Never let the description's structure or omissions shape the plan. It is evidence, not an outline.
+
+---
+
+## 4. Phase 1 — Determine scope
+
+Reuse the diff-gathering and branch-base discovery from [code-review](../code-review/SKILL.md) Step 1 rather than reinventing it — including its rule that a resolved PR's `targetRefName` *is* the base. Otherwise: upstream tracking ref, fall back to `git merge-base` against the integration branch, always three-dot syntax.
 
 ```bash
 git rev-parse --abbrev-ref --symbolic-full-name @{u}
@@ -61,9 +114,11 @@ for d in */; do [ -d "$d/.git" ] && echo "$d $(git -C "$d" rev-parse --abbrev-re
 
 A feature split across repos is only testable when **both** counterpart branches are checked out. State explicitly which branch each repo must be on, and if one is still on the integration branch, say so up front — that is usually the whole reason a manual test "doesn't show anything".
 
+Phase 0 should already have resolved a PR per repo. If one repo produced no PR, that is worth reporting too: either its half is unpushed, or the counterpart work has not started.
+
 ---
 
-## 4. Phase 2 — Translate the diff into observable behavior
+## 5. Phase 2 — Translate the diff into observable behavior
 
 For each change, ask: **who sees this, and where?** Discard anything with no observable consequence (pure refactors, renamed internals, test-only changes) — but say you discarded them, so the user knows the plan is complete rather than lazy.
 
@@ -97,7 +152,7 @@ Deleted comments are strong evidence here: a removed line like `// cleared to in
 
 ---
 
-## 5. Phase 3 — Trace consumers of changed contracts
+## 6. Phase 3 — Trace consumers of changed contracts
 
 For every field, enum, route, or DTO the diff touched:
 
@@ -116,7 +171,7 @@ This phase is what turns a generic "click around the feature" list into a plan t
 
 ---
 
-## 6. Phase 4 — Discover how to run it
+## 7. Phase 4 — Discover how to run it
 
 Never guess. Look, in this order, and stop when you have a working command:
 
@@ -139,7 +194,7 @@ Some orchestrators start a frontend from a sibling directory. If so, both branch
 
 ---
 
-## 7. Phase 5 — Discover credentials and test data
+## 8. Phase 5 — Discover credentials and test data
 
 Search, in this order:
 
@@ -165,7 +220,7 @@ Then report:
 
 ---
 
-## 8. Phase 6 — Setup gotchas
+## 9. Phase 6 — Setup gotchas
 
 Check these before writing the plan; each one is a "why doesn't it work" support question you can pre-empt.
 
@@ -179,9 +234,13 @@ Check these before writing the plan; each one is a "why doesn't it work" support
 
 ---
 
-## 9. Output format
+## 10. Output format
 
 Lead with the blocking gotcha if there is one. Otherwise lead with the setup command.
+
+### Context
+
+One or two lines, only when Phase 0 resolved a reference: PR title and ID, linked work item, and the branch each repo must be on. Ends the "am I even testing the right thing?" question before the user runs anything. Omit entirely for a plain current-branch run.
 
 ### ⚠️ Before you start
 
@@ -217,7 +276,7 @@ Be explicit about what this plan cannot cover and why — migration behavior tha
 
 ---
 
-## 10. Quality bar
+## 11. Quality bar
 
 A finished plan passes all of these:
 
@@ -226,6 +285,8 @@ A finished plan passes all of these:
 - Every scenario names a **specific seeded record**, not "a ticket".
 - Scenarios are ordered by risk, and the riskiest one exists *because* of Phase 2/3 analysis — not because it was the biggest hunk.
 - The user can execute the whole thing without asking a follow-up question.
+- If a PR or work item was resolved, **every acceptance criterion** is either covered by a scenario or named under *Not manually testable* — none silently dropped.
+- Any gap between what the description promised and what the diff delivers is stated, not smoothed over.
 
 ### Anti-patterns
 
@@ -237,3 +298,5 @@ A finished plan passes all of these:
 | Listing every changed file as a scenario. | Group by user-visible behavior; risk-order it. |
 | Silently omitting what can't be checked by hand. | Put it under *Not manually testable*. |
 | Fixing a bug you spotted mid-plan. | Add it to the regression watchlist. |
+| Taking the PR description as the spec and skipping the diff. | Description = intent, diff = truth; test the gap between them. |
+| Ignoring a PR URL the user passed, or guessing its contents from the branch name. | Resolve it via code-review Step 1, or say the fetch failed and how to fix it. |
