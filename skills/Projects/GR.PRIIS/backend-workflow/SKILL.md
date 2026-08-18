@@ -122,7 +122,7 @@ Resolved: #<implementing task or bug ID>
 |------|-----------|
 | Starting work | Set the **User Story** to `Active` |
 | Reusing a child task | Set the **Task** to `Active` |
-| Creating a new child task | Create → set to `Active` → link to parent story |
+| Creating a new child task | **Only when the user explicitly asks for it.** Create → set to `Active` → link to parent story |
 | PR created | Move the **implementing Task or Bug** to `Pull Request` |
 | PR merged | Work item typically moves to `Resolved` or `Done` automatically |
 
@@ -132,9 +132,11 @@ Link the PR to the implementing **task or bug** — not only to the parent user 
 
 ## 7. Work Item Intake
 
+> **Never create ADO work items (tasks, bugs, or stories) on your own.** Create a work item *only* when the user explicitly tells you to. Wherever intake would otherwise call for a new child task, fall back to the existing item's ID instead.
+
 | Work item type | Action |
 |----------------|--------|
-| **User Story** | Look for an existing `Backend`-tagged child task to reuse. If none exists, create a new Task with the `Backend` tag, set it `Active`, and link it to the story. Use the child task ID for the branch. |
+| **User Story** | Look for an existing `Backend`-tagged child task to reuse and use its ID for the branch. If none exists, **do not create one** — use the **User Story ID** itself for the branch/commit/PR and link the PR to the story. Only create a child task if the user explicitly instructs you to. |
 | **Task** | Work directly on that task. Use its ID for the branch. |
 | **Bug** | Work directly on that bug. Use its ID for the branch. |
 

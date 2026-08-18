@@ -19,4 +19,13 @@
     "command": "-extension.vim_ctrl+f",
     "when": "editorTextFocus && vim.active && vim.use<C-f> && !inDebugRepl && vim.mode != 'Insert'",
   },
+  {
+    "key": "ctrl+/",
+    "command": "workbench.action.terminal.new"
+  },
+  {
+    "key": "escape escape",
+    "command": "workbench.action.focusActiveEditorGroup",
+    "when": "terminalFocus"
+  }
 ]

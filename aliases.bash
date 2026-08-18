@@ -22,7 +22,14 @@ fi
 
 if [[ $ENV_PROFILE == "Linux" ]]; then
   function open() {
-    /usr/bin/nautilus --new-window "$1"
+    if command -v nautilus >/dev/null 2>&1; then
+      nautilus --new-window "${1:-.}"
+    elif command -v xdg-open >/dev/null 2>&1; then
+      xdg-open "${1:-.}"
+    else
+      echo "Error: Neither nautilus nor xdg-open is available."
+      return 1
+    fi
   }
 
   alias o="open"
@@ -32,5 +39,5 @@ fi
 
 alias .d='cd $HOME/Desktop'
 alias .p='cd $HOME/Projects'
-alias .config='$HOME/.config'
-alias .piop='$HOME/Documents/PlatformIO/Projects'
+alias .config='cd $HOME/.config'
+alias .piop='cd $HOME/Documents/PlatformIO/Projects'
