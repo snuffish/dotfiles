@@ -29,7 +29,7 @@ Invoke this skill when the user:
 ## 2. Guardrails
 
 | Rule | Why |
-|---|---|
+| --- | --- |
 | **Do not run** installs, builds, migrations, seeders, or the app itself unless the user explicitly asks. | The user is about to do this themselves; a half-run setup is worse than none. Read-only inspection only (`git`, `cat`, `grep`, `ls`). |
 | **Flag destructive setup steps as destructive** and let the user decide. | "Recreate the database" wipes their local state. Say so in the same sentence you recommend it. |
 | **Never invent** a URL, port, username, or password. | An invented credential costs the user ten minutes of doubt. If you cannot find it, say `not found — check <where you looked>`. |
@@ -68,7 +68,7 @@ A feature split across repos is only testable when **both** counterpart branches
 For each change, ask: **who sees this, and where?** Discard anything with no observable consequence (pure refactors, renamed internals, test-only changes) — but say you discarded them, so the user knows the plan is complete rather than lazy.
 
 | Change in the diff | What to actually test |
-|---|---|
+| --- | --- |
 | New/changed endpoint, field, or response shape | The screen that renders it; also the empty/zero/null case |
 | New enum member or changed enum semantics | Each member's rendered label, plus the value the UI shows when the field is `null` |
 | Validation rule added or relaxed | Submit the now-invalid input and read the message; submit the boundary value |
@@ -124,9 +124,11 @@ Never guess. Look, in this order, and stop when you have a working command:
 2. **Orchestrator** — a single entry point that starts everything: an Aspire AppHost, `docker-compose.yml`, `Procfile`, `Taskfile`, `Makefile`, `tilt`/`skaffold` config. Prefer it over starting services one by one, and say what it starts.
 3. **Scripts** — `package.json` scripts, `*.csproj`/`*.sln` run targets, `pyproject.toml`, `justfile`.
 4. **Ports and URLs** — read them from config rather than assuming defaults. Grep the orchestrator and launch profiles:
+
    ```bash
    grep -rn "port\|Port\|localhost:\|applicationUrl" <orchestrator/config/launchSettings>
    ```
+
 5. **Prerequisites** — container runtime, language/toolchain version pins (`.nvmrc`, `global.json`, Volta/`engines`), and whether a private package feed needs auth.
 
 Produce a table of every URL the user will need — app, API/API docs, admin/dashboard, mail catcher, DB.
@@ -182,15 +184,19 @@ Check these before writing the plan; each one is a "why doesn't it work" support
 Lead with the blocking gotcha if there is one. Otherwise lead with the setup command.
 
 ### ⚠️ Before you start
+
 Only if a destructive or blocking prerequisite exists. State what breaks, why, and the exact command — labelled destructive if it destroys data.
 
 ### Setup
+
 The minimal command sequence, with the URL/port table.
 
 ### Logins
+
 The credentials table, with the recommended account marked.
 
 ### What to test
+
 Numbered scenarios, ordered **most-likely-to-be-broken first**, not in diff order. Each one:
 
 > **N. <observable outcome, phrased as a claim>**
@@ -202,9 +208,11 @@ Numbered scenarios, ordered **most-likely-to-be-broken first**, not in diff orde
 Keep it to the scenarios that earn their place. Six sharp scenarios beat twenty that restate the diff.
 
 ### Regression watchlist
+
 Surfaces that read data whose meaning changed but were **not** updated by the diff. File link, line, and what the user will see. This is the section that finds bugs — do not drop it, and say "none found" if that is the honest answer.
 
 ### Not manually testable
+
 Be explicit about what this plan cannot cover and why — migration behavior that needs a production-shaped backup, race conditions, timing windows, load-dependent paths, third-party integrations without a sandbox. Name the safety net that does cover it (integration test, dry-run script, staging) or flag that there is none.
 
 ---
@@ -222,7 +230,7 @@ A finished plan passes all of these:
 ### Anti-patterns
 
 | Don't | Do |
-|---|---|
+| --- | --- |
 | "Log in and verify the feature works." | Name the account, the route, and the expected value. |
 | Restating the diff as a checklist. | Test observable outcomes; skip invisible refactors (and say you skipped them). |
 | Assuming `localhost:3000`, `admin/admin`. | Read the config and the seeder. |
