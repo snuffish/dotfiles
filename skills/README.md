@@ -22,15 +22,16 @@ skills/
 
 ## Inventory
 
-26 skills total — 4 general + 22 under `Projects/GR.PRIIS/`.
+29 skills total — 6 general + 23 under `Projects/GR.PRIIS/`.
 
 | Group                            | Count | Skills                                                                                                                |
 | -------------------------------- | :---: | -------------------------------------------------------------------------------------------------------------------- |
-| General (top level)              |   4   | `code-review`, `modern-csharp`, `pr-summary`, `refine`                                                               |
+| General (top level)              |   6   | `code-review`, `manual-testing`, `modern-csharp`, `pr-summary`, `problem`, `refine`                                   |
 | `GR.PRIIS/backend-*`             |   7   | `dry`, `ef-core`, `fastendpoints`, `notifications`, `signalr`, `testing`, `workflow`                                 |
 | `GR.PRIIS/frontend-*`            |   6   | `component-patterns`, `forms`, `routing`, `rtk-query`, `testing`, `workflow`                                          |
 | `GR.PRIIS/source-command-backend-*`  | 6 | `health-check`, `migrate-to-tunit`, `release-notes`, `scaffold`, `ship`, `verify`                                    |
 | `GR.PRIIS/source-command-frontend-*` | 3 | `health-check`, `scaffold`, `verify`                                                                                  |
+| `GR.PRIIS/` (unprefixed)         |   1   | `implement-feature`                                                                                                   |
 
 (Skill names are the group prefix + the listed suffix — e.g. `backend-ef-core`, `source-command-frontend-verify`.)
 
@@ -86,8 +87,8 @@ Get-ChildItem -Path "$env:USERPROFILE\.terminal\skills" -Filter "SKILL.md" -Recu
 
 (If the loader globs recursively — `skills/**/SKILL.md` — point it at this root directly and the grouping is honored as-is.)
 
-**Current live state:** all 24 skills are flat-symlinked into the flat skills directory, each pointing back into this tree. Verify on macOS/Linux with:
+**Current live state:** 27 of the 29 skills are flat-symlinked into the flat skills directory, each pointing back into this tree. `problem` and `refine` are staged but not linked. Verify on macOS/Linux with:
 
 ```bash
-ls -la ~/.claude/skills | grep -c '\-> .*/.terminal/skills/'   # expect 24
+ls -la ~/.claude/skills | grep -c '\-> .*/.terminal/skills/'   # expect 27
 ```
