@@ -4,6 +4,7 @@ if [[ $ENV_PROFILE == "Mac" || $ENV_PROFILE = "Linux" ]]; then
   # Mac
   export DEVICE="MAC"
   alias o="open"
+  alias .="cd ~"
   alias .tmp="cd /tmp"
   alias .up='cd $HOME/UnityProjects'
   alias reboot="sudo reboot now"
