@@ -16,6 +16,8 @@ fi
 alias .tmp='cd "$HOME/.tmp"'
 alias .logs='cd "$HOME/.logs"'
 
+alias rm="rm -rf"
+
 alias -- -="cd -"
 
 mkcd() {
