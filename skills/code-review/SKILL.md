@@ -257,6 +257,9 @@ Write each one as four beats, in this order:
 
 1. **What the code is trying to do** — one sentence, in domain nouns (*avtalsmall*,
    *delområde*, *handläggare*), never type names (`ContractTemplate`, `SubareaContract`).
+   Keep the product's own word for a thing so the team recognises it, but gloss it in
+   English the first time it appears — "*avtalsmall* (the master contract that subareas
+   hang off)" — then use the term unglossed.
 2. **What actually happens** — the failure as a numbered sequence of events with real
    actors, not as a conditional rule. "1. A handler pauses a contract. 2. They close the
    subarea — the guard only looks for *active* contracts, finds none, allows it. 3. …"
@@ -277,13 +280,16 @@ Rules:
   Avtalsmall  →  Delområden  →  Avtal
   ```
 - **Don't repeat the fix.** Reference the numbered finding; the diff already lives above.
-- **Skip 🟢 and 💙.** Polish and praise don't need translating.
+- **Skip 🟢 and 💙.** Polish and praise don't need restating.
 - **Cap each at ~150 words.** If one needs more, the technical finding above it is
   underexplained — fix that instead of padding here.
-- **Match the review's language**, except when the product's working language differs from
-  the review's (e.g. a Swedish product reviewed in English). This section is aimed at
-  non-engineers on the team, so default to the *product's* language for it — and say in one
-  line that you've done so.
+- **Always write this section in simple English**, whatever language the rest of the review
+  uses and whatever the product's working language is (a Swedish product still gets an
+  English explanation here). Don't add a line explaining the language choice.
+- **Simple means simple.** Short declarative sentences, everyday words, one idea per
+  sentence. "The record stays in the wrong state" — not "the entity's status remains
+  inconsistent with its parent aggregate". Split any sentence that needs a second clause to
+  survive. No acronyms without expanding them, no jargon a tester wouldn't use out loud.
 - If the review produced no 🔴 or 🟡 findings, omit the section entirely rather than
   writing "nothing to explain".
 
