@@ -235,6 +235,9 @@ For large reviews (many files), open with a **summary table** before detailed fi
 | 1 | 🔴 | `foo.ts` | Missing null check on `userId` |
 | 2 | 🟡 | `bar.tsx` | Duplicated `IssueWriter` type |
 
+Anchor each row's `#` to both the detailed finding and its plain-language counterpart, so a
+reader can jump either way.
+
 ### Actionable Suggestions
 
 For every 🔴 and 🟡 finding, provide a concrete code block or diff showing the fix, with a brief rationale:
@@ -243,6 +246,46 @@ For every 🔴 and 🟡 finding, provide a concrete code block or diff showing t
 - public class UserService {
 + public sealed class UserService {
 ```
+
+### In Plain Terms
+
+After the actionable suggestions, add a plain-language explanation of every 🔴 and 🟡
+finding. Technical readers skip it; product owners, testers, and the person who has to
+decide whether this blocks a release read only it.
+
+Write each one as four beats, in this order:
+
+1. **What the code is trying to do** — one sentence, in domain nouns (*avtalsmall*,
+   *delområde*, *handläggare*), never type names (`ContractTemplate`, `SubareaContract`).
+2. **What actually happens** — the failure as a numbered sequence of events with real
+   actors, not as a conditional rule. "1. A handler pauses a contract. 2. They close the
+   subarea — the guard only looks for *active* contracts, finds none, allows it. 3. …"
+   Sequences are concrete; rules are not.
+3. **Why it's a defect and not a matter of taste** — name the contradiction: another code
+   path already does it correctly, a stated promise in the PR is broken, or the data ends
+   up self-inconsistent. Without this beat the reader can dismiss the finding as opinion.
+4. **Who notices and how bad** — the user-visible symptom, and why the severity is what it
+   is ("nothing crashes, but records silently stay in the wrong state").
+
+Rules:
+
+- **No code, no type names, no method signatures.** If a name is unavoidable, gloss it once
+  in domain terms and move on.
+- **A three-line ASCII hierarchy or sequence diagram is often worth more than a paragraph.**
+  Use one when the finding is about how data or calls nest:
+  ```text
+  Avtalsmall  →  Delområden  →  Avtal
+  ```
+- **Don't repeat the fix.** Reference the numbered finding; the diff already lives above.
+- **Skip 🟢 and 💙.** Polish and praise don't need translating.
+- **Cap each at ~150 words.** If one needs more, the technical finding above it is
+  underexplained — fix that instead of padding here.
+- **Match the review's language**, except when the product's working language differs from
+  the review's (e.g. a Swedish product reviewed in English). This section is aimed at
+  non-engineers on the team, so default to the *product's* language for it — and say in one
+  line that you've done so.
+- If the review produced no 🔴 or 🟡 findings, omit the section entirely rather than
+  writing "nothing to explain".
 
 ---
 
@@ -254,3 +297,4 @@ For every 🔴 and 🟡 finding, provide a concrete code block or diff showing t
 - If the same **type is defined in more than one file**, flag it as a DRY violation.
 - If a **comment or XML `<summary>` narrates history or an incident** (PR/ticket numbers, "fixed the CI crash", "changed from X to Y", "why this fix works") or **cross-references sibling code as justification** ("mirrors X", "stricter than the Y export"), flag it as 🟢 — comments should state the code's current responsibility or a real constraint, not its backstory.
 - If a change alters what code does or needs but **leaves a now-inaccurate comment/doc in place** (e.g. a documented dependency that was removed), flag the stale comment as 🟡 — a wrong doc is worse than none.
+- When writing a plain-language explanation, the **"why this isn't a preference" beat is mandatory for every 🟡**. A design finding without it reads as style commentary and gets waved through. The strongest form is pointing at an existing code path in the same repo that already handles the case correctly.
