@@ -61,3 +61,23 @@ function gP() {
   fi
 }
 
+# Push a specific local branch without switching to it
+function gpb() {
+  local branch="$1"
+  if [ -z "$branch" ]; then
+    if command -v fzf >/dev/null 2>&1; then
+      branch=$(git branch --format='%(refname:short)' | fzf --header 'Select branch to push:' --preview 'git show --color=always {-1}' --height 50% --layout reverse)
+    fi
+  else
+    shift
+  fi
+
+  if [ -z "$branch" ]; then
+    echo "Usage: gpb <branch-name> [git push options...]"
+    return 1
+  fi
+
+  git push origin "$branch:$branch" "$@"
+}
+
+
