@@ -21,7 +21,7 @@ alias gch="g checkout"
 alias grh="g reset --hard && gclean"
 
 alias gpa="git-pull-all"
-alias gb="git branch --all | fzf --header 'Select branch to checkout:' --preview 'git show --color=always {-1}' --bind 'enter:become(git checkout {-1})' --height 50% --layout reverse"
+alias gb="git branch --all --format='%(refname:short)' | sed -e 's|^origin/||' -e 's|^remotes/origin/||' | grep -Ev '^(HEAD|\(HEAD|origin/HEAD)' | sort -u | fzf --header 'Select branch to checkout:' --preview 'git show --color=always {-1}' --bind 'enter:become(git checkout {-1})' --height 50% --layout reverse"
 
 alias gclean="g clean -f"
 

@@ -98,7 +98,6 @@ dotnet test --configuration Release
 Run from `source/priis-web/`:
 
 ```bash
-npm run organize-imports
 npm run lint
 npm run build
 # npm run e2e (optional for logic-only changes, required for UI/interaction changes)

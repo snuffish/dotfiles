@@ -22,11 +22,11 @@ skills/
 
 ## Inventory
 
-29 skills total — 6 general + 23 under `Projects/GR.PRIIS/`.
+30 skills total — 7 general + 23 under `Projects/GR.PRIIS/`.
 
 | Group                            | Count | Skills                                                                                                                |
 | -------------------------------- | :---: | -------------------------------------------------------------------------------------------------------------------- |
-| General (top level)              |   6   | `code-review`, `manual-testing`, `modern-csharp`, `pr-summary`, `problem`, `refine`                                   |
+| General (top level)              |   7   | `code-review`, `explain`, `manual-testing`, `modern-csharp`, `pr-summary`, `problem`, `refine`                       |
 | `GR.PRIIS/backend-*`             |   7   | `dry`, `ef-core`, `fastendpoints`, `notifications`, `signalr`, `testing`, `workflow`                                 |
 | `GR.PRIIS/frontend-*`            |   6   | `component-patterns`, `forms`, `routing`, `rtk-query`, `testing`, `workflow`                                          |
 | `GR.PRIIS/source-command-backend-*`  | 6 | `health-check`, `migrate-to-tunit`, `release-notes`, `scaffold`, `ship`, `verify`                                    |
@@ -61,6 +61,7 @@ Load these skills directly by registering their paths in the workspace configura
 Some loaders (like `~/.claude/skills` on macOS/Linux or `%USERPROFILE%\.claude\skills` on Windows) expect a **flat** root — each skill a direct child (`root/<name>/SKILL.md`), with no grouping folders. To activate from this grouped staging tree, symlink the specific skills you want.
 
 #### macOS / Linux (Bash/Zsh)
+
 ```bash
 # A single skill:
 ln -s ~/.terminal/skills/Projects/GR.PRIIS/backend-ef-core ~/.claude/skills/backend-ef-core
@@ -73,6 +74,7 @@ done
 ```
 
 #### Windows (PowerShell)
+
 ```powershell
 # A single skill:
 New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\skills\backend-ef-core" -Value "$env:USERPROFILE\.terminal\skills\Projects\GR.PRIIS\backend-ef-core"

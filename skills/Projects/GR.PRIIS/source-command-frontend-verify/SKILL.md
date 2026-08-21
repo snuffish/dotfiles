@@ -1,6 +1,6 @@
 ---
 name: source-command-frontend-verify
-description: "[Project: GR.PRIIS.Frontend] Run all quality checks before committing — organize imports, lint, build, and anti-pattern scan. Load ONLY when working on the GR.PRIIS.Frontend project or in the GR repository."
+description: "[Project: GR.PRIIS.Frontend] Run all quality checks before committing — lint, build, and anti-pattern scan. Load ONLY when working on the GR.PRIIS.Frontend project or in the GR repository."
 ---
 
 # source-command-frontend-verify
@@ -15,17 +15,7 @@ Run all phases before `git add / git commit`. All npm commands run from `source/
 
 ---
 
-## Phase 1: Organize Imports
-
-```bash
-cd source/priis-web && npm run organize-imports
-```
-
-Sorts imports and applies Prettier formatting to `.ts/.tsx` files. Run this first — CI expects clean, sorted imports. List any files changed.
-
----
-
-## Phase 2: Lint
+## Phase 1: Lint
 
 ```bash
 cd source/priis-web && npm run lint
@@ -35,7 +25,7 @@ cd source/priis-web && npm run lint
 
 ---
 
-## Phase 3: Build
+## Phase 2: Build
 
 ```bash
 cd source/priis-web && npm run build
@@ -45,7 +35,7 @@ TypeScript compile errors and Vite bundle issues surface here. Must complete wit
 
 ---
 
-## Phase 4: Anti-Pattern Scan
+## Phase 3: Anti-Pattern Scan
 
 Grep the changed `.ts/.tsx` files (use `git diff --name-only HEAD` or scan all in `source/priis-web/src/`) for the following violations. Report each hit as `FILE:LINE — explanation`.
 
@@ -70,7 +60,7 @@ Grep the changed `.ts/.tsx` files (use `git diff --name-only HEAD` or scan all i
 
 ---
 
-## Phase 5: SystemAction Sync (conditional)
+## Phase 4: SystemAction Sync (conditional)
 
 Only check this if `src/enums/systemAction.ts` was changed in this commit.
 
@@ -104,3 +94,12 @@ If it was, remind:
 
 ⚠️ **Not ready to commit** — fix 2 anti-pattern issues above, then re-run.
 ```
+
+---
+
+> [!IMPORTANT]
+> **Do not run `npm run organize-imports`.** It rewrites imports across the *whole* workspace, not just
+> the files you touched, so it drags unrelated files into your diff and makes the PR harder to review.
+> CI does not gate on it. `npm run lint` and `npm run build` are the checks that matter.
+>
+> If a file you actually edited has messy imports, fix that file by hand.

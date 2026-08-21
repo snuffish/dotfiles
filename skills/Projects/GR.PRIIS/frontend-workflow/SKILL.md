@@ -1,6 +1,6 @@
 ---
 name: frontend-workflow
-description: "[Project: GR.PRIIS.Frontend] GR.PRIIS.Frontend development workflow — branch naming (feature/bugfix/hotfix), commit format, PR title and body, ADO state transitions, frontend validation commands (organize-imports, lint, build, e2e). Load when creating branches, commits, or pull requests. Load ONLY when working on the GR.PRIIS.Frontend project or in the GR repository."
+description: "[Project: GR.PRIIS.Frontend] GR.PRIIS.Frontend development workflow — branch naming (feature/bugfix/hotfix), commit format, PR title and body, ADO state transitions, frontend validation commands (lint, build, e2e). Load when creating branches, commits, or pull requests. Load ONLY when working on the GR.PRIIS.Frontend project or in the GR repository."
 ---
 
 # Development Workflow — GR.PRIIS.Frontend
@@ -149,11 +149,17 @@ Child task tags:
 All commands run from `source/priis-web/`:
 
 ```bash
-npm run organize-imports    # sort imports + Prettier
 npm run lint                # zero warnings (ESLint)
 npm run build               # TypeScript + Vite bundle
 npm run e2e                 # Playwright (for UI/interaction changes)
 ```
+
+> [!IMPORTANT]
+> **Do not run `npm run organize-imports`.** It rewrites imports across the *whole* workspace, not just
+> the files you touched, so it drags unrelated files into your diff and makes the PR harder to review.
+> CI does not gate on it. `npm run lint` and `npm run build` are the checks that matter.
+>
+> If a file you actually edited has messy imports, fix that file by hand.
 
 Or run `/verify` to automate all checks including anti-pattern scanning.
 

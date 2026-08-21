@@ -136,7 +136,7 @@ Once approved, create `task.md` in the artifact brain directory. Break work into
   - [ ] dotnet format
   - [ ] dotnet build --configuration Release
   - [ ] dotnet test --configuration Release
-  - [ ] organize-imports + lint + build
+  - [ ] lint + build
 ```
 
 Mark items `[/]` as you start, `[x]` when done.
@@ -468,10 +468,14 @@ dotnet test --project tests/GR.PRIIS.ArchitectureTests --configuration Release
 
 ```bash
 cd GR.PRIIS.Frontend/source/priis-web
-npx organize-imports-cli tsconfig.json   # import sorting
-npm run lint                              # ESLint
-npm run build                            # TypeScript + Vite compile
+npm run lint     # ESLint, zero warnings
+npm run build    # TypeScript + Vite compile
 ```
+
+> [!IMPORTANT]
+> **Do not run `npm run organize-imports` / `organize-imports-cli`.** It rewrites imports across the
+> whole workspace, pulling unrelated files into the diff. CI does not gate on it; lint and build do.
+> Fix imports by hand in files you actually touched.
 
 ### Anti-pattern scan (backend)
 
