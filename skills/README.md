@@ -8,7 +8,7 @@ Each skill is a directory containing `SKILL.md` with `name` + `description` fron
 
 ```plaintext
 skills/
-  <general skills>/                # reusable across any project (modern-csharp, pr-summary)
+  <general skills>/                # reusable across any project (modern-csharp, pr-summary, squash-ef-core-migrations)
   Projects/
     GR.PRIIS/                      # everything scoped to the GR.PRIIS product lives here
       backend-<skill>/
@@ -22,11 +22,11 @@ skills/
 
 ## Inventory
 
-30 skills total — 7 general + 23 under `Projects/GR.PRIIS/`.
+31 skills total — 8 general + 23 under `Projects/GR.PRIIS/`.
 
 | Group                            | Count | Skills                                                                                                                |
 | -------------------------------- | :---: | -------------------------------------------------------------------------------------------------------------------- |
-| General (top level)              |   7   | `code-review`, `explain`, `manual-testing`, `modern-csharp`, `pr-summary`, `problem`, `refine`                       |
+| General (top level)              |   8   | `code-review`, `explain`, `manual-testing`, `modern-csharp`, `pr-summary`, `problem`, `refine`, `squash-ef-core-migrations` |
 | `GR.PRIIS/backend-*`             |   7   | `dry`, `ef-core`, `fastendpoints`, `notifications`, `signalr`, `testing`, `workflow`                                 |
 | `GR.PRIIS/frontend-*`            |   6   | `component-patterns`, `forms`, `routing`, `rtk-query`, `testing`, `workflow`                                          |
 | `GR.PRIIS/source-command-backend-*`  | 6 | `health-check`, `migrate-to-tunit`, `release-notes`, `scaffold`, `ship`, `verify`                                    |
