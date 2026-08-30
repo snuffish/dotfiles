@@ -56,34 +56,23 @@ When the question involves recent changes, intent, or review feedback:
 
 ---
 
-## Step 4 — Formulate the Explanation
+## Step 4 — Formulate the Explanation & Generate Artifact
 
-Structure the answer clearly using Markdown:
+1. **Write the Explanation Artifact**:
+   - Always create a dedicated markdown artifact in the active conversation directory:
+     `<appDataDir>/brain/<conversation-id>/explanation.md`
+   - Use `write_to_file` with `ArtifactMetadata` (`UserFacing: true`, `RequestFeedback: false`, `Summary: "..."`).
+   - The artifact must be thorough, clean, and well-structured using GitHub-flavored Markdown:
+     - Title and context of the explained code/concept.
+     - **Core Philosophy**: Explain both *what* it does and *why* it was designed that way.
+     - **Step-by-Step Technical Breakdown**: Clear walkthrough with clickable links to source files and symbols (`[Symbol](file:///path/to/file#L10)`).
+     - **Design Rationale & Tradeoffs**: Security, performance, consistency, and architecture principles.
+     - **Edge Cases & Reviewer Insights**: Potential gotchas, alternatives, or translations of reviewer feedback where applicable.
 
-### 1. The TL;DR / Core Takeaway
-
-State the direct answer in 1–2 crisp sentences without overwhelming jargon.
-
-### 2. Step-by-Step Technical Breakdown
-
-Break down the mechanics:
-
-- Explain what each key variable, method, or symbol does.
-- Format all file paths and symbols as clickable markdown links (`[ClassName](file:///path/to/file#L10)`).
-- Highlight non-obvious details (e.g., expression tree limitations, memory allocation concerns, EF Core query compilation vs in-memory execution).
-
-### 3. The "Why" (Design Rationale & Tradeoffs)
-
-Explain the architectural motivations:
-
-- **Security & Privacy**: (e.g., avoiding permission/data leakage).
-- **Performance & Scalability**: (e.g., single-query projection vs N+1 queries, post-projection in-memory sorting).
-- **Maintainability & DRY**: (e.g., decoupling DTOs via interfaces, reusing shared policies).
-
-### 4. If Explaining Reviewer Feedback / Alternatives
-
-Provide concrete options:
-
-- **Option Breakdown**: What are the alternatives the reviewer is considering?
-- **Tradeoffs**: Why is Option A preferred over Option B (or vice versa)?
-- **Concrete Code Snippets**: Show minimal, idiomatic before/after code examples of how to implement the suggested change according to repository standards.
+2. **Report Back in Chat**:
+   - In the conversation response, provide:
+     - The **TL;DR / Core Takeaway** (1–2 sentences).
+     - A direct, clickable link to open the artifact in the IDE:
+       `📄 [explanation.md](file://<appDataDir>/brain/<conversation-id>/explanation.md)`
+     - Direct anchor links to key sections in the artifact (e.g., `#technical-breakdown`, `#design-rationale--tradeoffs`).
+     - A concise overview highlighting critical takeaways without re-dumping the entire artifact body.
