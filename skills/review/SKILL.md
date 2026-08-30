@@ -9,14 +9,15 @@ Conducts a deep, systematic, read-only technical audit and review of an implemen
 
 ---
 
-## ⛔ The Golden Invariant: NEVER Proceed Without `/proceed`
+## ⛔ The Golden Invariants
 
 > [!CAUTION]
-> **ABSOLUTE RULE — ZERO TOLERANCE FOR UNPROMPTED EXECUTION:**
+> **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
 >
-> 1. **DO NOT MODIFY CODE:** You must **NEVER** edit files, create new source files, run modifying CLI commands (e.g. migrations, git commits, code scaffolding), or begin implementation during or immediately after a `/review`.
-> 2. **DO NOT AUTO-PROCEED:** Even if the plan is completely sound, verified, flawless, or approved, you must **NEVER** start implementing it automatically.
-> 3. **MANDATORY GATE:** Implementation of any plan must **ALWAYS and ONLY** begin when the user explicitly issues the command:
+> 1. **MANDATORY PLAN.MD REFERENCE (NO EXCUSES):** Every single `/review` response MUST ALWAYS include a direct, clickable file link to the active plan file (e.g. `[implementation_plan.md](file:///.../implementation_plan.md)`). The user frequently needs to click and open it in the IDE. This applies to ALL review responses, including follow-up reviews and questions asked under `/review`.
+> 2. **DO NOT MODIFY CODE:** You must **NEVER** edit files, create new source files, run modifying CLI commands (e.g. migrations, git commits, code scaffolding), or begin implementation during or immediately after a `/review`.
+> 3. **DO NOT AUTO-PROCEED:** Even if the plan is completely sound, verified, flawless, or approved, you must **NEVER** start implementing it automatically.
+> 4. **MANDATORY GATE:** Implementation of any plan must **ALWAYS and ONLY** begin when the user explicitly issues the command:
 >    ```text
 >    /proceed
 >    ```
