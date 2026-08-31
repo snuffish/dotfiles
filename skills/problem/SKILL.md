@@ -34,11 +34,22 @@ Before going back in history, establish what is currently modified or committed 
 To understand the original intent, design decisions, and requirements of the code that is failing, you must inspect the conversation history:
 
 1. **Identify Current Conversation ID**: Locate the conversation ID in `<user_information>`.
-2. **Search Transcripts**: Transcripts are stored in `<app_data_dir>/brain/` and the active one in `<app_data_dir>/brain/<conversation-id>/.system_generated/logs/transcript.jsonl`.
-3. **Locate Key Symbols/Files**: Run a recursive search on the brain directory for the active filenames, function names, or error messages:
+2. **Search Transcripts**: **Transcript location depends on the host IDE:**
+
+| Host | Transcripts |
+|---|---|
+| Claude Code | `~/.claude/projects/<workspace-slug>/<session-id>.jsonl` — one file per session, slug is the workspace path with `/` replaced by `-` (e.g. `-Users-snuffish-Projects-GR`) |
+| Antigravity | `<app_data_dir>/brain/<conversation-id>/.system_generated/logs/transcript.jsonl` |
+
+Check which exists before searching; do not assume.
+3. **Locate Key Symbols/Files**: Run a recursive search over the transcripts for the active filenames, function names, or error messages:
 
    ```bash
-   grep -rnwi "<symbol_or_filename>" /home/snuffish/.gemini/antigravity-ide/brain/
+   # Claude Code
+   grep -rnwi "<symbol_or_filename>" ~/.claude/projects/<workspace-slug>/
+
+   # Antigravity
+   grep -rnwi "<symbol_or_filename>" ~/.gemini/antigravity-ide/brain/
    ```
 
 4. **Trace the Implementation Logic**:

@@ -25,29 +25,37 @@ Invoke this skill whenever:
 When the user runs `/plan` without any arguments (or simply says "open plan"):
 
 1. **Locate the Plan Artifact:**
-   - Look for `implementation_plan.md` in the active conversation directory:
-     `<appDataDir>/brain/<conversation-id>/implementation_plan.md`
-   - If not found in the current session, check the most recent session from conversation history.
+   - Look for `implementation_plan.md` at the **workspace root**.
+   - If not found there, check the most recent session from conversation history.
 
 2. **Render Direct Link & Navigation Immediately:**
    - **DO NOT** edit code or execute background commands.
-   - Output a clear, direct, clickable markdown file link using the `file://` scheme so the user can open it with a single click in the IDE.
-   - Provide direct clickable anchor links to the key sections of the plan:
+   - Output a clickable markdown link built exactly as the *Link format* box below specifies, so the user can open it with a single click in the IDE.
+   - Provide clickable anchor links to the key sections of the plan:
      - 📄 Context & Goal
      - 📄 Proposed Changes
      - 📄 Verification Plan
    - Display the current status of the plan (e.g., `Drafting`, `Awaiting Review`, `Approved`, or `Completed`).
 
 #### Output Template for Bare `/plan`:
+> [!IMPORTANT]
+> **Link format — links only resolve one way.** Use a **workspace-relative** path with no
+> scheme; an absolute `file:///...` URI renders as dead text, as does any path outside the
+> workspace root. Section anchors must be **line numbers** (`#L42`), never heading slugs
+> (`#context--goal` does not work). Read the numbers off the file *after* writing it:
+> `grep -n '^#\{1,3\} ' <artifact>.md`, and re-read them if you edit it afterwards.
+
+The `#L` numbers are placeholders — replace them with the real ones from `grep -n`.
+
 ```markdown
 Here is the active implementation plan:
 
-📄 **[implementation_plan.md](file://<appDataDir>/brain/<conversation-id>/implementation_plan.md)**
+📄 **[implementation_plan.md](implementation_plan.md)**
 
 ### Key Sections:
-- 📄 [Context & Goal](file://<appDataDir>/brain/<conversation-id>/implementation_plan.md#context--goal)
-- 📄 [Proposed Changes](file://<appDataDir>/brain/<conversation-id>/implementation_plan.md#proposed-changes)
-- 📄 [Verification Plan](file://<appDataDir>/brain/<conversation-id>/implementation_plan.md#verification-plan)
+- 📄 [Context & Goal](implementation_plan.md#L8)
+- 📄 [Proposed Changes](implementation_plan.md#L24)
+- 📄 [Verification Plan](implementation_plan.md#L61)
 
 **Status:** [Draft | Awaiting User Review | Approved | Completed]
 ```
@@ -67,8 +75,8 @@ When the user supplies instructions (e.g., `/plan refactor user authentication`)
    - Formulate a clean, structured design adhering to project conventions (DDD, FastEndpoints, Radix UI, sealed classes, etc.).
 
 2. **Create or Update `implementation_plan.md`:**
-   - Write the plan to `<appDataDir>/brain/<conversation-id>/implementation_plan.md`.
-   - Set `RequestFeedback: true` and `UserFacing: true` in `ArtifactMetadata`.
+   - Write the plan to `implementation_plan.md` at the **workspace root**. That location is
+     what makes the link clickable, so do not put it elsewhere.
 
 3. **Present the Plan:**
    - Provide the direct clickable link to the plan.

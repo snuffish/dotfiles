@@ -27,8 +27,15 @@ Before proposing any refinement, you **MUST** investigate past conversation tran
 
 ### Step-by-Step Search Protocol
 
-1. **Identify Conversation ID**: The current conversation ID is available in the `<user_information>` block. All transcripts are stored in `<app_data_dir>/brain/<conversation-id>/.system_generated/logs/transcript.jsonl`.
-2. **Scan the Brain Directory**: Run recursive `grep` commands on `<app_data_dir>/brain/` using terminal commands (e.g., `run_command` with `grep`) to search for references to the target code being refined:
+1. **Identify the Session**: **Transcript location depends on the host IDE:**
+
+| Host | Transcripts |
+|---|---|
+| Claude Code | `~/.claude/projects/<workspace-slug>/<session-id>.jsonl` — one file per session, slug is the workspace path with `/` replaced by `-` (e.g. `-Users-snuffish-Projects-GR`) |
+| Antigravity | `<app_data_dir>/brain/<conversation-id>/.system_generated/logs/transcript.jsonl` |
+
+Check which exists before searching; do not assume.
+2. **Scan the Transcripts**: Run recursive `grep` commands over that directory to search for references to the target code being refined:
    - The names of files, classes, methods, or components you are currently auditing/refining.
    - Specific keywords, APIs, or error messages related to the code.
    - Generic search command (replace `<target_name_or_keyword>` with your active file or search term):
@@ -76,7 +83,7 @@ After completing the analysis and cross-referencing with both the history and ex
 
 When proposing or implementing refinements, you **MUST ALWAYS** enter `Planning Mode` before modifying any source code files. Follow this sequence:
 
-1. **Create the Implementation Plan**: Document your findings, historical context, and proposed modifications in the `implementation_plan.md` artifact (saved under the active conversation directory `<app_data_dir>/brain/<conversation-id>/implementation_plan.md`).
+1. **Create the Implementation Plan**: Document your findings, historical context, and proposed modifications in `implementation_plan.md` at the **workspace root** (that location is what makes the link clickable). Link it as `[implementation_plan.md](implementation_plan.md)` — a workspace-relative path with no scheme; section anchors must be line numbers (`#L42`), not heading slugs.
 2. **Request Feedback**: Set `UserFacing = true` and `RequestFeedback = true` in the plan's `ArtifactMetadata`.
 3. **Halt for Approval**: Stop and wait for the user's explicit approval/feedback on the proposed changes. Do not modify any code files in the workspace until the plan is approved.
 4. **Execute**: Once the user approves, proceed to edit the files and implement the refinements.
