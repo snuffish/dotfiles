@@ -306,6 +306,15 @@
     {
       "before": [
         "<leader>",
+        "e"
+      ],
+      "commands": [
+        "workbench.view.explorer"
+      ]
+    },
+    {
+      "before": [
+        "<leader>",
         "/"
       ],
       "commands": [
@@ -510,6 +519,16 @@
     },
     {
       "before": [
+        "<leader>",
+        "c",
+        "p"
+      ],
+      "commands": [
+        "markdown.showPreview"
+      ]
+    },
+    {
+      "before": [
         "<A-j>"
       ],
       "commands": [
@@ -697,14 +716,6 @@
         "todo-tree.focus"
       ]
     }, // Requires Todo Tree extension
-    {
-      "before": [
-        "<M-q>"
-      ],
-      "commands": [
-        "workbench.action.closeSidebar"
-      ]
-    },
     {
       "before": [
         "<leader>",
