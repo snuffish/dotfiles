@@ -25,8 +25,13 @@
   },
   {
     "key": "escape escape",
+    "command": "closeFindWidget",
+    "when": "findWidgetVisible"
+  },
+  {
+    "key": "escape escape",
     "command": "workbench.action.focusActiveEditorGroup",
-    "when": "!editorTextFocus"
+    "when": "!editorTextFocus && !findWidgetVisible"
   },
   {
     "key": "alt+q",
