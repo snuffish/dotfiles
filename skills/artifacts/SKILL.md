@@ -60,10 +60,10 @@ Present the discovered artifacts in a clean, structured table, followed by an in
 ```markdown
 # 📂 Recent Artifacts
 
-| # | Artifact | Conversation / Session | Summary / Goal | Path |
+| # | Artifact | Conversation / Session | Summary / Goal | Link |
 |---|---|---|---|---|
-| 1 | `implementation_plan.md` | Workspace root | Extract OperationObject mutations with grouped registration | [view](implementation_plan.md) |
-| 2 | `walkthrough.md` | Workspace root | Verification results and walkthrough of changes | [view](walkthrough.md) |
+| 1 | `implementation_plan.md` | Workspace root | Extract OperationObject mutations with grouped registration | [view](file://<workspace-root>/implementation_plan.md) *(Claude: `[view](implementation_plan.md)`)* |
+| 2 | `walkthrough.md` | Workspace root | Verification results and walkthrough of changes | [view](file://<workspace-root>/walkthrough.md) *(Claude: `[view](walkthrough.md)`)* |
 | ... | ... | ... | ... | ... |
 ```
 
@@ -85,8 +85,12 @@ Once an artifact is selected / targeted:
    - **View Full Details**: Clickable file link to the artifact markdown file.
 
 > [!IMPORTANT]
-> **Link format.** Use a **workspace-relative** path with no scheme —
-> `[code_review.md](code_review.md)`. An absolute `file:///...` URI renders as dead text,
-> as does any path outside the workspace root, so artifacts still sitting in the legacy
-> brain directory cannot be linked — offer to copy them to the workspace root instead.
-> Section anchors must be **line numbers** (`#L42`), never heading slugs.
+> **Host-Specific Link Formats (Antigravity IDE vs Claude Code):**
+> - **Antigravity IDE**: Chat requires absolute paths with the `file://` scheme:
+>   `[code_review.md](file://<workspace-root>/code_review.md#L42)`.
+>   *(Relative links without `file://` render as unclickable/dead text in Antigravity).*
+> - **Claude Code**: Chat requires workspace-relative paths without scheme:
+>   `[code_review.md](code_review.md#L42)`.
+>   *(Absolute `file:///...` URIs render as dead text in Claude Code).*
+> - **Section anchors (both hosts)**: Must be **line numbers** (`#L42` or `#L42-L50`), never heading slugs.
+> - Artifacts still sitting in the legacy brain directory cannot be linked in Claude Code — offer to copy them to the workspace root instead.

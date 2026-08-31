@@ -71,14 +71,22 @@ When the question involves recent changes, intent, or review feedback:
 2. **Report Back in Chat**:
    - In the conversation response, provide:
      - The **TL;DR / Core Takeaway** (1–2 sentences).
-     - A clickable link to open the artifact in the IDE: `📄 [explanation.md](explanation.md)`
-     - Anchor links to key sections, as line numbers (e.g. `[Design Rationale](explanation.md#L48)`).
+     - A clickable link to open the artifact in the IDE:
+       - Under **Antigravity IDE**: `📄 [explanation.md](file://<workspace-root>/explanation.md)`
+       - Under **Claude Code**: `📄 [explanation.md](explanation.md)`
+     - Anchor links to key sections, as line numbers:
+       - Under **Antigravity IDE**: `[Design Rationale](file://<workspace-root>/explanation.md#L48)`
+       - Under **Claude Code**: `[Design Rationale](explanation.md#L48)`
 
 > [!IMPORTANT]
-> **Link format — links only resolve one way.** Use a **workspace-relative** path with no
-> scheme; an absolute `file:///...` URI renders as dead text, as does any path outside the
-> workspace root. Section anchors must be **line numbers** (`#L42`), never heading slugs
-> (`#design-rationale` does not work). Read the numbers off the file *after* writing it:
-> `grep -n '^#\{1,3\} ' <artifact>.md`, and re-read them if you edit it afterwards.
+> **Host-Specific Link Formats (Antigravity IDE vs Claude Code):**
+> - **Antigravity IDE**: Chat requires absolute paths with `file://` scheme:
+>   `[explanation.md](file://<workspace-root>/explanation.md#L48)`
+>   *(Relative links without `file://` render as dead/unclickable text in Antigravity).*
+> - **Claude Code**: Chat requires workspace-relative paths without scheme:
+>   `[explanation.md](explanation.md#L48)`
+>   *(Absolute `file:///...` URIs render as dead text in Claude Code).*
+> - **Fragment format (both hosts)**: Always use `#L<line>` (e.g. `#L48`), **never** heading slugs (`#design-rationale` does not work in Claude Code). Read the numbers off the file after writing it:
+>   `grep -n '^#\{1,3\} ' explanation.md`
 
      - A concise overview highlighting critical takeaways without re-dumping the entire artifact body.

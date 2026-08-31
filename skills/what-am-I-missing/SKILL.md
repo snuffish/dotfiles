@@ -102,18 +102,28 @@ When evaluating the user's current task, active file, recent diff, or conversati
 2. **Report Back in Chat**:
    - In the conversation response, provide:
      - The bold **#1 Most Important Thing You Are Missing** takeaway sentence.
-     - A clickable link to open the artifact in the IDE:
-       `📄 [what_am_i_missing.md](what_am_i_missing.md)`
+     - A clickable link to open the artifact in the IDE, formatted for your host (or dual format):
+       - **Antigravity IDE**: `📄 [what_am_i_missing.md](file://<workspace-root>/what_am_i_missing.md)`
+       - **Claude Code**: `📄 [what_am_i_missing.md](what_am_i_missing.md)`
      - Anchor links to key sections, as line numbers from `grep -n` (placeholders here):
-       - 💥 [Blast Radius / Failure Scenario](what_am_i_missing.md#L18)
-       - 🔍 [Secondary Blind Spots & Nuances](what_am_i_missing.md#L26)
-       - 🛠️ [Actionable Recommendation](what_am_i_missing.md#L33)
+       - **Antigravity IDE**:
+         - 💥 [Blast Radius / Failure Scenario](file://<workspace-root>/what_am_i_missing.md#L18)
+         - 🔍 [Secondary Blind Spots & Nuances](file://<workspace-root>/what_am_i_missing.md#L26)
+         - 🛠️ [Actionable Recommendation](file://<workspace-root>/what_am_i_missing.md#L33)
+       - **Claude Code**:
+         - 💥 [Blast Radius / Failure Scenario](what_am_i_missing.md#L18)
+         - 🔍 [Secondary Blind Spots & Nuances](what_am_i_missing.md#L26)
+         - 🛠️ [Actionable Recommendation](what_am_i_missing.md#L33)
 
 > [!IMPORTANT]
-> **Link format — links only resolve one way.** Use a **workspace-relative** path with no
-> scheme; an absolute `file:///...` URI renders as dead text, as does any path outside the
-> workspace root. Section anchors must be **line numbers** (`#L42`), never heading slugs
-> (`#design-rationale` does not work). Read the numbers off the file *after* writing it:
-> `grep -n '^#\{1,3\} ' <artifact>.md`, and re-read them if you edit it afterwards.
+> **Host-Specific Link Formats (Antigravity IDE vs Claude Code):**
+> - **Antigravity IDE**: Chat requires absolute paths with `file://` scheme:
+>   `[what_am_i_missing.md](file://<workspace-root>/what_am_i_missing.md#L18)`
+>   *(Relative links without `file://` render as dead/unclickable text in Antigravity).*
+> - **Claude Code**: Chat requires workspace-relative paths without scheme:
+>   `[what_am_i_missing.md](what_am_i_missing.md#L18)`
+>   *(Absolute `file:///...` URIs render as dead text in Claude Code).*
+> - **Fragment format (both hosts)**: Always use `#L<line>` (e.g. `#L18`), **never** heading slugs (`#blast-radius--failure-scenario` does not work in Claude Code). Read the numbers off the file after writing it:
+>   `grep -n '^#\{1,3\} ' what_am_i_missing.md`
 
      - A concise overview of the core failure scenario and actionable fix.

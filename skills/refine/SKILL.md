@@ -83,7 +83,7 @@ After completing the analysis and cross-referencing with both the history and ex
 
 When proposing or implementing refinements, you **MUST ALWAYS** enter `Planning Mode` before modifying any source code files. Follow this sequence:
 
-1. **Create the Implementation Plan**: Document your findings, historical context, and proposed modifications in `implementation_plan.md` at the **workspace root** (that location is what makes the link clickable). Link it as `[implementation_plan.md](implementation_plan.md)` — a workspace-relative path with no scheme; section anchors must be line numbers (`#L42`), not heading slugs.
+1. **Create the Implementation Plan**: Document your findings, historical context, and proposed modifications in `implementation_plan.md` at the **workspace root**. Link it formatted for your host: `[implementation_plan.md](file://<workspace-root>/implementation_plan.md#L42)` under Antigravity IDE, or `[implementation_plan.md](implementation_plan.md#L42)` under Claude Code. Section anchors must be line numbers (`#L42`), not heading slugs.
 2. **Request Feedback**: Set `UserFacing = true` and `RequestFeedback = true` in the plan's `ArtifactMetadata`.
 3. **Halt for Approval**: Stop and wait for the user's explicit approval/feedback on the proposed changes. Do not modify any code files in the workspace until the plan is approved.
 4. **Execute**: Once the user approves, proceed to edit the files and implement the refinements.
