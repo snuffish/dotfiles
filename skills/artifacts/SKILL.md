@@ -20,22 +20,28 @@ Invoke this skill whenever:
 
 ## 2. Discovery Protocol
 
-Artifacts are markdown files stored inside the Antigravity IDE brain directory structure:
-```text
-<appDataDir>/brain/<conversation-id>/
-```
-Where `<appDataDir>` is typically `/Users/snuffish/.gemini/antigravity-ide`.
+Artifacts live in one of two places depending on which IDE wrote them.
 
-### Step 1: Scan Current Conversation Artifacts
+**Primary — the workspace root.** This is where every skill writes now (`code_review.md`,
+`implementation_plan.md`, `walkthrough.md`, `explanation.md`, `what_am_i_missing.md`), and
+it is the only location whose links are clickable in Claude Code.
+
+**Legacy — the Antigravity brain directory**, `<appDataDir>/brain/<conversation-id>/`,
+where `<appDataDir>` is typically `/Users/snuffish/.gemini/antigravity-ide`.
+
+### Step 1: Scan Workspace-Root Artifacts
+
+```bash
+ls -lt *.md
+```
+
+### Step 2: Scan Legacy Conversation Artifacts
 1. Check the active conversation directory:
    `<appDataDir>/brain/<current-conversation-id>/`
-2. Look for all top-level markdown documents (excluding hidden folders like `.system_generated/`, `.user_uploaded/`, and temporary `scratch/` files):
-   - `implementation_plan.md`
-   - `walkthrough.md`
-   - Any custom `*.md` artifacts.
+2. Look for all top-level markdown documents (excluding hidden folders like `.system_generated/`, `.user_uploaded/`, and temporary `scratch/` files).
 3. Check corresponding `*.metadata.json` files for human-readable summaries and metadata.
 
-### Step 2: Scan Recent Conversation Sessions
+### Step 3: Scan Recent Conversation Sessions
 1. Inspect the conversation IDs provided in the `<conversation_history>` block of the prompt.
 2. For the most recent conversations (top 5–10), check their artifact directory:
    `<appDataDir>/brain/<past-conversation-id>/`
@@ -56,8 +62,8 @@ Present the discovered artifacts in a clean, structured table, followed by an in
 
 | # | Artifact | Conversation / Session | Summary / Goal | Path |
 |---|---|---|---|---|
-| 1 | `implementation_plan.md` | Current (e.g. `59680306...`) | Extract OperationObject mutations with grouped registration | [view](file:///path/to/artifact.md) |
-| 2 | `walkthrough.md` | `9605f268...` (Refactoring Redundant Data Structures) | Verification results and walkthrough of changes | [view](file:///path/to/artifact.md) |
+| 1 | `implementation_plan.md` | Workspace root | Extract OperationObject mutations with grouped registration | [view](implementation_plan.md) |
+| 2 | `walkthrough.md` | Workspace root | Verification results and walkthrough of changes | [view](walkthrough.md) |
 | ... | ... | ... | ... | ... |
 ```
 
@@ -77,3 +83,10 @@ Once an artifact is selected / targeted:
    - **Proceed**: *"Type `/proceed` to begin implementing this plan."*
    - **Refine / Edit**: *"Tell me what modifications you'd like to make to the plan."*
    - **View Full Details**: Clickable file link to the artifact markdown file.
+
+> [!IMPORTANT]
+> **Link format.** Use a **workspace-relative** path with no scheme —
+> `[code_review.md](code_review.md)`. An absolute `file:///...` URI renders as dead text,
+> as does any path outside the workspace root, so artifacts still sitting in the legacy
+> brain directory cannot be linked — offer to copy them to the workspace root instead.
+> Section anchors must be **line numbers** (`#L42`), never heading slugs.

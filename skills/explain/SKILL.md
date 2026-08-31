@@ -59,20 +59,26 @@ When the question involves recent changes, intent, or review feedback:
 ## Step 4 — Formulate the Explanation & Generate Artifact
 
 1. **Write the Explanation Artifact**:
-   - Always create a dedicated markdown artifact in the active conversation directory:
-     `<appDataDir>/brain/<conversation-id>/explanation.md`
-   - Use `write_to_file` with `ArtifactMetadata` (`UserFacing: true`, `RequestFeedback: false`, `Summary: "..."`).
+   - Always write a dedicated markdown artifact, `explanation.md`, at the **workspace root**.
+     That location is what makes the link clickable, so do not put it elsewhere.
    - The artifact must be thorough, clean, and well-structured using GitHub-flavored Markdown:
      - Title and context of the explained code/concept.
      - **Core Philosophy**: Explain both *what* it does and *why* it was designed that way.
-     - **Step-by-Step Technical Breakdown**: Clear walkthrough with clickable links to source files and symbols (`[Symbol](file:///path/to/file#L10)`).
+     - **Step-by-Step Technical Breakdown**: Clear walkthrough with clickable links to source files and symbols, workspace-relative (`[Symbol](src/path/to/file.ts#L10)`).
      - **Design Rationale & Tradeoffs**: Security, performance, consistency, and architecture principles.
      - **Edge Cases & Reviewer Insights**: Potential gotchas, alternatives, or translations of reviewer feedback where applicable.
 
 2. **Report Back in Chat**:
    - In the conversation response, provide:
      - The **TL;DR / Core Takeaway** (1–2 sentences).
-     - A direct, clickable link to open the artifact in the IDE:
-       `📄 [explanation.md](file://<appDataDir>/brain/<conversation-id>/explanation.md)`
-     - Direct anchor links to key sections in the artifact (e.g., `#technical-breakdown`, `#design-rationale--tradeoffs`).
+     - A clickable link to open the artifact in the IDE: `📄 [explanation.md](explanation.md)`
+     - Anchor links to key sections, as line numbers (e.g. `[Design Rationale](explanation.md#L48)`).
+
+> [!IMPORTANT]
+> **Link format — links only resolve one way.** Use a **workspace-relative** path with no
+> scheme; an absolute `file:///...` URI renders as dead text, as does any path outside the
+> workspace root. Section anchors must be **line numbers** (`#L42`), never heading slugs
+> (`#design-rationale` does not work). Read the numbers off the file *after* writing it:
+> `grep -n '^#\{1,3\} ' <artifact>.md`, and re-read them if you edit it afterwards.
+
      - A concise overview highlighting critical takeaways without re-dumping the entire artifact body.

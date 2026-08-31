@@ -63,9 +63,8 @@ When evaluating the user's current task, active file, recent diff, or conversati
 ## 3. Output Format & Artifact Deliverable
 
 1. **Write the Analysis Artifact**:
-   - Always create a dedicated markdown artifact in the active conversation directory:
-     `<appDataDir>/brain/<conversation-id>/what_am_i_missing.md`
-   - Use `write_to_file` with `ArtifactMetadata` (`UserFacing: true`, `RequestFeedback: false`, `Summary: "..."`).
+   - Always write a dedicated markdown artifact, `what_am_i_missing.md`, at the **workspace
+     root**. That location is what makes the link clickable, so do not put it elsewhere.
    - The artifact must follow this high-impact structure:
 
 ```markdown
@@ -97,16 +96,24 @@ When evaluating the user's current task, active file, recent diff, or conversati
 ---
 
 ## 📄 Relevant References
-- 📄 [Active Plan / Relevant File](file:///path/to/relevant/file)
+- 📄 [Active Plan / Relevant File](path/to/relevant/file.ts#L10)
 ```
 
 2. **Report Back in Chat**:
    - In the conversation response, provide:
      - The bold **#1 Most Important Thing You Are Missing** takeaway sentence.
-     - A direct, clickable link to open the artifact in the IDE:
-       `📄 [what_am_i_missing.md](file://<appDataDir>/brain/<conversation-id>/what_am_i_missing.md)`
-     - Direct anchor links to key sections in the artifact:
-       - 💥 [Blast Radius / Failure Scenario](file://<appDataDir>/brain/<conversation-id>/what_am_i_missing.md#blast-radius--failure-scenario)
-       - 🔍 [Secondary Blind Spots & Nuances](file://<appDataDir>/brain/<conversation-id>/what_am_i_missing.md#secondary-blind-spots--nuances)
-       - 🛠️ [Actionable Recommendation](file://<appDataDir>/brain/<conversation-id>/what_am_i_missing.md#actionable-recommendation)
+     - A clickable link to open the artifact in the IDE:
+       `📄 [what_am_i_missing.md](what_am_i_missing.md)`
+     - Anchor links to key sections, as line numbers from `grep -n` (placeholders here):
+       - 💥 [Blast Radius / Failure Scenario](what_am_i_missing.md#L18)
+       - 🔍 [Secondary Blind Spots & Nuances](what_am_i_missing.md#L26)
+       - 🛠️ [Actionable Recommendation](what_am_i_missing.md#L33)
+
+> [!IMPORTANT]
+> **Link format — links only resolve one way.** Use a **workspace-relative** path with no
+> scheme; an absolute `file:///...` URI renders as dead text, as does any path outside the
+> workspace root. Section anchors must be **line numbers** (`#L42`), never heading slugs
+> (`#design-rationale` does not work). Read the numbers off the file *after* writing it:
+> `grep -n '^#\{1,3\} ' <artifact>.md`, and re-read them if you edit it afterwards.
+
      - A concise overview of the core failure scenario and actionable fix.

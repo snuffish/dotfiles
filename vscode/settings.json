@@ -524,7 +524,10 @@
         "p"
       ],
       "commands": [
-        "markdown.showPreview"
+        {
+          "command": "reopenActiveEditorWith",
+          "args": "vscode.markdown.preview.editor"
+        }
       ]
     },
     {

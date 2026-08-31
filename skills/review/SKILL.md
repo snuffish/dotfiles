@@ -14,7 +14,7 @@ Conducts a deep, systematic, read-only technical audit and review of an implemen
 > [!CAUTION]
 > **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
 >
-> 1. **MANDATORY PLAN.MD REFERENCE (NO EXCUSES):** Every single `/review` response MUST ALWAYS include a direct, clickable file link to the active plan file (e.g. `[implementation_plan.md](file:///.../implementation_plan.md)`). The user frequently needs to click and open it in the IDE. This applies to ALL review responses, including follow-up reviews and questions asked under `/review`.
+> 1. **MANDATORY PLAN.MD REFERENCE (NO EXCUSES):** Every single `/review` response MUST ALWAYS include a clickable link to the active plan file, built exactly as *Plan Artifact Reference* below specifies (`[implementation_plan.md](implementation_plan.md)`). The user frequently needs to click and open it in the IDE. This applies to ALL review responses, including follow-up reviews and questions asked under `/review`.
 > 2. **DO NOT MODIFY CODE:** You must **NEVER** edit files, create new source files, run modifying CLI commands (e.g. migrations, git commits, code scaffolding), or begin implementation during or immediately after a `/review`.
 > 3. **DO NOT AUTO-PROCEED:** Even if the plan is completely sound, verified, flawless, or approved, you must **NEVER** start implementing it automatically.
 > 4. **MANDATORY GATE:** Implementation of any plan must **ALWAYS and ONLY** begin when the user explicitly issues the command:
@@ -37,12 +37,12 @@ Invoke this skill whenever:
 ## 2. Review Workflow
 
 ### Step 1: Locate the Target Plan & Context
-1. Check `<appDataDir>/brain/<conversation-id>/implementation_plan.md` or any active proposal artifacts.
+1. Check `implementation_plan.md` at the **workspace root**, or any active proposal artifacts.
 2. If reviewing a branch, PR, or code diff, locate the relevant files or work items (composing with `code-review` principles if reviewing already-written code).
 3. Read the relevant project rulebooks and conventions:
-   - Root rulebook: [GEMINI.md](file:///Users/snuffish/Projects/GR/GEMINI.md)
-   - Backend guidelines: [GR.PRIIS.Backend/.github/copilot-instructions.md](file:///Users/snuffish/Projects/GR/GR.PRIIS.Backend/.github/copilot-instructions.md)
-   - Frontend guidelines: [GR.PRIIS.Frontend/.github/copilot-instructions.md](file:///Users/snuffish/Projects/GR/GR.PRIIS.Frontend/.github/copilot-instructions.md)
+   - Root rulebook: [CLAUDE.md](CLAUDE.md) (or [GEMINI.md](GEMINI.md) under Antigravity)
+   - Backend guidelines: [copilot-instructions.md](GR.PRIIS.Backend/.github/copilot-instructions.md)
+   - Frontend guidelines: [copilot-instructions.md](GR.PRIIS.Frontend/.github/copilot-instructions.md)
 
 ### Step 2: Evaluate Against Core Pillars
 
@@ -86,14 +86,22 @@ Produce a concise, structured review report using this template:
 > **Plan Artifact Reference Requirement:**
 > Always begin the review response with the target plan artifact reference and clickable key sections header. The user frequently closes the artifact tab in the IDE; this provides an immediate, one-click way to reopen the plan and navigate to specific sections directly from chat.
 
+> [!IMPORTANT]
+> **Link format — links only resolve one way.** Use a **workspace-relative** path with no
+> scheme; an absolute `file:///...` URI renders as dead text, as does any path outside the
+> workspace root. Section anchors must be **line numbers** (`#L42`), never heading slugs
+> (`#context--goal` does not work). Read the numbers off the file *after* writing it:
+> `grep -n '^#\{1,3\} ' <artifact>.md`, and re-read them if you edit it afterwards.
+
+The `#L` numbers below are placeholders — replace them with the real ones from `grep -n`.
+
 ```markdown
-Here is the plan artifact for this session:
-📄 [implementation_plan.md](file://<appDataDir>/brain/<conversation-id>/implementation_plan.md)
+📄 [implementation_plan.md](implementation_plan.md)
 
 Key Sections:
-- 📄 [Context & Goal](file://<appDataDir>/brain/<conversation-id>/implementation_plan.md#context--goal): [1-sentence summary of context/decisions]
-- 📄 [Proposed Changes](file://<appDataDir>/brain/<conversation-id>/implementation_plan.md#proposed-changes): [1-sentence summary of touched files/components]
-- 📄 [Verification Plan](file://<appDataDir>/brain/<conversation-id>/implementation_plan.md#verification-plan): [1-sentence summary of test & build verification]
+- 📄 [Context & Goal](implementation_plan.md#L8): [1-sentence summary of context/decisions]
+- 📄 [Proposed Changes](implementation_plan.md#L24): [1-sentence summary of touched files/components]
+- 📄 [Verification Plan](implementation_plan.md#L61): [1-sentence summary of test & build verification]
 
 ---
 

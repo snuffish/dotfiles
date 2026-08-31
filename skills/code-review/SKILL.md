@@ -14,7 +14,7 @@ Use this skill whenever the user requests a code review, feedback on a pull requ
 > [!CAUTION]
 > **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
 >
-> 1. **MANDATORY .MD ARTIFACT & SUMMARY (NO EXCUSES):** Every single `/code-review` response MUST ALWAYS write or update the complete review report as a markdown artifact (`<appDataDir>/brain/<conversation-id>/code_review.md`) and begin the response with a direct, clickable file link to the `.md` artifact along with clickable key section anchors (e.g. `[code_review.md](file:///.../code_review.md)`). If an active `implementation_plan.md` exists in the session, also provide a direct link to it. The user frequently needs to click and open it in the IDE.
+> 1. **MANDATORY .MD ARTIFACT & SUMMARY (NO EXCUSES):** Every single `/code-review` response MUST ALWAYS write or update the complete review report as `code_review.md` **at the workspace root**, and begin the response with a clickable link to it plus clickable section anchors, built exactly as *Artifact Links* below specifies. If an active `implementation_plan.md` exists, link that too. The user frequently needs to click and open it in the IDE.
 > 2. **DO NOT MODIFY CODE:** You must **NEVER** edit code files, stage commits, run migrations, or execute modifying commands during or immediately after a `/code-review`.
 > 3. **DO NOT AUTO-PROCEED:** Never begin implementing fixes or refactorings automatically. Wait for explicit user instruction or `/proceed`.
 
@@ -220,7 +220,7 @@ Assess the changes across the following criteria:
 
 ## Step 4 — Artifact Management & Planning Separation
 
-1. **Write Review Artifact:** Always persist the full code review to `<appDataDir>/brain/<conversation-id>/code_review.md` using `write_to_file` with `ArtifactMetadata` (`UserFacing: true`, `RequestFeedback: false`, and an informative summary).
+1. **Write Review Artifact:** Always persist the full code review to `code_review.md` **at the workspace root**. The location is what makes the link clickable — see *Artifact Links* below — so do not put it anywhere else.
 2. **Do Not Modify Code:** Reviews are strictly diagnostic and analytical. Never edit source files or execute mutations during a review.
 3. **Do Not Enter Implementation Planning Mode:** Do not generate an `implementation_plan.md` for a review; go straight to context gathering and findings generation. If an active `implementation_plan.md` already exists in the session, reference and link to it in the header alongside `code_review.md`.
 
@@ -228,25 +228,55 @@ Assess the changes across the following criteria:
 
 ## Step 5 — Output Format
 
-### Mandatory .md Artifact Header
+### Artifact Links
 
-Always begin every `/code-review` response with the direct, clickable file link to the review artifact and its key section anchors:
+> [!IMPORTANT]
+> **Links only work in one format. Get this wrong and every link renders as dead text.**
+>
+> - **Path: workspace-relative, no scheme.** `[code_review.md](code_review.md)`.
+>   An absolute `file:///Users/...` URI does **not** resolve, and neither does a path
+>   pointing outside the workspace root. This is why the artifact must be written to the
+>   workspace root and nowhere else.
+> - **Fragment: `#L<line>`, never a heading slug.** `#findings-summary` does **not** work.
+>   `#L32` does. A range is `#L32-L45`.
+
+Because anchors are line numbers, you cannot write them from memory — read them off the
+file **after** you have written it, and build the links from that output:
+
+```bash
+grep -n '^#\{1,3\} ' code_review.md
+```
+
+```text
+22:## Summary of Changes
+32:## Findings Summary
+66:## Detailed Review Findings
+138:## Actionable Suggestions
+236:## In Plain Terms
+```
+
+Then begin every `/code-review` response with:
 
 ```markdown
-Here is the review artifact for this session:
-📄 **[code_review.md](file://<appDataDir>/brain/<conversation-id>/code_review.md)**
+📄 **[code_review.md](code_review.md)**
 
 Key Sections:
-- 📄 [Summary of Changes](file://<appDataDir>/brain/<conversation-id>/code_review.md#summary-of-changes): [1-sentence summary of scope & intent]
-- 📄 [Findings Summary](file://<appDataDir>/brain/<conversation-id>/code_review.md#findings-summary): [Count of 🔴 Critical, 🟡 Important, 🟢 Minor findings]
-- 📄 [Detailed Review Findings](file://<appDataDir>/brain/<conversation-id>/code_review.md#detailed-review-findings): [Primary findings and defect analysis]
-- 📄 [Actionable Suggestions](file://<appDataDir>/brain/<conversation-id>/code_review.md#actionable-suggestions): [Concrete diffs and code fixes]
-- 📄 [In Plain Terms](file://<appDataDir>/brain/<conversation-id>/code_review.md#in-plain-terms): [Domain-level explanations for non-technical readers]
+- 📄 [Summary of Changes](code_review.md#L22): [1-sentence summary of scope & intent]
+- 📄 [Findings Summary](code_review.md#L32): [Count of 🔴 Critical, 🟡 Important, 🟢 Minor findings]
+- 📄 [Detailed Review Findings](code_review.md#L66): [Primary findings and defect analysis]
+- 📄 [Actionable Suggestions](code_review.md#L138): [Concrete diffs and code fixes]
+- 📄 [In Plain Terms](code_review.md#L236): [Domain-level explanations for non-technical readers]
 
 [If an active implementation_plan.md exists]:
 Active Implementation Plan:
-📄 **[implementation_plan.md](file://<appDataDir>/brain/<conversation-id>/implementation_plan.md)**
+📄 **[implementation_plan.md](implementation_plan.md)**
 ```
+
+If you edit the artifact after emitting the header, the line numbers have moved — re-run
+the `grep` and re-emit the links rather than leaving stale ones.
+
+**In-review references to source files** follow the same rules, relative to the workspace
+root: `[Setup.cs:264](GR.PRIIS.Backend/source/GR.PRIIS.Library/Setup.cs#L264)`.
 
 ---
 
