@@ -5,16 +5,36 @@ description: Conducts a thorough, read-only architectural and technical review o
 
 # Skill: `/review` — Strict Plan & Design Review
 
-Conducts a deep, systematic, read-only technical audit and review of an implementation plan (`implementation_plan.md`), architectural proposal, or change design.
+Conducts a deep, systematic, read-only technical audit and review of an implementation plan (`<prefix>-implementation_plan.md`), architectural proposal, or change design.
 
 ---
+
+## Artifact Filename — Host Prefix
+
+> [!IMPORTANT]
+> Claude Code and Antigravity IDE share one workspace root. An unprefixed filename means
+> whichever host runs second silently overwrites the other's work. **Resolve a prefix once,
+> before writing**, from your own identity in the system prompt:
+>
+> | Running as | Prefix | This skill writes |
+> |---|---|---|
+> | Claude Code — *"You are Claude"* | `claude-` | `claude-implementation_plan.md` |
+> | Antigravity IDE — *"You are Antigravity"* | `antigravity-` | `antigravity-implementation_plan.md` |
+> | Any other host | *(none)* | `implementation_plan.md` |
+>
+> This is the same signal that already decides `file://` vs relative links, so resolve it
+> once and reuse it. Use the resolved name in the file you write **and** in every link you
+> emit. Never write both names, and never read or overwrite the other host's file — if
+> `antigravity-implementation_plan.md` exists while you are Claude, leave it alone.
+>
+> Below, `<prefix>-` stands for the resolved prefix.
 
 ## ⛔ The Golden Invariants
 
 > [!CAUTION]
 > **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
 >
-> 1. **MANDATORY PLAN.MD REFERENCE (NO EXCUSES):** Every single `/review` response MUST ALWAYS include a clickable link to the active plan file, built exactly as *Plan Artifact Reference* below specifies (`[implementation_plan.md](implementation_plan.md)`). The user frequently needs to click and open it in the IDE. This applies to ALL review responses, including follow-up reviews and questions asked under `/review`.
+> 1. **MANDATORY PLAN.MD REFERENCE (NO EXCUSES):** Every single `/review` response MUST ALWAYS include a clickable link to the active plan file, built exactly as *Plan Artifact Reference* below specifies (`[claude-implementation_plan.md](claude-implementation_plan.md)`). The user frequently needs to click and open it in the IDE. This applies to ALL review responses, including follow-up reviews and questions asked under `/review`.
 > 2. **DO NOT MODIFY CODE:** You must **NEVER** edit files, create new source files, run modifying CLI commands (e.g. migrations, git commits, code scaffolding), or begin implementation during or immediately after a `/review`.
 > 3. **DO NOT AUTO-PROCEED:** Even if the plan is completely sound, verified, flawless, or approved, you must **NEVER** start implementing it automatically.
 > 4. **MANDATORY GATE:** Implementation of any plan must **ALWAYS and ONLY** begin when the user explicitly issues the command:
@@ -29,7 +49,7 @@ Conducts a deep, systematic, read-only technical audit and review of an implemen
 
 Invoke this skill whenever:
 - The user issues `/review` or asks for a plan/design review.
-- An `implementation_plan.md` has been drafted and needs a rigorous sanity check before execution.
+- An `<prefix>-implementation_plan.md` has been drafted and needs a rigorous sanity check before execution.
 - The user asks: *"Does this plan make sense?"*, *"Review this approach"*, or *"Check for design flaws"*.
 
 ---
@@ -37,7 +57,7 @@ Invoke this skill whenever:
 ## 2. Review Workflow
 
 ### Step 1: Locate the Target Plan & Context
-1. Check `implementation_plan.md` at the **workspace root**, or any active proposal artifacts.
+1. Check `<prefix>-implementation_plan.md` at the **workspace root**, or any active proposal artifacts.
 2. If reviewing a branch, PR, or code diff, locate the relevant files or work items (composing with `code-review` principles if reviewing already-written code).
 3. Read the relevant project rulebooks and conventions:
    - Root rulebook: [CLAUDE.md](CLAUDE.md) (or [GEMINI.md](GEMINI.md) under Antigravity)
@@ -89,32 +109,33 @@ Produce a concise, structured review report using this template:
 > [!IMPORTANT]
 > **Host-Specific Link Formats (Antigravity IDE vs Claude Code):**
 > - **Antigravity IDE**: Chat requires absolute paths with `file://` scheme:
->   `[implementation_plan.md](file://<workspace-root>/implementation_plan.md#L8)`
+>   `[antigravity-implementation_plan.md](file://<workspace-root>/antigravity-implementation_plan.md#L8)`
 >   *(Relative links without `file://` render as dead/unclickable text in Antigravity).*
 > - **Claude Code**: Chat requires workspace-relative paths without scheme:
->   `[implementation_plan.md](implementation_plan.md#L8)`
+>   `[claude-implementation_plan.md](claude-implementation_plan.md#L8)`
 >   *(Absolute `file:///...` URIs render as dead text in Claude Code).*
-> - **Fragment format (both hosts)**: Always use `#L<line>` (e.g. `#L8` or `#L8-L20`), **never** heading slugs (`#context--goal` does not work in Claude Code). Read the numbers off the file after writing it:
->   `grep -n '^#\{1,3\} ' implementation_plan.md`
+> - **Fragment format for CHAT links (both hosts)**: Always use `#L<line>` (e.g. `#L8` or `#L8-L20`), **never** heading slugs (`#context--goal` does not work in Claude Code). Read the numbers off the file after writing it:
+>   `grep -n '^#\{1,3\} ' <prefix>-implementation_plan.md`
+> - **Intra-document links inside markdown files**: For internal links within a markdown file itself, use HTML anchor tags `<a id="..."></a>` and semantic `#anchor` targets, never line numbers `#L<line>`.
 
 **Under Antigravity IDE:**
 ```markdown
-📄 [implementation_plan.md](file://<workspace-root>/implementation_plan.md)
+📄 [antigravity-implementation_plan.md](file://<workspace-root>/antigravity-implementation_plan.md)
 
 Key Sections:
-- 📄 [Context & Goal](file://<workspace-root>/implementation_plan.md#L8): [1-sentence summary of context/decisions]
-- 📄 [Proposed Changes](file://<workspace-root>/implementation_plan.md#L24): [1-sentence summary of touched files/components]
-- 📄 [Verification Plan](file://<workspace-root>/implementation_plan.md#L61): [1-sentence summary of test & build verification]
+- 📄 [Context & Goal](file://<workspace-root>/antigravity-implementation_plan.md#L8): [1-sentence summary of context/decisions]
+- 📄 [Proposed Changes](file://<workspace-root>/antigravity-implementation_plan.md#L24): [1-sentence summary of touched files/components]
+- 📄 [Verification Plan](file://<workspace-root>/antigravity-implementation_plan.md#L61): [1-sentence summary of test & build verification]
 ```
 
 **Under Claude Code:**
 ```markdown
-📄 [implementation_plan.md](implementation_plan.md)
+📄 [claude-implementation_plan.md](claude-implementation_plan.md)
 
 Key Sections:
-- 📄 [Context & Goal](implementation_plan.md#L8): [1-sentence summary of context/decisions]
-- 📄 [Proposed Changes](implementation_plan.md#L24): [1-sentence summary of touched files/components]
-- 📄 [Verification Plan](implementation_plan.md#L61): [1-sentence summary of test & build verification]
+- 📄 [Context & Goal](claude-implementation_plan.md#L8): [1-sentence summary of context/decisions]
+- 📄 [Proposed Changes](claude-implementation_plan.md#L24): [1-sentence summary of touched files/components]
+- 📄 [Verification Plan](claude-implementation_plan.md#L61): [1-sentence summary of test & build verification]
 ```
 
 ---

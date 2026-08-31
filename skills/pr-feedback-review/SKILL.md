@@ -7,7 +7,39 @@ description: Review, triage, and evaluate reviewer feedback, discussion threads,
 
 Use this skill whenever the user asks to review pull request feedback, triage review comments, assess reviewer objections or suggestions, or plan responses/actions for PR comments.
 
-> **Never** produce an implementation plan for a feedback review. Go straight to fetching context, analyzing discussion threads against the codebase, and presenting findings and options.
+---
+
+## ⛔ Mandatory Invariants
+
+> [!CAUTION]
+> **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
+>
+> 1. **MANDATORY .MD ARTIFACT & SUMMARY (NO EXCUSES):** Every single `/pr-feedback-review` response MUST ALWAYS write or update the complete feedback review report as `<prefix>-pr_feedback_review.md` **at the workspace root**, and begin the response with a clickable link to it plus clickable section anchors, built exactly as *Artifact Links* below specifies. The user frequently needs to click and open it in the IDE.
+> 2. **DO NOT MODIFY CODE:** You must **NEVER** edit code files, stage commits, run migrations, or execute modifying commands during or immediately after a `/pr-feedback-review`.
+> 3. **DO NOT AUTO-PROCEED:** Never begin implementing fixes or refactorings automatically. Present clear decision paths, code diffs, and draft replies, then wait for explicit user instruction.
+> 4. **DO NOT GENERATE AN IMPLEMENTATION PLAN INSTEAD:** Do not substitute `<prefix>-implementation_plan.md` for the feedback review document. The feedback review document *is* `<prefix>-pr_feedback_review.md`.
+
+---
+
+## Artifact Filename — Host Prefix
+
+> [!IMPORTANT]
+> Claude Code and Antigravity IDE share one workspace root. An unprefixed filename means
+> whichever host runs second silently overwrites the other's work. **Resolve a prefix once,
+> before writing**, from your own identity in the system prompt:
+>
+> | Running as | Prefix | This skill writes |
+> |---|---|---|
+> | Claude Code — *"You are Claude"* | `claude-` | `claude-pr_feedback_review.md` |
+> | Antigravity IDE — *"You are Antigravity"* | `antigravity-` | `antigravity-pr_feedback_review.md` |
+> | Any other host | *(none)* | `pr_feedback_review.md` |
+>
+> This is the same signal that already decides `file://` vs relative links, so resolve it
+> once and reuse it. Use the resolved name in the file you write **and** in every link you
+> emit. Never write both names, and never read or overwrite the other host's file — if
+> `antigravity-pr_feedback_review.md` exists while you are Claude, leave it alone.
+>
+> Below, `<prefix>-` stands for the resolved prefix.
 
 ---
 
@@ -169,48 +201,75 @@ For every non-trivial thread:
 
 ---
 
-## Step 6 — Output Format
+## Step 6 — Artifact Management & Output Format
 
-Format the output clearly and concisely:
+### 6.1 — Write the Markdown Artifact
+
+Always write the complete PR feedback review report to `<prefix>-pr_feedback_review.md` **at the workspace root** before returning the response.
+
+### 6.2 — Artifact Links (Dual-Host Compatibility: Antigravity IDE & Claude Code)
+
+> [!IMPORTANT]
+> **Host-Specific Link Formats — Antigravity IDE and Claude Code resolve links differently:**
+>
+> - **Antigravity IDE**: Chat requires absolute paths with the `file://` scheme:
+>   `[antigravity-pr_feedback_review.md](file://<workspace-root>/antigravity-pr_feedback_review.md#L22)`
+>   *(Relative links without `file://` render as dead/unclickable text in Antigravity).*
+> - **Claude Code**: Chat requires standard repo-relative markdown links:
+>   `[claude-pr_feedback_review.md](claude-pr_feedback_review.md#L22)`
+>   *(Never emit `file://` URLs under Claude Code).*
+> - **Section Anchors**: Use `#L<line-number>` line numbers for chat links (e.g. `#L42`).
+>
+> Always start your response with a clickable link to `<prefix>-pr_feedback_review.md` and direct anchors to its main sections.
+
+### 6.3 — Structure of `<prefix>-pr_feedback_review.md`
 
 ```markdown
-### PR Overview & Review Status
-- **PR**: [<Title>](<url>) (`<source>` → `<target>`)
-- **Status**: Active / Needs Attention
-- **Reviewers**:
-  - **<Reviewer Name>**: `<Vote / Status>` (e.g. `-5 Changes Requested` / `Approved`)
+# PR Feedback Review: <PR Title>
+
+> **PR:** [<Title>](<url>) (`<source>` → `<target>`)  
+> **Status:** Active / Needs Attention  
+> **Reviewers:**  
+> - **<Reviewer Name>:** `<Vote / Status>`
 
 ---
 
-### Feedback Summary & Evaluation
+## Executive Summary & Triage Matrix
 
-#### Thread #<ThreadId>: <File / Topic Summary>
-* **Author:** <Name> (<Timestamp>)
-* **Status:** Active / Closed
-* **Location:** `[<file>:<line>]` (or PR level)
-* **Reviewer Comment:**
+| Thread | File | Reviewer | Category | Recommendation |
+|---|---|---|---|---|
+| #106735 | PriisDbContext.cs | Nebojsa | 🟡 Optimization | Refactor cascade loop to Queue worklist |
+
+---
+
+## Detailed Thread Analysis & Actionable Solutions
+
+### Thread #<ThreadId>: <File / Topic Summary>
+- **Author:** <Name> (<Timestamp>)
+- **Status:** Active / Closed
+- **Location:** `[<file>:<line>]`
+- **Reviewer Comment:**
   > <Quote of reviewer's comment>
 
-##### Technical Analysis
-* **Core Concern:** <What the reviewer is pointing out>
-* **Architectural Assessment:** <How this fits into the codebase, EF Core / API conventions, constraints>
-* **Tradeoffs & Risks:** <Pros/cons of changing vs keeping as-is, downstream impact>
+#### Technical Analysis
+- **Core Concern:** <What the reviewer is pointing out>
+- **Architectural Assessment:** <How this fits into the codebase, EF Core / API conventions, constraints>
+- **Tradeoffs & Risks:** <Pros/cons of changing vs keeping as-is, downstream impact>
+
+#### Concrete Code Solution
+```diff
+- old code
++ new code
+```
+
+#### Ready-to-Send Reply (Swedish / Project Language)
+> <Draft reply ready to copy-paste directly into the PR thread>
 
 ---
 
-### Recommended Course of Action
-
-#### Option 1 — <Brief Option Title> (Recommended)
-<Actionable steps and rationale>
-
-#### Option 2 — <Alternative Option Title>
-<Actionable steps and rationale>
-
----
-
-### Draft Reply to Reviewer
-
-> <Draft text ready for the author to post in the PR thread>
+## Action Checklist & Next Steps
+- [ ] Task 1
+- [ ] Task 2
 ```
 
 ---

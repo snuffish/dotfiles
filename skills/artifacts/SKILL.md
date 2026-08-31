@@ -22,18 +22,39 @@ Invoke this skill whenever:
 
 Artifacts live in one of two places depending on which IDE wrote them.
 
-**Primary — the workspace root.** This is where every skill writes now (`code_review.md`,
-`implementation_plan.md`, `walkthrough.md`, `explanation.md`, `what_am_i_missing.md`), and
-it is the only location whose links are clickable in Claude Code.
+**Primary — the workspace root.** This is where every skill writes now, and it is the only
+location whose links are clickable in Claude Code.
+
+Filenames are **host-prefixed**, because Claude Code and Antigravity IDE share this root and
+an unprefixed name would let one host overwrite the other's work. The five artifacts are:
+
+| Base name | Claude Code writes | Antigravity IDE writes | Written by |
+|---|---|---|---|
+| `code_review.md` | `claude-code_review.md` | `antigravity-code_review.md` | `/code-review` |
+| `implementation_plan.md` | `claude-implementation_plan.md` | `antigravity-implementation_plan.md` | `/plan`, `/problem`, `/refine`, `/implement-feature` |
+| `walkthrough.md` | `claude-walkthrough.md` | `antigravity-walkthrough.md` | `/implement-feature` |
+| `explanation.md` | `claude-explanation.md` | `antigravity-explanation.md` | `/explain` |
+| `what_am_i_missing.md` | `claude-what_am_i_missing.md` | `antigravity-what_am_i_missing.md` | `/what-am-I-missing` |
+
+Unprefixed files are older artifacts written before the prefix convention, or ones from a
+host that is neither — list them too rather than hiding them.
 
 **Legacy — the Antigravity brain directory**, `<appDataDir>/brain/<conversation-id>/`,
 where `<appDataDir>` is typically `/Users/snuffish/.gemini/antigravity-ide`.
 
 ### Step 1: Scan Workspace-Root Artifacts
 
+`/artifacts` is the one skill that reads **across** hosts — the point is to show the user
+everything, including what the other IDE produced. Do not filter to your own prefix:
+
 ```bash
 ls -lt *.md
 ```
+
+Group the results by base artifact rather than by filename, so the two hosts' versions of
+the same document sit next to each other, and label which host wrote each one. When two
+hosts have both produced the same artifact, say so explicitly and show both timestamps —
+that is usually the thing the user actually wants to know.
 
 ### Step 2: Scan Legacy Conversation Artifacts
 1. Check the active conversation directory:
@@ -60,10 +81,11 @@ Present the discovered artifacts in a clean, structured table, followed by an in
 ```markdown
 # 📂 Recent Artifacts
 
-| # | Artifact | Conversation / Session | Summary / Goal | Link |
+| # | Artifact | Location · Host | Summary / Goal | Link |
 |---|---|---|---|---|
-| 1 | `implementation_plan.md` | Workspace root | Extract OperationObject mutations with grouped registration | [view](file://<workspace-root>/implementation_plan.md) *(Claude: `[view](implementation_plan.md)`)* |
-| 2 | `walkthrough.md` | Workspace root | Verification results and walkthrough of changes | [view](file://<workspace-root>/walkthrough.md) *(Claude: `[view](walkthrough.md)`)* |
+| 1 | `claude-implementation_plan.md` | Workspace root · Claude Code | Extract OperationObject mutations with grouped registration | [view](claude-implementation_plan.md) |
+| 2 | `antigravity-implementation_plan.md` | Workspace root · Antigravity | Same plan, older revision from the other host | [view](file://<workspace-root>/antigravity-implementation_plan.md) |
+| 3 | `claude-walkthrough.md` | Workspace root · Claude Code | Verification results and walkthrough of changes | [view](claude-walkthrough.md) |
 | ... | ... | ... | ... | ... |
 ```
 
@@ -87,10 +109,13 @@ Once an artifact is selected / targeted:
 > [!IMPORTANT]
 > **Host-Specific Link Formats (Antigravity IDE vs Claude Code):**
 > - **Antigravity IDE**: Chat requires absolute paths with the `file://` scheme:
->   `[code_review.md](file://<workspace-root>/code_review.md#L42)`.
+>   `[antigravity-code_review.md](file://<workspace-root>/antigravity-code_review.md#L42)`.
 >   *(Relative links without `file://` render as unclickable/dead text in Antigravity).*
 > - **Claude Code**: Chat requires workspace-relative paths without scheme:
->   `[code_review.md](code_review.md#L42)`.
+>   `[claude-code_review.md](claude-code_review.md#L42)`.
 >   *(Absolute `file:///...` URIs render as dead text in Claude Code).*
-> - **Section anchors (both hosts)**: Must be **line numbers** (`#L42` or `#L42-L50`), never heading slugs.
+> - **Section anchors in chat links (both hosts)**: Must be **line numbers** (`#L42` or `#L42-L50`), never heading slugs. (For intra-document links within a markdown file itself, use HTML anchor tags `<a id="..."></a>` and semantic `#anchor` targets).
+> - Link each artifact in **your own** host's format, whichever host wrote it. A Claude
+>   session listing `antigravity-code_review.md` still links it workspace-relative; the
+>   prefix names the author, the link format follows the reader.
 > - Artifacts still sitting in the legacy brain directory cannot be linked in Claude Code — offer to copy them to the workspace root instead.

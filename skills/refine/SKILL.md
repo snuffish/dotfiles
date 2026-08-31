@@ -11,6 +11,26 @@ Instead of defining standalone guidelines, this skill **composes and delegates t
 
 ---
 
+## Artifact Filename — Host Prefix
+
+> [!IMPORTANT]
+> Claude Code and Antigravity IDE share one workspace root. An unprefixed filename means
+> whichever host runs second silently overwrites the other's work. **Resolve a prefix once,
+> before writing**, from your own identity in the system prompt:
+>
+> | Running as | Prefix | This skill writes |
+> |---|---|---|
+> | Claude Code — *"You are Claude"* | `claude-` | `claude-implementation_plan.md` |
+> | Antigravity IDE — *"You are Antigravity"* | `antigravity-` | `antigravity-implementation_plan.md` |
+> | Any other host | *(none)* | `implementation_plan.md` |
+>
+> This is the same signal that already decides `file://` vs relative links, so resolve it
+> once and reuse it. Use the resolved name in the file you write **and** in every link you
+> emit. Never write both names, and never read or overwrite the other host's file — if
+> `antigravity-implementation_plan.md` exists while you are Claude, leave it alone.
+>
+> Below, `<prefix>-` stands for the resolved prefix.
+
 ## 1. Triggering & Purpose
 
 This skill is invoked when:
@@ -83,7 +103,7 @@ After completing the analysis and cross-referencing with both the history and ex
 
 When proposing or implementing refinements, you **MUST ALWAYS** enter `Planning Mode` before modifying any source code files. Follow this sequence:
 
-1. **Create the Implementation Plan**: Document your findings, historical context, and proposed modifications in `implementation_plan.md` at the **workspace root**. Link it formatted for your host: `[implementation_plan.md](file://<workspace-root>/implementation_plan.md#L42)` under Antigravity IDE, or `[implementation_plan.md](implementation_plan.md#L42)` under Claude Code. Section anchors must be line numbers (`#L42`), not heading slugs.
+1. **Create the Implementation Plan**: Document your findings, historical context, and proposed modifications in `<prefix>-implementation_plan.md` at the **workspace root**. Link it formatted for your host: `[antigravity-implementation_plan.md](file://<workspace-root>/antigravity-implementation_plan.md#L42)` under Antigravity IDE, or `[claude-implementation_plan.md](claude-implementation_plan.md#L42)` under Claude Code. Section anchors in chat links must be line numbers (`#L42`), not heading slugs (intra-document links inside markdown files use HTML `<a id="...">` anchors).
 2. **Request Feedback**: Set `UserFacing = true` and `RequestFeedback = true` in the plan's `ArtifactMetadata`.
 3. **Halt for Approval**: Stop and wait for the user's explicit approval/feedback on the proposed changes. Do not modify any code files in the workspace until the plan is approved.
 4. **Execute**: Once the user approves, proceed to edit the files and implement the refinements.
