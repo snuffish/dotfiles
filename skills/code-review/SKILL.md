@@ -9,6 +9,17 @@ Use this skill whenever the user requests a code review, feedback on a pull requ
 
 ---
 
+## ⛔ Mandatory Invariants
+
+> [!CAUTION]
+> **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
+>
+> 1. **MANDATORY .MD ARTIFACT & SUMMARY (NO EXCUSES):** Every single `/code-review` response MUST ALWAYS write or update the complete review report as a markdown artifact (`<appDataDir>/brain/<conversation-id>/code_review.md`) and begin the response with a direct, clickable file link to the `.md` artifact along with clickable key section anchors (e.g. `[code_review.md](file:///.../code_review.md)`). If an active `implementation_plan.md` exists in the session, also provide a direct link to it. The user frequently needs to click and open it in the IDE.
+> 2. **DO NOT MODIFY CODE:** You must **NEVER** edit code files, stage commits, run migrations, or execute modifying commands during or immediately after a `/code-review`.
+> 3. **DO NOT AUTO-PROCEED:** Never begin implementing fixes or refactorings automatically. Wait for explicit user instruction or `/proceed`.
+
+---
+
 ## Step 1 — Determine Scope
 
 Before reviewing any code, establish **what** to review:
@@ -207,13 +218,37 @@ Assess the changes across the following criteria:
 
 ---
 
-## Step 4 — Do Not Use Planning Mode
+## Step 4 — Artifact Management & Planning Separation
 
-> **Never** produce an implementation plan for a code review. Go straight to gathering context and writing findings. Planning mode is for *code changes*, not reviews.
+1. **Write Review Artifact:** Always persist the full code review to `<appDataDir>/brain/<conversation-id>/code_review.md` using `write_to_file` with `ArtifactMetadata` (`UserFacing: true`, `RequestFeedback: false`, and an informative summary).
+2. **Do Not Modify Code:** Reviews are strictly diagnostic and analytical. Never edit source files or execute mutations during a review.
+3. **Do Not Enter Implementation Planning Mode:** Do not generate an `implementation_plan.md` for a review; go straight to context gathering and findings generation. If an active `implementation_plan.md` already exists in the session, reference and link to it in the header alongside `code_review.md`.
 
 ---
 
 ## Step 5 — Output Format
+
+### Mandatory .md Artifact Header
+
+Always begin every `/code-review` response with the direct, clickable file link to the review artifact and its key section anchors:
+
+```markdown
+Here is the review artifact for this session:
+📄 **[code_review.md](file://<appDataDir>/brain/<conversation-id>/code_review.md)**
+
+Key Sections:
+- 📄 [Summary of Changes](file://<appDataDir>/brain/<conversation-id>/code_review.md#summary-of-changes): [1-sentence summary of scope & intent]
+- 📄 [Findings Summary](file://<appDataDir>/brain/<conversation-id>/code_review.md#findings-summary): [Count of 🔴 Critical, 🟡 Important, 🟢 Minor findings]
+- 📄 [Detailed Review Findings](file://<appDataDir>/brain/<conversation-id>/code_review.md#detailed-review-findings): [Primary findings and defect analysis]
+- 📄 [Actionable Suggestions](file://<appDataDir>/brain/<conversation-id>/code_review.md#actionable-suggestions): [Concrete diffs and code fixes]
+- 📄 [In Plain Terms](file://<appDataDir>/brain/<conversation-id>/code_review.md#in-plain-terms): [Domain-level explanations for non-technical readers]
+
+[If an active implementation_plan.md exists]:
+Active Implementation Plan:
+📄 **[implementation_plan.md](file://<appDataDir>/brain/<conversation-id>/implementation_plan.md)**
+```
+
+---
 
 ### Summary of Changes
 
