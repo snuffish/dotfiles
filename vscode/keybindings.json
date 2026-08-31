@@ -26,6 +26,26 @@
   {
     "key": "escape escape",
     "command": "workbench.action.focusActiveEditorGroup",
-    "when": "terminalFocus"
+    "when": "!editorTextFocus"
+  },
+  {
+    "key": "alt+q",
+    "command": "workbench.action.closeSidebar",
+    "when": "sideBarFocus"
+  },
+  {
+    "key": "alt+q",
+    "command": "antigravity.openAgent",
+    "when": "antigravity.agentSidePanel.isFocused || focusedView == 'antigravity.agentSidePanel' || activePaneCompositeId == 'antigravity.agentViewContainerId'"
+  },
+  {
+    "key": "alt+q",
+    "command": "workbench.action.closeAuxiliaryBar",
+    "when": "auxiliaryBarFocus"
+  },
+  {
+    "key": "alt+q",
+    "command": "workbench.action.closePanel",
+    "when": "panelFocus || terminalFocus"
   }
 ]
