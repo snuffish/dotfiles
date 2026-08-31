@@ -87,14 +87,27 @@ Produce a concise, structured review report using this template:
 > Always begin the review response with the target plan artifact reference and clickable key sections header. The user frequently closes the artifact tab in the IDE; this provides an immediate, one-click way to reopen the plan and navigate to specific sections directly from chat.
 
 > [!IMPORTANT]
-> **Link format — links only resolve one way.** Use a **workspace-relative** path with no
-> scheme; an absolute `file:///...` URI renders as dead text, as does any path outside the
-> workspace root. Section anchors must be **line numbers** (`#L42`), never heading slugs
-> (`#context--goal` does not work). Read the numbers off the file *after* writing it:
-> `grep -n '^#\{1,3\} ' <artifact>.md`, and re-read them if you edit it afterwards.
+> **Host-Specific Link Formats (Antigravity IDE vs Claude Code):**
+> - **Antigravity IDE**: Chat requires absolute paths with `file://` scheme:
+>   `[implementation_plan.md](file://<workspace-root>/implementation_plan.md#L8)`
+>   *(Relative links without `file://` render as dead/unclickable text in Antigravity).*
+> - **Claude Code**: Chat requires workspace-relative paths without scheme:
+>   `[implementation_plan.md](implementation_plan.md#L8)`
+>   *(Absolute `file:///...` URIs render as dead text in Claude Code).*
+> - **Fragment format (both hosts)**: Always use `#L<line>` (e.g. `#L8` or `#L8-L20`), **never** heading slugs (`#context--goal` does not work in Claude Code). Read the numbers off the file after writing it:
+>   `grep -n '^#\{1,3\} ' implementation_plan.md`
 
-The `#L` numbers below are placeholders — replace them with the real ones from `grep -n`.
+**Under Antigravity IDE:**
+```markdown
+📄 [implementation_plan.md](file://<workspace-root>/implementation_plan.md)
 
+Key Sections:
+- 📄 [Context & Goal](file://<workspace-root>/implementation_plan.md#L8): [1-sentence summary of context/decisions]
+- 📄 [Proposed Changes](file://<workspace-root>/implementation_plan.md#L24): [1-sentence summary of touched files/components]
+- 📄 [Verification Plan](file://<workspace-root>/implementation_plan.md#L61): [1-sentence summary of test & build verification]
+```
+
+**Under Claude Code:**
 ```markdown
 📄 [implementation_plan.md](implementation_plan.md)
 
@@ -102,6 +115,7 @@ Key Sections:
 - 📄 [Context & Goal](implementation_plan.md#L8): [1-sentence summary of context/decisions]
 - 📄 [Proposed Changes](implementation_plan.md#L24): [1-sentence summary of touched files/components]
 - 📄 [Verification Plan](implementation_plan.md#L61): [1-sentence summary of test & build verification]
+```
 
 ---
 

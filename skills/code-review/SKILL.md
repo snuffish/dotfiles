@@ -228,20 +228,27 @@ Assess the changes across the following criteria:
 
 ## Step 5 — Output Format
 
-### Artifact Links
+### Artifact Links (Dual-Host Compatibility: Antigravity IDE & Claude Code)
 
 > [!IMPORTANT]
-> **Links only work in one format. Get this wrong and every link renders as dead text.**
+> **Host-Specific Link Formats — Antigravity IDE and Claude Code resolve links differently:**
 >
-> - **Path: workspace-relative, no scheme.** `[code_review.md](code_review.md)`.
->   An absolute `file:///Users/...` URI does **not** resolve, and neither does a path
->   pointing outside the workspace root. This is why the artifact must be written to the
->   workspace root and nowhere else.
-> - **Fragment: `#L<line>`, never a heading slug.** `#findings-summary` does **not** work.
->   `#L32` does. A range is `#L32-L45`.
+> - **Antigravity IDE**: Chat requires absolute paths with the `file://` scheme:
+>   `[code_review.md](file://<workspace-root>/code_review.md#L22)`
+>   *(Relative links without `file://` render as dead/unclickable text in Antigravity).*
+> - **Claude Code**: Chat requires workspace-relative paths without scheme:
+>   `[code_review.md](code_review.md#L22)`
+>   *(Absolute `file:///...` URIs render as dead text in Claude Code).*
+> - **Fragment format (both hosts)**: Always use `#L<line>` (e.g. `#L32` or `#L32-L45`), **never** heading slugs (`#findings-summary` is not supported by Claude Code).
+> - **File location**: Always write `code_review.md` at the **workspace root** so both hosts can access and resolve it.
 
-Because anchors are line numbers, you cannot write them from memory — read them off the
-file **after** you have written it, and build the links from that output:
+**Host Detection & Link Emission:**
+- If running under **Antigravity IDE** (system prompt specifies *"You are Antigravity"*): emit absolute `file://<workspace-root>/<file>#L<line>`.
+- If running under **Claude Code** (system prompt specifies *"You are Claude"*): emit workspace-relative `<file>#L<line>`.
+- Alternatively, emit dual links so the header resolves regardless of client:
+  `📄 **[code_review.md](file://<workspace-root>/code_review.md)** ([Claude](code_review.md))`
+
+Because anchors are line numbers, read them off the file **after** you have written it:
 
 ```bash
 grep -n '^#\{1,3\} ' code_review.md
@@ -255,8 +262,25 @@ grep -n '^#\{1,3\} ' code_review.md
 236:## In Plain Terms
 ```
 
-Then begin every `/code-review` response with:
+Then begin every `/code-review` response with the header formatted for your host (or dual format):
 
+**Under Antigravity IDE:**
+```markdown
+📄 **[code_review.md](file://<workspace-root>/code_review.md)**
+
+Key Sections:
+- 📄 [Summary of Changes](file://<workspace-root>/code_review.md#L22): [1-sentence summary of scope & intent]
+- 📄 [Findings Summary](file://<workspace-root>/code_review.md#L32): [Count of 🔴 Critical, 🟡 Important, 🟢 Minor findings]
+- 📄 [Detailed Review Findings](file://<workspace-root>/code_review.md#L66): [Primary findings and defect analysis]
+- 📄 [Actionable Suggestions](file://<workspace-root>/code_review.md#L138): [Concrete diffs and code fixes]
+- 📄 [In Plain Terms](file://<workspace-root>/code_review.md#L236): [Domain-level explanations for non-technical readers]
+
+[If an active implementation_plan.md exists]:
+Active Implementation Plan:
+📄 **[implementation_plan.md](file://<workspace-root>/implementation_plan.md)**
+```
+
+**Under Claude Code:**
 ```markdown
 📄 **[code_review.md](code_review.md)**
 
@@ -275,8 +299,9 @@ Active Implementation Plan:
 If you edit the artifact after emitting the header, the line numbers have moved — re-run
 the `grep` and re-emit the links rather than leaving stale ones.
 
-**In-review references to source files** follow the same rules, relative to the workspace
-root: `[Setup.cs:264](GR.PRIIS.Backend/source/GR.PRIIS.Library/Setup.cs#L264)`.
+**In-review references to source files:**
+- Under Antigravity IDE: `[Setup.cs:L264](file://<workspace-root>/GR.PRIIS.Backend/source/GR.PRIIS.Library/Setup.cs#L264)`
+- Under Claude Code: `[Setup.cs:264](GR.PRIIS.Backend/source/GR.PRIIS.Library/Setup.cs#L264)`
 
 ---
 
