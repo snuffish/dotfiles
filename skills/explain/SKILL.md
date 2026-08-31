@@ -9,6 +9,26 @@ Use this skill whenever the user asks to explain a piece of code, a method, a PR
 
 ---
 
+## Artifact Filename — Host Prefix
+
+> [!IMPORTANT]
+> Claude Code and Antigravity IDE share one workspace root. An unprefixed filename means
+> whichever host runs second silently overwrites the other's work. **Resolve a prefix once,
+> before writing**, from your own identity in the system prompt:
+>
+> | Running as | Prefix | This skill writes |
+> |---|---|---|
+> | Claude Code — *"You are Claude"* | `claude-` | `claude-explanation.md` |
+> | Antigravity IDE — *"You are Antigravity"* | `antigravity-` | `antigravity-explanation.md` |
+> | Any other host | *(none)* | `explanation.md` |
+>
+> This is the same signal that already decides `file://` vs relative links, so resolve it
+> once and reuse it. Use the resolved name in the file you write **and** in every link you
+> emit. Never write both names, and never read or overwrite the other host's file — if
+> `antigravity-explanation.md` exists while you are Claude, leave it alone.
+>
+> Below, `<prefix>-` stands for the resolved prefix.
+
 ## Core Philosophy
 
 A great explanation is not a simple restatement of what the code lines do syntactically. It connects:
@@ -59,7 +79,7 @@ When the question involves recent changes, intent, or review feedback:
 ## Step 4 — Formulate the Explanation & Generate Artifact
 
 1. **Write the Explanation Artifact**:
-   - Always write a dedicated markdown artifact, `explanation.md`, at the **workspace root**.
+   - Always write a dedicated markdown artifact, `<prefix>-explanation.md`, at the **workspace root**.
      That location is what makes the link clickable, so do not put it elsewhere.
    - The artifact must be thorough, clean, and well-structured using GitHub-flavored Markdown:
      - Title and context of the explained code/concept.
@@ -72,21 +92,22 @@ When the question involves recent changes, intent, or review feedback:
    - In the conversation response, provide:
      - The **TL;DR / Core Takeaway** (1–2 sentences).
      - A clickable link to open the artifact in the IDE:
-       - Under **Antigravity IDE**: `📄 [explanation.md](file://<workspace-root>/explanation.md)`
-       - Under **Claude Code**: `📄 [explanation.md](explanation.md)`
+       - Under **Antigravity IDE**: `📄 [antigravity-explanation.md](file://<workspace-root>/antigravity-explanation.md)`
+       - Under **Claude Code**: `📄 [claude-explanation.md](claude-explanation.md)`
      - Anchor links to key sections, as line numbers:
-       - Under **Antigravity IDE**: `[Design Rationale](file://<workspace-root>/explanation.md#L48)`
-       - Under **Claude Code**: `[Design Rationale](explanation.md#L48)`
+       - Under **Antigravity IDE**: `[Design Rationale](file://<workspace-root>/antigravity-explanation.md#L48)`
+       - Under **Claude Code**: `[Design Rationale](claude-explanation.md#L48)`
 
 > [!IMPORTANT]
 > **Host-Specific Link Formats (Antigravity IDE vs Claude Code):**
 > - **Antigravity IDE**: Chat requires absolute paths with `file://` scheme:
->   `[explanation.md](file://<workspace-root>/explanation.md#L48)`
+>   `[antigravity-explanation.md](file://<workspace-root>/antigravity-explanation.md#L48)`
 >   *(Relative links without `file://` render as dead/unclickable text in Antigravity).*
 > - **Claude Code**: Chat requires workspace-relative paths without scheme:
->   `[explanation.md](explanation.md#L48)`
+>   `[claude-explanation.md](claude-explanation.md#L48)`
 >   *(Absolute `file:///...` URIs render as dead text in Claude Code).*
-> - **Fragment format (both hosts)**: Always use `#L<line>` (e.g. `#L48`), **never** heading slugs (`#design-rationale` does not work in Claude Code). Read the numbers off the file after writing it:
->   `grep -n '^#\{1,3\} ' explanation.md`
+> - **Fragment format for CHAT links (both hosts)**: Always use `#L<line>` (e.g. `#L48`), **never** heading slugs (`#design-rationale` does not work in Claude Code). Read the numbers off the file after writing it:
+>   `grep -n '^#\{1,3\} ' <prefix>-explanation.md`
+> - **Intra-document links inside markdown files**: For internal links within a markdown file itself, use HTML anchor tags `<a id="..."></a>` and semantic `#anchor` targets, never line numbers `#L<line>`.
 
      - A concise overview highlighting critical takeaways without re-dumping the entire artifact body.

@@ -44,6 +44,36 @@
     "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor') && !inputFocus && !webviewFindWidgetFocused"
   },
   {
+    "key": "shift+z shift+h",
+    "command": "workbench.action.closeEditorsToTheLeft",
+    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor') && !inputFocus && !webviewFindWidgetFocused"
+  },
+  {
+    "key": "shift+z h",
+    "command": "workbench.action.closeEditorsToTheLeft",
+    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor') && !inputFocus && !webviewFindWidgetFocused"
+  },
+  {
+    "key": "shift+z shift+l",
+    "command": "workbench.action.closeEditorsToTheRight",
+    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor') && !inputFocus && !webviewFindWidgetFocused"
+  },
+  {
+    "key": "shift+z l",
+    "command": "workbench.action.closeEditorsToTheRight",
+    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor') && !inputFocus && !webviewFindWidgetFocused"
+  },
+  {
+    "key": "shift+z shift+q",
+    "command": "workbench.action.closeOtherEditors",
+    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor') && !inputFocus && !webviewFindWidgetFocused"
+  },
+  {
+    "key": "shift+z q",
+    "command": "workbench.action.closeOtherEditors",
+    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor') && !inputFocus && !webviewFindWidgetFocused"
+  },
+  {
     "key": "alt+q",
     "command": "workbench.action.closeSidebar",
     "when": "sideBarFocus"

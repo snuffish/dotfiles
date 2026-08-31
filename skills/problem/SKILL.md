@@ -9,6 +9,26 @@ Use this skill whenever the user reports an error (compiler error, lint error, f
 
 ---
 
+## Artifact Filename — Host Prefix
+
+> [!IMPORTANT]
+> Claude Code and Antigravity IDE share one workspace root. An unprefixed filename means
+> whichever host runs second silently overwrites the other's work. **Resolve a prefix once,
+> before writing**, from your own identity in the system prompt:
+>
+> | Running as | Prefix | This skill writes |
+> |---|---|---|
+> | Claude Code — *"You are Claude"* | `claude-` | `claude-implementation_plan.md` |
+> | Antigravity IDE — *"You are Antigravity"* | `antigravity-` | `antigravity-implementation_plan.md` |
+> | Any other host | *(none)* | `implementation_plan.md` |
+>
+> This is the same signal that already decides `file://` vs relative links, so resolve it
+> once and reuse it. Use the resolved name in the file you write **and** in every link you
+> emit. Never write both names, and never read or overwrite the other host's file — if
+> `antigravity-implementation_plan.md` exists while you are Claude, leave it alone.
+>
+> Below, `<prefix>-` stands for the resolved prefix.
+
 ## Step 1 — Analyze the Symptom & Scope
 
 First, identify the exact signature of the failure:
@@ -86,7 +106,7 @@ Consolidate your findings into a structured Diagnostic report:
 
 When preparing to apply the fix:
 
-1. **Enter Planning Mode**: You **MUST** document the changes in `implementation_plan.md` first.
+1. **Enter Planning Mode**: You **MUST** document the changes in `<prefix>-implementation_plan.md` first.
 2. **Request User Feedback**: Set `UserFacing = true` and `RequestFeedback = true`.
 3. **Halt for Approval**: Do not edit any files in the workspace until the user explicitly approves.
 4. **Verify**: Run tests and build checks after editing to ensure the problem is fully resolved.
