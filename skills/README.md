@@ -22,11 +22,11 @@ skills/
 
 ## Inventory
 
-34 skills total — 11 general + 23 under `Projects/GR.PRIIS/`.
+38 skills total — 15 general + 23 under `Projects/GR.PRIIS/`.
 
 | Group                            | Count | Skills                                                                                                                |
 | -------------------------------- | :---: | -------------------------------------------------------------------------------------------------------------------- |
-| General (top level)              |  11   | `artifacts`, `code-review`, `explain`, `manual-testing`, `modern-csharp`, `pr-feedback-review`, `pr-summary`, `problem`, `refine`, `review`, `squash-ef-core-migrations` |
+| General (top level)              |  15   | `artifacts`, `code-review`, `core`, `create-skill`, `explain`, `manual-testing`, `modern-csharp`, `plan`, `pr-feedback-review`, `pr-summary`, `problem`, `refine`, `review`, `squash-ef-core-migrations`, `what-am-I-missing` |
 | `GR.PRIIS/backend-*`             |   7   | `dry`, `ef-core`, `fastendpoints`, `notifications`, `signalr`, `testing`, `workflow`                                 |
 | `GR.PRIIS/frontend-*`            |   6   | `component-patterns`, `forms`, `routing`, `rtk-query`, `testing`, `workflow`                                          |
 | `GR.PRIIS/source-command-backend-*`  | 6 | `health-check`, `migrate-to-tunit`, `release-notes`, `scaffold`, `ship`, `verify`                                    |
@@ -34,6 +34,18 @@ skills/
 | `GR.PRIIS/` (unprefixed)         |   1   | `implement-feature`                                                                                                   |
 
 (Skill names are the group prefix + the listed suffix — e.g. `backend-ef-core`, `source-command-frontend-verify`.)
+
+## Root Skill Architecture & Precedence
+
+The skill registry uses a layered architecture anchored by two foundational root modules:
+1. **[`core`](core/SKILL.md)**: Universal root operating standards, codebase investigation protocol, safety gates (`/proceed`), and baseline invariants.
+2. **[`artifacts`](artifacts/SKILL.md)**: Universal artifact protocol, host prefix resolution (`claude-` vs `antigravity-`), and IDE link formatting rules.
+
+All general and project-specific skills compose on top of `core` and `artifacts`. Instruction precedence resolves in this order:
+1. **Workspace Rulebooks** (`CLAUDE.md` / `GEMINI.md` / `.agents/rules/`)
+2. **Project-Scoped Skills** (`Projects/<Project>/...`)
+3. **Tech & Language Skills** (`modern-csharp`, etc.)
+4. **Root Operating Standard** (`core` & `artifacts`)
 
 ## Naming convention (inside `Projects/GR.PRIIS/`)
 
@@ -89,8 +101,8 @@ Get-ChildItem -Path "$env:USERPROFILE\.terminal\skills" -Filter "SKILL.md" -Recu
 
 (If the loader globs recursively — `skills/**/SKILL.md` — point it at this root directly and the grouping is honored as-is.)
 
-**Current live state:** 27 of the 29 skills are flat-symlinked into the flat skills directory, each pointing back into this tree. `problem` and `refine` are staged but not linked. Verify on macOS/Linux with:
+**Current live state:** All 38 skills are flat-symlinked into the flat skills directory (`~/.claude/skills`), each pointing back into this tree. Verify on macOS/Linux with:
 
 ```bash
-ls -la ~/.claude/skills | grep -c '\-> .*/.terminal/skills/'   # expect 27
+ls -la ~/.claude/skills | grep -c '\-> .*/.terminal/skills/'   # expect 38
 ```

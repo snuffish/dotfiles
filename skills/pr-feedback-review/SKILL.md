@@ -21,9 +21,9 @@ Use this skill whenever the user asks to review pull request feedback, triage re
 
 ---
 
-## Artifact Delivery Protocol
+## Operating Standards & Invariants
 
-Adhere strictly to the **[artifacts](../artifacts/SKILL.md)** protocol for host prefix resolution (`claude-` vs `antigravity-`), clickability rules, link formatting (`file://` vs relative), and `#L<line>` section anchors.
+This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
 - **Target Artifact**: `<prefix>-pr_feedback_review.md` at the **workspace root**.
 
 ---
@@ -214,13 +214,13 @@ Always start your response with a clickable link to `<prefix>-pr_feedback_review
 
 | Thread | File | Reviewer | Category | Recommendation |
 |---|---|---|---|---|
-| #106735 | PriisDbContext.cs | Nebojsa | 🟡 Optimization | Refactor cascade loop to Queue worklist |
+| [#106735](#thread-106735) ([devops](https://dev.azure.com/<org>/<project>/_git/<repo>/pullrequest/<prId>?discussionId=106735)) | PriisDbContext.cs | Nebojsa | 🟡 Optimization | Refactor cascade loop to Queue worklist |
 
 ---
 
 ## Detailed Thread Analysis & Actionable Solutions
 
-### Thread #<ThreadId>: <File / Topic Summary>
+### <a id="thread-<ThreadId>"></a>Thread [#<ThreadId>](https://dev.azure.com/<org>/<project>/_git/<repo>/pullrequest/<prId>?discussionId=<ThreadId>): <File / Topic Summary>
 - **Author:** <Name> (<Timestamp>)
 - **Status:** Active / Closed
 - **Location:** `[<file>:<line>]`

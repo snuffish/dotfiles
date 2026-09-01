@@ -9,10 +9,12 @@ Conducts a deep, systematic, read-only technical audit and review of an implemen
 
 ---
 
-## Artifact Delivery Protocol
+## Operating Standards & Invariants
 
-Adhere strictly to the **[artifacts](../artifacts/SKILL.md)** protocol for host prefix resolution (`claude-` vs `antigravity-`), clickability rules, link formatting (`file://` vs relative), and `#L<line>` section anchors.
+This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
 - **Referenced / Managed Artifact**: `<prefix>-implementation_plan.md` at the **workspace root**.
+
+---
 
 ## ⛔ The Golden Invariants
 

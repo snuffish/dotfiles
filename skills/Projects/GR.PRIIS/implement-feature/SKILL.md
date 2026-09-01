@@ -38,9 +38,9 @@ az boards work-item update --id <ID> --assigned-to "$(az account show --query us
 
 ---
 
-## Artifact Delivery Protocol
+## Operating Standards & Invariants
 
-Adhere strictly to the **[artifacts](../../artifacts/SKILL.md)** protocol for host prefix resolution (`claude-` vs `antigravity-`), clickability rules, link formatting (`file://` vs relative), and `#L<line>` section anchors.
+This skill adheres strictly to the **[core](../../core/SKILL.md)** operating standards and the **[artifacts](../../artifacts/SKILL.md)** delivery protocol.
 - **Target Artifacts**: `<prefix>-implementation_plan.md` (Phase 2) and `<prefix>-walkthrough.md` (Phase 8) at the **workspace root**.
 
 ---
