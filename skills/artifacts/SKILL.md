@@ -1,121 +1,119 @@
 ---
 name: artifacts
-description: Discovers and displays recent artifacts across the current and recent conversation sessions, allowing the user to select and target a specific artifact to inspect, review (/review), update, or execute (/proceed).
+description: Discovers, inspects, and targets workspace artifacts across sessions. Also serves as the central Universal Artifact Protocol (single source of truth for host prefix resolution, link formats, and artifact specifications across all skills).
 ---
 
-# Skill: `/artifacts` — Artifact Explorer & Targeting
+# Skill: `/artifacts` — Universal Artifact Protocol & Explorer
 
-Enables the user to inspect, list, and target recent artifacts (implementation plans, walkthroughs, design documents, research notes) generated across current and recent sessions in Antigravity IDE.
-
----
-
-## 1. When to Use
-
-Invoke this skill whenever:
-- The user issues the `/artifacts` command.
-- The user asks to see recent artifacts or plans (e.g. *"Show my recent plans"*, *"Which artifacts exist?"*).
-- The user wants to select/target a specific artifact from this or previous sessions to review, edit, or execute.
+The central source of truth for workspace artifact creation, host prefix resolution, link formatting, and artifact exploration across Claude Code, Antigravity IDE, and other AI coding assistants.
 
 ---
 
-## 2. Discovery Protocol
+## 1. Universal Artifact Protocol (Single Source of Truth)
 
-Artifacts live in one of two places depending on which IDE wrote them.
+All skills generating or linking workspace artifacts must conform strictly to the following standards.
 
-**Primary — the workspace root.** This is where every skill writes now, and it is the only
-location whose links are clickable in Claude Code.
+### 1.1 Artifact Location & Host Prefix Resolution
 
-Filenames are **host-prefixed**, because Claude Code and Antigravity IDE share this root and
-an unprefixed name would let one host overwrite the other's work. The five artifacts are:
+Claude Code and Antigravity IDE share one workspace root. An unprefixed filename means whichever host runs second silently overwrites the other's work.
 
-| Base name | Claude Code writes | Antigravity IDE writes | Written by |
+**Rules:**
+1. **Resolve prefix once before writing**, based on the assistant's identity from the system prompt:
+
+| Running as | System Prompt Indicator | Prefix | Artifact Target Path |
 |---|---|---|---|
-| `code_review.md` | `claude-code_review.md` | `antigravity-code_review.md` | `/code-review` |
-| `implementation_plan.md` | `claude-implementation_plan.md` | `antigravity-implementation_plan.md` | `/plan`, `/problem`, `/refine`, `/implement-feature` |
-| `walkthrough.md` | `claude-walkthrough.md` | `antigravity-walkthrough.md` | `/implement-feature` |
-| `explanation.md` | `claude-explanation.md` | `antigravity-explanation.md` | `/explain` |
-| `what_am_i_missing.md` | `claude-what_am_i_missing.md` | `antigravity-what_am_i_missing.md` | `/what-am-I-missing` |
+| Claude Code | *"You are Claude"* | `claude-` | Workspace root: `<workspace-root>/claude-<artifact>.md` |
+| Antigravity IDE | *"You are Antigravity"* | `antigravity-` | Workspace root: `<workspace-root>/antigravity-<artifact>.md` |
+| Any other host | *(none of the above)* | *(none)* | Workspace root: `<workspace-root>/<artifact>.md` |
 
-Unprefixed files are older artifacts written before the prefix convention, or ones from a
-host that is neither — list them too rather than hiding them.
+2. **Single Identity Rule**: Never write both filenames in one session.
+3. **No Overwrite Rule**: Never read or overwrite the other host's active artifact — if `antigravity-implementation_plan.md` exists while running as Claude, leave it intact.
+4. **Clickability Rule**: Always write directly to the **workspace root**. That location is what makes links clickable across IDEs.
 
-**Legacy — the Antigravity brain directory**, `<appDataDir>/brain/<conversation-id>/`,
-where `<appDataDir>` is typically `/Users/snuffish/.gemini/antigravity-ide`.
+---
 
-### Step 1: Scan Workspace-Root Artifacts
+### 1.2 Host-Specific Link Formats & Section Anchors
 
-`/artifacts` is the one skill that reads **across** hosts — the point is to show the user
-everything, including what the other IDE produced. Do not filter to your own prefix:
+Chat links and document anchors must follow strict formatting rules depending on the host:
 
+| Host | Chat Link Syntax | Example |
+|---|---|---|
+| **Antigravity IDE** | Absolute path with `file://` scheme *(relative links render dead/unclickable)* | `[antigravity-plan.md](file://<workspace-root>/antigravity-plan.md#L8)` |
+| **Claude Code** | Workspace-relative path without scheme *(`file://` URIs render dead)* | `[claude-plan.md](claude-plan.md#L8)` |
+
+#### Section Anchor / Fragment Rules:
+- **Chat Links (Both Hosts)**: Always use `#L<line>` (e.g. `#L8` or `#L8-L20`), **never** heading slugs (`#context--goal` fails in Claude Code). Read the actual line numbers from the file after writing:
+  ```bash
+  grep -n '^#\{1,3\} ' <prefix>-<artifact>.md
+  ```
+- **Intra-Document Links (Inside Markdown Files)**: Use standard HTML anchor tags `<a id="..."></a>` and semantic `#anchor` targets, never `#L<line>`.
+- **Cross-Host Reading**: When listing or referencing an artifact written by the *other* host, format the link for **your own** active host (the reader).
+
+---
+
+### 1.3 Canonical Artifact Catalog
+
+| Base Filename | Claude Code | Antigravity IDE | Written / Managed By | Primary Purpose |
+|---|---|---|---|---|
+| `implementation_plan.md` | `claude-implementation_plan.md` | `antigravity-implementation_plan.md` | `/plan`, `/problem`, `/refine`, `/implement-feature` | Technical design, phase breakdown, task checklist, gating approval |
+| `code_review.md` | `claude-code_review.md` | `antigravity-code_review.md` | `/code-review` | Code quality audit, severity findings (Critical/Important/Minor), diffs |
+| `pr_feedback_review.md` | `claude-pr_feedback_review.md` | `antigravity-pr_feedback_review.md` | `/pr-feedback-review` | PR comment triage matrix, technical resolutions, draft responses |
+| `explanation.md` | `claude-explanation.md` | `antigravity-explanation.md` | `/explain` | Deep architectural and code intent breakdown |
+| `what_am_i_missing.md` | `claude-what_am_i_missing.md` | `antigravity-what_am_i_missing.md` | `/what-am-I-missing` | Blind spots, failure modes, invariant audits |
+| `walkthrough.md` | `claude-walkthrough.md` | `antigravity-walkthrough.md` | `/implement-feature` | Verification results, screenshots, completed summary |
+
+*(Unprefixed files are older artifacts written before the prefix convention, or from standalone hosts — treat them as valid artifacts).*
+
+---
+
+## 2. Artifact Explorer & Interactive Targeting (Skill Command `/artifacts`)
+
+Enables the user to inspect, list, and target recent artifacts generated across current and recent sessions.
+
+### When to Use
+- The user issues `/artifacts`.
+- The user asks: *"Show my recent plans"*, *"Which artifacts exist?"*, or *"Target an artifact"*.
+
+### Discovery Protocol
+
+#### Step 1: Scan Workspace-Root Artifacts
+`/artifacts` is the one skill that reads **across** hosts to show the user everything:
 ```bash
 ls -lt *.md
 ```
+Group results by base artifact name rather than filename so both host versions sit side-by-side with their timestamps.
 
-Group the results by base artifact rather than by filename, so the two hosts' versions of
-the same document sit next to each other, and label which host wrote each one. When two
-hosts have both produced the same artifact, say so explicitly and show both timestamps —
-that is usually the thing the user actually wants to know.
-
-### Step 2: Scan Legacy Conversation Artifacts
-1. Check the active conversation directory:
-   `<appDataDir>/brain/<current-conversation-id>/`
-2. Look for all top-level markdown documents (excluding hidden folders like `.system_generated/`, `.user_uploaded/`, and temporary `scratch/` files).
-3. Check corresponding `*.metadata.json` files for human-readable summaries and metadata.
-
-### Step 3: Scan Recent Conversation Sessions
-1. Inspect the conversation IDs provided in the `<conversation_history>` block of the prompt.
-2. For the most recent conversations (top 5–10), check their artifact directory:
-   `<appDataDir>/brain/<past-conversation-id>/`
-3. Identify existing artifact markdown files. If needed, a quick shell command from the workspace can list them:
-   ```bash
-   # From workspace root, list recently modified markdown artifacts in the brain directory
-   find /Users/snuffish/.gemini/antigravity-ide/brain -maxdepth 2 -name "*.md" -not -path "*/.system_generated/*" -not -path "*/scratch/*" | head -n 20
-   ```
+#### Step 2: Scan Legacy Conversation Artifacts (Antigravity Only)
+1. Check active conversation: `<appDataDir>/brain/<current-conversation-id>/` (excluding hidden `.system_generated/` and `scratch/`).
+2. Check past conversations from `<conversation_history>` (top 5–10) in `<appDataDir>/brain/<past-id>/`.
 
 ---
 
-## 3. Presenting & Selecting Artifacts
+### Presenting & Selecting Artifacts
 
-Present the discovered artifacts in a clean, structured table, followed by an interactive selection prompt:
+Present discovered artifacts in a structured table:
 
 ```markdown
 # 📂 Recent Artifacts
 
 | # | Artifact | Location · Host | Summary / Goal | Link |
 |---|---|---|---|---|
-| 1 | `claude-implementation_plan.md` | Workspace root · Claude Code | Extract OperationObject mutations with grouped registration | [view](claude-implementation_plan.md) |
-| 2 | `antigravity-implementation_plan.md` | Workspace root · Antigravity | Same plan, older revision from the other host | [view](file://<workspace-root>/antigravity-implementation_plan.md) |
-| 3 | `claude-walkthrough.md` | Workspace root · Claude Code | Verification results and walkthrough of changes | [view](claude-walkthrough.md) |
-| ... | ... | ... | ... | ... |
+| 1 | `claude-implementation_plan.md` | Workspace root · Claude Code | Grouped endpoint registration | [view](claude-implementation_plan.md) |
+| 2 | `antigravity-implementation_plan.md` | Workspace root · Antigravity | Same plan, earlier revision | [view](file://<workspace-root>/antigravity-implementation_plan.md) |
+| 3 | `claude-walkthrough.md` | Workspace root · Claude Code | Verification results | [view](claude-walkthrough.md) |
 ```
 
-### Interactive Targeting
-To let the user target an artifact:
-1. If there are multiple options, use the `ask_question` tool with options for the most relevant/recent artifacts, allowing the user to select one with a single click.
-2. Alternatively, present the numbered list and ask the user which one they would like to target.
+#### Interactive Targeting
+- If multiple options exist, use `ask_question` or present a numbered list allowing the user to pick an artifact with a single click.
 
 ---
 
-## 4. Actions on the Targeted Artifact
+### Actions on Targeted Artifact
 
-Once an artifact is selected / targeted:
-1. **Read & Summarize**: Provide a concise summary of the targeted artifact's status, open questions, and proposed changes.
-2. **Offer Next Steps**:
+Once an artifact is selected:
+1. **Summarize**: Concise status, open questions, and proposed changes.
+2. **Next Steps**:
    - **Review**: *"Run `/review` to conduct a strict read-only audit of this plan."*
    - **Proceed**: *"Type `/proceed` to begin implementing this plan."*
    - **Refine / Edit**: *"Tell me what modifications you'd like to make to the plan."*
-   - **View Full Details**: Clickable file link to the artifact markdown file.
-
-> [!IMPORTANT]
-> **Host-Specific Link Formats (Antigravity IDE vs Claude Code):**
-> - **Antigravity IDE**: Chat requires absolute paths with the `file://` scheme:
->   `[antigravity-code_review.md](file://<workspace-root>/antigravity-code_review.md#L42)`.
->   *(Relative links without `file://` render as unclickable/dead text in Antigravity).*
-> - **Claude Code**: Chat requires workspace-relative paths without scheme:
->   `[claude-code_review.md](claude-code_review.md#L42)`.
->   *(Absolute `file:///...` URIs render as dead text in Claude Code).*
-> - **Section anchors in chat links (both hosts)**: Must be **line numbers** (`#L42` or `#L42-L50`), never heading slugs. (For intra-document links within a markdown file itself, use HTML anchor tags `<a id="..."></a>` and semantic `#anchor` targets).
-> - Link each artifact in **your own** host's format, whichever host wrote it. A Claude
->   session listing `antigravity-code_review.md` still links it workspace-relative; the
->   prefix names the author, the link format follows the reader.
-> - Artifacts still sitting in the legacy brain directory cannot be linked in Claude Code — offer to copy them to the workspace root instead.
+   - **View Details**: Provide a clickable direct link to open the file in the IDE.

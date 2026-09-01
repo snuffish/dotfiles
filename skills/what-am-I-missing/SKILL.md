@@ -11,25 +11,12 @@ Applicable to **any software project, language, framework, or technology stack**
 
 ---
 
-## Artifact Filename — Host Prefix
+## Artifact Delivery Protocol
 
-> [!IMPORTANT]
-> Claude Code and Antigravity IDE share one workspace root. An unprefixed filename means
-> whichever host runs second silently overwrites the other's work. **Resolve a prefix once,
-> before writing**, from your own identity in the system prompt:
->
-> | Running as | Prefix | This skill writes |
-> |---|---|---|
-> | Claude Code — *"You are Claude"* | `claude-` | `claude-what_am_i_missing.md` |
-> | Antigravity IDE — *"You are Antigravity"* | `antigravity-` | `antigravity-what_am_i_missing.md` |
-> | Any other host | *(none)* | `what_am_i_missing.md` |
->
-> This is the same signal that already decides `file://` vs relative links, so resolve it
-> once and reuse it. Use the resolved name in the file you write **and** in every link you
-> emit. Never write both names, and never read or overwrite the other host's file — if
-> `antigravity-what_am_i_missing.md` exists while you are Claude, leave it alone.
->
-> Below, `<prefix>-` stands for the resolved prefix.
+Adhere strictly to the **[artifacts](../artifacts/SKILL.md)** protocol for host prefix resolution (`claude-` vs `antigravity-`), clickability rules, link formatting (`file://` vs relative), and `#L<line>` section anchors.
+- **Target Artifact**: `<prefix>-what_am_i_missing.md` at the **workspace root**.
+
+---
 
 ## 1. When to Use
 
@@ -134,17 +121,4 @@ When evaluating the user's current task, active file, recent diff, or conversati
          - 💥 [Blast Radius / Failure Scenario](claude-what_am_i_missing.md#L18)
          - 🔍 [Secondary Blind Spots & Nuances](claude-what_am_i_missing.md#L26)
          - 🛠️ [Actionable Recommendation](claude-what_am_i_missing.md#L33)
-
-> [!IMPORTANT]
-> **Host-Specific Link Formats (Antigravity IDE vs Claude Code):**
-> - **Antigravity IDE**: Chat requires absolute paths with `file://` scheme:
->   `[antigravity-what_am_i_missing.md](file://<workspace-root>/antigravity-what_am_i_missing.md#L18)`
->   *(Relative links without `file://` render as dead/unclickable text in Antigravity).*
-> - **Claude Code**: Chat requires workspace-relative paths without scheme:
->   `[claude-what_am_i_missing.md](claude-what_am_i_missing.md#L18)`
->   *(Absolute `file:///...` URIs render as dead text in Claude Code).*
-> - **Fragment format for CHAT links (both hosts)**: Always use `#L<line>` (e.g. `#L18`), **never** heading slugs (`#blast-radius--failure-scenario` does not work in Claude Code). Read the numbers off the file after writing it:
->   `grep -n '^#\{1,3\} ' <prefix>-what_am_i_missing.md`
-> - **Intra-document links inside markdown files**: For internal links within a markdown file itself, use HTML anchor tags `<a id="..."></a>` and semantic `#anchor` targets, never line numbers `#L<line>`.
-
-     - A concise overview of the core failure scenario and actionable fix.
+      - A concise overview of the core failure scenario and actionable fix.

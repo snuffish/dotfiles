@@ -21,25 +21,10 @@ Use this skill whenever the user asks to review pull request feedback, triage re
 
 ---
 
-## Artifact Filename — Host Prefix
+## Artifact Delivery Protocol
 
-> [!IMPORTANT]
-> Claude Code and Antigravity IDE share one workspace root. An unprefixed filename means
-> whichever host runs second silently overwrites the other's work. **Resolve a prefix once,
-> before writing**, from your own identity in the system prompt:
->
-> | Running as | Prefix | This skill writes |
-> |---|---|---|
-> | Claude Code — *"You are Claude"* | `claude-` | `claude-pr_feedback_review.md` |
-> | Antigravity IDE — *"You are Antigravity"* | `antigravity-` | `antigravity-pr_feedback_review.md` |
-> | Any other host | *(none)* | `pr_feedback_review.md` |
->
-> This is the same signal that already decides `file://` vs relative links, so resolve it
-> once and reuse it. Use the resolved name in the file you write **and** in every link you
-> emit. Never write both names, and never read or overwrite the other host's file — if
-> `antigravity-pr_feedback_review.md` exists while you are Claude, leave it alone.
->
-> Below, `<prefix>-` stands for the resolved prefix.
+Adhere strictly to the **[artifacts](../artifacts/SKILL.md)** protocol for host prefix resolution (`claude-` vs `antigravity-`), clickability rules, link formatting (`file://` vs relative), and `#L<line>` section anchors.
+- **Target Artifact**: `<prefix>-pr_feedback_review.md` at the **workspace root**.
 
 ---
 
@@ -207,20 +192,11 @@ For every non-trivial thread:
 
 Always write the complete PR feedback review report to `<prefix>-pr_feedback_review.md` **at the workspace root** before returning the response.
 
-### 6.2 — Artifact Links (Dual-Host Compatibility: Antigravity IDE & Claude Code)
+### 6.2 — Artifact Links
 
-> [!IMPORTANT]
-> **Host-Specific Link Formats — Antigravity IDE and Claude Code resolve links differently:**
->
-> - **Antigravity IDE**: Chat requires absolute paths with the `file://` scheme:
->   `[antigravity-pr_feedback_review.md](file://<workspace-root>/antigravity-pr_feedback_review.md#L22)`
->   *(Relative links without `file://` render as dead/unclickable text in Antigravity).*
-> - **Claude Code**: Chat requires standard repo-relative markdown links:
->   `[claude-pr_feedback_review.md](claude-pr_feedback_review.md#L22)`
->   *(Never emit `file://` URLs under Claude Code).*
-> - **Section Anchors**: Use `#L<line-number>` line numbers for chat links (e.g. `#L42`).
->
-> Always start your response with a clickable link to `<prefix>-pr_feedback_review.md` and direct anchors to its main sections.
+Format all chat links and section anchors according to the **[artifacts](../artifacts/SKILL.md)** protocol (`file://` absolute for Antigravity IDE, workspace-relative for Claude Code, `#L<line>` line fragments for chat).
+
+Always start your response with a clickable link to `<prefix>-pr_feedback_review.md` and direct anchors to its main sections.
 
 ### 6.3 — Structure of `<prefix>-pr_feedback_review.md`
 

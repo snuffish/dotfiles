@@ -38,23 +38,10 @@ az boards work-item update --id <ID> --assigned-to "$(az account show --query us
 
 ---
 
-## Artifact Filenames — Host Prefix
+## Artifact Delivery Protocol
 
-> [!IMPORTANT]
-> This skill writes two artifacts to the workspace root: an implementation plan (Phase 2)
-> and a walkthrough (Phase 8). Claude Code and Antigravity IDE share that root, so an
-> unprefixed name lets whichever host runs second silently overwrite the other's work.
-> **Resolve a prefix once, at Phase 2**, from your own identity in the system prompt, and
-> reuse it for both artifacts and every link you emit:
->
-> | Running as | Prefix | Writes |
-> |---|---|---|
-> | Claude Code — *"You are Claude"* | `claude-` | `claude-implementation_plan.md`, `claude-walkthrough.md` |
-> | Antigravity IDE — *"You are Antigravity"* | `antigravity-` | `antigravity-implementation_plan.md`, `antigravity-walkthrough.md` |
-> | Any other host | *(none)* | `implementation_plan.md`, `walkthrough.md` |
->
-> Never write both names, and never read or overwrite the other host's artifacts.
-> Below, `<prefix>-` stands for the resolved prefix.
+Adhere strictly to the **[artifacts](../../artifacts/SKILL.md)** protocol for host prefix resolution (`claude-` vs `antigravity-`), clickability rules, link formatting (`file://` vs relative), and `#L<line>` section anchors.
+- **Target Artifacts**: `<prefix>-implementation_plan.md` (Phase 2) and `<prefix>-walkthrough.md` (Phase 8) at the **workspace root**.
 
 ---
 
@@ -98,7 +85,7 @@ Navigate to the domain folder(s) and read:
 
 ## Phase 2 — Implementation Plan
 
-Create or update `<prefix>-implementation_plan.md` at the **workspace root** (see *Artifact Filenames — Host Prefix* above).
+Create or update `<prefix>-implementation_plan.md` at the **workspace root** (see *Artifact Delivery Protocol* above).
 
 The plan must include:
 
@@ -567,7 +554,7 @@ Check changed `.ts/.tsx` files for:
 
 ## Phase 8 — Walkthrough
 
-Create or update `<prefix>-walkthrough.md` at the **workspace root** (see *Artifact Filenames — Host Prefix* above). Include:
+Create or update `<prefix>-walkthrough.md` at the **workspace root** (see *Artifact Delivery Protocol* above). Include:
 
 - Summary of all files changed and why
 - Test results (copy the summary output)
