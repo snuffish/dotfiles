@@ -20,9 +20,9 @@ Use this skill whenever the user requests a code review, feedback on a pull requ
 
 ---
 
-## Artifact Delivery Protocol
+## Operating Standards & Invariants
 
-Adhere strictly to the **[artifacts](../artifacts/SKILL.md)** protocol for host prefix resolution (`claude-` vs `antigravity-`), clickability rules, link formatting (`file://` vs relative), and `#L<line>` section anchors.
+This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
 - **Target Artifact**: `<prefix>-code_review.md` at the **workspace root**.
 
 ---

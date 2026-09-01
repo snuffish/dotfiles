@@ -51,7 +51,29 @@ Chat links and document anchors must follow strict formatting rules depending on
 
 ---
 
-### 1.3 Canonical Artifact Catalog
+### 1.3 PR Discussion Thread Links (Dual Navigation)
+
+When artifacts reference discussion threads or comments from a pull request (such as in `pr_feedback_review.md` or `code_review.md`), every thread reference must provide **dual navigation**:
+
+1. **Intra-Document Navigation**: Navigates locally within the markdown file to the thread's detailed analysis section: `[#<id>](#thread-<id>)`.
+2. **Direct Remote Link**: Directly opens the specific discussion thread in the remote host (Azure DevOps or GitHub):
+   - **Azure DevOps**: `<prWebUrl>?discussionId=<threadId>`  
+     *(e.g. `https://dev.azure.com/{org}/{project}/_git/{repo}/pullrequest/{prId}?discussionId=106813`)*
+   - **GitHub**: `<prWebUrl>#discussion_r<commentId>` or `<prWebUrl>#issuecomment-<id>`
+
+#### Formatting Standards:
+- **In Tables & Triage Matrices**: Keep the internal anchor and append the remote link in parentheses:
+  ```markdown
+  | [#106813](#thread-106813) ([devops](https://dev.azure.com/.../pullrequest/18176?discussionId=106813)) | `File.cs:42` | ...
+  ```
+- **In Section Headings**: Include the direct remote link on the thread number, wrapped in the intra-document anchor:
+  ```markdown
+  ### <a id="thread-106813"></a>Thread [#106813](https://dev.azure.com/.../pullrequest/18176?discussionId=106813): Revoke permissions when terminated
+  ```
+
+---
+
+### 1.4 Canonical Artifact Catalog
 
 | Base Filename | Claude Code | Antigravity IDE | Written / Managed By | Primary Purpose |
 |---|---|---|---|---|
