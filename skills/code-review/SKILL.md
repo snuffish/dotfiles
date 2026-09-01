@@ -20,25 +20,10 @@ Use this skill whenever the user requests a code review, feedback on a pull requ
 
 ---
 
-## Artifact Filename — Host Prefix
+## Artifact Delivery Protocol
 
-> [!IMPORTANT]
-> Claude Code and Antigravity IDE share one workspace root. An unprefixed filename means
-> whichever host runs second silently overwrites the other's work. **Resolve a prefix once,
-> before writing**, from your own identity in the system prompt:
->
-> | Running as | Prefix | This skill writes |
-> |---|---|---|
-> | Claude Code — *"You are Claude"* | `claude-` | `claude-code_review.md` |
-> | Antigravity IDE — *"You are Antigravity"* | `antigravity-` | `antigravity-code_review.md` |
-> | Any other host | *(none)* | `code_review.md` |
->
-> This is the same signal that already decides `file://` vs relative links, so resolve it
-> once and reuse it. Use the resolved name in the file you write **and** in every link you
-> emit. Never write both names, and never read or overwrite the other host's file — if
-> `antigravity-code_review.md` exists while you are Claude, leave it alone.
->
-> Below, `<prefix>-` stands for the resolved prefix.
+Adhere strictly to the **[artifacts](../artifacts/SKILL.md)** protocol for host prefix resolution (`claude-` vs `antigravity-`), clickability rules, link formatting (`file://` vs relative), and `#L<line>` section anchors.
+- **Target Artifact**: `<prefix>-code_review.md` at the **workspace root**.
 
 ---
 
@@ -250,30 +235,13 @@ Assess the changes across the following criteria:
 
 ## Step 5 — Output Format
 
-### Artifact Links (Dual-Host Compatibility: Antigravity IDE & Claude Code)
+### Artifact Links
 
-> [!IMPORTANT]
-> **Host-Specific Link Formats — Antigravity IDE and Claude Code resolve links differently:**
->
-> - **Antigravity IDE**: Chat requires absolute paths with the `file://` scheme:
->   `[antigravity-code_review.md](file://<workspace-root>/antigravity-code_review.md#L22)`
->   *(Relative links without `file://` render as dead/unclickable text in Antigravity).*
-> - **Claude Code**: Chat requires workspace-relative paths without scheme:
->   `[claude-code_review.md](claude-code_review.md#L22)`
->   *(Absolute `file:///...` URIs render as dead text in Claude Code).*
-> - **Fragment format for CHAT links (both hosts)**: Always use `#L<line>` (e.g. `#L32` or `#L32-L45`), **never** heading slugs (`#findings-summary` is not supported by Claude Code).
+Format all chat links and section anchors according to the **[artifacts](../artifacts/SKILL.md)** protocol (`file://` absolute for Antigravity IDE, workspace-relative for Claude Code, `#L<line>` line fragments for chat).
+
 - **Fragment format for INTRA-DOCUMENT links inside markdown files**:
   Internal links *within* the document itself (such as the summary table, finding links, or links to plain terms) must NEVER use `#L<line>`! They are rendered by Markdown Preview and browser HTML renderers, which navigate using HTML anchor tags. Always use semantic HTML anchors `<a id="..."></a>` (e.g., `<a id="finding-1"></a>`, `<a id="finding-1-plain"></a>`, `<a id="minor-findings"></a>`) and links `[1](#finding-1)` / `[plain](#finding-1-plain)` / `[Minor Findings](#minor-findings)`.
 - **File location**: Always write `<prefix>-code_review.md` at the **workspace root** so both hosts can access and resolve it.
-
-**Host Detection & Link Emission:** the same identity check picks both the prefix and the link form.
-
-- **Antigravity IDE** (system prompt says *"You are Antigravity"*): write `antigravity-code_review.md`, link it absolute — `file://<workspace-root>/antigravity-code_review.md#L<line>`.
-- **Claude Code** (system prompt says *"You are Claude"*): write `claude-code_review.md`, link it workspace-relative — `claude-code_review.md#L<line>`.
-
-Emit **only your own host's form**. Dual links are not an option here: the two hosts write
-two different files, so a link to the other host's filename points at a file this run never
-wrote — stale at best, absent at worst.
 
 Because anchors are line numbers, read them off the file **after** you have written it:
 

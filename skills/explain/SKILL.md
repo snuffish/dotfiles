@@ -9,25 +9,10 @@ Use this skill whenever the user asks to explain a piece of code, a method, a PR
 
 ---
 
-## Artifact Filename — Host Prefix
+## Artifact Delivery Protocol
 
-> [!IMPORTANT]
-> Claude Code and Antigravity IDE share one workspace root. An unprefixed filename means
-> whichever host runs second silently overwrites the other's work. **Resolve a prefix once,
-> before writing**, from your own identity in the system prompt:
->
-> | Running as | Prefix | This skill writes |
-> |---|---|---|
-> | Claude Code — *"You are Claude"* | `claude-` | `claude-explanation.md` |
-> | Antigravity IDE — *"You are Antigravity"* | `antigravity-` | `antigravity-explanation.md` |
-> | Any other host | *(none)* | `explanation.md` |
->
-> This is the same signal that already decides `file://` vs relative links, so resolve it
-> once and reuse it. Use the resolved name in the file you write **and** in every link you
-> emit. Never write both names, and never read or overwrite the other host's file — if
-> `antigravity-explanation.md` exists while you are Claude, leave it alone.
->
-> Below, `<prefix>-` stands for the resolved prefix.
+Adhere strictly to the **[artifacts](../artifacts/SKILL.md)** protocol for host prefix resolution (`claude-` vs `antigravity-`), clickability rules, link formatting (`file://` vs relative), and `#L<line>` section anchors.
+- **Target Artifact**: `<prefix>-explanation.md` at the **workspace root**.
 
 ## Core Philosophy
 
@@ -97,17 +82,4 @@ When the question involves recent changes, intent, or review feedback:
      - Anchor links to key sections, as line numbers:
        - Under **Antigravity IDE**: `[Design Rationale](file://<workspace-root>/antigravity-explanation.md#L48)`
        - Under **Claude Code**: `[Design Rationale](claude-explanation.md#L48)`
-
-> [!IMPORTANT]
-> **Host-Specific Link Formats (Antigravity IDE vs Claude Code):**
-> - **Antigravity IDE**: Chat requires absolute paths with `file://` scheme:
->   `[antigravity-explanation.md](file://<workspace-root>/antigravity-explanation.md#L48)`
->   *(Relative links without `file://` render as dead/unclickable text in Antigravity).*
-> - **Claude Code**: Chat requires workspace-relative paths without scheme:
->   `[claude-explanation.md](claude-explanation.md#L48)`
->   *(Absolute `file:///...` URIs render as dead text in Claude Code).*
-> - **Fragment format for CHAT links (both hosts)**: Always use `#L<line>` (e.g. `#L48`), **never** heading slugs (`#design-rationale` does not work in Claude Code). Read the numbers off the file after writing it:
->   `grep -n '^#\{1,3\} ' <prefix>-explanation.md`
-> - **Intra-document links inside markdown files**: For internal links within a markdown file itself, use HTML anchor tags `<a id="..."></a>` and semantic `#anchor` targets, never line numbers `#L<line>`.
-
-     - A concise overview highlighting critical takeaways without re-dumping the entire artifact body.
+      - A concise overview highlighting critical takeaways without re-dumping the entire artifact body.

@@ -9,25 +9,10 @@ Use this skill whenever the user reports an error (compiler error, lint error, f
 
 ---
 
-## Artifact Filename — Host Prefix
+## Artifact Delivery Protocol
 
-> [!IMPORTANT]
-> Claude Code and Antigravity IDE share one workspace root. An unprefixed filename means
-> whichever host runs second silently overwrites the other's work. **Resolve a prefix once,
-> before writing**, from your own identity in the system prompt:
->
-> | Running as | Prefix | This skill writes |
-> |---|---|---|
-> | Claude Code — *"You are Claude"* | `claude-` | `claude-implementation_plan.md` |
-> | Antigravity IDE — *"You are Antigravity"* | `antigravity-` | `antigravity-implementation_plan.md` |
-> | Any other host | *(none)* | `implementation_plan.md` |
->
-> This is the same signal that already decides `file://` vs relative links, so resolve it
-> once and reuse it. Use the resolved name in the file you write **and** in every link you
-> emit. Never write both names, and never read or overwrite the other host's file — if
-> `antigravity-implementation_plan.md` exists while you are Claude, leave it alone.
->
-> Below, `<prefix>-` stands for the resolved prefix.
+Adhere strictly to the **[artifacts](../artifacts/SKILL.md)** protocol for host prefix resolution (`claude-` vs `antigravity-`), clickability rules, link formatting (`file://` vs relative), and `#L<line>` section anchors.
+- **Target Artifact**: `<prefix>-implementation_plan.md` at the **workspace root**.
 
 ## Step 1 — Analyze the Symptom & Scope
 

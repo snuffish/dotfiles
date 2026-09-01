@@ -9,25 +9,12 @@ Manages the active implementation plan (`<prefix>-implementation_plan.md`) for t
 
 ---
 
-## Artifact Filename — Host Prefix
+## Artifact Delivery Protocol
 
-> [!IMPORTANT]
-> Claude Code and Antigravity IDE share one workspace root. An unprefixed filename means
-> whichever host runs second silently overwrites the other's work. **Resolve a prefix once,
-> before writing**, from your own identity in the system prompt:
->
-> | Running as | Prefix | This skill writes |
-> |---|---|---|
-> | Claude Code — *"You are Claude"* | `claude-` | `claude-implementation_plan.md` |
-> | Antigravity IDE — *"You are Antigravity"* | `antigravity-` | `antigravity-implementation_plan.md` |
-> | Any other host | *(none)* | `implementation_plan.md` |
->
-> This is the same signal that already decides `file://` vs relative links, so resolve it
-> once and reuse it. Use the resolved name in the file you write **and** in every link you
-> emit. Never write both names, and never read or overwrite the other host's file — if
-> `antigravity-implementation_plan.md` exists while you are Claude, leave it alone.
->
-> Below, `<prefix>-` stands for the resolved prefix.
+Adhere strictly to the **[artifacts](../artifacts/SKILL.md)** protocol for host prefix resolution (`claude-` vs `antigravity-`), clickability rules, link formatting (`file://` vs relative), and `#L<line>` section anchors.
+- **Target Artifact**: `<prefix>-implementation_plan.md` at the **workspace root**.
+
+---
 
 ## 1. When to Use
 
@@ -50,25 +37,14 @@ When the user runs `/plan` without any arguments (or simply says "open plan"):
 
 2. **Render Direct Link & Navigation Immediately:**
    - **DO NOT** edit code or execute background commands.
-   - Output a clickable markdown link built exactly as the *Link format* box below specifies, so the user can open it with a single click in the IDE.
-   - Provide clickable anchor links to the key sections of the plan:
+   - Output a clickable markdown link built exactly as the **[artifacts](../artifacts/SKILL.md)** protocol specifies, so the user can open it with a single click in the IDE.
+   - Provide clickable anchor links (`#L<line>`) to the key sections of the plan:
      - 📄 Context & Goal
      - 📄 Proposed Changes
      - 📄 Verification Plan
    - Display the current status of the plan (e.g., `Drafting`, `Awaiting Review`, `Approved`, or `Completed`).
 
 #### Output Template for Bare `/plan`:
-> [!IMPORTANT]
-> **Host-Specific Link Formats (Antigravity IDE vs Claude Code):**
-> - **Antigravity IDE**: Chat requires absolute paths with `file://` scheme:
->   `[antigravity-implementation_plan.md](file://<workspace-root>/antigravity-implementation_plan.md#L8)`
->   *(Relative links without `file://` render as dead/unclickable text in Antigravity).*
-> - **Claude Code**: Chat requires workspace-relative paths without scheme:
->   `[claude-implementation_plan.md](claude-implementation_plan.md#L8)`
->   *(Absolute `file:///...` URIs render as dead text in Claude Code).*
-> - **Fragment format for CHAT links (both hosts)**: Always use `#L<line>` (e.g. `#L8` or `#L8-L20`), **never** heading slugs (`#context--goal` does not work in Claude Code). Read the numbers off the file after writing it:
->   `grep -n '^#\{1,3\} ' <prefix>-implementation_plan.md`
-> - **Intra-document links inside markdown files**: For internal links within a markdown file itself, use HTML anchor tags `<a id="..."></a>` and semantic `#anchor` targets, never line numbers `#L<line>`.
 
 **Under Antigravity IDE:**
 ```markdown
