@@ -22,11 +22,11 @@ skills/
 
 ## Inventory
 
-38 skills total — 15 general + 23 under `Projects/GR.PRIIS/`.
+39 skills total — 16 general + 23 under `Projects/GR.PRIIS/`.
 
 | Group                            | Count | Skills                                                                                                                |
 | -------------------------------- | :---: | -------------------------------------------------------------------------------------------------------------------- |
-| General (top level)              |  15   | `artifacts`, `code-review`, `core`, `create-skill`, `explain`, `manual-testing`, `modern-csharp`, `plan`, `pr-feedback-review`, `pr-summary`, `problem`, `refine`, `review`, `squash-ef-core-migrations`, `what-am-I-missing` |
+| General (top level)              |  16   | `artifacts`, `code-review`, `core`, `create-skill`, `explain`, `investigate`, `manual-testing`, `modern-csharp`, `plan`, `pr-feedback-review`, `pr-summary`, `problem`, `refine`, `review`, `squash-ef-core-migrations`, `what-am-I-missing` |
 | `GR.PRIIS/backend-*`             |   7   | `dry`, `ef-core`, `fastendpoints`, `notifications`, `signalr`, `testing`, `workflow`                                 |
 | `GR.PRIIS/frontend-*`            |   6   | `component-patterns`, `forms`, `routing`, `rtk-query`, `testing`, `workflow`                                          |
 | `GR.PRIIS/source-command-backend-*`  | 6 | `health-check`, `migrate-to-tunit`, `release-notes`, `scaffold`, `ship`, `verify`                                    |
@@ -101,8 +101,8 @@ Get-ChildItem -Path "$env:USERPROFILE\.terminal\skills" -Filter "SKILL.md" -Recu
 
 (If the loader globs recursively — `skills/**/SKILL.md` — point it at this root directly and the grouping is honored as-is.)
 
-**Current live state:** All 38 skills are flat-symlinked into the flat skills directory (`~/.claude/skills`), each pointing back into this tree. Verify on macOS/Linux with:
+**Current live state:** All 39 skills are flat-symlinked into the flat skills directory (`~/.claude/skills`), each pointing back into this tree. Verify on macOS/Linux with:
 
 ```bash
-ls -la ~/.claude/skills | grep -c '\-> .*/.terminal/skills/'   # expect 38
+ls -la ~/.claude/skills | grep -c '\-> .*/.terminal/skills/'   # expect 39
 ```
