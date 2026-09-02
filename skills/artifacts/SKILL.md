@@ -80,6 +80,7 @@ When artifacts reference discussion threads or comments from a pull request (suc
 | `implementation_plan.md` | `claude-implementation_plan.md` | `antigravity-implementation_plan.md` | `/plan`, `/problem`, `/refine`, `/implement-feature` | Technical design, phase breakdown, task checklist, gating approval |
 | `code_review.md` | `claude-code_review.md` | `antigravity-code_review.md` | `/code-review` | Code quality audit, severity findings (Critical/Important/Minor), diffs |
 | `pr_feedback_review.md` | `claude-pr_feedback_review.md` | `antigravity-pr_feedback_review.md` | `/pr-feedback-review` | PR comment triage matrix, technical resolutions, draft responses |
+| `investigation.md` | `claude-investigation.md` | `antigravity-investigation.md` | `/investigate` | Pre-plan research: current-state map, prior art, constraints, options, confidence ledger |
 | `explanation.md` | `claude-explanation.md` | `antigravity-explanation.md` | `/explain` | Deep architectural and code intent breakdown |
 | `what_am_i_missing.md` | `claude-what_am_i_missing.md` | `antigravity-what_am_i_missing.md` | `/what-am-I-missing` | Blind spots, failure modes, invariant audits |
 | `walkthrough.md` | `claude-walkthrough.md` | `antigravity-walkthrough.md` | `/implement-feature` | Verification results, screenshots, completed summary |

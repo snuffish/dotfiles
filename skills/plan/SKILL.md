@@ -85,7 +85,12 @@ Here is the active implementation plan:
 When the user supplies instructions (e.g., `/plan refactor user authentication`):
 
 1. **Enter Planning Mode:**
-   - Research the relevant codebase areas without making code changes.
+   - **Check for an existing investigation first.** If `<prefix>-investigation.md` exists at the
+     workspace root and covers this topic, read it and build the plan on its findings — especially
+     its *Plan Seed*, *Options & Trade-offs*, and *Confidence Ledger*. Do not re-run research that
+     is already documented; do resolve anything it flagged ❓ Unknown that the plan depends on.
+   - Otherwise, research the relevant codebase areas without making code changes. If the topic is
+     large or the unknowns are substantial, run [`/investigate`](../investigate/SKILL.md) first.
    - Formulate a clean, structured design adhering to project conventions (DDD, FastEndpoints, Radix UI, sealed classes, etc.).
 
 2. **Create or Update `<prefix>-implementation_plan.md`:**
