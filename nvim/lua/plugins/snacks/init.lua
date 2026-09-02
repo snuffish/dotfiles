@@ -170,7 +170,7 @@ return {
   },
   {
     "maximilianlloyd/ascii.nvim",
-    requires = { "muniftanjim/nui.nvim" },
+    dependencies = { "muniftanjim/nui.nvim" },
   },
   {
     "mgierada/lazydocker.nvim",

@@ -13,20 +13,20 @@ return {
   {
     "vuki656/package-info.nvim",
     ft = "package.json",
-    requires = { "MunifTanjim/nui.nvim" },
+    dependencies = { "MunifTanjim/nui.nvim" },
     opts = {
       icons = {
-        enabled = true,
+        enable = true,
         style = {
           up_to_date = "| ",
           outdated = "| ",
           invalid = "| ",
         },
       },
-      colors = {
-        up_to_date = "green",
-        outdated = "blue",
-        invalid = "red",
+      highlights = {
+        up_to_date = { fg = "green" },
+        outdated = { fg = "blue" },
+        invalid = { fg = "red" },
       },
       package_manager = "npm",
     },
