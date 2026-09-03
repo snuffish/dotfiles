@@ -1,249 +1,289 @@
 ---
 name: investigate
-description: Read-only research and discovery pass that builds the evidence base for a task before it is designed — maps the relevant code, finds the prior art worth copying, surfaces constraints and cross-layer contracts, weighs approach options, and separates verified fact from assumption. Writes an investigation artifact that /plan consumes. Triggered by /investigate or requests like "research this", "how does X work before we change it", "what would it take to add Y", "scope this out". Runs before /plan; never designs a plan and never modifies code.
+description: Deep read-only research, discovery, and architectural reconnaissance pass that establishes ground truth before designing a solution. Traces symbols, maps call flows and blast radius, uncovers prior art and conventions, surfaces cross-layer constraints, weighs solution options, and builds an evidence-backed confidence ledger. Writes the host-prefixed investigation artifact (<prefix>-investigation.md) consumed by /plan. Trigger whenever the user asks to "research this", "how does X work before we change it", "what would it take to add Y", "scope this out", "explore this feature", "is this feasible", or runs /investigate (bare or with a topic). Strictly read-only; never writes code or modifies workspace state.
 ---
 
 # Skill: `/investigate` — Pre-Plan Research & Discovery
 
-The reconnaissance pass that runs **before** `/plan`. It answers *"what is actually true in this codebase right now, and what are my real options?"* — and hands `/plan` an evidence base instead of a blank page.
+The dedicated reconnaissance pass executed **before** `/plan`. It replaces speculation with verifiable evidence, answering: *"What is actually true in this codebase today, and what are our viable options?"*
 
-A plan built on guesses fails during implementation. This skill exists to make sure that never happens: every claim it produces is either traced to a real line of code or explicitly labelled as an assumption.
+A plan built on assumptions breaks down during implementation. This skill guarantees that every assertion is anchored to real code or explicitly quarantined as an unverified inference, handing `/plan` a solid evidence foundation instead of a blank page.
 
 ---
 
 ## Operating Standards & Invariants
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-investigation.md` at the **workspace root**.
+This skill strictly adheres to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
+- **Target Artifact**: `<prefix>-investigation.md` at the **workspace root** (`antigravity-investigation.md` under Antigravity IDE, `claude-investigation.md` under Claude Code).
 
 ---
 
-## ⛔ Golden Invariants
+## ⛔ Golden Operational Invariants
 
 > [!CAUTION]
-> **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
+> **ZERO-TOLERANCE RULES — READ-ONLY DISCIPLINE:**
 >
-> 1. **STRICTLY READ-ONLY.** Never edit source files, scaffold code, run migrations, stage commits, or execute any state-mutating command. Investigation observes; it does not change. The only file this skill writes is its own artifact.
-> 2. **DO NOT WRITE THE PLAN.** This skill produces findings, options and trade-offs — **not** phases, task checklists, or `<prefix>-implementation_plan.md`. Designing the solution is `/plan`'s job. Stopping short is the point, not a shortcoming.
-> 3. **NO UNCITED CLAIMS.** Every statement of fact about the codebase carries a `path:line` citation. Anything not traced to real source is labelled **Inferred** or **Unknown** — never presented as fact.
-> 4. **NO AUTO-PROCEED.** Never roll straight from investigation into planning or implementation. Hand off and stop; the user decides what runs next.
+> 1. **STRICTLY READ-ONLY**: Never edit source code, scaffold files, stage git changes, run database migrations, or execute mutating commands. The only file this skill creates or modifies is its own workspace artifact: `<prefix>-investigation.md`.
+> 2. **DO NOT WRITE THE PLAN**: Deliver current-state findings, architectural options, trade-offs, and a seed outline. Never draft task phases, step-by-step checklists, or `<prefix>-implementation_plan.md`. Solution architecture belongs to `/plan`.
+> 3. **NO UNCITED CLAIMS**: Every factual claim about codebase behavior, interfaces, or types must carry a precise `path:line` citation. Deductions must be explicitly marked **Inferred** or **Unknown**.
+> 4. **NO AUTO-PROCEED**: Never roll directly from research into planning or implementation without explicit user authorization. Present findings and hand off control.
 
 ---
 
 ## 1. When to Use
 
 Invoke this skill whenever:
-- The user runs `/investigate` (bare or with a topic).
-- The user asks to *"research this"*, *"scope this out"*, *"look into how X works before we touch it"*, *"what would it take to add Y?"*, *"where does Z live?"*, or *"is this even feasible?"*.
-- A work item, ticket, or feature request has arrived and the shape of the change is not yet obvious.
-- `/plan` was attempted but stalled on unknowns — investigate the unknowns, then re-plan.
+- The user issues `/investigate` (bare or with a topic).
+- The user asks: *"Research this"*, *"How does X work before we touch it?"*, *"What would it take to add Y?"*, *"Scope this feature out"*, *"Where is Z defined?"*, or *"Is this approach feasible?"*.
+- A feature request or issue description has arrived and the structural blast radius is still undefined.
+- An attempt at `/plan` stalled due to missing context or unverified architectural dependencies.
 
-### When *not* to use — pick the right neighbour
+### Skill Neighborhood & Routing
 
-| Situation | Correct skill |
+| Objective / Context | Correct Skill |
 |---|---|
-| Research the ground truth **before** a solution exists | **`/investigate`** (this skill) |
-| A specific known symbol/comment/behaviour needs explaining | [`/explain`](../explain/SKILL.md) |
-| The evidence is gathered; now design the change | [`/plan`](../plan/SKILL.md) |
-| A concrete error, failing test, or regression needs diagnosing | [`/problem`](../problem/SKILL.md) |
-| A plan already exists and needs a read-only audit | [`/review`](../review/SKILL.md) |
-| A design looks finished and needs a blind-spot sweep | [`/what-am-I-missing`](../what-am-I-missing/SKILL.md) |
+| Deep-dive research, ground truth, and options **before** designing a change | **`/investigate`** (this skill) |
+| Synthesizing gathered evidence into a phased task plan | [`/plan`](../plan/SKILL.md) |
+| Explaining an isolated symbol, expression, error, or PR comment | [`/explain`](../explain/SKILL.md) |
+| Diagnosing an active regression, failing test, or runtime crash | [`/problem`](../problem/SKILL.md) |
+| Auditing an existing plan or pull request diff | [`/review`](../review/SKILL.md) or [`/code-review`](../code-review/SKILL.md) |
+| Auditing a proposed architecture for hidden edge cases and failure modes | [`/what-am-I-missing`](../what-am-I-missing/SKILL.md) |
 
 ---
 
-## 2. Core Protocol & Workflow
+## 2. Invocation Modes
 
-### Step 0 — Frame the Question (do this first, in writing)
+### Case A: Bare Command (`/investigate` with no arguments)
 
-Before opening a single file, pin down:
+When the user runs `/investigate` without instructions:
 
-1. **The goal** — restate the user's request in one sentence, in your own words.
-2. **The open questions** — the 3–7 specific questions that must be answered before a sound plan is possible. These become the artifact's spine.
-3. **The done condition** — what makes this investigation complete. Without one, research sprawls.
+1. **Locate Existing Investigation**:
+   - Check for `<prefix>-investigation.md` at the **workspace root**.
+2. **If Found**:
+   - Immediately output a direct clickable IDE link and key section anchors (`#L<line>`):
+     ```markdown
+     Here is the active investigation:
 
-If the goal is genuinely ambiguous in a way that changes *what you would research*, ask once, up front — then proceed. Do not ask about details you could resolve by reading the code.
+     📄 **[<prefix>-investigation.md](file://<workspace-root>/<prefix>-investigation.md)** (or relative link under Claude Code)
 
-### Step 1 — Orient: Rulebooks, Scope & Prior Decisions
+     ### Key Sections:
+     - 📄 [TL;DR](file://<workspace-root>/<prefix>-investigation.md#L16)
+     - 📄 [Current-State Architecture](file://<workspace-root>/<prefix>-investigation.md#L32)
+     - 📄 [Options & Trade-offs](file://<workspace-root>/<prefix>-investigation.md#L78)
+     - 📄 [Confidence Ledger](file://<workspace-root>/<prefix>-investigation.md#L110)
+     - 📄 [Plan Seed](file://<workspace-root>/<prefix>-investigation.md#L135)
 
-1. **Read the workspace rulebooks first.** `CLAUDE.md` / `GEMINI.md` / `.agents/rules/` at the workspace root and in each subproject. They encode constraints (cross-repo contracts, conventions, forbidden patterns) that silently invalidate otherwise-reasonable designs.
-2. **Load the relevant project-scoped skills** for the side(s) you are entering, per the precedence model in [core §5](../core/SKILL.md). Their conventions define what "correct" means here.
-3. **Determine repo topology** — which repository/repositories the change touches. A change spanning two repos is a coordinated change, and that fact belongs in the findings.
-4. **Recover prior decisions** — `git log`, `git log -p <path>`, and past transcripts (`~/.claude/projects/` under Claude Code, `<appDataDir>/brain/` under Antigravity). A question the team already settled should not be reopened as an "option".
-5. **Read the ticket if there is one** — work item / issue description and acceptance criteria are primary sources.
-
-### Step 2 — Find the Prior Art (the highest-leverage step)
-
-In a codebase with established conventions, the best design is usually *the one already used for the nearest analogous feature*.
-
-- Locate the **closest existing implementation** of the same shape (a sibling endpoint, an existing form, a comparable job, a parallel migration).
-- Read it end-to-end, across every layer it touches.
-- Record it in the artifact as the **reference implementation**, with file links — this is what `/plan` will pattern-match against.
-- Note where the codebase is **inconsistent** (two competing patterns for the same thing). Which one is newer? Which does the rulebook endorse? An unflagged inconsistency becomes an arbitrary coin-flip during implementation.
-
-### Step 3 — Trace the Real Code (no guesswork)
-
-Follow the [core §4 investigation protocol](../core/SKILL.md). Never infer a signature, type, or behaviour from a name.
-
-- **Enclosing scope over isolated lines** — read the whole method, class, component, or lifecycle.
-- **Cross-layer mapping** — for each touched concern, walk the full path:
-  - Backend ↔ Frontend: DTO shape, route path, serialization, client hooks/generated types.
-  - Domain ↔ Persistence: entity mappings, migrations, keys, constraints, seeded data.
-  - Runtime ↔ Config: feature flags, environment settings, DI registration, background schedules.
-- **Map the blast radius** — enumerate every call site and consumer of what would change. Grep for the symbol; don't assume the list.
-- **Locate the tests** — which existing tests cover this area, and what do they assert? Their absence is itself a finding.
-
-### Step 4 — Surface Constraints & Contracts
-
-Explicitly hunt for the things that turn a small change into a large one:
-
-| Constraint class | What to look for |
-|---|---|
-| **Cross-repo / cross-service contracts** | Shared enums or IDs coupled by value, fixed URLs, generated clients, message schemas, anything the rulebooks flag as coupled |
-| **Data & migrations** | Schema changes, backfills, nullable→non-nullable transitions, historical/temporal data |
-| **Compatibility** | Existing API consumers, persisted state, in-flight jobs, cached payloads |
-| **Access control & security** | Permission/role gates the change must be wired into, authorization rules |
-| **Localization & conventions** | Required display text, language/culture rules, naming conventions |
-| **Toolchain** | Codegen steps, snapshot files, lint/build/test gates that must pass |
-
-### Step 5 — Frame the Options (not the plan)
-
-Present **2–3 genuinely viable approaches**, each with:
-- A one-line description of the approach.
-- **Trade-offs**: complexity, blast radius, migration cost, convention fit, reversibility.
-- Which existing prior art it follows.
-- Why it might be rejected.
-
-Close with a **recommendation and the reason for it**. Keep options at the level of *strategy* — where the change lives and what shape it takes. Task breakdowns, phases and file-by-file edits belong to `/plan`.
-
-### Step 6 — Build the Confidence Ledger
-
-Sort every material finding into exactly one bucket. This is the single most valuable output of the skill:
-
-- ✅ **Verified** — traced to a specific `path:line`.
-- 🟡 **Inferred** — reasonable deduction from convention or partial evidence; state the basis and how to confirm it.
-- ❓ **Unknown** — could not be determined from the codebase; state who or what could answer it, and whether the plan is blocked without it.
-
-Never quietly promote an inference into a fact.
+     **Status:** Complete | Blocked on open questions
+     ```
+3. **If Not Found**:
+   - Inform the user that no active investigation exists for this workspace.
+   - Prompt them for the topic, module, or feature they would like to investigate.
 
 ---
 
-## 3. Evidence Discipline
+### Case B: Command With Instructions (`/investigate <topic>`)
 
-- **Cite everything.** Findings link to source, workspace-relative: `[UserRoleAccessRules.cs:42](source/.../UserRoleAccessRules.cs#L42)`.
-- **Quote sparingly.** Short excerpts to make a point; never dump whole files into the artifact.
-- **Distinguish "not found" from "does not exist."** Say *"no match for `X` across `src/`"* and name the search, rather than asserting absence.
-- **Record dead ends.** A documented "this approach is blocked because …" saves the next reader the same hour.
+When the user supplies a topic or goal (e.g. `/investigate multi-tenant webhook dispatching`):
+Execute the complete **Investigation Protocol** below.
 
 ---
 
-## 4. Scope Control
+## 3. The 7-Step Investigation Protocol
 
-Research expands to fill available time. Bound it:
+```mermaid
+flowchart TD
+    S0["Step 0: Frame Scope & Questions"] --> S1["Step 1: Orient & Workspace Context"]
+    S1 --> S2["Step 2: Locate Prior Art & Analogous Flows"]
+    S2 --> S3["Step 3: Trace Real Code Cross-Layer"]
+    S3 --> S4["Step 4: Surface Contracts, Constraints & Blast Radius"]
+    S4 --> S5["Step 5: Frame Architectural Options & Trade-offs"]
+    S5 --> S6["Step 6: Assemble Confidence Ledger"]
+    S6 --> Art["Write & Deliver <prefix>-investigation.md"]
+```
 
-- Answer the Step 0 questions, then **stop** — resist the adjacent-interesting-thing.
-- Prefer breadth first (map the territory), then depth only where a decision actually hinges on the detail.
-- When a broad sweep across many files is needed and the host offers read-only search agents, delegating that sweep is appropriate — the conclusions still need citations.
-- If the investigation reveals the request rests on a false premise, **say so immediately and prominently** rather than researching around it.
+### Step 0 — Frame the Scope & Questions
+Before reading code, establish strict research boundaries to avoid sprawling:
+1. **Goal**: Restate the inquiry in one concise, unambiguous sentence.
+2. **Core Questions**: Define 3–7 precise questions that must be resolved before a plan can be drafted.
+3. **Done Condition**: Specify the clear boundary where investigation ends (e.g., "Identified exact database schema, call flow from controller to worker, and existing test patterns").
+
+### Step 1 — Orient & Recover Context
+1. **Workspace Rulebooks**: Check `CLAUDE.md`, `GEMINI.md`, and `.agents/rules/` for global architectural patterns, forbidden libraries, or repository constraints.
+2. **Project-Scoped Skills**: Identify and load relevant domain skills per the [core precedence model](../core/SKILL.md) (e.g. `Projects/GR.PRIIS/backend-fastendpoints`, `frontend-rtk-query`).
+3. **Repository Topology**: Determine if the change crosses repository or package boundaries (e.g., Backend API, Frontend SPA, Shared Contracts, Shared Worker).
+4. **Historical Decisions**: Inspect recent commits (`git log -n 5 -p`) and search past conversational transcripts (`<appDataDir>/brain/` or `~/.claude/projects/`) to honor established decisions and avoid relitigating resolved debates.
+
+### Step 2 — Locate Prior Art & Reference Patterns
+Codebases thrive on consistency. The most reliable pattern is usually the one already proven in a sibling feature:
+- Locate the nearest analogous implementation (e.g., sibling endpoint, existing form, matching domain event, existing migration).
+- Read the reference flow across every layer it touches.
+- Identify competing or inconsistent patterns in the codebase. Clearly document which one represents modern repository consensus and why.
+
+### Step 3 — Trace Real Code Cross-Layer (No Guesswork)
+Inspect actual source code definitions rather than making assumptions based on file or variable names:
+- **Enclosing Scope**: Inspect full class definitions, lifecycles, and middlewares—not just isolated snippets.
+- **Cross-Layer Mapping**:
+  - *API ↔ UI*: Route path, query params, DTO payload schemas, serialization settings, and client state/queries.
+  - *Domain ↔ Storage*: Entity definitions, database contexts, foreign keys, cascade configurations, and migrations.
+  - *Runtime ↔ Config*: Environment settings, dependency injection registrations, and background schedulers.
+- **Existing Test Coverage**: Locate unit and integration tests covering this flow. If tests do not exist, document that absence as a critical finding.
+
+### Step 4 — Surface Contracts, Constraints & Blast Radius
+Map out what could break:
+- **Blast Radius**: Enumerate all direct callers, downstream subscribers, consumers, and external webhooks.
+- **Data & Migration Risks**: Identify schema locks, breaking column drops, data backfill requirements, or nullable transitions.
+- **Third-Party & Network Boundaries**: Identify external APIs, timeouts, fallback policies, and retry behaviors.
+- **Auth & Access Control**: Check role-based or tenant authorization gates protecting the target pathways.
+
+### Step 5 — Frame Architectural Options (Not the Plan)
+Present 2–3 viable, contrasting implementation approaches:
+- **Approach Summary**: High-level structural description (where state lives, how events flow).
+- **Trade-offs**: Complexity, performance, blast radius, migration burden, and reversibility.
+- **Prior Art Reference**: Which existing pattern or file each option resembles.
+- **Recommendation & Rationale**: Explicitly designate the recommended option and justify why it wins.
+
+### Step 6 — Assemble the Confidence Ledger
+Classify every key finding into one of three strict categories:
+- ✅ **Verified**: Confirmed by inspecting specific code (`path/to/file.ext:L12-L34`).
+- 🟡 **Inferred**: Plausible deduction based on convention or partial evidence. Include explicit instructions on how to verify before implementation.
+- ❓ **Unknown**: Information missing from the codebase (e.g. business logic decisions, external service credentials). Document who owns the decision and whether it blocks planning.
 
 ---
 
-## 5. Output Format & Deliverables
+## 4. Workspace Artifact Specification
 
-### 5.1 The Artifact — `<prefix>-investigation.md` (workspace root)
+Save the investigation artifact directly to the **workspace root** using the host prefix:
+- **Antigravity IDE**: `<workspace-root>/antigravity-investigation.md`
+- **Claude Code**: `<workspace-root>/claude-investigation.md`
+
+### Artifact Template
 
 ```markdown
-# Investigation: <Topic>
+# Investigation: <Topic Name>
 
-**Goal:** <one-sentence restatement>
-**Scope:** <repos / projects / domains touched>
-**Status:** Complete | Blocked on open questions
-**Date:** <YYYY-MM-DD>
+**Goal:** <One-sentence restatement of user goal>  
+**Scope:** <Repositories, microservices, domains, or directories touched>  
+**Status:** Complete | Blocked on open questions  
+**Date:** <YYYY-MM-DD>  
 
-## 1. Questions This Answers
-1. <question> → <one-line answer>   <!-- the Step 0 spine, each with its verdict -->
+---
 
-## 2. TL;DR
-<3–6 bullets. What is true, what it means, what the recommended direction is.>
+## 1. Questions Answered
+1. **<Question 1>?** → <Direct, concise answer with source citation>
+2. **<Question 2>?** → <Direct, concise answer with source citation>
 
-## 3. How It Works Today
-<Current-state map of the relevant system, with file links. Include a flow or
-layer walkthrough where it aids comprehension.>
+---
 
-## 4. Prior Art / Reference Implementation
-<The closest analogous feature and why it is the pattern to follow, with links.
-Note any competing patterns and which one wins.>
+## 2. Executive Summary (TL;DR)
+- <Key finding 1: current state truth>
+- <Key finding 2: primary constraint or contract>
+- <Key finding 3: recommended architectural direction>
+
+---
+
+## 3. Current-State Architecture & Code Map
+<Walkthrough of the active implementation, including data flow, call sequences, and file links.>
+
+| Component / Layer | Source Location | Responsibilities |
+|---|---|---|
+| Controller / Endpoint | `path/to/File.cs:L20` | Handles request dispatch and validation |
+| Domain Service | `path/to/Service.cs:L45` | Business invariants and transaction boundary |
+
+---
+
+## 4. Prior Art & Reference Patterns
+- **Primary Reference**: `path/to/SiblingFeature.cs:L30` — cleanest pattern to mirror.
+- **Pattern Inconsistencies**: <Notes on legacy vs modern patterns if both exist in the repo.>
+
+---
 
 ## 5. Constraints & Contracts
-| Constraint | Impact | Source |
+| Constraint Category | Impact / Requirement | Source Evidence |
 |---|---|---|
+| Schema & Migration | Requires non-nullable column backfill | `src/Db/Migration.cs:L12` |
+| Cross-Service API | Downstream consumer expects fixed JSON format | `src/Contracts/Event.cs:L8` |
+
+---
 
 ## 6. Blast Radius
-<Every file, consumer, test and contract a change here would touch, with links.>
+- **Direct Callers**: <List of calling methods/components with file links>
+- **Shared State / Persistence**: <Tables, caches, or stores affected>
+- **Existing Test Coverage**: <Paths to unit/integration test suites, or "None found">
+
+---
 
 ## 7. Options & Trade-offs
-### Option A — <name>
-- **Approach:** …
-- **Pros / Cons:** …
-- **Follows:** <prior art>
-### Option B — <name>
-…
-**Recommendation:** <choice + rationale>
+
+### Option A: <Name> (Recommended)
+- **Concept:** <One-sentence summary>
+- **Pros:** ...
+- **Cons:** ...
+- **Follows:** `path/to/Reference.cs`
+
+### Option B: <Name>
+- **Concept:** <One-sentence summary>
+- **Pros:** ...
+- **Cons:** ...
+- **Follows:** ...
+
+**Recommendation:** <Why Option A is selected over alternatives.>
+
+---
 
 ## 8. Confidence Ledger
-| Finding | Confidence | Evidence / How to confirm |
+| Finding / Assumption | Level | Evidence / Verification Method |
 |---|---|---|
-| … | ✅ Verified | `path:line` |
-| … | 🟡 Inferred | basis + confirmation step |
-| … | ❓ Unknown | who/what can answer; blocking? |
+| Existing handler uses optimistic locking | ✅ Verified | `src/Handlers/OrderHandler.cs:L55` |
+| Legacy background job runs every 15 mins | 🟡 Inferred | Cron schedule in `appsettings.json`, needs runtime check |
+| Third-party API rate limits for webhook | ❓ Unknown | External vendor docs needed; non-blocking for scaffolding |
 
-## 9. Open Questions for the User
-<Only genuine blockers or decisions that are the user's to make. Empty is a good answer.>
+---
+
+## 9. Open Questions for User
+<Decisions that belong exclusively to the user, or genuine blockers. Leave empty if none.>
+
+---
 
 ## 10. Plan Seed
-<The handoff: the 3–8 bullet skeleton /plan should expand — no task breakdown,
-no phases, no code. Just the shape of the change and its known gotchas.>
+<High-level structural outline for /plan to build upon. No phases, no task lists, no code snippets.>
+- 1. Define domain contracts and event schemas adhering to Option A.
+- 2. Add database schema migration with backward-compatible defaults.
+- 3. Implement business handler mirroring prior art in `SiblingFeature.cs`.
+- 4. Wire client state hook and update frontend component.
 ```
-
-Omit sections that would be empty rather than padding them.
-
-### 5.2 The Chat Response
-
-Keep it high-signal per [core §1.3](../core/SKILL.md) — the depth lives in the artifact:
-
-1. **The headline** — 1–2 sentences: the single most decision-relevant finding.
-2. **Clickable artifact link**, per the [artifacts](../artifacts/SKILL.md) protocol:
-   - Claude Code: `📄 [claude-investigation.md](claude-investigation.md)`
-   - Antigravity IDE: `📄 [antigravity-investigation.md](file://<workspace-root>/antigravity-investigation.md)`
-3. **Anchor links** to key sections, using real `#L<line>` numbers read back from the written file.
-4. **Recommendation** in one line.
-5. **Open questions**, if any — asked directly in chat so the user can answer without opening the file.
-6. **The handoff line** (below).
 
 ---
 
-## 6. Verification & Validation
+## 5. Chat Response Protocol
 
-Before declaring the investigation complete, confirm:
+Per [core §1.3](../core/SKILL.md), chat output must remain concise and high-signal, pointing directly to the artifact:
 
-- [ ] Every Step 0 question is answered, or listed as ❓ Unknown with a reason.
-- [ ] Every factual claim carries a `path:line` citation, or sits in the Inferred/Unknown buckets.
-- [ ] No claim rests on a filename or symbol name alone.
-- [ ] Relevant rulebooks and project-scoped skills were read, and their constraints are reflected.
-- [ ] Cross-layer and cross-repo implications were checked, not assumed absent.
-- [ ] Blast radius came from an actual search, not from memory.
-- [ ] **No source file was modified and no mutating command was run.**
-- [ ] Anchor line numbers were read back from the written artifact:
-      `grep -n '^#\{1,3\} ' <prefix>-investigation.md`
+1. **Headline**: 1–2 sentences summarizing the most critical finding or recommended direction.
+2. **Clickable Artifact Link**:
+   - **Antigravity IDE**: `📄 [antigravity-investigation.md](file://<workspace-root>/antigravity-investigation.md)`
+   - **Claude Code**: `📄 [claude-investigation.md](claude-investigation.md)`
+3. **Section Anchors**: Read exact line numbers (`grep -n '^#\{1,3\} ' <prefix>-investigation.md`) and output clickable links to:
+   - `[Executive Summary]`
+   - `[Options & Trade-offs]`
+   - `[Confidence Ledger]`
+   - `[Plan Seed]`
+4. **Primary Recommendation**: State the winning approach in one sentence.
+5. **Open Questions**: Surface blocking user decisions directly in chat.
+6. **Standard Handoff Line**:
+   ```markdown
+   **Next Step:** Type `/plan` to convert the Plan Seed into a detailed implementation plan, or `/what-am-I-missing` for a blind-spot review.
+   ```
 
 ---
 
-## 7. Handoff
+## 6. Pre-Handoff Quality Checklist
 
-End every investigation with the handoff, and then **stop**:
-
-```markdown
-**Next:** `/plan` — I'll turn §10 Plan Seed into an implementation plan.
-Or `/what-am-I-missing` for a blind-spot sweep, or tell me which option to build on.
-```
-
-Never continue into `/plan` unprompted. The gate is the user's.
+Confirm every item before finalizing the response:
+- [ ] Strictly read-only: zero modifications to application source code or repository configuration.
+- [ ] No implementation plan was written: options and architecture seeds provided, no task phases.
+- [ ] Every factual statement contains a workspace-relative `path:line` citation.
+- [ ] Inferred assertions and unknown dependencies are documented in the Confidence Ledger.
+- [ ] Rulebooks (`CLAUDE.md`/`GEMINI.md`) and project-scoped skills were verified.
+- [ ] Target artifact was written directly to the workspace root using the correct host prefix.
+- [ ] Chat links and section anchors (`#L<line>`) were verified via grep.
+- [ ] Explicit handoff presented without auto-proceeding.
