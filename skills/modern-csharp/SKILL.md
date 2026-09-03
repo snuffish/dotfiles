@@ -322,6 +322,8 @@ Write a comment only to state something the code cannot show on its own — a no
 - **No history, changelog, or PR/CI references in comments.** Git and the PR already carry that. A comment describing *what changed* or *why the fix works* is written for the reviewer, not the next reader.
 - **Keep docs true to current behavior.** When you change what the code needs or does, update or delete the affected comment in the *same* edit — a stale doc (e.g. "requires libfontconfig1" after the dependency is gone) is worse than none.
 - **Prefer plain over clever.** Generic, conventional phrasing beats a war-story; the reader should learn the responsibility, not the debugging session that produced it.
+- **Slim by default.** One or two sentences for a member, a short paragraph for a type. A `<remarks>` block running past a few lines is a sign the explanation belongs in the PR description or an ADR, not the source.
+- **Never address the reader.** A doc is not a note to the user or the reviewer. No arguing a choice ("that costs twice", "the one thing X cannot be without"), no rhetorical framing, no listing the alternatives that were rejected. State the constraint in a clause and stop.
 - **Do comment genuine surprises.** A constraint the compiler can't express — ordering that matters, a filter that must run, a culture that must be invariant, a magic value's meaning — is exactly what a comment is for.
 
 ---
@@ -341,4 +343,6 @@ Write a comment only to state something the code cannot show on its own — a no
 | `var act = async () => ...` | `async Task Act() { ... }` (PascalCase local function) |
 | `// mirrors X / same as the Y export` (cross-ref archaeology) | State what *this* type does |
 | `// fixed CI / changed in PR #n` (history in a comment) | Leave history to git/PR; document current behavior |
+| Multi-paragraph `<remarks>` arguing why an approach was chosen | One clause naming the constraint; the rest goes in the PR |
+| Doc written as a message to the reader/reviewer | Doc written about the code, for the next reader |
 | Stale doc left behind after behavior changed | Update or delete it in the same edit |

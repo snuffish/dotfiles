@@ -25,6 +25,7 @@ Every skill and agent workflow must strictly enforce these invariants:
 3. **High-Signal Chat & Minimal Noise**:
    - Keep chat responses concise, structured, and focused on key decisions, findings, and immediate next actions.
    - Offload deep analysis, exhaustive reviews, implementation plans, and diagnostics into dedicated workspace markdown artifacts.
+   - Never let that analysis leak into source comments. A comment is documentation for the next reader, never a message to the user or a defence of a decision — keep it slim, technical, and about the code.
 
 ---
 
