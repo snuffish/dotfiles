@@ -7,7 +7,11 @@ if [[ $ENV_PROFILE == "Mac" || $ENV_PROFILE = "Linux" ]]; then
   alias .="cd ~"
   alias .tmp="cd /tmp"
   alias .up='cd $HOME/UnityProjects'
-  alias reboot="sudo reboot now"
+  if [[ $ENV_PROFILE == "Mac" ]]; then
+    alias reboot="defaults write com.apple.loginwindow TALLogoutSavesState -bool false && defaults -currentHost write com.apple.loginwindow TALLogoutSavesState -bool false && defaults -currentHost delete com.apple.loginwindow TALAppsToRelaunchAtLogin 2>/dev/null; osascript -e 'tell app \"System Events\" to restart with state saving preference'"
+  else
+    alias reboot="sudo reboot now"
+  fi
 elif [[ $ENV_PROFILE = "Windows" ]]; then
   # Home PC (Windows)
   export DEVICE="HOME"
