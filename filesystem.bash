@@ -13,9 +13,6 @@ if [[ $ENV_PROFILE == "Linux" ]]; then
   alias .disken="cd /mnt/disken"
 fi
 
-alias .tmp='cd "$HOME/.tmp"'
-alias .logs='cd "$HOME/.logs"'
-
 alias rm="rm -rf"
 
 alias -- -="cd -"
