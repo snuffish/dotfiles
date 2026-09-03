@@ -27,18 +27,16 @@ Invoke this skill whenever:
 
 ### Step 1 — Scope & Placement Resolution
 
-Determine where the new skill belongs:
+By default, **skills should be general, universal, and project-agnostic**. They should encapsulate reusable engineering patterns, architectural disciplines, workflows, and tools that function across any codebase, language, or stack.
 
 | Placement | Directory Target | Use Case | Naming Convention |
 |---|---|---|---|
-| **General (Top Level)** | `skills/<name>/` | Tech-stack, tool, or workflow reusable across any project | Single kebab-case name (e.g. `docker`, `rust-best-practices`, `git-bisect`) |
-| **Project-Scoped** | `skills/Projects/<Project>/<name>/` | Specific to a single product/repository (e.g. GR.PRIIS) | Prefixed kebab-case (`backend-*`, `frontend-*`, `source-command-*`) |
+| **General (Default / Standard)** | `skills/<name>/` | Universal workflows, architectural patterns, tooling, or disciplines that apply to any project | Single kebab-case name (e.g. `organize`, `code-review`, `expressive`, `problem`) |
+| **Project-Scoped (Explicit Request Only)** | `skills/Projects/<Project>/<name>/` | Only when the user explicitly requests rules restricted to a single specific repository/product | Prefixed kebab-case (`backend-*`, `frontend-*`, `source-command-*`) |
 
-#### Description & Gating Rules:
-- **General Skills**: Write a crisp, unambiguous `description` explaining the exact trigger conditions.
-- **Project-Scoped Skills**: MUST include project gating in the `description`:
-  - Open with: `[Project: <ProjectName>]`
-  - Close with: `Load ONLY when working on the <ProjectName> project or in the <RepoName> repository.`
+#### Description & Trigger Rules:
+- **General Skills (Default)**: Write a crisp, domain-focused `description` detailing the exact trigger conditions, intent, and capabilities. Do NOT bind or gate the description to any specific project.
+- **Project-Scoped Skills**: Only use project gating if the user explicitly demands product-specific isolation. Otherwise, write universal descriptions that allow the skill to be leveraged everywhere.
 
 ---
 
@@ -49,7 +47,7 @@ Every new `SKILL.md` must follow this standard structure:
 ```markdown
 ---
 name: <exact-directory-name>
-description: <concise trigger description with gating if project-scoped>
+description: <concise, universal trigger description and domain capabilities>
 ---
 
 # Skill: `/<name>` — <Human-Readable Title>
