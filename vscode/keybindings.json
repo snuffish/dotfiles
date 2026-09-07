@@ -74,6 +74,16 @@
     "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor') && !inputFocus && !webviewFindWidgetFocused"
   },
   {
+    "key": "ctrl+w q",
+    "command": "workbench.action.closeActiveEditor",
+    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor') && !inputFocus && !webviewFindWidgetFocused"
+  },
+  {
+    "key": "ctrl+w ctrl+q",
+    "command": "workbench.action.closeActiveEditor",
+    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor') && !inputFocus && !webviewFindWidgetFocused"
+  },
+  {
     "key": "alt+q",
     "command": "workbench.action.closeSidebar",
     "when": "sideBarFocus"

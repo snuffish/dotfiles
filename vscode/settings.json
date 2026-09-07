@@ -337,7 +337,7 @@
         "r"
       ],
       "commands": [
-        "workbench.action.openRecent"
+        "workbench.action.showAllEditorsByMostRecentlyUsed"
       ],
     },
     {
@@ -617,6 +617,15 @@
       ],
     },
     // Split / Window Management
+    {
+      "before": [
+        "<C-w>",
+        "q"
+      ],
+      "commands": [
+        "workbench.action.closeActiveEditor"
+      ],
+    },
     {
       "before": [
         "<C-w>",
