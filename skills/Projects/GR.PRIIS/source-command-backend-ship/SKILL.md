@@ -1,5 +1,5 @@
 ---
-name: source-command-ship
+name: source-command-backend-ship
 description: "[Project: GR.PRIIS] Branch, commit, push, and open a draft PR for current work — following PRIIS workflow conventions for both Frontend and Backend repositories."
 ---
 
