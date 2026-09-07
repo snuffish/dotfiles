@@ -22,11 +22,11 @@ skills/
 
 ## Inventory
 
-41 skills total — 18 general + 23 under `Projects/GR.PRIIS/`.
+44 skills total — 21 general + 23 under `Projects/GR.PRIIS/`.
 
 | Group                            | Count | Skills                                                                                                                |
 | -------------------------------- | :---: | -------------------------------------------------------------------------------------------------------------------- |
-| General (top level)              |  18   | `artifacts`, `code-review`, `core`, `create-skill`, `explain`, `expressive`, `investigate`, `manual-testing`, `modern-csharp`, `organize`, `plan`, `pr-feedback-review`, `pr-summary`, `problem`, `refine`, `review`, `squash-ef-core-migrations`, `what-am-I-missing` |
+| General (top level)              |  21   | `artifacts`, `clean`, `code-documentation`, `code-review`, `core`, `create-skill`, `explain`, `expressive`, `investigate`, `manual-testing`, `modern-csharp`, `organize`, `plan`, `pr-feedback-review`, `pr-summary`, `problem`, `refine`, `reload-skills`, `review`, `squash-ef-core-migrations`, `what-am-I-missing` |
 | `GR.PRIIS/backend-*`             |   7   | `dry`, `ef-core`, `fastendpoints`, `notifications`, `signalr`, `testing`, `workflow`                                 |
 | `GR.PRIIS/frontend-*`            |   6   | `component-patterns`, `forms`, `routing`, `rtk-query`, `testing`, `workflow`                                          |
 | `GR.PRIIS/source-command-backend-*`  | 6 | `health-check`, `migrate-to-tunit`, `release-notes`, `scaffold`, `ship`, `verify`                                    |
