@@ -14,7 +14,8 @@ Instead of defining standalone guidelines, this skill **composes and delegates t
 ## Operating Standards & Invariants
 
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-implementation_plan.md` at the **workspace root**.
+- **Target Artifact**: `<prefix>-implementation_plan-<suffix>.md` at the **workspace root**.
+- **Anti-Overwrite Rule**: Always append a descriptive kebab-case `<suffix>` derived from the target feature, file, or topic. Never write unsuffixed generic files.
 
 ---
 ## 1. Triggering & Purpose
@@ -89,7 +90,7 @@ After completing the analysis and cross-referencing with both the history and ex
 
 When proposing or implementing refinements, you **MUST ALWAYS** enter `Planning Mode` before modifying any source code files. Follow this sequence:
 
-1. **Create the Implementation Plan**: Document your findings, historical context, and proposed modifications in `<prefix>-implementation_plan.md` at the **workspace root**, providing a clickable chat link and section anchors formatted according to the **[artifacts](../artifacts/SKILL.md)** protocol.
+1. **Create the Implementation Plan**: Document your findings, historical context, and proposed modifications in `<prefix>-implementation_plan-<suffix>.md` at the **workspace root**, providing a clickable chat link and section anchors formatted according to the **[artifacts](../artifacts/SKILL.md)** protocol.
 2. **Request Feedback**: Set `UserFacing = true` and `RequestFeedback = true` in the plan's `ArtifactMetadata`.
 3. **Halt for Approval**: Stop and wait for the user's explicit approval/feedback on the proposed changes. Do not modify any code files in the workspace until the plan is approved.
 4. **Execute**: Once the user approves, proceed to edit the files and implement the refinements.

@@ -12,7 +12,8 @@ Systematically restructures codebase directories and files to eliminate clutter,
 ## Operating Standards & Invariants
 
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-organize_plan.md` at the **workspace root**.
+- **Target Artifact**: `<prefix>-organize_plan-<suffix>.md` at the **workspace root**.
+- **Anti-Overwrite Rule**: Always append a descriptive kebab-case `<suffix>` derived from the target subsystem or directory (e.g. `-matching-components`, `-ticket-features`). Never write unsuffixed generic files.
 
 ---
 
@@ -21,7 +22,7 @@ This skill adheres strictly to the **[core](../core/SKILL.md)** operating standa
 > [!CAUTION]
 > **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
 >
-> 1. **PROPOSAL & PLAN FIRST.** Never start moving, renaming, or modifying files without first producing `<prefix>-organize_plan.md` at the workspace root and presenting the before/after structure.
+> 1. **PROPOSAL & PLAN FIRST.** Never start moving, renaming, or modifying files without first producing `<prefix>-organize_plan-<suffix>.md` at the workspace root and presenting the before/after structure.
 > 2. **THE APPROVAL GATE (`/proceed`).** Unless the user explicitly requested instant execution with an unambiguous scope, treat reorganization proposals as gated. Do not mutate files until the user authorizes the plan.
 > 3. **PRESERVE GIT HISTORY WITH `git mv`.** Never use plain `rm`/`cp`/`mv` or filesystem-only writes that break git file identity, blame, and history tracking.
 > 4. **ZERO BROKEN REFERENCES (CODE & NON-CODE).** Updating import statements is not enough. Reorganization must scan and update dynamic imports, CSS `url()` assets, test fixtures, string path references, build configs, and `.csproj` inclusions.
@@ -144,9 +145,10 @@ When a file named `helper.*`, `utils.*`, or `common.*` accumulates multiple dist
 
 ### Phase 2: Formulate the Reorganization Plan Artifact
 
-Create `<prefix>-organize_plan.md` at the **workspace root** adhering to the **[artifacts](../artifacts/SKILL.md)** protocol:
+Create `<prefix>-organize_plan-<suffix>.md` at the **workspace root** adhering to the **[artifacts](../artifacts/SKILL.md)** protocol:
 - Prefix with `antigravity-` if running as Antigravity IDE.
 - Prefix with `claude-` if running as Claude Code.
+- Append descriptive `<suffix>` based on the target directory or component.
 - Unprefixed if neither.
 
 #### Artifact Structure:
@@ -201,10 +203,10 @@ path/to/target/
 
 ### Phase 3: The Approval Gate
 
-Present a high-signal summary in the chat with a direct link to `<prefix>-organize_plan.md`.
+Present a high-signal summary in the chat with a direct link to `<prefix>-organize_plan-<suffix>.md`.
 Unless the user already instructed you to execute immediately without a plan, wait for confirmation:
 ```text
-I have drafted the reorganization plan in [antigravity-organize_plan.md](file://<workspace-root>/antigravity-organize_plan.md#L8).
+I have drafted the reorganization plan in [antigravity-organize_plan-<suffix>.md](file://<workspace-root>/antigravity-organize_plan-<suffix>.md#L8).
 To proceed with the physical migration, please reply with `/proceed`.
 ```
 
@@ -285,8 +287,8 @@ Execute the project's quality verification suite in order:
 When reporting results to the user, format your chat response cleanly:
 
 1. **Clickable Link to Plan Artifact**:
-   - **Antigravity IDE**: `📄 [antigravity-organize_plan.md](file://<workspace-root>/antigravity-organize_plan.md#L8)`
-   - **Claude Code**: `📄 [claude-organize_plan.md](claude-organize_plan.md#L8)`
+   - **Antigravity IDE**: `📄 [antigravity-organize_plan-<suffix>.md](file://<workspace-root>/antigravity-organize_plan-<suffix>.md#L8)`
+   - **Claude Code**: `📄 [claude-organize_plan-<suffix>.md](claude-organize_plan-<suffix>.md#L8)`
 2. **Structural Comparison**: Render the concise Before vs. After directory tree.
 3. **Key Extractions & Refactorings**: Bulleted summary of split files, isolated assets, and new hooks.
 4. **Verification Evidence**: Clean reporting of linter, typecheck, build, and test outcomes confirming zero regressions.

@@ -12,7 +12,8 @@ Use this skill whenever the user reports an error (compiler error, lint error, f
 ## Operating Standards & Invariants
 
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-implementation_plan.md` at the **workspace root**.
+- **Target Artifact**: `<prefix>-implementation_plan-<suffix>.md` at the **workspace root**.
+- **Anti-Overwrite Rule**: Always append a descriptive kebab-case `<suffix>` derived from the error, ticket, or bug description (e.g. `-fix-audit-review`, `-auth-token-failure`). Never write unsuffixed generic files.
 
 ---
 
@@ -93,7 +94,7 @@ Consolidate your findings into a structured Diagnostic report:
 
 When preparing to apply the fix:
 
-1. **Enter Planning Mode**: You **MUST** document the changes in `<prefix>-implementation_plan.md` first.
+1. **Enter Planning Mode**: You **MUST** document the changes in `<prefix>-implementation_plan-<suffix>.md` first.
 2. **Request User Feedback**: Set `UserFacing = true` and `RequestFeedback = true`.
 3. **Halt for Approval**: Do not edit any files in the workspace until the user explicitly approves.
 4. **Verify**: Run tests and build checks after editing to ensure the problem is fully resolved.

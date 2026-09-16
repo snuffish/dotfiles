@@ -1,6 +1,6 @@
 ---
 name: investigate
-description: Deep read-only research, discovery, and architectural reconnaissance pass that establishes ground truth before designing a solution. Traces symbols, maps call flows and blast radius, uncovers prior art and conventions, surfaces cross-layer constraints, weighs solution options, and builds an evidence-backed confidence ledger. Writes the host-prefixed investigation artifact (<prefix>-investigation.md) consumed by /plan. Trigger whenever the user asks to "research this", "how does X work before we change it", "what would it take to add Y", "scope this out", "explore this feature", "is this feasible", or runs /investigate (bare or with a topic). Strictly read-only; never writes code or modifies workspace state.
+description: Deep read-only research, discovery, and architectural reconnaissance pass that establishes ground truth before designing a solution. Traces symbols, maps call flows and blast radius, uncovers prior art and conventions, surfaces cross-layer constraints, weighs solution options, and builds an evidence-backed confidence ledger. Writes the host-prefixed investigation artifact (<prefix>-investigation-<suffix>.md) consumed by /plan. Trigger whenever the user asks to "research this", "how does X work before we change it", "what would it take to add Y", "scope this out", "explore this feature", "is this feasible", or runs /investigate (bare or with a topic). Strictly read-only; never writes code or modifies workspace state.
 ---
 
 # Skill: `/investigate` — Pre-Plan Research & Discovery
@@ -14,7 +14,8 @@ A plan built on assumptions breaks down during implementation. This skill guaran
 ## Operating Standards & Invariants
 
 This skill strictly adheres to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-investigation.md` at the **workspace root** (`antigravity-investigation.md` under Antigravity IDE, `claude-investigation.md` under Claude Code).
+- **Target Artifact**: `<prefix>-investigation-<suffix>.md` at the **workspace root** (`antigravity-investigation-<suffix>.md` under Antigravity IDE, `claude-investigation-<suffix>.md` under Claude Code).
+- **Anti-Overwrite Rule**: Always append a descriptive kebab-case `<suffix>` (e.g. `-draft-close-dialog`, `-municipality-sync`). Never emit unsuffixed generic files.
 
 ---
 
@@ -23,8 +24,8 @@ This skill strictly adheres to the **[core](../core/SKILL.md)** operating standa
 > [!CAUTION]
 > **ZERO-TOLERANCE RULES — READ-ONLY DISCIPLINE:**
 >
-> 1. **STRICTLY READ-ONLY**: Never edit source code, scaffold files, stage git changes, run database migrations, or execute mutating commands. The only file this skill creates or modifies is its own workspace artifact: `<prefix>-investigation.md`.
-> 2. **DO NOT WRITE THE PLAN**: Deliver current-state findings, architectural options, trade-offs, and a seed outline. Never draft task phases, step-by-step checklists, or `<prefix>-implementation_plan.md`. Solution architecture belongs to `/plan`.
+> 1. **STRICTLY READ-ONLY**: Never edit source code, scaffold files, stage git changes, run database migrations, or execute mutating commands. The only file this skill creates or modifies is its own workspace artifact: `<prefix>-investigation-<suffix>.md`.
+> 2. **DO NOT WRITE THE PLAN**: Deliver current-state findings, architectural options, trade-offs, and a seed outline. Never draft task phases, step-by-step checklists, or `<prefix>-implementation_plan-<suffix>.md`. Solution architecture belongs to `/plan`.
 > 3. **NO UNCITED CLAIMS**: Every factual claim about codebase behavior, interfaces, or types must carry a precise `path:line` citation. Deductions must be explicitly marked **Inferred** or **Unknown**.
 > 4. **NO AUTO-PROCEED**: Never roll directly from research into planning or implementation without explicit user authorization. Present findings and hand off control.
 
@@ -58,20 +59,20 @@ Invoke this skill whenever:
 When the user runs `/investigate` without instructions:
 
 1. **Locate Existing Investigation**:
-   - Check for `<prefix>-investigation.md` at the **workspace root**.
+   - Check for `<prefix>-investigation-*.md` at the **workspace root**.
 2. **If Found**:
    - Immediately output a direct clickable IDE link and key section anchors (`#L<line>`):
      ```markdown
      Here is the active investigation:
 
-     📄 **[<prefix>-investigation.md](file://<workspace-root>/<prefix>-investigation.md)** (or relative link under Claude Code)
+     📄 **[<prefix>-investigation-<suffix>.md](file://<workspace-root>/<prefix>-investigation-<suffix>.md)** (or relative link under Claude Code)
 
      ### Key Sections:
-     - 📄 [TL;DR](file://<workspace-root>/<prefix>-investigation.md#L16)
-     - 📄 [Current-State Architecture](file://<workspace-root>/<prefix>-investigation.md#L32)
-     - 📄 [Options & Trade-offs](file://<workspace-root>/<prefix>-investigation.md#L78)
-     - 📄 [Confidence Ledger](file://<workspace-root>/<prefix>-investigation.md#L110)
-     - 📄 [Plan Seed](file://<workspace-root>/<prefix>-investigation.md#L135)
+     - 📄 [TL;DR](file://<workspace-root>/<prefix>-investigation-<suffix>.md#L16)
+     - 📄 [Current-State Architecture](file://<workspace-root>/<prefix>-investigation-<suffix>.md#L32)
+     - 📄 [Options & Trade-offs](file://<workspace-root>/<prefix>-investigation-<suffix>.md#L78)
+     - 📄 [Confidence Ledger](file://<workspace-root>/<prefix>-investigation-<suffix>.md#L110)
+     - 📄 [Plan Seed](file://<workspace-root>/<prefix>-investigation-<suffix>.md#L135)
 
      **Status:** Complete | Blocked on open questions
      ```
@@ -260,9 +261,9 @@ Per [core §1.3](../core/SKILL.md), chat output must remain concise and high-sig
 
 1. **Headline**: 1–2 sentences summarizing the most critical finding or recommended direction.
 2. **Clickable Artifact Link**:
-   - **Antigravity IDE**: `📄 [antigravity-investigation.md](file://<workspace-root>/antigravity-investigation.md)`
-   - **Claude Code**: `📄 [claude-investigation.md](claude-investigation.md)`
-3. **Section Anchors**: Read exact line numbers (`grep -n '^#\{1,3\} ' <prefix>-investigation.md`) and output clickable links to:
+   - **Antigravity IDE**: `📄 [antigravity-investigation-<suffix>.md](file://<workspace-root>/antigravity-investigation-<suffix>.md)`
+   - **Claude Code**: `📄 [claude-investigation-<suffix>.md](claude-investigation-<suffix>.md)`
+3. **Section Anchors**: Read exact line numbers (`grep -n '^#\{1,3\} ' <prefix>-investigation-<suffix>.md`) and output clickable links to:
    - `[Executive Summary]`
    - `[Options & Trade-offs]`
    - `[Confidence Ledger]`
@@ -271,7 +272,7 @@ Per [core §1.3](../core/SKILL.md), chat output must remain concise and high-sig
 5. **Open Questions**: Surface blocking user decisions directly in chat.
 6. **Standard Handoff Line**:
    ```markdown
-   **Next Step:** Type `/plan` to convert the Plan Seed into a detailed implementation plan, or `/what-am-I-missing` for a blind-spot review.
+   **Next Step:** Type `/plan <suffix>` to convert the Plan Seed into a detailed implementation plan, or `/what-am-I-missing <suffix>` for a blind-spot review.
    ```
 
 ---

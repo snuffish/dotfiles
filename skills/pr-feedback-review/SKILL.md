@@ -14,17 +14,18 @@ Use this skill whenever the user asks to review pull request feedback, triage re
 > [!CAUTION]
 > **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
 >
-> 1. **MANDATORY .MD ARTIFACT & SUMMARY (NO EXCUSES):** Every single `/pr-feedback-review` response MUST ALWAYS write or update the complete feedback review report as `<prefix>-pr_feedback_review.md` **at the workspace root**, and begin the response with a clickable link to it plus clickable section anchors, built exactly as *Artifact Links* below specifies. The user frequently needs to click and open it in the IDE.
+> 1. **MANDATORY .MD ARTIFACT & SUMMARY (NO EXCUSES):** Every single `/pr-feedback-review` response MUST ALWAYS write or update the complete feedback review report as `<prefix>-pr_feedback_review-<suffix>.md` **at the workspace root**, and begin the response with a clickable link to it plus clickable section anchors, built exactly as *Artifact Links* below specifies. The user frequently needs to click and open it in the IDE.
 > 2. **DO NOT MODIFY CODE:** You must **NEVER** edit code files, stage commits, run migrations, or execute modifying commands during or immediately after a `/pr-feedback-review`.
 > 3. **DO NOT AUTO-PROCEED:** Never begin implementing fixes or refactorings automatically. Present clear decision paths, code diffs, and draft replies, then wait for explicit user instruction.
-> 4. **DO NOT GENERATE AN IMPLEMENTATION PLAN INSTEAD:** Do not substitute `<prefix>-implementation_plan.md` for the feedback review document. The feedback review document *is* `<prefix>-pr_feedback_review.md`.
+> 4. **DO NOT GENERATE AN IMPLEMENTATION PLAN INSTEAD:** Do not substitute `<prefix>-implementation_plan-<suffix>.md` for the feedback review document. The feedback review document *is* `<prefix>-pr_feedback_review-<suffix>.md`.
 
 ---
 
 ## Operating Standards & Invariants
 
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-pr_feedback_review.md` at the **workspace root**.
+- **Target Artifact**: `<prefix>-pr_feedback_review-<suffix>.md` at the **workspace root**.
+- **Anti-Overwrite Rule**: Always append a descriptive kebab-case `<suffix>` (e.g. `-18176-backend`, `-18176-18177-verksamhetsobjekt`). Never write unsuffixed generic files.
 
 ---
 
@@ -190,15 +191,16 @@ For every non-trivial thread:
 
 ### 6.1 — Write the Markdown Artifact
 
-Always write the complete PR feedback review report to `<prefix>-pr_feedback_review.md` **at the workspace root** before returning the response.
+Always write the complete PR feedback review report to `<prefix>-pr_feedback_review-<suffix>.md` **at the workspace root** before returning the response.
+- **Suffix Resolution**: Derive `<suffix>` from PR ID and topic (e.g. `-18176-backend`, `-18176-18177-verksamhetsobjekt`).
 
 ### 6.2 — Artifact Links
 
 Format all chat links and section anchors according to the **[artifacts](../artifacts/SKILL.md)** protocol (`file://` absolute for Antigravity IDE, workspace-relative for Claude Code, `#L<line>` line fragments for chat).
 
-Always start your response with a clickable link to `<prefix>-pr_feedback_review.md` and direct anchors to its main sections.
+Always start your response with a clickable link to `<prefix>-pr_feedback_review-<suffix>.md` and direct anchors to its main sections.
 
-### 6.3 — Structure of `<prefix>-pr_feedback_review.md`
+### 6.3 — Structure of `<prefix>-pr_feedback_review-<suffix>.md`
 
 ```markdown
 # PR Feedback Review: <PR Title>

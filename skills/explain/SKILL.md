@@ -12,7 +12,8 @@ Use this skill whenever the user asks to explain a piece of code, a method, a PR
 ## Operating Standards & Invariants
 
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-explanation.md` at the **workspace root**.
+- **Target Artifact**: `<prefix>-explanation-<suffix>.md` at the **workspace root**.
+- **Anti-Overwrite Rule**: Always append a descriptive kebab-case `<suffix>` derived from the target symbol, question, or topic (e.g. `-matching-ticket`, `-audit-endpoint`). Never write unsuffixed generic files.
 
 ---
 
@@ -66,7 +67,7 @@ When the question involves recent changes, intent, or review feedback:
 ## Step 4 — Formulate the Explanation & Generate Artifact
 
 1. **Write the Explanation Artifact**:
-   - Always write a dedicated markdown artifact, `<prefix>-explanation.md`, at the **workspace root**.
+   - Always write a dedicated markdown artifact, `<prefix>-explanation-<suffix>.md`, at the **workspace root**.
      That location is what makes the link clickable, so do not put it elsewhere.
    - The artifact must be thorough, clean, and well-structured using GitHub-flavored Markdown:
      - Title and context of the explained code/concept.
@@ -79,9 +80,9 @@ When the question involves recent changes, intent, or review feedback:
    - In the conversation response, provide:
      - The **TL;DR / Core Takeaway** (1–2 sentences).
      - A clickable link to open the artifact in the IDE:
-       - Under **Antigravity IDE**: `📄 [antigravity-explanation.md](file://<workspace-root>/antigravity-explanation.md)`
-       - Under **Claude Code**: `📄 [claude-explanation.md](claude-explanation.md)`
+       - Under **Antigravity IDE**: `📄 [antigravity-explanation-<suffix>.md](file://<workspace-root>/antigravity-explanation-<suffix>.md)`
+       - Under **Claude Code**: `📄 [claude-explanation-<suffix>.md](claude-explanation-<suffix>.md)`
      - Anchor links to key sections, as line numbers:
-       - Under **Antigravity IDE**: `[Design Rationale](file://<workspace-root>/antigravity-explanation.md#L48)`
-       - Under **Claude Code**: `[Design Rationale](claude-explanation.md#L48)`
+       - Under **Antigravity IDE**: `[Design Rationale](file://<workspace-root>/antigravity-explanation-<suffix>.md#L48)`
+       - Under **Claude Code**: `[Design Rationale](claude-explanation-<suffix>.md#L48)`
       - A concise overview highlighting critical takeaways without re-dumping the entire artifact body.
