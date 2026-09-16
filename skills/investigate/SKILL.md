@@ -14,8 +14,8 @@ A plan built on assumptions breaks down during implementation. This skill guaran
 ## Operating Standards & Invariants
 
 This skill strictly adheres to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-investigation-<suffix>.md` at the **workspace root** (`antigravity-investigation-<suffix>.md` under Antigravity IDE, `claude-investigation-<suffix>.md` under Claude Code).
-- **Anti-Overwrite Rule**: Always append a descriptive kebab-case `<suffix>` (e.g. `-draft-close-dialog`, `-municipality-sync`). Never emit unsuffixed generic files.
+- **Target Artifact**: `<prefix>-investigation-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` under Antigravity IDE, `claude-sonnet-3.7-` under Claude Code).
+- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` (e.g. `-draft-close-dialog`, `-municipality-sync`). Never emit unsuffixed or un-modeled generic files.
 
 ---
 
@@ -99,7 +99,7 @@ flowchart TD
     S3 --> S4["Step 4: Surface Contracts, Constraints & Blast Radius"]
     S4 --> S5["Step 5: Frame Architectural Options & Trade-offs"]
     S5 --> S6["Step 6: Assemble Confidence Ledger"]
-    S6 --> Art["Write & Deliver <prefix>-investigation.md"]
+    S6 --> Art["Write & Deliver <prefix>-investigation-<suffix>.md"]
 ```
 
 ### Step 0 — Frame the Scope & Questions
@@ -153,9 +153,9 @@ Classify every key finding into one of three strict categories:
 
 ## 4. Workspace Artifact Specification
 
-Save the investigation artifact directly to the **workspace root** using the host prefix:
-- **Antigravity IDE**: `<workspace-root>/antigravity-investigation.md`
-- **Claude Code**: `<workspace-root>/claude-investigation.md`
+Save the investigation artifact directly to the **workspace root** using the host and model prefix:
+- **Antigravity IDE**: `<workspace-root>/antigravity-<model>-investigation-<suffix>.md`
+- **Claude Code**: `<workspace-root>/claude-<model>-investigation-<suffix>.md`
 
 ### Artifact Template
 
@@ -261,8 +261,8 @@ Per [core §1.3](../core/SKILL.md), chat output must remain concise and high-sig
 
 1. **Headline**: 1–2 sentences summarizing the most critical finding or recommended direction.
 2. **Clickable Artifact Link**:
-   - **Antigravity IDE**: `📄 [antigravity-investigation-<suffix>.md](file://<workspace-root>/antigravity-investigation-<suffix>.md)`
-   - **Claude Code**: `📄 [claude-investigation-<suffix>.md](claude-investigation-<suffix>.md)`
+   - **Antigravity IDE**: `📄 [antigravity-<model>-investigation-<suffix>.md](file://<workspace-root>/antigravity-<model>-investigation-<suffix>.md)`
+   - **Claude Code**: `📄 [claude-<model>-investigation-<suffix>.md](claude-<model>-investigation-<suffix>.md)`
 3. **Section Anchors**: Read exact line numbers (`grep -n '^#\{1,3\} ' <prefix>-investigation-<suffix>.md`) and output clickable links to:
    - `[Executive Summary]`
    - `[Options & Trade-offs]`

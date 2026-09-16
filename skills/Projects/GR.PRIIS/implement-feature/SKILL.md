@@ -41,8 +41,8 @@ az boards work-item update --id <ID> --assigned-to "$(az account show --query us
 ## Operating Standards & Invariants
 
 This skill adheres strictly to the **[core](../../core/SKILL.md)** operating standards and the **[artifacts](../../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifacts**: `<prefix>-implementation_plan-<suffix>.md` (Phase 2) and `<prefix>-walkthrough-<suffix>.md` (Phase 8) at the **workspace root**.
-- **Anti-Overwrite Rule**: Always append a descriptive kebab-case `<suffix>` derived from the Work Item ID and feature slug (e.g. `-29982-verksamhetsobjekt`, `-new-users-audit`). Never write unsuffixed generic files.
+- **Target Artifacts**: `<prefix>-implementation_plan-<suffix>.md` (Phase 2) and `<prefix>-walkthrough-<suffix>.md` (Phase 8) at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
+- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` derived from the Work Item ID and feature slug (e.g. `-29982-verksamhetsobjekt`, `-new-users-audit`). Never write unsuffixed or un-modeled generic files.
 
 ---
 

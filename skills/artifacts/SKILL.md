@@ -13,36 +13,49 @@ The central source of truth for workspace artifact creation, host prefix resolut
 
 All skills generating or linking workspace artifacts must conform strictly to the following standards.
 
-### 1.1 Artifact Location, Host Prefix Resolution & Mandatory Contextual Suffix
+### 1.1 Artifact Location, Host & Model Prefix Resolution & Mandatory Contextual Suffix
 
-Claude Code and Antigravity IDE share one workspace root, and multiple agents, subagents, or developer workflows may run concurrently or consecutively across different features, pull requests, and bug fixes.
+Claude Code and Antigravity IDE share one workspace root, and multiple agents, subagents, or developer workflows may run concurrently or consecutively across different features, pull requests, and bug fixes — frequently using different underlying AI models (e.g. Gemini 3.8 Flash vs Gemini 2.5 Pro, Claude 3.7 Sonnet vs Claude 3.5 Sonnet).
 - An **unprefixed** filename means whichever host runs second silently overwrites the other host's work.
-- An **unsuffixed generic** filename (e.g. `antigravity-code_review.md` or `claude-implementation_plan.md`) guarantees that subsequent agents, concurrent tasks, or different PR reviews silently overwrite previous artifacts.
+- A **model-less** prefix (e.g. bare `antigravity-code_review.md` or `claude-implementation_plan.md`) causes different models or subsequent sessions on the same platform to collide and overwrite findings.
+- An **unsuffixed generic** filename guarantees that different tasks or PR reviews overwrite each other.
 
 **Universal Naming Pattern:**
 ```text
 <workspace-root>/<prefix>-<base_artifact_name>-<suffix>.md
 ```
+Where `<prefix>` is `<host>-<model>-`:
+```text
+<workspace-root>/<host>-<model>-<base_artifact_name>-<suffix>.md
+```
 
 #### Rules:
-1. **Resolve Prefix Once Before Writing**, based on the assistant's identity from the system prompt:
+1. **Resolve Prefix (`<host>-<model>-`) Once Before Writing**:
+Detect the active host and slugify the active AI model name:
 
-| Running as | System Prompt Indicator | Prefix | Artifact Target Path |
-|---|---|---|---|
-| Claude Code | *"You are Claude"* | `claude-` | Workspace root: `<workspace-root>/claude-<artifact>-<suffix>.md` |
-| Antigravity IDE | *"You are Antigravity"* | `antigravity-` | Workspace root: `<workspace-root>/antigravity-<artifact>-<suffix>.md` |
-| Any other host | *(none of the above)* | *(none)* | Workspace root: `<workspace-root>/<artifact>-<suffix>.md` |
+| Running as | System Prompt Indicator | Active Model Indicator | Prefix (`<host>-<model>-`) | Artifact Target Path Example |
+|---|---|---|---|---|
+| Claude Code | *"You are Claude"* | Claude 3.7 Sonnet | `claude-sonnet-3.7-` | `<workspace-root>/claude-sonnet-3.7-<artifact>-<suffix>.md` |
+| Claude Code | *"You are Claude"* | Claude 3.5 Sonnet | `claude-sonnet-3.5-` | `<workspace-root>/claude-sonnet-3.5-<artifact>-<suffix>.md` |
+| Antigravity IDE | *"You are Antigravity"* | Gemini 3.8 Flash | `antigravity-gemini-3.8-flash-` | `<workspace-root>/antigravity-gemini-3.8-flash-<artifact>-<suffix>.md` |
+| Antigravity IDE | *"You are Antigravity"* | Gemini 2.5 Pro | `antigravity-gemini-2.5-pro-` | `<workspace-root>/antigravity-gemini-2.5-pro-<artifact>-<suffix>.md` |
+| Any other host | *(none of above)* | Active model | `<host>-<model>-` (or `<model>-`) | `<workspace-root>/<prefix>-<artifact>-<suffix>.md` |
+
+- **Model Detection**:
+  - **Antigravity IDE**: Inspect active model selection/metadata from user settings or context (e.g. `gemini-3.8-flash`, fallback: `gemini`).
+  - **Claude Code**: Inspect environment (`ANTHROPIC_MODEL`), CLI options, or system prompt (e.g. `sonnet-3.7`, `sonnet-3.5`, fallback: `sonnet`).
+- **Model Slug Format**: Lowercase alphanumeric and periods/hyphens (e.g., `gemini-3.8-flash`, `sonnet-3.7`).
 
 2. **Mandatory Contextual Suffix (Anti-Overwrite Invariant)**:
    - **Always append a descriptive kebab-case suffix (`-<suffix>`)** to every artifact.
-   - **Never generate unsuffixed generic artifacts** (such as bare `antigravity-implementation_plan.md` or `claude-code_review.md`).
+   - **Never generate unsuffixed generic artifacts** (such as bare `antigravity-gemini-3.8-flash-implementation_plan.md`).
    - Suffix derivation priority:
      1. **Work Item / PR / Ticket ID + Slug**: If associated with an explicit work item, ticket, or PR, prefix the slug with that ID (e.g. `-18176-verksamhetsobjekt`, `-29982-verksamhetsobjekt`, `-1480-009204`).
      2. **Branch or Feature Name**: If working on a git branch, use a kebab-case slug of the branch name (e.g. branch `feature/new-users-audit` → `-new-users-audit`, `bugfix/draft-close-dialog` → `-draft-close-dialog`).
      3. **Topic / Task Descriptor**: If running on a general task or request, derive a concise (2–4 words, kebab-case) topic slug from the task or user prompt (e.g. `-begar-prefix`, `-ticket-category-config`).
-3. **Idempotent Same-Task Updates**: Within the *same* ongoing task, branch, or PR review, an agent may update that specific suffixed artifact rather than creating runaway duplicates, while preserving all artifacts from other tasks.
-4. **Single Identity Rule**: Never write both host filenames in one session.
-5. **No Cross-Host Overwrite Rule**: Never read or overwrite the other host's active artifact — if `antigravity-implementation_plan-begar-prefix.md` exists while running as Claude, leave it intact.
+3. **Idempotent Same-Task Updates**: Within the *same* ongoing task, branch, or PR review, an agent running with that model may update that specific suffixed artifact rather than creating runaway duplicates, while preserving all artifacts from other models and tasks.
+4. **Single Identity Rule**: Never write multiple host/model variants in one turn.
+5. **No Cross-Host / Cross-Model Overwrite Rule**: Never overwrite another host's or another model's active artifact — leave them intact.
 6. **Clickability Rule**: Always write directly to the **workspace root**. That location is what makes links clickable across IDEs.
 
 ---
@@ -92,18 +105,18 @@ When artifacts reference discussion threads or comments from a pull request (suc
 
 | Base Filename Pattern | Claude Code Example | Antigravity IDE Example | Written / Managed By | Primary Purpose |
 |---|---|---|---|---|
-| `implementation_plan-<suffix>.md` | `claude-implementation_plan-begar-prefix.md` | `antigravity-implementation_plan-begar-prefix.md` | `/plan`, `/problem`, `/refine`, `/implement-feature` | Technical design, phase breakdown, task checklist, gating approval |
-| `code_review-<suffix>.md` | `claude-code_review-18176-verksamhetsobjekt.md` | `antigravity-code_review-18176-verksamhetsobjekt.md` | `/code-review` | Code quality audit, severity findings (Critical/Important/Minor), diffs |
-| `pr_feedback_review-<suffix>.md` | `claude-pr_feedback_review-18176-backend.md` | `antigravity-pr_feedback_review-18176-backend.md` | `/pr-feedback-review` | PR comment triage matrix, technical resolutions, draft responses |
-| `investigation-<suffix>.md` | `claude-investigation-draft-close-dialog.md` | `antigravity-investigation-draft-close-dialog.md` | `/investigate` | Pre-plan research: current-state map, prior art, constraints, options, confidence ledger |
-| `explanation-<suffix>.md` | `claude-explanation-matching-ticket.md` | `antigravity-explanation-matching-ticket.md` | `/explain` | Deep architectural and code intent breakdown |
-| `what_am_i_missing-<suffix>.md` | `claude-what_am_i_missing-municipality-sync.md` | `antigravity-what_am_i_missing-municipality-sync.md` | `/what-am-I-missing` | Blind spots, failure modes, invariant audits |
-| `walkthrough-<suffix>.md` | `claude-walkthrough-29982-verksamhetsobjekt.md` | `antigravity-walkthrough-29982-verksamhetsobjekt.md` | `/implement-feature` | Verification results, screenshots, completed summary |
-| `organize_plan-<suffix>.md` | `claude-organize_plan-matching-components.md` | `antigravity-organize_plan-matching-components.md` | `/organize` | Directory/module structure refactoring proposal |
-| `clean_report-<suffix>.md` | `claude-clean_report-audit-endpoint.md` | `antigravity-clean_report-audit-endpoint.md` | `/clean` | Multi-file dead-code pruning & sanitation report |
-| `skills_sync_report[-<suffix>].md` | `claude-skills_sync_report.md` | `antigravity-skills_sync_report.md` | `/reload-skills` | Registry discovery & loader synchronization audit |
+| `implementation_plan-<suffix>.md` | `claude-sonnet-3.7-implementation_plan-begar-prefix.md` | `antigravity-gemini-3.8-flash-implementation_plan-begar-prefix.md` | `/plan`, `/problem`, `/refine`, `/implement-feature` | Technical design, phase breakdown, task checklist, gating approval |
+| `code_review-<suffix>.md` | `claude-sonnet-3.7-code_review-18176-verksamhetsobjekt.md` | `antigravity-gemini-3.8-flash-code_review-category-demand-statistics.md` | `/code-review` | Code quality audit, severity findings (Critical/Important/Minor), diffs |
+| `pr_feedback_review-<suffix>.md` | `claude-sonnet-3.7-pr_feedback_review-18176-backend.md` | `antigravity-gemini-3.8-flash-pr_feedback_review-18176-backend.md` | `/pr-feedback-review` | PR comment triage matrix, technical resolutions, draft responses |
+| `investigation-<suffix>.md` | `claude-sonnet-3.7-investigation-draft-close-dialog.md` | `antigravity-gemini-3.8-flash-investigation-draft-close-dialog.md` | `/investigate` | Pre-plan research: current-state map, prior art, constraints, options, confidence ledger |
+| `explanation-<suffix>.md` | `claude-sonnet-3.7-explanation-matching-ticket.md` | `antigravity-gemini-3.8-flash-explanation-matching-ticket.md` | `/explain` | Deep architectural and code intent breakdown |
+| `what_am_i_missing-<suffix>.md` | `claude-sonnet-3.7-what_am_i_missing-municipality-sync.md` | `antigravity-gemini-3.8-flash-what_am_i_missing-municipality-sync.md` | `/what-am-I-missing` | Blind spots, failure modes, invariant audits |
+| `walkthrough-<suffix>.md` | `claude-sonnet-3.7-walkthrough-29982-verksamhetsobjekt.md` | `antigravity-gemini-3.8-flash-walkthrough-29982-verksamhetsobjekt.md` | `/implement-feature` | Verification results, screenshots, completed summary |
+| `organize_plan-<suffix>.md` | `claude-sonnet-3.7-organize_plan-matching-components.md` | `antigravity-gemini-3.8-flash-organize_plan-matching-components.md` | `/organize` | Directory/module structure refactoring proposal |
+| `clean_report-<suffix>.md` | `claude-sonnet-3.7-clean_report-audit-endpoint.md` | `antigravity-gemini-3.8-flash-clean_report-audit-endpoint.md` | `/clean` | Multi-file dead-code pruning & sanitation report |
+| `skills_sync_report[-<suffix>].md` | `claude-sonnet-3.7-skills_sync_report.md` | `antigravity-gemini-3.8-flash-skills_sync_report.md` | `/reload-skills` | Registry discovery & loader synchronization audit |
 
-*(Older unprefixed or unsuffixed files written before the suffix convention should still be recognized during scans).*
+*(Older unprefixed, un-modeled, or unsuffixed files written before the full convention should still be recognized during scans).*
 
 ---
 
@@ -118,14 +131,15 @@ Enables the user to inspect, list, and target recent artifacts generated across 
 ### Discovery Protocol
 
 #### Step 1: Scan Workspace-Root Artifacts
-`/artifacts` is the one skill that reads **across** hosts and suffixes to show the user everything:
+`/artifacts` is the one skill that reads **across** hosts, models, and suffixes to show the user everything:
 ```bash
 ls -lt *.md
 ```
 Parse filenames into:
-- **Host**: `claude-` (Claude Code), `antigravity-` (Antigravity IDE), or `(standalone)`
+- **Host**: `claude`, `antigravity`, or `(standalone)`
+- **AI Model**: e.g. `gemini-3.8-flash`, `sonnet-3.7`, `gemini-2.5-pro`, `sonnet-3.5`
 - **Base Type**: `implementation_plan`, `code_review`, `pr_feedback_review`, `investigation`, etc.
-- **Suffix / Topic**: The trailing identifier (e.g. `18176-verksamhetsobjekt`, `begar-prefix`)
+- **Suffix / Topic**: The trailing identifier (e.g. `category-demand-statistics`, `18176-verksamhetsobjekt`, `begar-prefix`)
 
 #### Step 2: Scan Legacy Conversation Artifacts (Antigravity Only)
 1. Check active conversation: `<appDataDir>/brain/<current-conversation-id>/` (excluding hidden `.system_generated/` and `scratch/`).
@@ -140,11 +154,12 @@ Present discovered artifacts in a structured table:
 ```markdown
 # 📂 Recent Artifacts
 
-| # | Artifact | Location · Host | Topic / Suffix | Summary / Goal | Link |
+| # | Artifact | Host · Model | Topic / Suffix | Summary / Goal | Link |
 |---|---|---|---|---|---|
-| 1 | `claude-code_review-18176-verksamhetsobjekt.md` | Workspace root · Claude Code | `18176-verksamhetsobjekt` | PR #18176 code review | [view](claude-code_review-18176-verksamhetsobjekt.md) |
-| 2 | `antigravity-implementation_plan-begar-prefix.md` | Workspace root · Antigravity | `begar-prefix` | Begär-prefix refactor plan | [view](file://<workspace-root>/antigravity-implementation_plan-begar-prefix.md) |
-| 3 | `claude-walkthrough-29982-verksamhetsobjekt.md` | Workspace root · Claude Code | `29982-verksamhetsobjekt` | Verification results | [view](claude-walkthrough-29982-verksamhetsobjekt.md) |
+| 1 | `antigravity-gemini-3.8-flash-code_review-category-demand-statistics.md` | Antigravity · Gemini 3.8 Flash | `category-demand-statistics` | Category demand statistics code review | [view](file://<workspace-root>/antigravity-gemini-3.8-flash-code_review-category-demand-statistics.md) |
+| 2 | `claude-sonnet-3.7-code_review-18176-verksamhetsobjekt.md` | Claude Code · Sonnet 3.7 | `18176-verksamhetsobjekt` | PR #18176 code review | [view](claude-sonnet-3.7-code_review-18176-verksamhetsobjekt.md) |
+| 3 | `antigravity-gemini-3.8-flash-implementation_plan-begar-prefix.md` | Antigravity · Gemini 3.8 Flash | `begar-prefix` | Begär-prefix refactor plan | [view](file://<workspace-root>/antigravity-gemini-3.8-flash-implementation_plan-begar-prefix.md) |
+| 4 | `claude-sonnet-3.7-walkthrough-29982-verksamhetsobjekt.md` | Claude Code · Sonnet 3.7 | `29982-verksamhetsobjekt` | Verification results | [view](claude-sonnet-3.7-walkthrough-29982-verksamhetsobjekt.md) |
 ```
 
 #### Interactive Targeting

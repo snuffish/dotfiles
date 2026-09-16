@@ -39,7 +39,7 @@ skills/
 
 The skill registry uses a layered architecture anchored by two foundational root modules:
 1. **[`core`](core/SKILL.md)**: Universal root operating standards, codebase investigation protocol, safety gates (`/proceed`), and baseline invariants.
-2. **[`artifacts`](artifacts/SKILL.md)**: Universal artifact protocol, host prefix resolution (`claude-` vs `antigravity-`), mandatory contextual suffix (`-<suffix>`) anti-overwrite protocol, and IDE link formatting rules.
+2. **[`artifacts`](artifacts/SKILL.md)**: Universal artifact protocol, host & AI model prefix resolution (`<host>-<model>-`), mandatory contextual suffix (`-<suffix>`) anti-overwrite protocol, and IDE link formatting rules.
 
 All general and project-specific skills compose on top of `core` and `artifacts`. Instruction precedence resolves in this order:
 1. **Workspace Rulebooks** (`CLAUDE.md` / `GEMINI.md` / `.agents/rules/`)

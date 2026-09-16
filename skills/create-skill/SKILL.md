@@ -60,8 +60,8 @@ description: <concise, universal trigger description and domain capabilities>
 
 This skill adheres strictly to the **[core](<relative-path-to-core>/core/SKILL.md)** operating standards and the **[artifacts](<relative-path-to-artifacts>/artifacts/SKILL.md)** delivery protocol.
 <!-- If writing a markdown artifact, declare it here: -->
-- **Target Artifact**: `<prefix>-<artifact_name>-<suffix>.md` at the **workspace root**.
-- **Anti-Overwrite Rule**: Always append a descriptive kebab-case `<suffix>`. Never write unsuffixed generic files.
+- **Target Artifact**: `<prefix>-<artifact_name>-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
+- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>`. Never write unsuffixed or un-modeled generic files.
 
 ---
 

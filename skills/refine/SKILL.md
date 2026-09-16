@@ -14,8 +14,8 @@ Instead of defining standalone guidelines, this skill **composes and delegates t
 ## Operating Standards & Invariants
 
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-implementation_plan-<suffix>.md` at the **workspace root**.
-- **Anti-Overwrite Rule**: Always append a descriptive kebab-case `<suffix>` derived from the target feature, file, or topic. Never write unsuffixed generic files.
+- **Target Artifact**: `<prefix>-implementation_plan-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
+- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` derived from the target feature, file, or topic. Never write unsuffixed or un-modeled generic files.
 
 ---
 ## 1. Triggering & Purpose
