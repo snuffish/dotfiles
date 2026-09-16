@@ -14,8 +14,8 @@ Applicable to **any software project, language, framework, or technology stack**
 ## Operating Standards & Invariants
 
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-what_am_i_missing-<suffix>.md` at the **workspace root**.
-- **Anti-Overwrite Rule**: Always append a descriptive kebab-case `<suffix>` derived from the evaluated topic, PR, or branch (e.g. `-municipality-sync`, `-matching-inactivity`). Never write unsuffixed generic files.
+- **Target Artifact**: `<prefix>-what_am_i_missing-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
+- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` derived from the evaluated topic, PR, or branch (e.g. `-municipality-sync`, `-matching-inactivity`). Never write unsuffixed or un-modeled generic files.
 
 ---
 
@@ -111,15 +111,15 @@ When evaluating the user's current task, active file, recent diff, or conversati
    - In the conversation response, provide:
      - The bold **#1 Most Important Thing You Are Missing** takeaway sentence.
      - A clickable link to open the artifact in the IDE, formatted for your host (or dual format):
-       - **Antigravity IDE**: `📄 [antigravity-what_am_i_missing-<suffix>.md](file://<workspace-root>/antigravity-what_am_i_missing-<suffix>.md)`
-       - **Claude Code**: `📄 [claude-what_am_i_missing-<suffix>.md](claude-what_am_i_missing-<suffix>.md)`
+       - **Antigravity IDE**: `📄 [antigravity-<model>-what_am_i_missing-<suffix>.md](file://<workspace-root>/antigravity-<model>-what_am_i_missing-<suffix>.md)`
+       - **Claude Code**: `📄 [claude-<model>-what_am_i_missing-<suffix>.md](claude-<model>-what_am_i_missing-<suffix>.md)`
      - Anchor links to key sections, as line numbers from `grep -n` (placeholders here):
        - **Antigravity IDE**:
-         - 💥 [Blast Radius / Failure Scenario](file://<workspace-root>/antigravity-what_am_i_missing-<suffix>.md#L18)
-         - 🔍 [Secondary Blind Spots & Nuances](file://<workspace-root>/antigravity-what_am_i_missing-<suffix>.md#L26)
-         - 🛠️ [Actionable Recommendation](file://<workspace-root>/antigravity-what_am_i_missing-<suffix>.md#L33)
+         - 💥 [Blast Radius / Failure Scenario](file://<workspace-root>/antigravity-<model>-what_am_i_missing-<suffix>.md#L18)
+         - 🔍 [Secondary Blind Spots & Nuances](file://<workspace-root>/antigravity-<model>-what_am_i_missing-<suffix>.md#L26)
+         - 🛠️ [Actionable Recommendation](file://<workspace-root>/antigravity-<model>-what_am_i_missing-<suffix>.md#L33)
        - **Claude Code**:
-         - 💥 [Blast Radius / Failure Scenario](claude-what_am_i_missing-<suffix>.md#L18)
-         - 🔍 [Secondary Blind Spots & Nuances](claude-what_am_i_missing-<suffix>.md#L26)
-         - 🛠️ [Actionable Recommendation](claude-what_am_i_missing-<suffix>.md#L33)
+         - 💥 [Blast Radius / Failure Scenario](claude-<model>-what_am_i_missing-<suffix>.md#L18)
+         - 🔍 [Secondary Blind Spots & Nuances](claude-<model>-what_am_i_missing-<suffix>.md#L26)
+         - 🛠️ [Actionable Recommendation](claude-<model>-what_am_i_missing-<suffix>.md#L33)
       - A concise overview of the core failure scenario and actionable fix.

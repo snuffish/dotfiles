@@ -12,8 +12,8 @@ Manages the active implementation plan (`<prefix>-implementation_plan-<suffix>.m
 ## Operating Standards & Invariants
 
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-implementation_plan-<suffix>.md` at the **workspace root**.
-- **Anti-Overwrite Rule**: Always append a descriptive kebab-case `<suffix>` derived from the Work Item ID, PR ID, branch, or topic. Never emit unsuffixed generic plan files.
+- **Target Artifact**: `<prefix>-implementation_plan-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
+- **Anti-Overwrite Rule**: Always append both the active AI model in `<prefix>` and a descriptive kebab-case `<suffix>`. Never emit unsuffixed or un-modeled generic plan files.
 
 ---
 
@@ -53,12 +53,12 @@ When the user runs `/plan` without arguments (or simply says "open plan"):
 ```markdown
 Here is the active implementation plan:
 
-📄 **[antigravity-implementation_plan-<suffix>.md](file://<workspace-root>/antigravity-implementation_plan-<suffix>.md)**
+📄 **[antigravity-<model>-implementation_plan-<suffix>.md](file://<workspace-root>/antigravity-<model>-implementation_plan-<suffix>.md)**
 
 ### Key Sections:
-- 📄 [Context & Goal](file://<workspace-root>/antigravity-implementation_plan-<suffix>.md#L8)
-- 📄 [Proposed Changes](file://<workspace-root>/antigravity-implementation_plan-<suffix>.md#L24)
-- 📄 [Verification Plan](file://<workspace-root>/antigravity-implementation_plan-<suffix>.md#L61)
+- 📄 [Context & Goal](file://<workspace-root>/antigravity-<model>-implementation_plan-<suffix>.md#L8)
+- 📄 [Proposed Changes](file://<workspace-root>/antigravity-<model>-implementation_plan-<suffix>.md#L24)
+- 📄 [Verification Plan](file://<workspace-root>/antigravity-<model>-implementation_plan-<suffix>.md#L61)
 
 **Status:** [Draft | Awaiting User Review | Approved | Completed]
 ```
@@ -67,12 +67,12 @@ Here is the active implementation plan:
 ```markdown
 Here is the active implementation plan:
 
-📄 **[claude-implementation_plan-<suffix>.md](claude-implementation_plan-<suffix>.md)**
+📄 **[claude-<model>-implementation_plan-<suffix>.md](claude-<model>-implementation_plan-<suffix>.md)**
 
 ### Key Sections:
-- 📄 [Context & Goal](claude-implementation_plan-<suffix>.md#L8)
-- 📄 [Proposed Changes](claude-implementation_plan-<suffix>.md#L24)
-- 📄 [Verification Plan](claude-implementation_plan-<suffix>.md#L61)
+- 📄 [Context & Goal](claude-<model>-implementation_plan-<suffix>.md#L8)
+- 📄 [Proposed Changes](claude-<model>-implementation_plan-<suffix>.md#L24)
+- 📄 [Verification Plan](claude-<model>-implementation_plan-<suffix>.md#L61)
 
 **Status:** [Draft | Awaiting User Review | Approved | Completed]
 ```

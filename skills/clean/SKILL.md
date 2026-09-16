@@ -13,8 +13,8 @@ Surgically sanitizes a source file by eliminating dead code, unused exports, unr
 
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
 
-- **Target Artifact** (when performing a multi-file audit or deep refactoring): `<prefix>-clean_report-<suffix>.md` at the **workspace root**.
-- **Anti-Overwrite Rule**: Always append a descriptive kebab-case `<suffix>` derived from the target module or file (e.g. `-audit-endpoint`, `-register-tickets`). Never write unsuffixed generic files.
+- **Target Artifact** (when performing a multi-file audit or deep refactoring): `<prefix>-clean_report-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
+- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` derived from the target module or file (e.g. `-audit-endpoint`, `-register-tickets`). Never write unsuffixed or un-modeled generic files.
 - For single-file targeted cleanup, apply precise edits directly to the file, accompanied by a structured summary in the chat response.
 
 ---

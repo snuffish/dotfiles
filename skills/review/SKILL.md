@@ -12,7 +12,7 @@ Conducts a deep, systematic, read-only technical audit and review of an implemen
 ## Operating Standards & Invariants
 
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Referenced / Managed Artifact**: `<prefix>-implementation_plan-<suffix>.md` at the **workspace root**.
+- **Referenced / Managed Artifact**: `<prefix>-implementation_plan-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
 
 ---
 
@@ -97,22 +97,22 @@ Produce a concise, structured review report using this template:
 
 **Under Antigravity IDE:**
 ```markdown
-📄 [antigravity-implementation_plan-<suffix>.md](file://<workspace-root>/antigravity-implementation_plan-<suffix>.md)
+📄 [antigravity-<model>-implementation_plan-<suffix>.md](file://<workspace-root>/antigravity-<model>-implementation_plan-<suffix>.md)
 
 Key Sections:
-- 📄 [Context & Goal](file://<workspace-root>/antigravity-implementation_plan-<suffix>.md#L8): [1-sentence summary of context/decisions]
-- 📄 [Proposed Changes](file://<workspace-root>/antigravity-implementation_plan-<suffix>.md#L24): [1-sentence summary of touched files/components]
-- 📄 [Verification Plan](file://<workspace-root>/antigravity-implementation_plan-<suffix>.md#L61): [1-sentence summary of test & build verification]
+- 📄 [Context & Goal](file://<workspace-root>/antigravity-<model>-implementation_plan-<suffix>.md#L8): [1-sentence summary of context/decisions]
+- 📄 [Proposed Changes](file://<workspace-root>/antigravity-<model>-implementation_plan-<suffix>.md#L24): [1-sentence summary of touched files/components]
+- 📄 [Verification Plan](file://<workspace-root>/antigravity-<model>-implementation_plan-<suffix>.md#L61): [1-sentence summary of test & build verification]
 ```
 
 **Under Claude Code:**
 ```markdown
-📄 [claude-implementation_plan-<suffix>.md](claude-implementation_plan-<suffix>.md)
+📄 [claude-<model>-implementation_plan-<suffix>.md](claude-<model>-implementation_plan-<suffix>.md)
 
 Key Sections:
-- 📄 [Context & Goal](claude-implementation_plan-<suffix>.md#L8): [1-sentence summary of context/decisions]
-- 📄 [Proposed Changes](claude-implementation_plan-<suffix>.md#L24): [1-sentence summary of touched files/components]
-- 📄 [Verification Plan](claude-implementation_plan-<suffix>.md#L61): [1-sentence summary of test & build verification]
+- 📄 [Context & Goal](claude-<model>-implementation_plan-<suffix>.md#L8): [1-sentence summary of context/decisions]
+- 📄 [Proposed Changes](claude-<model>-implementation_plan-<suffix>.md#L24): [1-sentence summary of touched files/components]
+- 📄 [Verification Plan](claude-<model>-implementation_plan-<suffix>.md#L61): [1-sentence summary of test & build verification]
 ```
 
 ---

@@ -55,10 +55,13 @@ To prevent accidental regressions and unapproved mutations:
 
 All skills creating or referencing workspace markdown documents must strictly adhere to the **[artifacts](../artifacts/SKILL.md)** protocol:
 
-1. **Host Prefix Resolution**:
-   - Running as Claude Code (*"You are Claude"*): prefix filenames with `claude-` (e.g. `claude-implementation_plan-<suffix>.md`).
-   - Running as Antigravity IDE (*"You are Antigravity"*): prefix filenames with `antigravity-` (e.g. `antigravity-implementation_plan-<suffix>.md`).
-   - Other / Standalone: no prefix (e.g. `implementation_plan-<suffix>.md`).
+1. **Host & AI-Model Prefix Resolution**:
+   - The `<prefix>-` of every artifact MUST include **both the active host and the actual AI-model**: `<host>-<model>-`
+   - **Host indicator**: `antigravity` (Antigravity IDE), `claude` (Claude Code), or standalone/other.
+   - **AI-Model slug**: The slugified active model name:
+     - Under **Antigravity IDE**: Derived from active model selection/metadata (e.g. `gemini-3.8-flash`, `gemini-2.5-pro`, fallback `gemini`). Example prefix: `antigravity-gemini-3.8-flash-`
+     - Under **Claude Code**: Derived from environment (`ANTHROPIC_MODEL`) or CLI/session model (e.g. `sonnet-3.7`, `sonnet-3.5`, `opus-4`, fallback `sonnet`). Example prefix: `claude-sonnet-3.7-`
+     - Standalone / Other: Model slug directly (e.g. `gemini-3.8-flash-`, `gpt-4o-`) or `<host>-<model>-`.
    - Write all artifacts directly to the **workspace root** to ensure IDE clickability.
 2. **Contextual Suffix Rule (Anti-Overwrite Invariant)**:
    - **Always append a descriptive kebab-case suffix (`-<suffix>`)** to every generated artifact (e.g. `-18176-verksamhetsobjekt`, `-begar-prefix`, `-draft-close-dialog`).

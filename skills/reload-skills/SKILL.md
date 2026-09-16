@@ -13,8 +13,8 @@ Systematically scans the local skill registry (`~/.terminal/skills`), audits all
 
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
 
-- **Target Artifact** (when requested or reporting major registry audits): `<prefix>-skills_sync_report[-<suffix>].md` at the **workspace root**.
-- **Anti-Overwrite Rule**: When generating multiple or targeted sync reports, append a descriptive kebab-case `<suffix>` (e.g. `-full-audit`, `-broken-links`).
+- **Target Artifact** (when requested or reporting major registry audits): `<prefix>-skills_sync_report[-<suffix>].md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
+- **Anti-Overwrite Rule**: When generating multiple or targeted sync reports, include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` (e.g. `-full-audit`, `-broken-links`).
 - For regular synchronizations, execute atomic link/inventory updates directly and output a structured discovery summary in the chat response.
 
 ---

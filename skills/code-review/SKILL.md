@@ -23,8 +23,8 @@ Use this skill whenever the user requests a code review, feedback on a pull requ
 ## Operating Standards & Invariants
 
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-code_review-<suffix>.md` at the **workspace root**.
-- **Anti-Overwrite Rule**: Always append a descriptive kebab-case `<suffix>` (e.g. `-18176-verksamhetsobjekt`, `-new-users-audit`). Never write unsuffixed generic files.
+- **Target Artifact**: `<prefix>-code_review-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
+- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` (e.g. `-18176-verksamhetsobjekt`, `-category-demand-statistics`). Never write unsuffixed or un-modeled generic files.
 
 ---
 
@@ -246,7 +246,7 @@ Format all chat links and section anchors according to the **[artifacts](../arti
 
 - **Fragment format for INTRA-DOCUMENT links inside markdown files**:
   Internal links *within* the document itself (such as the summary table, finding links, or links to plain terms) must NEVER use `#L<line>`! They are rendered by Markdown Preview and browser HTML renderers, which navigate using HTML anchor tags. Always use semantic HTML anchors `<a id="..."></a>` (e.g., `<a id="finding-1"></a>`, `<a id="finding-1-plain"></a>`, `<a id="minor-findings"></a>`) and links `[1](#finding-1)` / `[plain](#finding-1-plain)` / `[Minor Findings](#minor-findings)`.
-- **File location**: Always write `<prefix>-code_review-<suffix>.md` at the **workspace root** so both hosts can access and resolve it.
+- **File location**: Always write `<prefix>-code_review-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`) so both hosts can access and resolve it.
 
 Because anchors are line numbers, read them off the file **after** you have written it:
 
@@ -266,34 +266,34 @@ Then begin every `/code-review` response with the header formatted for your host
 
 **Under Antigravity IDE:**
 ```markdown
-📄 **[antigravity-code_review-<suffix>.md](file://<workspace-root>/antigravity-code_review-<suffix>.md)**
+📄 **[antigravity-<model>-code_review-<suffix>.md](file://<workspace-root>/antigravity-<model>-code_review-<suffix>.md)**
 
 Key Sections:
-- 📄 [Summary of Changes](file://<workspace-root>/antigravity-code_review-<suffix>.md#L22): [1-sentence summary of scope & intent]
-- 📄 [Findings Summary](file://<workspace-root>/antigravity-code_review-<suffix>.md#L32): [Count of 🔴 Critical, 🟡 Important, 🟢 Minor findings]
-- 📄 [Detailed Review Findings](file://<workspace-root>/antigravity-code_review-<suffix>.md#L66): [Primary findings and defect analysis]
-- 📄 [Actionable Suggestions](file://<workspace-root>/antigravity-code_review-<suffix>.md#L138): [Concrete diffs and code fixes]
-- 📄 [In Plain Terms](file://<workspace-root>/antigravity-code_review-<suffix>.md#L236): [Domain-level explanations for non-technical readers]
+- 📄 [Summary of Changes](file://<workspace-root>/antigravity-<model>-code_review-<suffix>.md#L22): [1-sentence summary of scope & intent]
+- 📄 [Findings Summary](file://<workspace-root>/antigravity-<model>-code_review-<suffix>.md#L32): [Count of 🔴 Critical, 🟡 Important, 🟢 Minor findings]
+- 📄 [Detailed Review Findings](file://<workspace-root>/antigravity-<model>-code_review-<suffix>.md#L66): [Primary findings and defect analysis]
+- 📄 [Actionable Suggestions](file://<workspace-root>/antigravity-<model>-code_review-<suffix>.md#L138): [Concrete diffs and code fixes]
+- 📄 [In Plain Terms](file://<workspace-root>/antigravity-<model>-code_review-<suffix>.md#L236): [Domain-level explanations for non-technical readers]
 
 [If an active <prefix>-implementation_plan-<suffix>.md exists]:
 Active Implementation Plan:
-📄 **[antigravity-implementation_plan-<suffix>.md](file://<workspace-root>/antigravity-implementation_plan-<suffix>.md)**
+📄 **[antigravity-<model>-implementation_plan-<suffix>.md](file://<workspace-root>/antigravity-<model>-implementation_plan-<suffix>.md)**
 ```
 
 **Under Claude Code:**
 ```markdown
-📄 **[claude-code_review-<suffix>.md](claude-code_review-<suffix>.md)**
+📄 **[claude-<model>-code_review-<suffix>.md](claude-<model>-code_review-<suffix>.md)**
 
 Key Sections:
-- 📄 [Summary of Changes](claude-code_review-<suffix>.md#L22): [1-sentence summary of scope & intent]
-- 📄 [Findings Summary](claude-code_review-<suffix>.md#L32): [Count of 🔴 Critical, 🟡 Important, 🟢 Minor findings]
-- 📄 [Detailed Review Findings](claude-code_review-<suffix>.md#L66): [Primary findings and defect analysis]
-- 📄 [Actionable Suggestions](claude-code_review-<suffix>.md#L138): [Concrete diffs and code fixes]
-- 📄 [In Plain Terms](claude-code_review-<suffix>.md#L236): [Domain-level explanations for non-technical readers]
+- 📄 [Summary of Changes](claude-<model>-code_review-<suffix>.md#L22): [1-sentence summary of scope & intent]
+- 📄 [Findings Summary](claude-<model>-code_review-<suffix>.md#L32): [Count of 🔴 Critical, 🟡 Important, 🟢 Minor findings]
+- 📄 [Detailed Review Findings](claude-<model>-code_review-<suffix>.md#L66): [Primary findings and defect analysis]
+- 📄 [Actionable Suggestions](claude-<model>-code_review-<suffix>.md#L138): [Concrete diffs and code fixes]
+- 📄 [In Plain Terms](claude-<model>-code_review-<suffix>.md#L236): [Domain-level explanations for non-technical readers]
 
 [If an active <prefix>-implementation_plan-<suffix>.md exists]:
 Active Implementation Plan:
-📄 **[claude-implementation_plan-<suffix>.md](claude-implementation_plan-<suffix>.md)**
+📄 **[claude-<model>-implementation_plan-<suffix>.md](claude-<model>-implementation_plan-<suffix>.md)**
 ```
 
 If you edit the artifact after emitting the header, the line numbers have moved — re-run

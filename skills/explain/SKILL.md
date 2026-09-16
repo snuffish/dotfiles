@@ -12,8 +12,8 @@ Use this skill whenever the user asks to explain a piece of code, a method, a PR
 ## Operating Standards & Invariants
 
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-explanation-<suffix>.md` at the **workspace root**.
-- **Anti-Overwrite Rule**: Always append a descriptive kebab-case `<suffix>` derived from the target symbol, question, or topic (e.g. `-matching-ticket`, `-audit-endpoint`). Never write unsuffixed generic files.
+- **Target Artifact**: `<prefix>-explanation-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
+- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` derived from the target symbol, question, or topic (e.g. `-matching-ticket`, `-audit-endpoint`). Never write unsuffixed or un-modeled generic files.
 
 ---
 
@@ -80,9 +80,9 @@ When the question involves recent changes, intent, or review feedback:
    - In the conversation response, provide:
      - The **TL;DR / Core Takeaway** (1–2 sentences).
      - A clickable link to open the artifact in the IDE:
-       - Under **Antigravity IDE**: `📄 [antigravity-explanation-<suffix>.md](file://<workspace-root>/antigravity-explanation-<suffix>.md)`
-       - Under **Claude Code**: `📄 [claude-explanation-<suffix>.md](claude-explanation-<suffix>.md)`
+       - Under **Antigravity IDE**: `📄 [antigravity-<model>-explanation-<suffix>.md](file://<workspace-root>/antigravity-<model>-explanation-<suffix>.md)`
+       - Under **Claude Code**: `📄 [claude-<model>-explanation-<suffix>.md](claude-<model>-explanation-<suffix>.md)`
      - Anchor links to key sections, as line numbers:
-       - Under **Antigravity IDE**: `[Design Rationale](file://<workspace-root>/antigravity-explanation-<suffix>.md#L48)`
-       - Under **Claude Code**: `[Design Rationale](claude-explanation-<suffix>.md#L48)`
-      - A concise overview highlighting critical takeaways without re-dumping the entire artifact body.
+       - Under **Antigravity IDE**: `[Design Rationale](file://<workspace-root>/antigravity-<model>-explanation-<suffix>.md#L48)`
+       - Under **Claude Code**: `[Design Rationale](claude-<model>-explanation-<suffix>.md#L48)`
+     - A concise overview highlighting critical takeaways without re-dumping the entire artifact body.

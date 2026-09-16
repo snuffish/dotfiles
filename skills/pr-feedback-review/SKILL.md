@@ -24,8 +24,8 @@ Use this skill whenever the user asks to review pull request feedback, triage re
 ## Operating Standards & Invariants
 
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-pr_feedback_review-<suffix>.md` at the **workspace root**.
-- **Anti-Overwrite Rule**: Always append a descriptive kebab-case `<suffix>` (e.g. `-18176-backend`, `-18176-18177-verksamhetsobjekt`). Never write unsuffixed generic files.
+- **Target Artifact**: `<prefix>-pr_feedback_review-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
+- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` (e.g. `-18176-backend`, `-18176-18177-verksamhetsobjekt`). Never write unsuffixed or un-modeled generic files.
 
 ---
 
@@ -192,6 +192,7 @@ For every non-trivial thread:
 ### 6.1 — Write the Markdown Artifact
 
 Always write the complete PR feedback review report to `<prefix>-pr_feedback_review-<suffix>.md` **at the workspace root** before returning the response.
+- **Prefix Resolution**: Prefix `<prefix>-` includes both the active host and the actual AI model (`<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
 - **Suffix Resolution**: Derive `<suffix>` from PR ID and topic (e.g. `-18176-backend`, `-18176-18177-verksamhetsobjekt`).
 
 ### 6.2 — Artifact Links

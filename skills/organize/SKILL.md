@@ -12,8 +12,8 @@ Systematically restructures codebase directories and files to eliminate clutter,
 ## Operating Standards & Invariants
 
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-organize_plan-<suffix>.md` at the **workspace root**.
-- **Anti-Overwrite Rule**: Always append a descriptive kebab-case `<suffix>` derived from the target subsystem or directory (e.g. `-matching-components`, `-ticket-features`). Never write unsuffixed generic files.
+- **Target Artifact**: `<prefix>-organize_plan-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
+- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` derived from the target subsystem or directory (e.g. `-matching-components`, `-ticket-features`). Never write unsuffixed or un-modeled generic files.
 
 ---
 
@@ -146,10 +146,8 @@ When a file named `helper.*`, `utils.*`, or `common.*` accumulates multiple dist
 ### Phase 2: Formulate the Reorganization Plan Artifact
 
 Create `<prefix>-organize_plan-<suffix>.md` at the **workspace root** adhering to the **[artifacts](../artifacts/SKILL.md)** protocol:
-- Prefix with `antigravity-` if running as Antigravity IDE.
-- Prefix with `claude-` if running as Claude Code.
+- Prefix `<prefix>-` includes both the host and active AI model: `<host>-<model>-` (e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
 - Append descriptive `<suffix>` based on the target directory or component.
-- Unprefixed if neither.
 
 #### Artifact Structure:
 
@@ -206,7 +204,7 @@ path/to/target/
 Present a high-signal summary in the chat with a direct link to `<prefix>-organize_plan-<suffix>.md`.
 Unless the user already instructed you to execute immediately without a plan, wait for confirmation:
 ```text
-I have drafted the reorganization plan in [antigravity-organize_plan-<suffix>.md](file://<workspace-root>/antigravity-organize_plan-<suffix>.md#L8).
+I have drafted the reorganization plan in [antigravity-<model>-organize_plan-<suffix>.md](file://<workspace-root>/antigravity-<model>-organize_plan-<suffix>.md#L8).
 To proceed with the physical migration, please reply with `/proceed`.
 ```
 
@@ -287,8 +285,8 @@ Execute the project's quality verification suite in order:
 When reporting results to the user, format your chat response cleanly:
 
 1. **Clickable Link to Plan Artifact**:
-   - **Antigravity IDE**: `📄 [antigravity-organize_plan-<suffix>.md](file://<workspace-root>/antigravity-organize_plan-<suffix>.md#L8)`
-   - **Claude Code**: `📄 [claude-organize_plan-<suffix>.md](claude-organize_plan-<suffix>.md#L8)`
+   - **Antigravity IDE**: `📄 [antigravity-<model>-organize_plan-<suffix>.md](file://<workspace-root>/antigravity-<model>-organize_plan-<suffix>.md#L8)`
+   - **Claude Code**: `📄 [claude-<model>-organize_plan-<suffix>.md](claude-<model>-organize_plan-<suffix>.md#L8)`
 2. **Structural Comparison**: Render the concise Before vs. After directory tree.
 3. **Key Extractions & Refactorings**: Bulleted summary of split files, isolated assets, and new hooks.
 4. **Verification Evidence**: Clean reporting of linter, typecheck, build, and test outcomes confirming zero regressions.
