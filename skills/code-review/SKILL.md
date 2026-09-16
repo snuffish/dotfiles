@@ -14,7 +14,7 @@ Use this skill whenever the user requests a code review, feedback on a pull requ
 > [!CAUTION]
 > **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
 >
-> 1. **MANDATORY .MD ARTIFACT & SUMMARY (NO EXCUSES):** Every single `/code-review` response MUST ALWAYS write or update the complete review report as `<prefix>-code_review.md` **at the workspace root**, and begin the response with a clickable link to it plus clickable section anchors, built exactly as *Artifact Links* below specifies. If an active `<prefix>-implementation_plan.md` exists, link that too. The user frequently needs to click and open it in the IDE.
+> 1. **MANDATORY .MD ARTIFACT & SUMMARY (NO EXCUSES):** Every single `/code-review` response MUST ALWAYS write or update the complete review report as `<prefix>-code_review-<suffix>.md` **at the workspace root**, and begin the response with a clickable link to it plus clickable section anchors, built exactly as *Artifact Links* below specifies. If an active `<prefix>-implementation_plan-<suffix>.md` exists, link that too. The user frequently needs to click and open it in the IDE.
 > 2. **DO NOT MODIFY CODE:** You must **NEVER** edit code files, stage commits, run migrations, or execute modifying commands during or immediately after a `/code-review`.
 > 3. **DO NOT AUTO-PROCEED:** Never begin implementing fixes or refactorings automatically. Wait for explicit user instruction or `/proceed`.
 
@@ -23,7 +23,8 @@ Use this skill whenever the user requests a code review, feedback on a pull requ
 ## Operating Standards & Invariants
 
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-code_review.md` at the **workspace root**.
+- **Target Artifact**: `<prefix>-code_review-<suffix>.md` at the **workspace root**.
+- **Anti-Overwrite Rule**: Always append a descriptive kebab-case `<suffix>` (e.g. `-18176-verksamhetsobjekt`, `-new-users-audit`). Never write unsuffixed generic files.
 
 ---
 
@@ -227,9 +228,13 @@ Assess the changes across the following criteria:
 
 ## Step 4 — Artifact Management & Planning Separation
 
-1. **Write Review Artifact:** Always persist the full code review to `<prefix>-code_review.md` **at the workspace root**. The location is what makes the link clickable — see *Artifact Links* below — so do not put it anywhere else.
+1. **Write Review Artifact:** Always persist the full code review to `<prefix>-code_review-<suffix>.md` **at the workspace root**. The location is what makes the link clickable — see *Artifact Links* below — so do not put it anywhere else.
+   - **Suffix Resolution**:
+     - PR / Work Item: `[<id>-]<slug>` (e.g. `18176-verksamhetsobjekt`, `18176-backend`)
+     - Branch / Working Diff: `<branch-slug>` (e.g. `new-users-audit`)
+     - Topic / Specific Files: 2–4 word topic slug (e.g. `ticket-category-config`)
 2. **Do Not Modify Code:** Reviews are strictly diagnostic and analytical. Never edit source files or execute mutations during a review.
-3. **Do Not Enter Implementation Planning Mode:** Do not generate an `<prefix>-implementation_plan.md` for a review; go straight to context gathering and findings generation. If an active `<prefix>-implementation_plan.md` already exists in the session, reference and link to it in the header alongside `<prefix>-code_review.md`.
+3. **Do Not Enter Implementation Planning Mode:** Do not generate an `<prefix>-implementation_plan-<suffix>.md` for a review; go straight to context gathering and findings generation. If an active `<prefix>-implementation_plan-<suffix>.md` already exists in the session, reference and link to it in the header alongside `<prefix>-code_review-<suffix>.md`.
 
 ---
 
@@ -241,12 +246,12 @@ Format all chat links and section anchors according to the **[artifacts](../arti
 
 - **Fragment format for INTRA-DOCUMENT links inside markdown files**:
   Internal links *within* the document itself (such as the summary table, finding links, or links to plain terms) must NEVER use `#L<line>`! They are rendered by Markdown Preview and browser HTML renderers, which navigate using HTML anchor tags. Always use semantic HTML anchors `<a id="..."></a>` (e.g., `<a id="finding-1"></a>`, `<a id="finding-1-plain"></a>`, `<a id="minor-findings"></a>`) and links `[1](#finding-1)` / `[plain](#finding-1-plain)` / `[Minor Findings](#minor-findings)`.
-- **File location**: Always write `<prefix>-code_review.md` at the **workspace root** so both hosts can access and resolve it.
+- **File location**: Always write `<prefix>-code_review-<suffix>.md` at the **workspace root** so both hosts can access and resolve it.
 
 Because anchors are line numbers, read them off the file **after** you have written it:
 
 ```bash
-grep -n '^#\{1,3\} ' <prefix>-code_review.md
+grep -n '^#\{1,3\} ' <prefix>-code_review-<suffix>.md
 ```
 
 ```text
@@ -261,34 +266,34 @@ Then begin every `/code-review` response with the header formatted for your host
 
 **Under Antigravity IDE:**
 ```markdown
-📄 **[antigravity-code_review.md](file://<workspace-root>/antigravity-code_review.md)**
+📄 **[antigravity-code_review-<suffix>.md](file://<workspace-root>/antigravity-code_review-<suffix>.md)**
 
 Key Sections:
-- 📄 [Summary of Changes](file://<workspace-root>/antigravity-code_review.md#L22): [1-sentence summary of scope & intent]
-- 📄 [Findings Summary](file://<workspace-root>/antigravity-code_review.md#L32): [Count of 🔴 Critical, 🟡 Important, 🟢 Minor findings]
-- 📄 [Detailed Review Findings](file://<workspace-root>/antigravity-code_review.md#L66): [Primary findings and defect analysis]
-- 📄 [Actionable Suggestions](file://<workspace-root>/antigravity-code_review.md#L138): [Concrete diffs and code fixes]
-- 📄 [In Plain Terms](file://<workspace-root>/antigravity-code_review.md#L236): [Domain-level explanations for non-technical readers]
+- 📄 [Summary of Changes](file://<workspace-root>/antigravity-code_review-<suffix>.md#L22): [1-sentence summary of scope & intent]
+- 📄 [Findings Summary](file://<workspace-root>/antigravity-code_review-<suffix>.md#L32): [Count of 🔴 Critical, 🟡 Important, 🟢 Minor findings]
+- 📄 [Detailed Review Findings](file://<workspace-root>/antigravity-code_review-<suffix>.md#L66): [Primary findings and defect analysis]
+- 📄 [Actionable Suggestions](file://<workspace-root>/antigravity-code_review-<suffix>.md#L138): [Concrete diffs and code fixes]
+- 📄 [In Plain Terms](file://<workspace-root>/antigravity-code_review-<suffix>.md#L236): [Domain-level explanations for non-technical readers]
 
-[If an active <prefix>-implementation_plan.md exists]:
+[If an active <prefix>-implementation_plan-<suffix>.md exists]:
 Active Implementation Plan:
-📄 **[antigravity-implementation_plan.md](file://<workspace-root>/antigravity-implementation_plan.md)**
+📄 **[antigravity-implementation_plan-<suffix>.md](file://<workspace-root>/antigravity-implementation_plan-<suffix>.md)**
 ```
 
 **Under Claude Code:**
 ```markdown
-📄 **[claude-code_review.md](claude-code_review.md)**
+📄 **[claude-code_review-<suffix>.md](claude-code_review-<suffix>.md)**
 
 Key Sections:
-- 📄 [Summary of Changes](claude-code_review.md#L22): [1-sentence summary of scope & intent]
-- 📄 [Findings Summary](claude-code_review.md#L32): [Count of 🔴 Critical, 🟡 Important, 🟢 Minor findings]
-- 📄 [Detailed Review Findings](claude-code_review.md#L66): [Primary findings and defect analysis]
-- 📄 [Actionable Suggestions](claude-code_review.md#L138): [Concrete diffs and code fixes]
-- 📄 [In Plain Terms](claude-code_review.md#L236): [Domain-level explanations for non-technical readers]
+- 📄 [Summary of Changes](claude-code_review-<suffix>.md#L22): [1-sentence summary of scope & intent]
+- 📄 [Findings Summary](claude-code_review-<suffix>.md#L32): [Count of 🔴 Critical, 🟡 Important, 🟢 Minor findings]
+- 📄 [Detailed Review Findings](claude-code_review-<suffix>.md#L66): [Primary findings and defect analysis]
+- 📄 [Actionable Suggestions](claude-code_review-<suffix>.md#L138): [Concrete diffs and code fixes]
+- 📄 [In Plain Terms](claude-code_review-<suffix>.md#L236): [Domain-level explanations for non-technical readers]
 
-[If an active <prefix>-implementation_plan.md exists]:
+[If an active <prefix>-implementation_plan-<suffix>.md exists]:
 Active Implementation Plan:
-📄 **[claude-implementation_plan.md](claude-implementation_plan.md)**
+📄 **[claude-implementation_plan-<suffix>.md](claude-implementation_plan-<suffix>.md)**
 ```
 
 If you edit the artifact after emitting the header, the line numbers have moved — re-run

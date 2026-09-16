@@ -35,7 +35,7 @@ To prevent accidental regressions and unapproved mutations:
 
 ### 2.1 Planning Mode First
 - For non-trivial modifications, refactorings, or new features, **always formulate an implementation plan first**.
-- Save the plan as `<prefix>-implementation_plan.md` at the **workspace root** and request user approval before modifying code.
+- Save the plan as `<prefix>-implementation_plan-<suffix>.md` at the **workspace root** and request user approval before modifying code.
 
 ### 2.2 The `/proceed` Gate (Strict Read-Only Invariant)
 - Read-only research, evaluation and diagnostic skills (`/investigate`, `/review`, `/code-review`, `/pr-feedback-review`) must **never** execute code modifications, stage commits, run migrations, or auto-implement changes during or immediately after the evaluation.
@@ -56,14 +56,21 @@ To prevent accidental regressions and unapproved mutations:
 All skills creating or referencing workspace markdown documents must strictly adhere to the **[artifacts](../artifacts/SKILL.md)** protocol:
 
 1. **Host Prefix Resolution**:
-   - Running as Claude Code (*"You are Claude"*): prefix filenames with `claude-` (e.g. `claude-implementation_plan.md`).
-   - Running as Antigravity IDE (*"You are Antigravity"*): prefix filenames with `antigravity-` (e.g. `antigravity-implementation_plan.md`).
-   - Other / Standalone: no prefix (e.g. `implementation_plan.md`).
+   - Running as Claude Code (*"You are Claude"*): prefix filenames with `claude-` (e.g. `claude-implementation_plan-<suffix>.md`).
+   - Running as Antigravity IDE (*"You are Antigravity"*): prefix filenames with `antigravity-` (e.g. `antigravity-implementation_plan-<suffix>.md`).
+   - Other / Standalone: no prefix (e.g. `implementation_plan-<suffix>.md`).
    - Write all artifacts directly to the **workspace root** to ensure IDE clickability.
-2. **Chat Link Formats**:
-   - **Antigravity IDE**: `[<artifact>.md](file://<workspace-root>/<prefix>-<artifact>.md#L<line>)` (absolute URI with `file://` scheme).
-   - **Claude Code**: `[<artifact>.md](<prefix>-<artifact>.md#L<line>)` (workspace-relative path without scheme).
-3. **Section Anchors**:
+2. **Contextual Suffix Rule (Anti-Overwrite Invariant)**:
+   - **Always append a descriptive kebab-case suffix (`-<suffix>`)** to every generated artifact (e.g. `-18176-verksamhetsobjekt`, `-begar-prefix`, `-draft-close-dialog`).
+   - **Never generate unsuffixed generic artifacts** (such as bare `antigravity-code_review.md` or `claude-implementation_plan.md`). A generic filename causes concurrent agents, subsequent sessions, or subagents to silently overwrite previous artifacts.
+   - Suffix derivation priority:
+     a. **Work Item / PR / Ticket ID + Slug**: e.g. `-18176-verksamhetsobjekt`, `-29982-verksamhetsobjekt`, `-1480-009204`.
+     b. **Branch or Topic Slug**: e.g. `-begar-prefix`, `-new-users-audit`.
+     c. **Task / Problem Descriptor**: 2–4 kebab-case words describing the specific objective.
+3. **Chat Link Formats**:
+   - **Antigravity IDE**: `[<prefix>-<artifact>-<suffix>.md](file://<workspace-root>/<prefix>-<artifact>-<suffix>.md#L<line>)` (absolute URI with `file://` scheme).
+   - **Claude Code**: `[<prefix>-<artifact>-<suffix>.md](<prefix>-<artifact>-<suffix>.md#L<line>)` (workspace-relative path without scheme).
+4. **Section Anchors**:
    - Chat links must use `#L<line>` line numbers obtained via `grep -n '^#\{1,3\} ' <file>`.
    - Intra-document links inside markdown files must use HTML anchors `<a id="..."></a>` and semantic `#anchor` targets.
 
@@ -105,6 +112,6 @@ Any child skill declaring operational standards should include a header block re
 ```markdown
 ## Operating Standards & Invariants
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-<artifact_name>.md` at the **workspace root**.
+- **Target Artifact**: `<prefix>-<artifact_name>-<suffix>.md` at the **workspace root**.
 ```
 *(For nested project skills under `Projects/<Project>/`, use relative path `../../core/SKILL.md`).*

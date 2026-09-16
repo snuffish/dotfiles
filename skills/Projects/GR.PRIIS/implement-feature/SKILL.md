@@ -41,7 +41,8 @@ az boards work-item update --id <ID> --assigned-to "$(az account show --query us
 ## Operating Standards & Invariants
 
 This skill adheres strictly to the **[core](../../core/SKILL.md)** operating standards and the **[artifacts](../../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifacts**: `<prefix>-implementation_plan.md` (Phase 2) and `<prefix>-walkthrough.md` (Phase 8) at the **workspace root**.
+- **Target Artifacts**: `<prefix>-implementation_plan-<suffix>.md` (Phase 2) and `<prefix>-walkthrough-<suffix>.md` (Phase 8) at the **workspace root**.
+- **Anti-Overwrite Rule**: Always append a descriptive kebab-case `<suffix>` derived from the Work Item ID and feature slug (e.g. `-29982-verksamhetsobjekt`, `-new-users-audit`). Never write unsuffixed generic files.
 
 ---
 
@@ -85,7 +86,7 @@ Navigate to the domain folder(s) and read:
 
 ## Phase 2 — Implementation Plan
 
-Create or update `<prefix>-implementation_plan.md` at the **workspace root** (see *Artifact Delivery Protocol* above).
+Create or update `<prefix>-implementation_plan-<suffix>.md` at the **workspace root** (see *Artifact Delivery Protocol* above).
 
 The plan must include:
 
@@ -554,7 +555,7 @@ Check changed `.ts/.tsx` files for:
 
 ## Phase 8 — Walkthrough
 
-Create or update `<prefix>-walkthrough.md` at the **workspace root** (see *Artifact Delivery Protocol* above). Include:
+Create or update `<prefix>-walkthrough-<suffix>.md` at the **workspace root** (see *Artifact Delivery Protocol* above). Include:
 
 - Summary of all files changed and why
 - Test results (copy the summary output)

@@ -60,7 +60,8 @@ description: <concise, universal trigger description and domain capabilities>
 
 This skill adheres strictly to the **[core](<relative-path-to-core>/core/SKILL.md)** operating standards and the **[artifacts](<relative-path-to-artifacts>/artifacts/SKILL.md)** delivery protocol.
 <!-- If writing a markdown artifact, declare it here: -->
-- **Target Artifact**: `<prefix>-<artifact_name>.md` at the **workspace root**.
+- **Target Artifact**: `<prefix>-<artifact_name>-<suffix>.md` at the **workspace root**.
+- **Anti-Overwrite Rule**: Always append a descriptive kebab-case `<suffix>`. Never write unsuffixed generic files.
 
 ---
 

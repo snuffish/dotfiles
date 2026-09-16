@@ -12,7 +12,8 @@ Elevates code readability and maintainability by refactoring low-level, nested, 
 ## Operating Standards & Invariants
 
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact** (when requested or providing an in-depth review): `<prefix>-expressive.md` at the **workspace root**.
+- **Target Artifact** (when requested or providing an in-depth review): `<prefix>-expressive-<suffix>.md` at the **workspace root**.
+- **Anti-Overwrite Rule**: Always append a descriptive kebab-case `<suffix>` derived from the target component or refactoring topic (e.g. `-ticket-category`, `-review-ratings`). Never write unsuffixed generic files.
 - When asked directly on specific code lines (e.g. *"make lines 168–174 more expressive"*), propose and apply the clean refactoring directly to the file while explaining the transformation.
 
 ---

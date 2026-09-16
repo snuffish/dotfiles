@@ -5,14 +5,14 @@ description: Conducts a thorough, read-only architectural and technical review o
 
 # Skill: `/review` — Strict Plan & Design Review
 
-Conducts a deep, systematic, read-only technical audit and review of an implementation plan (`<prefix>-implementation_plan.md`), architectural proposal, or change design.
+Conducts a deep, systematic, read-only technical audit and review of an implementation plan (`<prefix>-implementation_plan-<suffix>.md`), architectural proposal, or change design.
 
 ---
 
 ## Operating Standards & Invariants
 
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Referenced / Managed Artifact**: `<prefix>-implementation_plan.md` at the **workspace root**.
+- **Referenced / Managed Artifact**: `<prefix>-implementation_plan-<suffix>.md` at the **workspace root**.
 
 ---
 
@@ -21,7 +21,7 @@ This skill adheres strictly to the **[core](../core/SKILL.md)** operating standa
 > [!CAUTION]
 > **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
 >
-> 1. **MANDATORY PLAN.MD REFERENCE (NO EXCUSES):** Every single `/review` response MUST ALWAYS include a clickable link to the active plan file, built exactly as *Plan Artifact Reference* below specifies (`[claude-implementation_plan.md](claude-implementation_plan.md)`). The user frequently needs to click and open it in the IDE. This applies to ALL review responses, including follow-up reviews and questions asked under `/review`.
+> 1. **MANDATORY PLAN.MD REFERENCE (NO EXCUSES):** Every single `/review` response MUST ALWAYS include a clickable link to the active plan file, built exactly as *Plan Artifact Reference* below specifies (`[<prefix>-implementation_plan-<suffix>.md](...)`). The user frequently needs to click and open it in the IDE. This applies to ALL review responses, including follow-up reviews and questions asked under `/review`.
 > 2. **DO NOT MODIFY CODE:** You must **NEVER** edit files, create new source files, run modifying CLI commands (e.g. migrations, git commits, code scaffolding), or begin implementation during or immediately after a `/review`.
 > 3. **DO NOT AUTO-PROCEED:** Even if the plan is completely sound, verified, flawless, or approved, you must **NEVER** start implementing it automatically.
 > 4. **MANDATORY GATE:** Implementation of any plan must **ALWAYS and ONLY** begin when the user explicitly issues the command:
@@ -35,8 +35,8 @@ This skill adheres strictly to the **[core](../core/SKILL.md)** operating standa
 ## 1. When to Use
 
 Invoke this skill whenever:
-- The user issues `/review` or asks for a plan/design review.
-- An `<prefix>-implementation_plan.md` has been drafted and needs a rigorous sanity check before execution.
+- The user issues `/review` (bare or with a specific plan suffix).
+- An `<prefix>-implementation_plan-<suffix>.md` has been drafted and needs a rigorous sanity check before execution.
 - The user asks: *"Does this plan make sense?"*, *"Review this approach"*, or *"Check for design flaws"*.
 
 ---
@@ -44,7 +44,9 @@ Invoke this skill whenever:
 ## 2. Review Workflow
 
 ### Step 1: Locate the Target Plan & Context
-1. Check `<prefix>-implementation_plan.md` at the **workspace root**, or any active proposal artifacts.
+1. Locate `<prefix>-implementation_plan-<suffix>.md` at the **workspace root**:
+   - If an argument or suffix was supplied (e.g. `/review 18176`, `/review begar-prefix`), target that specific plan artifact.
+   - If invoked bare, check for matching plans via `ls -lt <prefix>-implementation_plan-*.md` at the workspace root. If multiple exist, match against the current branch or ask the user to specify.
 2. If reviewing a branch, PR, or code diff, locate the relevant files or work items (composing with `code-review` principles if reviewing already-written code).
 3. Read the relevant project rulebooks and conventions:
    - Root rulebook: [CLAUDE.md](CLAUDE.md) (or [GEMINI.md](GEMINI.md) under Antigravity)
@@ -95,22 +97,22 @@ Produce a concise, structured review report using this template:
 
 **Under Antigravity IDE:**
 ```markdown
-📄 [antigravity-implementation_plan.md](file://<workspace-root>/antigravity-implementation_plan.md)
+📄 [antigravity-implementation_plan-<suffix>.md](file://<workspace-root>/antigravity-implementation_plan-<suffix>.md)
 
 Key Sections:
-- 📄 [Context & Goal](file://<workspace-root>/antigravity-implementation_plan.md#L8): [1-sentence summary of context/decisions]
-- 📄 [Proposed Changes](file://<workspace-root>/antigravity-implementation_plan.md#L24): [1-sentence summary of touched files/components]
-- 📄 [Verification Plan](file://<workspace-root>/antigravity-implementation_plan.md#L61): [1-sentence summary of test & build verification]
+- 📄 [Context & Goal](file://<workspace-root>/antigravity-implementation_plan-<suffix>.md#L8): [1-sentence summary of context/decisions]
+- 📄 [Proposed Changes](file://<workspace-root>/antigravity-implementation_plan-<suffix>.md#L24): [1-sentence summary of touched files/components]
+- 📄 [Verification Plan](file://<workspace-root>/antigravity-implementation_plan-<suffix>.md#L61): [1-sentence summary of test & build verification]
 ```
 
 **Under Claude Code:**
 ```markdown
-📄 [claude-implementation_plan.md](claude-implementation_plan.md)
+📄 [claude-implementation_plan-<suffix>.md](claude-implementation_plan-<suffix>.md)
 
 Key Sections:
-- 📄 [Context & Goal](claude-implementation_plan.md#L8): [1-sentence summary of context/decisions]
-- 📄 [Proposed Changes](claude-implementation_plan.md#L24): [1-sentence summary of touched files/components]
-- 📄 [Verification Plan](claude-implementation_plan.md#L61): [1-sentence summary of test & build verification]
+- 📄 [Context & Goal](claude-implementation_plan-<suffix>.md#L8): [1-sentence summary of context/decisions]
+- 📄 [Proposed Changes](claude-implementation_plan-<suffix>.md#L24): [1-sentence summary of touched files/components]
+- 📄 [Verification Plan](claude-implementation_plan-<suffix>.md#L61): [1-sentence summary of test & build verification]
 ```
 
 ---
