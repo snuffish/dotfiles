@@ -95,13 +95,31 @@ Use **Radix Themes CSS tokens** for spacing, colors, and typography — do not h
 
 ---
 
-## 4. File Naming
+## 4. File Naming & TypeScript Type Conventions
 
 - **Files:** kebab-case — `supplier-notes-form.tsx`, `supplier-notes-form.module.css`
 - **Components:** PascalCase — `export function SupplierNotesForm`
-- **Props interface:** `ComponentNameProps` — `type SupplierNotesFormProps = { ... }`
+- **Props type:** `ComponentNameProps` — **always** use `type` instead of `interface`: `type SupplierNotesFormProps = { ... }`
 - **Feature folder:** `source/priis-web/src/features/{domain}/` — group related components together
 - **Shared UI:** `source/priis-web/src/components/` — project-wide reusable components only
+
+### Always Prefer `type` Before `interface`
+
+Always declare props, internal state, component models, DTOs, and event payloads with `type`. Do **not** use `interface`:
+
+```typescript
+// ✅ Correct
+type SupplierNotesFormProps = {
+    supplierId: string;
+    onSuccess: () => void;
+};
+
+// ❌ Wrong — do not use interface
+interface SupplierNotesFormProps {
+    supplierId: string;
+    onSuccess: () => void;
+}
+```
 
 ---
 
@@ -263,6 +281,7 @@ export default function AdminPage() {
 ❌ Relative imports — use path aliases
 ❌ style={{ }} inline styles — use CSS Modules
 ❌ Hardcoded English UI text — Swedish only
+❌ Using `interface` for props, models, or state — always prefer `type`
 ❌ Building a custom modal without using the modal pattern (priis-modal-keys → priis-modals)
 ❌ Raw <input> or Radix input without Controlled.* wrapper in forms
 ❌ Custom dialog from scratch — use Radix Dialog via project components

@@ -206,7 +206,7 @@ export function CreateSupplierNoteForm({ supplierId, onSuccess }: CreateSupplier
 - CSS Modules for custom styles (`component-name.module.css` co-located)
 - `Controlled.*` components for form fields — not raw `<input>` or Radix inputs directly
 - Swedish labels, placeholders, button text
-- Props interface named `ComponentNameProps`
+- Props type named `ComponentNameProps` — always use `type` instead of `interface`
 - File name: kebab-case (`create-supplier-note-form.tsx`)
 
 ---

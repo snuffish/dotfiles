@@ -204,7 +204,7 @@ When prompted to make code more expressive:
    - Nested `if` blocks → **Guard Clauses (Pattern 3)**
    - Multi-branch action dispatching → **Strategy / Dispatch Map (Pattern 4)**
 3. **Verify Type Safety & Exhaustiveness**:
-   - In TypeScript, use `as const` or typed `Record<Key, Value>` so the compiler enforces that all cases are covered.
+   - In TypeScript, **always prefer `type` before `interface`** (e.g. `type Props = { ... }`, `type State = { ... }`). Use `as const` or typed `Record<Key, Value>` so the compiler enforces that all cases are covered.
    - In C#, use exhaustive pattern-matching expressions (`status switch { ... }`).
 4. **Preserve Semantic Equivalence**:
    - Ensure null/undefined handling, edge cases, and defaults match the original logic 100%.
