@@ -27,6 +27,10 @@ Every skill and agent workflow must strictly enforce these invariants:
    - Offload deep analysis, exhaustive reviews, implementation plans, and diagnostics into dedicated workspace markdown artifacts.
    - Never let that analysis leak into source comments. A comment is documentation for the next reader, never a message to the user or a defence of a decision — keep it slim, technical, and about the code.
 
+4. **TypeScript Convention (Prefer `type` Before `interface`)**:
+   - In all TypeScript code, always prefer `type` over `interface` for props, state, payloads, and domain objects (`type ComponentProps = { ... }`, not `interface ComponentProps`).
+   - Reserve `interface` strictly for third-party declaration merging or framework-mandated abstractions.
+
 ---
 
 ## 2. Safety & Execution Gates
