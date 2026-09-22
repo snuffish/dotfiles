@@ -36,52 +36,52 @@
   {
     "key": "shift+h",
     "command": "workbench.action.previousEditor",
-    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor') && !inputFocus && !webviewFindWidgetFocused"
+    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor' || activeEditor == 'antigravity.jetskiArtifactsEditor' || activeEditor == 'antigravity.jetskiGlobalArtifactsEditor') && !inputFocus && !webviewFindWidgetFocused"
   },
   {
     "key": "shift+l",
     "command": "workbench.action.nextEditor",
-    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor') && !inputFocus && !webviewFindWidgetFocused"
+    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor' || activeEditor == 'antigravity.jetskiArtifactsEditor' || activeEditor == 'antigravity.jetskiGlobalArtifactsEditor') && !inputFocus && !webviewFindWidgetFocused"
   },
   {
     "key": "shift+z shift+h",
     "command": "workbench.action.closeEditorsToTheLeft",
-    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor') && !inputFocus && !webviewFindWidgetFocused"
+    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor' || activeEditor == 'antigravity.jetskiArtifactsEditor' || activeEditor == 'antigravity.jetskiGlobalArtifactsEditor') && !inputFocus && !webviewFindWidgetFocused"
   },
   {
     "key": "shift+z h",
     "command": "workbench.action.closeEditorsToTheLeft",
-    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor') && !inputFocus && !webviewFindWidgetFocused"
+    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor' || activeEditor == 'antigravity.jetskiArtifactsEditor' || activeEditor == 'antigravity.jetskiGlobalArtifactsEditor') && !inputFocus && !webviewFindWidgetFocused"
   },
   {
     "key": "shift+z shift+l",
     "command": "workbench.action.closeEditorsToTheRight",
-    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor') && !inputFocus && !webviewFindWidgetFocused"
+    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor' || activeEditor == 'antigravity.jetskiArtifactsEditor' || activeEditor == 'antigravity.jetskiGlobalArtifactsEditor') && !inputFocus && !webviewFindWidgetFocused"
   },
   {
     "key": "shift+z l",
     "command": "workbench.action.closeEditorsToTheRight",
-    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor') && !inputFocus && !webviewFindWidgetFocused"
+    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor' || activeEditor == 'antigravity.jetskiArtifactsEditor' || activeEditor == 'antigravity.jetskiGlobalArtifactsEditor') && !inputFocus && !webviewFindWidgetFocused"
   },
   {
     "key": "shift+z shift+q",
     "command": "workbench.action.closeOtherEditors",
-    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor') && !inputFocus && !webviewFindWidgetFocused"
+    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor' || activeEditor == 'antigravity.jetskiArtifactsEditor' || activeEditor == 'antigravity.jetskiGlobalArtifactsEditor') && !inputFocus && !webviewFindWidgetFocused"
   },
   {
     "key": "shift+z q",
     "command": "workbench.action.closeOtherEditors",
-    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor') && !inputFocus && !webviewFindWidgetFocused"
+    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor' || activeEditor == 'antigravity.jetskiArtifactsEditor' || activeEditor == 'antigravity.jetskiGlobalArtifactsEditor') && !inputFocus && !webviewFindWidgetFocused"
   },
   {
     "key": "ctrl+w q",
     "command": "workbench.action.closeActiveEditor",
-    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor') && !inputFocus && !webviewFindWidgetFocused"
+    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor' || activeEditor == 'antigravity.jetskiArtifactsEditor' || activeEditor == 'antigravity.jetskiGlobalArtifactsEditor') && !inputFocus && !webviewFindWidgetFocused"
   },
   {
     "key": "ctrl+w ctrl+q",
     "command": "workbench.action.closeActiveEditor",
-    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor') && !inputFocus && !webviewFindWidgetFocused"
+    "when": "(activeWebviewPanelId == 'markdown.preview' || activeCustomEditorId == 'vscode.markdown.preview.editor' || activeEditor == 'antigravity.jetskiArtifactsEditor' || activeEditor == 'antigravity.jetskiGlobalArtifactsEditor') && !inputFocus && !webviewFindWidgetFocused"
   },
   {
     "key": "alt+q",
