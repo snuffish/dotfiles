@@ -103,8 +103,8 @@ Get-ChildItem -Path "$env:USERPROFILE\.terminal\skills" -Filter "SKILL.md" -Recu
 
 (If the loader globs recursively — `skills/**/SKILL.md` — point it at this root directly and the grouping is honored as-is.)
 
-**Current live state:** All 44 skills are flat-symlinked into the flat skills directory (`~/.claude/skills`), each pointing back into this tree. Verify on macOS/Linux with:
+**Current live state:** All 45 skills are flat-symlinked into the flat skills directory (`~/.claude/skills`), each pointing back into this tree. Verify on macOS/Linux with:
 
 ```bash
-ls -la ~/.claude/skills | grep -c '\-> .*/.terminal/skills/'   # expect 44
+ls -la ~/.claude/skills | grep -c '\-> .*/.terminal/skills/'   # expect 45
 ```
