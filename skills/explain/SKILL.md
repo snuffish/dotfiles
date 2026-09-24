@@ -1,88 +1,69 @@
 ---
 name: explain
-description: Deeply explains code, PR review comments, complex expressions, architecture patterns, or design intent across the codebase by tracing symbols, investigating project conventions, and checking conversation/git history.
+description: Explains code, PR review comments, complex expressions, architecture patterns, or design intent across the codebase. Supports fast, concise explanations (/explain) and comprehensive, deep-dive artifact generation (/explain detailed).
 ---
 
-# Skill: `/explain` — Deep Code, Architecture & Intent Explanation
+# Skill: `/explain` — Code, Architecture & Intent Explanation
 
-Use this skill whenever the user asks to explain a piece of code, a method, a PR/code review comment, an architectural design choice, an error, or the underlying intent behind a system behavior.
+Explains code, methods, PR/code review comments, architectural design choices, or system behaviors. Operates in two distinct modes based on the user's invocation:
+
+1. **`/explain` (Default — Simple & Fast)**: Direct, clear, and concise in-chat explanation. Zero artifact overhead, minimal latency.
+2. **`/explain detailed` (In-Depth)**: Comprehensive deep-dive covering cross-layer tracing, git history, and design tradeoffs, backed by a dedicated workspace-root artifact.
 
 ---
 
-## Operating Standards & Invariants
+## 1. Invocation Modes & Gating
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
+| Command | Output Location | Research Scope | Target Latency |
+| :--- | :--- | :--- | :--- |
+| **`/explain`** (bare or with code target) | Direct in-chat response (no artifact written) | Focused: immediate enclosing function/type & direct symbols | **Fast** (minimal tool calls, immediate response) |
+| **`/explain detailed`** (or "explain in depth/detail") | Workspace-root artifact (`<prefix>-explanation-<suffix>.md`) + chat summary | Comprehensive: symbol definitions, cross-layer flow, git log context | **Thorough** (deep multi-step investigation) |
+
+---
+
+## 2. Mode 1: `/explain` — Simple & Fast (Default)
+
+Use when the user runs `/explain` (without "detailed"), asks "explain this", or asks for a quick breakdown.
+
+### Operating Standards:
+- **No Artifact Created**: Do **NOT** write an explanation file to disk. Keep execution fast and lightweight.
+- **Fast Focused Investigation**:
+  - Read only the immediate target lines and enclosing scope.
+  - Avoid heavy multi-step searches, git blame/log commands, or full cross-layer audits unless an unknown symbol prevents basic comprehension.
+- **In-Chat Response Structure**:
+  - **What it is**: 1–2 sentences explaining the symbol, prop, or expression in plain English.
+  - **What it does / Why it is here**: 2–4 concise bullet points explaining the mechanism and purpose in the component.
+  - Use clickable file and symbol links (`[Symbol](file:///path/to/file.tsx#L123)`).
+  - Keep the whole answer readable in 30 seconds.
+
+---
+
+## 3. Mode 2: `/explain detailed` — In-Depth Analysis
+
+Use when the user specifies `/explain detailed`, asks to "explain in detail/depth", or asks for an exhaustive architectural breakdown.
+
+### Operating Standards:
 - **Target Artifact**: `<prefix>-explanation-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
-- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` derived from the target symbol, question, or topic (e.g. `-matching-ticket`, `-audit-endpoint`). Never write unsuffixed or un-modeled generic files.
+- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` derived from the target symbol, question, or topic. Never write unsuffixed or un-modeled generic files.
+- Adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
 
----
-
-## Core Philosophy
-
-A great explanation is not a simple restatement of what the code lines do syntactically. It connects:
-
-1. **What the code is doing** (technical mechanism & symbol definitions).
-2. **Why it is done this way** (underlying rationale, constraints, security, performance, or architecture patterns).
-3. **What a reviewer or author actually meant** (translating feedback or high-level comments into concrete choices, tradeoffs, and actionable code).
-
----
-
-## Step 1 — Identify the Target & Question Scope
-
-Identify the exact subject of the inquiry:
-
-- **Specific Code/Expression**: A line range, LINQ query, expression tree, async pipeline, or generic pattern.
-- **Reviewer / Team Feedback**: A PR comment, issue comment, or review feedback (e.g. *"Explain what Daniel actually means"*).
-- **Architectural / Flow Question**: How a feature works end-to-end between Frontend, Backend, Database, and Worker.
-- **"Why" Question**: Why a specific restriction, workaround, or design was implemented.
-
----
-
-## Step 2 — Trace Real Code & Symbol Definitions (No Guesswork)
-
-**Never guess based on names alone.** Always investigate the real codebase before explaining:
-
-1. **Surrounding Context**: Inspect the full enclosing method, class, or component to understand call conditions and lifecycles.
-2. **Definition Tracing**:
-   - Trace referenced classes, records, interfaces, and extension methods (e.g. use `grep_search` or `view_file` to find `.Within()`, `EffectiveActions`, `IProfileMetadata`).
-   - Check enum definitions, constant groups, and configuration options.
-3. **Cross-Layer Mapping**:
-   - If explaining a Backend DTO/Endpoint: check how the Frontend consumes it (RTK Query hooks, pages, components).
-   - If explaining a Frontend Component: check where data originates (API endpoints, store slices, custom hooks).
-
----
-
-## Step 3 — Context Recovery (Git & History)
-
-When the question involves recent changes, intent, or review feedback:
-
-1. **Git Context**: Run `git log -n 5 -p <file>` or `git diff` to understand what was recently added, changed, or removed.
-2. **Conversation & Decision History**:
-   - If diagnosing why code was written or what past consensus was reached, search past transcripts in `<app_data_dir>/brain/` or check knowledge items.
-3. **Project Rulebook / Skill Alignment**:
-   - Consult relevant project skills (e.g. `backend-ef-core`, `backend-fastendpoints`, `backend-dry`, `frontend-rtk-query`, `frontend-component-patterns`) to see if the pattern adheres to an official repository convention.
-
----
-
-## Step 4 — Formulate the Explanation & Generate Artifact
-
-1. **Write the Explanation Artifact**:
-   - Always write a dedicated markdown artifact, `<prefix>-explanation-<suffix>.md`, at the **workspace root**.
-     That location is what makes the link clickable, so do not put it elsewhere.
-   - The artifact must be thorough, clean, and well-structured using GitHub-flavored Markdown:
-     - Title and context of the explained code/concept.
-     - **Core Philosophy**: Explain both *what* it does and *why* it was designed that way.
-     - **Step-by-Step Technical Breakdown**: Clear walkthrough with clickable links to source files and symbols, workspace-relative (`[Symbol](src/path/to/file.ts#L10)`).
-     - **Design Rationale & Tradeoffs**: Security, performance, consistency, and architecture principles.
-     - **Edge Cases & Reviewer Insights**: Potential gotchas, alternatives, or translations of reviewer feedback where applicable.
-
-2. **Report Back in Chat**:
-   - In the conversation response, provide:
-     - The **TL;DR / Core Takeaway** (1–2 sentences).
-     - A clickable link to open the artifact in the IDE:
-       - Under **Antigravity IDE**: `📄 [antigravity-<model>-explanation-<suffix>.md](file://<workspace-root>/antigravity-<model>-explanation-<suffix>.md)`
-       - Under **Claude Code**: `📄 [claude-<model>-explanation-<suffix>.md](claude-<model>-explanation-<suffix>.md)`
-     - Anchor links to key sections, as line numbers:
-       - Under **Antigravity IDE**: `[Design Rationale](file://<workspace-root>/antigravity-<model>-explanation-<suffix>.md#L48)`
-       - Under **Claude Code**: `[Design Rationale](claude-<model>-explanation-<suffix>.md#L48)`
-     - A concise overview highlighting critical takeaways without re-dumping the entire artifact body.
+### Deep Investigation Pass:
+1. **Surrounding Context & Symbol Definitions**:
+   - Trace referenced classes, records, interfaces, and helper functions across layers.
+   - Inspect backend endpoints, DTOs, or frontend store slices/hooks that interact with the target.
+2. **Context Recovery (Git & History)**:
+   - Check `git log -n 5 -p <file>` or PR history to understand recent intent, past bug fixes, or design compromises.
+3. **Write the Dedicated Artifact**:
+   - Write `<prefix>-explanation-<suffix>.md` at the **workspace root** containing:
+     - **Executive Summary / Core Concept**.
+     - **Technical Call Flow & Architecture** (with Mermaid diagrams where useful).
+     - **Step-by-Step Technical Walkthrough** with clickable links to source files and line ranges.
+     - **Design Rationale & Tradeoffs** (performance, security, UX, failure modes).
+     - **Edge Cases & Reviewer Insights**.
+4. **Report Back in Chat**:
+   - Provide a 1–2 sentence **TL;DR**.
+   - Provide a clickable link to open the artifact in the IDE:
+     - Antigravity IDE: `📄 [antigravity-<model>-explanation-<suffix>.md](file://<workspace-root>/antigravity-<model>-explanation-<suffix>.md)`
+     - Claude Code: `📄 [claude-<model>-explanation-<suffix>.md](claude-<model>-explanation-<suffix>.md)`
+   - Provide clickable anchor links to key sections in the artifact.
+   - Highlight 2–3 critical takeaways without duplicating the full document.

@@ -38,10 +38,12 @@ skills/
 ## Root Skill Architecture & Precedence
 
 The skill registry uses a layered architecture anchored by two foundational root modules:
+
 1. **[`core`](core/SKILL.md)**: Universal root operating standards, codebase investigation protocol, safety gates (`/proceed`), and baseline invariants.
 2. **[`artifacts`](artifacts/SKILL.md)**: Universal artifact protocol, host & AI model prefix resolution (`<host>-<model>-`), mandatory contextual suffix (`-<suffix>`) anti-overwrite protocol, and IDE link formatting rules.
 
 All general and project-specific skills compose on top of `core` and `artifacts`. Instruction precedence resolves in this order:
+
 1. **Workspace Rulebooks** (`CLAUDE.md` / `GEMINI.md` / `.agents/rules/`)
 2. **Project-Scoped Skills** (`Projects/<Project>/...`)
 3. **Tech & Language Skills** (`modern-csharp`, etc.)
@@ -101,8 +103,8 @@ Get-ChildItem -Path "$env:USERPROFILE\.terminal\skills" -Filter "SKILL.md" -Recu
 
 (If the loader globs recursively — `skills/**/SKILL.md` — point it at this root directly and the grouping is honored as-is.)
 
-**Current live state:** All 39 skills are flat-symlinked into the flat skills directory (`~/.claude/skills`), each pointing back into this tree. Verify on macOS/Linux with:
+**Current live state:** All 44 skills are flat-symlinked into the flat skills directory (`~/.claude/skills`), each pointing back into this tree. Verify on macOS/Linux with:
 
 ```bash
-ls -la ~/.claude/skills | grep -c '\-> .*/.terminal/skills/'   # expect 39
+ls -la ~/.claude/skills | grep -c '\-> .*/.terminal/skills/'   # expect 44
 ```
