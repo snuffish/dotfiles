@@ -1046,5 +1046,20 @@
   "gitlens.currentLine.enabled": false,
   "typescript.updateImportsOnFileMove.enabled": "always",
   "claudeCode.preferredLocation": "panel",
-  "claudeCode.hideOnboarding": true
+  "claudeCode.hideOnboarding": true,
+  "geminicodeassist.displayInlineContextHint": false,
+  "gitlens.graph.details.location": "auto",
+  "gitlens.views.scm.grouped.views": {
+    "commits": true,
+    "branches": true,
+    "remotes": true,
+    "stashes": true,
+    "tags": true,
+    "worktrees": true,
+    "contributors": true,
+    "fileHistory": false,
+    "repositories": true,
+    "searchAndCompare": false,
+    "launchpad": true
+  }
 }
