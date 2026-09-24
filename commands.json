@@ -7,6 +7,7 @@
   },
   "gr": {
     "[SSH] priis-docker01": "ssh -i ~/.ssh/gr_rsa christoffer.engman@priis-docker01.gr.internal",
-    "[SSH] priis-docker02": "ssh -i ~/.ssh/gr_rsa christoffer.engman@priis-docker02.gr.internal"
+    "[SSH] priis-docker02": "ssh -i ~/.ssh/gr_rsa christoffer.engman@priis-docker02.gr.internal",
+    "[SSH TUNNEL] IVO": "ssh -i ~/.ssh/gr_rsa -D 9090 -N christoffer.engman@priis-docker01.gr.internal"
   }
 }
