@@ -8,6 +8,6 @@
   "gr": {
     "[SSH] priis-docker01": "ssh -i ~/.ssh/gr_rsa GR_DOCKER01_SSH",
     "[SSH] priis-docker02": "ssh -i ~/.ssh/gr_rsa GR_DOCKER02_SSH",
-    "[SSH TUNNEL] IVO": "ssh -i ~/.ssh/gr_rsa -D 9090 -N GR_DOCKER01_SSH"
+    "[SSH TUNNEL & PROXY] IVO": "ivo-proxy"
   }
 }
