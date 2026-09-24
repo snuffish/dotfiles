@@ -1,87 +1,110 @@
----
-name: code-review
-description: "Review the changes since a fixed point (commit, branch, tag, or merge-base) along two axes: Standards (does the code follow this repo's documented coding standards?) and Spec (does the code match what the originating issue/spec asked for?). Runs both reviews in parallel sub-agents and reports them side by side. Use when the user wants to review a branch, a PR, work-in-progress changes, or asks to \"review since X\"."
----
+# Skills
 
-Two-axis review of the diff between `HEAD` and a fixed point the user supplies:
+Local skill registry. This is a **source-of-truth / staging** area. You activate skills either by pointing a workspace skill-loader configuration (`skills.json`) directly at directories in this tree, or by symlinking individual skills into a flat live skills root (e.g. `~/.claude/skills/`).
 
-- **Standards**: does the code conform to this repo's documented coding standards?
-- **Spec**: does the code faithfully implement the originating issue / spec?
+Each skill is a directory containing `SKILL.md` with `name` + `description` frontmatter. The directory name always equals the `name` field, and every skill name is globally unique — so a flat loader can symlink any skill in without collisions.
 
-Both axes run as **parallel sub-agents** so they don't pollute each other's context, then this skill aggregates their findings.
+## Layout
 
-The issue tracker should have been provided to you. If `docs/agents/issue-tracker.md` is missing, tell the user to run `/setup-matt-pocock-skills`.
+```plaintext
+skills/
+  <general skills>/                # reusable across any project (modern-csharp, pr-summary, squash-ef-core-migrations)
+  Projects/
+    GR.PRIIS/                      # everything scoped to the GR.PRIIS product lives here
+      backend-<skill>/
+      frontend-<skill>/
+      source-command-backend-<skill>/
+      source-command-frontend-<skill>/
+```
 
-## Process
+- **Top level** = general, project-agnostic skills.
+- **`Projects/<Project>/`** = skills scoped to a specific project. Add a new folder per project as more are onboarded.
 
-### 1. Pin the fixed point
+## Inventory
 
-Whatever the user said is the fixed point (a commit SHA, branch name, tag, `main`, `HEAD~5`, etc.). If they didn't specify one, ask for it.
+44 skills total — 21 general + 23 under `Projects/GR.PRIIS/`.
 
-Capture the diff command once: `git diff <fixed-point>...HEAD` (three-dot, so the comparison is against the merge-base). Also note the list of commits via `git log <fixed-point>..HEAD --oneline`.
+| Group                            | Count | Skills                                                                                                                |
+| -------------------------------- | :---: | -------------------------------------------------------------------------------------------------------------------- |
+| General (top level)              |  21   | `artifacts`, `clean`, `code-documentation`, `code-review`, `core`, `create-skill`, `explain`, `expressive`, `investigate`, `manual-testing`, `modern-csharp`, `organize`, `plan`, `pr-feedback-review`, `pr-summary`, `problem`, `refine`, `reload-skills`, `review`, `squash-ef-core-migrations`, `what-am-I-missing` |
+| `GR.PRIIS/backend-*`             |   7   | `dry`, `ef-core`, `fastendpoints`, `notifications`, `signalr`, `testing`, `workflow`                                 |
+| `GR.PRIIS/frontend-*`            |   6   | `component-patterns`, `forms`, `routing`, `rtk-query`, `testing`, `workflow`                                          |
+| `GR.PRIIS/source-command-backend-*`  | 6 | `health-check`, `migrate-to-tunit`, `release-notes`, `scaffold`, `ship`, `verify`                                    |
+| `GR.PRIIS/source-command-frontend-*` | 3 | `health-check`, `scaffold`, `verify`                                                                                  |
+| `GR.PRIIS/` (unprefixed)         |   1   | `implement-feature`                                                                                                   |
 
-Before going further, confirm the fixed point resolves (`git rev-parse <fixed-point>`) and the diff is non-empty. A bad ref or empty diff should fail here, not inside two parallel sub-agents.
+(Skill names are the group prefix + the listed suffix — e.g. `backend-ef-core`, `source-command-frontend-verify`.)
 
-### 2. Identify the spec source
+## Root Skill Architecture & Precedence
 
-Look for the originating spec, in this order:
+The skill registry uses a layered architecture anchored by two foundational root modules:
 
-1. Issue references in the commit messages (`#123`, `Closes #45`, GitLab `!67`, etc.), fetched via the workflow in `docs/agents/issue-tracker.md`.
-2. A path the user passed as an argument.
-3. A spec file under `docs/`, `specs/`, or `.scratch/` matching the branch name or feature.
-4. If nothing is found, ask the user where the spec is. If they say there isn't one, the **Spec** sub-agent will skip and report "no spec available".
+1. **[`core`](core/SKILL.md)**: Universal root operating standards, codebase investigation protocol, safety gates (`/proceed`), and baseline invariants.
+2. **[`artifacts`](artifacts/SKILL.md)**: Universal artifact protocol, host & AI model prefix resolution (`<host>-<model>-`), mandatory contextual suffix (`-<suffix>`) anti-overwrite protocol, and IDE link formatting rules.
 
-### 3. Identify the standards sources
+All general and project-specific skills compose on top of `core` and `artifacts`. Instruction precedence resolves in this order:
 
-Anything in the repo that documents how code should be written, such as `CODING_STANDARDS.md` or `CONTRIBUTING.md`.
+1. **Workspace Rulebooks** (`CLAUDE.md` / `GEMINI.md` / `.agents/rules/`)
+2. **Project-Scoped Skills** (`Projects/<Project>/...`)
+3. **Tech & Language Skills** (`modern-csharp`, etc.)
+4. **Root Operating Standard** (`core` & `artifacts`)
 
-On top of whatever the repo documents, the Standards axis always carries the **smell baseline** below: a fixed set of Fowler code smells (_Refactoring_, ch.3) that applies even when a repo documents nothing. Two rules bind it:
+## Naming convention (inside `Projects/GR.PRIIS/`)
 
-- **The repo overrides.** A documented repo standard always wins; where it endorses something the baseline would flag, suppress the smell.
-- **Always a judgement call.** Each smell is a labelled heuristic ("possible Feature Envy"), never a hard violation. Like any standard here, skip anything tooling already enforces.
+| Prefix                                                   | Meaning                                                                                                          |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `backend-*`                                              | Specific to **GR.PRIIS.Backend** (.NET / FastEndpoints / EF Core).                                              |
+| `frontend-*`                                             | Specific to **GR.PRIIS.Frontend** (React / RTK Query / TanStack Router).                                        |
+| `source-command-backend-*` / `source-command-frontend-*` | Ported from a project slash-command (`.claude/commands/`); operational recipes rather than reference knowledge. |
 
-Each smell reads *what it is* → *how to fix*; match it against the diff:
+The `backend-`/`frontend-` prefix distinguishes the two apps within the single GR.PRIIS product folder, and keeps every skill name unique.
 
-- **Mysterious Name**: a function, variable, or type whose name doesn't reveal what it does or holds. → rename it; if no honest name comes, the design's murky.
-- **Duplicated Code**: the same logic shape appears in more than one hunk or file in the change. → extract the shared shape, call it from both.
-- **Feature Envy**: a method that reaches into another object's data more than its own. → move the method onto the data it envies.
-- **Data Clumps**: the same few fields or params keep travelling together (a type wanting to be born). → bundle them into one type, pass that.
-- **Primitive Obsession**: a primitive or string standing in for a domain concept that deserves its own type. → give the concept its own small type.
-- **Repeated Switches**: the same `switch`/`if`-cascade on the same type recurs across the change. → replace with polymorphism, or one map both sites share.
-- **Shotgun Surgery**: one logical change forces scattered edits across many files in the diff. → gather what changes together into one module.
-- **Divergent Change**: one file or module is edited for several unrelated reasons. → split so each module changes for one reason.
-- **Speculative Generality**: abstraction, parameters, or hooks added for needs the spec doesn't have. → delete it; inline back until a real need shows.
-- **Message Chains**: long `a.b().c().d()` navigation the caller shouldn't depend on. → hide the walk behind one method on the first object.
-- **Middle Man**: a class or function that mostly just delegates onward. → cut it, call the real target direct.
-- **Refused Bequest**: a subclass or implementer that ignores or overrides most of what it inherits. → drop the inheritance, use composition.
+Every project-specific skill is also **gated in its `description`**: it opens with `[Project: GR.PRIIS.X]` and closes with `Load ONLY when working on the GR.PRIIS.X project or in the GR repository.`
 
-### 4. Spawn both sub-agents in parallel
+Load these skills directly by registering their paths in the workspace configuration (e.g. `.agents/skills.json`), replacing `<global_skills_dir>` with the absolute path to your local skills registry (e.g. `/Users/snuffish/.terminal/skills` on macOS/Linux or `C:\Users\username\.terminal\skills` on Windows):
 
-**Standards sub-agent prompt** should include:
+```json
+{
+  "entries": [
+    { "path": "<global_skills_dir>" },
+    { "path": "<global_skills_dir>/Projects/GR.PRIIS" }
+  ]
+}
+```
 
-- The full diff command and commit list.
-- The list of standards-source files you found in step 3, **plus the smell baseline from step 3** pasted in full (the sub-agent has no other access to it).
-- The brief: "Report, per file/hunk where relevant, (a) every place the diff violates a documented standard: cite the standard (file + the rule); and (b) any baseline smell you spot: name it and quote the hunk. Distinguish hard violations from judgement calls: documented-standard breaches can be hard, but baseline smells are always judgement calls, and a documented repo standard overrides the baseline. Skip anything tooling enforces. Under 400 words."
+Some loaders (like `~/.claude/skills` on macOS/Linux or `%USERPROFILE%\.claude\skills` on Windows) expect a **flat** root — each skill a direct child (`root/<name>/SKILL.md`), with no grouping folders. To activate from this grouped staging tree, symlink the specific skills you want.
 
-**Spec sub-agent prompt** should include:
+#### macOS / Linux (Bash/Zsh)
 
-- The diff command and commit list.
-- The path or fetched contents of the spec.
-- The brief: "Report: (a) requirements the spec asked for that are missing or partial; (b) behaviour in the diff that wasn't asked for (scope creep); (c) requirements that look implemented but where the implementation looks wrong. Quote the spec line for each finding. Under 400 words."
+```bash
+# A single skill:
+ln -s ~/.terminal/skills/Projects/GR.PRIIS/backend-ef-core ~/.claude/skills/backend-ef-core
 
-If the spec is missing, skip the Spec sub-agent and note this in the final report.
+# Every skill in the tree (general + all projects), flattened by name:
+find ~/.terminal/skills -name SKILL.md -print0 | while IFS= read -r -d '' f; do
+  d="$(dirname "$f")"
+  ln -sfn "$d" ~/.claude/skills/"$(basename "$d")"
+done
+```
 
-### 5. Aggregate
+#### Windows (PowerShell)
 
-Present the two reports under `## Standards` and `## Spec` headings, verbatim or lightly cleaned. Do **not** merge or rerank findings, because the two axes are deliberately separate (see _Why two axes_).
+```powershell
+# A single skill:
+New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\skills\backend-ef-core" -Value "$env:USERPROFILE\.terminal\skills\Projects\GR.PRIIS\backend-ef-core"
 
-End with a one-line summary: total findings per axis, and the worst issue _within each axis_ (if any). Don't pick a single winner across axes: that's the reranking the separation exists to prevent.
+# Every skill in the tree (general + all projects), flattened by name:
+Get-ChildItem -Path "$env:USERPROFILE\.terminal\skills" -Filter "SKILL.md" -Recurse | ForEach-Object {
+    $srcDir = $_.DirectoryName
+    $destDir = Join-Path "$env:USERPROFILE\.claude\skills" $_.Directory.Name
+    New-Item -ItemType SymbolicLink -Path $destDir -Value $srcDir -Force
+}
+```
 
-## Why two axes
+(If the loader globs recursively — `skills/**/SKILL.md` — point it at this root directly and the grouping is honored as-is.)
 
-A change can pass one axis and fail the other:
+**Current live state:** All 44 skills are flat-symlinked into the flat skills directory (`~/.claude/skills`), each pointing back into this tree. Verify on macOS/Linux with:
 
-- Code that follows every standard but implements the wrong thing → **Standards pass, Spec fail.**
-- Code that does exactly what the issue asked but breaks the project's conventions → **Spec pass, Standards fail.**
-
-Reporting them separately stops one axis from masking the other.
+```bash
+ls -la ~/.claude/skills | grep -c '\-> .*/.terminal/skills/'   # expect 44
+```
