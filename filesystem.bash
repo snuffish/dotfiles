@@ -54,8 +54,6 @@ alias .ghostty='cd "$HOME/Library/Application Support/com.mitchellh.ghostty"'
 
 alias space="du -d1 -h 2>/dev/null | sort -h"
 
-# Remove legacy diskspace alias (replaced by utils/diskspace.bash function)
-unalias diskspace 2>/dev/null || true
-if ! declare -f diskspace >/dev/null 2>&1 && ! typeset -f diskspace >/dev/null 2>&1; then
-  [[ -f "$HOME/.terminal/utils/diskspace.bash" ]] && source "$HOME/.terminal/utils/diskspace.bash"
-fi
+# diskspace (utils/diskspace.bash) only defines functions and removes the legacy alias
+# itself, so it's safe to source on every load — re-sourcing picks up edits
+[[ -f "$HOME/.terminal/utils/diskspace.bash" ]] && source "$HOME/.terminal/utils/diskspace.bash"
