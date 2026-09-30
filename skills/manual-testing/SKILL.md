@@ -93,11 +93,11 @@ Never let the description's structure or omissions shape the plan. It is evidenc
 
 ## 4. Phase 1 — Determine scope
 
-Reuse the diff-gathering and branch-base discovery from [code-review](../code-review/SKILL.md) Step 1 rather than reinventing it — including its rule that a resolved PR's `targetRefName` *is* the base. Otherwise: upstream tracking ref, fall back to `git merge-base` against the integration branch, always three-dot syntax.
+Reuse the diff-gathering and branch-base discovery from [code-review](../code-review/SKILL.md) Step 1 rather than reinventing it — including its rule that a resolved PR's `targetRefName` *is* the base. Otherwise: the remote's default branch (never `@{u}` — on a feature branch that is its own remote copy and yields an empty diff), always three-dot syntax.
 
 ```bash
-git rev-parse --abbrev-ref --symbolic-full-name @{u}
-git diff --name-status $(git merge-base HEAD <base>)...HEAD
+git symbolic-ref --short refs/remotes/origin/HEAD   # e.g. origin/main → <base>
+git diff --name-status <base>...HEAD
 git diff --stat                      # uncommitted work counts too — the user is testing their working tree
 git log --oneline <base>...HEAD      # commit subjects usually name the work item / intent
 ```
