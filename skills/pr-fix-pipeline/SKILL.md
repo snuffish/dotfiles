@@ -1,9 +1,9 @@
 ---
-name: fix-pr-pipeline
-description: Diagnoses a failing pull-request pipeline (CI/CD build validation) and plans the fix. Resolves the PR(s) for the current branch across every repo in the workspace (e.g. frontend + backend), pulls the failing runs, timelines, step logs and test results from Azure DevOps Pipelines or GitHub Actions, classifies each failure (code regression, test, flake, time-dependent, environment/agent, pipeline config, cross-repo contract drift), traces it to the code or YAML that caused it, then writes an /investigate artifact and an /plan implementation plan. Read-only until /proceed. Trigger on /fix-pr-pipeline, "the PR build is red", "why is CI failing on my PR", "fix the pipeline", "the build validation failed", "check the devops pipeline for errors".
+name: pr-fix-pipeline
+description: Diagnoses a failing pull-request pipeline (CI/CD build validation) and plans the fix. Resolves the PR(s) for the current branch across every repo in the workspace (e.g. frontend + backend), pulls the failing runs, timelines, step logs and test results from Azure DevOps Pipelines or GitHub Actions, classifies each failure (code regression, test, flake, time-dependent, environment/agent, pipeline config, cross-repo contract drift), traces it to the code or YAML that caused it, then writes an /investigate artifact and an /plan implementation plan. Read-only until /proceed. Trigger on /pr-fix-pipeline, "the PR build is red", "why is CI failing on my PR", "fix the pipeline", "the build validation failed", "check the devops pipeline for errors".
 ---
 
-# Skill: `/fix-pr-pipeline` — PR Pipeline Failure Diagnosis & Fix Plan
+# Skill: `/pr-fix-pipeline` — PR Pipeline Failure Diagnosis & Fix Plan
 
 Finds out **why** a pull request's pipeline is failing, separates real regressions from noise, and hands over an evidence-backed fix plan. It chains the [`/investigate`](../investigate/SKILL.md) protocol (ground truth from the run logs and code) into [`/plan`](../plan/SKILL.md) (the fix), with a review pass in between.
 
@@ -30,7 +30,7 @@ This skill adheres strictly to the **[core](../core/SKILL.md)** operating standa
 ## 1. When to Use
 
 Invoke this skill whenever:
-- The user runs `/fix-pr-pipeline` (bare, or with a PR URL/id, run/build id, or repo name).
+- The user runs `/pr-fix-pipeline` (bare, or with a PR URL/id, run/build id, or repo name).
 - *"The PR build is red"*, *"why is CI failing?"*, *"build validation failed"*, *"check the pipeline for errors and plan a fix"*.
 
 | Situation | Use instead |
