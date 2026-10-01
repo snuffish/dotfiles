@@ -26,7 +26,7 @@ skills/
 
 | Group                            | Count | Skills                                                                                                                |
 | -------------------------------- | :---: | -------------------------------------------------------------------------------------------------------------------- |
-| General (top level)              |  22   | `artifacts`, `clean`, `code-documentation`, `code-review`, `core`, `create-skill`, `explain`, `expressive`, `fix-pr-pipeline`, `investigate`, `manual-testing`, `modern-csharp`, `organize`, `plan`, `pr-feedback-review`, `pr-summary`, `problem`, `refine`, `reload-skills`, `review`, `squash-ef-core-migrations`, `what-am-I-missing` |
+| General (top level)              |  22   | `artifacts`, `clean`, `code-documentation`, `code-review`, `core`, `create-skill`, `explain`, `expressive`, `investigate`, `manual-testing`, `modern-csharp`, `organize`, `plan`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-summary`, `problem`, `refine`, `reload-skills`, `review`, `squash-ef-core-migrations`, `what-am-I-missing` |
 | `GR.PRIIS/backend-*`             |   7   | `dry`, `ef-core`, `fastendpoints`, `notifications`, `signalr`, `testing`, `workflow`                                 |
 | `GR.PRIIS/frontend-*`            |   6   | `component-patterns`, `forms`, `routing`, `rtk-query`, `testing`, `workflow`                                          |
 | `GR.PRIIS/source-command-backend-*`  | 6 | `health-check`, `migrate-to-tunit`, `release-notes`, `scaffold`, `ship`, `verify`                                    |
