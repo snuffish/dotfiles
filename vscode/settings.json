@@ -1061,5 +1061,6 @@
     "repositories": true,
     "searchAndCompare": false,
     "launchpad": true
-  }
+  },
+  "aspire.aspireCliExecutablePath": "/Users/snuffish/.aspire/bin/aspire"
 }
