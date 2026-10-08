@@ -42,7 +42,7 @@ To prevent accidental regressions and unapproved mutations:
 - Save the plan as `<prefix>-implementation_plan-<suffix>.md` at the **workspace root** and request user approval before modifying code.
 
 ### 2.2 The `/proceed` Gate (Strict Read-Only Invariant)
-- Read-only research, evaluation and diagnostic skills (`/investigate`, `/review`, `/code-review`, `/pr-feedback-review`) must **never** execute code modifications, stage commits, run migrations, or auto-implement changes during or immediately after the evaluation.
+- Read-only research, evaluation and diagnostic skills (`/investigate`, `/review`, `/code-review`, `/pr-feedback-review`, `/explain`, `/what-am-I-missing`, `/manual-testing`, and `/pr-fix-pipeline` until `/proceed`) must **never** execute code modifications, stage commits, run migrations, or auto-implement changes during or immediately after the evaluation.
 - Execution is locked until the user explicitly issues the command:
   ```text
   /proceed
@@ -121,4 +121,6 @@ Any child skill declaring operational standards should include a header block re
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
 - **Target Artifact**: `<prefix>-<artifact_name>-<suffix>.md` at the **workspace root**.
 ```
-*(For nested project skills under `Projects/<Project>/`, use relative path `../../core/SKILL.md`).*
+*(For nested project skills under `Projects/<Project>/<name>/`, the registry root is three levels up: `../../../core/SKILL.md`.)*
+
+Which skills carry it: every **operational** skill — one that runs a workflow, mutates the repo, or writes an artifact (the general `/…` skills, the `source-command-*` recipes, `*-workflow`, `squash-ef-core-migrations`, `code-documentation`, `pr-summary`, `manual-testing`). Pure **reference** skills — `modern-csharp` and the `backend-*` / `frontend-*` pattern skills — carry no header; they inherit these standards through the precedence model in §5.

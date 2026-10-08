@@ -1,9 +1,12 @@
 ---
 name: source-command-backend-migrate-to-tunit
-description: "[Project: GR.PRIIS.Backend] Migrate xUnit integration tests from GR.PRIIS.API.IntegrationTests to the TUnit project. Load ONLY when working on the GR.PRIIS.Backend project or in the GR repository."
+description: "[Project: GR.PRIIS.Backend] RETIRED — the xUnit → TUnit migration is complete: no xUnit remains in any test project and the separate .TUnit project was folded into tests/GR.PRIIS.API.IntegrationTests. Kept only as a conversion reference; do not load for new work. Load ONLY when working on the GR.PRIIS.Backend project or in the GR repository."
 ---
 
 # source-command-migrate-to-tunit
+
+> [!WARNING]
+> **Retired.** Every backend test project is TUnit (verified 2026-10-08: zero `[Fact]` files, no `GR.PRIIS.API.IntegrationTests.TUnit` project — its contents now live in `tests/GR.PRIIS.API.IntegrationTests`). The paths and namespaces below are historical. Use the conversion rules only as a reference when an xUnit-style snippet shows up; for current conventions load `backend-testing`.
 
 Use this skill when the user asks to run the migrated source command `migrate-to-tunit`.
 

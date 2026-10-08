@@ -19,6 +19,13 @@ Ship your current work in one go: create or confirm a branch, run pre-commit val
 
 ---
 
+## Operating Standards & Invariants
+
+This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating standards and the **[artifacts](../../../artifacts/SKILL.md)** delivery protocol.
+- **Target Artifact**: none — the deliverables are the commit, the push and the draft PR. Mutating by design: stage only files the user confirmed, never force-push.
+
+---
+
 ## Step 1 — Detect environment and repository
 
 Determine the repo root: run `git rev-parse --show-toplevel` from the current working directory.
@@ -48,7 +55,7 @@ Determine the implementing Task or Bug ID using this priority:
 Fetch the work item via CLI:
 
 ```bash
-az boards work-item show --id <ID> --org https://grutbildning.visualstudio.com --output json
+az boards work-item show --id <ID> --org https://dev.azure.com/grutbildning --output json
 ```
 
 Confirm its type, title, and state from the output.
@@ -116,25 +123,17 @@ Show the full diff (`git -C <repo-root> diff` and `git -C <repo-root> diff --sta
 git -C <repo-root> add <file1> <file2> ...
 ```
 
-Commit using the repository-specific format:
+Commit using the same format in both repositories (`backend-workflow` / `frontend-workflow` §3):
 
-- **Backend**: Swedish work item title directly (no translation to English).
+```
+#<work_item_id>: <short English description, imperative>
+```
 
-  ```
-  #<work_item_id>: <Swedish work item title>
-  ```
+*Example: `#28048: Add quota change request to operation`*
 
-  *Example: `#28048: Begär ändring av totalt antal platser`*
-
-- **Frontend**: English short description.
-
-  ```
-  #<work_item_id>: <Short English description>
-  ```
-
-  *Example: `#28048: Support request for total places change`*
-
----
+- English only, imperative present tense — never the Swedish work-item title.
+- Reference the implementing Task or Bug, not the parent User Story.
+- For review fixes: `#<id>: Address PR review comments`.
 
 ## Step 6 — Push
 
@@ -151,7 +150,7 @@ Report success or any errors before continuing.
 **Check for an existing PR first:**
 
 ```bash
-az repos pr list --org https://grutbildning.visualstudio.com --project PRIIS --repository <repo-name> --source-branch <branch-name> --status active --output json
+az repos pr list --org https://dev.azure.com/grutbildning --project PRIIS --repository <repo-name> --source-branch <branch-name> --status active --output json
 ```
 
 If an open PR already exists, report its URL and skip creation.
@@ -165,21 +164,21 @@ Otherwise:
    - Load and follow the `pr-summary` skill (`../../../pr-summary/SKILL.md`) in full.
    - Use `git diff $(git merge-base HEAD origin/main)...HEAD` to compute the diff for the branch.
    - Compose the PR body following all rules from the `pr-summary` skill (classification, summary, key impacts, resolved line).
-   - Use English for the Frontend PR, and Swedish/English as appropriate for the Backend PR.
+   - English in both repositories.
    - End with `Resolved: #<id>`.
 3. Create the PR via CLI:
-   - **Title:** `#<id>: <description>` (Swedish for Backend, English for Frontend)
+   - **Title:** `#<id>: <description>` — English imperative in both repositories (`*-workflow` §4)
    - **Body:** the output from the `pr-summary` skill above
    - **isDraft:** `true`
 
 ```bash
-az repos pr create --org https://grutbildning.visualstudio.com --project PRIIS --repository <repo-name> --source-branch <branch-name> --target-branch <target-branch> --title "#<id>: <description>" --description "<PR body>" --draft true --work-items <id>
+az repos pr create --org https://dev.azure.com/grutbildning --project PRIIS --repository <repo-name> --source-branch <branch-name> --target-branch <target-branch> --title "#<id>: <description>" --description "<PR body>" --draft true --work-items <id>
 ```
 
 1. Move work item state to `Pull Request`:
 
 ```bash
-az boards work-item update --id <id> --state "Pull Request" --org https://grutbildning.visualstudio.com
+az boards work-item update --id <id> --state "Pull Request" --org https://dev.azure.com/grutbildning
 ```
 
 Report the PR URL on success.

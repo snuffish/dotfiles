@@ -7,6 +7,13 @@ description: "[Project: GR.PRIIS.Frontend] Audit the frontend codebase for conve
 
 Use this skill when the user asks to run the migrated source command `health-check` for the GR.PRIIS.Frontend project.
 
+## Operating Standards & Invariants
+
+This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating standards and the **[artifacts](../../../artifacts/SKILL.md)** delivery protocol.
+- **Target Artifact**: `<prefix>-health_check-<suffix>.md` at the **workspace root** (suffix `frontend` or the feature area audited); a short scorecard summary goes in chat.
+
+---
+
 ## Command Template
 
 # /health-check — Frontend Health Audit
@@ -22,13 +29,13 @@ Scan the frontend source (`source/priis-web/src/`) for convention drift and prod
 Count `from '../` or `from '../../` patterns in all `.ts/.tsx` files under `source/priis-web/src/`.
 Expected: **zero**. All imports must use path aliases (`~`, `~components/`, `~features/`, `~api`, `~enums/`, `~strings/`).
 
-### 2. Zod v3 Imports
+### 2. Legacy Zod Imports
 
-Count `from 'zod'` (without `/v4`) in `source/priis-web/src/**/*.ts` and `*.tsx`.
-Expected: **zero**. All Zod usage must import from `'zod/v4'`.
+Count `from 'zod/v4'` in `source/priis-web/src/**/*.ts` and `*.tsx`.
+Expected: **zero**. Zod v4 is the pinned package and is imported from `'zod'`.
 
-Also check for old resolver: `from '@hookform/resolvers/zod'`
-Expected: **zero**. Must use `~/utility/validation/zod-v4-resolver`.
+Also check for the removed custom resolver: `from '~/utility/validation/zod-v4-resolver'`
+Expected: **zero**. Must use `@hookform/resolvers/zod`.
 
 ### 3. Inline Styles
 
@@ -71,9 +78,8 @@ All user-visible text must be Swedish. Flag files with obvious English strings.
 
 ### 10. SystemAction Sync
 
-Read `source/priis-web/src/enums/systemAction.ts` and list all enum values.
-Cross-check against the backend at `<workspace_root>/GR.PRIIS.Backend/source/GR.PRIIS.Library/Common/Users/AccessRules/SystemActionTexts.cs` for missing entries.
-Flag any values present in one but not the other.
+`src/enums/systemAction.ts` is a generated facade, so drift lives between the checked-in snapshot and the backend enum. List the `SystemAction` members in `source/priis-web/openapi/swagger.json` and cross-check against `<workspace_root>/GR.PRIIS.Backend/source/GR.PRIIS.Library/Common/Users/AccessRules/Actions/SystemAction.cs`.
+Flag any values present in one but not the other (a stale snapshot means `npm run codegen:refresh` is due). Also flag any hand edit to the facade's re-export lines.
 
 ---
 

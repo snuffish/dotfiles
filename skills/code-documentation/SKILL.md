@@ -5,6 +5,13 @@ description: Use this skill when the user requests to generate, create, or impro
 
 # Code Documentation Skill
 
+## Operating Standards & Invariants
+
+This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
+- **Target Artifact**: none at the workspace root — documentation is written into the repository where the user asks (README, `docs/`, inline comments). Confirm the destination before writing.
+
+---
+
 ## Overview
 
 This skill generates professional, comprehensive documentation for software projects, codebases, libraries, and APIs. It follows industry best practices from projects like React, Django, Stripe, and Kubernetes to produce documentation that is accurate, well-structured, and useful for both new contributors and experienced developers.

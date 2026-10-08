@@ -46,6 +46,17 @@ Suggest `deep` in the chat response (do not switch silently) when there are more
 
 ---
 
+### When *not* to use — pick the right neighbor
+
+| Situation | Use instead |
+|---|---|
+| Reviewing the PR's code yourself | [`/code-review`](../code-review/SKILL.md) |
+| The PR's build validation is red | [`/pr-fix-pipeline`](../pr-fix-pipeline/SKILL.md) |
+| Writing or refreshing the PR description | [`pr-summary`](../pr-summary/SKILL.md) |
+| How to try the change by hand | [`/manual-testing`](../manual-testing/SKILL.md) |
+
+---
+
 ## Step 1 — Determine the Target PR
 
 Parse the arguments or current workspace context to identify the target PR:

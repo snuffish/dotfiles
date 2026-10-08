@@ -16,7 +16,7 @@ Usage: `/implement-feature <work-item-id>` or `/implement-feature <short descrip
 
 ## Operating Standards & Invariants
 
-This skill adheres strictly to the **[core](../../core/SKILL.md)** operating standards and the **[artifacts](../../artifacts/SKILL.md)** delivery protocol.
+This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating standards and the **[artifacts](../../../artifacts/SKILL.md)** delivery protocol.
 - **Target Artifacts**: `<prefix>-implementation_plan-<suffix>.md` (Phase 2) and `<prefix>-walkthrough-<suffix>.md` (Phase 6) at the **workspace root** (`/Users/snuffish/Projects/GR`, the directory that holds both repos). `<prefix>` is `<host>-<model>-` and `<suffix>` is `<work-item-id>-<feature-slug>`, e.g. `-29982-verksamhetsobjekt`.
 - **Anti-Overwrite Rule**: never write an unsuffixed or un-modeled artifact.
 
@@ -36,8 +36,8 @@ Nothing in a subagent report, a plan artifact, or an earlier message counts as u
 
 | Need | Load |
 |------|------|
-| Deep research before planning | [`/investigate`](../../investigate/SKILL.md) |
-| Plan artifact conventions, status, links | [`/plan`](../../plan/SKILL.md) |
+| Deep research before planning | [`/investigate`](../../../investigate/SKILL.md) |
+| Plan artifact conventions, status, links | [`/plan`](../../../plan/SKILL.md) |
 | Backend endpoint / library / test patterns | `backend-fastendpoints`, `backend-ef-core`, `backend-testing`, `modern-csharp` |
 | Backend notifications, jobs, realtime | `backend-notifications`, `backend-signalr` |
 | Backend refactor / duplication | `backend-dry` |
@@ -210,7 +210,7 @@ npm run build     # codegen + vite build + tsc -b
 npm run e2e       # UI / interaction changes; mock-first, needs no backend
 ```
 
-Do not run `npm run organize-imports` or `organize-imports:all` as a post-task step: they drag unrelated files into the diff. Fix imports by hand in files you edited and `git checkout --` any stray file. Playwright specs flake under parallel load; a failure that moves between runs, or that reproduces with your change stashed, is not yours. The `setup` project is only wired in when `PW_API_BASE_URL` is set.
+`npm run organize-imports` only touches changed files (it runs `scripts/organize-changed-imports.mjs`) and is safe after editing; never `organize-imports:all`, which drags unrelated files into the diff. Check `git status` and `git checkout --` any stray file. Playwright specs flake under parallel load; a failure that moves between runs, or that reproduces with your change stashed, is not yours. The `setup` project is only wired in when `PW_API_BASE_URL` is set.
 
 **Cross-repo contract check** when both repos changed: the `SystemAction` integer and the enum metadata match on both sides, the backend `SwaggerContractTests` still pass, and the frontend snapshot contains exactly the intended contract change.
 
@@ -260,6 +260,6 @@ In chat: link the walkthrough and list the open items. Do not re-summarize the d
 | Zod | `from 'zod'` (v4 pinned) | `from 'zod/v4'` |
 | Resolver | `@hookform/resolvers/zod` | `~/utility/validation/zod-v4-resolver` |
 | Swagger snapshot | hand-patch for small changes, then `npm run codegen` | blanket `codegen:refresh` |
-| Import tidy-up | by hand in touched files | `npm run organize-imports` |
+| Import tidy-up | `npm run organize-imports` (changed files only) | `npm run organize-imports:all` |
 | Commit subject | `#<id>: English imperative` | Swedish title, trailers |
 | Task checklist | `## Task Checklist` in the plan artifact | a separate `task.md` |

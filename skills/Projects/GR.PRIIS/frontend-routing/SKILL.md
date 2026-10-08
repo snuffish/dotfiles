@@ -163,7 +163,7 @@ import { Link } from '@tanstack/react-router';
 Validate and type search params in the route definition:
 
 ```typescript
-import { z } from 'zod/v4';
+import { z } from 'zod';
 import { zodValidator } from '@tanstack/zod-adapter';
 
 export const Route = createFileRoute('/suppliers')({

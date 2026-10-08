@@ -1,6 +1,6 @@
 ---
 name: backend-testing
-description: "[Project: GR.PRIIS.Backend] Testing conventions for GR.PRIIS.Backend — TUnit (preferred for new tests) and xUnit (existing). BaseTUnitIntegrationTests, factory methods, assertions, AutoRollback, and minimum coverage rules. Load when writing or modifying tests. Load ONLY when working on the GR.PRIIS.Backend project or in the GR repository."
+description: "[Project: GR.PRIIS.Backend] Testing conventions for GR.PRIIS.Backend — TUnit on Microsoft.Testing.Platform in every test project (xUnit is fully migrated and gone). BaseTUnitIntegrationTests, factory methods, assertions, AutoRollback, and minimum coverage rules. Load when writing or modifying tests. Load ONLY when working on the GR.PRIIS.Backend project or in the GR repository."
 ---
 
 # Testing — Project Conventions
@@ -9,10 +9,9 @@ description: "[Project: GR.PRIIS.Backend] Testing conventions for GR.PRIIS.Backe
 
 | Framework | Version | Status | Used in |
 |-----------|---------|--------|---------|
-| TUnit | 1.37.24 | **Preferred for all new tests** | `GR.PRIIS.API.IntegrationTests` |
-| xUnit | 2.9.3 | Existing, do not convert | unit test projects |
+| TUnit | 1.37.24 | **The only framework** | every project under `tests/` |
 
-**Rule:** Write all new tests in TUnit. Do not convert existing xUnit tests unless explicitly asked. When editing an existing xUnit test file, follow its existing style.
+**Rule:** All tests are TUnit on Microsoft.Testing.Platform. The xUnit → TUnit migration is complete and the former `GR.PRIIS.API.IntegrationTests.TUnit` project is now `tests/GR.PRIIS.API.IntegrationTests`. Never add xUnit packages, `[Fact]`/`[Theory]`, or FluentAssertions `Should()` calls.
 
 ---
 
@@ -261,24 +260,9 @@ await Assert.That(result).IsNull();  // ← required
 
 ---
 
-## xUnit Patterns (Existing Test Projects)
+## xUnit
 
-When editing files in `GR.PRIIS.API.IntegrationTests` or the unit test projects, follow their existing style:
-
-```csharp
-// Attributes
-[Fact]             // single test
-[Theory]           // parameterized test
-[InlineData(...)]  // theory input
-
-// Assertions (FluentAssertions)
-result.Should().Be(expected);
-result.Should().NotBeNull();
-result.Should().BeEquivalentTo(expected);
-collection.Should().Contain(item);
-```
-
-Do not mix TUnit and xUnit assertions in the same file.
+None remains in any test project. A `[Fact]`, `[Theory]`, `[InlineData]` or `.Should()` is a paste from an old snippet — convert it to TUnit attributes and `Assert.That(...)` before committing.
 
 ---
 

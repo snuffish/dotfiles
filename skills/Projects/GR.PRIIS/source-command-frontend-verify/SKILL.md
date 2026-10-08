@@ -7,6 +7,13 @@ description: "[Project: GR.PRIIS.Frontend] Run all quality checks before committ
 
 Use this skill when the user asks to run the migrated source command `verify` for the GR.PRIIS.Frontend project.
 
+## Operating Standards & Invariants
+
+This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating standards and the **[artifacts](../../../artifacts/SKILL.md)** delivery protocol.
+- **Target Artifact**: none — the PASS/FAIL table is printed in chat. Read-only.
+
+---
+
 ## Command Template
 
 # /verify — Quality Gate
@@ -41,8 +48,8 @@ Grep the changed `.ts/.tsx` files (use `git diff --name-only HEAD` or scan all i
 
 ### Imports
 - `from ['"]\.\.` (starts with `../` or `../../`) — relative imports forbidden; use `~` path aliases
-- `from ['"]zod['"]` — must be `from 'zod/v4'`
-- `from ['"]@hookform/resolvers/zod['"]` — must use `~/utility/validation/zod-v4-resolver`
+- `from ['"]zod/v4['"]` — legacy subpath; must be `from 'zod'` (v4 is the pinned package)
+- `from ['"]~/utility/validation/zod-v4-resolver['"]` — file no longer exists; use `@hookform/resolvers/zod`
 
 ### Styling
 - `style={{` in JSX — use CSS Modules (`.module.css`) instead of inline styles
@@ -62,12 +69,12 @@ Grep the changed `.ts/.tsx` files (use `git diff --name-only HEAD` or scan all i
 
 ## Phase 4: SystemAction Sync (conditional)
 
-Only check this if `src/enums/systemAction.ts` was changed in this commit.
+Only check this if `openapi/swagger.json` or the generated `SystemAction` enum changed in this commit (`src/enums/systemAction.ts` is a generated facade — a hand edit there is itself a finding).
 
-If it was, remind:
-1. Verify backend `UserRoleAccessRules.cs` has matching entries
-2. Verify backend `SystemActionTexts.cs` has Swedish display names for all new values
-3. Flag as TODO if backend repo is not in scope of this changeset
+If it did, remind:
+1. Verify the backend member exists in `AccessRules/Actions/SystemAction.cs` with `[Display(Name = "…")]` and is granted in `AccessRules/Roles/<Role>AccessRules.cs`
+2. Verify the action is wired into `top-menu-items.ts` `actions` and the tab's `systemActions` where it gates UI
+3. Flag as TODO if the backend repo is not in scope of this changeset
 
 ---
 
@@ -88,7 +95,7 @@ If it was, remind:
 
 **Phase 4 — Anti-patterns:**
 - `source/priis-web/src/features/foo/foo-form.tsx:12` — `from '../../store/api'`; use `~api` instead
-- `source/priis-web/src/features/foo/schema.ts:1` — `from 'zod'`; must be `from 'zod/v4'`
+- `source/priis-web/src/features/foo/schema.ts:1` — `from 'zod/v4'`; must be `from 'zod'`
 
 ### Verdict
 
@@ -98,8 +105,10 @@ If it was, remind:
 ---
 
 > [!IMPORTANT]
-> **Do not run `npm run organize-imports`.** It rewrites imports across the *whole* workspace, not just
-> the files you touched, so it drags unrelated files into your diff and makes the PR harder to review.
-> CI does not gate on it. `npm run lint` and `npm run build` are the checks that matter.
+> `npm run organize-imports` runs `scripts/organize-changed-imports.mjs` (since 2026-09-17) and only touches files the
+> working tree has changed, so it is safe after editing. **Never run `npm run organize-imports:all`** — it rewrites
+> imports across the whole `src/` tree and buries your change under unrelated files. CI gates on neither;
+> `npm run lint` and `npm run build` are the checks that matter. Check `git status` afterwards and
+> `git checkout --` anything you did not edit.
 >
 > If a file you actually edited has messy imports, fix that file by hand.

@@ -7,6 +7,13 @@ description: "[Project: GR.PRIIS.Backend] Audit the codebase against project con
 
 Use this skill when the user asks to run the migrated source command `health-check`.
 
+## Operating Standards & Invariants
+
+This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating standards and the **[artifacts](../../../artifacts/SKILL.md)** delivery protocol.
+- **Target Artifact**: `<prefix>-health_check-<suffix>.md` at the **workspace root** (suffix `backend` or the feature area audited); a short scorecard summary goes in chat.
+
+---
+
 ## Command Template
 
 # /health-check — Project Health Audit
@@ -58,7 +65,7 @@ Count classes ending in `Service`, `Handler`, `Manager`, `Helper`, `Processor` i
 
 ### 6. TUnit Coverage Gaps
 
-For every `*Endpoint.cs` in `source/GR.PRIIS.API/Features/`, check whether a matching `*EndpointTests.cs` exists anywhere under `tests/GR.PRIIS.API.IntegrationTests.TUnit/`.
+For every `*Endpoint.cs` in `source/GR.PRIIS.API/Features/`, check whether a matching `*EndpointTests.cs` exists anywhere under `tests/GR.PRIIS.API.IntegrationTests/`.
 
 Report:
 - **Covered:** count
@@ -66,11 +73,11 @@ Report:
 
 ### 7. SystemAction Sync
 
-Read the `SystemAction` enum from `source/GR.PRIIS.Library/Common/Users/AccessRules/UserRoleAccessRules.cs`.
+Read the `SystemAction` enum from `source/GR.PRIIS.Library/Common/Users/AccessRules/Actions/SystemAction.cs`.
 
-For each enum value, check whether it has an entry in `source/GR.PRIIS.Library/Common/Users/AccessRules/SystemActionTexts.cs`.
+For each member check (a) it carries a Swedish `[Display(Name = "…")]` and (b) at least one `source/GR.PRIIS.Library/Common/Users/AccessRules/Roles/<Role>AccessRules.cs` grants it in `AllowedActions`.
 
-Report any enum values missing a Swedish display name.
+Report members missing a display name, and members no role grants (dead actions).
 
 ### 8. FusionCache L2 Safety
 

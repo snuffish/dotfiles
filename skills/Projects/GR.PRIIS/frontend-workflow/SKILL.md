@@ -9,6 +9,13 @@ This skill is the single source of truth for day-to-day git and ADO conventions 
 
 ---
 
+## Operating Standards & Invariants
+
+This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating standards and the **[artifacts](../../../artifacts/SKILL.md)** delivery protocol.
+- **Target Artifact**: none — this is the git/ADO rulebook; the ship recipe and `pr-summary` produce the commits and PR bodies.
+
+---
+
 ## 1. Branch Naming
 
 Format: `<prefix>/<work_item_id>_<english-kebab-slug>`
@@ -155,9 +162,11 @@ npm run e2e                 # Playwright (for UI/interaction changes)
 ```
 
 > [!IMPORTANT]
-> **Do not run `npm run organize-imports`.** It rewrites imports across the *whole* workspace, not just
-> the files you touched, so it drags unrelated files into your diff and makes the PR harder to review.
-> CI does not gate on it. `npm run lint` and `npm run build` are the checks that matter.
+> `npm run organize-imports` runs `scripts/organize-changed-imports.mjs` (since 2026-09-17) and only touches files the
+> working tree has changed, so it is safe after editing. **Never run `npm run organize-imports:all`** — it rewrites
+> imports across the whole `src/` tree and buries your change under unrelated files. CI gates on neither;
+> `npm run lint` and `npm run build` are the checks that matter. Check `git status` afterwards and
+> `git checkout --` anything you did not edit.
 >
 > If a file you actually edited has messy imports, fix that file by hand.
 
@@ -181,9 +190,9 @@ Create one PR per repo. For cross-repo changes (Backend + Frontend), each repo P
 
 ## 10. SystemAction Sync
 
-If `src/enums/systemAction.ts` is modified:
-1. Verify the backend `UserRoleAccessRules.cs` has matching entries
-2. Verify the backend `SystemActionTexts.cs` has Swedish display names
+`src/enums/systemAction.ts` is a generated facade over `~api/generated` — never hand-edit it. A new `SystemAction` arrives through the OpenAPI snapshot (`npm run codegen` after patching `openapi/swagger.json`, or `codegen:refresh` against a running API). When one does:
+1. Verify the backend member exists in `AccessRules/Actions/SystemAction.cs` with `[Display(Name = "…")]` and is granted in the relevant `AccessRules/Roles/<Role>AccessRules.cs`
+2. Add it to the menu item's `actions` in `src/components/navigation/top-menu-items.ts` and to the tab's `systemActions` where it gates UI (`actions` is an OR-check — a role's first export action otherwise leaves the item hidden)
 3. Flag the backend as a required follow-up if not in scope of this changeset
 
 ---
@@ -194,7 +203,7 @@ If `src/enums/systemAction.ts` is modified:
 
 ```bash
 # Common ADO constants
-ORG=https://grutbildning.visualstudio.com
+ORG=https://dev.azure.com/grutbildning   # the legacy grutbildning.visualstudio.com host fails auth with the cached az login token
 PROJECT=PRIIS
 REPO=GR.PRIIS.Frontend
 ```

@@ -9,6 +9,13 @@ This skill is the single source of truth for day-to-day git and ADO conventions 
 
 ---
 
+## Operating Standards & Invariants
+
+This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating standards and the **[artifacts](../../../artifacts/SKILL.md)** delivery protocol.
+- **Target Artifact**: none — this is the git/ADO rulebook; the ship recipe and `pr-summary` produce the commits and PR bodies.
+
+---
+
 ## 1. Branch Naming
 
 Format: `<prefix>/<work_item_id>_<english-kebab-slug>`
@@ -180,7 +187,7 @@ Create one PR per repo. For cross-repo changes (Backend + Frontend), each PR lin
 
 ```bash
 # Common ADO constants
-ORG=https://grutbildning.visualstudio.com
+ORG=https://dev.azure.com/grutbildning   # the legacy grutbildning.visualstudio.com host fails auth with the cached az login token
 PROJECT=PRIIS
 REPO_BACKEND=GR.PRIIS.Backend
 REPO_FRONTEND=GR.PRIIS.Frontend
@@ -200,7 +207,7 @@ REPO_FRONTEND=GR.PRIIS.Frontend
 ### PR creation example
 
 ```bash
-az repos pr create --org https://grutbildning.visualstudio.com --project PRIIS --repository GR.PRIIS.Backend --source-branch feature/28048_my-branch --target-branch main --title "#28048: My PR title" --description "$(cat pr_body.md)" --draft true --work-items 28048
+az repos pr create --org https://dev.azure.com/grutbildning --project PRIIS --repository GR.PRIIS.Backend --source-branch feature/28048_my-branch --target-branch main --title "#28048: My PR title" --description "$(cat pr_body.md)" --draft true --work-items 28048
 ```
 
 > **Note:** For wiki operations (release notes) there is no `az` equivalent — use `mcp__azure-devops__wiki_*` tools in that context only.

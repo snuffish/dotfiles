@@ -40,6 +40,18 @@ Suggest `deep` in the chat response (do not switch silently) when the diff excee
 
 ---
 
+### When *not* to use — pick the right neighbor
+
+| Situation | Use instead |
+|---|---|
+| Auditing an implementation plan, not code | [`/review`](../review/SKILL.md) |
+| Reviewer comments, threads and votes on the PR | [`/pr-feedback-review`](../pr-feedback-review/SKILL.md) |
+| The PR's pipeline is red | [`/pr-fix-pipeline`](../pr-fix-pipeline/SKILL.md) |
+| How to try the change by hand | [`/manual-testing`](../manual-testing/SKILL.md) |
+| Quality-only cleanup you intend to apply yourself | [`/refine`](../refine/SKILL.md) or [`/clean`](../clean/SKILL.md) |
+
+---
+
 ## Step 1 — Determine Scope
 
 Before reviewing any code, establish **what** to review:
@@ -233,7 +245,7 @@ If nothing is found, say so in the header ("Spec: none available — Spec axis l
 Do not review against conventions from memory. Load what the repo documents, following the `core` precedence (workspace rulebooks > project-scoped skills > tech skills):
 
 1. **Rulebooks** for every repo the diff touches: the repo's `CLAUDE.md` / `GEMINI.md`, and whatever canonical rulebook it points to (e.g. `.github/copilot-instructions.md`), plus `CONTRIBUTING.md` / `CODING_STANDARDS.md` if present.
-2. **Project-scoped skills** for the touched side — e.g. `backend-fastendpoints`, `backend-ef-core`, `backend-testing` for backend endpoints/queries/tests; `frontend-rtk-query`, `frontend-forms`, `frontend-component-patterns`, `frontend-routing` for frontend. Load only those matching the files changed.
+2. **Project-scoped skills** for the touched side — e.g. `backend-fastendpoints`, `backend-ef-core`, `backend-testing` for backend endpoints/queries/tests, `backend-notifications` / `backend-signalr` for jobs and realtime, `backend-dry` for duplication; `frontend-rtk-query`, `frontend-forms`, `frontend-component-patterns`, `frontend-routing` for frontend, `frontend-testing` for Playwright specs and test IDs. Load only those matching the files changed.
 3. **Cross-repo contracts** from the workspace-root `CLAUDE.md` (in PRIIS: `SystemAction` integer values, the `/realtime/account` hub URL, `x-enumMetadata` / `x-roleAccessRules` OpenAPI extensions, sv-SE UI text). Use them as a checklist whenever the diff touches either side of a contract — see *Heuristics*.
 4. **Tech skills** — e.g. `modern-csharp` for C# changes.
 
@@ -522,7 +534,7 @@ Rules:
 - If **prop mutation** is spotted (directly modifying a prop object), flag it as 🟡 — use a local `const` copy instead.
 - If the same **type is defined in more than one file**, flag it as a DRY violation.
 - **Cross-repo contracts (PRIIS):** when the diff touches one side, check the other side exists and agrees —
-  - a new/changed `SystemAction` member → same integer in backend `UserRoleAccessRules.cs` and frontend `src/enums/systemAction.ts`, role `AllowedActions`, menu item and tab `systemActions` (the full checklist lives in both `copilot-instructions.md` files);
+  - a new/changed `SystemAction` member → member with `[Display(Name = "…")]` in backend `AccessRules/Actions/SystemAction.cs`, granted in the relevant `AccessRules/Roles/<Role>AccessRules.cs` `AllowedActions`; the frontend enum is regenerated from the OpenAPI snapshot (`src/enums/systemAction.ts` is a generated facade, never hand-edited), menu item and tab `systemActions` (the full checklist lives in both `copilot-instructions.md` files);
   - an endpoint request/response change → the frontend's checked-in OpenAPI snapshot and RTK Query types match;
   - an enum gaining/losing `[EmitOpenApiMetadata]`, `[Display]`, `[DisplayContext]` → frontend facade in `src/enums/` and generated `…Names` maps;
   - the SignalR hub URL `/realtime/account` → unchanged, or changed in both repos;

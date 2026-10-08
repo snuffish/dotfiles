@@ -17,6 +17,17 @@ This skill adheres strictly to the **[core](../core/SKILL.md)** operating standa
 
 ---
 
+### When *not* to use — pick the right neighbor
+
+| Situation | Use instead |
+|---|---|
+| The failure is in the PR's CI pipeline, not local | [`/pr-fix-pipeline`](../pr-fix-pipeline/SKILL.md) |
+| Nothing is failing — the code just smells, or past decisions need re-aligning | [`/refine`](../refine/SKILL.md) |
+| Research before deciding how to change something | [`/investigate`](../investigate/SKILL.md) |
+| Dead code, unused exports, leftover debug statements in one file | [`/clean`](../clean/SKILL.md) |
+
+---
+
 ## Step 1 — Analyze the Symptom & Scope
 
 First, identify the exact signature of the failure:

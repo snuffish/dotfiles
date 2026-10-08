@@ -28,6 +28,17 @@ Invoke this skill whenever:
 
 ---
 
+### When *not* to use — pick the right neighbor
+
+| Situation | Use instead |
+|---|---|
+| Full ground-truth research with options and a plan seed | [`/investigate`](../investigate/SKILL.md) |
+| Auditing a drafted implementation plan | [`/review`](../review/SKILL.md) |
+| Reviewing a diff | [`/code-review`](../code-review/SKILL.md) |
+| Something is already failing | [`/problem`](../problem/SKILL.md) |
+
+---
+
 ## 2. Universal Investigation Protocol
 
 When evaluating the user's current task, active file, recent diff, or conversation context, audit the situation across these **7 Universal Blindspot Vectors**:

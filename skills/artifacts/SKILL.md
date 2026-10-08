@@ -115,6 +115,7 @@ When artifacts reference discussion threads or comments from a pull request (suc
 | `organize_plan-<suffix>.md` | `claude-sonnet-3.7-organize_plan-matching-components.md` | `antigravity-gemini-3.8-flash-organize_plan-matching-components.md` | `/organize` | Directory/module structure refactoring proposal |
 | `clean_report-<suffix>.md` | `claude-sonnet-3.7-clean_report-audit-endpoint.md` | `antigravity-gemini-3.8-flash-clean_report-audit-endpoint.md` | `/clean` | Multi-file dead-code pruning & sanitation report |
 | `skills_sync_report[-<suffix>].md` | `claude-sonnet-3.7-skills_sync_report.md` | `antigravity-gemini-3.8-flash-skills_sync_report.md` | `/reload-skills` | Registry discovery & loader synchronization audit |
+| `health_check-<suffix>.md` | `claude-sonnet-3.7-health_check-backend.md` | `antigravity-gemini-3.8-flash-health_check-frontend.md` | `source-command-backend-health-check`, `source-command-frontend-health-check` | Convention-drift scorecard per inspection area |
 
 *(Older unprefixed, un-modeled, or unsuffixed files written before the full convention should still be recognized during scans).*
 

@@ -97,7 +97,7 @@ Invoke this skill whenever:
 
 #### Relative Path Rules for Root References:
 - Top-level skills (`skills/<name>/`): use `../core/SKILL.md` and `../artifacts/SKILL.md`.
-- Project skills (`skills/Projects/<Project>/<name>/`): use `../../core/SKILL.md` and `../../artifacts/SKILL.md`.
+- Project skills (`skills/Projects/<Project>/<name>/`): use `../../../core/SKILL.md` and `../../../artifacts/SKILL.md` (three levels up — `Projects/`, `<Project>/`, `<name>/`).
 
 ---
 
@@ -130,3 +130,4 @@ Update [`skills/README.md`](../README.md):
      ln -s ~/.terminal/skills/<path-to-skill> ~/.claude/skills/<name>
      ```
    - Or display the JSON entry for `.agents/skills.json` if using Antigravity / workspace loader.
+   - Or run [`/reload-skills`](../reload-skills/SKILL.md), which symlinks every registry skill into the flat loader, prunes dead links and refreshes the README inventory in one pass.
