@@ -8,6 +8,7 @@
   "gr": {
     "[SSH] priis-docker01": "ssh -i ~/.ssh/gr_rsa GR_DOCKER01_SSH",
     "[SSH] priis-docker02": "ssh -i ~/.ssh/gr_rsa GR_DOCKER02_SSH",
-    "[SSH TUNNEL & PROXY] IVO": "ivo-proxy"
+    "[SSH TUNNEL & PROXY] IVO": "ivo-proxy",
+    "[PRIIS] Re-seed Demodata": "dotnet run --project /Users/snuffish/Projects/GR/GR.PRIIS.Backend/source/GR.PRIIS.CLI -- migrations -s -d"
   }
 }
