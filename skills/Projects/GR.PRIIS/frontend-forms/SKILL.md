@@ -1,6 +1,6 @@
 ---
 name: frontend-forms
-description: "[Project: GR.PRIIS.Frontend] Form patterns for GR.PRIIS.Frontend — Zod v4 (always import from 'zod/v4' NOT 'zod'), custom zodResolver from ~/utility/validation/zod-v4-resolver, schema location in features/{domain}/schema.ts, discriminated unions, react-hook-form setup, Controlled.* components, Swedish validation messages. Load when creating or modifying forms. Load ONLY when working on the GR.PRIIS.Frontend project or in the GR repository."
+description: "[Project: GR.PRIIS.Frontend] Form patterns for GR.PRIIS.Frontend — Zod v4 (import from 'zod' — never the legacy 'zod/v4' subpath), zodResolver from @hookform/resolvers/zod, schema location in features/{domain}/schema.ts, discriminated unions, react-hook-form setup, Controlled.* components, Swedish validation messages. Load when creating or modifying forms. Load ONLY when working on the GR.PRIIS.Frontend project or in the GR repository."
 ---
 
 # Forms — react-hook-form + Zod v4

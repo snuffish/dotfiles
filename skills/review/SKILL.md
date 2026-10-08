@@ -41,6 +41,17 @@ Invoke this skill whenever:
 
 ---
 
+### When *not* to use — pick the right neighbor
+
+| Situation | Use instead |
+|---|---|
+| Reviewing a code diff, branch or PR rather than a plan | [`/code-review`](../code-review/SKILL.md) |
+| Reviewer comments and votes on a PR | [`/pr-feedback-review`](../pr-feedback-review/SKILL.md) |
+| Research that should happen *before* a plan exists | [`/investigate`](../investigate/SKILL.md) |
+| Hidden assumptions and failure modes of a design | [`/what-am-I-missing`](../what-am-I-missing/SKILL.md) |
+
+---
+
 ## 2. Review Workflow
 
 ### Step 1: Locate the Target Plan & Context
@@ -67,7 +78,7 @@ Examine the proposal across five core evaluation dimensions:
 - **Interfaces:** Are interfaces strictly reserved for external I/O (SMS, Email, third-party clients) or Library boundary decoupling, avoiding unnecessary domain-layer interfaces?
 - **FastEndpoints:** Are endpoints inheriting from `ExtendedEndpoint`, using `Policy(SystemAction...)`, returning `SystemResult`, and using `SendAndSaveChangesAsync`?
 - **EF Core:** Do read queries use `.Select()` projections rather than eager `.Include()` chains? Are temporal tables, change tracking, and concurrency handled properly?
-- **Frontend:** Does it follow Radix UI themes, React Hook Form + Zod v4 (`zod/v4`), TanStack Router file-based conventions, and centralized test IDs?
+- **Frontend:** Does it follow Radix UI themes, React Hook Form + Zod v4 (`from 'zod'` — the `/v4` subpath is legacy — with `zodResolver` from `@hookform/resolvers/zod`), TanStack Router file-based conventions, and centralized test IDs?
 
 #### 3. Security, Authorization & Access Rules
 - Are appropriate `SystemAction` policies assigned to endpoints?

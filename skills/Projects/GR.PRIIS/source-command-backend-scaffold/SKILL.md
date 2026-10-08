@@ -7,6 +7,13 @@ description: "[Project: GR.PRIIS.Backend] Scaffold a complete FastEndpoints feat
 
 Use this skill when the user asks to run the migrated source command `scaffold`.
 
+## Operating Standards & Invariants
+
+This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating standards and the **[artifacts](../../../artifacts/SKILL.md)** delivery protocol.
+- **Target Artifact**: none — generated source files land in the repository paths below. When run from a plan, only after `/proceed`.
+
+---
+
 ## Command Template
 
 # /scaffold — Feature Scaffolding
@@ -36,7 +43,7 @@ Ask for clarification if: request/response shape is unclear, or the domain entit
 ```
 source/GR.PRIIS.API/Features/{Domain}/{Verb}{Feature}Endpoint.cs
 source/GR.PRIIS.Library/Features/{Domain}/{Verb}{Feature}.cs      ← or inline in entity file
-tests/GR.PRIIS.API.IntegrationTests.TUnit/{Domain}/{Verb}{Feature}EndpointTests.cs
+tests/GR.PRIIS.API.IntegrationTests/{Domain}/{Verb}{Feature}EndpointTests.cs
 ```
 
 ---
@@ -154,8 +161,8 @@ public sealed class OperationNote : AuditableEntity
 Minimum 3 tests per endpoint. Always write all three — never skip the auth tests.
 
 ```csharp
-// tests/GR.PRIIS.API.IntegrationTests.TUnit/Operations/Notes/CreateOperationNoteEndpointTests.cs
-namespace GR.PRIIS.API.IntegrationTests.TUnit.Operations.Notes;
+// tests/GR.PRIIS.API.IntegrationTests/Operations/Notes/CreateOperationNoteEndpointTests.cs
+namespace GR.PRIIS.API.IntegrationTests.Operations.Notes;
 
 internal sealed class CreateOperationNoteEndpointTests : BaseTUnitIntegrationTests
 {

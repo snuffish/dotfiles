@@ -13,6 +13,13 @@ replaces. Everything below exists to protect that difference.
 
 ---
 
+## Operating Standards & Invariants
+
+This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
+- **Target Artifact**: none — the deliverable is the squashed migration itself. This skill rewrites migration history: run the safety gate below first, and when invoked from a plan, only after `/proceed`.
+
+---
+
 ## Non-negotiable safety gate
 
 Squashing rewrites migration history. Do it **only** for migrations that exist nowhere but this branch.

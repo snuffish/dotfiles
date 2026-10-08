@@ -15,6 +15,13 @@ The output is a **test plan a human executes**, not a summary of the code. Every
 
 ---
 
+## Operating Standards & Invariants
+
+This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
+- **Target Artifact**: none — the test plan is returned in chat. Read-only: no code changes, no fixes for defects found while writing it.
+
+---
+
 ## 1. Triggering
 
 Invoke this skill when the user:

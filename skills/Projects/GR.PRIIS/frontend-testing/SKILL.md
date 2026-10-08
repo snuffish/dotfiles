@@ -1,6 +1,6 @@
 ---
 name: frontend-testing
-description: "[Project: GR.PRIIS.Frontend] Playwright E2E testing for GR.PRIIS.Frontend — test IDs centralized in e2e/test-ids.ts with typed objects and parameterized functions, auth.setup.ts for session state, helper functions for repeated steps, step-by-step assertions. No Jest/Vitest — lint + build + Playwright are the only automated quality gates. Load when writing or modifying E2E tests. Load ONLY when working on the GR.PRIIS.Frontend project or in the GR repository."
+description: "[Project: GR.PRIIS.Frontend] Playwright E2E testing for GR.PRIIS.Frontend — test IDs centralized in e2e/test-ids.ts with typed objects and parameterized functions, offline per-persona storage states from auth.fixtures.ts (auth.setup.ts only on the real-backend leg), helper functions for repeated steps, step-by-step assertions. No Jest/Vitest — lint + build + Playwright are the only automated quality gates. Load when writing or modifying E2E tests. Load ONLY when working on the GR.PRIIS.Frontend project or in the GR repository."
 ---
 
 # Playwright E2E Testing
@@ -125,24 +125,11 @@ test('create note — valid content creates note successfully', async ({ page })
 
 ## 4. Auth Setup
 
-The project uses session-based authentication. `e2e/auth.setup.ts` creates authenticated session state:
+Storage states are not checked in. `e2e/auth.fixtures.ts` builds one per persona offline from the generated grant table (`e2e/generated/role-access-rules.gen.ts`, produced by codegen from the backend's `x-roleAccessRules`), so the default run needs no backend and has no `setup` project. `playwright.config.ts` adds `dependencies: ['setup']` only when `PW_API_BASE_URL` is set (`USES_REAL_BACKEND`); on that leg `e2e/auth.setup.ts` re-logs the personas in so the states carry genuine session cookies.
 
-```typescript
-// e2e/auth.setup.ts — sets up storageState with logged-in session
-test('auth setup', async ({ page }) => {
-    await page.goto('/login');
-    // ... login flow
-    await page.context().storageState({ path: authFile });
-});
-```
+Most specs inherit the register-administrator state from the `chromium` project; switch persona through the fixtures. For unauthenticated behaviour, use a context without storage state.
 
-Most spec files should use authenticated state:
-```typescript
-// In playwright.config.ts — projects configure which storageState to use
-// Most tests inherit the authenticated session automatically
-```
-
-For tests that specifically test unauthenticated behavior, use a context without storage state.
+Run a subset with `npx playwright test <specs> --project=chromium`. Never pass `--no-deps` on the real-backend leg — without the setup project every test lands on the login page.
 
 ---
 
@@ -218,6 +205,8 @@ await expect(heading).toContainText('Noteringar');
 - Logic/utility changes with no UI impact
 
 When in doubt, run it. CI runs the full suite on every PR.
+
+Parallel runs flake under load (the login `waitForURL` and some dialogs time out, and the failing test names move between runs). Before attributing a failure to your change: re-run the spec alone, then `git stash -u` and run it again for a baseline. Failures that move or reproduce on stashed code are not yours.
 
 ---
 

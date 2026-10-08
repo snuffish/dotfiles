@@ -28,6 +28,19 @@ This skill is invoked when:
 
 ---
 
+### When *not* to use — pick the right neighbor
+
+| Situation | Use instead |
+|---|---|
+| Something is actually failing (build, lint, test, runtime) | [`/problem`](../problem/SKILL.md) |
+| Single-file dead-code pruning | [`/clean`](../clean/SKILL.md) |
+| Declarative rewrite of imperative code | [`/expressive`](../expressive/SKILL.md) |
+| Moving files, splitting modules, reshaping folders | [`/organize`](../organize/SKILL.md) |
+| Reviewing a branch diff against acceptance criteria | [`/code-review`](../code-review/SKILL.md) |
+| Backend duplication across endpoints / validators / queries | `backend-dry` |
+
+---
+
 ## 2. Phase 1: Context & Conversation History Lookup
 
 Before proposing any refinement, you **MUST** investigate past conversation transcripts to see if the files, patterns, or errors have been discussed previously.

@@ -219,7 +219,19 @@ Two interceptors are registered globally in `Setup.cs`:
 
 ---
 
-## 10. Anti-Patterns Checklist
+## 10. Migrations
+
+Run from the backend repo root (`dotnet-ef` is a local tool; there is no `--migrate` flag):
+
+```bash
+dotnet ef migrations add <MigrationName> -p source/GR.PRIIS.Library -s source/GR.PRIIS.API
+```
+
+Review the generated file before committing. Integration tests apply migrations themselves through `TUnitApiWebFactory`; to apply and seed a local database use `cd source/GR.PRIIS.CLI && dotnet run -- migrations -s -d`. Several migrations accumulated on one branch → [`squash-ef-core-migrations`](../../../squash-ef-core-migrations/SKILL.md).
+
+---
+
+## 11. Anti-Patterns Checklist
 
 ```
 ❌ .Include() in read-only GET endpoints — use .Select() navigation

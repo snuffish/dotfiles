@@ -7,6 +7,13 @@ description: "[Project: GR.PRIIS.Backend] Run all quality checks before committi
 
 Use this skill when the user asks to run the migrated source command `verify`.
 
+## Operating Standards & Invariants
+
+This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating standards and the **[artifacts](../../../artifacts/SKILL.md)** delivery protocol.
+- **Target Artifact**: none — the PASS/FAIL table is printed in chat. Read-only apart from `dotnet format`, which only rewrites files you already changed.
+
+---
+
 ## Command Template
 
 # /verify — Quality Gate
@@ -67,10 +74,10 @@ Grep the changed `.cs` files (use `git diff --name-only HEAD` to find them, or s
 dotnet test --configuration Release
 ```
 
-Report failures by project and test name. If only touching a specific feature, you may run the focused test project:
+Report failures by project and test name. A full local run flakes under TestContainers load (dozens of varying integration timeouts): re-run the failing groups alone with `--treenode-filter` before blaming the change. If only touching a specific feature, you may run the focused test project:
 
 ```bash
-dotnet test --project tests/GR.PRIIS.API.IntegrationTests.TUnit --configuration Release
+dotnet test --project tests/GR.PRIIS.API.IntegrationTests --configuration Release --treenode-filter "/*/*/<ClassName>/*"   # TUnit/MTP: --treenode-filter, never --filter
 ```
 
 ---
@@ -78,7 +85,7 @@ dotnet test --project tests/GR.PRIIS.API.IntegrationTests.TUnit --configuration 
 ## Phase 5: Architecture Tests
 
 ```bash
-dotnet test tests/GR.PRIIS.ArchitectureTests --configuration Release
+dotnet test --project tests/GR.PRIIS.ArchitectureTests --configuration Release
 ```
 
 Enforces the **API → Library only** dependency rule. A failure here means a project reference was added that crosses the boundary.
@@ -90,9 +97,9 @@ Enforces the **API → Library only** dependency rule. A failure here means a pr
 Only check this if `SystemAction` enum values were added or renamed in this changeset.
 
 If they were, verify all three sync points:
-1. `source/GR.PRIIS.Library/Common/Users/AccessRules/UserRoleAccessRules.cs` — enum value present in the correct numeric range and added to relevant role AllowedActions
-2. `source/GR.PRIIS.Library/Common/Users/AccessRules/SystemActionTexts.cs` — Swedish display name present
-3. **Remind:** the frontend `systemAction.ts` enum must also be updated (separate repo — flag as a TODO if not already done)
+1. `source/GR.PRIIS.Library/Common/Users/AccessRules/Actions/SystemAction.cs` — member in the correct numeric range with a Swedish `[Display(Name = "…")]` (there is no separate label file; `SystemActionTexts.cs` only maps ranges to category names)
+2. `source/GR.PRIIS.Library/Common/Users/AccessRules/Roles/<Role>AccessRules.cs` — added to `AllowedActions` of every role that needs it, and only those
+3. **Remind:** the frontend regenerates `src/enums/systemAction.ts` from the OpenAPI snapshot (`npm run codegen` after patching `openapi/swagger.json`), then wires the action into `top-menu-items.ts` / tab `systemActions` — flag as a TODO if the frontend repo is not in scope
 
 ---
 

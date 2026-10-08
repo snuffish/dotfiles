@@ -30,6 +30,16 @@ Invoke this skill whenever:
 
 ---
 
+### When *not* to use — pick the right neighbor
+
+| Situation | Use instead |
+|---|---|
+| Tidying one file: unused exports, dead variables, debug statements (nested ternaries only) | [`/clean`](../clean/SKILL.md) |
+| Moving files, splitting modules, reshaping folders | [`/organize`](../organize/SKILL.md) |
+| Duplication across files, or aligning with past decisions | [`/refine`](../refine/SKILL.md) / `backend-dry` |
+
+---
+
 ## 2. Core Transformation Catalog
 
 Apply these battle-tested patterns to transform code from mechanical execution to domain expression:

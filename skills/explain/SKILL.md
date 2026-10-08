@@ -31,6 +31,17 @@ Suggest `deep` in the chat response (do not switch silently) when a bare `/expla
 
 ---
 
+### When *not* to use — pick the right neighbor
+
+| Situation | Use instead |
+|---|---|
+| Research with options and a confidence ledger *before* a change | [`/investigate`](../investigate/SKILL.md) |
+| Judging a diff, not understanding it | [`/code-review`](../code-review/SKILL.md) |
+| Finding what a design has overlooked | [`/what-am-I-missing`](../what-am-I-missing/SKILL.md) |
+| Writing documentation for other readers | [`code-documentation`](../code-documentation/SKILL.md) |
+
+---
+
 ## 2. Mode 1: `/explain` — Simple & Fast (Default)
 
 Use when the user runs `/explain` (without `deep`), asks "explain this", or asks for a quick breakdown.

@@ -7,6 +7,13 @@ description: "[Project: GR.PRIIS.Frontend] Scaffold a new feature slice — RTK 
 
 Use this skill when the user asks to run the migrated source command `scaffold` for the GR.PRIIS.Frontend project.
 
+## Operating Standards & Invariants
+
+This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating standards and the **[artifacts](../../../artifacts/SKILL.md)** delivery protocol.
+- **Target Artifact**: none — generated source files land in the repository paths below. When run from a plan, only after `/proceed`.
+
+---
+
 ## Command Template
 
 # /scaffold — Feature Scaffolding
@@ -137,7 +144,7 @@ const tagTypes = [
 **Location:** `source/priis-web/src/features/{domain}/schema.ts`
 
 ```typescript
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 export const createSupplierNoteSchema = z.object({
     content: z.string().min(1, { message: 'Obligatoriskt fält' }),
@@ -148,7 +155,7 @@ export type CreateSupplierNoteFormValues = z.infer<typeof createSupplierNoteSche
 ```
 
 **Rules:**
-- Always `from 'zod/v4'` — never `from 'zod'`
+- Always `from 'zod'` (v4 is the pinned package) — never the legacy `'zod/v4'` subpath
 - Swedish validation messages
 - Use `ErrorMessages.*` from `~strings/error-messages` for standard messages
 - For conditional fields: use `z.discriminatedUnion('fieldName', [...])` pattern
@@ -162,8 +169,8 @@ export type CreateSupplierNoteFormValues = z.infer<typeof createSupplierNoteSche
 ```typescript
 import { Flex, Heading, Text } from '@radix-ui/themes';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { z } from 'zod/v4';
-import { zodResolver } from '~/utility/validation/zod-v4-resolver';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useCreateSupplierNoteMutation } from '~api';
 import { createSupplierNoteSchema, CreateSupplierNoteFormValues } from './schema';
 import styles from './create-supplier-note-form.module.css';
@@ -277,8 +284,8 @@ Add `data-testid` attributes to the corresponding interactive elements in the co
 ## Anti-Patterns — Never Generate
 
 ```
-❌ import { z } from 'zod'                    — use 'zod/v4'
-❌ from '@hookform/resolvers/zod'             — use '~/utility/validation/zod-v4-resolver'
+❌ import { z } from 'zod/v4'                 — use 'zod' (v4 is the pinned package)
+❌ from '~/utility/validation/zod-v4-resolver' — removed; use '@hookform/resolvers/zod'
 ❌ Relative imports (../ or ../../)           — use path aliases
 ❌ style={{ }} inline styles                  — use CSS Modules
 ❌ English labels/placeholders in JSX         — Swedish only

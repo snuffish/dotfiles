@@ -29,7 +29,7 @@ skills/
 | General (top level)              |  22   | `artifacts`, `clean`, `code-documentation`, `code-review`, `core`, `create-skill`, `explain`, `expressive`, `investigate`, `manual-testing`, `modern-csharp`, `organize`, `plan`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-summary`, `problem`, `refine`, `reload-skills`, `review`, `squash-ef-core-migrations`, `what-am-I-missing` |
 | `GR.PRIIS/backend-*`             |   7   | `dry`, `ef-core`, `fastendpoints`, `notifications`, `signalr`, `testing`, `workflow`                                 |
 | `GR.PRIIS/frontend-*`            |   6   | `component-patterns`, `forms`, `routing`, `rtk-query`, `testing`, `workflow`                                          |
-| `GR.PRIIS/source-command-backend-*`  | 6 | `health-check`, `migrate-to-tunit`, `release-notes`, `scaffold`, `ship`, `verify`                                    |
+| `GR.PRIIS/source-command-backend-*`  | 6 | `health-check`, `migrate-to-tunit` (retired — migration complete), `release-notes`, `scaffold`, `ship`, `verify`                                    |
 | `GR.PRIIS/source-command-frontend-*` | 3 | `health-check`, `scaffold`, `verify`                                                                                  |
 | `GR.PRIIS/` (unprefixed)         |   1   | `implement-feature`                                                                                                   |
 
@@ -42,7 +42,7 @@ The skill registry uses a layered architecture anchored by two foundational root
 1. **[`core`](core/SKILL.md)**: Universal root operating standards, codebase investigation protocol, safety gates (`/proceed`), and baseline invariants.
 2. **[`artifacts`](artifacts/SKILL.md)**: Universal artifact protocol, host & AI model prefix resolution (`<host>-<model>-`), mandatory contextual suffix (`-<suffix>`) anti-overwrite protocol, and IDE link formatting rules.
 
-All general and project-specific skills compose on top of `core` and `artifacts`. Instruction precedence resolves in this order:
+Every **operational** skill (one that runs a workflow, mutates the repo, or writes an artifact) declares this composition in an `## Operating Standards & Invariants` header. Pure **reference** skills (`modern-csharp`, `backend-*`, `frontend-*`) carry no header and inherit the standards through the precedence model. Instruction precedence resolves in this order:
 
 1. **Workspace Rulebooks** (`CLAUDE.md` / `GEMINI.md` / `.agents/rules/`)
 2. **Project-Scoped Skills** (`Projects/<Project>/...`)

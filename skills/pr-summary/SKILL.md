@@ -13,6 +13,13 @@ Use this skill whenever the user requests a pull request (PR) summary, PR descri
 
 ---
 
+## Operating Standards & Invariants
+
+This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
+- **Target Artifact**: none — the summary is printed in chat (preview) or written to the open PR (`update` mode). Never an implementation plan.
+
+---
+
 ## Invocation modes — preview vs update
 
 Parse the arguments **before** doing anything else:
@@ -147,7 +154,7 @@ Derive the host from the git remote (`git remote -v`), then find the open PR who
 - **Azure DevOps** (remote host contains `visualstudio.com` or `dev.azure.com`) — use the `az repos` CLI. Derive `ORG`, `PROJECT`, and `REPO` from the remote URL; a project-scoped workflow skill (e.g. `backend-workflow` / `frontend-workflow`) may already document the constants.
 
   ```bash
-  ORG=https://<org>.visualstudio.com
+  ORG=https://dev.azure.com/<org>   # never the legacy <org>.visualstudio.com host — the cached az login token is bound to dev.azure.com
   BR=$(git branch --show-current)
   az repos pr list --org "$ORG" --project <PROJECT> --repository <REPO> --source-branch "$BR" --status active --query "[0].pullRequestId" -o tsv
   ```
