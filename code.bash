@@ -1,8 +1,11 @@
 #!/bin/bash
 
 ag() {
-  nohup antigravity "$@" >/dev/null 2>&1 &
+  antigravity-ide "${@:-.}"
 }
+
+alias antigravity-editor="antigravity-ide"
+
 
 agy() {
   # If running non-interactively, pass through directly
