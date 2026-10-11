@@ -121,10 +121,15 @@ rm -rf "$TARGET.old"
 printf '%s\n' "$LATEST" > "$STAMP"
 
 # --------------------------------------------------------------- cli + desktop entry
-# CLI launcher (behaves like `code`): prefer bin/<slug>, else the root binary.
 if [ -x "$TARGET/bin/$SLUG" ]; then CLI="$TARGET/bin/$SLUG"
 else CLI="$(find "$TARGET/bin" -maxdepth 1 -type f 2>/dev/null | head -1)"; fi
 [ -n "${CLI:-}" ] && ln -sfn "$CLI" "$BIN_DIR/$SLUG"
+if [ "$PRODUCT" = "ide" ] && [ -n "${CLI:-}" ]; then
+  ln -sfn "$CLI" "$BIN_DIR/antigravity"
+  ln -sfn "$CLI" "$BIN_DIR/antigravity-editor"
+  ln -sfn "$CLI" "$BIN_DIR/ag"
+fi
+
 
 # GUI binary (the Electron executable at the tree root).
 GUI="$TARGET/$SLUG"; [ -x "$GUI" ] || GUI="${CLI:-$TARGET/$SLUG}"
