@@ -65,7 +65,14 @@ export MANPAGER='nvim +Man!'
 if command -v fzf >/dev/null 2>&1; then
   if [[ -n "$ZSH_VERSION" ]]; then
     source <(fzf --zsh)
+    if declare -f _fzf_setup_completion_widget >/dev/null; then
+      _fzf_setup_completion_widget
+    fi
   elif [[ -n "$BASH_VERSION" ]]; then
     source <(fzf --bash 2>/dev/null || true)
+    if declare -f _fzf_setup_completion_bash >/dev/null; then
+      _fzf_setup_completion_bash
+    fi
   fi
 fi
+
