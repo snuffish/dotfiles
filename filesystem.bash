@@ -38,13 +38,88 @@ elif command -v batcat >/dev/null 2>&1; then
   alias cat="batcat"
 fi
 
-ff() {
-  if [[ -z "$1" ]]; then
-    echo "Usage: ff <filename_pattern>"
-    return 1
+# ==============================================================================
+# Interactive Fuzzy File Finder (find / ff)
+# ==============================================================================
+# - find                     -> fuzzy-find in current directory (.)
+# - find ~                   -> fuzzy-find in home directory (~)
+# - find <dir>               -> fuzzy-find in specified directory
+# - find <query>             -> fuzzy-find in current directory pre-filtered
+# - find <dir> <query>       -> fuzzy-find in <dir> pre-filtered
+# - find . -name "*.txt"     -> passes through directly to GNU find
+# - find ~<tab>              -> fuzzy-completes on Tab (handled by fzf completion)
+find() {
+  # If stdin is not a terminal (e.g. piped input), delegate directly to system find
+  if [[ ! -t 0 ]]; then
+    command find "$@"
+    return $?
   fi
-  find . -name "$1"
+
+  # If any argument starts with '-', delegate directly to system find
+  for arg in "$@"; do
+    if [[ "$arg" == -* ]]; then
+      command find "$@"
+      return $?
+    fi
+  done
+
+  local search_dir="."
+  local query=""
+
+  if [[ $# -eq 0 ]]; then
+    search_dir="."
+  elif [[ $# -eq 1 ]]; then
+    local target="${1/#\~/$HOME}"
+    if [[ -d "$target" ]]; then
+      search_dir="$target"
+    elif [[ -f "$target" ]]; then
+      echo "$target"
+      return 0
+    else
+      query="$1"
+      search_dir="."
+    fi
+  elif [[ $# -eq 2 ]]; then
+    local target="${1/#\~/$HOME}"
+    if [[ -d "$target" ]]; then
+      search_dir="$target"
+      query="$2"
+    else
+      command find "$@"
+      return $?
+    fi
+  else
+    command find "$@"
+    return $?
+  fi
+
+  local preview_cmd='bat --color=always --style=numbers --line-range=:300 {} 2>/dev/null || cat {} 2>/dev/null'
+  local fzf_opts=(
+    --height=70%
+    --layout=reverse
+    --border
+    --preview="$preview_cmd"
+    --preview-window='right:50%:wrap'
+    --header='[Enter] Print path | [Ctrl-E] Edit (nvim) | [Ctrl-O] Open | [Ctrl-Y] Copy path'
+    --bind="ctrl-e:execute(${EDITOR:-nvim} {})+abort"
+    --bind="ctrl-o:execute(xdg-open {} >/dev/null 2>&1 || open {} >/dev/null 2>&1 &)+abort"
+    --bind="ctrl-y:execute-silent(echo -n {} | (wl-copy 2>/dev/null || xclip -selection clipboard 2>/dev/null || pbcopy 2>/dev/null))+abort"
+  )
+  [[ -n "$query" ]] && fzf_opts+=(--query "$query")
+
+  local selected
+  if command -v fd >/dev/null 2>&1; then
+    selected=$(fd --hidden --exclude .git . "$search_dir" 2>/dev/null | fzf "${fzf_opts[@]}")
+  else
+    selected=$(command find "$search_dir" -not -path '*/.*' 2>/dev/null | fzf "${fzf_opts[@]}")
+  fi
+
+  if [[ -n "$selected" ]]; then
+    echo "$selected"
+  fi
 }
+
+alias ff="find"
 
 alias untar="tar -xvzf"
 
