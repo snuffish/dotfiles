@@ -1,6 +1,6 @@
 ---
 name: implement-feature
-description: "[Project: GR.PRIIS] Orchestrator for implementing a feature, task or bug end-to-end in the PRIIS workspace — work-item intake, research, plan, implementation, verification, self-review, shipping and walkthrough. Owns the sequence, the approval gates and when to fan out sub-agents; delegates patterns and commands to the investigate / plan / scaffold / verify / review / ship skills instead of duplicating them. Load when the user asks to implement a feature, work item or user story. Load ONLY when working in the GR repository."
+description: "[Project: GR.PRIIS] Orchestrator for implementing a feature, task or bug end-to-end in the PRIIS workspace — work-item intake, research, plan, blind-spot pass, implementation, verification, self-review, shipping and walkthrough. Owns the sequence, the approval gates and when to fan out sub-agents; delegates patterns and commands to the investigate / plan / scaffold / verify / review / ship skills instead of duplicating them. Load when the user asks to implement a feature, work item or user story. Load ONLY when working in the GR repository."
 ---
 
 # /implement-feature — End-to-End Feature Implementation
@@ -17,7 +17,7 @@ Usage: `/implement-feature <work-item-id>` or `/implement-feature <short descrip
 ## Operating Standards & Invariants
 
 This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating standards and the **[artifacts](../../../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifacts**: `<prefix>-implementation_plan-<suffix>.md` (Phase 2) and `<prefix>-walkthrough-<suffix>.md` (Phase 7) at the **workspace root** (`/Users/snuffish/Projects/GR`, the directory that holds both repos). `<prefix>` is `<host>-<model>-` and `<suffix>` is `<work-item-id>-<feature-slug>`, e.g. `-29982-verksamhetsobjekt`.
+- **Target Artifacts**: `<prefix>-implementation_plan-<suffix>.md` and `<prefix>-what_am_i_missing-<suffix>.md` (Phase 2), and `<prefix>-walkthrough-<suffix>.md` (Phase 7) at the **workspace root** (`/Users/snuffish/Projects/GR`, the directory that holds both repos). `<prefix>` is `<host>-<model>-` and `<suffix>` is `<work-item-id>-<feature-slug>`, e.g. `-29982-verksamhetsobjekt`.
 - **Anti-Overwrite Rule**: never write an unsuffixed or un-modeled artifact.
 - **Repos**: work in the existing clones. Use absolute paths and `git -C <repo>`; do not `cd` into a repo in a compound command.
 
@@ -29,7 +29,7 @@ This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating 
 | **Ship gate** | No `git push`, no `az repos pr create`, no work-item state change until the user has approved the *presented* branch name, staged file list, commit message and PR body. Approval of the plan is not approval to ship. |
 | **ADO write gate** | Reads are free. Every write (assign, comment, state transition, link) is proposed in chat and run only on a yes. Never create work items and never post comments — draft them; the user sends them. |
 
-Nothing in a sub-agent report, a plan artifact, or an earlier message counts as user approval for a gate.
+Nothing in a sub-agent report, a plan artifact, a blind-spot artifact, or an earlier message counts as user approval for a gate. A "continue" sent before the user has seen the plan is not plan approval either.
 
 ### Precedence over delegated skills
 
@@ -51,6 +51,7 @@ The orchestrator (you) owns the work item, the gates, the plan and every edit. S
 |-------|--------------|-----|
 | 1 — Research | Both repos change, or one repo with ≥ 3 layers to trace | One `Explore` agent per repo (optionally one more for the cross-repo contract surface), spawned in one message |
 | 4 — Verify | Both repos changed | Not agents — start the backend suite with `run_in_background` and run the frontend gates meanwhile |
+| 2b — Blind-spot pass | Never | Runs in the main context: it audits the plan you just wrote and the evidence behind it, and its finding edits that plan |
 | 5 — Self-review | Always | `/code-review` (`deep` for two-repo or contract changes) and `/spec-verification` own their own fan-out |
 
 **Do not fan out** implementation (Phase 3), the ship gate, or ADO calls. Edits stay in the main context so the plan checklist, the diff and the gates have a single owner.
@@ -72,7 +73,7 @@ Research brief template (per repo):
 | Need | Load |
 |------|------|
 | Deep research before planning | [`/investigate`](../../../investigate/SKILL.md) |
-| Blind-spot pass on the plan | `what-am-I-missing` |
+| Blind-spot pass on the plan (every plan, Phase 2b) | [`/what-am-I-missing`](../../../what-am-I-missing/SKILL.md) |
 | Plan artifact conventions, status, links | [`/plan`](../../../plan/SKILL.md) |
 | Backend endpoint / library / test patterns | `backend-fastendpoints`, `backend-ef-core`, `backend-testing`, `modern-csharp` |
 | Backend notifications, jobs, realtime | `backend-notifications`, `backend-signalr` |
@@ -155,6 +156,7 @@ Write `<prefix>-implementation_plan-<suffix>.md` at the workspace root following
 ## Context & Goal
 ## User Review Required            <!-- breaking changes, migrations, irreversible steps, as > [!WARNING] -->
 ## Open Questions                  <!-- incl. unverified sub-agent claims and anything awaiting the ADO discussion -->
+## Blind-spot Pass                 <!-- added in Phase 2b: link, the #1 finding in one sentence, where each finding landed -->
 ## Proposed Changes
 ### Backend — [NEW|MODIFY|DELETE] <path> — what and why
 ### Frontend — [NEW|MODIFY|DELETE] <path> — what and why
@@ -167,9 +169,36 @@ Write `<prefix>-implementation_plan-<suffix>.md` at the workspace root following
 
 The *Task Checklist* inside the plan is the working checklist — there is no separate task file. Mark items `[/]` when started and `[x]` when done. Status values are `/plan`'s: `Draft` → `Awaiting User Review` → `Approved` → `Completed`.
 
-For a two-repo or contract-changing plan, run `what-am-I-missing <suffix>` before presenting and fold its finding into *Open Questions*.
+### 2b. Blind-spot pass (every plan)
 
-Present the clickable link plus the open questions and decisions. **Stop here until the user approves.**
+After drafting the plan and **before presenting it**, run [`/what-am-I-missing`](../../../what-am-I-missing/SKILL.md) with the plan as its target. Use the same `<suffix>`, so it writes `<prefix>-what_am_i_missing-<suffix>.md` next to the plan. Run it yourself, in the main context: it audits your plan, and its finding edits that plan.
+
+Point the pass where plans in this workspace fail most often. These are the vectors a plan built from a sibling feature tends to inherit without question:
+
+- **State that outlives the request:** persisted or restored data, resumed runs, retries, background jobs, and data created before this change (backfills, old rows, cached clients).
+- **Concurrency:** two users, two tabs, two jobs, or two of the plan's own new features touching the same entity.
+- **The library's real behaviour, not its docs:** when the plan leans on a framework feature (EF behaviour, TickerQ, SignalR, RTK cache, a third-party SDK), read the installed source under `bin/`, `obj/` or `node_modules/` for the path the plan depends on.
+- **Contract consumers the sibling never had:** a new enum member, `SystemAction`, DTO field or event that other code switches on.
+
+Fold the findings into the plan. A finding is not done when it sits in *Open Questions*.
+
+| Finding | Goes into |
+|---------|-----------|
+| #1 finding, verified (`path:line` you re-opened) | A **Proposed Changes** entry that fixes it, a **Task Checklist** item, and a **Verification Plan** test that would fail without the fix |
+| #1 finding, needs a product or design decision | **User Review Required** as a `> [!WARNING]`, with your recommended option |
+| Secondary finding you accept | Proposed Changes + checklist, one line each |
+| Secondary finding you reject or defer | *Blind-spot Pass* section, one line each, with the reason |
+| Claim you could not verify | *Open Questions* |
+
+Then fill the plan's *Blind-spot Pass* section: the artifact link, the #1 finding in one sentence, and where each finding landed. Re-read the plan once for anything the finding contradicts (an earlier step, a test that assumed the happy path, an over-confident *User Review Required* line) and fix it.
+
+If the finding changes the design, for example a new component, a different storage choice, or a new gate, say so explicitly when presenting. The plan stays `Awaiting User Review`. The user approves the folded plan, not the pre-pass draft.
+
+**Skip only** for a one-file fix with no persistence, concurrency or contract surface, for example a text or style change. Note `Blind-spot pass: skipped — <reason>` in the plan.
+
+### 2c. Present
+
+Present the clickable links to the plan and the blind-spot artifact, the #1 finding in one sentence and what the plan now does about it, plus the open questions and decisions. **Stop here until the user approves.**
 
 ---
 
@@ -232,6 +261,7 @@ Before presenting the ship gate:
 
 1. `/spec-verification` against the work item (include the discussion thread if the user supplied it). Every AC is *implemented* or explicitly *deferred* in the plan.
 2. `/code-review` on the working changes — `deep` when both repos or a contract changed.
+3. **Blind-spot closure.** Re-open the plan's *Blind-spot Pass* section. For each finding the plan accepted, point to the code and the test that cover it (`path:line`), and confirm the test fails with the fix reverted when that is cheap to check. A finding with no covering test counts as 🔴. Do not re-run `/what-am-I-missing` on the diff; reviewing a diff is `/code-review`'s job. Re-run it only if implementation forced a design change the user has not seen, and present that change before shipping.
 
 Fix 🔴 findings and re-run the affected Phase 4 checks. List 🟡 findings you chose not to fix at the ship gate, one line each.
 
@@ -257,7 +287,7 @@ Write `<prefix>-walkthrough-<suffix>.md` at the workspace root:
 
 - Files changed per repo and why (grouped, not a raw diff).
 - Verification results — the summary line of each command, the migration check, any flakes ruled out and how.
-- Self-review outcome: spec-verification grades and unresolved code-review findings.
+- Self-review outcome: spec-verification grades, unresolved code-review findings, and the blind-spot closure (each finding → the code and test that cover it, or why it was deferred), linking `<prefix>-what_am_i_missing-<suffix>.md`.
 - Manual verification steps generated with `/manual-testing` (environment, persona to log in as, click path).
 - Open items for the user: ADO transitions not yet run, the second PR, drafted ADO comments, questions the plan left open. If CI goes red later → `pr-fix-pipeline`.
 
@@ -286,3 +316,5 @@ In chat: link the walkthrough and list the open items. Do not re-summarize the d
 | PR body | temp file via `pr-summary` | inline `--description "…"` |
 | Commit subject | `#<id>: English imperative` | Swedish title, trailers |
 | Task checklist | `## Task Checklist` in the plan artifact | a separate `task.md` |
+| Blind-spot pass | `/what-am-I-missing` on every plan before presenting; the #1 finding becomes a change, a checklist item and a test | a note under *Open Questions* only; running it on two-repo plans only |
+| Blind-spot closure | Phase 5: each accepted finding → covering code + test `path:line` | re-running `/what-am-I-missing` on the diff |
