@@ -77,7 +77,21 @@ alias gch="g checkout"
 alias grh="g reset --hard && gclean"
 
 alias gpa="git-pull-all"
-alias gb="git branch --all --format='%(refname:short)' | sed -e 's|^origin/||' -e 's|^remotes/origin/||' | grep -Ev '^(HEAD|\(HEAD|origin/HEAD)' | sort -u | fzf --header 'Select branch to checkout:' --preview 'git show --color=always {-1}' --bind 'enter:become(git checkout {-1})' --height 50% --layout reverse"
+
+# Checkout a branch, most recently visited first (from the reflog), then the rest alphabetically
+unalias gb 2>/dev/null
+function gb() {
+  local branches
+  branches=$(git branch --all --format='%(refname:short)' | sed -e 's|^origin/||' -e 's|^remotes/origin/||' | grep -Ev '^(HEAD|\(HEAD|origin/HEAD)' | sort -u) || return $?
+
+  local recent
+  recent=$(git reflog --format='%gs' 2>/dev/null | awk '/^checkout: moving from / { print $NF; print $4 }' | sed 's|^origin/||')
+
+  # Keep only existing branches (drops detached SHAs), first occurrence wins
+  printf '%s\n%s\n' "$recent" "$branches" \
+    | awk 'FNR == NR { ok[$0] = 1; next } ok[$0] && !seen[$0]++' <(printf '%s\n' "$branches") - \
+    | fzf --header 'Select branch to checkout:' --tiebreak=index --preview 'git show --color=always {-1}' --bind 'enter:become(git checkout {-1})' --height 50% --layout reverse
+}
 
 alias gclean="g clean -f"
 
