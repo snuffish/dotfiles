@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Perform a structured, high-quality review of code changes along three axes — Correctness (bugs, security, performance), Standards (does the code follow this repo's documented conventions and cross-repo contracts?) and Spec (does it implement what the PR / work item / acceptance criteria asked for?). Accepts an optional pull-request URL/ID, work-item ID, or fixed point ("since main", a SHA, a tag) — and resolves the PR from the current branch when none is given. `deep` runs the axes as parallel sub-agents. Use when the user asks for a code review, PR review, "review since X", or feedback on a branch or working changes.
+description: Perform a structured, high-quality review of code changes along three axes — Correctness (bugs, security, performance), Standards (does the code follow this repo's documented conventions and cross-repo contracts?) and Spec (does it implement what the PR / work item / acceptance criteria asked for?). Accepts an optional pull-request URL/ID, work-item ID, or fixed point ("since main", a SHA, a tag) — and resolves the PR from the current branch when none is given. `deep` runs the axes as parallel sub-agents. Reviews from a detached snapshot worktree by default so the user can keep editing the main checkout meanwhile; `live` opts out. Project-agnostic: conventions and cross-repo contracts come from the workspace's own rulebooks and project-scoped skills. Use when the user asks for a code review, PR review, "review since X", or feedback on a branch or working changes.
 ---
 
 # Code Review Skill
@@ -15,7 +15,7 @@ Use this skill whenever the user requests a code review, feedback on a pull requ
 > **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
 >
 > 1. **MANDATORY .MD ARTIFACT & SUMMARY (NO EXCUSES):** Every single `/code-review` response MUST ALWAYS write or update the complete review report as `<prefix>-code_review-<suffix>.md` **at the workspace root**, and begin the response with a clickable link to it plus clickable section anchors, built exactly as *Artifact Links* below specifies. If an active `<prefix>-implementation_plan-<suffix>.md` exists, link that too. The user frequently needs to click and open it in the IDE.
-> 2. **DO NOT MODIFY CODE OR THE WORKING TREE:** Never edit code files, stage commits, run migrations, check out branches, stash, or execute any modifying command during or immediately after a `/code-review`. If the tree is not the one to review, say so and ask (see *Get the right code checked out*).
+> 2. **DO NOT MODIFY CODE OR THE MAIN WORKING TREE:** Never edit code files, stage commits, run migrations, check out branches, `git stash push`/`pop`, or execute any command that changes the main checkout during or immediately after a `/code-review`. The **only** git writes allowed are the ones in *Step 1b — Review snapshot*: `git fetch`, `git stash create` (writes one unreferenced commit object, nothing else) and `git worktree add --detach` / `remove` / `prune` on a snapshot directory **outside** the repo. If the tree is not the one to review, snapshot the right ref instead of checking it out (see *Get the right code into the snapshot*).
 > 3. **DO NOT AUTO-PROCEED:** Never begin implementing fixes or refactorings automatically. Wait for explicit user instruction or `/proceed`.
 > 4. **NO UNVERIFIED FINDINGS:** Every 🔴/🟡 must survive Step 6 (*Verify*) before it is written.
 
@@ -25,7 +25,7 @@ Use this skill whenever the user requests a code review, feedback on a pull requ
 
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
 - **Target Artifact**: `<prefix>-code_review-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
-- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` (e.g. `-18176-verksamhetsobjekt`, `-category-demand-statistics`). Never write unsuffixed or un-modeled generic files, and never copy another model's review under your own prefix — a review file must be the output of the model it names.
+- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` (e.g. `-18176-contract-templates`, `-category-demand-statistics`). Never write unsuffixed or un-modeled generic files, and never copy another model's review under your own prefix — a review file must be the output of the model it names.
 
 ---
 
@@ -35,8 +35,9 @@ This skill adheres strictly to the **[core](../core/SKILL.md)** operating standa
 |---|---|---|
 | `/code-review [scope]` | **Standard** (default) | One pass; the reviewer covers all three axes itself |
 | `/code-review deep [scope]` | **Deep** | Correctness, Standards and Spec each run in an isolated parallel sub-agent (see *Deep Mode*), then aggregate |
+| `/code-review live [scope]` | Standard or deep, **no snapshot** | Reads the main checkout directly instead of the snapshot from *Step 1b*. Only for what cannot be snapshotted — e.g. specific files that were never committed |
 
-Suggest `deep` in the chat response (do not switch silently) when the diff exceeds ~1,500 changed lines or spans both repos with contract changes.
+`live` is a modifier, not a mode: `/code-review deep live <scope>` is valid. Suggest `deep` in the chat response (do not switch silently) when the diff exceeds ~1,500 changed lines or spans both repos with contract changes.
 
 ---
 
@@ -58,16 +59,68 @@ Before reviewing any code, establish **what** to review:
 
 | User says | What to diff |
 |---|---|
-| `staged` / `commit` | `git diff --staged` |
-| `unstaged` / `working` | `git diff` |
+| `staged` / `commit` | `git diff HEAD <snap>^2` — `<snap>` is the stash commit from *Step 1b*; its second parent is the index |
+| `unstaged` / `working` | `git diff HEAD <snap>` — the stash commit's tree is the working tree |
 | `branch` / `pr` / (default) | All commits on the current branch vs. its base — see *Branch Discovery* |
 | `since <ref>` / a SHA, tag, branch, `HEAD~5` | `git diff <ref>...HEAD` — the user-supplied fixed point is the base |
-| Specific file(s) | Read those files directly |
+| Specific file(s) | Read those files from the snapshot — or `live` when they were never committed (*Step 1b-f*) |
 | `frontend` / `backend` | Branch diff, scoped to that sub-directory |
 | A **pull-request URL** or bare PR id | Resolve it first — see *Pull-Request References* below |
 | A work item / issue id (`#30342`, `AB#30342`) | Read the work item, then find its PR or branch |
 
 Whatever the base, confirm it resolves (`git rev-parse <base>`) and the diff is non-empty **before** going further. A bad ref or an empty diff fails here, not halfway through a review (or inside sub-agents).
+
+### Step 1b — Review Snapshot
+
+The review never reads the main checkout. It pins a head per repo in scope, materialises that head in a **detached `git worktree` outside the repo**, and reads everything from there. The user may keep editing the main checkout the whole time; nothing in the review may depend on it. `/code-review live …` skips this step and reads the main checkout as-is.
+
+Do not use the host's own worktree tooling for this (Claude Code's `EnterWorktree`, sub-agent worktree isolation): it acts on the repository of the current directory — in a multi-repo workspace whose root is itself a repo that does not track the sub-projects, that is an empty shell — and it moves the session's working directory, which the artifact links depend on. Plain `git -C <repo> worktree …` keeps the session at the workspace root and handles any number of repos.
+
+**a. Resolve the head per repo in scope**
+
+| Scope | Head to snapshot |
+|---|---|
+| `branch` / `since <ref>` / default | `git -C <repo> rev-parse HEAD` |
+| PR whose branch is not checked out | `git -C <repo> fetch origin <sourceRefName>`, then `git -C <repo> rev-parse origin/<sourceRefName>` |
+| `working` | `SNAP=$(git -C <repo> stash create)` → head is `$SNAP` (its tree is the working tree) |
+| `staged` | `SNAP=$(git -C <repo> stash create)` → head is `$SNAP^2` (the second parent is the index) |
+
+`git stash create` writes one unreferenced commit object and changes nothing else — not the index, not the working tree, not `git stash list`. An empty result means the tree is clean: the scope is empty, stop here. It does **not** capture untracked files: list them with `git -C <repo> ls-files --others --exclude-standard`, record them in the Review Context table under *Untracked, not in snapshot*, read them from the main checkout, and mark every citation into them `(live, untracked)` — their line numbers are not stable.
+
+**b. Create the snapshot**
+
+```bash
+# <tmp-root>: the session scratchpad when the host provides one, else ${TMPDIR:-/tmp}
+SNAP_DIR=<tmp-root>/code-review/<repo-dirname>/<short-sha>
+git -C <repo> worktree prune                          # drop admin entries a crashed session left behind
+git -C <repo> worktree add --detach "$SNAP_DIR" <head>
+```
+
+If `$SNAP_DIR` already exists and `git -C "$SNAP_DIR" rev-parse HEAD` equals `<head>`, reuse it; otherwise remove it first. One snapshot per repo in scope — a two-repo review has two. Snapshots live outside the repos on purpose: nothing shows up in `git status` and no `.gitignore` entry is needed.
+
+**c. Read from the snapshot**
+
+- Every diff, `git log`, grep and whole-file read runs with `-C "$SNAP_DIR"` or on paths under it. Inside the snapshot `HEAD` **is** the reviewed head and remote refs are shared, so the commands in this skill (`git diff <base>...HEAD`, `git log --oneline <base>..HEAD`) are unchanged apart from `-C`.
+- A code-intelligence index (e.g. CodeGraph) covers the main checkout only. Use it for **navigation** — callers, blast radius, where a symbol lives — then open the same file in the snapshot for the **citation**. When the main checkout's `HEAD` equals the snapshot head and its `git status` is clean, index lines are exact and may be cited directly; say which case applied in the Review Context table.
+
+**d. Map paths back (mandatory)**
+
+Before any `path:line` reaches the artifact or the chat, replace the `$SNAP_DIR` prefix with the repo's workspace-relative path (`<repo-dirname>/…`). A link into `<tmp-root>` is a defect in the review. The reviewed head recorded in Review Context is what gives the line numbers meaning if the user has edited since.
+
+**e. Remove the snapshot**
+
+After the artifact is written and the header links are emitted — in deep mode, after every sub-agent has returned and Step 6 is done:
+
+```bash
+git -C <repo> worktree remove --force "$SNAP_DIR"   # --force: the snapshot is disposable, nothing of the user's lives there
+git -C <repo> worktree prune
+```
+
+Say in the chat response that the snapshot was removed, or why it was kept (the user asked to keep it for a follow-up).
+
+**f. When no snapshot is possible**
+
+Specific files that were never committed, a directory that is not a git repository, or a failing `git worktree add` → fall back to `live`, record `live checkout` in Review Context, and warn that edits during the review invalidate line numbers.
 
 ### Pull-Request References
 
@@ -78,8 +131,8 @@ Parse the URL into its parts. Azure DevOps:
 ```text
 https://dev.azure.com/{org}/{project}/_git/{repo}/pullrequest/{prId}
 
-e.g.  .../grutbildning/PRIIS/_git/52f22501-...-f597ebeaacf9/pullrequest/18106
-      org = grutbildning   project = PRIIS   repo = <guid>   prId = 18106
+e.g.  .../acme/Shop/_git/52f22501-...-f597ebeaacf9/pullrequest/18106
+      org = acme   project = Shop   repo = <guid>   prId = 18106
 ```
 
 `{repo}` is often a GUID rather than a name — pass it through unchanged, the API accepts either. Other hosts: GitHub `/{owner}/{repo}/pull/{n}`, GitLab `/{group}/{project}/-/merge_requests/{n}`, Bitbucket `/{workspace}/{repo}/pull-requests/{n}`.
@@ -181,19 +234,20 @@ git log --oneline <base>...HEAD
 
 That gives you the id to quote and to hand back to the user, but **not** the acceptance criteria. Say which one you have. Never infer what a description said from a branch slug.
 
-#### Get the right code checked out
+#### Get the right code into the snapshot
 
-A PR URL usually means the user is *not* on that branch. Verify before diffing, and state the mismatch rather than reviewing the wrong tree:
+A PR URL usually means the user is *not* on that branch. Verify before diffing, state the mismatch, and snapshot the PR's own head instead of whatever is checked out:
 
 ```bash
-git rev-parse --abbrev-ref HEAD                       # where am I?
+git rev-parse --abbrev-ref HEAD                       # where am I? — say so if it differs from <sourceRefName>
 git fetch origin <sourceRefName>                      # read-only: updates remote refs only
-git diff origin/<targetRef>...origin/<sourceRef>      # review without checking out
+git rev-parse origin/<sourceRefName>                  # → the head for Step 1b-b
+git -C "$SNAP_DIR" diff origin/<targetRef>...HEAD     # inside the snapshot, HEAD is the PR head
 ```
 
-Prefer reviewing the fetched remote ref directly — it needs no checkout (`git show origin/<sourceRef>:<path>` reads a whole file). If a checkout is genuinely needed, **ask first** and offer `az repos pr checkout --id <prId>` / `gh pr checkout <n>`; never check out, stash, or reset on your own.
+No checkout is ever needed: the snapshot is the checkout. Never `git checkout`, `git switch`, `git stash push` or reset the main checkout on your own.
 
-Review the **committed PR head**. If the working tree has uncommitted changes on top, say so in the header and review them only when the user asks.
+Review the **committed PR head**. Uncommitted changes in the main checkout are outside the review unless the user asks for the `working` or `staged` scope.
 
 #### How much to trust the description
 
@@ -218,12 +272,12 @@ git symbolic-ref --short refs/remotes/origin/HEAD
 # 2. Fall back only if origin/HEAD is unset: the integration branches that actually exist
 git branch -r --list 'origin/main' 'origin/develop' 'origin/master'
 
-# 3. Build the diff using the merge-base (three-dot syntax):
-git diff <base>...HEAD --name-status
-git log --oneline <base>..HEAD
+# 3. Build the diff using the merge-base (three-dot syntax), inside the snapshot:
+git -C "$SNAP_DIR" diff <base>...HEAD --name-status
+git -C "$SNAP_DIR" log --oneline <base>..HEAD
 ```
 
-Always use the **three-dot** form (`A...B`) so you see only the commits introduced by this branch, not divergent commits on the base. State the base you used in the artifact header.
+Remote refs are shared between the main checkout and the snapshot, so `origin/HEAD` and `<base>` resolve identically in both. Always use the **three-dot** form (`A...B`) so you see only the commits introduced by this branch, not divergent commits on the base. State the base and the snapshot head you used in the artifact header.
 
 ---
 
@@ -245,9 +299,9 @@ If nothing is found, say so in the header ("Spec: none available — Spec axis l
 Do not review against conventions from memory. Load what the repo documents, following the `core` precedence (workspace rulebooks > project-scoped skills > tech skills):
 
 1. **Rulebooks** for every repo the diff touches: the repo's `CLAUDE.md` / `GEMINI.md`, and whatever canonical rulebook it points to (e.g. `.github/copilot-instructions.md`), plus `CONTRIBUTING.md` / `CODING_STANDARDS.md` if present.
-2. **Project-scoped skills** for the touched side — e.g. `backend-fastendpoints`, `backend-ef-core`, `backend-testing` for backend endpoints/queries/tests, `backend-notifications` / `backend-signalr` for jobs and realtime, `backend-dry` for duplication; `frontend-rtk-query`, `frontend-forms`, `frontend-component-patterns`, `frontend-routing` for frontend, `frontend-testing` for Playwright specs and test IDs. Load only those matching the files changed.
-3. **Cross-repo contracts** from the workspace-root `CLAUDE.md` (in PRIIS: `SystemAction` integer values, the `/realtime/account` hub URL, `x-enumMetadata` / `x-roleAccessRules` OpenAPI extensions, sv-SE UI text). Use them as a checklist whenever the diff touches either side of a contract — see *Heuristics*.
-4. **Tech skills** — e.g. `modern-csharp` for C# changes.
+2. **Project-scoped skills** for the touched side — the `[Project: …]`-gated skills the registry provides for this workspace (the workspace rulebook or `.agents/skills.json` lists them, typically one per layer: endpoints, data access, forms, routing, testing, …). Load only those matching the files changed.
+3. **Cross-repo contracts** from the workspace-root rulebook — whatever couples the repos: enums shared by integer value, fixed realtime or endpoint URLs, generated clients and checked-in API snapshots, the product's UI language. Use them as a checklist whenever the diff touches either side of a contract — see *Heuristics*.
+4. **Tech skills** — language- or framework-level skills for the languages in the diff (e.g. a C# idioms skill for C# changes).
 
 Record the sources you loaded in the artifact header, so a finding's "the rule says" can be traced.
 
@@ -277,11 +331,11 @@ On top of whatever the repo documents, the Standards axis carries the **smell ba
 
 1. **List changed files** first (`--name-status`) to understand the blast radius before reading code.
 2. **For small diffs** (< ~200 lines): read the raw diff directly.
-3. **For large diffs**: read each changed file in full with the host's file-reading tool. Do **not** rely solely on truncated diff output — you will miss essential context.
-4. **Deleted / moved files**: for every deleted file, grep the codebase for remaining imports or references to ensure nothing is left dangling.
-5. **Do not** run `npm ci`, `npm install`, `dotnet restore`, or any install/build commands unless the user explicitly requests it.
+3. **For large diffs**: read each changed file in full, from the snapshot, with the host's file-reading tool. Do **not** rely solely on truncated diff output — you will miss essential context.
+4. **Deleted / moved files**: for every deleted file, grep the snapshot for remaining imports or references to ensure nothing is left dangling.
+5. **Do not** run package-manager installs or builds (`npm ci`, `dotnet restore`, `pip install`, `cargo build`, …) unless the user explicitly requests it. The snapshot has no dependencies installed and never needs them.
 6. **Do not** run the linter or test suite unless the user explicitly requests it. When a finding depends on runtime behaviour you could not confirm by reading, say so and give the user the exact command to confirm it.
-7. **Skip auto-generated files** (e.g., `routeTree.gen.ts`, `*.g.cs`, `*.gen.ts`, EF `*.Designer.cs` / model snapshots) — but do check that generated artifacts which *should* have changed alongside the source did (e.g. a checked-in `swagger.json` snapshot after an endpoint change).
+7. **Skip auto-generated files** (e.g. `*.gen.ts`, `*.g.cs`, ORM migration designers / model snapshots, lockfiles) — but do check that generated artifacts which *should* have changed alongside the source did (e.g. a checked-in OpenAPI snapshot after an endpoint change).
 
 ---
 
@@ -327,7 +381,7 @@ Rank severity **within** each axis on its own merits — a spotless Standards re
 
 Before writing the artifact, re-check each 🔴/🟡 against the code — not against your notes:
 
-1. **Re-open the cited `path:line`** in the reviewed revision and confirm the code says what the finding claims. Fix any drifted line numbers.
+1. **Re-open the cited `path:line`** in the snapshot and confirm the code says what the finding claims. Fix any drifted line numbers.
 2. **Try to refute it:** look for the guard, caller, config, or test that would make it a non-issue (e.g. a check one layer up, a query that already filters, a validator that runs first).
 3. **Classify:**
    - **Verified** — you traced the failing path in code.
@@ -343,7 +397,7 @@ In deep mode, the aggregator runs this step on the sub-agents' findings — sub-
 
 1. **Write Review Artifact:** Always persist the full code review to `<prefix>-code_review-<suffix>.md` **at the workspace root**. The location is what makes the link clickable — see *Artifact Links* below — so do not put it anywhere else.
    - **Suffix Resolution**:
-     - PR / Work Item: `[<id>-]<slug>` (e.g. `18176-verksamhetsobjekt`, `18176-backend`)
+     - PR / Work Item: `[<id>-]<slug>` (e.g. `18176-contract-templates`, `18176-backend`)
      - Branch / Working Diff: `<branch-slug>` (e.g. `new-users-audit`)
      - Topic / Specific Files: 2–4 word topic slug (e.g. `ticket-category-config`)
 2. **Re-reviews:** re-running on the same PR with the same model updates that artifact in place. Read another model's review of the same PR only if the user asks for a comparison — otherwise review independently, so the two reviews stay independent evidence.
@@ -413,8 +467,9 @@ After the links, the chat response adds: the worst finding **per axis** (one lin
 If you edit the artifact after emitting the header, the line numbers have moved — re-run the `grep` and re-emit the links rather than leaving stale ones.
 
 **In-review references to source files:**
-- Under Antigravity IDE: `[Setup.cs:L264](file://<workspace-root>/GR.PRIIS.Backend/source/GR.PRIIS.Library/Setup.cs#L264)`
-- Under Claude Code: `[Setup.cs:264](GR.PRIIS.Backend/source/GR.PRIIS.Library/Setup.cs#L264)`
+- Under Antigravity IDE: `[Setup.cs:L264](file://<workspace-root>/api/src/Setup.cs#L264)`
+- Under Claude Code: `[Setup.cs:264](api/src/Setup.cs#L264)`
+- Paths are always the main-checkout workspace path, never the snapshot directory (*Step 1b-d*). Line numbers refer to the snapshot head recorded in Review Context.
 
 ---
 
@@ -422,7 +477,7 @@ If you edit the artifact after emitting the header, the line numbers have moved 
 
 Sections in this order, and **nothing after In Plain Terms**:
 
-1. `## Review Context` — a small table: PR(s) and work item(s) per repo, base and head reviewed, Spec source (or "none available"), Standards sources loaded, mode (standard/deep).
+1. `## Review Context` — a small table: PR(s) and work item(s) per repo, base and head reviewed, **Reviewed from** (`snapshot <short-sha> (removed)` / `snapshot <short-sha> (kept at <path>)` / `live checkout`), **Untracked, not in snapshot** (`working`/`staged` only: file list or "none"), Spec source (or "none available"), Standards sources loaded, mode (standard/deep).
 2. `## Summary of Changes` — 1–3 sentences on what the changes accomplish and their architectural intent.
 3. `## Findings Summary` — the summary table.
 4. `## Detailed Review Findings` — 🔴/🟡 findings with their fix inline, then `### 🟢 Minor Findings`, then `### 💙 Praise`.
@@ -433,7 +488,7 @@ Sections in this order, and **nothing after In Plain Terms**:
 | # | Severity | Axis | File | Issue |
 |---|---|---|---|---|
 | [1](#finding-1) · [plain](#finding-1-plain) | 🔴 | Correctness | `foo.ts` | Missing null check on `userId` |
-| [2](#finding-2) · [plain](#finding-2-plain) | 🟡 | Spec | `bar.tsx` | AC "per kategori" not implemented |
+| [2](#finding-2) · [plain](#finding-2-plain) | 🟡 | Spec | `bar.tsx` | AC "per category" not implemented |
 | [3](#finding-3) · [plain](#finding-3-plain) | 🟡 | Standards | `Baz.cs` | Read query tracks entities (backend rulebook: reads use `AsNoTracking`) |
 | 4–7 | 🟢 | various | various | Polish — see [Minor Findings](#minor-findings) |
 
@@ -472,11 +527,12 @@ decide whether this blocks a release read only it.
 
 Write each one as four beats, in this order:
 
-1. **What the code is trying to do** — one sentence, in domain nouns (*avtalsmall*,
-   *delområde*, *handläggare*), never type names (`ContractTemplate`, `SubareaContract`).
-   Keep the product's own word for a thing so the team recognises it, but gloss it in
-   English the first time it appears — "*avtalsmall* (the master contract that subareas
-   hang off)" — then use the term unglossed.
+1. **What the code is trying to do** — one sentence, in domain nouns (*contract
+   template*, *subarea*, *case handler*), never type names (`ContractTemplate`,
+   `SubareaContract`). When the product's working language is not English, keep its own
+   word for a thing so the team recognises it, but gloss it in English the first time it
+   appears — "*avtalsmall* (the master contract that subareas hang off)" — then use the
+   term unglossed.
 2. **What actually happens** — the failure as a numbered sequence of events with real
    actors, not as a conditional rule. "1. A handler pauses a contract. 2. They close the
    subarea — the guard only looks for *active* contracts, finds none, allows it. 3. …"
@@ -495,15 +551,16 @@ Rules:
 - **A three-line ASCII hierarchy or sequence diagram is often worth more than a paragraph.**
   Use one when the finding is about how data or calls nest:
   ```text
-  Avtalsmall  →  Delområden  →  Avtal
+  Contract template  →  Subareas  →  Contracts
   ```
 - **Don't repeat the fix.** Reference the numbered finding; the diff already lives above.
 - **Skip 🟢 and 💙.** Polish and praise don't need restating.
 - **Cap each at ~150 words.** If one needs more, the technical finding above it is
   underexplained — fix that instead of padding here.
 - **Always write this section in simple English**, whatever language the rest of the review
-  uses and whatever the product's working language is (a Swedish product still gets an
-  English explanation here). Don't add a line explaining the language choice.
+  uses and whatever the product's working language is (a product that works in another
+  language still gets an English explanation here). Don't add a line explaining the
+  language choice.
 - **Simple means simple.** Short declarative sentences, everyday words, one idea per
   sentence. "The record stays in the wrong state" — not "the entity's status remains
   inconsistent with its parent aggregate". Split any sentence that needs a second clause to
@@ -517,13 +574,13 @@ Rules:
 
 `/code-review deep` runs each axis in its own sub-agent so one axis's context cannot mask another: code that follows every standard can still implement the wrong thing, and code that does exactly what the issue asked can still break conventions.
 
-1. **Do Steps 1–3 yourself first** — base resolved and non-empty diff confirmed, Spec source fetched, Standards sources listed. Sub-agents must not re-resolve PRs or re-fetch work items.
-2. **Spawn the sub-agents in parallel** (one message, three calls). Each prompt includes the exact diff command (`git diff <base>...HEAD`), the commit list, the repo paths, and its axis brief:
+1. **Do Steps 1–3 yourself first** — base resolved and non-empty diff confirmed, snapshot(s) created (*Step 1b*), Spec source fetched, Standards sources listed. Sub-agents must not re-resolve PRs, re-fetch work items, or create or remove worktrees.
+2. **Spawn the sub-agents in parallel** (one message, three calls). Each prompt includes the exact diff command prefixed with the snapshot (`git -C <snapshot> diff <base>...HEAD`), the commit list, the **snapshot path(s) — never the main checkout** — with the workspace path each one maps back to (*Step 1b-d*), and its axis brief:
    - **Correctness** — "Find bugs, edge cases, race conditions, security and performance issues in this diff. Read whole files where the diff lacks context. For each: `path:line`, the failing path as a concrete sequence, proposed severity (🔴/🟡/🟢). Under 500 words."
    - **Standards** — include the list of Standards source files from Step 3 **and the smell baseline table pasted in full** (the sub-agent has no other access to it). "Report every place the diff violates a documented standard — cite the source file and rule — and any baseline smell you spot, labelled as a judgement call. A documented repo standard overrides the baseline. Check the listed cross-repo contracts on both sides. Skip anything tooling enforces. Under 500 words."
    - **Spec** — include the fetched spec/AC text (not a link). "Report: (a) requirements missing or partial; (b) behaviour in the diff that wasn't asked for; (c) requirements that look implemented but where the implementation looks wrong. Quote the spec line for each. Under 400 words." Skip this sub-agent when there is no Spec source, and say so.
-   - All sub-agents are **read-only**: no edits, no checkouts, no installs, builds or tests.
-3. **Aggregate** into the single artifact: de-duplicate findings raised by more than one axis (keep the axis that owns the root cause), assign final severities within each axis, then run **Step 6 — Verify** on every 🔴/🟡 yourself before writing.
+   - All sub-agents are **read-only**: no edits, no checkouts, no worktree commands, no installs, builds or tests. They read only the snapshot and report `path:line` already mapped to the workspace path.
+3. **Aggregate** into the single artifact: de-duplicate findings raised by more than one axis (keep the axis that owns the root cause), assign final severities within each axis, re-check that no citation points into a snapshot directory, then run **Step 6 — Verify** on every 🔴/🟡 yourself before writing. Remove the snapshot(s) afterwards (*Step 1b-e*).
 
 ---
 
@@ -533,13 +590,13 @@ Rules:
 - If a **context or hook** is changed, verify that all components using it still receive the correct contract.
 - If **prop mutation** is spotted (directly modifying a prop object), flag it as 🟡 — use a local `const` copy instead.
 - If the same **type is defined in more than one file**, flag it as a DRY violation.
-- **Cross-repo contracts (PRIIS):** when the diff touches one side, check the other side exists and agrees —
-  - a new/changed `SystemAction` member → member with `[Display(Name = "…")]` in backend `AccessRules/Actions/SystemAction.cs`, granted in the relevant `AccessRules/Roles/<Role>AccessRules.cs` `AllowedActions`; the frontend enum is regenerated from the OpenAPI snapshot (`src/enums/systemAction.ts` is a generated facade, never hand-edited), menu item and tab `systemActions` (the full checklist lives in both `copilot-instructions.md` files);
-  - an endpoint request/response change → the frontend's checked-in OpenAPI snapshot and RTK Query types match;
-  - an enum gaining/losing `[EmitOpenApiMetadata]`, `[Display]`, `[DisplayContext]` → frontend facade in `src/enums/` and generated `…Names` maps;
-  - the SignalR hub URL `/realtime/account` → unchanged, or changed in both repos;
-  - user-facing text and validation messages → Swedish.
+- **Cross-repo contracts:** when the diff touches one side of a contract the workspace rulebook documents, check the other side exists and agrees — typical shapes:
+  - a value shared by number or name across repos (an enum, a permission, a status code) → defined on the producing side and reflected on the consuming side, through the consumer's generated facade where one exists (generated files are regenerated, never hand-edited);
+  - an API request/response change → the consumer's checked-in API snapshot and generated client types match;
+  - a fixed URL or channel name (realtime hub, webhook, queue) → unchanged, or changed in every repo that uses it;
+  - user-facing text → in the product's working language, as the rulebook states it.
   A contract change with only one side in the reviewed PR(s) is a Spec or Standards finding even if the counterpart PR exists — name the counterpart and whether you reviewed it.
+- If a citation's line does **not** match what the user sees in the IDE, the user has edited the main checkout since the snapshot was taken — point them at the head in Review Context rather than re-reviewing the live tree.
 - If a **comment or XML `<summary>` narrates history or an incident** (PR/ticket numbers, "fixed the CI crash", "changed from X to Y", "why this fix works") or **cross-references sibling code as justification** ("mirrors X", "stricter than the Y export"), flag it as 🟢 — comments should state the code's current responsibility or a real constraint, not its backstory.
 - If a change alters what code does or needs but **leaves a now-inaccurate comment/doc in place** (e.g. a documented dependency that was removed), flag the stale comment as 🟡 — a wrong doc is worse than none.
 - When writing a plain-language explanation, the **"why this isn't a preference" beat is mandatory for every 🟡**. A design finding without it reads as style commentary and gets waved through. The strongest form is pointing at an existing code path in the same repo that already handles the case correctly.
