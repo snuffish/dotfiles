@@ -25,9 +25,32 @@ This skill adheres strictly to the **[core](../core/SKILL.md)** operating standa
 Parse the arguments **before** doing anything else:
 
 - **Preview mode (default)** — `/pr-summary`, `/pr-summary <branch>`, or `/pr-summary <base>`. Compose the summary and print it as a paste-ready block (Step 4). Nothing is written to any PR.
-- **Update mode** — the arguments contain the token `update` (e.g. `/pr-summary update`, or `/pr-summary update <branch>`). Compose the summary exactly as in preview mode, then push it to the **real, open PR** for the branch on the hosting platform (Step 5).
+- **Update mode** — the arguments contain the token `update` (e.g. `/pr-summary update`, or `/pr-summary update <branch>`). First commit and push any pending work (Step 0). Then compose the summary exactly as in preview mode and push it to the **real, open PR** for the branch on the hosting platform (Step 5).
 
 Any argument that is not the `update` keyword is still treated as the branch/base, exactly as before. If in doubt whether a token is a branch, treat it as the branch name.
+
+---
+
+## Step 0 — Sync the branch before composing
+
+A PR description has to describe the code the PR actually contains. If the work exists only in the working tree, or only in local commits, the summary would describe code reviewers cannot see. So **commit and push first, then compose**. In a multi-repo workspace, run this per repo that has a branch to summarise.
+
+```bash
+git status --short                                   # uncommitted work?
+git rev-list --count @{u}..HEAD 2>/dev/null          # local commits not pushed? (errors when no upstream)
+```
+
+1. **Uncommitted changes** — commit them before Step 1.
+   - Stage **selectively**: only the files that belong to this branch's change, never `git add -A` / `git add .`. Leave stray files out and name them in chat: generated output, local config, editor settings, scratch artifacts.
+   - Use the repo's commit convention, from its workflow skill or `CONTRIBUTING.md`, falling back to the recent `git log`. Example: `#<id>: <short English imperative description>`, with the work-item id taken from the branch name.
+   - Apply the attribution-trailer rule the project or profile sets; a project that forbids trailers overrides the harness default.
+   - Run the repo's fast pre-commit gates first when they are documented: a formatter, an import organiser on changed files, lint. A failing gate stops here and is reported; never commit around it.
+2. **Unpushed commits** — push them: `git push`, or `git push -u origin HEAD` when the branch has no upstream.
+3. **Nothing to sync** — continue silently.
+
+In **preview mode**, do not commit or push. Say instead that the summary covers changes that are not yet committed or pushed, and list them.
+
+Never amend, rebase or force-push existing commits here; add new commits only. Report what was committed and pushed (short SHA and subject per repo) before the summary block.
 
 ---
 
