@@ -131,7 +131,7 @@ The frontend never talks to the backend at build time; it reads the committed `s
 
 - Branch: `feature/<id>_<english-kebab-slug>` (`bugfix/`, `hotfix/` per the workflow skill). Note the underscore after the ID.
 - Commit subject and PR title, both repos: `#<id>: <short English imperative description>`. Single line. **No AI-attribution trailers** (`Co-Authored-By`, `🤖 Generated with …`) in commits or PR bodies — this overrides the harness default.
-- PR body: the repo's `docs/pull_request_template.md` composed with `pr-summary`, written to a temp file and passed by path. Draft PR. For a paired change, open the backend PR first and add `This PR relates to: !<other-pr-id>` to both descriptions.
+- PR body: invoke `/pr-summary` in preview mode per repo (it reads `docs/pull_request_template.md`), then follow the orchestrator's Phase 6a. Draft PR. For a paired change, open the backend PR first; the `This PR relates to: !<other-pr-id>` footer is filled once both IDs exist.
 - Work-item state after the PR exists: `Pull Request` — propose it, run it on a yes.
 
 ---
@@ -153,5 +153,5 @@ The frontend never talks to the backend at build time; it reads the committed `s
 | Codegen plugin | `src/codegen/openapi-metadata/` | `enum-metadata-plugin.ts` |
 | Swagger snapshot | hand-patch for small changes, then `npm run codegen` | blanket `codegen:refresh` |
 | Import tidy-up | `npm run organize-imports` (changed files only) | `organize-imports:all` |
-| PR body | temp file via `pr-summary` | inline `--description "…"` |
+| PR body | `/pr-summary` preview → temp file → cross-link after both PRs exist | hand-written body, inline `--description "…"` |
 | Commit subject | `#<id>: English imperative` | Swedish title, attribution trailers |

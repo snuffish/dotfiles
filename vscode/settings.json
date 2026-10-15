@@ -1061,5 +1061,11 @@
     "repositories": true,
     "searchAndCompare": false,
     "launchpad": true
+  },
+  "workbench.editorAssociations": {
+    "*.md": "vscode.markdown.preview.editor"
+  },
+  "workbench.diffEditorAssociations": {
+    "*.md": "default"
   }
 }

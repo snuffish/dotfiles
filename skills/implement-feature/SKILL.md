@@ -108,7 +108,7 @@ Research brief template (per repo):
 | Self-review against code and spec | [`/code-review`](../code-review/SKILL.md), [`/spec-verification`](../spec-verification/SKILL.md) |
 | Git and tracker conventions | the profile's workflow skills; else `CONTRIBUTING.md` and the PR template |
 | Branch, commit, push, draft PR | the profile's ship skill (held at the ship gate); else plain `git` + `gh` / `az repos` / `glab` |
-| PR body | [`pr-summary`](../pr-summary/SKILL.md) |
+| PR body: preview at the ship gate, cross-links after the PRs exist (Phase 6a) | [`/pr-summary`](../pr-summary/SKILL.md), invoked, not imitated |
 | Manual test steps | [`/manual-testing`](../manual-testing/SKILL.md) |
 | CI red after the PR is open | [`/pr-fix-pipeline`](../pr-fix-pipeline/SKILL.md) |
 
@@ -268,14 +268,42 @@ Fix 🔴 findings and re-run the affected Phase 4 checks. List 🟡 findings you
 
 Load the profile's ship and workflow skills, applying *Precedence* above. Stage selectively — never `git add -A`; skip a ship skill's re-run of format/build/test if Phase 4 passed on the same tree.
 
-Conventions come from the profile, else from `CONTRIBUTING.md` and the PR template, else these defaults:
+Conventions come from the profile, else from `CONTRIBUTING.md`, else these defaults:
 
 - Branch: `feature/<id>-<english-kebab-slug>` (`bugfix/`, `hotfix/` by ticket type).
 - Commit subject and PR title: `#<id>: <short English imperative description>`, single line.
 - Attribution trailers (`Co-Authored-By`, "Generated with …"): exactly what the profile or rulebook says; a project that forbids them overrides the harness default, a project that says nothing keeps it.
-- PR body: the repo's PR template composed with `pr-summary`, written to a temp file and passed by path (`gh pr create --body-file`, `az repos pr create --description "$(cat …)"`, `glab mr create --description-file`). Draft PR unless the profile says otherwise. For a paired change, open the producer PR first and cross-link both descriptions.
+- Draft PR unless the profile says otherwise. For a paired change, open the producer PR first.
 
-**Ship gate:** present branch name, the exact file list to stage, the commit message and the full PR body in chat. Wait for approval. Then commit, push, create the draft PR, and report the URL. Propose the ticket's "in review" state transition separately; run it on a yes.
+### 6a. PR body — invoke `/pr-summary`
+
+Every PR body comes from invoking [`pr-summary`](../pr-summary/SKILL.md) with the Skill tool, once per repo. Never hand-write a body "in its style". The skill owns:
+
+- the repo's PR template and its classification vocabulary;
+- the Key-impacts grouping;
+- the `---` footer, with `Resolved:` first and `This PR relates to:` last;
+- the 4000-character budget;
+- the temp file and the cross-link fill-in.
+
+Run it at two points:
+
+| When | How | Why |
+|------|-----|-----|
+| At the ship gate, before anything is committed | **Preview mode** (`/pr-summary <base>`), never `update` | `update` commits and pushes in its Step 0, which would get past the ship gate. Preview composes from the working-tree diff. Keep its block verbatim, with `!<other-pr-id>` placeholders for a paired change, and save it to a temp file. |
+| After every paired PR exists | Replace the placeholder in the approved temp file with the other repo's real PR id. Apply it with `pr-summary` §5.2–5.3: show the current description, update from the file, then read it back to verify. | This keeps the text the user approved. Use `/pr-summary update` only if the diff changed after the gate, and present the new body before writing it. |
+
+Create each PR from the preview's temp file, passed by path: `gh pr create --body-file`, `az repos pr create --description "$(cat …)"`, or `glab mr create --description-file`. Verification results, merge instructions and coordination prose go in the gate message and the walkthrough, never in the body.
+
+### 6b. Ship gate
+
+Present in chat:
+
+- the branch name;
+- the exact file list to stage;
+- the commit message;
+- the `/pr-summary` preview block for each repo.
+
+Wait for approval. Then commit, push, create the draft PR(s), fill the cross-links (6a), and report the URLs. Propose the ticket's "in review" state transition separately and run it only on a yes.
 
 ---
 
@@ -305,7 +333,7 @@ In chat: link the walkthrough and list the open items. Do not re-summarize the d
 | Contract changes | producer → snapshot/regenerate → consumer, producer PR first | editing generated client code by hand |
 | Migration verified by | applying it to a real local database | the test suite when it builds the schema itself |
 | Flaky failure | re-run alone; reproduce with the change stashed | re-running the whole suite until green |
-| PR body | temp file via `pr-summary` | inline description |
+| PR body | `/pr-summary` preview at the gate → temp file → cross-links via its §5.3 | a hand-written body, an inline description, `update` mode before the gate |
 | Task checklist | `## Task Checklist` in the plan artifact | a separate `task.md` |
 | Blind-spot pass | `/what-am-I-missing` on every plan before presenting; the #1 finding becomes a change, a checklist item and a test | a note under *Open Questions* only |
 | Blind-spot closure | Phase 5: each accepted finding → covering code + test `path:line` | re-running `/what-am-I-missing` on the diff |
