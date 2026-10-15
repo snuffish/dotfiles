@@ -22,16 +22,16 @@ skills/
 
 ## Inventory
 
-46 skills total — 23 general + 23 under `Projects/GR.PRIIS/`.
+47 skills total — 24 general + 23 under `Projects/GR.PRIIS/`.
 
 | Group                            | Count | Skills                                                                                                                |
 | -------------------------------- | :---: | -------------------------------------------------------------------------------------------------------------------- |
-| General (top level)              |  23   | `artifacts`, `clean`, `code-documentation`, `code-review`, `core`, `create-skill`, `explain`, `expressive`, `investigate`, `manual-testing`, `modern-csharp`, `organize`, `plan`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-summary`, `problem`, `refine`, `reload-skills`, `review`, `spec-verification`, `squash-ef-core-migrations`, `what-am-I-missing` |
+| General (top level)              |  24   | `artifacts`, `clean`, `code-documentation`, `code-review`, `core`, `create-skill`, `explain`, `expressive`, `implement-feature`, `investigate`, `manual-testing`, `modern-csharp`, `organize`, `plan`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-summary`, `problem`, `refine`, `reload-skills`, `review`, `spec-verification`, `squash-ef-core-migrations`, `what-am-I-missing` |
 | `GR.PRIIS/backend-*`             |   7   | `dry`, `ef-core`, `fastendpoints`, `notifications`, `signalr`, `testing`, `workflow`                                 |
 | `GR.PRIIS/frontend-*`            |   6   | `component-patterns`, `forms`, `routing`, `rtk-query`, `testing`, `workflow`                                          |
 | `GR.PRIIS/source-command-backend-*`  | 6 | `health-check`, `migrate-to-tunit` (retired — migration complete), `release-notes`, `scaffold`, `ship`, `verify`                                    |
 | `GR.PRIIS/source-command-frontend-*` | 3 | `health-check`, `scaffold`, `verify`                                                                                  |
-| `GR.PRIIS/` (unprefixed)         |   1   | `implement-feature`                                                                                                   |
+| `GR.PRIIS/implement-feature-*`   |   1   | `priis-profile` — project profile consumed by the general `implement-feature` orchestrator                             |
 
 (Skill names are the group prefix + the listed suffix — e.g. `backend-ef-core`, `source-command-frontend-verify`.)
 
@@ -56,6 +56,7 @@ Every **operational** skill (one that runs a workflow, mutates the repo, or writ
 | `backend-*`                                              | Specific to **GR.PRIIS.Backend** (.NET / FastEndpoints / EF Core).                                              |
 | `frontend-*`                                             | Specific to **GR.PRIIS.Frontend** (React / RTK Query / TanStack Router).                                        |
 | `source-command-backend-*` / `source-command-frontend-*` | Ported from a project slash-command (`.claude/commands/`); operational recipes rather than reference knowledge. |
+| `implement-feature-<project>-profile`                    | Project profile read by the general `implement-feature` orchestrator: resolved facts per phase (tracker, skills, verify, ship, contracts, known drift). |
 
 The `backend-`/`frontend-` prefix distinguishes the two apps within the single GR.PRIIS product folder, and keeps every skill name unique.
 
@@ -103,8 +104,8 @@ Get-ChildItem -Path "$env:USERPROFILE\.terminal\skills" -Filter "SKILL.md" -Recu
 
 (If the loader globs recursively — `skills/**/SKILL.md` — point it at this root directly and the grouping is honored as-is.)
 
-**Current live state:** All 46 skills are flat-symlinked into the flat skills directory (`~/.claude/skills`), each pointing back into this tree. Verify on macOS/Linux with:
+**Current live state:** All 47 skills are flat-symlinked into the flat skills directory (`~/.claude/skills`), each pointing back into this tree. Verify on macOS/Linux with:
 
 ```bash
-ls -la ~/.claude/skills | grep -c '\-> .*/.terminal/skills/'   # expect 46
+ls -la ~/.claude/skills | grep -c '\-> .*/.terminal/skills/'   # expect 47
 ```
