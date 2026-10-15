@@ -78,12 +78,23 @@ Do not use the host's own worktree tooling for this (Claude Code's `EnterWorktre
 
 **a. Resolve the head per repo in scope**
 
-| Scope | Head to snapshot |
-|---|---|
-| `branch` / `since <ref>` / default | `git -C <repo> rev-parse HEAD` |
-| PR whose branch is not checked out | `git -C <repo> fetch origin <sourceRefName>`, then `git -C <repo> rev-parse origin/<sourceRefName>` |
-| `working` | `SNAP=$(git -C <repo> stash create)` → head is `$SNAP` (its tree is the working tree) |
-| `staged` | `SNAP=$(git -C <repo> stash create)` → head is `$SNAP^2` (the second parent is the index) |
+| Scope | Head to snapshot | Source ref to record |
+|---|---|---|
+| `branch` / `since <ref>` / default | `git -C <repo> rev-parse HEAD` | `<local-branch>` |
+| PR whose branch is not checked out | `git -C <repo> fetch origin <sourceRefName>`, then `git -C <repo> rev-parse origin/<sourceRefName>` | `origin/<sourceRefName>` |
+| `working` | `SNAP=$(git -C <repo> stash create)` → head is `$SNAP` (its tree is the working tree) | `<local-branch> + working tree` |
+| `staged` | `SNAP=$(git -C <repo> stash create)` → head is `$SNAP^2` (the second parent is the index) | `<local-branch> + index` |
+
+`<local-branch>` is `git -C <repo> rev-parse --abbrev-ref HEAD` (`detached` when it prints `HEAD`). The snapshot is a detached worktree, so its own `HEAD` carries no branch name: capture the source ref **now**, before the SHA is all that is left, and carry it alongside the SHA everywhere the head is mentioned (Review Context, chat response, sub-agent prompts). A bare SHA or "snapshot `<sha>`" without the branch it came from is a defect in the review.
+
+Also record, per repo, the **main checkout's branch** and how it relates to the reviewed head — the user needs to know whether what they have locally is what was reviewed:
+
+```bash
+git -C <repo> rev-parse --abbrev-ref HEAD                          # main checkout's branch
+git -C <repo> rev-list --left-right --count <head>...HEAD          # "<behind> <ahead>" of local vs reviewed head
+```
+
+Report it as `same commit`, `local ahead N / behind M`, or `on <other-branch> — PR branch not checked out`.
 
 `git stash create` writes one unreferenced commit object and changes nothing else — not the index, not the working tree, not `git stash list`. An empty result means the tree is clean: the scope is empty, stop here. It does **not** capture untracked files: list them with `git -C <repo> ls-files --others --exclude-standard`, record them in the Review Context table under *Untracked, not in snapshot*, read them from the main checkout, and mark every citation into them `(live, untracked)` — their line numbers are not stable.
 
@@ -91,7 +102,8 @@ Do not use the host's own worktree tooling for this (Claude Code's `EnterWorktre
 
 ```bash
 # <tmp-root>: the session scratchpad when the host provides one, else ${TMPDIR:-/tmp}
-SNAP_DIR=<tmp-root>/code-review/<repo-dirname>/<short-sha>
+# <ref-slug>: the source ref with '/' → '-' (e.g. origin-feature-31085_permit-…), so a kept snapshot still names its branch
+SNAP_DIR=<tmp-root>/code-review/<repo-dirname>/<ref-slug>@<short-sha>
 git -C <repo> worktree prune                          # drop admin entries a crashed session left behind
 git -C <repo> worktree add --detach "$SNAP_DIR" <head>
 ```
@@ -116,7 +128,7 @@ git -C <repo> worktree remove --force "$SNAP_DIR"   # --force: the snapshot is d
 git -C <repo> worktree prune
 ```
 
-Say in the chat response that the snapshot was removed, or why it was kept (the user asked to keep it for a follow-up).
+Say in the chat response that the snapshot of `<source-ref> @ <short-sha>` was removed, or why it was kept (the user asked to keep it for a follow-up).
 
 **f. When no snapshot is possible**
 
@@ -277,7 +289,7 @@ git -C "$SNAP_DIR" diff <base>...HEAD --name-status
 git -C "$SNAP_DIR" log --oneline <base>..HEAD
 ```
 
-Remote refs are shared between the main checkout and the snapshot, so `origin/HEAD` and `<base>` resolve identically in both. Always use the **three-dot** form (`A...B`) so you see only the commits introduced by this branch, not divergent commits on the base. State the base and the snapshot head you used in the artifact header.
+Remote refs are shared between the main checkout and the snapshot, so `origin/HEAD` and `<base>` resolve identically in both. Always use the **three-dot** form (`A...B`) so you see only the commits introduced by this branch, not divergent commits on the base. State the base and the snapshot head — with the source ref it was taken from — in the artifact header.
 
 ---
 
@@ -477,7 +489,7 @@ If you edit the artifact after emitting the header, the line numbers have moved 
 
 Sections in this order, and **nothing after In Plain Terms**:
 
-1. `## Review Context` — a small table: PR(s) and work item(s) per repo, base and head reviewed, **Reviewed from** (`snapshot <short-sha> (removed)` / `snapshot <short-sha> (kept at <path>)` / `live checkout`), **Untracked, not in snapshot** (`working`/`staged` only: file list or "none"), Spec source (or "none available"), Standards sources loaded, mode (standard/deep).
+1. `## Review Context` — a small table: PR(s) and work item(s) per repo, base, **Head reviewed** per repo as `` `<source-ref>` @ `<short-sha>` `` (*Step 1b-a*) — e.g. `` Backend `origin/feature/31085_permit-…` @ `65c726bb` `` — never a bare SHA, **Reviewed from** (`` snapshot of `<source-ref>` @ `<short-sha>` (removed) `` / `… (kept at <path>)` / `` live checkout of `<branch>` ``), **Local checkout** per repo (its branch and `same commit` / `local ahead N / behind M` / `on <other-branch> — PR branch not checked out`), **Untracked, not in snapshot** (`working`/`staged` only: file list or "none"), Spec source (or "none available"), Standards sources loaded, mode (standard/deep).
 2. `## Summary of Changes` — 1–3 sentences on what the changes accomplish and their architectural intent.
 3. `## Findings Summary` — the summary table.
 4. `## Detailed Review Findings` — 🔴/🟡 findings with their fix inline, then `### 🟢 Minor Findings`, then `### 💙 Praise`.
@@ -575,7 +587,7 @@ Rules:
 `/code-review deep` runs each axis in its own sub-agent so one axis's context cannot mask another: code that follows every standard can still implement the wrong thing, and code that does exactly what the issue asked can still break conventions.
 
 1. **Do Steps 1–3 yourself first** — base resolved and non-empty diff confirmed, snapshot(s) created (*Step 1b*), Spec source fetched, Standards sources listed. Sub-agents must not re-resolve PRs, re-fetch work items, or create or remove worktrees.
-2. **Spawn the sub-agents in parallel** (one message, three calls). Each prompt includes the exact diff command prefixed with the snapshot (`git -C <snapshot> diff <base>...HEAD`), the commit list, the **snapshot path(s) — never the main checkout** — with the workspace path each one maps back to (*Step 1b-d*), and its axis brief:
+2. **Spawn the sub-agents in parallel** (one message, three calls). Each prompt includes the exact diff command prefixed with the snapshot (`git -C <snapshot> diff <base>...HEAD`), the commit list, the **snapshot path(s) — never the main checkout** — with the workspace path each one maps back to (*Step 1b-d*) and the source ref each was taken from, and its axis brief:
    - **Correctness** — "Find bugs, edge cases, race conditions, security and performance issues in this diff. Read whole files where the diff lacks context. For each: `path:line`, the failing path as a concrete sequence, proposed severity (🔴/🟡/🟢). Under 500 words."
    - **Standards** — include the list of Standards source files from Step 3 **and the smell baseline table pasted in full** (the sub-agent has no other access to it). "Report every place the diff violates a documented standard — cite the source file and rule — and any baseline smell you spot, labelled as a judgement call. A documented repo standard overrides the baseline. Check the listed cross-repo contracts on both sides. Skip anything tooling enforces. Under 500 words."
    - **Spec** — include the fetched spec/AC text (not a link). "Report: (a) requirements missing or partial; (b) behaviour in the diff that wasn't asked for; (c) requirements that look implemented but where the implementation looks wrong. Quote the spec line for each. Under 400 words." Skip this sub-agent when there is no Spec source, and say so.
