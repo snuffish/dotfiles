@@ -32,8 +32,8 @@ Generate a complete feature slice for a new frontend feature. Provide a short de
 
 Before generating, read:
 - The nearest existing endpoint builder file in the same domain (`source/priis-web/src/store/api/endpoint-builders/{domain}/index.ts`)
-- The existing `source/priis-web/src/store/api/index.ts` to understand how builders are wired and how hooks are exported
-- The existing `source/priis-web/src/store/api/tags.ts` to check if domain tags already exist
+- An existing domain's `source/priis-web/src/store/api/endpoint-builders/<domain>/api.ts` to see how builders are registered (`injectEndpoints`) and how hooks are exported
+- The domain's `source/priis-web/src/store/api/endpoint-builders/<domain>/tags.ts` to check if its tags already exist
 
 Ask for clarification if: the domain folder is unclear, or a form is involved but the request/response shape is not described.
 
@@ -43,7 +43,7 @@ Ask for clarification if: the domain folder is unclear, or a form is involved bu
 
 Based on the description, identify which of these apply:
 - [ ] New endpoint builder (always)
-- [ ] New tag in `tags.ts` (if domain doesn't have one yet)
+- [ ] New tag in the domain's `tags.ts` and its `<domain>Changed()` (if the domain doesn't have one yet)
 - [ ] Form schema + form component (if mutation with user input)
 - [ ] List/display component (if read query displaying data)
 - [ ] New route file (if a new page is needed)
@@ -58,8 +58,8 @@ Based on the description, identify which of these apply:
 Add to the existing domain file, or create a new one if the domain doesn't exist yet.
 
 ```typescript
-import { Builder } from '../..';
-import { Tags } from '../tags';
+import { Builder } from '../../base';
+import { Tags } from '../../tags';
 
 // Types (co-located or in a separate types.ts in the same folder)
 export type SupplierNote = {
@@ -81,7 +81,7 @@ export const listSupplierNotes = (builder: Builder) =>
             url: `suppliers/${supplierId}/notes`,
         }),
         providesTags: (_result, _error, { supplierId }) => [
-            { type: Tags.suppliers.notes, id: supplierId },
+            { type: suppliersTags.notes, id: supplierId },
         ],
     });
 
@@ -94,41 +94,46 @@ export const createSupplierNote = (builder: Builder) =>
             body: { content },
         }),
         invalidatesTags: (_result, _error, { supplierId }) => [
-            { type: Tags.suppliers.notes, id: supplierId },
+            { type: suppliersTags.notes, id: supplierId },
         ],
     });
 ```
 
-**Wire into api/index.ts:**
+**Register in the domain's `api.ts`** (same folder; never in `api/index.ts`):
 
 ```typescript
-// In the endpoints object:
-listSupplierNotes: suppliersBuilders.listSupplierNotes(builder),
-createSupplierNote: suppliersBuilders.createSupplierNote(builder),
+// source/priis-web/src/store/api/endpoint-builders/suppliers/api.ts
+export const suppliersApi = priisApi.injectEndpoints({
+    endpoints: (builder) => ({
+        // ...existing...
+        listSupplierNotes: listSupplierNotes(builder),
+        createSupplierNote: createSupplierNote(builder),
+    }),
+});
 
-// In the exports at the bottom:
 export const {
-    // ...existing exports...
+    // ...existing...
     useListSupplierNotesQuery,
     useCreateSupplierNoteMutation,
-} = priisApi;
+} = suppliersApi;
 ```
+
+A **new** domain folder also gets an `api.ts` (import `priisApi` from `'../../base'`, name it `<camelCasedFolder>Api`) and one line in `src/store/api/index.ts`: `export * from './endpoint-builders/<domain>/api';`.
 
 ---
 
 ## Step 4: Tags (if new domain)
 
-If the domain has no existing tags, add to `source/priis-web/src/store/api/tags.ts`:
+If the domain has no existing tags, add them to `source/priis-web/src/store/api/endpoint-builders/<domain>/tags.ts` (and the new type to that file's `<domain>Changed()`). A mutation that also writes another domain's data announces that domain's `<x>Changed()`; never import another domain's raw tags (lint-enforced, see `docs/adr/0001-api-domain-change-sets.md`):
 
 ```typescript
-// Inside the Tags object:
-supplierNotes: {
+export const supplierNotesTags = {
     all: tagOf('SupplierNotes'),
     listBySupplier: (supplierId: Guid) => tagOf('SupplierNotes', `List-${supplierId}`),
-},
+} as const;
 ```
 
-Add the new type string to the `tagTypes` array at the top of `source/priis-web/src/store/api/index.ts`:
+Add the new type string to the `tagTypes` array in `source/priis-web/src/store/api/base.ts`:
 
 ```typescript
 const tagTypes = [

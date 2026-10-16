@@ -109,7 +109,7 @@ The frontend never talks to the backend at build time; it reads the committed `s
 ### Frontend (verified 2026-10-14)
 
 - Zod is v4, imported as `import { z } from 'zod'`; `zodResolver` from `@hookform/resolvers/zod`. Do not copy the three legacy `'zod/v4'` imports.
-- Endpoint builders in `src/store/api/endpoint-builders/<domain>/index.ts`, wired into `src/store/api/index.ts` (`createApi` and the hook exports). New tag types go in its `tagTypes` array; `Tags` / `tagOf` live in `src/store/api/tags.ts`. Mutations declare `invalidatesTags`.
+- Endpoint builders in `src/store/api/endpoint-builders/<domain>/index.ts`, registered with `injectEndpoints` in the same folder's `api.ts`, which exports that domain's hooks; `src/store/api/index.ts` is only a barrel (one line per domain). `createApi`, the base query and the `tagTypes` array live in `src/store/api/base.ts`; each domain's tags live in its own `endpoint-builders/<domain>/tags.ts` (`tagOf` in `src/store/api/tags.ts`). Mutations declare `invalidatesTags`; a write to another domain's data announces `<domain>Changed()`, a query showing another domain's data provides its `<domain>Subscriptions` entry — never another domain's raw tags (lint-enforced, frontend `docs/adr/0001`).
 - Use path aliases (`~/components/form`, `~/components/buttons`, `~features/…`, `~enums`) over relative `../` imports — convention, not lint-enforced.
 - Route `staticData.type` is `'general' | 'resource' | 'tab'`; resource pages also set `pageCode` and `highlightedMenuLink`.
 - Test IDs come from `e2e/test-ids.ts` via `$e2e/test-ids` — the only `e2e/` import ESLint allows in `src/`.

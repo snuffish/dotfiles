@@ -1,6 +1,6 @@
 ---
 name: pr-post-comments
-description: Posts already-drafted pull-request feedback to the PR host — /code-review findings as new inline threads anchored to the right file and line range, the 🟢 minor findings as one standalone non-blocking comment per PR, /pr-feedback-review "ready-to-send" replies into existing threads, and general (file-less) PR comments. Routes items across several PRs when one review spans repos, and supports a clean re-post after the user deleted earlier threads. Azure DevOps and GitHub. Resolves the PR and its latest iteration/commit, verifies every anchor against the PR head (not the local checkout), skips anything already posted, dry-runs the exact payloads, posts one and verifies its anchor before the rest, and records the thread ids back into the source artifact. Never resolves threads, votes, or edits the PR description unless that is also asked. Trigger on /pr-post-comments, "post the findings to the PR", "post these review comments", "create the PR threads", "reply to the threads in the PR", "also post the new findings", "post the minor findings as one comment", "I deleted the comments, post them again clean".
+description: Posts already-drafted pull-request feedback to the PR host — /code-review findings as new inline threads anchored to the right file and line range, the 🟢 minor findings as one standalone non-blocking comment per PR, /pr-feedback-review "ready-to-send" replies into existing threads, and general (file-less) PR comments. Routes items across several PRs when one review spans repos, and supports a clean re-post after the user deleted earlier threads. Azure DevOps and GitHub. Resolves the PR and its latest iteration/commit, verifies every anchor against the PR head (not the local checkout), skips anything already posted, dry-runs the exact payloads, posts one and verifies its anchor before the rest, and records the thread ids back into the source artifact. `/pr-post-comments draft` stops after the dry run and shows the exact comments, and posts them only when the user approves in a later message. Never resolves threads, votes, or edits the PR description unless that is also asked. Trigger on /pr-post-comments, "draft the PR comments first", "show me the comments before posting", "post the findings to the PR", "post these review comments", "create the PR threads", "reply to the threads in the PR", "also post the new findings", "post the minor findings as one comment", "I deleted the comments, post them again clean".
 ---
 
 # Skill: `/pr-post-comments` — Post Drafted Feedback to a Pull Request
@@ -12,7 +12,7 @@ Turns feedback that has already been written and read by the user — review fin
 ## ⛔ Mandatory Invariants
 
 > [!CAUTION]
-> 1. **POST ONLY ON AN EXPLICIT REQUEST IN THE CURRENT MESSAGE.** `/pr-post-comments` or "post …" is that request. Approval to post one batch does not carry over to a later batch. Drafting is the default everywhere else.
+> 1. **POST ONLY ON AN EXPLICIT REQUEST IN THE CURRENT MESSAGE.** `/pr-post-comments` or "post …" is that request. `/pr-post-comments draft` is **not**: it ends at the dry run, and posting needs a later message approving that draft (see *Modes*). Approval to post one batch does not carry over to a later batch. Drafting is the default everywhere else.
 > 2. **POST ONLY WHAT WAS DRAFTED AND SHOWN TO THE USER.** Reformat for the PR (see *Step 4*), never rewrite the substance, add findings, or translate unless asked.
 > 3. **NEVER RESOLVE, CLOSE, VOTE, OR EDIT THE PR DESCRIPTION** unless that exact action is also asked for. New threads are posted **active**.
 > 4. **A DENIED POST IS FINAL FOR THIS TURN.** If the permission system blocks the write, do not route around it (other tools, other CLIs, a test runner). Leave the dry-run payloads in place and hand the user the exact command — see *Step 6*.
@@ -28,10 +28,28 @@ This skill adheres strictly to the **[core](../core/SKILL.md)** operating standa
 
 ---
 
+## Modes
+
+| Invocation | Mode | What happens |
+|---|---|---|
+| `/pr-post-comments [what] [pr]` | **Post** (default) | Steps 1–7: dry run, post one and verify it, post the rest, record the ids |
+| `/pr-post-comments draft [what] [pr]` | **Draft** | Steps 1–4, then *Step 5* items 1–2 (dedupe, dry run), then **stop** and show the *Draft preview*. No host writes |
+
+**Draft mode is also the default** when the user's standing instructions (memory, `CLAUDE.md`) say PR comments must be approved before posting, or when the request asks to see them first ("draft the comments", "show me before you post").
+
+**After a draft:**
+
+- **Approval:** "post", "go", "post 1–3" or a bare `/pr-post-comments` in a later message. It covers exactly the drafted payloads, or the subset named.
+  - Before posting, re-run *Step 2*. If the PR head moved since the dry run, re-verify the anchors (*Step 3*) and show the changed items again instead of posting.
+  - Re-run the *Step 5* dedupe, then continue at *Step 5* item 3.
+- **Changes:** for "change item 3 to …" or "drop the 🟢 block", regenerate those payloads, show the preview again and wait. Approval of an earlier preview does not cover a changed one.
+
+---
+
 ## 1. When to Use
 
 Invoke this skill whenever:
-- The user runs `/pr-post-comments [what] [pr]`.
+- The user runs `/pr-post-comments [draft] [what] [pr]`.
 - After `/code-review`: "post the findings", "post 🟡 1–5 as threads", "also post the new findings".
 - After `/pr-feedback-review`: "reply to the threads", "send the drafted replies".
 - "Leave a general comment on the PR saying …" with the text already agreed.
@@ -126,7 +144,7 @@ The artifact's *🟢 Minor Findings* list becomes **one general comment per PR**
    gh api repos/<owner>/<repo>/pulls/<n>/comments --paginate --jq '.[].body'
    ```
    On Azure DevOps, deleted threads stay in the list with `isDeleted: true` (or with every comment deleted). CI bots (e.g. coverage checks) post their own threads. Neither counts as "already posted". The artifact's *Posted to PR* row is a hint, not the truth: the user may have deleted those threads. Trust the live list.
-2. **Spec + dry run.** Copy [`templates/post_pr_comments.py`](templates/post_pr_comments.py) into `<scratchpad>/pr<id>/`, write `spec.json` beside it (format in the script's docstring), and run `python3 -I post_pr_comments.py spec.json`. It writes one payload file per item and prints each anchor; check them before posting.
+2. **Spec + dry run.** Copy [`templates/post_pr_comments.py`](templates/post_pr_comments.py) into `<scratchpad>/pr<id>/`, write `spec.json` beside it (format in the script's docstring), and run `python3 -I post_pr_comments.py spec.json`. It writes one payload file per item and prints each anchor; check them before posting. **In draft mode, stop here** and give the *Draft preview* (see *Output Format*).
 3. **Post one, verify.** `--post --only <first-key>`, then fetch that thread and confirm the anchor landed on the intended lines. For a multi-repo batch, verify the first thread **per PR**. A general comment has no anchor: confirm `threadContext` is null, the status is active, and the first line is the title.
    ```bash
    az devops invoke … --resource pullRequestThreads --route-parameters … threadId=<id> --api-version 7.1 --query threadContext
@@ -158,7 +176,29 @@ Append to the row on later batches; never rewrite earlier entries. A clean re-po
 
 ## 3. Output Format & Deliverables
 
-Chat response, nothing else:
+Chat response, nothing else.
+
+### Draft preview (draft mode)
+
+Show each item exactly as it will be posted, grouped per PR, so approval is given on the real text:
+
+````markdown
+**Draft — nothing posted yet.** Reply "post" to send all, "post 1,3" for a subset, or tell me what to change.
+
+### GR.PRIIS.Frontend !18658 (iteration 2, `edad93b7`)
+
+**1 · reply to #110660** · `-operation-response-rate-category-card.tsx:52`
+> <the full comment body, verbatim as in the payload>
+
+**2 · new thread** · `GetOperationResponseRateStatisticsEndpoint.cs:61-63`
+> …
+
+Skipped: <key> already posted on a live thread (#<id>) · <key> outside the diff, so it becomes a general comment
+````
+
+End the preview with the payload directory's absolute path, so the user can open the files.
+
+### After posting
 
 - One line per posted item: key, `path:line` (clickable, workspace-relative), host thread/comment id.
 - Skipped items with the reason (already posted, outside the diff → posted as general comment, anchor drift → asked).
@@ -174,3 +214,4 @@ Chat response, nothing else:
 - Re-listing threads shows no duplicate titles among live threads, on every PR in the batch.
 - Each PR's minor-findings comment holds only that PR's items, and every item from the artifact's list (the "+N more" tail included) appears in exactly one of them.
 - No thread was resolved, no vote cast, and the PR description is unchanged unless asked.
+- **Draft mode:** no `--post` run and no host write in the draft turn. What was posted after approval matches the previewed payloads byte for byte, or was shown again after a change or a head move.
