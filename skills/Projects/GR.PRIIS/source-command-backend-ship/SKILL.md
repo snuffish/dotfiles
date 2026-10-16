@@ -23,13 +23,14 @@ Ship your current work in one go: create or confirm a branch, run pre-commit val
 
 This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating standards and the **[artifacts](../../../artifacts/SKILL.md)** delivery protocol.
 - **Target Artifact**: none — the deliverables are the commit, the push and the draft PR. Mutating by design: stage only files the user confirmed, never force-push.
+- **Repo root** (per [`git-worktrees`](../../../git-worktrees/SKILL.md) §3): the `repo-root` of a `[worktree-context]` block handed in by the caller (e.g. `/implement-feature` shipping from its workspace worktree) when one is present; otherwise `git rev-parse --show-toplevel` from the current working directory. Every command below is `git -C <repo-root>`. Never `checkout`, `add`, `commit` or `push` against a root you did not resolve this way — the user's main checkout is read-only while a worktree is active (core §2.4). If no block was handed in but `git -C <repo> worktree list --porcelain` shows a **locked** worktree whose reason begins with `claude-skill:` for the same work item or branch, stop and ask which tree to ship.
 
 ---
 
 ## Step 1 — Detect environment and repository
 
-Determine the repo root: run `git rev-parse --show-toplevel` from the current working directory.
-Check which repository you are working in (using the directory name or git remote URL):
+Determine the repo root per *Repo root* above: the handed-in `repo-root`, else `git rev-parse --show-toplevel` from the current working directory.
+Check which repository you are working in (using the directory name or git remote URL — in a worktree the directory is `<repo>/.claude/worktrees/<slug>`, so prefer the remote URL):
 
 - **Backend** if directory/remote is `GR.PRIIS.Backend`
 - **Frontend** if directory/remote is `GR.PRIIS.Frontend`
@@ -77,12 +78,14 @@ Derive the branch name from the work item:
 Full format: `<prefix>/<id>_<english-kebab-slug>` (e.g., `feature/30048_add-oppenvard-barn-q4`)
 *Slug rules: English only, kebab-case (hyphens, no underscores after the ID).*
 
-- If already on a correctly named branch → confirm and continue.
-- If on any other branch: show the proposed branch name, ask the user to confirm or adjust, then check out:
+- If already on a correctly named branch → confirm and continue. A workspace worktree is always already on its branch (`git-worktrees` §5a created it), so this is the normal case under `/implement-feature`; never `checkout -b` there.
+- If on any other branch **and no `[worktree-context]` was handed in**: show the proposed branch name, ask the user to confirm or adjust, then check out:
 
   ```bash
   git -C <repo-root> checkout -b <branch-name>
   ```
+
+  If `<branch-name>` already exists, say where it is checked out (`git -C <repo-root> worktree list`) and ask instead of forcing.
 
 ---
 
@@ -161,8 +164,8 @@ Otherwise:
    - `feature/` and `bugfix/` → `main`
    - `hotfix/` → the `release/X.Y.Z` branch it was cut from
 2. **Generate the PR body using the `pr-summary` skill:**
-   - Load and follow the `pr-summary` skill (`../../../pr-summary/SKILL.md`) in full.
-   - Use `git diff $(git merge-base HEAD origin/main)...HEAD` to compute the diff for the branch.
+   - Load and follow the `pr-summary` skill (`../../../pr-summary/SKILL.md`) in full, handing it the same `[worktree-context]` block (if any) so its Step 0 and diff run against `<repo-root>`.
+   - Use `git -C <repo-root> diff $(git -C <repo-root> merge-base HEAD origin/main)...HEAD` to compute the diff for the branch.
    - Compose the PR body following all rules from the `pr-summary` skill (classification, summary, key impacts, resolved line).
    - English in both repositories.
    - End with `Resolved: #<id>`.

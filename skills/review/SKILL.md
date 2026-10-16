@@ -1,6 +1,6 @@
 ---
 name: review
-description: Conducts a thorough, read-only architectural and technical review of an implementation plan, design proposal, or PR without executing or modifying code. STRICT INVARIANT: NEVER proceeds or implements changes without an explicit /proceed command.
+description: "Conducts a thorough, read-only architectural and technical review of an implementation plan, design proposal, or PR without executing or modifying code. STRICT INVARIANT: NEVER proceeds or implements changes without an explicit /proceed command."
 ---
 
 # Skill: `/review` — Strict Plan & Design Review

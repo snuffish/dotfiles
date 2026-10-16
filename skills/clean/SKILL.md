@@ -16,6 +16,7 @@ This skill adheres strictly to the **[core](../core/SKILL.md)** operating standa
 - **Single-file target (default)**: `/clean` is itself the authorization to edit the target file — apply edits directly, no implementation plan or `/proceed` gate. Report with the chat summary in §5.
 - **Directory / multi-file target**: write `<prefix>-clean_report-<suffix>.md` at the **workspace root** (prefix and suffix resolved per the [artifacts](../artifacts/SKILL.md) protocol, suffix derived from the target, e.g. `-audit-endpoint`), list the per-file findings, and clean the files one at a time with verification between each.
 - **Blast radius**: edits stay inside the target file. The only permitted edits elsewhere are mechanical consequences of a verified removal (a barrel re-export line, an `__all__` entry, a stale JSDoc/XML-doc reference) — each one listed in the summary. Anything else found outside the target goes under *Suggestions*, not into the diff.
+- **Isolation**: when the invocation contains `worktree` or `/git-worktrees` (e.g. `/clean <file> /git-worktrees`), or when running under `/implement-feature`, edits happen in a workspace worktree per [`git-worktrees`](../git-worktrees/SKILL.md) §5 and the target path is resolved under its `repo-root`; otherwise in place as today. Honour a handed-in `[worktree-context]` block: `git diff --stat` and `git checkout -- <file>` in §3 run as `git -C <repo-root>`, never against the user's main checkout (core §2.4).
 
 ---
 
@@ -117,8 +118,11 @@ Before touching any `export`, `public`, or `internal` symbol:
 
    ```bash
    rg -n -w 'SymbolName' <workspace-root> \
-     -g '!**/node_modules/**' -g '!**/bin/**' -g '!**/obj/**' -g '!**/dist/**'
+     -g '!**/node_modules/**' -g '!**/bin/**' -g '!**/obj/**' -g '!**/dist/**' \
+     -g '!**/.claude/worktrees/**'
    ```
+
+   The last glob keeps active `git-worktrees` worktrees (`<repo>/.claude/worktrees/<slug>`) from counting as consumers — their copy of every symbol would make each export look used. `rg` already skips the hidden `.claude/` directory and honours the `.git/info/exclude` entry the worktree skill writes; the glob protects `--hidden` runs, `grep -r` / `find` fallbacks, and repos where that entry is missing.
 
 3. **Follow the indirections grep misses on a plain name search:**
    - Barrels: `export * from './file'` and `export { Foo } from './file'` — then search consumers of the barrel path/alias.

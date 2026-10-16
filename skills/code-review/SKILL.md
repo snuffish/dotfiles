@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Perform a structured, high-quality review of code changes along three axes — Correctness (bugs, security, performance), Standards (does the code follow this repo's documented conventions and cross-repo contracts?) and Spec (does it implement what the PR / work item / acceptance criteria asked for?). Accepts an optional pull-request URL/ID, work-item ID, or fixed point ("since main", a SHA, a tag) — and resolves the PR from the current branch when none is given. `deep` runs the axes as parallel sub-agents. Reviews from a detached snapshot worktree by default so the user can keep editing the main checkout meanwhile; `live` opts out. Project-agnostic: conventions and cross-repo contracts come from the workspace's own rulebooks and project-scoped skills. Use when the user asks for a code review, PR review, "review since X", or feedback on a branch or working changes.
+description: "Perform a structured, high-quality review of code changes along three axes — Correctness (bugs, security, performance), Standards (does the code follow this repo's documented conventions and cross-repo contracts?) and Spec (does it implement what the PR / work item / acceptance criteria asked for?). Accepts an optional pull-request URL/ID, work-item ID, or fixed point (\"since main\", a SHA, a tag) — and resolves the PR from the current branch when none is given. `deep` runs the axes as parallel sub-agents. Reviews from a detached snapshot worktree by default so the user can keep editing the main checkout meanwhile; `live` opts out. Project-agnostic: conventions and cross-repo contracts come from the workspace's own rulebooks and project-scoped skills. Use when the user asks for a code review, PR review, \"review since X\", or feedback on a branch or working changes."
 ---
 
 # Code Review Skill
@@ -15,7 +15,7 @@ Use this skill whenever the user requests a code review, feedback on a pull requ
 > **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
 >
 > 1. **MANDATORY .MD ARTIFACT & SUMMARY (NO EXCUSES):** Every single `/code-review` response MUST ALWAYS write or update the complete review report as `<prefix>-code_review-<suffix>.md` **at the workspace root**, and begin the response with a clickable link to it plus clickable section anchors, built exactly as *Artifact Links* below specifies. If an active `<prefix>-implementation_plan-<suffix>.md` exists, link that too. The user frequently needs to click and open it in the IDE.
-> 2. **DO NOT MODIFY CODE OR THE MAIN WORKING TREE:** Never edit code files, stage commits, run migrations, check out branches, `git stash push`/`pop`, or execute any command that changes the main checkout during or immediately after a `/code-review`. The **only** git writes allowed are the ones in *Step 1b — Review snapshot*: `git fetch`, `git stash create` (writes one unreferenced commit object, nothing else) and `git worktree add --detach` / `remove` / `prune` on a snapshot directory **outside** the repo. If the tree is not the one to review, snapshot the right ref instead of checking it out (see *Get the right code into the snapshot*).
+> 2. **DO NOT MODIFY CODE OR THE MAIN WORKING TREE:** Never edit code files, stage commits, run migrations, check out branches, `git stash push`/`pop`, or execute any command that changes the main checkout during or immediately after a `/code-review`. The **only** git writes allowed are the ones [`git-worktrees`](../git-worktrees/SKILL.md) snapshot mode performs (*Step 1b*): `git fetch`, `git stash create` (writes one unreferenced commit object, nothing else) and `git worktree add --detach` / `remove` / `prune` on a snapshot directory **outside** the repo. If the tree is not the one to review, snapshot the right ref instead of checking it out (see *Get the right code into the snapshot*).
 > 3. **DO NOT AUTO-PROCEED:** Never begin implementing fixes or refactorings automatically. Wait for explicit user instruction or `/proceed`.
 > 4. **NO UNVERIFIED FINDINGS:** Every 🔴/🟡 must survive Step 6 (*Verify*) before it is written.
 
@@ -26,6 +26,7 @@ Use this skill whenever the user requests a code review, feedback on a pull requ
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
 - **Target Artifact**: `<prefix>-code_review-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
 - **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` (e.g. `-18176-contract-templates`, `-category-demand-statistics`). Never write unsuffixed or un-modeled generic files, and never copy another model's review under your own prefix — a review file must be the output of the model it names.
+- **Repo root** (per [`git-worktrees`](../git-worktrees/SKILL.md) §3): the `repo-root` of a `[worktree-context]` block handed in by the caller when one is present (e.g. `/implement-feature` reviewing its own workspace worktree); otherwise the workspace repo(s) you discover yourself. Before any `git status`, `stash create` or `rev-parse HEAD`, confirm the target is that root. If no block was handed in but `git -C <repo> worktree list --porcelain` shows a **locked** worktree whose reason begins with `claude-skill:` for the same ticket or branch, stop and ask which tree is meant. With a workspace block, *Review Context* reports the worktree's branch as the reviewed head and the user's main-checkout branch separately as "not reviewed".
 
 ---
 
@@ -74,7 +75,7 @@ Whatever the base, confirm it resolves (`git rev-parse <base>`) and the diff is 
 
 The review never reads the main checkout. It pins a head per repo in scope, materialises that head in a **detached `git worktree` outside the repo**, and reads everything from there. The user may keep editing the main checkout the whole time; nothing in the review may depend on it. `/code-review live …` skips this step and reads the main checkout as-is.
 
-Do not use the host's own worktree tooling for this (Claude Code's `EnterWorktree`, sub-agent worktree isolation): it acts on the repository of the current directory — in a multi-repo workspace whose root is itself a repo that does not track the sub-projects, that is an empty shell — and it moves the session's working directory, which the artifact links depend on. Plain `git -C <repo> worktree …` keeps the session at the workspace root and handles any number of repos.
+The lifecycle — create, read, map paths back, remove, fallback — is **[`git-worktrees`](../git-worktrees/SKILL.md) §4 (snapshot mode)** with `<skill>=code-review`; follow it rather than this page for the mechanics. (It also explains why the host's own worktree tooling is not used: it acts on the launch repository and moves the session's working directory, which the artifact links depend on.) What stays review-specific is below: which head each scope pins, the source-ref rule, the main-checkout relation, and untracked files.
 
 **a. Resolve the head per repo in scope**
 
@@ -98,41 +99,14 @@ Report it as `same commit`, `local ahead N / behind M`, or `on <other-branch> �
 
 `git stash create` writes one unreferenced commit object and changes nothing else — not the index, not the working tree, not `git stash list`. An empty result means the tree is clean: the scope is empty, stop here. It does **not** capture untracked files: list them with `git -C <repo> ls-files --others --exclude-standard`, record them in the Review Context table under *Untracked, not in snapshot*, read them from the main checkout, and mark every citation into them `(live, untracked)` — their line numbers are not stable.
 
-**b. Create the snapshot**
+**b–f. Create, read, map, remove, fall back** — `git-worktrees` §4b–f, with these review invariants on top:
 
-```bash
-# <tmp-root>: the session scratchpad when the host provides one, else ${TMPDIR:-/tmp}
-# <ref-slug>: the source ref with '/' → '-' (e.g. origin-feature-31085_permit-…), so a kept snapshot still names its branch
-SNAP_DIR=<tmp-root>/code-review/<repo-dirname>/<ref-slug>@<short-sha>
-git -C <repo> worktree prune                          # drop admin entries a crashed session left behind
-git -C <repo> worktree add --detach "$SNAP_DIR" <head>
-```
-
-If `$SNAP_DIR` already exists and `git -C "$SNAP_DIR" rev-parse HEAD` equals `<head>`, reuse it; otherwise remove it first. One snapshot per repo in scope — a two-repo review has two. Snapshots live outside the repos on purpose: nothing shows up in `git status` and no `.gitignore` entry is needed.
-
-**c. Read from the snapshot**
-
-- Every diff, `git log`, grep and whole-file read runs with `-C "$SNAP_DIR"` or on paths under it. Inside the snapshot `HEAD` **is** the reviewed head and remote refs are shared, so the commands in this skill (`git diff <base>...HEAD`, `git log --oneline <base>..HEAD`) are unchanged apart from `-C`.
-- A code-intelligence index (e.g. CodeGraph) covers the main checkout only. Use it for **navigation** — callers, blast radius, where a symbol lives — then open the same file in the snapshot for the **citation**. When the main checkout's `HEAD` equals the snapshot head and its `git status` is clean, index lines are exact and may be cited directly; say which case applied in the Review Context table.
-
-**d. Map paths back (mandatory)**
-
-Before any `path:line` reaches the artifact or the chat, replace the `$SNAP_DIR` prefix with the repo's workspace-relative path (`<repo-dirname>/…`). A link into `<tmp-root>` is a defect in the review. The reviewed head recorded in Review Context is what gives the line numbers meaning if the user has edited since.
-
-**e. Remove the snapshot**
-
-After the artifact is written and the header links are emitted — in deep mode, after every sub-agent has returned and Step 6 is done:
-
-```bash
-git -C <repo> worktree remove --force "$SNAP_DIR"   # --force: the snapshot is disposable, nothing of the user's lives there
-git -C <repo> worktree prune
-```
-
-Say in the chat response that the snapshot of `<source-ref> @ <short-sha>` was removed, or why it was kept (the user asked to keep it for a follow-up).
-
-**f. When no snapshot is possible**
-
-Specific files that were never committed, a directory that is not a git repository, or a failing `git worktree add` → fall back to `live`, record `live checkout` in Review Context, and warn that edits during the review invalidate line numbers.
+- `SNAP_DIR=<scratchpad>/code-review/<repo-dirname>/<ref-slug>@<short-sha>`; one snapshot per repo in scope — a two-repo review has two. `$SNAP_DIR` is the `repo-root` of the snapshot's `[worktree-context]`.
+- Inside the snapshot `HEAD` **is** the reviewed head and remote refs are shared, so the commands in this skill (`git diff <base>...HEAD`, `git log --oneline <base>..HEAD`) are unchanged apart from `-C "$SNAP_DIR"`.
+- **The source ref travels with the SHA everywhere** — Review Context, chat response, sub-agent prompts.
+- **No `<scratchpad>` path reaches the artifact or the chat**: map every `path:line` to `<repo-dirname>/…` first (§4d). The reviewed head recorded in Review Context is what gives the line numbers meaning if the user has edited since. When CodeGraph lines are cited directly (main checkout `HEAD` equals the snapshot head and `git status` is clean), say so in the Review Context table.
+- Remove after the artifact is written and the header links are emitted — in deep mode, after every sub-agent has returned and Step 6 is done — and say in the chat response that the snapshot of `<source-ref> @ <short-sha>` was removed, or why it was kept.
+- When no snapshot is possible (§4f), fall back to `live`, record `live checkout` in Review Context, and warn that edits during the review invalidate line numbers.
 
 ### Pull-Request References
 
@@ -586,12 +560,12 @@ Rules:
 
 `/code-review deep` runs each axis in its own sub-agent so one axis's context cannot mask another: code that follows every standard can still implement the wrong thing, and code that does exactly what the issue asked can still break conventions.
 
-1. **Do Steps 1–3 yourself first** — base resolved and non-empty diff confirmed, snapshot(s) created (*Step 1b*), Spec source fetched, Standards sources listed. Sub-agents must not re-resolve PRs, re-fetch work items, or create or remove worktrees.
-2. **Spawn the sub-agents in parallel** (one message, three calls). Each prompt includes the exact diff command prefixed with the snapshot (`git -C <snapshot> diff <base>...HEAD`), the commit list, the **snapshot path(s) — never the main checkout** — with the workspace path each one maps back to (*Step 1b-d*) and the source ref each was taken from, and its axis brief:
+1. **Do Steps 1–3 yourself first** — base resolved and non-empty diff confirmed, snapshot(s) created (*Step 1b*), Spec source fetched, Standards sources listed. Sub-agents must not re-resolve PRs, re-fetch work items, or create, remove, lock or unlock worktrees (`git-worktrees` invariant 5).
+2. **Spawn the sub-agents in parallel** (one message, three calls). Each prompt includes the exact diff command prefixed with the snapshot (`git -C <snapshot> diff <base>...HEAD`), the commit list, the snapshot's **`[worktree-context]` block per repo** (`repo-root` = the snapshot path, **never the main checkout**; `workspace-path` = what every cited path maps back to; `source-ref` = where the head came from), and its axis brief:
    - **Correctness** — "Find bugs, edge cases, race conditions, security and performance issues in this diff. Read whole files where the diff lacks context. For each: `path:line`, the failing path as a concrete sequence, proposed severity (🔴/🟡/🟢). Under 500 words."
    - **Standards** — include the list of Standards source files from Step 3 **and the smell baseline table pasted in full** (the sub-agent has no other access to it). "Report every place the diff violates a documented standard — cite the source file and rule — and any baseline smell you spot, labelled as a judgement call. A documented repo standard overrides the baseline. Check the listed cross-repo contracts on both sides. Skip anything tooling enforces. Under 500 words."
    - **Spec** — include the fetched spec/AC text (not a link). "Report: (a) requirements missing or partial; (b) behaviour in the diff that wasn't asked for; (c) requirements that look implemented but where the implementation looks wrong. Quote the spec line for each. Under 400 words." Skip this sub-agent when there is no Spec source, and say so.
-   - All sub-agents are **read-only**: no edits, no checkouts, no worktree commands, no installs, builds or tests. They read only the snapshot and report `path:line` already mapped to the workspace path.
+   - All sub-agents are **read-only**: no edits, no checkouts, no worktree commands, no installs, builds or tests. They read only under `repo-root` and report `path:line` already mapped to `workspace-path`.
 3. **Aggregate** into the single artifact: de-duplicate findings raised by more than one axis (keep the axis that owns the root cause), assign final severities within each axis, re-check that no citation points into a snapshot directory, then run **Step 6 — Verify** on every 🔴/🟡 yourself before writing. Remove the snapshot(s) afterwards (*Step 1b-e*).
 
 ---

@@ -15,6 +15,7 @@ This skill adheres strictly to the **[core](../core/SKILL.md)** operating standa
 - **Target Artifact** (when requested or providing an in-depth review): `<prefix>-expressive-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
 - **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` derived from the target component or refactoring topic (e.g. `-ticket-category`, `-review-ratings`). Never write unsuffixed or un-modeled generic files.
 - When asked directly on specific code lines (e.g. *"make lines 168–174 more expressive"*), propose and apply the clean refactoring directly to the file while explaining the transformation.
+- **Isolation**: when the invocation contains `worktree` or `/git-worktrees` (e.g. `/<skill> <request> /git-worktrees`), or when running under `/implement-feature`, edits happen in a workspace worktree per [`git-worktrees`](../git-worktrees/SKILL.md) §5 (the main checkout stays read-only, core §2.4); otherwise in place as today. Honour a handed-in `[worktree-context]` block: every `git` command and every file path resolves under its `repo-root`.
 
 ---
 

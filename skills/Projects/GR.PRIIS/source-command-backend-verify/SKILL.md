@@ -11,6 +11,7 @@ Use this skill when the user asks to run the migrated source command `verify`.
 
 This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating standards and the **[artifacts](../../../artifacts/SKILL.md)** delivery protocol.
 - **Target Artifact**: none — the PASS/FAIL table is printed in chat. Read-only apart from `dotnet format`, which only rewrites files you already changed.
+- **Repo root** (per [`git-worktrees`](../../../git-worktrees/SKILL.md) §3): `<repo-root>` is the `repo-root` of a `[worktree-context]` block handed in by the caller when one is present (e.g. `/implement-feature` verifying its workspace worktree); otherwise the backend repo in the workspace. Every `dotnet` command below runs from `<repo-root>` — `(cd <repo-root> && dotnet …)` in a subshell, so the session's working directory never moves. A worktree lacks the ignored `appsettings.local.json` files; the profile's *Worktree include list* copies them before this skill runs, otherwise the integration suite targets the wrong database.
 
 ---
 
@@ -18,7 +19,7 @@ This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating 
 
 # /verify — Quality Gate
 
-Run all phases before `git add / git commit`. Report PASS/FAIL for each phase and a final verdict.
+Run all phases before `git add / git commit`, from `<repo-root>`. Report PASS/FAIL for each phase and a final verdict.
 
 ---
 

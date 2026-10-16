@@ -7,7 +7,7 @@ description: "[Project: GR.PRIIS] Project profile consumed by the general /imple
 
 Reference data for the general [`/implement-feature`](../../../implement-feature/SKILL.md) orchestrator. It does not own phases, gates or sub-agent rules — those are the orchestrator's. Each section below is keyed to the orchestrator's phase it feeds. Facts marked *verified <date>* were checked against the code on that date; when the code has moved on, follow the code and update the date here.
 
-Workspace: `/Users/snuffish/Projects/GR` (workspace root, not a git repo) holding `GR.PRIIS.Backend/` (.NET 10, FastEndpoints, EF Core, TUnit) and `GR.PRIIS.Frontend/` (React 18, TypeScript, Vite, RTK Query, TanStack Router, Playwright), each its own git repo. Artifacts go to the workspace root.
+Workspace: `/Users/snuffish/Projects/GR` (workspace root; itself a git repo that tracks only workspace files such as `.agents/` and `.github/`, and **ignores** both product directories — so it is a shell for `git-worktrees` repo resolution, and worktrees are created per product repo) holding `GR.PRIIS.Backend/` (.NET 10, FastEndpoints, EF Core, TUnit) and `GR.PRIIS.Frontend/` (React 18, TypeScript, Vite, RTK Query, TanStack Router, Playwright), each its own git repo on `origin/main`. Artifacts go to the workspace root.
 
 ---
 
@@ -25,10 +25,15 @@ Workspace: `/Users/snuffish/Projects/GR` (workspace root, not a git repo) holdin
 | **Ship** | `source-command-backend-ship` (covers both repos), `backend-workflow`, `frontend-workflow`, `pr-summary`. Conventions in *Phase 6*. |
 | **Contract touchpoints** | `SystemAction` integer values, `[EmitOpenApiMetadata]` enum metadata (`x-enumMetadata`), `x-roleAccessRules`, the committed `openapi/swagger.json` snapshot, the SignalR hub URL `/realtime/account`, Swedish (`sv-SE`) UI text with English URL paths. |
 | **Known drift** | Repo-local `<repo>/.claude/skills/`, `<repo>/.claude/commands/` and both `.github/copilot-instructions.md` files are stale and diverge from the registry skills. The backend scaffold template shows `CreateClientAndLoginAsNoAccessUserAsync` (gone). Three legacy `'zod/v4'` imports remain in the frontend. Older entities thread `IReadOnlyPriisDbContext` through static methods. Follow the code. |
+| **Worktree branch** | `feature/<id>_<english-kebab-slug>` (`bugfix/`, `hotfix/`) — the same convention as *Phase 6*; never `worktree-<name>`. Base: freshly fetched `origin/main` in both repos. |
+| **Worktree include list** (`git-worktrees` §5c, *verified 2026-10-16*) | Backend, all gitignored: `source/GR.PRIIS.API/appsettings.local.json`, `source/GR.PRIIS.CLI/appsettings.local.json`, `source/GR.PRIIS.Worker/appsettings.local.json` — copy from the main checkout or the integration suite targets the default connection string. Frontend: none — every `source/priis-web/.env*` file is tracked. Do not copy `.claude/settings.local.json`. |
+| **Dependency hydration** (`git-worktrees` §5c) | Frontend: `(cd <repo-root>/source/priis-web && npm ci)` (~460 MB, minutes). Backend: none — `dotnet build` restores. Dependency symlinking: **off** (a lockfile change on the branch would otherwise mutate the main checkout's install); enable here if it is ever wanted. |
+| **Shared local services** (`git-worktrees` §5e) | The API on `http://127.0.0.1:5033` (contract sync, `codegen:refresh`), the Playwright dev server, and the local SQL database the integration suite uses. Shared between worktrees and with the user's own running app: a second concurrent run of the same repo verifies with targeted suites only and says so. |
 
 ### Precedence overrides for delegated PRIIS skills
 
 - `source-command-backend-ship` stops on a User Story, pushes and creates the PR right after its file prompt, passes the PR body inline, and moves the work item to `Pull Request` unconditionally. Under the orchestrator: a story without a tagged child task ships under its own ID; push and PR creation wait for the ship gate; the PR body goes through a temp file (`pr-summary` §5.2); the state transition is a tracker write.
+- `source-command-backend-ship`, `source-command-backend-verify` and `source-command-frontend-verify` resolve the repo from the current working directory (`rev-parse --show-toplevel`, `cd source/priis-web`) when no `[worktree-context]` is handed in. Under the orchestrator they always receive the block and run against `repo-root`; the ship skill confirms the worktree's existing branch instead of `checkout -b`.
 
 ---
 

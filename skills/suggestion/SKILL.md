@@ -1,6 +1,6 @@
 ---
 name: suggestion
-description: Answers a question with ranked, evidence-backed suggestions and approaches — "how should I do X", "what's the best way to handle Y", "which option would you pick", "give me some ideas for Z". Gathers the relevant codebase and convention context, enumerates viable approaches, weighs trade-offs against the project's actual constraints, and returns a clear recommendation in chat (/suggestion) or, for cross-cutting decisions, a workspace-root artifact (/suggestion deep). Read-only — never implements the chosen approach without /proceed.
+description: Answers a question with ranked, evidence-backed suggestions and approaches — "how should I do X", "what's the best way to handle Y", "which option would you pick", "give me some ideas for Z". Gathers the relevant codebase and convention context, enumerates viable approaches, weighs trade-offs against the project's actual constraints, and always writes a clear recommendation to a workspace-root artifact (<prefix>-suggestion-<suffix>.md) with a short linked chat summary; /suggestion deep widens the research for cross-cutting decisions. Read-only — never implements the chosen approach without /proceed.
 ---
 
 # Skill: `/suggestion` — Recommended Approaches & Suggestions
@@ -15,8 +15,8 @@ Applicable to **any software project, language, framework or technology stack**.
 
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
 - **Read-only**: produces advice, never code changes. No edits, checkouts, installs, migrations or commits — for you and for any sub-agent. Implementation only after an explicit `/proceed` (see core §2.2), and then usually via [`/plan`](../plan/SKILL.md) or [`/implement-feature`](../implement-feature/SKILL.md).
-- **Default output is chat** (`/suggestion`). No artifact is written unless the user runs `/suggestion deep`.
-- **Target Artifact (deep mode only)**: `<prefix>-suggestion-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
+- **MANDATORY .MD ARTIFACT & SUMMARY (every mode):** Every `/suggestion` response — bare or `deep` — MUST write or update the full answer as `<prefix>-suggestion-<suffix>.md` **at the workspace root**, and begin the chat response with a clickable link to it plus clickable section anchors, built as §3 *Chat Response* specifies. Never answer in chat only.
+- **Target Artifact**: `<prefix>-suggestion-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`). A follow-up on the same question with the same model updates that artifact in place.
 - **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` derived from the question (e.g. `-cache-invalidation-strategy`, `-pdf-export-library`). Never write unsuffixed or un-modeled generic files.
 
 ---
@@ -32,10 +32,10 @@ Invoke this skill whenever:
 
 | Command | Output | Research scope | Latency |
 | :--- | :--- | :--- | :--- |
-| **`/suggestion <question>`** (default) | In-chat answer, no artifact | Focused: the files, symbols and conventions the question touches | **Fast** |
-| **`/suggestion deep <question>`** (or "compare these thoroughly", "write up the options") | Workspace-root artifact + chat summary | Comprehensive: wider prior-art sweep, every affected layer, optional parallel sub-agents per candidate approach | **Thorough** |
+| **`/suggestion <question>`** (default) | Workspace-root artifact + linked chat summary | Focused: the files, symbols and conventions the question touches | **Fast** |
+| **`/suggestion deep <question>`** (or "compare these thoroughly") | Workspace-root artifact + linked chat summary | Comprehensive: wider prior-art sweep, every affected layer, optional parallel sub-agents per candidate approach | **Thorough** |
 
-Suggest `deep` in chat (never switch silently) when a bare `/suggestion` turns out to span several repos or layers, needs a contract or migration decision, or when the ranking hinges on facts that require more than a handful of reads.
+The modes differ only in research depth — both always write the artifact. Suggest `deep` in chat (never switch silently) when a bare `/suggestion` turns out to span several repos or layers, needs a contract or migration decision, or when the ranking hinges on facts that require more than a handful of reads.
 
 ### When *not* to use — pick the right neighbor
 
@@ -69,7 +69,7 @@ Suggest `deep` in chat (never switch silently) when a bare `/suggestion` turns o
 - **Blast radius third.** For each candidate, note what it touches: contracts, generated files, migrations, shared enums, public APIs, tests that pin behaviour.
 - **Prior decisions.** Check recent git history, open PRs, workspace-root artifacts (`<prefix>-investigation-*`, `<prefix>-implementation_plan-*`) and memory for an earlier decision on the same topic — do not re-litigate a settled choice without flagging that it is settled.
 - **External research** (docs, changelogs, web) only when the codebase and rulebooks leave the question genuinely open, and only in `deep` mode or when a version/API fact must be verified.
-- Keep bare mode to a **handful of reads**. If you cannot answer confidently within that budget, give the best-effort answer, mark what is unverified, and offer `deep`.
+- Keep bare mode to a **handful of reads**. If you cannot answer confidently within that budget, write the best-effort answer to the artifact, mark what is unverified, and offer `deep`.
 
 ### Step 3: Enumerate and rank
 
@@ -89,42 +89,50 @@ Aggregate yourself. **Re-open every `path:line` a sub-agent cites** before it en
 
 ## 3. Output Format & Deliverables
 
-### Bare mode — in chat
-
-Keep it readable in under a minute. Structure:
-
-1. **Recommendation** — lead with the pick in one or two sentences, including the assumption about the goal if you had to make one.
-2. **Approaches** — a numbered list, recommended first, each with:
-   - **What**: one sentence.
-   - **Fits because / Precedent**: clickable `path:line` link to the existing pattern or convention.
-   - **Trade-offs**: 1–3 short bullets (effort, risk, reversibility, maintenance).
-   - **Pick this when**: the condition that makes it the right choice.
-3. **Why this one** — one or two sentences tying the ranking to the goal and constraints.
-4. **Next step** — the smallest action to proceed (e.g. "run `/plan` with approach 1", "confirm X with the team", "check whether Y is still true"). Do not implement it.
-5. **Unverified** — anything inferred rather than read, if any. Omit the section when empty.
-
-Prefer prose and short lists over tables; use a comparison table only when there are three or more approaches with three or more comparable dimensions.
-
-### Deep mode — artifact + chat summary
+### Artifact — every mode
 
 Write `<prefix>-suggestion-<suffix>.md` at the **workspace root** containing, in order:
 
-- **Header**: question as framed, goal and constraints, repo(s), head SHA, mode (`deep`), related artifacts and prior decisions.
-- **Recommendation** (TL;DR).
-- **Context & Prior Art**: precedent and conventions found, with links.
-- **Approaches**: one subsection per candidate — description, fit, files touched, contract/migration impact, tests affected, risks, effort, pick-this-when.
-- **Comparison** (table across the dimensions that actually differ).
-- **Decision & Rationale**: why the pick wins; what would flip it.
-- **Suggested Next Steps**: concrete, ordered, none executed.
-- **Open Questions / Unverified**.
+1. `# Suggestion: <short title>`
+2. **Header** — a small table: question as framed (Step 1), goal (and whether it was assumed), constraints, repo(s), head SHA, mode (`bare` / `deep`), related artifacts and prior decisions.
+3. `## Recommendation` — the pick in two or three sentences (TL;DR).
+4. `## Context & Prior Art` — precedent and conventions found, each with a clickable `path:line` link.
+5. `## Approaches` — one `###` subsection per candidate, recommended first, each with:
+   - **What**: one or two sentences.
+   - **Fits because / Precedent**: `path:line` link to the existing pattern or convention.
+   - **Trade-offs**: effort, risk, reversibility, maintenance.
+   - **Pick this when**: the condition that makes it the right choice.
+   - *Deep mode adds*: files touched, contract/migration impact, tests affected, effort (T-shirt size).
+6. `## Comparison` — a table across the dimensions that actually differ (only when there are three or more approaches; otherwise omit).
+7. `## Decision & Rationale` — why the pick wins against the goal and constraints; what single fact would flip it.
+8. `## Suggested Next Steps` — concrete, ordered, none executed (e.g. "run `/plan` with approach 1", "confirm X with the team").
+9. `## Open Questions / Unverified` — anything inferred rather than read. Omit when empty.
 
-Then report back in chat with a 1–2 sentence TL;DR, a clickable IDE link to the artifact (`📄 [claude-<model>-suggestion-<suffix>.md](claude-<model>-suggestion-<suffix>.md)` in Claude Code, `file://` form in Antigravity), the mode and head SHA, and the 2–3 facts most likely to change the user's mind — without repeating the document.
+A cheap, no-code diagnostic or experiment that would settle the question faster than building anything belongs in its own `## Try This First` section after *Context & Prior Art*.
+
+Bare mode keeps each approach short — the whole artifact should read in a couple of minutes. Deep mode may run longer but never pads.
+
+### Chat Response
+
+Format all links per the **[artifacts](../artifacts/SKILL.md)** protocol (workspace-relative in Claude Code, `file://` absolute in Antigravity). Get the anchor line numbers with `grep -n '^#\{1,3\} ' <artifact>` after the final write — re-run it if you edit the artifact again.
+
+```markdown
+📄 **[claude-<model>-suggestion-<suffix>.md](claude-<model>-suggestion-<suffix>.md)**
+
+- 📄 [Recommendation](claude-<model>-suggestion-<suffix>.md#L<n>): [the pick in one sentence]
+- 📄 [Approaches](claude-<model>-suggestion-<suffix>.md#L<n>): [the candidates, in ranked order]
+- 📄 [Decision & Rationale](claude-<model>-suggestion-<suffix>.md#L<n>): [what would flip it]
+- 📄 [Suggested Next Steps](claude-<model>-suggestion-<suffix>.md#L<n>): [the first step]
+```
+
+After the links, the chat adds only: the mode and head SHA, the 2–3 facts most likely to change the user's mind, and — for bare mode on a question that outgrew it — a one-line offer of `deep`. Do not repeat the document.
 
 ---
 
 ## 4. Verification & Validation
 
 - **Self-check before answering**: every approach cites at least one real location or document; the recommendation respects every constraint from Step 1 or explicitly flags the violation; no approach is "recommended" that the user has already ruled out; the next step is actionable without further clarification.
+- **Artifact check**: the artifact exists at the workspace root under the model-prefixed, suffixed name, and every chat anchor points at the heading it names.
 - **Precedent check**: if the recommended approach has no precedent in the codebase while another candidate does, say so and justify the departure.
-- **Read-only check**: confirm no files were modified (`git status` is unchanged) except the deep-mode artifact at the workspace root.
+- **Read-only check**: confirm no files were modified (`git status` is unchanged) except the suggestion artifact at the workspace root.
 - **User validation**: the user confirms the goal assumption, picks an approach, and runs `/proceed` (or `/plan` / `/implement-feature`) to act on it. Until then, nothing is implemented.
