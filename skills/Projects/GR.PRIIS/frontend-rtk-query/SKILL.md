@@ -1,6 +1,6 @@
 ---
 name: frontend-rtk-query
-description: "[Project: GR.PRIIS.Frontend] RTK Query patterns for GR.PRIIS.Frontend — endpoint builders in src/store/api/endpoint-builders/{domain}/, Builder type, Tags object from tags.ts, providesTags/invalidatesTags, hook exports from api/index.ts. Load when adding or modifying API calls, endpoint builders, or cache invalidation. Load ONLY when working on the GR.PRIIS.Frontend project or in the GR repository."
+description: "[Project: GR.PRIIS.Frontend] RTK Query patterns for GR.PRIIS.Frontend — endpoint builders in src/store/api/endpoint-builders/{domain}/, Builder type from api/base.ts, per-domain api.ts registration via injectEndpoints (each API domain exports its own hooks; api/index.ts is a barrel), per-domain tags.ts with change sets (<domain>Changed) and published subscriptions (<domain>Subscriptions) for cross-domain cache effects, providesTags/invalidatesTags. Load when adding or modifying API calls, endpoint builders, or cache invalidation. Load ONLY when working on the GR.PRIIS.Frontend project or in the GR repository."
 ---
 
 # RTK Query — Project Patterns
@@ -14,19 +14,24 @@ All API calls in this project go through RTK Query. There is no direct `fetch` o
 Endpoint builders are modular functions organized by domain under `source/priis-web/src/store/api/endpoint-builders/`:
 
 ```
-src/store/api/endpoint-builders/
-  addresses/index.ts
-  auth/index.ts
-  suppliers/index.ts
-  operations/index.ts
-  ...
+src/store/api/
+  base.ts                    ← createApi (no endpoints), base query, tagTypes, Builder, TypedEndpoint
+  index.ts                   ← barrel only: one `export *` line per API domain
+  tags.ts                    ← TagDescription + tagOf helper only
+  endpoint-builders/
+    shared/index.ts          ← shared DTOs (Id, Name, PaginatedRequest, PaginatedListResponse, Breadcrumbs, …)
+    suppliers/index.ts       ← builder functions + request/response types
+    suppliers/api.ts         ← injectEndpoints registration + hook exports for this domain
+    suppliers/tags.ts        ← suppliersTags (domain-private), suppliersChanged(), optional suppliersSubscriptions
+    ...
 ```
 
-Each file exports named endpoint builder functions:
+Each `index.ts` exports named endpoint builder functions:
 
 ```typescript
-import { Builder } from '../..';       // Builder type from api/index.ts
-import { Tags } from '../tags';         // Tag constants
+import { Builder } from '../../base';               // Builder type
+import { suppliersTags } from './tags';             // this domain's tags
+import { Id, PaginatedListResponse } from '../shared'; // shared DTOs
 import { Guid } from '~/types/guid';
 
 export type SupplierNote = {
@@ -52,7 +57,7 @@ export const listSupplierNotes = (builder: Builder) =>
             url: `suppliers/${supplierId}/notes`,
         }),
         providesTags: (_result, _error, { supplierId }) => [
-            Tags.suppliers.notes,
+            suppliersTags.notes,
             { type: 'SupplierNotes', id: supplierId },
         ],
     });
@@ -65,7 +70,7 @@ export const createSupplierNote = (builder: Builder) =>
             body: { content },
         }),
         invalidatesTags: (_result, _error, { supplierId }) => [
-            Tags.suppliers.notes,
+            suppliersTags.notes,
             { type: 'SupplierNotes', id: supplierId },
         ],
     });
@@ -87,44 +92,47 @@ Mutation hooks: `useXxxMutation()` (returns `[trigger, { data, error, isLoading 
 
 ## 3. Tags — `providesTags` and `invalidatesTags`
 
-Tags are defined in `source/priis-web/src/store/api/tags.ts`. Always use the `Tags` object — never hardcode tag strings.
+Each API domain owns its tags in `endpoint-builders/<domain>/tags.ts` (see `docs/adr/0001-api-domain-change-sets.md` and `GLOSSARY.md` in the repo). Never hardcode tag strings.
 
 ```typescript
-// tags.ts structure (excerpt):
-export const Tags = {
-    suppliers: {
-        all: tagOf('Suppliers'),
-        list: tagOf('Suppliers', 'List'),
-        details: tagOf('Suppliers', 'Details'),
-    },
-    users: {
-        all: tagOf('Users'),
-        detailsWithId: (id: Guid) => tagOf('Users', `Details-${id}`),
-    },
-    // ...
+// endpoint-builders/suppliers/tags.ts
+import { TagDescription, tagOf } from '../../tags';
+
+export const suppliersTags = {
+    all: tagOf('Suppliers'),
+    list: tagOf('Suppliers', 'List'),
+    details: tagOf('Suppliers', 'Details'),
+    operationsTab: tagOf('Suppliers', 'DetailsOperationsTab'),
 } as const;
+
+/** Every cached read of this API domain; announced by mutations in other domains that write its data. */
+export const suppliersChanged = (): TagDescription[] => [tagOf('Suppliers')];
+
+/** Only when another domain's query shows this domain's data. */
+export const suppliersSubscriptions = { list: suppliersTags.list } as const;
 ```
 
-**Invalidation patterns:**
+**The writes / reads rule:**
 
 ```typescript
-// Invalidate a whole domain (all supplier queries)
-invalidatesTags: [Tags.suppliers.all]
+// Own domain — invalidate precisely with this domain's tags
+invalidatesTags: (_result, _error, { id }) => [suppliersTags.list, suppliersTags.details],
 
-// Invalidate a specific list view
-invalidatesTags: [Tags.suppliers.list]
+// Writing ANOTHER domain's data (status cascades, apply-on-close, …) — announce its change set
+invalidatesTags: (_result, _error, request) => [
+    controlTicketsTags.detail(request.id),
+    ...operationsChanged(),   // from '../operations/tags'
+    ...contractsChanged(),
+],
 
-// Invalidate a specific entity (parameterized)
-invalidatesTags: (_result, _error, { supplierId }) => [
-    { type: 'Suppliers', id: supplierId }
-]
-
-// Invalidate multiple related caches
-invalidatesTags: (_result, _error, { supplierId }) => [
-    Tags.suppliers.list,
-    { type: 'Suppliers', id: `Details-${supplierId}` },
-]
+// A query that SHOWS another domain's data — provide that domain's published subscription
+providesTags: [dashboardTags.tickets, matchingSubscriptions.list],
 ```
+
+- `no-restricted-imports` allows importing only `*Changed` / `*Subscriptions` from another domain's `tags.ts` — never its raw `<x>Tags`.
+- A change set is the domain's whole tag type(s), so every mounted query of that domain refetches — intended; add a finer change set only for a measured cost.
+- A new cross-domain reader needs the read in the owning domain's `*Subscriptions`; add it there (the owning domain's own mutations already invalidate it).
+- Outside `endpoint-builders` (listeners, components) use `dispatch(priisApi.util.invalidateTags(xChanged()))`.
 
 **Every mutation must have `invalidatesTags`** — omitting it causes stale UI after mutations.
 
@@ -132,9 +140,7 @@ invalidatesTags: (_result, _error, { supplierId }) => [
 
 ## 4. Adding a New Tag
 
-When a domain needs tags that don't exist yet:
-
-**Step 1** — add the type string to `tagTypes` in `source/priis-web/src/store/api/index.ts`:
+**Step 1** — add the type string to `tagTypes` in `source/priis-web/src/store/api/base.ts`:
 ```typescript
 const tagTypes = [
     'AuthExpires',
@@ -144,41 +150,47 @@ const tagTypes = [
 ] as const;
 ```
 
-**Step 2** — add the tag constants to `source/priis-web/src/store/api/tags.ts`:
+**Step 2** — add the tag constants to the owning domain's `endpoint-builders/<domain>/tags.ts`, and add the new type to that domain's `<domain>Changed()`:
 ```typescript
-supplierNotes: {
+export const supplierNotesTags = {
     all: tagOf('SupplierNotes'),
     listBySupplier: (supplierId: Guid) => tagOf('SupplierNotes', `List-${supplierId}`),
-},
+} as const;
+
+export const suppliersChanged = (): TagDescription[] => [tagOf('Suppliers'), tagOf('SupplierNotes')];
 ```
 
 ---
 
-## 5. Wiring into `api/index.ts`
+## 5. Registering in the domain's `api.ts`
 
-After defining the builder function, wire it into the central API slice and export the hook:
+After defining the builder function, register it in the **same domain's** `api.ts` and export its hooks there. Never edit `api/index.ts` for a new endpoint — it only changes when a new API domain (folder) is added, as one `export * from './endpoint-builders/<domain>/api';` line.
 
 ```typescript
-// In source/priis-web/src/store/api/index.ts
+// source/priis-web/src/store/api/endpoint-builders/supplier-notes/api.ts
+import { createSupplierNote, listSupplierNotes } from '.';
+import priisApi from '../../base';
 
-// Import the builder module at the top:
-import * as supplierNotesBuilders from './endpoint-builders/supplier-notes';
-
-// Add to the endpoints object:
-const priisApi = createApi({
+export const supplierNotesApi = priisApi.injectEndpoints({
     endpoints: (builder) => ({
-        // ...existing...
-        listSupplierNotes: supplierNotesBuilders.listSupplierNotes(builder),
-        createSupplierNote: supplierNotesBuilders.createSupplierNote(builder),
+        listSupplierNotes: listSupplierNotes(builder),
+        createSupplierNote: createSupplierNote(builder),
     }),
 });
 
-// Export the auto-generated hooks at the bottom:
-export const {
-    // ...existing...
-    useListSupplierNotesQuery,
-    useCreateSupplierNoteMutation,
-} = priisApi;
+export const { useListSupplierNotesQuery, useCreateSupplierNoteMutation } = supplierNotesApi;
+```
+
+The domain api is named `<camelCasedFolder>Api`. Endpoint names must be unique across all domains (`injectEndpoints` ignores a duplicate name).
+
+**Referencing an endpoint object** (modal `preloadData`, `GlobalModal` mutation slots, `paginated-table`) or a typed util goes through the domain api — `priisApi` from `base.ts` has no endpoints in its type:
+
+```typescript
+import { operationsApi } from '~api';
+
+preloadData={{ endpoint: operationsApi.endpoints.getOperationProfile, request: { operationId } }}
+dispatch(matchingApi.util.updateQueryData('getMatchingSelectionProcess', { id }, (draft) => { /* … */ }));
+dispatch(priisApi.util.invalidateTags(usersChanged())); // untyped utils may stay on priisApi
 ```
 
 ---
@@ -233,9 +245,12 @@ Global defaults (from `createApi` config): `keepUnusedDataFor: 10`, `refetchOnMo
 ```
 ❌ fetch() or axios.get() in components — use RTK Query hooks
 ❌ Mutations without invalidatesTags — stale UI after save
-❌ Hardcoded tag strings like ['Suppliers'] — use Tags.suppliers.all
+❌ Hardcoded tag strings like ['Suppliers'] — use the domain's <domain>Tags / <domain>Changed()
+❌ Naming another domain's individual tags (invalidate or provide) — use <domain>Changed() / <domain>Subscriptions
+❌ A new tag type missing from its domain's <domain>Changed()
 ❌ Duplicating an endpoint that already exists in another domain builder
-❌ Exporting hooks from the builder file — hooks come from api/index.ts only
+❌ Adding endpoints or hooks to api/index.ts — register them in the domain's api.ts
+❌ priisApi.endpoints.X / priisApi.useXQuery — use <domain>Api.endpoints.X or the exported hook
+❌ Importing from '../..' or '~api' inside endpoint-builders — import ../../base, ../shared or a sibling domain (the barrel imports every domain, so it creates a cycle)
 ❌ Skipping the tagTypes array update when adding a new tag type
-❌ Calling the query/mutation directly from api/index.ts builder; always go through hooks
 ```
