@@ -38,6 +38,7 @@ for env_file in "$SCRIPT_DIR"/.env*; do
 done
 
 # Load all resources
+# Every *.bash below is sourced into zsh too: never use zsh special names (path, status, cdpath, fpath, argv) as variables
 header "Environment"
 for resource in "$SCRIPT_DIR"/*.bash; do
   if [[ "$resource" != *"__init__"* && -f "$resource" ]]; then

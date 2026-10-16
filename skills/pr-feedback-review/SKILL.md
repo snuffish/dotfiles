@@ -1,6 +1,6 @@
 ---
 name: pr-feedback-review
-description: Review, triage, and evaluate reviewer feedback, discussion threads, and votes on a pull request. Analyzes technical implications against the codebase and provides actionable recommendations and response options. `deep` runs the three analysis axes (Verification, Merit, Impact) as parallel sub-agents. Reads the PR head from a detached snapshot worktree by default so the user can keep editing the main checkout meanwhile; `live` opts out.
+description: Review, triage, and evaluate reviewer feedback, discussion threads, and votes on a pull request. Analyzes technical implications against the codebase and provides actionable recommendations and response options. Always looks for a counterpart PR in a sibling repo (a dual-repo change such as backend + frontend) and triages both PRs' threads, since a comment on one half often needs its fix on the other. `deep` runs the three analysis axes (Verification, Merit, Impact) as parallel sub-agents. Reads the PR head from a detached snapshot worktree by default so the user can keep editing the main checkout meanwhile; `live` opts out.
 ---
 
 # PR Feedback Review Skill
@@ -97,6 +97,15 @@ az repos pr list --source-branch "$(git rev-parse --abbrev-ref HEAD)" \
 # GitHub
 gh pr view --json number,title,baseRefName,url
 ```
+
+### Counterpart PRs — every resolved PR, every time
+
+After the target PR is resolved, run the counterpart lookup in **[`core`](../core/SKILL.md) §4.1**. That section owns the signals, the commands and the classification. One pasted link is one half of a change that may span repos. What the result means here:
+
+- **Found** → the counterpart joins the scope without asking. Steps 2–5 run for **every PR in scope**: its metadata and votes, its thread dump (kept per PR: `threads-<repo>.json`), its own snapshot (*2.3*, one per PR), and its rows in the triage matrix. A thread on one PR whose fix lands in the other repo, or must land in both (an API shape, a shared enum, a generated client snapshot), is assessed against **both** snapshots. Its *Concrete Code Solution* names both files, and its reply says the counterpart PR carries the other half.
+- **Found, excluded** (the user named one PR "only") → triage only that PR. Still name the counterpart, its head and its open-thread count in the header, and flag any thread whose fix would change the shared contract.
+- **Expected but missing** → an action-checklist item: the fix a thread asks for needs a change in a repo that has no PR.
+- **None** → say "single-repo change" in the header.
 
 ---
 
@@ -214,6 +223,7 @@ Do not analyze comments in a vacuum. Cross-reference each comment with the actua
 2. **Check Downstream & Stacked Dependencies**:
    - Check if other PRs or branches branch off this PR (e.g. feature branch stacking).
    - Check linked work items (`az repos pr work-item list --id <prId>` or `az boards work-item show --id <id>`).
+   - Check the counterpart PR (*Counterpart PRs*, Step 1): does the thread's suggestion change something the other repo consumes, and is the other half already there, or contradicted, at the counterpart's head?
 3. **Assess Technical & Architectural Constraints**:
    - **Database & Migrations**: Temporal tables, data preservation (`sp_rename` vs drop/create), indexes, foreign keys.
    - **Framework & Conventions**: FastEndpoints, EF Core tracking/filters, Radix UI, Zod validation, sealed classes, etc.
@@ -273,6 +283,7 @@ Always start your response with a clickable link to `<prefix>-pr_feedback_review
 # PR Feedback Review: <PR Title>
 
 > **PR:** [<Title>](<url>) (`<source>` → `<target>`)  
+> **Counterpart:** [<repo> !<id>](<url>) @ `<short-sha>` — triaged / found, not triaged / expected but missing / single-repo change (`core` §4.1)  
 > **Head reviewed:** `origin/<source>` @ `<short-sha>` (iteration <n>)  
 > **Read from:** snapshot of `origin/<source>` @ `<short-sha>` (removed) / (kept at <path>) / live checkout of `<branch>`  
 > **Local checkout:** on `<branch>` — same commit / local ahead <n> / behind <n> / PR branch not checked out  
@@ -285,12 +296,12 @@ Always start your response with a clickable link to `<prefix>-pr_feedback_review
 
 ## Executive Summary & Triage Matrix
 
-| Thread | File | Reviewer | Category | State at head | Recommendation |
-|---|---|---|---|---|---|
-| [#106735](#thread-106735) ([devops](https://dev.azure.com/<org>/<project>/_git/<repo>/pullrequest/<prId>?discussionId=106735)) | PriisDbContext.cs | Nebojsa | 🟡 Optimization | ⏸ Not addressed | Refactor cascade loop to Queue worklist |
-| [#106740](#thread-106740) ([devops](…)) | Foo.cs | Daniel | 🔴 Bug | ✅ Fixed (`abc1234`) | Reply, resolve |
+| Thread | PR | File | Reviewer | Category | State at head | Recommendation |
+|---|---|---|---|---|---|---|
+| [#106735](#thread-106735) ([devops](https://dev.azure.com/<org>/<project>/_git/<repo>/pullrequest/<prId>?discussionId=106735)) | Backend !18707 | PriisDbContext.cs | Nebojsa | 🟡 Optimization | ⏸ Not addressed | Refactor cascade loop to Queue worklist |
+| [#106740](#thread-106740) ([devops](…)) | Frontend !18708 | Foo.tsx | Daniel | 🔴 Bug | ✅ Fixed (`abc1234`) | Reply, resolve |
 
-*State at head* is one of ✅ Fixed (commit) · ◐ Partial · ⏸ Not addressed · ↩ Superseded · ⚪ n/a.
+*State at head* is one of ✅ Fixed (commit) · ◐ Partial · ⏸ Not addressed · ↩ Superseded · ⚪ n/a. With a single PR in scope, drop the *PR* column.
 
 ---
 

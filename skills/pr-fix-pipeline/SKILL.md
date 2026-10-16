@@ -57,6 +57,7 @@ Invoke this skill whenever:
    gh pr view --json number,title,headRefName,baseRefName,statusCheckRollup
    ```
    Report repos with no PR — that is a finding, not a skip.
+   **Then the counterpart:** run the lookup in [`core`](../core/SKILL.md) §4.1 for every resolved PR, even when only one PR was given. Pull the counterpart's pipeline status too. A paired change merges only when both halves are green, and a red half often comes from a contract the other half changed (classify it as cross-repo contract drift). A counterpart whose pipeline is green is listed as such, not skipped silently.
 4. **Read the PR description and linked work items** so the plan knows the change's intent (same commands as `/code-review` § *Pull-Request References*).
 
 ### Step 2: Collect the Evidence

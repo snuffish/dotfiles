@@ -194,6 +194,7 @@ Handle these edge cases explicitly — do **not** guess:
 - **No open PR** for the branch → do not invent one. Print the composed body (Step 4) and tell the user no PR was found, offering to create one (`az repos pr create` / `gh pr create`).
 - **More than one** open PR for the branch → list them and ask which to update.
 - **Branch exists in several repos** (cross-repo change) → locate and update the PR in **each** repo, one per repo.
+- **Counterpart under a different branch name** → run the lookup in [`core`](../core/SKILL.md) §4.1 even when the branch exists in one repo only, because the halves of a change usually carry different work-item ids and branch names. Every PR it finds gets the relation link (5.3). An *expected but missing* half is reported back, never papered over with a placeholder.
 
 ### 5.2 — Show what will be replaced, then update
 

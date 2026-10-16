@@ -74,6 +74,7 @@ git -C <repo> status --short | wc -l                        # dirty?
 ```
 
 - Verify against the **PR head on the remote**, and state whether the local tree equals it. If local is behind, read changed files with `git show "origin/<branch>:<path>"` (quote or brace the ref — zsh treats `$B:source/...` and `$B:tests/...` as history modifiers).
+- **Counterpart PRs:** whatever the input (story, PR URL, branch), run the counterpart lookup in [`core`](../core/SKILL.md) §4.1 and pin every PR it finds. A story is usually implemented by sibling tasks in different repos, each with its own PR, so starting from one PR link finds only half the evidence. A requirement graded against one half is never ✅ when the other half owns part of it. Record the classification in the artifact's *Context*. An *expected but missing* half grades the lines it owns as ✗ or ↗ (with the owning item id), never as ✅.
 - In a **multi-repo workspace**, resolve the PR for every repo (`az repos pr list --source-branch <b> --detect true` per repo) and verify both halves: a field limit is a backend constant *and* a frontend schema rule *and* a column length; a select's option list is a backend enum *and* a frontend facade.
 
 ### Step 3: Decompose the spec into atomic lines

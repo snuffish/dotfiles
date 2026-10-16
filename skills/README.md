@@ -22,11 +22,11 @@ skills/
 
 ## Inventory
 
-50 skills total — 27 general + 23 under `Projects/GR.PRIIS/`.
+52 skills total — 29 general + 23 under `Projects/GR.PRIIS/`.
 
 | Group                            | Count | Skills                                                                                                                |
 | -------------------------------- | :---: | -------------------------------------------------------------------------------------------------------------------- |
-| General (top level)              |  27   | `artifacts`, `clean`, `code-documentation`, `code-review`, `core`, `create-skill`, `explain`, `expressive`, `git-worktrees`, `implement-feature`, `investigate`, `manual-testing`, `modern-csharp`, `organize`, `plan`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-summary`, `problem`, `refine`, `reload-skills`, `resolve-conflicts`, `review`, `spec-verification`, `squash-ef-core-migrations`, `suggestion`, `what-am-I-missing` |
+| General (top level)              |  29   | `artifacts`, `ask-question`, `clean`, `code-documentation`, `code-review`, `core`, `create-skill`, `explain`, `expressive`, `git-worktrees`, `implement-feature`, `investigate`, `manual-testing`, `modern-csharp`, `organize`, `plan`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`, `refine`, `reload-skills`, `resolve-conflicts`, `review`, `spec-verification`, `squash-ef-core-migrations`, `suggestion`, `what-am-I-missing` |
 | `GR.PRIIS/backend-*`             |   7   | `dry`, `ef-core`, `fastendpoints`, `notifications`, `signalr`, `testing`, `workflow`                                 |
 | `GR.PRIIS/frontend-*`            |   6   | `component-patterns`, `forms`, `routing`, `rtk-query`, `testing`, `workflow`                                          |
 | `GR.PRIIS/source-command-backend-*`  | 6 | `health-check`, `migrate-to-tunit` (retired — migration complete), `release-notes`, `scaffold`, `ship`, `verify`                                    |
@@ -104,8 +104,8 @@ Get-ChildItem -Path "$env:USERPROFILE\.terminal\skills" -Filter "SKILL.md" -Recu
 
 (If the loader globs recursively — `skills/**/SKILL.md` — point it at this root directly and the grouping is honored as-is.)
 
-**Current live state:** All 50 skills are flat-symlinked into the flat skills directory (`~/.claude/skills`), each pointing back into this tree. Verify on macOS/Linux with:
+**Current live state:** All 51 skills are flat-symlinked into the flat skills directory (`~/.claude/skills`), each pointing back into this tree. Verify on macOS/Linux with:
 
 ```bash
-ls -la ~/.claude/skills | grep -c '\-> .*/.terminal/skills/'   # expect 50
+ls -la ~/.claude/skills | grep -c '\-> .*/.terminal/skills/'   # expect 51
 ```
