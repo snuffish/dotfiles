@@ -1,6 +1,6 @@
 ---
 name: pr-feedback-review
-description: Review, triage, and evaluate reviewer feedback, discussion threads, and votes on a pull request. Analyzes technical implications against the codebase and provides actionable recommendations and response options. `deep` runs the three analysis axes (Verification, Merit, Impact) as parallel sub-agents.
+description: Review, triage, and evaluate reviewer feedback, discussion threads, and votes on a pull request. Analyzes technical implications against the codebase and provides actionable recommendations and response options. `deep` runs the three analysis axes (Verification, Merit, Impact) as parallel sub-agents. Reads the PR head from a detached snapshot worktree by default so the user can keep editing the main checkout meanwhile; `live` opts out.
 ---
 
 # PR Feedback Review Skill
@@ -15,7 +15,7 @@ Use this skill whenever the user asks to review pull request feedback, triage re
 > **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
 >
 > 1. **MANDATORY .MD ARTIFACT & SUMMARY (NO EXCUSES):** Every single `/pr-feedback-review` response MUST ALWAYS write or update the complete feedback review report as `<prefix>-pr_feedback_review-<suffix>.md` **at the workspace root**, and begin the response with a clickable link to it plus clickable section anchors, built exactly as *Artifact Links* below specifies. The user frequently needs to click and open it in the IDE.
-> 2. **DO NOT MODIFY CODE:** You must **NEVER** edit code files, stage commits, run migrations, or execute modifying commands during or immediately after a `/pr-feedback-review`.
+> 2. **DO NOT MODIFY CODE OR THE MAIN WORKING TREE:** You must **NEVER** edit code files, stage commits, run migrations, check out branches, `git stash push`/`pop`, or execute modifying commands during or immediately after a `/pr-feedback-review`. The **only** git writes allowed are `git fetch` and the ones [`git-worktrees`](../git-worktrees/SKILL.md) snapshot mode performs (*Step 2.3*): `git worktree add --detach` / `remove` / `prune` on a snapshot directory **outside** the repo.
 > 3. **DO NOT AUTO-PROCEED:** Never begin implementing fixes or refactorings automatically. Present clear decision paths, code diffs, and draft replies, then wait for explicit user instruction.
 > 4. **DO NOT GENERATE AN IMPLEMENTATION PLAN INSTEAD:** Do not substitute `<prefix>-implementation_plan-<suffix>.md` for the feedback review document. The feedback review document *is* `<prefix>-pr_feedback_review-<suffix>.md`.
 
@@ -26,6 +26,7 @@ Use this skill whenever the user asks to review pull request feedback, triage re
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
 - **Target Artifact**: `<prefix>-pr_feedback_review-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
 - **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` (e.g. `-18176-backend`, `-18176-18177-verksamhetsobjekt`). Never write unsuffixed or un-modeled generic files.
+- **Repo root** (per [`git-worktrees`](../git-worktrees/SKILL.md) §3): the `repo-root` of a `[worktree-context]` block handed in by the caller when one is present; otherwise the snapshot this skill creates in *Step 2.3*. Before any `git status` or `rev-parse HEAD`, confirm the target is that root. If no block was handed in but `git -C <repo> worktree list --porcelain` shows a **locked** worktree whose reason begins with `claude-skill:` for the same ticket or branch, stop and ask which tree is meant.
 
 ---
 
@@ -35,6 +36,9 @@ This skill adheres strictly to the **[core](../core/SKILL.md)** operating standa
 |---|---|---|
 | `/pr-feedback-review [target]` | **Standard** (default) | One pass; the reviewer covers all three axes itself (Steps 3–5) |
 | `/pr-feedback-review deep [target]` | **Deep** | Verification, Merit and Impact each run in an isolated parallel sub-agent (see *Deep Mode*), then aggregate |
+| `/pr-feedback-review live [target]` | Standard or deep, **no snapshot** | Reads the main checkout directly instead of the snapshot from *Step 2.3*. Only when no snapshot is possible, or the user wants threads checked against unpushed local commits |
+
+`live` is a modifier, not a mode: `/pr-feedback-review deep live <target>` is valid. The words `worktree`, `worktrees` and `/git-worktrees` in the arguments are accepted and change nothing — the snapshot is already the default.
 
 The three axes every thread is assessed on:
 
@@ -169,15 +173,35 @@ gh api repos/{owner}/{repo}/issues/{prId}/comments
 
 Save the raw JSON and the filtered human-readable dump to the scratchpad (e.g. `threads.json`, `threads-human.txt`) rather than only printing them. The dump is the single source for Steps 3–5, and in deep mode the sub-agents read it from there instead of re-fetching. Record for each thread its **status**, **file/line**, and the **iteration** it was written against (`pullRequestThreadContext.iterationContext`) — the iteration tells you how far the code may have moved since.
 
-### 2.3 — Pin the head
+### 2.3 — Pin the head in a snapshot
 
-```bash
-git fetch origin <sourceBranch>
-git rev-parse --short origin/<sourceBranch>          # the head every thread is mapped against
-git log --oneline <targetBranch>..origin/<sourceBranch>
-```
+Threads are assessed against the PR's **remote head** — what reviewers see — never against the iteration they were written on, and never against whatever happens to be checked out locally. That head is materialised in a **detached `git worktree` outside the repo** and everything in Steps 3–5 reads from there, so the user can keep editing the main checkout the whole run. `/pr-feedback-review live …` skips the snapshot and reads the main checkout as-is.
 
-Threads are assessed against **head**, never against the iteration they were written on. Also note whether the local branch equals the remote (unpushed local commits are not what reviewers see).
+The lifecycle — create, read, map paths back, remove, fallback — is **[`git-worktrees`](../git-worktrees/SKILL.md) §4 (snapshot mode)** with `<skill>=pr-feedback-review`; follow it for the mechanics. What is specific here:
+
+- **Repo:** the workspace repo whose `origin` matches the PR's `{repo}` (§2 repo resolution — in a multi-repo workspace, e.g. `GR.PRIIS.Backend` for a `_git/GR.PRIIS.Backend/pullrequest/…` URL). One snapshot per PR in scope.
+- **Head and source ref** (§4a, *PR whose branch is not checked out* row — used even when it is checked out, since local commits are not what reviewers see):
+
+  ```bash
+  git -C <repo> fetch origin <sourceBranch> <targetBranch>
+  HEAD_SHA=$(git -C <repo> rev-parse origin/<sourceBranch>)    # source ref: origin/<sourceBranch>
+  git -C <repo> rev-parse --abbrev-ref HEAD                      # main checkout's branch
+  git -C <repo> rev-list --left-right --count "$HEAD_SHA"...HEAD # "<behind> <ahead>" when that branch is the PR branch
+  ```
+
+  Also compare `HEAD_SHA` with the PR's `lastMergeSourceCommit` from Step 2.1; a mismatch means the PR moved during the fetch — re-fetch.
+- **Create** (§4b): `SNAP_DIR=<scratchpad>/pr-feedback-review/<repo-dirname>/<ref-slug>@<short-sha>`, then `git -C <repo> worktree add --detach "$SNAP_DIR" "$HEAD_SHA"`.
+- **Read** (§4c): inside the snapshot `HEAD` **is** the PR head and remote refs are shared, so
+
+  ```bash
+  git -C "$SNAP_DIR" log --oneline origin/<targetBranch>..HEAD
+  git -C "$SNAP_DIR" diff origin/<targetBranch>...HEAD
+  ```
+
+  CodeGraph indexes the main checkout: navigate with it, open the same file under `$SNAP_DIR` for the citation (exact only when the main checkout's `HEAD` equals the snapshot head and is clean — say which case applied).
+- **No `<scratchpad>` path reaches the artifact or the chat** (§4d): map every `path:line` to `<repo-dirname>/…` first.
+- **Remove** (§4e) after the artifact is written and its links emitted — in deep mode, after every sub-agent has returned — and say in chat that the snapshot of `origin/<sourceBranch> @ <short-sha>` was removed, or why it was kept.
+- **Fallback** (§4f): when `worktree add` fails, read live, record `live checkout` in the artifact header, and warn that edits during the run invalidate line numbers.
 
 ---
 
@@ -186,7 +210,7 @@ Threads are assessed against **head**, never against the iteration they were wri
 Do not analyze comments in a vacuum. Cross-reference each comment with the actual codebase. In standard mode you cover all three axes (*Verification*, *Merit*, *Impact*) yourself here and in Step 4; in deep mode this step is what the sub-agents do, and you aggregate (see *Deep Mode*).
 
 1. **Inspect Targeted Code**:
-   - Use `view_file` or `grep_search` to view the specific lines, classes, queries, or configs mentioned in the feedback.
+   - Use `view_file` or `grep_search` to view the specific lines, classes, queries, or configs mentioned in the feedback — under the snapshot (`$SNAP_DIR`), not the main checkout.
 2. **Check Downstream & Stacked Dependencies**:
    - Check if other PRs or branches branch off this PR (e.g. feature branch stacking).
    - Check linked work items (`az repos pr work-item list --id <prId>` or `az boards work-item show --id <id>`).
@@ -233,7 +257,7 @@ For every non-trivial thread:
 
 ### 6.1 — Write the Markdown Artifact
 
-Always write the complete PR feedback review report to `<prefix>-pr_feedback_review-<suffix>.md` **at the workspace root** before returning the response.
+Always write the complete PR feedback review report to `<prefix>-pr_feedback_review-<suffix>.md` **at the workspace root** (never inside the snapshot) before returning the response, then remove the snapshot (*Step 2.3*).
 - **Prefix Resolution**: Prefix `<prefix>-` includes both the active host and the actual AI model (`<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
 - **Suffix Resolution**: Derive `<suffix>` from PR ID and topic (e.g. `-18176-backend`, `-18176-18177-verksamhetsobjekt`).
 
@@ -249,7 +273,9 @@ Always start your response with a clickable link to `<prefix>-pr_feedback_review
 # PR Feedback Review: <PR Title>
 
 > **PR:** [<Title>](<url>) (`<source>` → `<target>`)  
-> **Head reviewed:** `<sha>` (iteration <n>) — local tree equal to remote / <n> unpushed commits  
+> **Head reviewed:** `origin/<source>` @ `<short-sha>` (iteration <n>)  
+> **Read from:** snapshot of `origin/<source>` @ `<short-sha>` (removed) / (kept at <path>) / live checkout of `<branch>`  
+> **Local checkout:** on `<branch>` — same commit / local ahead <n> / behind <n> / PR branch not checked out  
 > **Mode:** standard / deep  
 > **Status:** Active / Needs Attention — <votes>, <n> threads active, <n> resolved  
 > **Reviewers:**  
@@ -305,13 +331,13 @@ Always start your response with a clickable link to `<prefix>-pr_feedback_review
 
 `/pr-feedback-review deep` runs each axis in its own sub-agent so one axis's context cannot mask another: a thread can be "fixed" at head while the reviewer's underlying claim was wrong, or the reviewer's proposed fix can be the one that introduces a defect, or a fix that satisfies one thread can undo another.
 
-1. **Do Steps 1–2 yourself first** — PR resolved, votes and threads fetched, the dump saved to the scratchpad, head pinned and compared with the local tree. Sub-agents must not re-fetch the PR or the threads.
-2. **Spawn the three sub-agents in parallel** (one message, three calls). Each prompt includes: the repo path(s), the head SHA and the exact diff command (`git diff <target>...origin/<source>`), the commit list, the path to the thread dump, and its axis brief. Each report is **per thread**, keyed by thread id, so the aggregator can join them.
+1. **Do Steps 1–2 yourself first** — PR resolved, votes and threads fetched, the dump saved to the scratchpad, snapshot created and compared with the local tree. Sub-agents must not re-fetch the PR or the threads, or create, remove, lock or unlock worktrees (`git-worktrees` invariant 5).
+2. **Spawn the three sub-agents in parallel** (one message, three calls). Each prompt includes: the snapshot's **`[worktree-context]` block** (`repo-root` = the snapshot path, **never the main checkout**; `workspace-path` = what every cited path maps back to; `source-ref` = `origin/<source>`), the exact diff command (`git -C <snapshot> diff origin/<target>...HEAD`), the commit list, the path to the thread dump, and its axis brief. Each report is **per thread**, keyed by thread id, so the aggregator can join them.
    - **Verification** — "For every thread in the dump: what does the code at head do about it? Classify as fixed / partial / not addressed / superseded. Cite the commit and `path:line` at head (line numbers in the thread are from an older iteration — re-find the code), and name the test that pins it, or say there is none. Where the reviewer asked for something specific (a test, a doc line, an overload), check that exact thing exists. Under 600 words."
    - **Merit** — "For every thread: is the reviewer's claim correct, and is their proposed fix the right fix? Judge independently against the code and the framework's real semantics (EF Core change tracker, transactions, FastEndpoints, etc.). Try to refute both the reviewer and the current implementation. Flag proposals that would introduce a defect, claims the code already handles, and things the comment implies but does not say (a reviewer who names four endpoints may be describing six statements). Under 600 words."
    - **Impact** — include the list of workspace-root artifacts for this PR (earlier reviews, plans, description drafts). "For every thread that proposes a change: what else does it touch? Stacked branches off this PR, linked work items, cross-repo contracts (list them), other callers of the changed members, conflicts between threads (one thread's fix undoing another's), and decisions already recorded in the listed artifacts. Also compare the live PR description with the threads and the diff and flag stale claims. Under 500 words."
-   - All sub-agents are **read-only**: no edits, no checkouts, no installs, builds or tests, no posting.
-3. **Aggregate** into the single artifact: join the three reports per thread, assign the Step 4 category, set *State at head* from Verification **only after re-opening the cited `path:line` yourself** — sub-agent output is evidence, not a verdict — decide Path A/B using Merit and Impact, and draft the reply. Any thread Merit marks as "reviewer is wrong" or "proposed fix introduces a defect" gets its reply written as a respectful explanation with the concrete failing sequence, never a bare refusal.
+   - All sub-agents are **read-only**: no edits, no checkouts, no worktree commands, no installs, builds or tests, no posting. They read only under `repo-root` and report `path:line` already mapped to `workspace-path`.
+3. **Aggregate** into the single artifact, then remove the snapshot: re-check that no citation points into the snapshot directory, join the three reports per thread, assign the Step 4 category, set *State at head* from Verification **only after re-opening the cited `path:line` yourself** — sub-agent output is evidence, not a verdict — decide Path A/B using Merit and Impact, and draft the reply. Any thread Merit marks as "reviewer is wrong" or "proposed fix introduces a defect" gets its reply written as a respectful explanation with the concrete failing sequence, never a bare refusal.
 4. **Name the mode** in the artifact header and in the chat response.
 
 ---

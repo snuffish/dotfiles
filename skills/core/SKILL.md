@@ -58,7 +58,7 @@ To prevent accidental regressions and unapproved mutations:
 - The only writes outside a worktree are artifacts at the workspace root and the `.claude/worktrees/` entry in `<repo>/.git/info/exclude`.
 - A worktree holding uncommitted or unpushed work is never removed without the user's explicit "discard"; removing a worktree never deletes its branch. `/proceed` approves edits in the worktree; it does not lift this invariant.
 - The session's working directory never moves to a worktree; every command uses `git -C <path>` or absolute paths.
-- **Opt-in for any skill:** an invocation whose arguments contain `worktree`, `worktrees` or `/git-worktrees` (e.g. `/<skill> <request> /git-worktrees`) runs that skill under the `git-worktrees` protocol — workspace mode for a mutating skill, snapshot mode for a read-only one — whether or not the skill isolates by default. `/code-review` (snapshot) and `/implement-feature` (workspace) do so by default.
+- **Opt-in for any skill:** an invocation whose arguments contain `worktree`, `worktrees` or `/git-worktrees` (e.g. `/<skill> <request> /git-worktrees`) runs that skill under the `git-worktrees` protocol — workspace mode for a mutating skill, snapshot mode for a read-only one — whether or not the skill isolates by default. `/code-review` and `/pr-feedback-review` (snapshot) and `/implement-feature` (workspace) do so by default.
 
 ---
 

@@ -5,7 +5,7 @@ description: Shared git worktree isolation protocol for every operational skill 
 
 # Skill: `git-worktrees` — Shared Worktree Isolation Protocol
 
-One protocol for every skill that must read or change a repository without touching the user's main checkout. `/code-review` uses **snapshot** mode by default; `/implement-feature` uses **workspace** mode by default; every other mutating skill switches to workspace mode when invoked with the word `worktree` or when it runs under `/implement-feature`. Each of them delegates here instead of carrying its own copy of the lifecycle.
+One protocol for every skill that must read or change a repository without touching the user's main checkout. `/code-review` and `/pr-feedback-review` use **snapshot** mode by default; `/implement-feature` uses **workspace** mode by default; every other mutating skill switches to workspace mode when invoked with the word `worktree` or when it runs under `/implement-feature`. Each of them delegates here instead of carrying its own copy of the lifecycle.
 
 ---
 
@@ -38,7 +38,7 @@ This skill adheres strictly to the **[core](../core/SKILL.md)** operating standa
 | **snapshot** | Read a pinned head (branch, PR, working tree or index) while the user keeps editing | `<scratchpad>/<skill>/<repo-dirname>/<ref-slug>@<short-sha>` (the session scratchpad when the host provides one, else `${TMPDIR:-/tmp}`) | detached | Always, after the calling skill's artifact is written |
 | **workspace** | Implement on a branch without touching the main checkout | `<repo>/.claude/worktrees/<slug>` | the project's branch convention | After the branch is pushed and the PR exists; otherwise kept and reported |
 
-Default users: `/code-review` → snapshot; `/implement-feature` → workspace. `clean`, `expressive`, `organize`, `refine`, `problem`, `pr-fix-pipeline`, `squash-ef-core-migrations` → workspace when opted in (below) or under `/implement-feature`, otherwise in place. Read-only skills other than `/code-review` keep their live, head-pinned reading unless opted in, which gives them a snapshot.
+Default users: `/code-review`, `/pr-feedback-review` → snapshot; `/implement-feature` → workspace. `clean`, `expressive`, `organize`, `refine`, `problem`, `pr-fix-pipeline`, `squash-ef-core-migrations` → workspace when opted in (below) or under `/implement-feature`, otherwise in place. Other read-only skills keep their live, head-pinned reading unless opted in, which gives them a snapshot.
 
 **Opt-in token.** Any skill invocation whose arguments contain `worktree`, `worktrees` or `/git-worktrees` runs under this protocol even when the skill does not isolate by default — e.g. `/refine <request> /git-worktrees` or `/explain deep <symbol> worktree`. Only the first `/<name>` in a message is a command; `/git-worktrees` later in the line is plain text the invoked skill must recognise, which core §2.4 makes a universal rule. A mutating skill gets **workspace** mode, a read-only skill gets **snapshot** mode. The skill loads this file, follows §2–§5 for the mode, and otherwise runs unchanged with `repo-root` as its repository.
 
@@ -85,7 +85,7 @@ The lock reason (§5b) is the discovery mechanism, so no marker file is left in 
 
 ## 4. Snapshot Lifecycle (read-only)
 
-Used by `/code-review` and by any read-only skill asked for a snapshot. `<skill>` is the calling skill's name.
+Used by `/code-review`, `/pr-feedback-review` and by any read-only skill asked for a snapshot. `<skill>` is the calling skill's name.
 
 **a. Resolve the head and record its source ref — per repo**
 
