@@ -73,7 +73,7 @@ A diff tells you what changed. A PR description and its acceptance criteria tell
 - getting the PR's source branch checked out without clobbering a dirty tree;
 - the trust rule — **description states intent, diff states truth**.
 
-Run it **once per repo**. Two repos means two PRs, two descriptions, and usually two different work items — resolving only the one you are standing in gets you half the intent.
+Run it **once per repo**. Two repos means two PRs, two descriptions, and usually two different work items — resolving only the one you are standing in gets you half the intent. This holds **even when the user pasted one PR link**. Code-review's *Counterpart PRs* step, backed by [`core`](../core/SKILL.md) §4.1, finds the other half. A counterpart that was found adds its branch to the environment setup and its behaviour to the click paths. One that is *expected but missing* goes to the top of the plan, because that half's behaviour cannot be tested yet.
 
 Everything below is what *this* skill does with the result.
 

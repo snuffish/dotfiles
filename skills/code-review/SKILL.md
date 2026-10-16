@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: "Perform a structured, high-quality review of code changes along three axes — Correctness (bugs, security, performance), Standards (does the code follow this repo's documented conventions and cross-repo contracts?) and Spec (does it implement what the PR / work item / acceptance criteria asked for?). Accepts an optional pull-request URL/ID, work-item ID, or fixed point (\"since main\", a SHA, a tag) — and resolves the PR from the current branch when none is given. `deep` runs the axes as parallel sub-agents. Reviews from a detached snapshot worktree by default so the user can keep editing the main checkout meanwhile; `live` opts out. Project-agnostic: conventions and cross-repo contracts come from the workspace's own rulebooks and project-scoped skills. Use when the user asks for a code review, PR review, \"review since X\", or feedback on a branch or working changes."
+description: "Perform a structured, high-quality review of code changes along three axes — Correctness (bugs, security, performance), Standards (does the code follow this repo's documented conventions and cross-repo contracts?) and Spec (does it implement what the PR / work item / acceptance criteria asked for?). Accepts an optional pull-request URL/ID, work-item ID, or fixed point (\"since main\", a SHA, a tag) — and resolves the PR from the current branch when none is given. Always looks for a counterpart PR in a sibling repo (a dual-repo change such as backend + frontend) and reviews both halves. `deep` runs the axes as parallel sub-agents. Reviews from a detached snapshot worktree by default so the user can keep editing the main checkout meanwhile; `live` opts out. Project-agnostic: conventions and cross-repo contracts come from the workspace's own rulebooks and project-scoped skills. Use when the user asks for a code review, PR review, \"review since X\", or feedback on a branch or working changes."
 ---
 
 # Code Review Skill
@@ -66,7 +66,7 @@ Before reviewing any code, establish **what** to review:
 | `since <ref>` / a SHA, tag, branch, `HEAD~5` | `git diff <ref>...HEAD` — the user-supplied fixed point is the base |
 | Specific file(s) | Read those files from the snapshot — or `live` when they were never committed (*Step 1b-f*) |
 | `frontend` / `backend` | Branch diff, scoped to that sub-directory |
-| A **pull-request URL** or bare PR id | Resolve it first — see *Pull-Request References* below |
+| A **pull-request URL** or bare PR id | Resolve it first (see *Pull-Request References* below), then its counterpart in the other repo (*Counterpart PRs*) |
 | A work item / issue id (`#30342`, `AB#30342`) | Read the work item, then find its PR or branch |
 
 Whatever the base, confirm it resolves (`git rev-parse <base>`) and the diff is non-empty **before** going further. A bad ref or an empty diff fails here, not halfway through a review (or inside sub-agents).
@@ -157,15 +157,18 @@ done
 
 Report which repos resolved to a PR and which did not — a repo still sitting on the integration branch is itself worth saying out loud.
 
-##### Finding the counterpart PR in the other repo
+#### Counterpart PRs — every resolved PR, every time
 
-The two sides usually carry **different** work item ids (e.g. backend `#30342`, frontend `#30343`), so matching on the number in the branch name will not find the sibling. Walk the work-item relations instead:
+A pasted PR link names **one** half of a change that may span repos. After resolving it — from a URL, an id, the branch or a work item — run the counterpart lookup in **[`core`](../core/SKILL.md) §4.1** for every PR in scope. That section owns the signals, the commands and the classification. The two halves usually carry different work-item ids (e.g. backend `#31175`, frontend `#31176` under one parent story), so a branch-name match alone never settles it.
 
-```bash
-az boards work-item relation show --id <workItemId> --org https://dev.azure.com/<org> -o json
-```
+What a classified counterpart means for this review:
 
-Look for `Parent`, `Related`, and child links; the sibling story is normally under the same parent feature. Its own branch/PR is then discoverable with the commands above.
+- **Found** → it joins the scope without asking. It gets its own snapshot (*Step 1b*), its own Spec source (*Step 2*), its own Standards sources (*Step 3*), and its own row in every *Review Context* field. Findings cite whichever repo they live in. Cross-repo contract checks (*Heuristics*) run against the counterpart's real code, not against what its description claims.
+- **Found, excluded** (the user said "backend only") → review only the named side. Name the counterpart and its head in *Review Context* as **not reviewed**, and raise any contract the diff touches as a finding, because nobody checked the other side.
+- **Expected but missing** → a Spec finding (🟡, or 🔴 when the product breaks at runtime without the other half).
+- **None** → say "single-repo change" in *Review Context*.
+
+A review that spans both repos with a contract change is the case where `deep` is worth suggesting (*Modes*).
 
 #### Fetch the PR and its work item
 
@@ -275,6 +278,8 @@ Look for what the change was supposed to do, in this order:
 2. A path or pasted text the user supplied.
 3. A spec or plan file matching the branch or work item (`docs/`, `specs/`, a `<prefix>-implementation_plan-<suffix>.md` at the workspace root).
 4. Work-item ids in commit subjects (`#30342: ...`), fetched as in Step 1.
+
+The same sources feed the artifact's *Feature in Brief*. When the linked item is a bare task, read its parent story for the *why*.
 
 If nothing is found, say so in the header ("Spec: none available — Spec axis limited to unannounced behaviour") and continue. Do not stop to ask unless the user explicitly asked for a spec review.
 
@@ -410,10 +415,11 @@ grep -n '^#\{1,3\} ' <prefix>-code_review-<suffix>.md
 
 ```text
 3:## Review Context
-18:## Summary of Changes
-26:## Findings Summary
-48:## Detailed Review Findings
-160:## In Plain Terms
+18:## Feature in Brief
+24:## Summary of Changes
+30:## Findings Summary
+52:## Detailed Review Findings
+164:## In Plain Terms
 ```
 
 Then begin every `/code-review` response with the header formatted for your host:
@@ -423,10 +429,11 @@ Then begin every `/code-review` response with the header formatted for your host
 📄 **[antigravity-<model>-code_review-<suffix>.md](file://<workspace-root>/antigravity-<model>-code_review-<suffix>.md)**
 
 Key Sections:
-- 📄 [Summary of Changes](file://<workspace-root>/antigravity-<model>-code_review-<suffix>.md#L18): [1-sentence summary of scope & intent]
-- 📄 [Findings Summary](file://<workspace-root>/antigravity-<model>-code_review-<suffix>.md#L26): [🔴/🟡/🟢 counts per axis]
-- 📄 [Detailed Review Findings](file://<workspace-root>/antigravity-<model>-code_review-<suffix>.md#L48): [Primary findings and defect analysis]
-- 📄 [In Plain Terms](file://<workspace-root>/antigravity-<model>-code_review-<suffix>.md#L160): [Domain-level explanations for non-technical readers]
+- 📄 [Feature in Brief](file://<workspace-root>/antigravity-<model>-code_review-<suffix>.md#L18): [1–2 sentences: who it is for, and what it should achieve]
+- 📄 [Summary of Changes](file://<workspace-root>/antigravity-<model>-code_review-<suffix>.md#L24): [1-sentence summary of scope & intent]
+- 📄 [Findings Summary](file://<workspace-root>/antigravity-<model>-code_review-<suffix>.md#L30): [🔴/🟡/🟢 counts per axis]
+- 📄 [Detailed Review Findings](file://<workspace-root>/antigravity-<model>-code_review-<suffix>.md#L52): [Primary findings and defect analysis]
+- 📄 [In Plain Terms](file://<workspace-root>/antigravity-<model>-code_review-<suffix>.md#L164): [Domain-level explanations for non-technical readers]
 
 [If an active <prefix>-implementation_plan-<suffix>.md exists]:
 Active Implementation Plan:
@@ -438,10 +445,11 @@ Active Implementation Plan:
 📄 **[claude-<model>-code_review-<suffix>.md](claude-<model>-code_review-<suffix>.md)**
 
 Key Sections:
-- 📄 [Summary of Changes](claude-<model>-code_review-<suffix>.md#L18): [1-sentence summary of scope & intent]
-- 📄 [Findings Summary](claude-<model>-code_review-<suffix>.md#L26): [🔴/🟡/🟢 counts per axis]
-- 📄 [Detailed Review Findings](claude-<model>-code_review-<suffix>.md#L48): [Primary findings and defect analysis]
-- 📄 [In Plain Terms](claude-<model>-code_review-<suffix>.md#L160): [Domain-level explanations for non-technical readers]
+- 📄 [Feature in Brief](claude-<model>-code_review-<suffix>.md#L18): [1–2 sentences: who it is for, and what it should achieve]
+- 📄 [Summary of Changes](claude-<model>-code_review-<suffix>.md#L24): [1-sentence summary of scope & intent]
+- 📄 [Findings Summary](claude-<model>-code_review-<suffix>.md#L30): [🔴/🟡/🟢 counts per axis]
+- 📄 [Detailed Review Findings](claude-<model>-code_review-<suffix>.md#L52): [Primary findings and defect analysis]
+- 📄 [In Plain Terms](claude-<model>-code_review-<suffix>.md#L164): [Domain-level explanations for non-technical readers]
 
 [If an active <prefix>-implementation_plan-<suffix>.md exists]:
 Active Implementation Plan:
@@ -463,11 +471,30 @@ If you edit the artifact after emitting the header, the line numbers have moved 
 
 Sections in this order, and **nothing after In Plain Terms**:
 
-1. `## Review Context` — a small table: PR(s) and work item(s) per repo, base, **Head reviewed** per repo as `` `<source-ref>` @ `<short-sha>` `` (*Step 1b-a*) — e.g. `` Backend `origin/feature/31085_permit-…` @ `65c726bb` `` — never a bare SHA, **Reviewed from** (`` snapshot of `<source-ref>` @ `<short-sha>` (removed) `` / `… (kept at <path>)` / `` live checkout of `<branch>` ``), **Local checkout** per repo (its branch and `same commit` / `local ahead N / behind M` / `on <other-branch> — PR branch not checked out`), **Untracked, not in snapshot** (`working`/`staged` only: file list or "none"), Spec source (or "none available"), Standards sources loaded, mode (standard/deep).
-2. `## Summary of Changes` — 1–3 sentences on what the changes accomplish and their architectural intent.
-3. `## Findings Summary` — the summary table.
-4. `## Detailed Review Findings` — 🔴/🟡 findings with their fix inline, then `### 🟢 Minor Findings`, then `### 💙 Praise`.
-5. `## In Plain Terms` — only when there is at least one 🔴/🟡.
+1. `## Review Context` — a small table: PR(s) and work item(s) per repo, **Counterpart** (the `core` §4.1 classification: `<repo> !<id>` reviewed / found, not reviewed / expected but missing / single-repo change), base, **Head reviewed** per repo as `` `<source-ref>` @ `<short-sha>` `` (*Step 1b-a*) — e.g. `` Backend `origin/feature/31085_permit-…` @ `65c726bb` `` — never a bare SHA, **Reviewed from** (`` snapshot of `<source-ref>` @ `<short-sha>` (removed) `` / `… (kept at <path>)` / `` live checkout of `<branch>` ``), **Local checkout** per repo (its branch and `same commit` / `local ahead N / behind M` / `on <other-branch> — PR branch not checked out`), **Untracked, not in snapshot** (`working`/`staged` only: file list or "none"), Spec source (or "none available"), Standards sources loaded, mode (standard/deep).
+2. `## Feature in Brief` — what the feature is and what it is meant to achieve, before any code is mentioned (see *Feature in Brief* below).
+3. `## Summary of Changes` — 1–3 sentences on what the changes accomplish and their architectural intent.
+4. `## Findings Summary` — the summary table.
+5. `## Detailed Review Findings` — 🔴/🟡 findings with their fix inline, then `### 🟢 Minor Findings`, then `### 💙 Praise`.
+6. `## In Plain Terms` — only when there is at least one 🔴/🟡.
+
+### Feature in Brief
+
+*Summary of Changes* says **how** the code changed. This section says **what** is being built and **why**, so a reader can judge every finding against the goal. It is not a restatement of the diff.
+
+Write 3–5 short sentences, or a few bullets, covering:
+
+- **Who** it is for — the user role or persona (e.g. "case handlers (Amalia)", "suppliers (Lena/Hadya)").
+- **The problem** they have today, or the gap the work closes. When the PR is a follow-up, also say what the earlier work left out.
+- **The outcome** — what they can see or do once this ships.
+- **Where it sits** — the parent story or feature it belongs to, and the counterpart PR in another repo when the work is split.
+
+Rules:
+
+- Draw it from the Step 2 spec source. The parent story usually carries the *why* when the child task is bare. Follow the work-item `Parent` link (Step 1) rather than stopping at a task with no description.
+- Use domain words, not type, file or endpoint names. Keep the product's own terms (e.g. Swedish UI labels) and gloss each one in English the first time it appears.
+- When no spec source exists, infer the purpose from the diff and say so: "*Inferred from the diff — no description or work item available.*" Never present a guess as the stated intent.
+- Keep it neutral. Whether the code actually achieves the goal belongs in the Spec findings, not here.
 
 ### Findings Summary Table
 
@@ -566,7 +593,7 @@ Rules:
    - **Standards** — include the list of Standards source files from Step 3 **and the smell baseline table pasted in full** (the sub-agent has no other access to it). "Report every place the diff violates a documented standard — cite the source file and rule — and any baseline smell you spot, labelled as a judgement call. A documented repo standard overrides the baseline. Check the listed cross-repo contracts on both sides. Skip anything tooling enforces. Under 500 words."
    - **Spec** — include the fetched spec/AC text (not a link). "Report: (a) requirements missing or partial; (b) behaviour in the diff that wasn't asked for; (c) requirements that look implemented but where the implementation looks wrong. Quote the spec line for each. Under 400 words." Skip this sub-agent when there is no Spec source, and say so.
    - All sub-agents are **read-only**: no edits, no checkouts, no worktree commands, no installs, builds or tests. They read only under `repo-root` and report `path:line` already mapped to `workspace-path`.
-3. **Aggregate** into the single artifact: de-duplicate findings raised by more than one axis (keep the axis that owns the root cause), assign final severities within each axis, re-check that no citation points into a snapshot directory, then run **Step 6 — Verify** on every 🔴/🟡 yourself before writing. Remove the snapshot(s) afterwards (*Step 1b-e*).
+3. **Aggregate** into the single artifact: de-duplicate findings raised by more than one axis (keep the axis that owns the root cause), assign final severities within each axis, re-check that no citation points into a snapshot directory, then run **Step 6 — Verify** on every 🔴/🟡 yourself before writing. Write *Feature in Brief* yourself from the Step 2 spec source; no sub-agent writes it. Remove the snapshot(s) afterwards (*Step 1b-e*).
 
 ---
 
@@ -581,7 +608,7 @@ Rules:
   - an API request/response change → the consumer's checked-in API snapshot and generated client types match;
   - a fixed URL or channel name (realtime hub, webhook, queue) → unchanged, or changed in every repo that uses it;
   - user-facing text → in the product's working language, as the rulebook states it.
-  A contract change with only one side in the reviewed PR(s) is a Spec or Standards finding even if the counterpart PR exists — name the counterpart and whether you reviewed it.
+  When the counterpart PR is in scope (*Counterpart PRs*), check both sides in code; agreement is a ✅ note, a mismatch is the finding. A contract change whose other side was not reviewed (excluded by the user, or expected but missing) is a Spec or Standards finding: name the counterpart and why it was not checked.
 - If a citation's line does **not** match what the user sees in the IDE, the user has edited the main checkout since the snapshot was taken — point them at the head in Review Context rather than re-reviewing the live tree.
 - If a **comment or XML `<summary>` narrates history or an incident** (PR/ticket numbers, "fixed the CI crash", "changed from X to Y", "why this fix works") or **cross-references sibling code as justification** ("mirrors X", "stricter than the Y export"), flag it as 🟢 — comments should state the code's current responsibility or a real constraint, not its backstory.
 - If a change alters what code does or needs but **leaves a now-inaccurate comment/doc in place** (e.g. a documented dependency that was removed), flag the stale comment as 🟡 — a wrong doc is worse than none.

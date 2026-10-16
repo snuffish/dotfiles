@@ -93,6 +93,59 @@ function gb() {
     | fzf --header 'Select branch to checkout:' --tiebreak=index --preview 'git show --color=always {-1}' --bind 'enter:become(git checkout {-1})' --height 50% --layout reverse
 }
 
+# Switch to another worktree of the current repo (agent-locked ones are flagged)
+unalias gw 2>/dev/null
+function gw() {
+  if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    echo "gw: not inside a git repository" >&2
+    return 1
+  fi
+
+  local current_root
+  current_root=$(git rev-parse --show-toplevel) || return $?
+
+  # One row per live worktree: "<label>\t<dir>". Prunable (deleted) worktrees are skipped
+  local rows
+  rows=$(git worktree list --porcelain | awk -v cur="$current_root" '
+    function flush() {
+      if (dir != "" && !prunable) {
+        label = (branch != "" ? branch : "(detached " substr(head, 1, 7) ")")
+        if (dir == cur) label = "● " label
+        if (lock != "") label = label "  🔒 " lock
+        printf "%s\t%s\n", label, dir
+      }
+      dir = ""; head = ""; branch = ""; lock = ""; prunable = 0
+    }
+    /^worktree / { flush(); dir = substr($0, 10); next }
+    /^HEAD /     { head = substr($0, 6); next }
+    /^branch /   { branch = substr($0, 8); sub(/^refs\/heads\//, "", branch); next }
+    /^locked/    { lock = substr($0, 8); if (lock == "") lock = "locked"; next }
+    /^prunable/  { prunable = 1; next }
+    END          { flush() }
+  ') || return $?
+
+  if [[ $(printf '%s\n' "$rows" | grep -c .) -le 1 ]]; then
+    echo "gw: no other worktrees in $current_root"
+    return 0
+  fi
+
+  # Match the query against the label only; the shared parent path would fuzzy-match everything
+  local wt_line
+  wt_line=$(printf '%s\n' "$rows" | fzf --header 'Select worktree to switch to:' --delimiter '\t' --nth 1 --tiebreak=index \
+    --query "$*" --select-1 --exit-0 \
+    --preview 'git -C {2} -c color.status=always status -sb; echo; git -C {2} log --oneline --color=always -n 20' \
+    --height 50% --layout reverse)
+  [[ -n "$wt_line" ]] || return 0
+
+  local wt_dir
+  wt_dir=$(printf '%s\n' "$wt_line" | cut -f2)
+  cd -- "$wt_dir" || return $?
+
+  if [[ "$wt_line" == *"🔒 claude-skill:"* ]]; then
+    echo "gw: warning — an agent is working in this worktree; avoid checkout/stash/edits here" >&2
+  fi
+}
+
 alias gclean="g clean -f"
 
 alias gst="g status"
