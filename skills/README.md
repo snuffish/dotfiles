@@ -22,11 +22,11 @@ skills/
 
 ## Inventory
 
-48 skills total — 25 general + 23 under `Projects/GR.PRIIS/`.
+49 skills total — 26 general + 23 under `Projects/GR.PRIIS/`.
 
 | Group                            | Count | Skills                                                                                                                |
 | -------------------------------- | :---: | -------------------------------------------------------------------------------------------------------------------- |
-| General (top level)              |  25   | `artifacts`, `clean`, `code-documentation`, `code-review`, `core`, `create-skill`, `explain`, `expressive`, `implement-feature`, `investigate`, `manual-testing`, `modern-csharp`, `organize`, `plan`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-summary`, `problem`, `refine`, `reload-skills`, `review`, `spec-verification`, `squash-ef-core-migrations`, `suggestion`, `what-am-I-missing` |
+| General (top level)              |  26   | `artifacts`, `clean`, `code-documentation`, `code-review`, `core`, `create-skill`, `explain`, `expressive`, `git-worktrees`, `implement-feature`, `investigate`, `manual-testing`, `modern-csharp`, `organize`, `plan`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-summary`, `problem`, `refine`, `reload-skills`, `review`, `spec-verification`, `squash-ef-core-migrations`, `suggestion`, `what-am-I-missing` |
 | `GR.PRIIS/backend-*`             |   7   | `dry`, `ef-core`, `fastendpoints`, `notifications`, `signalr`, `testing`, `workflow`                                 |
 | `GR.PRIIS/frontend-*`            |   6   | `component-patterns`, `forms`, `routing`, `rtk-query`, `testing`, `workflow`                                          |
 | `GR.PRIIS/source-command-backend-*`  | 6 | `health-check`, `migrate-to-tunit` (retired — migration complete), `release-notes`, `scaffold`, `ship`, `verify`                                    |
@@ -42,7 +42,7 @@ The skill registry uses a layered architecture anchored by two foundational root
 1. **[`core`](core/SKILL.md)**: Universal root operating standards, codebase investigation protocol, safety gates (`/proceed`), and baseline invariants.
 2. **[`artifacts`](artifacts/SKILL.md)**: Universal artifact protocol, host & AI model prefix resolution (`<host>-<model>-`), mandatory contextual suffix (`-<suffix>`) anti-overwrite protocol, and IDE link formatting rules.
 
-Every **operational** skill (one that runs a workflow, mutates the repo, or writes an artifact) declares this composition in an `## Operating Standards & Invariants` header. Pure **reference** skills (`modern-csharp`, `backend-*`, `frontend-*`) carry no header and inherit the standards through the precedence model. Instruction precedence resolves in this order:
+Every **operational** skill (one that runs a workflow, mutates the repo, or writes an artifact) declares this composition in an `## Operating Standards & Invariants` header. A third shared protocol, [`git-worktrees`](git-worktrees/SKILL.md), owns worktree isolation: `/code-review` snapshots through it and `/implement-feature` implements in a workspace worktree through it, both handing a `[worktree-context]` block to every delegated skill so no skill acts on the user's main checkout. Pure **reference** skills (`modern-csharp`, `backend-*`, `frontend-*`) carry no header and inherit the standards through the precedence model. Instruction precedence resolves in this order:
 
 1. **Workspace Rulebooks** (`CLAUDE.md` / `GEMINI.md` / `.agents/rules/`)
 2. **Project-Scoped Skills** (`Projects/<Project>/...`)
@@ -104,8 +104,8 @@ Get-ChildItem -Path "$env:USERPROFILE\.terminal\skills" -Filter "SKILL.md" -Recu
 
 (If the loader globs recursively — `skills/**/SKILL.md` — point it at this root directly and the grouping is honored as-is.)
 
-**Current live state:** All 47 skills are flat-symlinked into the flat skills directory (`~/.claude/skills`), each pointing back into this tree. Verify on macOS/Linux with:
+**Current live state:** All 49 skills are flat-symlinked into the flat skills directory (`~/.claude/skills`), each pointing back into this tree. Verify on macOS/Linux with:
 
 ```bash
-ls -la ~/.claude/skills | grep -c '\-> .*/.terminal/skills/'   # expect 47
+ls -la ~/.claude/skills | grep -c '\-> .*/.terminal/skills/'   # expect 49
 ```

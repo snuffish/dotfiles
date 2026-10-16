@@ -17,6 +17,7 @@ Use this skill whenever the user requests a pull request (PR) summary, PR descri
 
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
 - **Target Artifact**: none — the summary is printed in chat (preview) or written to the open PR (`update` mode). Never an implementation plan.
+- **Repo root** (per [`git-worktrees`](../git-worktrees/SKILL.md) §3): the `repo-root` of a `[worktree-context]` block handed in by the caller when one is present (e.g. `/implement-feature` shipping from its workspace worktree); otherwise the repo you discover from the workspace. Every `git` command below is `git -C <repo-root> …`. Before Step 0's `status`, `add`, `commit` or `push`, confirm the target is that root — Step 0 against the user's main checkout would commit and push *their* unrelated work. If no block was handed in but `git -C <repo> worktree list --porcelain` shows a **locked** worktree whose reason begins with `claude-skill:` for the same branch, stop and ask which tree is meant.
 
 ---
 
@@ -33,11 +34,11 @@ Any argument that is not the `update` keyword is still treated as the branch/bas
 
 ## Step 0 — Sync the branch before composing
 
-A PR description has to describe the code the PR actually contains. If the work exists only in the working tree, or only in local commits, the summary would describe code reviewers cannot see. So **commit and push first, then compose**. In a multi-repo workspace, run this per repo that has a branch to summarise.
+A PR description has to describe the code the PR actually contains. If the work exists only in the working tree, or only in local commits, the summary would describe code reviewers cannot see. So **commit and push first, then compose**. Run this per `[worktree-context]` block when blocks were handed in, else per repo in the workspace that has a branch to summarise — always against `<repo-root>`, never the current directory.
 
 ```bash
-git status --short                                   # uncommitted work?
-git rev-list --count @{u}..HEAD 2>/dev/null          # local commits not pushed? (errors when no upstream)
+git -C <repo-root> status --short                                   # uncommitted work?
+git -C <repo-root> rev-list --count @{u}..HEAD 2>/dev/null          # local commits not pushed? (errors when no upstream)
 ```
 
 1. **Uncommitted changes** — commit them before Step 1.
@@ -45,7 +46,7 @@ git rev-list --count @{u}..HEAD 2>/dev/null          # local commits not pushed?
    - Use the repo's commit convention, from its workflow skill or `CONTRIBUTING.md`, falling back to the recent `git log`. Example: `#<id>: <short English imperative description>`, with the work-item id taken from the branch name.
    - Apply the attribution-trailer rule the project or profile sets; a project that forbids trailers overrides the harness default.
    - Run the repo's fast pre-commit gates first when they are documented: a formatter, an import organiser on changed files, lint. A failing gate stops here and is reported; never commit around it.
-2. **Unpushed commits** — push them: `git push`, or `git push -u origin HEAD` when the branch has no upstream.
+2. **Unpushed commits** — push them: `git -C <repo-root> push`, or `git -C <repo-root> push -u origin HEAD` when the branch has no upstream.
 3. **Nothing to sync** — continue silently.
 
 In **preview mode**, do not commit or push. Say instead that the summary covers changes that are not yet committed or pushed, and list them.
@@ -58,12 +59,12 @@ Never amend, rebase or force-push existing commits here; add new commits only. R
 
 Find exactly what changed. Choose the appropriate strategy in order:
 
-| Situation | Command |
+| Situation | Command (all `-C <repo-root>`) |
 |---|---|
-| Branch / PR (default) | `git diff $(git merge-base HEAD <base>)...HEAD` |
-| Staged only | `git diff --staged` |
-| Unstaged only | `git diff` |
-| Specific commit range | `git log <base>..HEAD --oneline` |
+| Branch / PR (default) | `git -C <repo-root> diff $(git -C <repo-root> merge-base HEAD <base>)...HEAD` |
+| Staged only | `git -C <repo-root> diff --staged` |
+| Unstaged only | `git -C <repo-root> diff` |
+| Specific commit range | `git -C <repo-root> log <base>..HEAD --oneline` |
 
 ### Base branch discovery
 
@@ -71,14 +72,14 @@ When comparing a branch, find the correct base — **do not guess**:
 
 ```bash
 # 1. Check the upstream tracking ref recorded for this branch
-git rev-parse --abbrev-ref --symbolic-full-name @{u}   # e.g. origin/main
+git -C <repo-root> rev-parse --abbrev-ref --symbolic-full-name @{u}   # e.g. origin/main
 
 # 2. Fall back: find the merge-base against common integration branches
-git merge-base HEAD origin/main
-git merge-base HEAD origin/develop
+git -C <repo-root> merge-base HEAD origin/main
+git -C <repo-root> merge-base HEAD origin/develop
 
 # 3. Build the diff using three-dot syntax (only commits introduced by this branch):
-git diff $(git merge-base HEAD <base>)...HEAD --name-only
+git -C <repo-root> diff $(git -C <repo-root> merge-base HEAD <base>)...HEAD --name-only
 ```
 
 Always use the **three-dot** form so you see only what this branch introduces, not divergent commits on the base.

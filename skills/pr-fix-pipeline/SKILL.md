@@ -17,6 +17,7 @@ This skill adheres strictly to the **[core](../core/SKILL.md)** operating standa
   - `<prefix>-implementation_plan-<suffix>.md` — the fix (format owned by `/plan`).
 - **Suffix**: `<prId>-pipeline-<slug>` (e.g. `-18542-pipeline-statistics-granularity`). For a multi-repo fix, use the lead PR id and list every PR in the artifact header.
 - **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append the descriptive `<suffix>`. Never write unsuffixed or un-modeled generic files.
+- **Isolation**: when the invocation contains `worktree` or `/git-worktrees` (e.g. `/<skill> <request> /git-worktrees`), or when running under `/implement-feature`, edits happen in a workspace worktree per [`git-worktrees`](../git-worktrees/SKILL.md) §5 (the main checkout stays read-only, core §2.4); otherwise in place as today. Honour a handed-in `[worktree-context]` block: every `git` command and every file path resolves under its `repo-root`.
 
 > [!CAUTION]
 > **Golden invariants**

@@ -11,6 +11,7 @@ Use this skill when the user asks to run the migrated source command `verify` fo
 
 This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating standards and the **[artifacts](../../../artifacts/SKILL.md)** delivery protocol.
 - **Target Artifact**: none — the PASS/FAIL table is printed in chat. Read-only.
+- **Repo root** (per [`git-worktrees`](../../../git-worktrees/SKILL.md) §3): `<repo-root>` is the `repo-root` of a `[worktree-context]` block handed in by the caller when one is present (e.g. `/implement-feature` verifying its workspace worktree); otherwise the frontend repo in the workspace. Every command below runs against `<repo-root>/source/priis-web`, in a subshell so the session's working directory never moves. A worktree starts without `node_modules`: run the profile's dependency hydration (`npm ci` in `<repo-root>/source/priis-web`) before Phase 1 if it is missing.
 
 ---
 
@@ -18,14 +19,14 @@ This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating 
 
 # /verify — Quality Gate
 
-Run all phases before `git add / git commit`. All npm commands run from `source/priis-web/`.
+Run all phases before `git add / git commit`. All npm commands run from `<repo-root>/source/priis-web/` via `(cd <repo-root>/source/priis-web && …)` or `npm --prefix <repo-root>/source/priis-web run …`.
 
 ---
 
 ## Phase 1: Lint
 
 ```bash
-cd source/priis-web && npm run lint
+(cd <repo-root>/source/priis-web && npm run lint)
 ```
 
 **Zero warnings allowed.** List each warning with file:line. Do not proceed to commit if any warnings remain.
@@ -35,7 +36,7 @@ cd source/priis-web && npm run lint
 ## Phase 2: Build
 
 ```bash
-cd source/priis-web && npm run build
+(cd <repo-root>/source/priis-web && npm run build)
 ```
 
 TypeScript compile errors and Vite bundle issues surface here. Must complete with zero errors.

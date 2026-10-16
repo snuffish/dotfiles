@@ -17,6 +17,7 @@ replaces. Everything below exists to protect that difference.
 
 This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
 - **Target Artifact**: none — the deliverable is the squashed migration itself. This skill rewrites migration history: run the safety gate below first, and when invoked from a plan, only after `/proceed`.
+- **Isolation**: when the invocation contains `worktree` or `/git-worktrees` (e.g. `/<skill> <request> /git-worktrees`), or when running under `/implement-feature`, edits happen in a workspace worktree per [`git-worktrees`](../git-worktrees/SKILL.md) §5 (the main checkout stays read-only, core §2.4); otherwise in place as today. Honour a handed-in `[worktree-context]` block: every `git` command and every file path resolves under its `repo-root`.
 
 ---
 
@@ -91,7 +92,7 @@ git ls-tree -r --name-only origin/main -- <MigrationsDir> \
 
 ```bash
 rm <MigrationsDir>/<candidate>.cs <MigrationsDir>/<candidate>.Designer.cs   # for each candidate
-git checkout origin/main -- <MigrationsDir>/<Context>ModelSnapshot.cs        # snapshot as of the baseline
+git -C <repo-root> checkout origin/main -- <MigrationsDir>/<Context>ModelSnapshot.cs   # snapshot as of the baseline; <repo-root> = the worktree when a [worktree-context] was handed in
 ```
 
 The snapshot must describe the model **at the baseline**, otherwise the scaffolder diffs against the wrong
@@ -241,7 +242,7 @@ docker rm -f mig-verify
 | Snapshot left at the branch state | Scaffold comes out empty/partial. Reset it in Step 4 |
 | Trusting `has-pending-model-changes` as proof | It checks the snapshot, not your `Up()` |
 | `ls \| grep '^2026'` finding nothing | `ls` may be aliased to a table format. Use `find` |
-| `cd` in a compound command breaking later relative paths | Use absolute paths, or `cd` once at the start |
+| `cd` in a compound command breaking later relative paths | Use absolute paths under `<repo-root>` (or `(cd <repo-root> && …)` in a subshell); never move the session's cwd |
 | `HostAbortedException` read as failure | Normal for web startup projects; look for `Done.` |
 | `STRING_AGG` collation conflict in verification SQL | Use `UNION ALL` of scalar counts instead |
 | Temporal table rename failing | Toggle `SYSTEM_VERSIONING = OFF`, rename current **and** history tables plus PK/FK/index names, then back `ON` with `DATA_CONSISTENCY_CHECK` |

@@ -53,6 +53,13 @@ To prevent accidental regressions and unapproved mutations:
 - After editing code, never assume success. Always run targeted verification (relevant unit tests, integration tests, type checks, or build commands).
 - If tests or builds fail, diagnose and fix the issue before claiming completion.
 
+### 2.4 Isolated Worktree Invariant
+- When the **[git-worktrees](../git-worktrees/SKILL.md)** protocol has an active worktree for a repository (a `[worktree-context]` block was handed in, or `git -C <repo> worktree list --porcelain` shows a worktree locked with a `claude-skill:` reason), the repository's **main checkout is read-only for every skill in the session**: no `git status`-driven decisions, `stash create`, `checkout`, `add`, `commit`, `push` or file edits there. Work happens in the worktree named by `repo-root`.
+- The only writes outside a worktree are artifacts at the workspace root and the `.claude/worktrees/` entry in `<repo>/.git/info/exclude`.
+- A worktree holding uncommitted or unpushed work is never removed without the user's explicit "discard"; removing a worktree never deletes its branch. `/proceed` approves edits in the worktree; it does not lift this invariant.
+- The session's working directory never moves to a worktree; every command uses `git -C <path>` or absolute paths.
+- **Opt-in for any skill:** an invocation whose arguments contain `worktree`, `worktrees` or `/git-worktrees` (e.g. `/<skill> <request> /git-worktrees`) runs that skill under the `git-worktrees` protocol — workspace mode for a mutating skill, snapshot mode for a read-only one — whether or not the skill isolates by default. `/code-review` (snapshot) and `/implement-feature` (workspace) do so by default.
+
 ---
 
 ## 3. Universal Artifact & Link Protocol
@@ -123,4 +130,4 @@ This skill adheres strictly to the **[core](../core/SKILL.md)** operating standa
 ```
 *(For nested project skills under `Projects/<Project>/<name>/`, the registry root is three levels up: `../../../core/SKILL.md`.)*
 
-Which skills carry it: every **operational** skill — one that runs a workflow, mutates the repo, or writes an artifact (the general `/…` skills, the `source-command-*` recipes, `*-workflow`, `squash-ef-core-migrations`, `code-documentation`, `pr-summary`, `manual-testing`). Pure **reference** skills — `modern-csharp` and the `backend-*` / `frontend-*` pattern skills — carry no header; they inherit these standards through the precedence model in §5.
+Which skills carry it: every **operational** skill — one that runs a workflow, mutates the repo, or writes an artifact (the general `/…` skills, the `source-command-*` recipes, `*-workflow`, `squash-ef-core-migrations`, `code-documentation`, `pr-summary`, `manual-testing`, `git-worktrees`). Pure **reference** skills — `modern-csharp` and the `backend-*` / `frontend-*` pattern skills — carry no header; they inherit these standards through the precedence model in §5.
