@@ -22,11 +22,11 @@ skills/
 
 ## Inventory
 
-53 skills total — 30 general + 23 under `Projects/GR.PRIIS/`.
+54 skills total — 31 general + 23 under `Projects/GR.PRIIS/`.
 
 | Group                            | Count | Skills                                                                                                                |
 | -------------------------------- | :---: | -------------------------------------------------------------------------------------------------------------------- |
-| General (top level)              |  30   | `artifacts`, `ask-question`, `clean`, `code-documentation`, `code-review`, `core`, `create-skill`, `create-ticket`, `explain`, `expressive`, `git-worktrees`, `implement-feature`, `investigate`, `manual-testing`, `modern-csharp`, `organize`, `plan`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`, `refine`, `reload-skills`, `resolve-conflicts`, `review`, `spec-verification`, `squash-ef-core-migrations`, `suggestion`, `what-am-I-missing` |
+| General (top level)              |  31   | `artifacts`, `ask-question`, `clean`, `code-documentation`, `code-review`, `core`, `create-skill`, `create-ticket`, `explain`, `expressive`, `git-worktrees`, `implement-feature`, `investigate`, `manual-testing`, `modern-csharp`, `organize`, `plan`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`, `refine`, `reload-skills`, `resolve-conflicts`, `review`, `spec-verification`, `squash-ef-core-migrations`, `suggestion`, `verify-assumptions`, `what-am-I-missing` |
 | `GR.PRIIS/backend-*`             |   7   | `dry`, `ef-core`, `fastendpoints`, `notifications`, `signalr`, `testing`, `workflow`                                 |
 | `GR.PRIIS/frontend-*`            |   6   | `component-patterns`, `forms`, `routing`, `rtk-query`, `testing`, `workflow`                                          |
 | `GR.PRIIS/source-command-backend-*`  | 6 | `health-check`, `migrate-to-tunit` (retired — migration complete), `release-notes`, `scaffold`, `ship`, `verify`                                    |

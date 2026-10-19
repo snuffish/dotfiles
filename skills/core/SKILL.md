@@ -42,7 +42,7 @@ To prevent accidental regressions and unapproved mutations:
 - Save the plan as `<prefix>-implementation_plan-<suffix>.md` at the **workspace root** and request user approval before modifying code.
 
 ### 2.2 The `/proceed` Gate (Strict Read-Only Invariant)
-- Read-only research, evaluation and diagnostic skills (`/investigate`, `/review`, `/code-review`, `/pr-feedback-review`, `/explain`, `/suggestion`, `/what-am-I-missing`, `/manual-testing`, and `/pr-fix-pipeline` until `/proceed`) must **never** execute code modifications, stage commits, run migrations, or auto-implement changes during or immediately after the evaluation.
+- Read-only research, evaluation and diagnostic skills (`/investigate`, `/review`, `/code-review`, `/pr-feedback-review`, `/explain`, `/suggestion`, `/what-am-I-missing`, `/verify-assumptions`, `/manual-testing`, and `/pr-fix-pipeline` until `/proceed`) must **never** execute code modifications, stage commits, run migrations, or auto-implement changes during or immediately after the evaluation.
 - Execution is locked until the user explicitly issues the command:
   ```text
   /proceed
