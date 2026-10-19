@@ -1,18 +1,24 @@
----
-name: git-worktrees
-description: Shared git worktree isolation protocol for every operational skill — run a skill in its own worktree so several jobs can proceed in parallel on one repository while the user keeps editing the main checkout. Two modes — snapshot (detached, read-only, always removed; used by /code-review) and workspace (a branch worktree for implementation, removed once the branch is pushed and the PR exists). Owns repo resolution in single- and multi-repo workspaces, the [worktree-context] block that tells delegated skills and sub-agents which tree is the repo root, hydration of ignored local config and dependencies, the removal guard for unpushed work, crash recovery and the user hand-off line. Plain `git -C <repo> worktree …` only — never the host's EnterWorktree / ExitWorktree / sub-agent isolation. Load when a skill says "follow git-worktrees", when the user says "worktree", "isolate this run", "snapshot the repo", "run this in parallel without touching my checkout", or when a skill must create, enter, hand over or remove a worktree.
----
-
-# Skill: `git-worktrees` — Shared Worktree Isolation Protocol
+# git-worktrees
 
 One protocol for every skill that must read or change a repository without touching the user's main checkout. `/code-review` and `/pr-feedback-review` use **snapshot** mode by default; `/implement-feature` uses **workspace** mode by default; every other mutating skill switches to workspace mode when invoked with the word `worktree` or when it runs under `/implement-feature`. Each of them delegates here instead of carrying its own copy of the lifecycle.
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: none. The deliverables are the worktree, the `[worktree-context]` block handed to the calling skill, and the hand-off line in chat. Artifacts stay at the **workspace root** and keep workspace-relative paths.
+Read these before using this one:
+- `~/.terminal/skills/_modules/core.md`
+
+Artifacts stay at the **workspace root** and keep workspace-relative paths. This Module writes none; its deliverables are the worktree, the `[worktree-context]` block handed to the calling Command, and the hand-off line in chat.
+
+---
+
+## Using this Module from a Command
+
+A Command that lists this Module in its `## Modules` section gets both rules below without restating them. Its `git-worktrees` line names only its default mode (`snapshot by default`, `workspace by default`, or nothing for "in place unless opted in").
+
+- **Isolation.** When the invocation contains `worktree`, `worktrees` or `/git-worktrees`, or the Command runs under `/implement-feature`, a mutating Command edits in a workspace worktree (*Workspace Lifecycle*) and a read-only Command reads from a snapshot (*Snapshot Lifecycle*). Otherwise it uses its default mode, or works in place. The main checkout stays read-only while a worktree is active (*Golden Invariants*).
+- **Repo root.** The `repo-root` of a `[worktree-context]` block handed in by the caller when one is present; otherwise the discovery the Command does today. Every `git` command and file path resolves under it. Before any `git status`, `stash create`, `checkout`, `add`, `commit` or `push`, confirm the target is that root. If no block was handed in but `git -C <repo> worktree list --porcelain` shows a **locked** worktree whose reason begins with `claude-skill:` for the same ticket or branch, stop and ask which tree is meant.
 
 ---
 
@@ -21,7 +27,7 @@ This skill adheres strictly to the **[core](../core/SKILL.md)** operating standa
 > [!CAUTION]
 > **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
 >
-> 1. **THE MAIN CHECKOUT IS READ-ONLY WHILE A WORKTREE IS ACTIVE FOR ITS REPO.** No `status`-driven decisions, `stash create`, `checkout`, `switch`, `add`, `commit`, `push`, `reset` or file edits there, by you or by any sub-agent. The only writes outside a worktree are artifacts at the workspace root and the `.git/info/exclude` entry in §5b.
+> 1. **THE MAIN CHECKOUT IS READ-ONLY WHILE A WORKTREE IS ACTIVE FOR ITS REPO.** No `status`-driven decisions, `stash create`, `checkout`, `switch`, `add`, `commit`, `push`, `reset` or file edits there, by you or by any sub-agent. The only writes outside a worktree are artifacts at the workspace root and the `.git/info/exclude` entry in §5b. `/proceed` approves edits in the worktree; it does not lift this invariant.
 > 2. **THE SESSION'S WORKING DIRECTORY NEVER MOVES.** Every command is `git -C <path>` or an absolute path. Artifact links are workspace-root-relative and break the moment the cwd changes.
 > 3. **NO HOST WORKTREE TOOLING.** Do not use Claude Code's `EnterWorktree`, `ExitWorktree`, `claude --worktree` or the Agent tool's `isolation: "worktree"` to satisfy this protocol: they are Claude-Code-only, they act on the repository of the launch directory (an empty shell in a multi-repo workspace), they move the cwd, and they name branches `worktree-<name>` against every project's convention. `EnterWorktree` with `path:` is acceptable **only** when the user asks to step into a kept worktree themselves (§5h).
 > 4. **ONE WORKTREE PER REPO IN SCOPE.** A two-repo change has two worktrees, two context blocks and two removals.
@@ -40,7 +46,7 @@ This skill adheres strictly to the **[core](../core/SKILL.md)** operating standa
 
 Default users: `/code-review`, `/pr-feedback-review` → snapshot; `/implement-feature` → workspace. `clean`, `expressive`, `organize`, `refine`, `problem`, `pr-fix-pipeline`, `squash-ef-core-migrations` → workspace when opted in (below) or under `/implement-feature`, otherwise in place. Other read-only skills keep their live, head-pinned reading unless opted in, which gives them a snapshot.
 
-**Opt-in token.** Any skill invocation whose arguments contain `worktree`, `worktrees` or `/git-worktrees` runs under this protocol even when the skill does not isolate by default — e.g. `/refine <request> /git-worktrees` or `/explain deep <symbol> worktree`. Only the first `/<name>` in a message is a command; `/git-worktrees` later in the line is plain text the invoked skill must recognise, which core §2.4 makes a universal rule. A mutating skill gets **workspace** mode, a read-only skill gets **snapshot** mode. The skill loads this file, follows §2–§5 for the mode, and otherwise runs unchanged with `repo-root` as its repository.
+**Opt-in token.** Any skill invocation whose arguments contain `worktree`, `worktrees` or `/git-worktrees` runs under this protocol even when the skill does not isolate by default — e.g. `/refine <request> /git-worktrees` or `/explain deep <symbol> worktree`. Only the first `/<name>` in a message is a command; `/git-worktrees` later in the line is plain text the invoked skill must recognise, which `core` › *Worktree opt-in* makes a universal rule. A mutating skill gets **workspace** mode, a read-only skill gets **snapshot** mode. The skill loads this file, follows §2–§5 for the mode, and otherwise runs unchanged with `repo-root` as its repository.
 
 Why the workspace location is inside the repo: it is under the host's project directory in single-repo workspaces (so file edits do not prompt per file), it is where Claude Code's own tooling looks, and a kept worktree can be entered by the user with `EnterWorktree path:`. The cost is the exclude entry in §5b and the search glob in §5d. Snapshots live in the scratchpad because nothing of the user's ever lives in them.
 
@@ -75,9 +81,7 @@ base=<ref>@<short-sha>
 source-ref=<ref the head came from>       # snapshot mode: the branch or origin/<ref> the SHA was taken from
 ```
 
-**Rule for every delegating skill** (copy this sentence into the skill's *Operating Standards*):
-
-> **Repo root:** the `repo-root` of a `[worktree-context]` block handed in by the caller when one is present; otherwise the discovery this skill does today. Before any `git status`, `stash create`, `checkout`, `add`, `commit` or `push`, confirm the target is that root. If no block was handed in but `git -C <repo> worktree list --porcelain` shows a **locked** worktree whose reason begins with `claude-skill:` for the same ticket or branch, stop and ask which tree is meant.
+Every delegated skill follows the *Repo root* rule in *Using this Module from a Command*.
 
 The lock reason (§5b) is the discovery mechanism, so no marker file is left in the tree and `git status` stays clean.
 

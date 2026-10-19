@@ -77,6 +77,8 @@ Workspace: `/Users/snuffish/Projects/GR` (workspace root; itself a git repo that
 | SignalR hub URL `/realtime/account` | Fixed contract | Do not change without coordinating both repos. |
 | Notification / job | `backend-notifications` | TickerQ job + handler + definition. |
 
+Cross-layer mapping for this stack (`core` › *Codebase investigation*): backend ↔ frontend means DTO synchronization, route paths, payload serialization and the RTK Query hooks; domain ↔ persistence means EF Core mappings, migrations, foreign keys and validation rules.
+
 ---
 
 ## Phase 2 — Plan
