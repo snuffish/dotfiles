@@ -7,10 +7,11 @@ description: "[Project: GR.PRIIS.Frontend] Scaffold a new feature slice — RTK 
 
 Use this skill when the user asks to run the migrated source command `scaffold` for the GR.PRIIS.Frontend project.
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating standards and the **[artifacts](../../../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: none — generated source files land in the repository paths below. When run from a plan, only after `/proceed`.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes no artifact — generated source files land in the repository paths below. When run from a plan, only after `/proceed`.
 
 ---
 

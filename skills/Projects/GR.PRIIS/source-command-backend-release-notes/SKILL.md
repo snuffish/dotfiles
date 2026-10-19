@@ -7,10 +7,11 @@ description: "[Project: GR.PRIIS.Backend] Generate and publish Swedish release n
 
 Use this skill when the user asks to run the migrated source command `release-notes`.
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating standards and the **[artifacts](../../../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: none — the draft is shown in chat and published to the PRIIS wiki only after the user confirms it.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes no artifact — the draft is shown in chat and published to the PRIIS wiki only after the user confirms it
 
 ---
 

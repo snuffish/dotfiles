@@ -15,18 +15,21 @@ Use this skill whenever the user asks to review pull request feedback, triage re
 > **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
 >
 > 1. **MANDATORY .MD ARTIFACT & SUMMARY (NO EXCUSES):** Every single `/pr-feedback-review` response MUST ALWAYS write or update the complete feedback review report as `<prefix>-pr_feedback_review-<suffix>.md` **at the workspace root**, and begin the response with a clickable link to it plus clickable section anchors, built exactly as *Artifact Links* below specifies. The user frequently needs to click and open it in the IDE.
-> 2. **DO NOT MODIFY CODE OR THE MAIN WORKING TREE:** You must **NEVER** edit code files, stage commits, run migrations, check out branches, `git stash push`/`pop`, or execute modifying commands during or immediately after a `/pr-feedback-review`. The **only** git writes allowed are `git fetch` and the ones [`git-worktrees`](../git-worktrees/SKILL.md) snapshot mode performs (*Step 2.3*): `git worktree add --detach` / `remove` / `prune` on a snapshot directory **outside** the repo.
+> 2. **DO NOT MODIFY CODE OR THE MAIN WORKING TREE:** You must **NEVER** edit code files, stage commits, run migrations, check out branches, `git stash push`/`pop`, or execute modifying commands during or immediately after a `/pr-feedback-review`. The **only** git writes allowed are `git fetch` and the ones `git-worktrees` snapshot mode performs (*Step 2.3*): `git worktree add --detach` / `remove` / `prune` on a snapshot directory **outside** the repo.
 > 3. **DO NOT AUTO-PROCEED:** Never begin implementing fixes or refactorings automatically. Present clear decision paths, code diffs, and draft replies, then wait for explicit user instruction.
 > 4. **DO NOT GENERATE AN IMPLEMENTATION PLAN INSTEAD:** Do not substitute `<prefix>-implementation_plan-<suffix>.md` for the feedback review document. The feedback review document *is* `<prefix>-pr_feedback_review-<suffix>.md`.
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-pr_feedback_review-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
-- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` (e.g. `-18176-backend`, `-18176-18177-verksamhetsobjekt`). Never write unsuffixed or un-modeled generic files.
-- **Repo root** (per [`git-worktrees`](../git-worktrees/SKILL.md) §3): the `repo-root` of a `[worktree-context]` block handed in by the caller when one is present; otherwise the snapshot this skill creates in *Step 2.3*. Before any `git status` or `rev-parse HEAD`, confirm the target is that root. If no block was handed in but `git -C <repo> worktree list --porcelain` shows a **locked** worktree whose reason begins with `claude-skill:` for the same ticket or branch, stop and ask which tree is meant.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-pr_feedback_review-<suffix>.md` (suffix e.g. `-18176-backend`, `-18176-18177-verksamhetsobjekt`)
+- `~/.terminal/skills/_modules/git-worktrees.md`: snapshot by default
+- `~/.terminal/skills/_modules/pr-counterpart.md`
+
+- Without a handed-in `[worktree-context]` block, the repo root is the snapshot this skill creates in *Step 2.3*.
 
 ---
 
@@ -100,7 +103,7 @@ gh pr view --json number,title,baseRefName,url
 
 ### Counterpart PRs — every resolved PR, every time
 
-After the target PR is resolved, run the counterpart lookup in **[`core`](../core/SKILL.md) §4.1**. That section owns the signals, the commands and the classification. One pasted link is one half of a change that may span repos. What the result means here:
+After the target PR is resolved, run the counterpart lookup in **`pr-counterpart` › *Counterpart discovery***. That section owns the signals, the commands and the classification. One pasted link is one half of a change that may span repos. What the result means here:
 
 - **Found** → the counterpart joins the scope without asking. Steps 2–5 run for **every PR in scope**: its metadata and votes, its thread dump (kept per PR: `threads-<repo>.json`), its own snapshot (*2.3*, one per PR), and its rows in the triage matrix. A thread on one PR whose fix lands in the other repo, or must land in both (an API shape, a shared enum, a generated client snapshot), is assessed against **both** snapshots. Its *Concrete Code Solution* names both files, and its reply says the counterpart PR carries the other half.
 - **Found, excluded** (the user named one PR "only") → triage only that PR. Still name the counterpart, its head and its open-thread count in the header, and flag any thread whose fix would change the shared contract.
@@ -186,10 +189,10 @@ Save the raw JSON and the filtered human-readable dump to the scratchpad (e.g. `
 
 Threads are assessed against the PR's **remote head** — what reviewers see — never against the iteration they were written on, and never against whatever happens to be checked out locally. That head is materialised in a **detached `git worktree` outside the repo** and everything in Steps 3–5 reads from there, so the user can keep editing the main checkout the whole run. `/pr-feedback-review live …` skips the snapshot and reads the main checkout as-is.
 
-The lifecycle — create, read, map paths back, remove, fallback — is **[`git-worktrees`](../git-worktrees/SKILL.md) §4 (snapshot mode)** with `<skill>=pr-feedback-review`; follow it for the mechanics. What is specific here:
+The lifecycle — create, read, map paths back, remove, fallback — is **`git-worktrees` › *Snapshot Lifecycle* (snapshot mode)** with `<skill>=pr-feedback-review`; follow it for the mechanics. What is specific here:
 
-- **Repo:** the workspace repo whose `origin` matches the PR's `{repo}` (§2 repo resolution — in a multi-repo workspace, e.g. `GR.PRIIS.Backend` for a `_git/GR.PRIIS.Backend/pullrequest/…` URL). One snapshot per PR in scope.
-- **Head and source ref** (§4a, *PR whose branch is not checked out* row — used even when it is checked out, since local commits are not what reviewers see):
+- **Repo:** the workspace repo whose `origin` matches the PR's `{repo}` (*Repo Resolution* — in a multi-repo workspace, e.g. `GR.PRIIS.Backend` for a `_git/GR.PRIIS.Backend/pullrequest/…` URL). One snapshot per PR in scope.
+- **Head and source ref** (*Snapshot Lifecycle* a, *PR whose branch is not checked out* row — used even when it is checked out, since local commits are not what reviewers see):
 
   ```bash
   git -C <repo> fetch origin <sourceBranch> <targetBranch>
@@ -199,8 +202,8 @@ The lifecycle — create, read, map paths back, remove, fallback — is **[`git-
   ```
 
   Also compare `HEAD_SHA` with the PR's `lastMergeSourceCommit` from Step 2.1; a mismatch means the PR moved during the fetch — re-fetch.
-- **Create** (§4b): `SNAP_DIR=<scratchpad>/pr-feedback-review/<repo-dirname>/<ref-slug>@<short-sha>`, then `git -C <repo> worktree add --detach "$SNAP_DIR" "$HEAD_SHA"`.
-- **Read** (§4c): inside the snapshot `HEAD` **is** the PR head and remote refs are shared, so
+- **Create** (*Snapshot Lifecycle* b): `SNAP_DIR=<scratchpad>/pr-feedback-review/<repo-dirname>/<ref-slug>@<short-sha>`, then `git -C <repo> worktree add --detach "$SNAP_DIR" "$HEAD_SHA"`.
+- **Read** (*Snapshot Lifecycle* c): inside the snapshot `HEAD` **is** the PR head and remote refs are shared, so
 
   ```bash
   git -C "$SNAP_DIR" log --oneline origin/<targetBranch>..HEAD
@@ -208,9 +211,9 @@ The lifecycle — create, read, map paths back, remove, fallback — is **[`git-
   ```
 
   CodeGraph indexes the main checkout: navigate with it, open the same file under `$SNAP_DIR` for the citation (exact only when the main checkout's `HEAD` equals the snapshot head and is clean — say which case applied).
-- **No `<scratchpad>` path reaches the artifact or the chat** (§4d): map every `path:line` to `<repo-dirname>/…` first.
-- **Remove** (§4e) after the artifact is written and its links emitted — in deep mode, after every sub-agent has returned — and say in chat that the snapshot of `origin/<sourceBranch> @ <short-sha>` was removed, or why it was kept.
-- **Fallback** (§4f): when `worktree add` fails, read live, record `live checkout` in the artifact header, and warn that edits during the run invalidate line numbers.
+- **No `<scratchpad>` path reaches the artifact or the chat** (*Snapshot Lifecycle* d): map every `path:line` to `<repo-dirname>/…` first.
+- **Remove** (*Snapshot Lifecycle* e) after the artifact is written and its links emitted — in deep mode, after every sub-agent has returned — and say in chat that the snapshot of `origin/<sourceBranch> @ <short-sha>` was removed, or why it was kept.
+- **Fallback** (*Snapshot Lifecycle* f): when `worktree add` fails, read live, record `live checkout` in the artifact header, and warn that edits during the run invalidate line numbers.
 
 ---
 
@@ -273,7 +276,7 @@ Always write the complete PR feedback review report to `<prefix>-pr_feedback_rev
 
 ### 6.2 — Artifact Links
 
-Format all chat links and section anchors according to the **[artifacts](../artifacts/SKILL.md)** protocol (`file://` absolute for Antigravity IDE, workspace-relative for Claude Code, `#L<line>` line fragments for chat).
+Format all chat links and section anchors according to the **`artifact-protocol`** protocol (`file://` absolute for Antigravity IDE, workspace-relative for Claude Code, `#L<line>` line fragments for chat).
 
 Always start your response with a clickable link to `<prefix>-pr_feedback_review-<suffix>.md` and direct anchors to its main sections.
 
@@ -283,7 +286,7 @@ Always start your response with a clickable link to `<prefix>-pr_feedback_review
 # PR Feedback Review: <PR Title>
 
 > **PR:** [<Title>](<url>) (`<source>` → `<target>`)  
-> **Counterpart:** [<repo> !<id>](<url>) @ `<short-sha>` — triaged / found, not triaged / expected but missing / single-repo change (`core` §4.1)  
+> **Counterpart:** [<repo> !<id>](<url>) @ `<short-sha>` — triaged / found, not triaged / expected but missing / single-repo change (`pr-counterpart` › *Classification*)  
 > **Head reviewed:** `origin/<source>` @ `<short-sha>` (iteration <n>)  
 > **Read from:** snapshot of `origin/<source>` @ `<short-sha>` (removed) / (kept at <path>) / live checkout of `<branch>`  
 > **Local checkout:** on `<branch>` — same commit / local ahead <n> / behind <n> / PR branch not checked out  

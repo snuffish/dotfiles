@@ -9,14 +9,17 @@ Surgically sanitizes a source file by eliminating dead code, unused exports, unr
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-clean_report-<suffix>.md` for a directory / multi-file target only (suffix derived from the target, e.g. `-audit-endpoint`)
+- `~/.terminal/skills/_modules/git-worktrees.md`
 
 - **Single-file target (default)**: `/clean` is itself the authorization to edit the target file — apply edits directly, no implementation plan or `/proceed` gate. Report with the chat summary in §5.
-- **Directory / multi-file target**: write `<prefix>-clean_report-<suffix>.md` at the **workspace root** (prefix and suffix resolved per the [artifacts](../artifacts/SKILL.md) protocol, suffix derived from the target, e.g. `-audit-endpoint`), list the per-file findings, and clean the files one at a time with verification between each.
+- **Directory / multi-file target**: write `<prefix>-clean_report-<suffix>.md` at the **workspace root** (prefix and suffix resolved per the `artifact-protocol` protocol, suffix derived from the target, e.g. `-audit-endpoint`), list the per-file findings, and clean the files one at a time with verification between each.
 - **Blast radius**: edits stay inside the target file. The only permitted edits elsewhere are mechanical consequences of a verified removal (a barrel re-export line, an `__all__` entry, a stale JSDoc/XML-doc reference) — each one listed in the summary. Anything else found outside the target goes under *Suggestions*, not into the diff.
-- **Isolation**: when the invocation contains `worktree` or `/git-worktrees` (e.g. `/clean <file> /git-worktrees`), or when running under `/implement-feature`, edits happen in a workspace worktree per [`git-worktrees`](../git-worktrees/SKILL.md) §5 and the target path is resolved under its `repo-root`; otherwise in place as today. Honour a handed-in `[worktree-context]` block: `git diff --stat` and `git checkout -- <file>` in §3 run as `git -C <repo-root>`, never against the user's main checkout (core §2.4).
+- **Worktree**: the target path is resolved under the `repo-root`, and `git diff --stat` and `git checkout -- <file>` in §3 run as `git -C <repo-root>`, never against the user's main checkout (`git-worktrees` › *Golden Invariants*).
 
 ---
 
@@ -194,7 +197,7 @@ Then:
 - **Unused state**: remove `useState` only when neither the value nor the setter is used. A setter used without reading the value may still trigger needed re-renders — keep it and flag it.
 - **Unused effects/memos**: an effect with side effects is not dead just because nothing reads its output.
 - **`import React`**: remove only when `tsconfig` uses the automatic runtime (`"jsx": "react-jsx"`) and the file doesn't use `React.*` APIs.
-- **Prefer `type` over `interface`** per [core](../core/SKILL.md) — but converting existing interfaces is out of `/clean`'s scope unless the user asks.
+- **Prefer `type` over `interface`** per `core` — but converting existing interfaces is out of `/clean`'s scope unless the user asks.
 
 ### C# / .NET
 
@@ -214,7 +217,7 @@ Then:
 
 ## 5. Output Format
 
-Keep the summary concise and high-signal. Link the file using the **active host's** link format from the [artifacts](../artifacts/SKILL.md) protocol (workspace-relative in Claude Code, `file://` in Antigravity). Omit empty sections.
+Keep the summary concise and high-signal. Link the file using the **active host's** link format from the `artifact-protocol` protocol (workspace-relative in Claude Code, `file://` in Antigravity). Omit empty sections.
 
 ```markdown
 ### 🧹 Clean Summary: [button.tsx](src/components/button.tsx)

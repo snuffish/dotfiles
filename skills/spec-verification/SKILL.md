@@ -9,11 +9,12 @@ Takes a specification and an implementation and answers, for every line of the s
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-spec_verification-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
-- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` (`<workItemId>-<slug>`, e.g. `-30758-control-tickets`). Never write unsuffixed or un-modeled generic files.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-spec_verification-<suffix>.md` (suffix `<workItemId>-<slug>`, e.g. `-30758-control-tickets`)
+- `~/.terminal/skills/_modules/pr-counterpart.md`
 
 > [!CAUTION]
 > **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
@@ -74,7 +75,7 @@ git -C <repo> status --short | wc -l                        # dirty?
 ```
 
 - Verify against the **PR head on the remote**, and state whether the local tree equals it. If local is behind, read changed files with `git show "origin/<branch>:<path>"` (quote or brace the ref — zsh treats `$B:source/...` and `$B:tests/...` as history modifiers).
-- **Counterpart PRs:** whatever the input (story, PR URL, branch), run the counterpart lookup in [`core`](../core/SKILL.md) §4.1 and pin every PR it finds. A story is usually implemented by sibling tasks in different repos, each with its own PR, so starting from one PR link finds only half the evidence. A requirement graded against one half is never ✅ when the other half owns part of it. Record the classification in the artifact's *Context*. An *expected but missing* half grades the lines it owns as ✗ or ↗ (with the owning item id), never as ✅.
+- **Counterpart PRs:** whatever the input (story, PR URL, branch), run the counterpart lookup in `pr-counterpart` › *Counterpart discovery* and pin every PR it finds. A story is usually implemented by sibling tasks in different repos, each with its own PR, so starting from one PR link finds only half the evidence. A requirement graded against one half is never ✅ when the other half owns part of it. Record the classification in the artifact's *Context*. An *expected but missing* half grades the lines it owns as ✗ or ↗ (with the owning item id), never as ✅.
 - In a **multi-repo workspace**, resolve the PR for every repo (`az repos pr list --source-branch <b> --detect true` per repo) and verify both halves: a field limit is a backend constant *and* a frontend schema rule *and* a column length; a select's option list is a backend enum *and* a frontend facade.
 
 ### Step 3: Decompose the spec into atomic lines
@@ -170,7 +171,7 @@ For long specs (> ~40 lines) or two-repo features, run Steps 3–5 in parallel s
 1. … (options with cost)
 ```
 
-Rows cite files as `[File.cs:42](<workspace-relative path>#L42)` under Claude Code and `file://` absolute under Antigravity, per the artifacts protocol. References to another artifact's section or finding (`code_review`, `pr_feedback_review`, `implementation_plan`) are links to that file's HTML anchor (`other.md#finding-9`, `other.md#thread-110409`), so a reader can jump between the two documents. Quote spec lines in the spec's language; write the rest in the review language. Keep each Evidence cell to the proof, not a narrative.
+Rows cite files as `[File.cs:42](<workspace-relative path>#L42)` under Claude Code and `file://` absolute under Antigravity, per the `artifact-protocol`. References to another artifact's section or finding (`code_review`, `pr_feedback_review`, `implementation_plan`) are links to that file's HTML anchor (`other.md#finding-9`, `other.md#thread-110409`), so a reader can jump between the two documents. Quote spec lines in the spec's language; write the rest in the review language. Keep each Evidence cell to the proof, not a narrative.
 
 ### Chat response
 

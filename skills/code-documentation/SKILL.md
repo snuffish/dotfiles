@@ -5,10 +5,13 @@ description: Use this skill when the user requests to generate, create, or impro
 
 # Code Documentation Skill
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: none at the workspace root — documentation is written into the repository where the user asks (README, `docs/`, inline comments). Confirm the destination before writing.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes no artifact at the workspace root — documentation is written into the repository where the user asks (README, `docs/`, inline comments)
+
+- Confirm the destination before writing.
 
 ---
 

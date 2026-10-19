@@ -19,11 +19,15 @@ Ship your current work in one go: create or confirm a branch, run pre-commit val
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating standards and the **[artifacts](../../../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: none — the deliverables are the commit, the push and the draft PR. Mutating by design: stage only files the user confirmed, never force-push.
-- **Repo root** (per [`git-worktrees`](../../../git-worktrees/SKILL.md) §3): the `repo-root` of a `[worktree-context]` block handed in by the caller (e.g. `/implement-feature` shipping from its workspace worktree) when one is present; otherwise `git rev-parse --show-toplevel` from the current working directory. Every command below is `git -C <repo-root>`. Never `checkout`, `add`, `commit` or `push` against a root you did not resolve this way — the user's main checkout is read-only while a worktree is active (core §2.4). If no block was handed in but `git -C <repo> worktree list --porcelain` shows a **locked** worktree whose reason begins with `claude-skill:` for the same work item or branch, stop and ask which tree to ship.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes no artifact — the deliverables are the commit, the push and the draft PR
+- `~/.terminal/skills/_modules/git-worktrees.md`
+
+- Mutating by design: stage only files the user confirmed, never force-push.
+- **Repo root** without a `[worktree-context]` block: `git rev-parse --show-toplevel` from the current working directory. Every command below is `git -C <repo-root>`.
 
 ---
 
@@ -78,7 +82,7 @@ Derive the branch name from the work item:
 Full format: `<prefix>/<id>_<english-kebab-slug>` (e.g., `feature/30048_add-oppenvard-barn-q4`)
 *Slug rules: English only, kebab-case (hyphens, no underscores after the ID).*
 
-- If already on a correctly named branch → confirm and continue. A workspace worktree is always already on its branch (`git-worktrees` §5a created it), so this is the normal case under `/implement-feature`; never `checkout -b` there.
+- If already on a correctly named branch → confirm and continue. A workspace worktree is always already on its branch (`git-worktrees` › *Workspace Lifecycle* step a created it), so this is the normal case under `/implement-feature`; never `checkout -b` there.
 - If on any other branch **and no `[worktree-context]` was handed in**: show the proposed branch name, ask the user to confirm or adjust, then check out:
 
   ```bash

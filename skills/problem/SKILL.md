@@ -9,12 +9,12 @@ Use this skill whenever the user reports an error (compiler error, lint error, f
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-implementation_plan-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
-- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` derived from the error, ticket, or bug description (e.g. `-fix-audit-review`, `-auth-token-failure`). Never write unsuffixed or un-modeled generic files.
-- **Isolation**: when the invocation contains `worktree` or `/git-worktrees` (e.g. `/<skill> <request> /git-worktrees`), or when running under `/implement-feature`, edits happen in a workspace worktree per [`git-worktrees`](../git-worktrees/SKILL.md) §5 (the main checkout stays read-only, core §2.4); otherwise in place as today. Honour a handed-in `[worktree-context]` block: every `git` command and every file path resolves under its `repo-root`.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-implementation_plan-<suffix>.md` (suffix from the error, ticket, or bug description, e.g. `-fix-audit-review`, `-auth-token-failure`)
+- `~/.terminal/skills/_modules/git-worktrees.md`
 
 ---
 

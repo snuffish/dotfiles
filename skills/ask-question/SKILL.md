@@ -9,14 +9,17 @@ Answers a question the user asks mid-session while the current work keeps going.
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes no artifact — the answer lives in chat
+- `~/.terminal/skills/_modules/git-worktrees.md`
 
 - **No artifact.** The answer lives in chat. A question that needs a written deep-dive belongs to [`/explain deep`](../explain/SKILL.md) or [`/investigate`](../investigate/SKILL.md) — suggest it, do not switch silently.
 - **Read-only, for you and the sub-agent.** No edits, writes, installs, builds, tests, migrations, `git checkout`/`stash`/`commit`, or tracker/PR writes. Reading files, `git log`/`diff`/`show`/`blame`, code-index queries and web lookups are fine.
 - **The main task is not disturbed.** The question never changes the plan, the todo list, the branch, the files being edited or the order of work. If the answer reveals a problem with the work in flight, flag it and ask — never pivot on your own.
-- **Worktree invariant applies.** If a [`git-worktrees`](../git-worktrees/SKILL.md) worktree is active, hand its `[worktree-context]` block to the sub-agent so it reads the right tree.
+- **Worktree invariant applies.** If a `git-worktrees` worktree is active, hand its `[worktree-context]` block to the sub-agent so it reads the right tree.
 
 ---
 

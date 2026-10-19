@@ -11,13 +11,14 @@ Applicable to **any software project, language, framework or technology stack**.
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Read-only**: produces advice, never code changes. No edits, checkouts, installs, migrations or commits — for you and for any sub-agent. Implementation only after an explicit `/proceed` (see core §2.2), and then usually via [`/plan`](../plan/SKILL.md) or [`/implement-feature`](../implement-feature/SKILL.md).
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-suggestion-<suffix>.md` at the **workspace root** (suffix derived from the question, e.g. `-cache-invalidation-strategy`, `-pdf-export-library`). A follow-up on the same question with the same model updates that artifact in place.
+
+- **Read-only**: produces advice, never code changes. No edits, checkouts, installs, migrations or commits — for you and for any sub-agent. Implementation only after an explicit `/proceed` (see `core` › *The `/proceed` gate*), and then usually via [`/plan`](../plan/SKILL.md) or [`/implement-feature`](../implement-feature/SKILL.md).
 - **MANDATORY .MD ARTIFACT & SUMMARY (every mode):** Every `/suggestion` response — bare or `deep` — MUST write or update the full answer as `<prefix>-suggestion-<suffix>.md` **at the workspace root**, and begin the chat response with a clickable link to it plus clickable section anchors, built as §3 *Chat Response* specifies. Never answer in chat only.
-- **Target Artifact**: `<prefix>-suggestion-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`). A follow-up on the same question with the same model updates that artifact in place.
-- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` derived from the question (e.g. `-cache-invalidation-strategy`, `-pdf-export-library`). Never write unsuffixed or un-modeled generic files.
 
 ---
 
@@ -114,7 +115,7 @@ Bare mode keeps each approach short — the whole artifact should read in a coup
 
 ### Chat Response
 
-Format all links per the **[artifacts](../artifacts/SKILL.md)** protocol (workspace-relative in Claude Code, `file://` absolute in Antigravity). Get the anchor line numbers with `grep -n '^#\{1,3\} ' <artifact>` after the final write — re-run it if you edit the artifact again.
+Format all links per the **`artifact-protocol`** (workspace-relative in Claude Code, `file://` absolute in Antigravity). Get the anchor line numbers with `grep -n '^#\{1,3\} ' <artifact>` after the final write — re-run it if you edit the artifact again.
 
 ```markdown
 📄 **[claude-<model>-suggestion-<suffix>.md](claude-<model>-suggestion-<suffix>.md)**

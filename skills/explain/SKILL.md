@@ -14,6 +14,15 @@ There is no intermediate mode. A request for "explain in detail/depth" or an exh
 
 ---
 
+## Modules
+
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-explanation-<suffix>.md` in `/explain deep` only (suffix derived from the target symbol, question, or topic); bare `/explain` writes no artifact
+- `~/.terminal/skills/_modules/pr-counterpart.md`
+
+---
+
 ## 1. Invocation Modes & Gating
 
 | Command | Output Location | Research Scope | Target Latency |
@@ -64,14 +73,12 @@ Use when the user runs `/explain` (without `deep`), asks "explain this", or asks
 Use when the user specifies `/explain deep`, asks to "explain in detail/depth", or asks for an exhaustive architectural breakdown.
 
 ### Operating Standards:
-- **Target Artifact**: `<prefix>-explanation-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
-- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` derived from the target symbol, question, or topic. Never write unsuffixed or un-modeled generic files.
-- Adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
+- **Target Artifact**: `<prefix>-explanation-<suffix>.md` at the **workspace root** (see *Modules*).
 - **Read-only**: no edits, no checkouts, no installs, builds or tests — for you and for every sub-agent.
 
 ### Orchestration
 
-1. **Resolve the target yourself first**: the exact symbols, files and line ranges, the repo(s) involved, the head SHA (`git rev-parse --short HEAD`, and whether the tree is clean), and any PR / work item / earlier workspace-root artifact that already discusses the topic. When a PR is involved, also resolve its counterpart in a sibling repo ([`core`](../core/SKILL.md) §4.1): the reason a backend shape is the way it is often lives in the frontend PR's threads, and vice versa. Sub-agents must not re-discover the target.
+1. **Resolve the target yourself first**: the exact symbols, files and line ranges, the repo(s) involved, the head SHA (`git rev-parse --short HEAD`, and whether the tree is clean), and any PR / work item / earlier workspace-root artifact that already discusses the topic. When a PR is involved, also resolve its counterpart in a sibling repo (`pr-counterpart` › *Counterpart discovery*): the reason a backend shape is the way it is often lives in the frontend PR's threads, and vice versa. Sub-agents must not re-discover the target.
 2. **Spawn the three sub-agents in parallel** (one message, three calls). Each prompt includes: the repo path(s), the resolved target (`path:line` ranges), the head SHA, the list of related artifacts at the workspace root, and its axis brief.
    - **Mechanism** — "Trace what this code does at head, hop by hop: entry points, the call and data flow across layers, state transitions, transactions and query filters it runs under, and every failure path. Read whole files where needed. Cite `path:line` for each hop. Produce (a) a numbered walkthrough and (b) a Mermaid sequence or flow diagram source. Say what you could not confirm by reading. Under 700 words plus the diagram."
    - **Rationale** — "Explain why it is the way it is. Use `git log --follow -p` on the touched files, PR descriptions and review threads if a CLI is authenticated (`az repos pr list --source-branch`, `gh pr view`), linked work items, ADRs/docs, and comments that state constraints. Report: the decisions that shaped it, the alternatives that were considered or rejected and why, and any constraint that is no longer true. Quote the source (commit, thread id, doc) for each. Never infer intent from a branch name. Under 600 words."

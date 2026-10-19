@@ -9,13 +9,6 @@ This skill is the single source of truth for day-to-day git and ADO conventions 
 
 ---
 
-## Operating Standards & Invariants
-
-This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating standards and the **[artifacts](../../../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: none — this is the git/ADO rulebook; the ship recipe and `pr-summary` produce the commits and PR bodies.
-
----
-
 ## 1. Branch Naming
 
 Format: `<prefix>/<work_item_id>_<english-kebab-slug>`
