@@ -1,17 +1,19 @@
 ---
 name: create-skill
-description: Orchestrates, designs, scaffolds, validates, and registers a new skill into the skills registry. Adheres to the root skill architecture, enforces naming and gating conventions, wires core/artifacts protocols, and updates the README inventory.
+description: Orchestrates, designs, scaffolds, validates, and registers a new Registry entry — a Command, Reference or Profile skill — into the skills registry. Resolves the kind first, enforces naming and gating conventions, wires the Modules a Command depends on, and updates the README inventory.
 ---
 
 # Skill: `/create-skill` — Skill Creator & Registry Orchestrator
 
-Systematically designs, scaffolds, validates, and registers new skills in the local skill registry (`~/.terminal/skills`). Enforces adherence to the **[`core`](../core/SKILL.md)** operating standards and the **[`artifacts`](../artifacts/SKILL.md)** protocol.
+Systematically designs, scaffolds, validates, and registers new skills in the local skill registry (`~/.terminal/skills`). Every entry is one of the kinds defined in `~/.terminal/GLOSSARY.md`; the kind decides the template.
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes no artifact — the deliverable is the new skill directory
 
 ---
 
@@ -21,18 +23,32 @@ Invoke this skill whenever:
 - The user runs `/create-skill` (with or without arguments).
 - The user asks to *"create a new skill"*, *"scaffold a skill"*, *"add a skill for X"*, or *"author a new skill"*.
 
+### When *not* to use
+
+A shared contract that several Commands depend on and that never runs on its own is a **Module**, not a skill. Write it as `skills/_modules/<name>.md` (plain markdown, no frontmatter, never symlinked; see `~/.terminal/docs/adr/0001-modules-live-outside-skill-loaders.md`) and add it to the `## Modules` section of each Command that uses it.
+
 ---
 
 ## 2. Step-by-Step Creation Workflow
 
-### Step 1 — Scope & Placement Resolution
+### Step 1 — Kind, Scope & Placement Resolution
 
-By default, **skills should be general, universal, and project-agnostic**. They should encapsulate reusable engineering patterns, architectural disciplines, workflows, and tools that function across any codebase, language, or stack.
+**Kind** (ask if the request does not make it obvious):
+
+| Kind | What it is | Gets a `## Modules` section? |
+|---|---|---|
+| **Command** | Carries out a workflow, invoked by name or by a matching request (`/code-review`, `squash-ef-core-migrations`) | Yes |
+| **Reference** | Knowledge the model loads by topic, never run as a workflow (`modern-csharp`, `backend-ef-core`) | No — inherits standards through `core` › *Precedence* |
+| **Profile** | Project-specific facts one Command reads to adapt to that project (`implement-feature-priis-profile`) | No |
+
+**Scope.** By default, **skills should be general, universal, and project-agnostic**. They should encapsulate reusable engineering patterns, architectural disciplines, workflows, and tools that function across any codebase, language, or stack.
 
 | Placement | Directory Target | Use Case | Naming Convention |
 |---|---|---|---|
 | **General (Default / Standard)** | `skills/<name>/` | Universal workflows, architectural patterns, tooling, or disciplines that apply to any project | Single kebab-case name (e.g. `organize`, `code-review`, `expressive`, `problem`) |
-| **Project-Scoped (Explicit Request Only)** | `skills/Projects/<Project>/<name>/` | Only when the user explicitly requests rules restricted to a single specific repository/product | Prefixed kebab-case (`backend-*`, `frontend-*`, `source-command-*`) |
+| **Project-Scoped (Explicit Request Only)** | `skills/Projects/<Project>/<name>/` | Only when the user explicitly requests rules restricted to a single specific repository/product, and always for a Profile | Prefixed kebab-case (`backend-*`, `frontend-*`, `source-command-*`, `implement-feature-<project>-profile`) |
+
+Never place a skill under `skills/_modules/`; that directory holds Modules only and must never contain a `SKILL.md`.
 
 #### Description & Trigger Rules:
 - **General Skills (Default)**: Write a crisp, domain-focused `description` detailing the exact trigger conditions, intent, and capabilities. Do NOT bind or gate the description to any specific project.
@@ -42,7 +58,7 @@ By default, **skills should be general, universal, and project-agnostic**. They 
 
 ### Step 2 — Structure & Architecture Wiring
 
-Every new `SKILL.md` must follow this standard structure:
+#### Command template
 
 ```markdown
 ---
@@ -56,12 +72,15 @@ description: <concise, universal trigger description and domain capabilities>
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](<relative-path-to-core>/core/SKILL.md)** operating standards and the **[artifacts](<relative-path-to-artifacts>/artifacts/SKILL.md)** delivery protocol.
-<!-- If writing a markdown artifact, declare it here: -->
-- **Target Artifact**: `<prefix>-<artifact_name>-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
-- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>`. Never write unsuffixed or un-modeled generic files.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`<: read-only until `/proceed` — for research, review and diagnostic Commands>
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-<artifact_name>-<suffix>.md`   <or: writes no artifact — reason>
+- `~/.terminal/skills/_modules/git-worktrees.md`<: snapshot by default | workspace by default — only if the Command reads or edits a repository>
+- `~/.terminal/skills/_modules/pr-counterpart.md`   <only if the Command resolves a pull request>
+
+<Command-specific rules, as bullets>
 
 ---
 
@@ -95,9 +114,15 @@ Invoke this skill whenever:
 [Instructions on how the agent and user verify the work (tests, builds, commands)]
 ```
 
-#### Relative Path Rules for Root References:
-- Top-level skills (`skills/<name>/`): use `../core/SKILL.md` and `../artifacts/SKILL.md`.
-- Project skills (`skills/Projects/<Project>/<name>/`): use `../../../core/SKILL.md` and `../../../artifacts/SKILL.md` (three levels up — `Projects/`, `<Project>/`, `<name>/`).
+#### Module wiring rules:
+- List only the Modules the Command uses directly; a Module's own `## Modules` section pulls in what it needs.
+- Paths are always absolute (`~/.terminal/skills/_modules/<name>.md`). A relative link breaks when the skill is read through its `~/.claude/skills/<name>` symlink.
+- Refer to a section inside a Module by name, never by number: `` `git-worktrees` › *Workspace Lifecycle* ``.
+- A Command that writes an artifact adds its base name to `artifact-protocol` › *Canonical Artifact Catalog*.
+
+#### Reference and Profile template
+
+Same frontmatter and title, then the content sections directly — no `## Modules` section. A project-scoped description starts with `[Project: <Project>]` and ends with its `Load ONLY when …` gate.
 
 ---
 
@@ -115,7 +140,7 @@ Invoke this skill whenever:
 
 Update [`skills/README.md`](../README.md):
 1. Increment total skill count and group count in the summary line and inventory table.
-2. Add the new skill name to the appropriate table row in alphabetical order.
+2. Add the new skill name to the row for its kind and placement, in alphabetical order.
 
 ---
 
@@ -123,7 +148,7 @@ Update [`skills/README.md`](../README.md):
 
 1. **Verify Integrity**:
    - Ensure the directory name **exactly matches** the `name:` field in frontmatter.
-   - Verify all relative markdown links resolve without broken paths.
+   - Verify every `## Modules` path exists and every relative link to another skill resolves.
 2. **Symlink / Activation Output**:
    - Present the user with the exact symlink command to activate the new skill in their live flat loader (e.g. Claude Code):
      ```bash

@@ -15,12 +15,15 @@ Usage: `/implement-feature <ticket-id | ticket-url>` or `/implement-feature <sho
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifacts**: `<prefix>-implementation_plan-<suffix>.md` and `<prefix>-what_am_i_missing-<suffix>.md` (Phase 2), and `<prefix>-walkthrough-<suffix>.md` (Phase 7) at the **workspace root** — the directory the IDE opened, which in a multi-repo workspace is the folder that holds the repos. `<prefix>` is `<host>-<model>-`; `<suffix>` is `<ticket-id>-<feature-slug>` when there is a ticket, else a 2–4 word topic slug.
-- **Anti-Overwrite Rule**: never write an unsuffixed or un-modeled artifact.
-- **Repos**: work in a **workspace worktree per repo in scope**, created in Phase 0 and removed in Phase 7 through [`git-worktrees`](../git-worktrees/SKILL.md) §5. The user's main checkout is read-only for the whole run (core §2.4) — they keep editing it while this skill runs. Use absolute paths and `git -C <repo-root>`, where `repo-root` is the worktree from the repo's `[worktree-context]` block; never `cd`, and never let the session's working directory move. Paste the block into every delegated skill invocation and every sub-agent brief — delegated skills discover "the repo" from the workspace otherwise and would act on the main checkout.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-implementation_plan-<suffix>.md` and `<prefix>-what_am_i_missing-<suffix>.md` (Phase 2), and `<prefix>-walkthrough-<suffix>.md` (Phase 7) at the **workspace root** — the directory the IDE opened, which in a multi-repo workspace is the folder that holds the repos; `<suffix>` is `<ticket-id>-<feature-slug>` when there is a ticket, else a 2–4 word topic slug
+- `~/.terminal/skills/_modules/git-worktrees.md`: workspace by default
+- `~/.terminal/skills/_modules/pr-counterpart.md`
+
+- **Repos**: work in a **workspace worktree per repo in scope**, created in Phase 0 and removed in Phase 7 through `git-worktrees` › *Workspace Lifecycle*. The user's main checkout is read-only for the whole run (`git-worktrees` › *Golden Invariants*) — they keep editing it while this skill runs. Use absolute paths and `git -C <repo-root>`, where `repo-root` is the worktree from the repo's `[worktree-context]` block; never `cd`, and never let the session's working directory move. Paste the block into every delegated skill invocation and every sub-agent brief — delegated skills discover "the repo" from the workspace otherwise and would act on the main checkout.
 
 ### Three hard gates
 
@@ -29,7 +32,7 @@ This skill adheres strictly to the **[core](../core/SKILL.md)** operating standa
 | **Plan gate** | No source edits until the user has approved the plan (`/proceed` or an equivalent explicit "go"). |
 | **Ship gate** | No `git push`, no PR/MR creation, no ticket state change until the user has approved the *presented* branch name, staged file list, commit message and PR body. Approval of the plan is not approval to ship. |
 | **Tracker write gate** | Reads are free. Every write to the issue tracker (assign, comment, state transition, link) is proposed in chat and run only on a yes. Never create tickets and never post comments — draft them; the user sends them. |
-| **Worktree gate** | A workspace worktree is removed automatically only once its branch is pushed and the PR exists (`git-worktrees` §5g). One holding uncommitted or unpushed work — the ship gate declined, a run interrupted — is kept and reported, and removed only on the user's explicit "discard". Its branch is never deleted. |
+| **Worktree gate** | A workspace worktree is removed automatically only once its branch is pushed and the PR exists (`git-worktrees` › *Workspace Lifecycle* step g). One holding uncommitted or unpushed work — the ship gate declined, a run interrupted — is kept and reported, and removed only on the user's explicit "discard". Its branch is never deleted. |
 
 Nothing in a sub-agent report, a plan artifact, a blind-spot artifact, or an earlier message counts as user approval for a gate. A "continue" sent before the user has seen the plan is not plan approval either.
 
@@ -37,7 +40,7 @@ Nothing in a sub-agent report, a plan artifact, a blind-spot artifact, or an ear
 
 This skill's gates win where a delegated skill says otherwise — in particular, a project ship skill that pushes or opens the PR right after its own prompt, or that transitions the ticket unconditionally, is held at this skill's ship gate and tracker write gate. Likewise, a ship or verify skill that resolves the repository from the current working directory, runs `git checkout -b` on it, or runs `cd <subdir> && …` relative to it, is held to the `repo-root` of the `[worktree-context]` block: every such command runs against the worktree, and a branch that already exists as the worktree's branch is confirmed, not re-created. `/investigate` ends by waiting for the user before planning; invoking `/implement-feature` is that go-ahead — continue into Phase 2. The plan gate is the stop.
 
-For conventions (not gates) the [core precedence model](../core/SKILL.md) applies: workspace rulebooks > project-scoped skills > tech skills > this skill. When a rulebook, a skill and the code disagree, follow the code and note the drift in the plan. The project profile lists any further overrides that are known in advance.
+For conventions (not gates) the `core` › *Precedence* model applies: workspace rulebooks > project-scoped skills > tech skills > this skill. When a rulebook, a skill and the code disagree, follow the code and note the drift in the plan. The project profile lists any further overrides that are known in advance.
 
 ---
 
@@ -99,7 +102,7 @@ Research brief template (per repo):
 | Need | Load |
 |------|------|
 | Project facts for every phase | the `implement-feature-<project>-profile` skill, else the sources in *Project profile* |
-| Isolated worktree per repo: create, `[worktree-context]` block, hydrate, land, remove (Phase 0 and Phase 7) | [`git-worktrees`](../git-worktrees/SKILL.md) §5, invoked, not imitated |
+| Isolated worktree per repo: create, `[worktree-context]` block, hydrate, land, remove (Phase 0 and Phase 7) | `git-worktrees` › *Workspace Lifecycle*, invoked, not imitated |
 | Deep research before planning | [`/investigate`](../investigate/SKILL.md) |
 | Blind-spot pass on the plan (every plan, Phase 2b) | [`/what-am-I-missing`](../what-am-I-missing/SKILL.md) |
 | Plan artifact conventions, status, links | [`/plan`](../plan/SKILL.md) |
@@ -143,7 +146,7 @@ Research brief template (per repo):
 
 7. **Write a scope statement** in chat: one paragraph naming the implementing ID, the repos touched, the domains, whether the discussion thread was read, the resolved profile fields that matter (tracker, verify, ship conventions) and anything the ticket leaves ambiguous.
 
-8. **Create the workspace worktree(s)** per [`git-worktrees`](../git-worktrees/SKILL.md) §5a–c, one per repo in scope: base = the freshly fetched `origin/<default>` unless the ticket names another base; branch = the project's convention with the implementing ID; copy the profile's *Worktree include list*; run its *Dependency hydration*. If the branch is already checked out in the user's main checkout, §5a says stop and ask — do that before Phase 1. Append the resulting `[worktree-context]` block(s) to the scope statement; every later phase, delegated skill and sub-agent brief uses them. A worktree created here and never approved past the plan gate is clean and is removed per §5g when the run ends.
+8. **Create the workspace worktree(s)** per `git-worktrees` › *Workspace Lifecycle* steps a–c, one per repo in scope: base = the freshly fetched `origin/<default>` unless the ticket names another base; branch = the project's convention with the implementing ID; copy the profile's *Worktree include list*; run its *Dependency hydration*. If the branch is already checked out in the user's main checkout, *Workspace Lifecycle* step a says stop and ask — do that before Phase 1. Append the resulting `[worktree-context]` block(s) to the scope statement; every later phase, delegated skill and sub-agent brief uses them. A worktree created here and never approved past the plan gate is clean and is removed per *Workspace Lifecycle* step g when the run ends.
 
 ---
 
@@ -233,7 +236,7 @@ Present the clickable links to the plan and the blind-spot artifact, the #1 find
 
 ## Phase 3 — Implement
 
-Order of work when more than one repo changes: **producer (API) → contract sync (regenerate or patch the client snapshot) → consumer (client)**. Keep the plan's checklist ticked as you go. No sub-agents in this phase. Every edit lands under the repo's `repo-root`; a file path that does not start with a worktree path is a defect (core §2.4).
+Order of work when more than one repo changes: **producer (API) → contract sync (regenerate or patch the client snapshot) → consumer (client)**. Keep the plan's checklist ticked as you go. No sub-agents in this phase. Every edit lands under the repo's `repo-root`; a file path that does not start with a worktree path is a defect (`git-worktrees` › *Golden Invariants*).
 
 - Use the profile's scaffold skill for a new slice, or edit the sibling you read in Phase 1. Where the profile's *Known drift* says a scaffold template or doc is stale, follow the code it points to instead.
 - Domain failures follow the project's result/exception convention; error messages follow the product locale.
@@ -249,7 +252,7 @@ Order of work when more than one repo changes: **producer (API) → contract syn
 Run the profile's verify skill for each touched repo — or the repo's documented commands — **inside the worktree** (invoke it with the `[worktree-context]` block; its commands run against `repo-root`) and report PASS/FAIL per check. When more than one repo changed, start the slowest suite with `run_in_background` and do the other gates meanwhile. Do not move to Phase 5 on a FAIL.
 
 - **Targeted first, full suite before shipping.** Use the test runner's filter syntax the profile or the test project documents.
-- **Parallel runs.** If `git -C <repo> worktree list --porcelain` shows another `claude-skill:` worktree of the same repo, run targeted suites only and say so (`git-worktrees` §5e): the profile's *Shared local services* (dev-server and API ports, the local database) are shared between worktrees, so concurrent full suites collide and flake.
+- **Parallel runs.** If `git -C <repo> worktree list --porcelain` shows another `claude-skill:` worktree of the same repo, run targeted suites only and say so (`git-worktrees` › *Workspace Lifecycle* step e): the profile's *Shared local services* (dev-server and API ports, the local database) are shared between worktrees, so concurrent full suites collide and flake.
 - **Flakes.** A failure that moves between runs, or reproduces with the change stashed (`git -C <repo-root> stash -u`, in the worktree only), is not yours — re-run the failing group alone and record the outcome; only failures that persist alone are yours. The profile may list known-flaky groups.
 - **Migration check** when the plan adds one: if the test suite builds the schema without running migrations (common with `EnsureCreated`-style setups), apply the migration to a real local database with the project's migration command and confirm it runs clean.
 - **Client gates** for UI changes: import tidy-up on changed files only, lint at zero warnings, build, and the e2e suite the profile names. Check `git status` afterwards and revert any stray generated file.
@@ -264,7 +267,7 @@ Before presenting the ship gate:
 Invoke both skills **with the `[worktree-context]` block(s)**; without it they resolve the repo from the workspace and would grade or snapshot the user's main checkout — an empty scope at best, the user's unrelated edits at worst.
 
 1. `/spec-verification` against the ticket (include the discussion thread if the user supplied it), reading `repo-root`. Every acceptance criterion is *implemented* or explicitly *deferred* in the plan.
-2. `/code-review` on the working changes — `deep` when more than one repo or a contract changed. With the block, its `working` scope snapshots the worktree's tree (`git -C <repo-root> stash create`) and its Review Context names the worktree branch as the reviewed head. Hand it **every** repo's block in one invocation, so its counterpart lookup (`core` §4.1) resolves to the sibling worktree and reviews both halves together. Separate per-repo runs would each miss the cross-repo contract checks.
+2. `/code-review` on the working changes — `deep` when more than one repo or a contract changed. With the block, its `working` scope snapshots the worktree's tree (`git -C <repo-root> stash create`) and its Review Context names the worktree branch as the reviewed head. Hand it **every** repo's block in one invocation, so its counterpart lookup (`pr-counterpart` › *Counterpart discovery*) resolves to the sibling worktree and reviews both halves together. Separate per-repo runs would each miss the cross-repo contract checks.
 3. **Blind-spot closure.** Re-open the plan's *Blind-spot Pass* section. For each finding the plan accepted, point to the code and the test that cover it (`path:line`), and confirm the test fails with the fix reverted when that is cheap to check. A finding with no covering test counts as 🔴. Do not re-run `/what-am-I-missing` on the diff; reviewing a diff is `/code-review`'s job. Re-run it only if implementation forced a design change the user has not seen, and present that change before shipping.
 
 Fix 🔴 findings and re-run the affected Phase 4 checks. List 🟡 findings you chose not to fix at the ship gate, one line each.
@@ -273,7 +276,7 @@ Fix 🔴 findings and re-run the affected Phase 4 checks. List 🟡 findings you
 
 ## Phase 6 — Ship
 
-Load the profile's ship and workflow skills, applying *Precedence* above, and invoke them with the `[worktree-context]` block: commit, push and PR creation all run from `repo-root` (`git-worktrees` §5f); the branch already exists as the worktree's branch, so the ship skill confirms it rather than running `checkout -b`. Stage selectively — never `git add -A`; skip a ship skill's re-run of format/build/test if Phase 4 passed on the same tree.
+Load the profile's ship and workflow skills, applying *Precedence* above, and invoke them with the `[worktree-context]` block: commit, push and PR creation all run from `repo-root` (`git-worktrees` › *Workspace Lifecycle* step f); the branch already exists as the worktree's branch, so the ship skill confirms it rather than running `checkout -b`. Stage selectively — never `git add -A`; skip a ship skill's re-run of format/build/test if Phase 4 passed on the same tree.
 
 Conventions come from the profile, else from `CONTRIBUTING.md`, else these defaults:
 
@@ -312,7 +315,7 @@ Present in chat:
 
 Wait for approval. Then commit, push, create the draft PR(s), fill the cross-links (6a), and report the URLs. Propose the ticket's "in review" state transition separately and run it only on a yes.
 
-If the user declines the gate, the worktree is **kept** (worktree gate): report its path, branch and what is uncommitted or unpushed, per `git-worktrees` §5g.
+If the user declines the gate, the worktree is **kept** (worktree gate): report its path, branch and what is uncommitted or unpushed, per `git-worktrees` › *Workspace Lifecycle* step g.
 
 ---
 
@@ -325,9 +328,9 @@ Write `<prefix>-walkthrough-<suffix>.md` at the workspace root:
 - Self-review outcome: spec-verification grades, unresolved code-review findings, and the blind-spot closure (each finding → the code and test that cover it, or why it was deferred), linking `<prefix>-what_am_i_missing-<suffix>.md`.
 - Manual verification steps generated with `/manual-testing` (environment, user to log in as, click path).
 - Open items for the user: tracker transitions not yet run, the second PR, drafted ticket comments, questions the plan left open. If CI goes red later → `/pr-fix-pipeline`.
-- **Worktree hand-off** (`git-worktrees` §5h), per repo: which branch holds the work; that the user's checkout is unchanged and on which branch; whether the worktree was removed (branch pushed, PR open → §5g landed procedure ran) or kept and why; how to see the work (`git -C <repo> checkout <branch>` after stashing their own changes, or open the kept worktree directly). Manual testing runs from the kept worktree or after that checkout — nothing of the feature is in the main checkout.
+- **Worktree hand-off** (`git-worktrees` › *Workspace Lifecycle* step h), per repo: which branch holds the work; that the user's checkout is unchanged and on which branch; whether the worktree was removed (branch pushed, PR open → step g landed procedure ran) or kept and why; how to see the work (`git -C <repo> checkout <branch>` after stashing their own changes, or open the kept worktree directly). Manual testing runs from the kept worktree or after that checkout — nothing of the feature is in the main checkout.
 
-Then remove each landed worktree per §5g (unlock, remove, prune) and confirm `git -C <repo> worktree list` shows only the main checkout; keep any that did not land.
+Then remove each landed worktree per *Workspace Lifecycle* step g (unlock, remove, prune) and confirm `git -C <repo> worktree list` shows only the main checkout; keep any that did not land.
 
 In chat: link the walkthrough, give the hand-off line and list the open items. Do not re-summarize the document.
 

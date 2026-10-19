@@ -15,18 +15,22 @@ Use this skill whenever the user requests a code review, feedback on a pull requ
 > **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
 >
 > 1. **MANDATORY .MD ARTIFACT & SUMMARY (NO EXCUSES):** Every single `/code-review` response MUST ALWAYS write or update the complete review report as `<prefix>-code_review-<suffix>.md` **at the workspace root**, and begin the response with a clickable link to it plus clickable section anchors, built exactly as *Artifact Links* below specifies. If an active `<prefix>-implementation_plan-<suffix>.md` exists, link that too. The user frequently needs to click and open it in the IDE.
-> 2. **DO NOT MODIFY CODE OR THE MAIN WORKING TREE:** Never edit code files, stage commits, run migrations, check out branches, `git stash push`/`pop`, or execute any command that changes the main checkout during or immediately after a `/code-review`. The **only** git writes allowed are the ones [`git-worktrees`](../git-worktrees/SKILL.md) snapshot mode performs (*Step 1b*): `git fetch`, `git stash create` (writes one unreferenced commit object, nothing else) and `git worktree add --detach` / `remove` / `prune` on a snapshot directory **outside** the repo. If the tree is not the one to review, snapshot the right ref instead of checking it out (see *Get the right code into the snapshot*).
+> 2. **DO NOT MODIFY CODE OR THE MAIN WORKING TREE:** Never edit code files, stage commits, run migrations, check out branches, `git stash push`/`pop`, or execute any command that changes the main checkout during or immediately after a `/code-review`. The **only** git writes allowed are the ones `git-worktrees` snapshot mode performs (*Step 1b*): `git fetch`, `git stash create` (writes one unreferenced commit object, nothing else) and `git worktree add --detach` / `remove` / `prune` on a snapshot directory **outside** the repo. If the tree is not the one to review, snapshot the right ref instead of checking it out (see *Get the right code into the snapshot*).
 > 3. **DO NOT AUTO-PROCEED:** Never begin implementing fixes or refactorings automatically. Wait for explicit user instruction or `/proceed`.
 > 4. **NO UNVERIFIED FINDINGS:** Every 🔴/🟡 must survive Step 6 (*Verify*) before it is written.
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-code_review-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
-- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` (e.g. `-18176-contract-templates`, `-category-demand-statistics`). Never write unsuffixed or un-modeled generic files, and never copy another model's review under your own prefix — a review file must be the output of the model it names.
-- **Repo root** (per [`git-worktrees`](../git-worktrees/SKILL.md) §3): the `repo-root` of a `[worktree-context]` block handed in by the caller when one is present (e.g. `/implement-feature` reviewing its own workspace worktree); otherwise the workspace repo(s) you discover yourself. Before any `git status`, `stash create` or `rev-parse HEAD`, confirm the target is that root. If no block was handed in but `git -C <repo> worktree list --porcelain` shows a **locked** worktree whose reason begins with `claude-skill:` for the same ticket or branch, stop and ask which tree is meant. With a workspace block, *Review Context* reports the worktree's branch as the reviewed head and the user's main-checkout branch separately as "not reviewed".
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-code_review-<suffix>.md` (suffix e.g. `-18176-contract-templates`, `-category-demand-statistics`)
+- `~/.terminal/skills/_modules/git-worktrees.md`: snapshot by default
+- `~/.terminal/skills/_modules/pr-counterpart.md`
+
+- Never copy another model's review under your own prefix — a review file must be the output of the model it names.
+- With a workspace `[worktree-context]` block (e.g. `/implement-feature` reviewing its own workspace worktree), *Review Context* reports the worktree's branch as the reviewed head and the user's main-checkout branch separately as "not reviewed".
 
 ---
 
@@ -75,7 +79,7 @@ Whatever the base, confirm it resolves (`git rev-parse <base>`) and the diff is 
 
 The review never reads the main checkout. It pins a head per repo in scope, materialises that head in a **detached `git worktree` outside the repo**, and reads everything from there. The user may keep editing the main checkout the whole time; nothing in the review may depend on it. `/code-review live …` skips this step and reads the main checkout as-is.
 
-The lifecycle — create, read, map paths back, remove, fallback — is **[`git-worktrees`](../git-worktrees/SKILL.md) §4 (snapshot mode)** with `<skill>=code-review`; follow it rather than this page for the mechanics. (It also explains why the host's own worktree tooling is not used: it acts on the launch repository and moves the session's working directory, which the artifact links depend on.) What stays review-specific is below: which head each scope pins, the source-ref rule, the main-checkout relation, and untracked files.
+The lifecycle — create, read, map paths back, remove, fallback — is **`git-worktrees` › *Snapshot Lifecycle* (snapshot mode)** with `<skill>=code-review`; follow it rather than this page for the mechanics. (It also explains why the host's own worktree tooling is not used: it acts on the launch repository and moves the session's working directory, which the artifact links depend on.) What stays review-specific is below: which head each scope pins, the source-ref rule, the main-checkout relation, and untracked files.
 
 **a. Resolve the head per repo in scope**
 
@@ -99,14 +103,14 @@ Report it as `same commit`, `local ahead N / behind M`, or `on <other-branch> �
 
 `git stash create` writes one unreferenced commit object and changes nothing else — not the index, not the working tree, not `git stash list`. An empty result means the tree is clean: the scope is empty, stop here. It does **not** capture untracked files: list them with `git -C <repo> ls-files --others --exclude-standard`, record them in the Review Context table under *Untracked, not in snapshot*, read them from the main checkout, and mark every citation into them `(live, untracked)` — their line numbers are not stable.
 
-**b–f. Create, read, map, remove, fall back** — `git-worktrees` §4b–f, with these review invariants on top:
+**b–f. Create, read, map, remove, fall back** — `git-worktrees` › *Snapshot Lifecycle* b–f, with these review invariants on top:
 
 - `SNAP_DIR=<scratchpad>/code-review/<repo-dirname>/<ref-slug>@<short-sha>`; one snapshot per repo in scope — a two-repo review has two. `$SNAP_DIR` is the `repo-root` of the snapshot's `[worktree-context]`.
 - Inside the snapshot `HEAD` **is** the reviewed head and remote refs are shared, so the commands in this skill (`git diff <base>...HEAD`, `git log --oneline <base>..HEAD`) are unchanged apart from `-C "$SNAP_DIR"`.
 - **The source ref travels with the SHA everywhere** — Review Context, chat response, sub-agent prompts.
-- **No `<scratchpad>` path reaches the artifact or the chat**: map every `path:line` to `<repo-dirname>/…` first (§4d). The reviewed head recorded in Review Context is what gives the line numbers meaning if the user has edited since. When CodeGraph lines are cited directly (main checkout `HEAD` equals the snapshot head and `git status` is clean), say so in the Review Context table.
+- **No `<scratchpad>` path reaches the artifact or the chat**: map every `path:line` to `<repo-dirname>/…` first (`git-worktrees` › *Snapshot Lifecycle* d). The reviewed head recorded in Review Context is what gives the line numbers meaning if the user has edited since. When CodeGraph lines are cited directly (main checkout `HEAD` equals the snapshot head and `git status` is clean), say so in the Review Context table.
 - Remove after the artifact is written and the header links are emitted — in deep mode, after every sub-agent has returned and Step 6 is done — and say in the chat response that the snapshot of `<source-ref> @ <short-sha>` was removed, or why it was kept.
-- When no snapshot is possible (§4f), fall back to `live`, record `live checkout` in Review Context, and warn that edits during the review invalidate line numbers.
+- When no snapshot is possible (`git-worktrees` › *Snapshot Lifecycle* f), fall back to `live`, record `live checkout` in Review Context, and warn that edits during the review invalidate line numbers.
 
 ### Pull-Request References
 
@@ -159,7 +163,7 @@ Report which repos resolved to a PR and which did not — a repo still sitting o
 
 #### Counterpart PRs — every resolved PR, every time
 
-A pasted PR link names **one** half of a change that may span repos. After resolving it — from a URL, an id, the branch or a work item — run the counterpart lookup in **[`core`](../core/SKILL.md) §4.1** for every PR in scope. That section owns the signals, the commands and the classification. The two halves usually carry different work-item ids (e.g. backend `#31175`, frontend `#31176` under one parent story), so a branch-name match alone never settles it.
+A pasted PR link names **one** half of a change that may span repos. After resolving it — from a URL, an id, the branch or a work item — run the counterpart lookup in **`pr-counterpart` › *Counterpart discovery*** for every PR in scope. That section owns the signals, the commands and the classification. The two halves usually carry different work-item ids (e.g. backend `#31175`, frontend `#31176` under one parent story), so a branch-name match alone never settles it.
 
 What a classified counterpart means for this review:
 
@@ -401,7 +405,7 @@ In deep mode, the aggregator runs this step on the sub-agents' findings — sub-
 
 ### Artifact Links
 
-Format all chat links and section anchors according to the **[artifacts](../artifacts/SKILL.md)** protocol (`file://` absolute for Antigravity IDE, workspace-relative for Claude Code, `#L<line>` line fragments for chat).
+Format all chat links and section anchors according to the **`artifact-protocol`** protocol (`file://` absolute for Antigravity IDE, workspace-relative for Claude Code, `#L<line>` line fragments for chat).
 
 - **Fragment format for INTRA-DOCUMENT links inside markdown files**:
   Internal links *within* the document itself (such as the summary table, finding links, or links to plain terms) must NEVER use `#L<line>`! They are rendered by Markdown Preview and browser HTML renderers, which navigate using HTML anchor tags. Always use semantic HTML anchors `<a id="..."></a>` (e.g., `<a id="finding-1"></a>`, `<a id="finding-1-plain"></a>`, `<a id="minor-findings"></a>`) and links `[1](#finding-1)` / `[plain](#finding-1-plain)` / `[Minor Findings](#minor-findings)`.
@@ -471,7 +475,7 @@ If you edit the artifact after emitting the header, the line numbers have moved 
 
 Sections in this order, and **nothing after In Plain Terms**:
 
-1. `## Review Context` — a small table: PR(s) and work item(s) per repo, **Counterpart** (the `core` §4.1 classification: `<repo> !<id>` reviewed / found, not reviewed / expected but missing / single-repo change), base, **Head reviewed** per repo as `` `<source-ref>` @ `<short-sha>` `` (*Step 1b-a*) — e.g. `` Backend `origin/feature/31085_permit-…` @ `65c726bb` `` — never a bare SHA, **Reviewed from** (`` snapshot of `<source-ref>` @ `<short-sha>` (removed) `` / `… (kept at <path>)` / `` live checkout of `<branch>` ``), **Local checkout** per repo (its branch and `same commit` / `local ahead N / behind M` / `on <other-branch> — PR branch not checked out`), **Untracked, not in snapshot** (`working`/`staged` only: file list or "none"), Spec source (or "none available"), Standards sources loaded, mode (standard/deep).
+1. `## Review Context` — a small table: PR(s) and work item(s) per repo, **Counterpart** (the `pr-counterpart` › *Classification*: `<repo> !<id>` reviewed / found, not reviewed / expected but missing / single-repo change), base, **Head reviewed** per repo as `` `<source-ref>` @ `<short-sha>` `` (*Step 1b-a*) — e.g. `` Backend `origin/feature/31085_permit-…` @ `65c726bb` `` — never a bare SHA, **Reviewed from** (`` snapshot of `<source-ref>` @ `<short-sha>` (removed) `` / `… (kept at <path>)` / `` live checkout of `<branch>` ``), **Local checkout** per repo (its branch and `same commit` / `local ahead N / behind M` / `on <other-branch> — PR branch not checked out`), **Untracked, not in snapshot** (`working`/`staged` only: file list or "none"), Spec source (or "none available"), Standards sources loaded, mode (standard/deep).
 2. `## Feature in Brief` — what the feature is and what it is meant to achieve, before any code is mentioned (see *Feature in Brief* below).
 3. `## Summary of Changes` — 1–3 sentences on what the changes accomplish and their architectural intent.
 4. `## Findings Summary` — the summary table.

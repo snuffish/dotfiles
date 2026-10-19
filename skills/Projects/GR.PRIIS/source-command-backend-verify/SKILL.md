@@ -7,11 +7,15 @@ description: "[Project: GR.PRIIS.Backend] Run all quality checks before committi
 
 Use this skill when the user asks to run the migrated source command `verify`.
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating standards and the **[artifacts](../../../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: none — the PASS/FAIL table is printed in chat. Read-only apart from `dotnet format`, which only rewrites files you already changed.
-- **Repo root** (per [`git-worktrees`](../../../git-worktrees/SKILL.md) §3): `<repo-root>` is the `repo-root` of a `[worktree-context]` block handed in by the caller when one is present (e.g. `/implement-feature` verifying its workspace worktree); otherwise the backend repo in the workspace. Every `dotnet` command below runs from `<repo-root>` — `(cd <repo-root> && dotnet …)` in a subshell, so the session's working directory never moves. A worktree lacks the ignored `appsettings.local.json` files; the profile's *Worktree include list* copies them before this skill runs, otherwise the integration suite targets the wrong database.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes no artifact — the PASS/FAIL table is printed in chat
+- `~/.terminal/skills/_modules/git-worktrees.md`
+
+- Read-only apart from `dotnet format`, which only rewrites files you already changed.
+- **Repo root** without a `[worktree-context]` block: the backend repo in the workspace. Every `dotnet` command below runs from `<repo-root>` — `(cd <repo-root> && dotnet …)` in a subshell, so the session's working directory never moves. A worktree lacks the ignored `appsettings.local.json` files; the profile's *Worktree include list* copies them before this skill runs, otherwise the integration suite targets the wrong database.
 
 ---
 
