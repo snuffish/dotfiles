@@ -110,7 +110,7 @@ Before reading code, establish strict research boundaries to avoid sprawling:
 
 ### Step 1 — Orient & Recover Context
 1. **Workspace Rulebooks**: Check `CLAUDE.md`, `GEMINI.md`, and `.agents/rules/` for global architectural patterns, forbidden libraries, or repository constraints.
-2. **Project-Scoped Skills**: Identify and load relevant domain skills per `core` › *Precedence* (e.g. `Projects/GR.PRIIS/backend-fastendpoints`, `frontend-rtk-query`).
+2. **Project-Scoped Skills**: Identify and load relevant domain skills per `core` › *Precedence* (e.g. `Projects/GR.PRIIS/priis-backend-fastendpoints`, `priis-frontend-rtk-query`).
 3. **Repository Topology**: Determine if the change crosses repository or package boundaries (e.g., Backend API, Frontend SPA, Shared Contracts, Shared Worker).
 4. **Historical Decisions**: Inspect recent commits (`git log -n 5 -p`) and search past conversational transcripts (`<appDataDir>/brain/` or `~/.claude/projects/`) to honor established decisions and avoid relitigating resolved debates.
 

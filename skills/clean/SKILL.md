@@ -56,7 +56,7 @@ Invoke this skill whenever:
 | --- | --- |
 | Moving files, splitting modules, reshaping folders | [`/organize`](../organize/SKILL.md) |
 | Multi-function or architecture-wide declarative refactoring | [`/expressive`](../expressive/SKILL.md) |
-| Removing duplication across files | `backend-dry` (backend) or [`/refine`](../refine/SKILL.md) |
+| Removing duplication across files | `priis-backend-dry` (backend) or [`/refine`](../refine/SKILL.md) |
 | Compiler, build, or test failures | [`/problem`](../problem/SKILL.md) |
 | Reviewing a branch diff against acceptance criteria | [`/code-review`](../code-review/SKILL.md) |
 

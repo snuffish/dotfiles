@@ -70,7 +70,7 @@ When multiple skills and rules apply to a task, instructions resolve in the foll
 1. **Workspace Rulebooks** (`CLAUDE.md` / `GEMINI.md` / `.agents/rules/`):
    - Strict repository-level instructions, project constraints, and local overrides.
 2. **Project-scoped References and Profiles** (`Projects/<Project>/...`):
-   - Domain-specific conventions (e.g., `backend-fastendpoints`, `backend-ef-core`, `frontend-rtk-query`) and the facts a Command adapts to.
+   - Domain-specific conventions (e.g., `priis-backend-fastendpoints`, `priis-backend-ef-core`, `priis-frontend-rtk-query`) and the facts a Command adapts to.
 3. **General References** (`modern-csharp`, `typescript-conventions`, etc.):
    - General language idioms and patterns.
 4. **Modules** (`core`, `artifact-protocol`, `git-worktrees`, `pr-counterpart`):

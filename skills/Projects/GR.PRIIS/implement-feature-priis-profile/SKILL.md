@@ -20,9 +20,9 @@ Workspace: the `GR` folder that holds both product repos, `~/Projects/GR` by def
 | **Implementing ID** | Branch, commit and PR use the **Task or Bug** ID, never the parent story. For a User Story, look for a `Backend` / `Frontend`-tagged child task in the relations; if none exists use the story ID itself. Do not create one. |
 | **Pattern skills per layer** | See *Phase 1* below. |
 | **Sibling chain** | Backend: endpoint → library/entity method → entity + EF configuration → integration test class. Frontend: route file → feature component → endpoint builder + tags → schema → e2e test IDs. |
-| **Scaffold skills** | `source-command-backend-scaffold`, `source-command-frontend-scaffold` |
-| **Verify** | `source-command-backend-verify` (incl. its architecture-tests phase), `source-command-frontend-verify` (+ `npm run e2e`, which the verify skill lacks). |
-| **Ship** | `source-command-backend-ship` (covers both repos), `backend-workflow`, `frontend-workflow`, `pr-summary`. Conventions in *Phase 6*. |
+| **Scaffold skills** | `priis-backend-scaffold`, `priis-frontend-scaffold` |
+| **Verify** | `priis-backend-verify` (incl. its architecture-tests phase), `priis-frontend-verify` (+ `npm run e2e`, which the verify skill lacks). |
+| **Ship** | `priis-backend-ship` (covers both repos), `priis-backend-workflow`, `priis-frontend-workflow`, `pr-summary`. Conventions in *Phase 6*. |
 | **Contract touchpoints** | `SystemAction` integer values, `[EmitOpenApiMetadata]` enum metadata (`x-enumMetadata`), `x-roleAccessRules`, the committed `openapi/swagger.json` snapshot, the SignalR hub URL `/realtime/account`, Swedish (`sv-SE`) UI text with English URL paths. |
 | **Known drift** | Repo-local `<repo>/.claude/skills/`, `<repo>/.claude/commands/` and both `.github/copilot-instructions.md` files are stale and diverge from the registry skills. The backend scaffold template shows `CreateClientAndLoginAsNoAccessUserAsync` (gone). Three legacy `'zod/v4'` imports remain in the frontend. Older entities thread `IReadOnlyPriisDbContext` through static methods. Follow the code. |
 | **Worktree branch** | `feature/<id>_<english-kebab-slug>` (`bugfix/`, `hotfix/`) — the same convention as *Phase 6*; never `worktree-<name>`. Base: freshly fetched `origin/main` in both repos. |
@@ -32,8 +32,8 @@ Workspace: the `GR` folder that holds both product repos, `~/Projects/GR` by def
 
 ### Precedence overrides for delegated PRIIS skills
 
-- `source-command-backend-ship` stops on a User Story, pushes and creates the PR right after its file prompt, passes the PR body inline, and moves the work item to `Pull Request` unconditionally. Under the orchestrator: a story without a tagged child task ships under its own ID; push and PR creation wait for the ship gate; the PR body goes through a temp file (`pr-summary` §5.2); the state transition is a tracker write.
-- `source-command-backend-ship`, `source-command-backend-verify` and `source-command-frontend-verify` resolve the repo from the current working directory (`rev-parse --show-toplevel`, `cd source/priis-web`) when no `[worktree-context]` is handed in. Under the orchestrator they always receive the block and run against `repo-root`; the ship skill confirms the worktree's existing branch instead of `checkout -b`.
+- `priis-backend-ship` stops on a User Story, pushes and creates the PR right after its file prompt, passes the PR body inline, and moves the work item to `Pull Request` unconditionally. Under the orchestrator: a story without a tagged child task ships under its own ID; push and PR creation wait for the ship gate; the PR body goes through a temp file (`pr-summary` §5.2); the state transition is a tracker write.
+- `priis-backend-ship`, `priis-backend-verify` and `priis-frontend-verify` resolve the repo from the current working directory (`rev-parse --show-toplevel`, `cd source/priis-web`) when no `[worktree-context]` is handed in. Under the orchestrator they always receive the block and run against `repo-root`; the ship skill confirms the worktree's existing branch instead of `checkout -b`.
 
 ---
 
@@ -56,11 +56,11 @@ Workspace: the `GR` folder that holds both product repos, `~/Projects/GR` by def
 
 | Scope | Load |
 |-------|------|
-| Backend — endpoint or library change | `backend-fastendpoints`, `backend-ef-core`, `modern-csharp`, `backend-testing` |
-| Backend — background job / event / notification | `backend-ef-core`, `backend-notifications`, `modern-csharp` |
-| Backend — realtime | `backend-signalr` |
-| Backend — refactor | `backend-dry` plus the above |
-| Frontend — feature or page | `frontend-component-patterns`, `frontend-forms`, `frontend-rtk-query`, `frontend-routing`, `frontend-testing` |
+| Backend — endpoint or library change | `priis-backend-fastendpoints`, `priis-backend-ef-core`, `modern-csharp`, `priis-backend-testing` |
+| Backend — background job / event / notification | `priis-backend-ef-core`, `priis-backend-notifications`, `modern-csharp` |
+| Backend — realtime | `priis-backend-signalr` |
+| Backend — refactor | `priis-backend-dry` plus the above |
+| Frontend — feature or page | `priis-frontend-component-patterns`, `priis-frontend-forms`, `priis-frontend-rtk-query`, `priis-frontend-routing`, `priis-frontend-testing` |
 
 ### Sibling patterns
 
@@ -75,7 +75,7 @@ Workspace: the `GR` folder that holds both product repos, `~/Projects/GR` by def
 | API shape change (request/response/enum) | Frontend `source/priis-web/openapi/swagger.json` snapshot | Contract-sync step in the plan; backend PR merges first or the frontend branch carries the snapshot. |
 | Enum exposed to the frontend | `[EmitOpenApiMetadata]` on the backend enum; frontend facade `src/enums/<enum>.ts` is scaffolded on first codegen | Both repos. |
 | SignalR hub URL `/realtime/account` | Fixed contract | Do not change without coordinating both repos. |
-| Notification / job | `backend-notifications` | TickerQ job + handler + definition. |
+| Notification / job | `priis-backend-notifications` | TickerQ job + handler + definition. |
 
 Cross-layer mapping for this stack (`core` › *Codebase investigation*): backend ↔ frontend means DTO synchronization, route paths, payload serialization and the RTK Query hooks; domain ↔ persistence means EF Core mappings, migrations, foreign keys and validation rules.
 
@@ -122,13 +122,13 @@ The frontend never talks to the backend at build time; it reads the committed `s
 
 ## Phase 4 — Verify
 
-**Backend** (`source-command-backend-verify`, including its architecture-tests phase):
+**Backend** (`priis-backend-verify`, including its architecture-tests phase):
 
 - Scope a run with `dotnet test --project tests/GR.PRIIS.API.IntegrationTests --configuration Release --treenode-filter "/*/*/<Class>/*"` — `--project` is required on .NET 10; never `--filter`. Targeted first, full suite before shipping.
 - A full local run drops 25–45 unrelated integration tests to TestContainers load. Re-run those groups alone with `--no-build`; only failures that persist alone are yours.
 - **Migration check**: integration tests build the schema with `EnsureCreatedAsync`, so they never execute a migration. Apply it to the local database from `source/GR.PRIIS.CLI` with `dotnet run -- migrations -s -d` and confirm it runs clean.
 
-**Frontend** (`source-command-frontend-verify`; from `source/priis-web/`): `npm run organize-imports` (changed files only; never `:all`), `npm run lint`, `npm run build`, and `npm run e2e` for UI changes. The default e2e leg needs no backend; the `setup` project only joins when `PW_API_BASE_URL` is set, and that leg must not use `--no-deps`.
+**Frontend** (`priis-frontend-verify`; from `source/priis-web/`): `npm run organize-imports` (changed files only; never `:all`), `npm run lint`, `npm run build`, and `npm run e2e` for UI changes. The default e2e leg needs no backend; the `setup` project only joins when `PW_API_BASE_URL` is set, and that leg must not use `--no-deps`.
 
 **Cross-repo contract check**: the `SystemAction` integer and the enum metadata match on both sides, the backend `SwaggerContractTests` pass, and the frontend snapshot contains exactly the intended contract change.
 
