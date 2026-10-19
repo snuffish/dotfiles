@@ -11,12 +11,12 @@ Instead of defining standalone guidelines, this skill **composes and delegates t
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-implementation_plan-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
-- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` derived from the target feature, file, or topic. Never write unsuffixed or un-modeled generic files.
-- **Isolation**: when the invocation contains `worktree` or `/git-worktrees` (e.g. `/<skill> <request> /git-worktrees`), or when running under `/implement-feature`, edits happen in a workspace worktree per [`git-worktrees`](../git-worktrees/SKILL.md) §5 (the main checkout stays read-only, core §2.4); otherwise in place as today. Honour a handed-in `[worktree-context]` block: every `git` command and every file path resolves under its `repo-root`.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-implementation_plan-<suffix>.md` (suffix from the target feature, file, or topic)
+- `~/.terminal/skills/_modules/git-worktrees.md`
 
 ---
 ## 1. Triggering & Purpose
@@ -104,7 +104,7 @@ After completing the analysis and cross-referencing with both the history and ex
 
 When proposing or implementing refinements, you **MUST ALWAYS** enter `Planning Mode` before modifying any source code files. Follow this sequence:
 
-1. **Create the Implementation Plan**: Document your findings, historical context, and proposed modifications in `<prefix>-implementation_plan-<suffix>.md` at the **workspace root**, providing a clickable chat link and section anchors formatted according to the **[artifacts](../artifacts/SKILL.md)** protocol.
+1. **Create the Implementation Plan**: Document your findings, historical context, and proposed modifications in `<prefix>-implementation_plan-<suffix>.md` at the **workspace root**, providing a clickable chat link and section anchors formatted according to the **`artifact-protocol`** protocol.
 2. **Request Feedback**: Set `UserFacing = true` and `RequestFeedback = true` in the plan's `ArtifactMetadata`.
 3. **Halt for Approval**: Stop and wait for the user's explicit approval/feedback on the proposed changes. Do not modify any code files in the workspace until the plan is approved.
 4. **Execute**: Once the user approves, proceed to edit the files and implement the refinements.

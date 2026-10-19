@@ -20,10 +20,13 @@ Turns feedback that has already been written and read by the user — review fin
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **No artifact of its own.** It consumes an existing artifact — typically `<prefix>-code_review-<suffix>.md` or `<prefix>-pr_feedback_review-<suffix>.md` at the workspace root — and updates only its *Posted to PR* row.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes no artifact of its own — it consumes an existing artifact (typically `<prefix>-code_review-<suffix>.md` or `<prefix>-pr_feedback_review-<suffix>.md` at the workspace root) and updates only its *Posted to PR* row
+- `~/.terminal/skills/_modules/pr-counterpart.md`
+
 - **Payload files** live in the host's scratchpad, `<scratchpad>/pr<id>/`, never in the repo or at the workspace root.
 
 ---
@@ -79,7 +82,7 @@ Invoke this skill whenever:
 
    **Resolved findings** (✅, or marked resolved/refuted in the artifact) are never posted as threads; at most they appear as one line in the minor-findings block.
 3. **PR.** From the artifact's *Review Context*, the user's link, or the branch (`az repos pr list --source-branch … --detect true` / `gh pr view`). Azure DevOps: always `--org https://dev.azure.com/<org>`; the legacy `<org>.visualstudio.com` host fails auth even when signed in.
-4. **One artifact, several PRs.** When the review spans repos (e.g. backend + frontend PR), route every item to the PR whose code it cites, and keep **one spec per PR** (the script posts to one PR per spec). An item citing both sides goes to the PR that owns the defect; the other side is mentioned by PR number in the body. Take the PR set from the artifact's *Counterpart* field, and confirm it with the lookup in [`core`](../core/SKILL.md) §4.1. If the user named only one PR, post that PR's items, list the counterpart's items as held back, and offer to post them.
+4. **One artifact, several PRs.** When the review spans repos (e.g. backend + frontend PR), route every item to the PR whose code it cites, and keep **one spec per PR** (the script posts to one PR per spec). An item citing both sides goes to the PR that owns the defect; the other side is mentioned by PR number in the body. Take the PR set from the artifact's *Counterpart* field, and confirm it with the lookup in `pr-counterpart` › *Counterpart discovery*. If the user named only one PR, post that PR's items, list the counterpart's items as held back, and offer to post them.
 
 ### Step 2 — Pin the PR head and detect drift
 

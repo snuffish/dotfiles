@@ -11,11 +11,11 @@ Applicable to **any software project, language, framework, or technology stack**
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-what_am_i_missing-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
-- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` derived from the evaluated topic, PR, or branch (e.g. `-municipality-sync`, `-matching-inactivity`). Never write unsuffixed or un-modeled generic files.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-what_am_i_missing-<suffix>.md` at the **workspace root** (suffix derived from the evaluated topic, PR, or branch, e.g. `-municipality-sync`, `-matching-inactivity`)
 
 ---
 

@@ -9,10 +9,11 @@ Conducts a deep, systematic, read-only technical audit and review of an implemen
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Referenced / Managed Artifact**: `<prefix>-implementation_plan-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: references and manages `<prefix>-implementation_plan-<suffix>.md` at the **workspace root**
 
 ---
 

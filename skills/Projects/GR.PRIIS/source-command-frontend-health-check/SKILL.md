@@ -7,10 +7,11 @@ description: "[Project: GR.PRIIS.Frontend] Audit the frontend codebase for conve
 
 Use this skill when the user asks to run the migrated source command `health-check` for the GR.PRIIS.Frontend project.
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating standards and the **[artifacts](../../../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-health_check-<suffix>.md` at the **workspace root** (suffix `frontend` or the feature area audited); a short scorecard summary goes in chat.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-health_check-<suffix>.md` (suffix `frontend` or the feature area audited); a short scorecard summary goes in chat
 
 ---
 

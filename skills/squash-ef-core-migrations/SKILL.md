@@ -13,11 +13,14 @@ replaces. Everything below exists to protect that difference.
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: none — the deliverable is the squashed migration itself. This skill rewrites migration history: run the safety gate below first, and when invoked from a plan, only after `/proceed`.
-- **Isolation**: when the invocation contains `worktree` or `/git-worktrees` (e.g. `/<skill> <request> /git-worktrees`), or when running under `/implement-feature`, edits happen in a workspace worktree per [`git-worktrees`](../git-worktrees/SKILL.md) §5 (the main checkout stays read-only, core §2.4); otherwise in place as today. Honour a handed-in `[worktree-context]` block: every `git` command and every file path resolves under its `repo-root`.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes no artifact — the deliverable is the squashed migration itself
+- `~/.terminal/skills/_modules/git-worktrees.md`
+
+- This skill rewrites migration history: run the safety gate below first, and when invoked from a plan, only after `/proceed`.
 
 ---
 

@@ -9,12 +9,12 @@ Systematically scans the local skill registry (`~/.terminal/skills`), audits all
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-skills_sync_report[-<suffix>].md` only when requested or for a major registry audit (e.g. `-full-audit`, `-broken-links`)
 
-- **Target Artifact** (when requested or reporting major registry audits): `<prefix>-skills_sync_report[-<suffix>].md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
-- **Anti-Overwrite Rule**: When generating multiple or targeted sync reports, include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` (e.g. `-full-audit`, `-broken-links`).
 - For regular synchronizations, execute atomic link/inventory updates directly and output a structured discovery summary in the chat response.
 
 ---
@@ -26,13 +26,15 @@ This skill adheres strictly to the **[core](../core/SKILL.md)** operating standa
 >
 > 1. **ZERO DRIFT BETWEEN REPOSITORY & FLAT LOADERS.**
 >    Every valid skill directory in `~/.terminal/skills/` (top-level general or `Projects/<Project>/`) must have an active, matching symlink in `~/.claude/skills/<name>`.
-> 2. **STRICT SPECIFICATION VALIDATION BEFORE PROMOTION.**
+> 2. **MODULES ARE NEVER SKILLS.**
+>    `~/.terminal/skills/_modules/` holds Modules (plain markdown, no frontmatter; ADR-0001 in `~/.terminal/docs/adr/`). Never symlink anything from it, never count it in the skill inventory, and flag any `SKILL.md` found inside it as an error.
+> 3. **STRICT SPECIFICATION VALIDATION BEFORE PROMOTION.**
 >    A directory is only considered a valid skill if it contains a `SKILL.md` with valid YAML frontmatter containing `name` and `description`. The directory name must **identically match** the `name:` frontmatter attribute.
-> 3. **SAFE PRUNING (NEVER PURGE UNRELATED LOADERS).**
+> 4. **SAFE PRUNING (NEVER PURGE UNRELATED LOADERS).**
 >    When pruning dead symlinks in `~/.claude/skills/`, only remove links that point to deleted or moved targets within `~/.terminal/skills/`. Never delete standalone directories or links pointing to workspace-specific skill bundles (e.g. `../../.agents/skills/*`).
-> 4. **NON-DESTRUCTIVE EXECUTION.**
+> 5. **NON-DESTRUCTIVE EXECUTION.**
 >    Never modify or overwrite the instruction contents of existing `SKILL.md` files during a scan.
-> 5. **IMMEDIATE SESSION HYDRATION.**
+> 6. **IMMEDIATE SESSION HYDRATION.**
 >    Once new skills are discovered and linked, the agent must immediately index their paths, names, and trigger descriptions in the current turn so the user can use them right away without restarting the agent or IDE.
 
 ---
@@ -60,7 +62,8 @@ Different AI tools discover skills using different paradigms:
 ```
                       ~/.terminal/skills/ (Source of Truth)
                       ├── <general-skills>/SKILL.md
-                      └── Projects/<Project>/<skill>/SKILL.md
+                      ├── Projects/<Project>/<skill>/SKILL.md
+                      └── _modules/<name>.md   (Modules — never linked)
                                       │
                ┌──────────────────────┴──────────────────────┐
                ▼                                             ▼
@@ -84,7 +87,7 @@ Different AI tools discover skills using different paradigms:
 
 ### Step 1: Discover & Catalog Local Skills
 
-Scan `/Users/snuffish/.terminal/skills` (or `~/.terminal/skills`) recursively for all files named `SKILL.md`.
+Scan `/Users/snuffish/.terminal/skills` (or `~/.terminal/skills`) recursively for all files named `SKILL.md`, skipping `_modules/`.
 
 Categorize each discovered skill:
 - **General (top-level)**: Direct children of `skills/` (e.g. `skills/clean/SKILL.md`).
@@ -100,9 +103,10 @@ For each skill, extract:
 
 Enforce the following quality checks on each skill:
 1. **Name Alignment**: Confirm `name:` in `SKILL.md` exactly matches the enclosing directory name.
-2. **Core Link Integrity**: Verify relative links to foundational skills:
-   - Top-level skills must reference `../core/SKILL.md` and `../artifacts/SKILL.md`.
-   - Project-scoped skills must reference `../../core/SKILL.md` and `../../artifacts/SKILL.md`.
+2. **Module Integrity**:
+   - Every `~/.terminal/skills/_modules/<name>.md` path named in a `## Modules` section exists on disk.
+   - No skill still links to the retired `core` or `git-worktrees` skill files, and no skill refers to a Module section by section number.
+   - `_modules/` contains no `SKILL.md`.
 3. **Trigger Description**: Ensure `description` is non-empty and contains actionable trigger phrases.
 
 Flag any warnings or errors for resolution.
@@ -179,7 +183,15 @@ os.makedirs(claude_dir, exist_ok=True)
 discovered_skills = {}
 validation_errors = []
 
+modules_root = os.path.join(skills_root, '_modules')
+module_ref = re.compile(r'~/\.terminal/skills/_modules/([\w.-]+\.md)')
+retired_ref = re.compile(r'(?<![\w-])(?:core|git-worktrees)/SKILL\.md|(?<![\w-])(?:core|git-worktrees|artifacts)`? §')
+
 for root, dirs, files in os.walk(skills_root):
+    if root == modules_root or root.startswith(modules_root + os.sep):
+        if 'SKILL.md' in files:
+            validation_errors.append(f"{root}: SKILL.md inside _modules/ — Modules are never skills.")
+        continue
     if 'SKILL.md' in files:
         dir_name = os.path.basename(root)
         skill_file = os.path.join(root, 'SKILL.md')
@@ -189,6 +201,11 @@ for root, dirs, files in os.walk(skills_root):
             match_name = re.search(r'^name:\s*([^\r\n]+)', content, re.MULTILINE)
             name = match_name.group(1).strip() if match_name else None
             match_desc = re.search(r'^description:\s*([^\r\n]+)', content, re.MULTILINE)
+            for module in module_ref.findall(content):
+                if not os.path.exists(os.path.join(modules_root, module)):
+                    validation_errors.append(f"{root}: Module '{module}' does not exist.")
+            if retired_ref.search(content):
+                validation_errors.append(f"{root}: Retired core/git-worktrees link or § reference into a Module.")
             desc = match_desc.group(1).strip() if match_desc else ''
             
             if not name:
@@ -278,7 +295,7 @@ The current conversation has dynamically loaded and indexed all `<N>` skills. Yo
 
 Before reporting completion to the user, ensure:
 
-- [ ] Every directory in `~/.terminal/skills` containing a `SKILL.md` was scanned and validated.
+- [ ] Every directory in `~/.terminal/skills` containing a `SKILL.md` was scanned and validated, and nothing under `_modules/` was linked or counted.
 - [ ] No `name` vs folder mismatch was ignored.
 - [ ] Every valid skill has an active symlink in `~/.claude/skills/`.
 - [ ] No external workspace links in `~/.claude/skills/` were accidentally unlinked.

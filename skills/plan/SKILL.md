@@ -9,11 +9,11 @@ Manages the active implementation plan (`<prefix>-implementation_plan-<suffix>.m
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-implementation_plan-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
-- **Anti-Overwrite Rule**: Always append both the active AI model in `<prefix>` and a descriptive kebab-case `<suffix>`. Never emit unsuffixed or un-modeled generic plan files.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-implementation_plan-<suffix>.md` at the **workspace root**
 
 ---
 
@@ -40,7 +40,7 @@ When the user runs `/plan` without arguments (or simply says "open plan"):
 
 2. **Render Direct Link & Navigation Immediately:**
    - **DO NOT** edit code or execute background commands.
-   - Output a clickable markdown link built exactly as the **[artifacts](../artifacts/SKILL.md)** protocol specifies, so the user can open it with a single click in the IDE.
+   - Output a clickable markdown link built exactly as the **`artifact-protocol`** specifies, so the user can open it with a single click in the IDE.
    - Provide clickable anchor links (`#L<line>`) to the key sections of the plan:
      - 📄 Context & Goal
      - 📄 Proposed Changes

@@ -7,11 +7,16 @@ description: "[Project: GR.PRIIS.Frontend] Run all quality checks before committ
 
 Use this skill when the user asks to run the migrated source command `verify` for the GR.PRIIS.Frontend project.
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../../../core/SKILL.md)** operating standards and the **[artifacts](../../../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: none — the PASS/FAIL table is printed in chat. Read-only.
-- **Repo root** (per [`git-worktrees`](../../../git-worktrees/SKILL.md) §3): `<repo-root>` is the `repo-root` of a `[worktree-context]` block handed in by the caller when one is present (e.g. `/implement-feature` verifying its workspace worktree); otherwise the frontend repo in the workspace. Every command below runs against `<repo-root>/source/priis-web`, in a subshell so the session's working directory never moves. A worktree starts without `node_modules`: run the profile's dependency hydration (`npm ci` in `<repo-root>/source/priis-web`) before Phase 1 if it is missing.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes no artifact — the PASS/FAIL table is printed in chat
+- `~/.terminal/skills/_modules/git-worktrees.md`
+
+- **Read-only:** runs checks and changes no files; it needs no `/proceed`.
+
+- **Repo root** without a `[worktree-context]` block: the frontend repo in the workspace. Every command below runs against `<repo-root>/source/priis-web`, in a subshell so the session's working directory never moves. A worktree starts without `node_modules`: run the profile's dependency hydration (`npm ci` in `<repo-root>/source/priis-web`) before Phase 1 if it is missing.
 
 ---
 

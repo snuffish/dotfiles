@@ -9,12 +9,12 @@ Systematically restructures codebase directories and files to eliminate clutter,
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-organize_plan-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
-- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` derived from the target subsystem or directory (e.g. `-matching-components`, `-ticket-features`). Never write unsuffixed or un-modeled generic files.
-- **Isolation**: when the invocation contains `worktree` or `/git-worktrees` (e.g. `/<skill> <request> /git-worktrees`), or when running under `/implement-feature`, edits happen in a workspace worktree per [`git-worktrees`](../git-worktrees/SKILL.md) §5 (the main checkout stays read-only, core §2.4); otherwise in place as today. Honour a handed-in `[worktree-context]` block: every `git` command and every file path resolves under its `repo-root`.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-organize_plan-<suffix>.md` (suffix from the target subsystem or directory, e.g. `-matching-components`, `-ticket-features`)
+- `~/.terminal/skills/_modules/git-worktrees.md`
 
 ---
 
@@ -146,7 +146,7 @@ When a file named `helper.*`, `utils.*`, or `common.*` accumulates multiple dist
 
 ### Phase 2: Formulate the Reorganization Plan Artifact
 
-Create `<prefix>-organize_plan-<suffix>.md` at the **workspace root** adhering to the **[artifacts](../artifacts/SKILL.md)** protocol:
+Create `<prefix>-organize_plan-<suffix>.md` at the **workspace root** adhering to the **`artifact-protocol`** protocol:
 - Prefix `<prefix>-` includes both the host and active AI model: `<host>-<model>-` (e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
 - Append descriptive `<suffix>` based on the target directory or component.
 
