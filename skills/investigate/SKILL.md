@@ -13,9 +13,11 @@ A plan built on assumptions breaks down during implementation. This skill guaran
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-investigation-<suffix>.md` at the **workspace root** (suffix e.g. `-draft-close-dialog`, `-municipality-sync`)
+- `../_modules/core.md`: read-only until `/proceed`
+- `../_modules/artifact-protocol.md`: writes `<prefix>-investigation-<suffix>.md` at the **workspace root** (suffix e.g. `-draft-close-dialog`, `-municipality-sync`)
 
 ---
 

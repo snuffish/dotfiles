@@ -11,11 +11,13 @@ Finds out **why** a pull request's pipeline is failing, separates real regressio
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-investigation-<suffix>.md` (the diagnosis, format owned by `/investigate`) and `<prefix>-implementation_plan-<suffix>.md` (the fix, format owned by `/plan`); suffix `<prId>-pipeline-<slug>` (e.g. `-18542-pipeline-statistics-granularity`) — for a multi-repo fix, use the lead PR id and list every PR in the artifact header
-- `~/.terminal/skills/_modules/git-worktrees.md`
-- `~/.terminal/skills/_modules/pr-counterpart.md`
+- `../_modules/core.md`: read-only until `/proceed`
+- `../_modules/artifact-protocol.md`: writes `<prefix>-investigation-<suffix>.md` (the diagnosis, format owned by `/investigate`) and `<prefix>-implementation_plan-<suffix>.md` (the fix, format owned by `/plan`); suffix `<prId>-pipeline-<slug>` (e.g. `-18542-pipeline-statistics-granularity`) — for a multi-repo fix, use the lead PR id and list every PR in the artifact header
+- `../_modules/git-worktrees.md`
+- `../_modules/pr-counterpart.md`
 
 > [!CAUTION]
 > **Golden invariants**

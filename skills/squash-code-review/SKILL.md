@@ -22,11 +22,13 @@ Takes two or more code reviews of the same change and produces one new review th
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-squashed_code_review-<suffix>.md` (suffix: the sources' shared suffix, e.g. `-18715-18716-rtk-api-domains`)
-- `~/.terminal/skills/_modules/git-worktrees.md`: snapshot by default
-- `~/.terminal/skills/_modules/pr-counterpart.md`
+- `../_modules/core.md`: read-only until `/proceed`
+- `../_modules/artifact-protocol.md`: writes `<prefix>-squashed_code_review-<suffix>.md` (suffix: the sources' shared suffix, e.g. `-18715-18716-rtk-api-domains`)
+- `../_modules/git-worktrees.md`: snapshot by default
+- `../_modules/pr-counterpart.md`
 
 - Also read [`code-review`](../code-review/SKILL.md). Severity, axes, verification, artifact structure, *In Plain Terms* and the link format all come from there. This skill adds only what is specific to squashing.
 - Read [`pr-feedback-review`](../pr-feedback-review/SKILL.md) › *2.2 — Discussion Threads & Comments* for the thread fetch, and its *State at head* vocabulary.

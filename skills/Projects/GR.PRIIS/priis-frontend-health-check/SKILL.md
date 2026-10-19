@@ -9,9 +9,11 @@ Use this skill when the user asks to run `/priis-frontend-health-check` for the 
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-health_check-<suffix>.md` (suffix `frontend` or the feature area audited); a short scorecard summary goes in chat
+- `../../../_modules/core.md`
+- `../../../_modules/artifact-protocol.md`: writes `<prefix>-health_check-<suffix>.md` (suffix `frontend` or the feature area audited); a short scorecard summary goes in chat
 
 ---
 

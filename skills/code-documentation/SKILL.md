@@ -7,9 +7,11 @@ description: Use this skill when the user requests to generate, create, or impro
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes no artifact at the workspace root — documentation is written into the repository where the user asks (README, `docs/`, inline comments)
+- `../_modules/core.md`
+- `../_modules/artifact-protocol.md`: writes no artifact at the workspace root — documentation is written into the repository where the user asks (README, `docs/`, inline comments)
 
 - Confirm the destination before writing.
 

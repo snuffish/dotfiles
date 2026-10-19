@@ -21,10 +21,12 @@ Ship your current work in one go: create or confirm a branch, run pre-commit val
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes no artifact — the deliverables are the commit, the push and the draft PR
-- `~/.terminal/skills/_modules/git-worktrees.md`
+- `../../../_modules/core.md`
+- `../../../_modules/artifact-protocol.md`: writes no artifact — the deliverables are the commit, the push and the draft PR
+- `../../../_modules/git-worktrees.md`
 
 - Mutating by design: stage only files the user confirmed, never force-push.
 - **Repo root** without a `[worktree-context]` block: `git rev-parse --show-toplevel` from the current working directory. Every command below is `git -C <repo-root>`.

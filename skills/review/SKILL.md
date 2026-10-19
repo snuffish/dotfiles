@@ -11,9 +11,11 @@ Conducts a deep, systematic, read-only technical audit and review of an implemen
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: references and manages `<prefix>-implementation_plan-<suffix>.md` at the **workspace root**
+- `../_modules/core.md`: read-only until `/proceed`
+- `../_modules/artifact-protocol.md`: references and manages `<prefix>-implementation_plan-<suffix>.md` at the **workspace root**
 
 ---
 

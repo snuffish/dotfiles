@@ -1,6 +1,6 @@
 # Modules live outside the skill loaders
 
-Shared contracts that Commands depend on (`core`, `artifact-protocol`, `git-worktrees`, `pr-counterpart`) are not skills. Each is a plain markdown file at `skills/_modules/<name>.md`, with no frontmatter and no `SKILL.md`, and is never symlinked into `~/.claude/skills`. A Command pulls a Module in by telling the model to read its absolute path (`~/.terminal/skills/_modules/<name>.md`) before it starts. No host has an import mechanism between skills, so a file path is the only real dependency edge. Registering Modules as skills put them in the skill list, where they could be invoked or auto-loaded on their own, with descriptions that never meaningfully trigger. Every listed skill also costs context on every turn, and the listing has a fixed budget (1% of the context window), so a Module that is registered as a skill pushes out the descriptions of real skills.
+Shared contracts that Commands depend on (`core`, `artifact-protocol`, `git-worktrees`, `pr-counterpart`) are not skills. Each is a plain markdown file at `skills/_modules/<name>.md`, with no frontmatter and no `SKILL.md`, and is never symlinked into `~/.claude/skills`. A Command pulls a Module in by telling the model to read its path (`skills/_modules/<name>.md`) before it starts. No host has an import mechanism between skills, so a file path is the only real dependency edge. Registering Modules as skills put them in the skill list, where they could be invoked or auto-loaded on their own, with descriptions that never meaningfully trigger. Every listed skill also costs context on every turn, and the listing has a fixed budget (1% of the context window), so a Module that is registered as a skill pushes out the descriptions of real skills.
 
 ## Considered Options
 
@@ -11,7 +11,7 @@ Shared contracts that Commands depend on (`core`, `artifact-protocol`, `git-work
 
 ## Consequences
 
-- Module paths in Commands are absolute. A relative link breaks when a skill is read through its `~/.claude/skills/<name>` symlink.
+- Module paths in Commands are absolute. A relative link breaks when a skill is read through its `~/.claude/skills/<name>` symlink. Superseded by [ADR-0002](0002-module-paths-relative-to-real-skill-folder.md).
 - Module-to-Module references are relative (`[core.md](core.md)`). A Module is never symlinked, so it is always read from its real folder, and the reference survives the registry moving to another machine or path.
 - A Module that grows into a folder must never contain a `SKILL.md`.
 - `reload-skills` skips `_modules/` explicitly.

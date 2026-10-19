@@ -17,11 +17,13 @@ Usage: `/implement-feature <ticket-id | ticket-url>` or `/implement-feature <sho
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-implementation_plan-<suffix>.md` and `<prefix>-what_am_i_missing-<suffix>.md` (Phase 2), and `<prefix>-walkthrough-<suffix>.md` (Phase 7) at the **workspace root** — the directory the IDE opened, which in a multi-repo workspace is the folder that holds the repos; `<suffix>` is `<ticket-id>-<feature-slug>` when there is a ticket, else a 2–4 word topic slug
-- `~/.terminal/skills/_modules/git-worktrees.md`: workspace by default
-- `~/.terminal/skills/_modules/pr-counterpart.md`
+- `../_modules/core.md`
+- `../_modules/artifact-protocol.md`: writes `<prefix>-implementation_plan-<suffix>.md` and `<prefix>-what_am_i_missing-<suffix>.md` (Phase 2), and `<prefix>-walkthrough-<suffix>.md` (Phase 7) at the **workspace root** — the directory the IDE opened, which in a multi-repo workspace is the folder that holds the repos; `<suffix>` is `<ticket-id>-<feature-slug>` when there is a ticket, else a 2–4 word topic slug
+- `../_modules/git-worktrees.md`: workspace by default
+- `../_modules/pr-counterpart.md`
 
 - **Repos**: work in a **workspace worktree per repo in scope**, created in Phase 0 and removed in Phase 7 through `git-worktrees` › *Workspace Lifecycle*. The user's main checkout is read-only for the whole run (`git-worktrees` › *Golden Invariants*) — they keep editing it while this skill runs. Use absolute paths and `git -C <repo-root>`, where `repo-root` is the worktree from the repo's `[worktree-context]` block; never `cd`, and never let the session's working directory move. Paste the block into every delegated skill invocation and every sub-agent brief — delegated skills discover "the repo" from the workspace otherwise and would act on the main checkout.
 

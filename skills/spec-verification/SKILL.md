@@ -11,10 +11,12 @@ Takes a specification and an implementation and answers, for every line of the s
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-spec_verification-<suffix>.md` (suffix `<workItemId>-<slug>`, e.g. `-30758-control-tickets`)
-- `~/.terminal/skills/_modules/pr-counterpart.md`
+- `../_modules/core.md`: read-only until `/proceed`
+- `../_modules/artifact-protocol.md`: writes `<prefix>-spec_verification-<suffix>.md` (suffix `<workItemId>-<slug>`, e.g. `-30758-control-tickets`)
+- `../_modules/pr-counterpart.md`
 
 > [!CAUTION]
 > **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**

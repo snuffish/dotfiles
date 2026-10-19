@@ -5,15 +5,17 @@ description: Orchestrates, designs, scaffolds, validates, and registers a new Re
 
 # Skill: `/create-skill` — Skill Creator & Registry Orchestrator
 
-Systematically designs, scaffolds, validates, and registers new skills in the local skill registry (`~/.terminal/skills`). Every entry is one of the kinds defined in `~/.terminal/GLOSSARY.md`; the kind decides the template.
+Systematically designs, scaffolds, validates, and registers new skills in the local skill registry (the parent of this skill's real folder, which holds `_modules/`). Every entry is one of the kinds defined in the repo-root [`GLOSSARY.md`](../../GLOSSARY.md); the kind decides the template.
 
 ---
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes no artifact — the deliverable is the new skill directory
+- `../_modules/core.md`
+- `../_modules/artifact-protocol.md`: writes no artifact — the deliverable is the new skill directory
 
 ---
 
@@ -25,7 +27,7 @@ Invoke this skill whenever:
 
 ### When *not* to use
 
-A shared contract that several Commands depend on and that never runs on its own is a **Module**, not a skill. Write it as `skills/_modules/<name>.md` (plain markdown, no frontmatter, never symlinked; see `~/.terminal/docs/adr/0001-modules-live-outside-skill-loaders.md`) and add it to the `## Modules` section of each Command that uses it.
+A shared contract that several Commands depend on and that never runs on its own is a **Module**, not a skill. Write it as `skills/_modules/<name>.md` (plain markdown, no frontmatter, never symlinked; see [ADR-0001](../../docs/adr/0001-modules-live-outside-skill-loaders.md) and [ADR-0002](../../docs/adr/0002-module-paths-relative-to-real-skill-folder.md)) and add it to the `## Modules` section of each Command that uses it.
 
 ---
 
@@ -74,11 +76,13 @@ description: <concise, universal trigger description and domain capabilities>
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`<: read-only until `/proceed` — for research, review and diagnostic Commands>
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-<artifact_name>-<suffix>.md`   <or: writes no artifact — reason>
-- `~/.terminal/skills/_modules/git-worktrees.md`<: snapshot by default | workspace by default — only if the Command reads or edits a repository>
-- `~/.terminal/skills/_modules/pr-counterpart.md`   <only if the Command resolves a pull request>
+- `../_modules/core.md`<: read-only until `/proceed` — for research, review and diagnostic Commands>
+- `../_modules/artifact-protocol.md`: writes `<prefix>-<artifact_name>-<suffix>.md`   <or: writes no artifact — reason>
+- `../_modules/git-worktrees.md`<: snapshot by default | workspace by default — only if the Command reads or edits a repository>
+- `../_modules/pr-counterpart.md`   <only if the Command resolves a pull request>
 
 <Command-specific rules, as bullets>
 
@@ -116,7 +120,7 @@ Invoke this skill whenever:
 
 #### Module wiring rules:
 - List only the Modules the Command uses directly; a Module's own `## Modules` section pulls in what it needs.
-- In a skill, Module paths are always absolute (`~/.terminal/skills/_modules/<name>.md`). A relative link breaks when the skill is read through its `~/.claude/skills/<name>` symlink.
+- In a skill, Module paths are relative to the skill's real folder: `../_modules/<name>.md` at the top level, `../../../_modules/<name>.md` under `Projects/<Project>/`. Keep the preamble sentence above the list verbatim: the base directory may be the `~/.claude/skills/<name>` symlink, and joining `..` onto it as a string misses `_modules/`, so the paths are resolved through `realpath` ([ADR-0002](../../docs/adr/0002-module-paths-relative-to-real-skill-folder.md)).
 - In a Module, references to another Module are relative (`[git-worktrees.md](git-worktrees.md)`). A Module is never symlinked, so it is always read from its real folder.
 - A link from one skill to another is relative (`[code-review](../code-review/SKILL.md)`) only when both sit in the same group, both top level or both in the same `Projects/<Project>/`. Across groups, no relative path works through both the registry tree and the flat `~/.claude/skills` loader, so name the skill instead ("the `implement-feature` skill").
 - Never write a machine path (`/Users/<name>/…`, `C:\Users\…`). Use `~/…`, a relative link, or a placeholder the skill defines (`<registry>`, `<workspace-root>`).
@@ -151,11 +155,12 @@ Update [`skills/README.md`](../README.md):
 
 1. **Verify Integrity**:
    - Ensure the directory name **exactly matches** the `name:` field in frontmatter.
-   - Verify every `## Modules` path exists and every relative link to another skill resolves.
+   - Verify every relative link to another skill resolves. `## Modules` paths are checked by [`/reload-skills`](../reload-skills/SKILL.md) (Step 2 › *Module Integrity*).
 2. **Symlink / Activation Output**:
    - Present the user with the exact symlink command to activate the new skill in their live flat loader (e.g. Claude Code):
      ```bash
-     ln -s ~/.terminal/skills/<path-to-skill> ~/.claude/skills/<name>
+     ln -s "<registry>/<path-to-skill>" ~/.claude/skills/<name>
      ```
+     `<registry>` is the parent of this skill's real folder: `dirname "$(realpath <base directory>)"`.
    - Or display the JSON entry for `.agents/skills.json` if using Antigravity / workspace loader.
    - Or run [`/reload-skills`](../reload-skills/SKILL.md), which symlinks every registry skill into the flat loader, prunes dead links and refreshes the README inventory in one pass.

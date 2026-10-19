@@ -16,10 +16,12 @@ There is no intermediate mode. A request for "explain in detail/depth" or an exh
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-explanation-<suffix>.md` in `/explain deep` only (suffix derived from the target symbol, question, or topic); bare `/explain` writes no artifact
-- `~/.terminal/skills/_modules/pr-counterpart.md`
+- `../_modules/core.md`: read-only until `/proceed`
+- `../_modules/artifact-protocol.md`: writes `<prefix>-explanation-<suffix>.md` in `/explain deep` only (suffix derived from the target symbol, question, or topic); bare `/explain` writes no artifact
+- `../_modules/pr-counterpart.md`
 
 ---
 

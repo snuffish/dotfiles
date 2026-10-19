@@ -11,10 +11,12 @@ Answers a question the user asks mid-session while the current work keeps going.
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes no artifact — the answer lives in chat
-- `~/.terminal/skills/_modules/git-worktrees.md`
+- `../_modules/core.md`: read-only until `/proceed`
+- `../_modules/artifact-protocol.md`: writes no artifact — the answer lives in chat
+- `../_modules/git-worktrees.md`
 
 - **No artifact.** The answer lives in chat. A question that needs a written deep-dive belongs to [`/explain deep`](../explain/SKILL.md) or [`/investigate`](../investigate/SKILL.md) — suggest it, do not switch silently.
 - **Read-only, for you and the sub-agent.** No edits, writes, installs, builds, tests, migrations, `git checkout`/`stash`/`commit`, or tracker/PR writes. Reading files, `git log`/`diff`/`show`/`blame`, code-index queries and web lookups are fine.

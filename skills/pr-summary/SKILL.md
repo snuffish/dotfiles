@@ -15,11 +15,13 @@ Use this skill whenever the user requests a pull request (PR) summary, PR descri
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes no artifact — the summary is printed in chat (preview) or written to the open PR (`update` mode). Never an implementation plan.
-- `~/.terminal/skills/_modules/git-worktrees.md`
-- `~/.terminal/skills/_modules/pr-counterpart.md`
+- `../_modules/core.md`
+- `../_modules/artifact-protocol.md`: writes no artifact — the summary is printed in chat (preview) or written to the open PR (`update` mode). Never an implementation plan.
+- `../_modules/git-worktrees.md`
+- `../_modules/pr-counterpart.md`
 
 - Confirm the repo root before Step 0's `status`, `add`, `commit` or `push` — Step 0 against the user's main checkout would commit and push *their* unrelated work.
 

@@ -13,9 +13,11 @@ Applicable to **any software project, language, framework or technology stack**.
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-suggestion-<suffix>.md` at the **workspace root** (suffix derived from the question, e.g. `-cache-invalidation-strategy`, `-pdf-export-library`). A follow-up in the same session updates that artifact in place; a follow-up in a new session writes the next counter (`artifact-protocol` › *Ownership*, *Claim*).
+- `../_modules/core.md`: read-only until `/proceed`
+- `../_modules/artifact-protocol.md`: writes `<prefix>-suggestion-<suffix>.md` at the **workspace root** (suffix derived from the question, e.g. `-cache-invalidation-strategy`, `-pdf-export-library`). A follow-up in the same session updates that artifact in place; a follow-up in a new session writes the next counter (`artifact-protocol` › *Ownership*, *Claim*).
 
 - **Read-only**: produces advice, never code changes. No edits, checkouts, installs, migrations or commits — for you and for any sub-agent. Implementation only after an explicit `/proceed` (see `core` › *The `/proceed` gate*), and then usually via [`/plan`](../plan/SKILL.md) or [`/implement-feature`](../implement-feature/SKILL.md).
 - **MANDATORY .MD ARTIFACT & SUMMARY (every mode):** Every `/suggestion` response — bare or `deep` — MUST write or update the full answer as `<prefix>-suggestion-<suffix>.md` **at the workspace root**, and begin the chat response with a clickable link to it plus clickable section anchors, built as §3 *Chat Response* specifies. Never answer in chat only.
