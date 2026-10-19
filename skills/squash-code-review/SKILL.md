@@ -28,8 +28,8 @@ Read these before step 1:
 - `~/.terminal/skills/_modules/git-worktrees.md`: snapshot by default
 - `~/.terminal/skills/_modules/pr-counterpart.md`
 
-- Also read `~/.terminal/skills/code-review/SKILL.md`. Severity, axes, verification, artifact structure, *In Plain Terms* and the link format all come from there. This skill adds only what is specific to squashing.
-- Read `~/.terminal/skills/pr-feedback-review/SKILL.md` › *2.2 — Discussion Threads & Comments* for the thread fetch, and its *State at head* vocabulary.
+- Also read [`code-review`](../code-review/SKILL.md). Severity, axes, verification, artifact structure, *In Plain Terms* and the link format all come from there. This skill adds only what is specific to squashing.
+- Read [`pr-feedback-review`](../pr-feedback-review/SKILL.md) › *2.2 — Discussion Threads & Comments* for the thread fetch, and its *State at head* vocabulary.
 - `/code-review` normally forbids reading another model's review. Here the user has asked for exactly that comparison, so reading every source is the job.
 
 ---

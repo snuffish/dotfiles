@@ -53,7 +53,7 @@ skills/
 
 ## Modules & Precedence
 
-Every **Command** opens with a `## Modules` section that tells the model to read each Module it depends on before step 1, by absolute path (a relative link breaks when the skill is read through its `~/.claude/skills` symlink). Each line also carries the Command's setting for that Module:
+Every **Command** opens with a `## Modules` section that tells the model to read each Module it depends on before step 1, by absolute path (a relative link breaks when the skill is read through its `~/.claude/skills` symlink). A Module that depends on another Module links it relatively (`[core.md](core.md)`), because Modules are never symlinked. Each line also carries the Command's setting for that Module:
 
 ```markdown
 ## Modules
@@ -90,7 +90,7 @@ The `backend-`/`frontend-` prefix distinguishes the two apps within the single G
 
 Every project-specific skill is also **gated in its `description`**: it opens with `[Project: GR.PRIIS.X]` and closes with `Load ONLY when working on the GR.PRIIS.X project or in the GR repository.`
 
-Load these skills directly by registering their paths in the workspace configuration (e.g. `.agents/skills.json`), replacing `<global_skills_dir>` with the absolute path to your local skills registry (e.g. `/Users/snuffish/.terminal/skills` on macOS/Linux or `C:\Users\username\.terminal\skills` on Windows):
+Load these skills directly by registering their paths in the workspace configuration (e.g. `.agents/skills.json`), replacing `<global_skills_dir>` with the absolute path to your local skills registry (e.g. `/Users/username/.terminal/skills` on macOS/Linux or `C:\Users\username\.terminal\skills` on Windows):
 
 ```json
 {

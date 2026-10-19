@@ -5,7 +5,9 @@ description: Scans, discovers, validates, and synchronizes all skills across the
 
 # Skill: `/reload-skills` — Skill Registry Scanner & Live Loader Synchronizer
 
-Systematically scans the local skill registry (`~/.terminal/skills`), audits all discovered skill directories for specification compliance, synchronizes flat symlinks into live loader directories (`~/.claude/skills`), verifies workspace registration (`.agents/skills.json` and `.agents/AGENTS.md`), updates registry inventories, and immediately hydrates the current session with complete awareness of newly authored skills.
+Systematically scans the local skill registry (`<registry>`), audits all discovered skill directories for specification compliance, synchronizes flat symlinks into live loader directories (`~/.claude/skills`), verifies workspace registration (`.agents/skills.json` and `.agents/AGENTS.md`), updates registry inventories, and immediately hydrates the current session with complete awareness of newly authored skills.
+
+`<registry>` is the registry root: the parent of this skill's real directory (`dirname "$(realpath ~/.claude/skills/reload-skills)"`), which is `~/.terminal/skills` by default. Resolve it once and use the absolute path everywhere below, so the run works wherever the registry is cloned.
 
 ---
 
@@ -25,13 +27,13 @@ Read these before step 1:
 > **ABSOLUTE RULES — REGISTRY INTEGRITY & SAFE LINKING:**
 >
 > 1. **ZERO DRIFT BETWEEN REPOSITORY & FLAT LOADERS.**
->    Every valid skill directory in `~/.terminal/skills/` (top-level general or `Projects/<Project>/`) must have an active, matching symlink in `~/.claude/skills/<name>`.
+>    Every valid skill directory in `<registry>/` (top-level general or `Projects/<Project>/`) must have an active, matching symlink in `~/.claude/skills/<name>`.
 > 2. **MODULES ARE NEVER SKILLS.**
->    `~/.terminal/skills/_modules/` holds Modules (plain markdown, no frontmatter; ADR-0001 in `~/.terminal/docs/adr/`). Never symlink anything from it, never count it in the skill inventory, and flag any `SKILL.md` found inside it as an error.
+>    `<registry>/_modules/` holds Modules (plain markdown, no frontmatter; ADR-0001 in `~/.terminal/docs/adr/`). Never symlink anything from it, never count it in the skill inventory, and flag any `SKILL.md` found inside it as an error.
 > 3. **STRICT SPECIFICATION VALIDATION BEFORE PROMOTION.**
 >    A directory is only considered a valid skill if it contains a `SKILL.md` with valid YAML frontmatter containing `name` and `description`. The directory name must **identically match** the `name:` frontmatter attribute.
 > 4. **SAFE PRUNING (NEVER PURGE UNRELATED LOADERS).**
->    When pruning dead symlinks in `~/.claude/skills/`, only remove links that point to deleted or moved targets within `~/.terminal/skills/`. Never delete standalone directories or links pointing to workspace-specific skill bundles (e.g. `../../.agents/skills/*`).
+>    When pruning dead symlinks in `~/.claude/skills/`, only remove links that point to deleted or moved targets within `<registry>/`. Never delete standalone directories or links pointing to workspace-specific skill bundles (e.g. `../../.agents/skills/*`).
 > 5. **NON-DESTRUCTIVE EXECUTION.**
 >    Never modify or overwrite the instruction contents of existing `SKILL.md` files during a scan.
 > 6. **IMMEDIATE SESSION HYDRATION.**
@@ -51,7 +53,7 @@ Invoke this skill whenever:
   - *"load newly created skills"*
   - *"my new skill is not recognized"*
 - Immediately after creating one or more new skills via `/create-skill` or manual authoring.
-- When switching branches or pulling changes in `~/.terminal/skills` that introduced or removed skills.
+- When switching branches or pulling changes in `<registry>` that introduced or removed skills.
 
 ---
 
@@ -60,7 +62,7 @@ Invoke this skill whenever:
 Different AI tools discover skills using different paradigms:
 
 ```
-                      ~/.terminal/skills/ (Source of Truth)
+                      <registry>/ (Source of Truth)
                       ├── <general-skills>/SKILL.md
                       ├── Projects/<Project>/<skill>/SKILL.md
                       └── _modules/<name>.md   (Modules — never linked)
@@ -77,7 +79,7 @@ Different AI tools discover skills using different paradigms:
 1. **Flat Symlink Loader (`~/.claude/skills/`)**:
    Requires a flat directory where each entry is a direct child symlink (or folder) pointing to the skill directory containing `SKILL.md`. Subdirectories like `Projects/` are not traversed recursively by flat loaders; every nested skill must be symlinked directly by its unique name.
 2. **Workspace Tree Loader (`.agents/skills.json`)**:
-   Used by Antigravity IDE. It declares root paths to scan (e.g. `/Users/snuffish/.terminal/skills` and `/Users/snuffish/.terminal/skills/Projects/GR.PRIIS`). If a new project directory is created under `Projects/`, it must be registered here.
+   Used by Antigravity IDE. It declares root paths to scan (the absolute, `~`-expanded paths `<registry>` and `<registry>/Projects/GR.PRIIS`). If a new project directory is created under `Projects/`, it must be registered here.
 3. **Active Session Awareness**:
    If an agent began its conversation before a new skill was created on disk, it may not have that skill in its initial system prompt. Running `/reload-skills` actively inspects and reads the new skill specifications into the current context so the agent can execute them immediately.
 
@@ -87,7 +89,7 @@ Different AI tools discover skills using different paradigms:
 
 ### Step 1: Discover & Catalog Local Skills
 
-Scan `/Users/snuffish/.terminal/skills` (or `~/.terminal/skills`) recursively for all files named `SKILL.md`, skipping `_modules/`.
+Scan `<registry>` recursively for all files named `SKILL.md`, skipping `_modules/`.
 
 Categorize each discovered skill:
 - **General (top-level)**: Direct children of `skills/` (e.g. `skills/clean/SKILL.md`).
@@ -97,14 +99,14 @@ For each skill, extract:
 - `name`: Value from YAML frontmatter.
 - `description`: Value from YAML frontmatter.
 - `path`: Absolute directory path.
-- `relative_path`: Path relative to `~/.terminal/skills`.
+- `relative_path`: Path relative to `<registry>`.
 
 ### Step 2: Validate Compliance & Integrity
 
 Enforce the following quality checks on each skill:
 1. **Name Alignment**: Confirm `name:` in `SKILL.md` exactly matches the enclosing directory name.
 2. **Module Integrity**:
-   - Every `~/.terminal/skills/_modules/<name>.md` path named in a `## Modules` section exists on disk.
+   - Every `<registry>/_modules/<name>.md` path named in a `## Modules` section exists on disk.
    - No skill still links to the retired `core` or `git-worktrees` skill files, and no skill refers to a Module section by section number.
    - `_modules/` contains no `SKILL.md`.
 3. **Trigger Description**: Ensure `description` is non-empty and contains actionable trigger phrases.
@@ -119,30 +121,30 @@ mkdir -p ~/.claude/skills
 ```
 
 Audit and reconcile symlinks:
-1. **Add Missing Links**: For every valid skill discovered in `~/.terminal/skills`:
+1. **Add Missing Links**: For every valid skill discovered in `<registry>`:
    - If `~/.claude/skills/<name>` does not exist, create the symlink:
      ```bash
      ln -sfn "<absolute_path>" ~/.claude/skills/<name>
      ```
    - If it points to an incorrect or stale path, update the symlink.
 2. **Prune Dangling Links**: Inspect all symlinks in `~/.claude/skills/`:
-   - If a link points into `~/.terminal/skills/` but its target directory or `SKILL.md` no longer exists, prune it:
+   - If a link points into `<registry>/` but its target directory or `SKILL.md` no longer exists, prune it:
      ```bash
      rm ~/.claude/skills/<broken_link_name>
      ```
-   - **Protection Rule**: Never delete symlinks or folders pointing outside `~/.terminal/skills/` (such as `.agents/skills/*`).
+   - **Protection Rule**: Never delete symlinks or folders pointing outside `<registry>/` (such as `.agents/skills/*`).
 
 ### Step 4: Synchronize Workspace Configurations
 
 1. **Audit `.agents/skills.json`**:
    - Inspect the active workspace's `.agents/skills.json`.
-   - Verify that all project folders under `~/.terminal/skills/Projects/*` (e.g. `Projects/GR.PRIIS`) are included in `"entries"`. If a new project folder was created, append it to `"entries"`.
+   - Verify that all project folders under `<registry>/Projects/*` (e.g. `Projects/GR.PRIIS`) are included in `"entries"`. If a new project folder was created, append it to `"entries"`.
 2. **Audit Workspace Playbook (`.agents/AGENTS.md`)**:
    - If working in a repository with `.agents/AGENTS.md`, check that newly introduced general or project-scoped skills are documented under the corresponding section with a clickable markdown link.
 
-### Step 5: Synchronize Registry Inventory (`~/.terminal/skills/README.md`)
+### Step 5: Synchronize Registry Inventory (`<registry>/README.md`)
 
-Audit the master inventory in `~/.terminal/skills/README.md`:
+Audit the master inventory in `<registry>/README.md`:
 1. Calculate the total skill count and group counts:
    - Total count
    - General (top level) count
@@ -154,7 +156,7 @@ Audit the master inventory in `~/.terminal/skills/README.md`:
 
 Check git status in the skills repository:
 ```bash
-git -C ~/.terminal/skills status -s
+git -C <registry> status -s
 ```
 Alert the user if any new or modified skills remain uncommitted or untracked.
 
@@ -175,7 +177,8 @@ To execute Steps 1–3 in a single reliable operation, run the following Python 
 import os
 import re
 
-skills_root = os.path.expanduser('~/.terminal/skills')
+_self = os.path.realpath(os.path.expanduser('~/.claude/skills/reload-skills'))
+skills_root = os.path.dirname(_self) if os.path.isdir(_self) else os.path.expanduser('<registry>')
 claude_dir = os.path.expanduser('~/.claude/skills')
 os.makedirs(claude_dir, exist_ok=True)
 
@@ -275,15 +278,15 @@ Always return a structured, transparent summary of the sync operation:
 
 #### 🔗 Loader Symlinks (`~/.claude/skills`):
 - **Newly Linked**:
-  - [`<name>`](file:///Users/snuffish/.terminal/skills/<path>): `<Trigger / summary>`
+  - [`<name>`](file://<registry>/<path>): `<Trigger / summary>`
 - **Updated / Repointed**: None (or list of updated links)
 - **Pruned Dead Links**: None (or list of removed dangling links)
 
 #### ⚙️ Workspace & Documentation Status:
 - **`.agents/skills.json`**: Verified (all active project paths present)
 - **`.agents/AGENTS.md`**: Synchronized (or up to date)
-- **`~/.terminal/skills/README.md`**: Master inventory count updated to `<N>`
-- **Git Status (`~/.terminal/skills`)**: Clean (or list untracked/modified skills)
+- **`<registry>/README.md`**: Master inventory count updated to `<N>`
+- **Git Status (`<registry>`)**: Clean (or list untracked/modified skills)
 
 #### 🚀 Active Session Hydration:
 The current conversation has dynamically loaded and indexed all `<N>` skills. You can trigger newly added skills immediately (e.g. `/<new-skill-name>`).
@@ -295,9 +298,9 @@ The current conversation has dynamically loaded and indexed all `<N>` skills. Yo
 
 Before reporting completion to the user, ensure:
 
-- [ ] Every directory in `~/.terminal/skills` containing a `SKILL.md` was scanned and validated, and nothing under `_modules/` was linked or counted.
+- [ ] Every directory in `<registry>` containing a `SKILL.md` was scanned and validated, and nothing under `_modules/` was linked or counted.
 - [ ] No `name` vs folder mismatch was ignored.
 - [ ] Every valid skill has an active symlink in `~/.claude/skills/`.
 - [ ] No external workspace links in `~/.claude/skills/` were accidentally unlinked.
-- [ ] Inventory counts in `~/.terminal/skills/README.md` reflect the exact on-disk state.
+- [ ] Inventory counts in `<registry>/README.md` reflect the exact on-disk state.
 - [ ] All new skills are exposed with actionable trigger instructions in the chat response.

@@ -7,7 +7,7 @@ One protocol for every skill that must read or change a repository without touch
 ## Modules
 
 Read these before using this one:
-- `~/.terminal/skills/_modules/core.md`
+- [core.md](core.md) (same folder as this file)
 
 Artifacts stay at the **workspace root** and keep workspace-relative paths. This Module writes none; its deliverables are the worktree, the `[worktree-context]` block handed to the calling Command, and the hand-off line in chat.
 

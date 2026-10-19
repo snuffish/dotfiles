@@ -59,12 +59,14 @@ Based on the description, identify which of these apply:
 Add to the existing domain file, or create a new one if the domain doesn't exist yet.
 
 ```typescript
+// source/priis-web/src/store/api/endpoint-builders/supplier-notes/index.ts
+import { Guid } from '~/types/guid';
 import { Builder } from '../../base';
-import { Tags } from '../../tags';
+import { supplierNotesTags } from './tags';
 
 // Types (co-located or in a separate types.ts in the same folder)
 export type SupplierNote = {
-    id: string;
+    id: Guid;
     content: string;
     createdAt: string;
     createdBy: string;
@@ -76,47 +78,41 @@ export type ListSupplierNotesResponse = {
 
 // Query endpoint (for GET requests)
 export const listSupplierNotes = (builder: Builder) =>
-    builder.query<ListSupplierNotesResponse, { supplierId: string }>({
+    builder.query<ListSupplierNotesResponse, { supplierId: Guid }>({
         query: ({ supplierId }) => ({
             method: 'get',
             url: `suppliers/${supplierId}/notes`,
         }),
-        providesTags: (_result, _error, { supplierId }) => [
-            { type: suppliersTags.notes, id: supplierId },
-        ],
+        providesTags: (_result, _error, { supplierId }) => [supplierNotesTags.listBySupplier(supplierId)],
     });
 
 // Mutation endpoint (for POST/PUT/PATCH/DELETE)
 export const createSupplierNote = (builder: Builder) =>
-    builder.mutation<{ id: string }, { supplierId: string; content: string }>({
+    builder.mutation<{ id: Guid }, { supplierId: Guid; content: string }>({
         query: ({ supplierId, content }) => ({
             method: 'post',
             url: `suppliers/${supplierId}/notes`,
             body: { content },
         }),
-        invalidatesTags: (_result, _error, { supplierId }) => [
-            { type: suppliersTags.notes, id: supplierId },
-        ],
+        invalidatesTags: (_result, _error, { supplierId }) => [supplierNotesTags.listBySupplier(supplierId)],
     });
 ```
 
 **Register in the domain's `api.ts`** (same folder; never in `api/index.ts`):
 
 ```typescript
-// source/priis-web/src/store/api/endpoint-builders/suppliers/api.ts
-export const suppliersApi = priisApi.injectEndpoints({
+// source/priis-web/src/store/api/endpoint-builders/supplier-notes/api.ts
+import { createSupplierNote, listSupplierNotes } from '.';
+import priisApi from '../../base';
+
+export const supplierNotesApi = priisApi.injectEndpoints({
     endpoints: (builder) => ({
-        // ...existing...
         listSupplierNotes: listSupplierNotes(builder),
         createSupplierNote: createSupplierNote(builder),
     }),
 });
 
-export const {
-    // ...existing...
-    useListSupplierNotesQuery,
-    useCreateSupplierNoteMutation,
-} = suppliersApi;
+export const { useListSupplierNotesQuery, useCreateSupplierNoteMutation } = supplierNotesApi;
 ```
 
 A **new** domain folder also gets an `api.ts` (import `priisApi` from `'../../base'`, name it `<camelCasedFolder>Api`) and one line in `src/store/api/index.ts`: `export * from './endpoint-builders/<domain>/api';`.
@@ -128,10 +124,17 @@ A **new** domain folder also gets an `api.ts` (import `priisApi` from `'../../ba
 If the domain has no existing tags, add them to `source/priis-web/src/store/api/endpoint-builders/<domain>/tags.ts` (and the new type to that file's `<domain>Changed()`). A mutation that also writes another domain's data announces that domain's `<x>Changed()`; never import another domain's raw tags (lint-enforced, see `docs/adr/0001-api-domain-change-sets.md`):
 
 ```typescript
+// source/priis-web/src/store/api/endpoint-builders/supplier-notes/tags.ts
+import { Guid } from '~/types/guid';
+import { TagDescription, tagOf } from '../../tags';
+
 export const supplierNotesTags = {
     all: tagOf('SupplierNotes'),
     listBySupplier: (supplierId: Guid) => tagOf('SupplierNotes', `List-${supplierId}`),
 } as const;
+
+/** Every cached read of this API domain; announced by mutations in other domains that write its data. */
+export const supplierNotesChanged = (): TagDescription[] => [tagOf('SupplierNotes')];
 ```
 
 Add the new type string to the `tagTypes` array in `source/priis-web/src/store/api/base.ts`:

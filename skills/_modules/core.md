@@ -45,7 +45,7 @@ To prevent accidental regressions and unapproved mutations:
 - If tests or builds fail, diagnose and fix the issue before claiming completion.
 
 ### Worktree opt-in
-- When the invocation's arguments contain `worktree`, `worktrees` or `/git-worktrees`, or a `[worktree-context]` block was handed in, read `~/.terminal/skills/_modules/git-worktrees.md` and run under it, even if this Command does not list it.
+- When the invocation's arguments contain `worktree`, `worktrees` or `/git-worktrees`, or a `[worktree-context]` block was handed in, read [git-worktrees.md](git-worktrees.md) (same folder as this file) and run under it, even if this Command does not list it.
 
 ---
 

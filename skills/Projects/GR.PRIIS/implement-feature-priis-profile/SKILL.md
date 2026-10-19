@@ -5,9 +5,9 @@ description: "[Project: GR.PRIIS] Project profile consumed by the general /imple
 
 # `implement-feature-priis-profile` — PRIIS project profile for `/implement-feature`
 
-Reference data for the general [`/implement-feature`](../../../implement-feature/SKILL.md) orchestrator. It does not own phases, gates or sub-agent rules — those are the orchestrator's. Each section below is keyed to the orchestrator's phase it feeds. Facts marked *verified <date>* were checked against the code on that date; when the code has moved on, follow the code and update the date here.
+Reference data for the general `implement-feature` skill (`/implement-feature`), the orchestrator. It does not own phases, gates or sub-agent rules — those are the orchestrator's. Each section below is keyed to the orchestrator's phase it feeds. Facts marked *verified <date>* were checked against the code on that date; when the code has moved on, follow the code and update the date here.
 
-Workspace: `/Users/snuffish/Projects/GR` (workspace root; itself a git repo that tracks only workspace files such as `.agents/` and `.github/`, and **ignores** both product directories — so it is a shell for `git-worktrees` repo resolution, and worktrees are created per product repo) holding `GR.PRIIS.Backend/` (.NET 10, FastEndpoints, EF Core, TUnit) and `GR.PRIIS.Frontend/` (React 18, TypeScript, Vite, RTK Query, TanStack Router, Playwright), each its own git repo on `origin/main`. Artifacts go to the workspace root.
+Workspace: the `GR` folder that holds both product repos, `~/Projects/GR` by default (workspace root; itself a git repo that tracks only workspace files such as `.agents/` and `.github/`, and **ignores** both product directories — so it is a shell for `git-worktrees` repo resolution, and worktrees are created per product repo) holding `GR.PRIIS.Backend/` (.NET 10, FastEndpoints, EF Core, TUnit) and `GR.PRIIS.Frontend/` (React 18, TypeScript, Vite, RTK Query, TanStack Router, Playwright), each its own git repo on `origin/main`. Artifacts go to the workspace root.
 
 ---
 

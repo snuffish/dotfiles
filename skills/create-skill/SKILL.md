@@ -116,7 +116,10 @@ Invoke this skill whenever:
 
 #### Module wiring rules:
 - List only the Modules the Command uses directly; a Module's own `## Modules` section pulls in what it needs.
-- Paths are always absolute (`~/.terminal/skills/_modules/<name>.md`). A relative link breaks when the skill is read through its `~/.claude/skills/<name>` symlink.
+- In a skill, Module paths are always absolute (`~/.terminal/skills/_modules/<name>.md`). A relative link breaks when the skill is read through its `~/.claude/skills/<name>` symlink.
+- In a Module, references to another Module are relative (`[git-worktrees.md](git-worktrees.md)`). A Module is never symlinked, so it is always read from its real folder.
+- A link from one skill to another is relative (`[code-review](../code-review/SKILL.md)`) only when both sit in the same group, both top level or both in the same `Projects/<Project>/`. Across groups, no relative path works through both the registry tree and the flat `~/.claude/skills` loader, so name the skill instead ("the `implement-feature` skill").
+- Never write a machine path (`/Users/<name>/…`, `C:\Users\…`). Use `~/…`, a relative link, or a placeholder the skill defines (`<registry>`, `<workspace-root>`).
 - Refer to a section inside a Module by name, never by number: `` `git-worktrees` › *Workspace Lifecycle* ``.
 - A Command that writes an artifact adds its base name to `artifact-protocol` › *Canonical Artifact Catalog*.
 

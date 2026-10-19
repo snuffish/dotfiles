@@ -5,7 +5,7 @@ Dual-repo PR counterpart discovery: finds the other half of a change that ships 
 ## Modules
 
 Read these before using this one:
-- `~/.terminal/skills/_modules/git-worktrees.md`: only its *Repo Resolution* section, to list the repos in the workspace
+- [git-worktrees.md](git-worktrees.md) (same folder as this file): only its *Repo Resolution* section, to list the repos in the workspace
 
 ---
 
