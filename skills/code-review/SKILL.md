@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: "Perform a structured, high-quality review of code changes along three axes — Correctness (bugs, security, performance), Standards (does the code follow this repo's documented conventions and cross-repo contracts?) and Spec (does it implement what the PR / work item / acceptance criteria asked for?). Accepts an optional pull-request URL/ID, work-item ID, or fixed point (\"since main\", a SHA, a tag) — and resolves the PR from the current branch when none is given. Always looks for a counterpart PR in a sibling repo (a dual-repo change such as backend + frontend) and reviews both halves. `deep` runs the axes as parallel sub-agents. Reviews from a detached snapshot worktree by default so the user can keep editing the main checkout meanwhile; `live` opts out. Project-agnostic: conventions and cross-repo contracts come from the workspace's own rulebooks and project-scoped skills. Use when the user asks for a code review, PR review, \"review since X\", or feedback on a branch or working changes."
+description: "Perform a structured, high-quality review of code changes along three axes — Correctness (bugs, security, performance), Standards (does the code follow this repo's documented conventions and cross-repo contracts?) and Spec (does it implement what the PR / work item / acceptance criteria asked for?). Accepts an optional pull-request URL/ID, work-item ID, or fixed point (\"since main\", a SHA, a tag) — and resolves the PR from the current branch when none is given. Always looks for a counterpart PR in a sibling repo (a dual-repo change such as backend + frontend) and reviews both halves. `deep` runs the axes as parallel sub-agents. `feedback` also runs /pr-feedback-review after the findings are verified and folds the PR's discussion threads into the review. Reviews from a detached snapshot worktree by default so the user can keep editing the main checkout meanwhile; `live` opts out. Project-agnostic: conventions and cross-repo contracts come from the workspace's own rulebooks and project-scoped skills. Use when the user asks for a code review, PR review, \"review since X\", or feedback on a branch or working changes."
 ---
 
 # Code Review Skill
@@ -41,8 +41,9 @@ Read these before step 1:
 | `/code-review [scope]` | **Standard** (default) | One pass; the reviewer covers all three axes itself |
 | `/code-review deep [scope]` | **Deep** | Correctness, Standards and Spec each run in an isolated parallel sub-agent (see *Deep Mode*), then aggregate |
 | `/code-review live [scope]` | Standard or deep, **no snapshot** | Reads the main checkout directly instead of the snapshot from *Step 1b*. Only for what cannot be snapshotted — e.g. specific files that were never committed |
+| `/code-review feedback [scope]` | Standard or deep, **full thread triage** | Once the review's own findings are verified, runs `/pr-feedback-review`, which writes its own artifact, and folds the PR threads into the review (see *Step 6b*) |
 
-`live` is a modifier, not a mode: `/code-review deep live <scope>` is valid. Suggest `deep` in the chat response (do not switch silently) when the diff exceeds ~1,500 changed lines or spans both repos with contract changes.
+`live` and `feedback` are modifiers, not modes: `/code-review deep live <scope>` and `/code-review deep feedback <pr>` are valid. Suggest `deep` in the chat response (do not switch silently) when the diff exceeds ~1,500 changed lines or spans both repos with contract changes.
 
 ---
 
@@ -51,7 +52,7 @@ Read these before step 1:
 | Situation | Use instead |
 |---|---|
 | Auditing an implementation plan, not code | [`/review`](../review/SKILL.md) |
-| Reviewer comments, threads and votes on the PR | [`/pr-feedback-review`](../pr-feedback-review/SKILL.md) |
+| Reviewer comments, threads and votes on the PR | [`/pr-feedback-review`](../pr-feedback-review/SKILL.md), or `/code-review feedback` for a review and a thread triage in one run |
 | The PR's pipeline is red | [`/pr-fix-pipeline`](../pr-fix-pipeline/SKILL.md) |
 | How to try the change by hand | [`/manual-testing`](../manual-testing/SKILL.md) |
 | Quality-only cleanup you intend to apply yourself | [`/refine`](../refine/SKILL.md) or [`/clean`](../clean/SKILL.md) |
@@ -388,6 +389,22 @@ In deep mode, the aggregator runs this step on the sub-agents' findings — sub-
 
 ---
 
+## Step 6b — Fold In PR Feedback (`feedback` only)
+
+Runs only with the `feedback` modifier, and only **after** Step 6. The findings are already formed and verified before any thread is read, so the review stays independent evidence. The threads can change how a finding is linked or settled. They cannot change what the review went looking for.
+
+1. **Needs a PR.** When the scope resolved to no PR (`working`, `staged`, `since <ref>`, specific files), skip this step. Say so in *Review Context* and in chat.
+2. **Run `/pr-feedback-review`** for every PR in scope, including a counterpart that joined the scope. Pass the same `deep` / `live` modifiers. Hand it this run's snapshot as a `[worktree-context]` block per repo, so it reads the same pinned head and creates no snapshot of its own (`git-worktrees` › *The `[worktree-context]` Block — Active Repo Root Contract*). It writes its own `<prefix>-pr_feedback_review-<suffix>.md` under `artifact-protocol` › *Ownership* and *Claim*. Use its triage matrix as the input for the rest of this step. If it cannot fetch the threads (auth, CLI missing), continue without them and say so. Never guess what a thread said.
+3. **Match each thread to a finding by root cause**, not by file and line alone. Each thread ends up as exactly one of:
+   - **Covers finding N**, and the thread is ⏸ / ◐ at head → keep the finding, and add the thread to its *Where* line with the dual link (`artifact-protocol` › *PR Discussion Thread Links*). That lets `/pr-post-comments` reply in that thread instead of opening a duplicate.
+   - **Covers finding N, and a recorded decision exists** in the thread ("intentional", "follow-up story #123") → quote the decision in the finding. Keep the severity only if the code contradicts the decision or the decision leaves a defect in place. Otherwise lower it to 🟢 with "decided in thread #id".
+   - **Covers finding N, and the thread marks it ✅ Fixed**, but Step 6 still verified the defect at head → the finding stands, and it says the thread's "fixed" is wrong at head.
+   - **Raises a defect the review missed** → run Step 6 on it as if the review had found it. Add it when it survives, tagged *raised in thread #id*, on the axis that owns it. Otherwise mark it refuted, with the evidence.
+   - **Not a code defect** (a question, a convention preference already answered, ✅ fixed with nothing left at head) → it appears only in the cross-check table below.
+4. **A thread never overrides Step 6.** A reviewer who says "this is fine" does not remove a verified finding. A reviewer who says "this is broken" adds nothing until Step 6 verifies it.
+
+---
+
 ## Step 7 — Artifact Management & Planning Separation
 
 1. **Write Review Artifact:** Always persist the full code review to `<prefix>-code_review-<suffix>.md` **at the workspace root**. The location is what makes the link clickable — see *Artifact Links* below — so do not put it anywhere else.
@@ -395,7 +412,7 @@ In deep mode, the aggregator runs this step on the sub-agents' findings — sub-
      - PR / Work Item: `[<id>-]<slug>` (e.g. `18176-contract-templates`, `18176-backend`)
      - Branch / Working Diff: `<branch-slug>` (e.g. `new-users-audit`)
      - Topic / Specific Files: 2–4 word topic slug (e.g. `ticket-category-config`)
-2. **Re-reviews:** re-running on the same PR with the same model updates that artifact in place. Read another model's review of the same PR only if the user asks for a comparison — otherwise review independently, so the two reviews stay independent evidence.
+2. **Re-reviews:** a re-run in the session that wrote the artifact updates it in place. A re-run in any other session writes a new file (`artifact-protocol` › *Claim* adds `-2`, `-3`, …) unless the user names the existing file and asks for it to be updated (`artifact-protocol` › *Ownership*). Read another model's review of the same PR only if the user asks for a comparison — otherwise review independently, so the two reviews stay independent evidence.
 3. **Do Not Modify Code:** Reviews are strictly diagnostic and analytical. Never edit source files or execute mutations during a review. Record nothing as "fixed during review".
 4. **Do Not Enter Implementation Planning Mode:** Do not generate an `<prefix>-implementation_plan-<suffix>.md` for a review; go straight to context gathering and findings generation. If an active `<prefix>-implementation_plan-<suffix>.md` already exists in the session, reference and link to it in the header alongside `<prefix>-code_review-<suffix>.md`.
 
@@ -460,7 +477,7 @@ Active Implementation Plan:
 📄 **[claude-<model>-implementation_plan-<suffix>.md](claude-<model>-implementation_plan-<suffix>.md)**
 ```
 
-After the links, the chat response adds: the worst finding **per axis** (one line each, or "clean"), any Spec source that could not be resolved, and — if the diff was large — a one-line suggestion to re-run with `deep`. Nothing else; the artifact carries the rest.
+After the links, the chat response adds: the worst finding **per axis** (one line each, or "clean"), any Spec source that could not be resolved, with `feedback` a link to the `pr_feedback_review` artifact plus one line on the threads (attached / added as findings / refuted / skipped and why), and — if the diff was large — a one-line suggestion to re-run with `deep`. Nothing else; the artifact carries the rest.
 
 If you edit the artifact after emitting the header, the line numbers have moved — re-run the `grep` and re-emit the links rather than leaving stale ones.
 
@@ -475,10 +492,10 @@ If you edit the artifact after emitting the header, the line numbers have moved 
 
 Sections in this order, and **nothing after In Plain Terms**:
 
-1. `## Review Context` — a small table: PR(s) and work item(s) per repo, **Counterpart** (the `pr-counterpart` › *Classification*: `<repo> !<id>` reviewed / found, not reviewed / expected but missing / single-repo change), base, **Head reviewed** per repo as `` `<source-ref>` @ `<short-sha>` `` (*Step 1b-a*) — e.g. `` Backend `origin/feature/31085_permit-…` @ `65c726bb` `` — never a bare SHA, **Reviewed from** (`` snapshot of `<source-ref>` @ `<short-sha>` (removed) `` / `… (kept at <path>)` / `` live checkout of `<branch>` ``), **Local checkout** per repo (its branch and `same commit` / `local ahead N / behind M` / `on <other-branch> — PR branch not checked out`), **Untracked, not in snapshot** (`working`/`staged` only: file list or "none"), Spec source (or "none available"), Standards sources loaded, mode (standard/deep).
+1. `## Review Context` — a small table: PR(s) and work item(s) per repo, **Counterpart** (the `pr-counterpart` › *Classification*: `<repo> !<id>` reviewed / found, not reviewed / expected but missing / single-repo change), base, **Head reviewed** per repo as `` `<source-ref>` @ `<short-sha>` `` (*Step 1b-a*) — e.g. `` Backend `origin/feature/31085_permit-…` @ `65c726bb` `` — never a bare SHA, **Reviewed from** (`` snapshot of `<source-ref>` @ `<short-sha>` (removed) `` / `… (kept at <path>)` / `` live checkout of `<branch>` ``), **Local checkout** per repo (its branch and `same commit` / `local ahead N / behind M` / `on <other-branch> — PR branch not checked out`), **Untracked, not in snapshot** (`working`/`staged` only: file list or "none"), Spec source (or "none available"), Standards sources loaded, mode (standard/deep, plus `feedback`). With `feedback`: a **PR feedback** row linking the `pr_feedback_review` artifact(s), and giving the human thread count, how many threads attach to findings, and how many findings were added from threads. If *Step 6b* was skipped, the row says why.
 2. `## Feature in Brief` — what the feature is and what it is meant to achieve, before any code is mentioned (see *Feature in Brief* below).
 3. `## Summary of Changes` — 1–3 sentences on what the changes accomplish and their architectural intent.
-4. `## Findings Summary` — the summary table.
+4. `## Findings Summary` — the summary table. With `feedback`, the table gains a **Thread** column (`[#110776](#thread-110776)` with its host link, or `—`), and a `### PR Feedback Cross-Check` table follows it: one row per human thread with its *Thread*, *State at head* and *Disposition* (`covers finding N` / `added as finding N` / `decided — finding N lowered` / `refuted: <evidence>` / `no code defect`). The table accounts for every thread.
 5. `## Detailed Review Findings` — 🔴/🟡 findings with their fix inline, then `### 🟢 Minor Findings`, then `### 💙 Praise`.
 6. `## In Plain Terms` — only when there is at least one 🔴/🟡.
 
@@ -597,7 +614,7 @@ Rules:
    - **Standards** — include the list of Standards source files from Step 3 **and the smell baseline table pasted in full** (the sub-agent has no other access to it). "Report every place the diff violates a documented standard — cite the source file and rule — and any baseline smell you spot, labelled as a judgement call. A documented repo standard overrides the baseline. Check the listed cross-repo contracts on both sides. Skip anything tooling enforces. Under 500 words."
    - **Spec** — include the fetched spec/AC text (not a link). "Report: (a) requirements missing or partial; (b) behaviour in the diff that wasn't asked for; (c) requirements that look implemented but where the implementation looks wrong. Quote the spec line for each. Under 400 words." Skip this sub-agent when there is no Spec source, and say so.
    - All sub-agents are **read-only**: no edits, no checkouts, no worktree commands, no installs, builds or tests. They read only under `repo-root` and report `path:line` already mapped to `workspace-path`.
-3. **Aggregate** into the single artifact: de-duplicate findings raised by more than one axis (keep the axis that owns the root cause), assign final severities within each axis, re-check that no citation points into a snapshot directory, then run **Step 6 — Verify** on every 🔴/🟡 yourself before writing. Write *Feature in Brief* yourself from the Step 2 spec source; no sub-agent writes it. Remove the snapshot(s) afterwards (*Step 1b-e*).
+3. **Aggregate** into the single artifact: de-duplicate findings raised by more than one axis (keep the axis that owns the root cause), assign final severities within each axis, re-check that no citation points into a snapshot directory, then run **Step 6 — Verify** on every 🔴/🟡 yourself before writing. With `feedback`, run *Step 6b* after that, still yourself; the axis sub-agents never see the threads. Write *Feature in Brief* yourself from the Step 2 spec source; no sub-agent writes it. Remove the snapshot(s) afterwards (*Step 1b-e*), after `/pr-feedback-review` has finished with them.
 
 ---
 
