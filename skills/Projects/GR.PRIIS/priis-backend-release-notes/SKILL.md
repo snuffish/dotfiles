@@ -9,9 +9,11 @@ Use this skill when the user asks to run `/priis-backend-release-notes`.
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes no artifact — the draft is shown in chat and published to the PRIIS wiki only after the user confirms it
+- `../../../_modules/core.md`
+- `../../../_modules/artifact-protocol.md`: writes no artifact — the draft is shown in chat and published to the PRIIS wiki only after the user confirms it
 
 ---
 

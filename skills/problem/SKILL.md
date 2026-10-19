@@ -11,10 +11,12 @@ Use this skill whenever the user reports an error (compiler error, lint error, f
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-implementation_plan-<suffix>.md` (suffix from the error, ticket, or bug description, e.g. `-fix-audit-review`, `-auth-token-failure`)
-- `~/.terminal/skills/_modules/git-worktrees.md`
+- `../_modules/core.md`
+- `../_modules/artifact-protocol.md`: writes `<prefix>-implementation_plan-<suffix>.md` (suffix from the error, ticket, or bug description, e.g. `-fix-audit-review`, `-auth-token-failure`)
+- `../_modules/git-worktrees.md`
 
 ---
 

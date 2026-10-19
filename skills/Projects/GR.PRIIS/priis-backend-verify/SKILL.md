@@ -9,10 +9,12 @@ Use this skill when the user asks to run `/priis-backend-verify`.
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes no artifact — the PASS/FAIL table is printed in chat
-- `~/.terminal/skills/_modules/git-worktrees.md`
+- `../../../_modules/core.md`
+- `../../../_modules/artifact-protocol.md`: writes no artifact — the PASS/FAIL table is printed in chat
+- `../../../_modules/git-worktrees.md`
 
 - Read-only apart from `dotnet format`, which only rewrites files you already changed.
 - **Repo root** without a `[worktree-context]` block: the backend repo in the workspace. Every `dotnet` command below runs from `<repo-root>` — `(cd <repo-root> && dotnet …)` in a subshell, so the session's working directory never moves. A worktree lacks the ignored `appsettings.local.json` files; the profile's *Worktree include list* copies them before this skill runs, otherwise the integration suite targets the wrong database.

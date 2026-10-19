@@ -11,9 +11,11 @@ Takes what the current context *believes* about tools, libraries, platforms and 
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: chat by default. With `deep`, or when more than 10 claims are checked, writes `<prefix>-assumption_check-<suffix>.md` at the **workspace root** (suffix derived from the checked plan, decision or topic, e.g. `-skill-modules`, `-tunit-migration`)
+- `../_modules/core.md`: read-only until `/proceed`
+- `../_modules/artifact-protocol.md`: chat by default. With `deep`, or when more than 10 claims are checked, writes `<prefix>-assumption_check-<suffix>.md` at the **workspace root** (suffix derived from the checked plan, decision or topic, e.g. `-skill-modules`, `-tunit-migration`)
 
 - **Read-only until `/proceed`, for you and every sub-agent.** No edits to code, plans, ADRs, glossaries, settings or trackers. A contradicted claim produces a *proposed* edit, never an applied one. Reading files, read-only CLI calls (`--version`, `config get`, `git log`), code-index queries and web fetches are fine.
 - **Facts are verified, decisions are not.** Preferences, trade-off choices and naming are the user's; they are never "contradicted by the docs". Only claims about how something *behaves* are in scope.

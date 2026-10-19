@@ -11,10 +11,12 @@ Finishes the half of a merge, rebase, cherry-pick, revert or stash pop that git 
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes no artifact by default — the deliverable is the resolved, staged tree and a per-file summary in chat. When at least one conflict needed a user decision, or the operation spans more than ~10 conflicted files or several rebase stops, also writes `<prefix>-conflict_resolution-<suffix>.md` (suffix = the branch pair, e.g. `-settings-screen-into-main`, `-rebase-onto-main`)
-- `~/.terminal/skills/_modules/git-worktrees.md`
+- `../_modules/core.md`
+- `../_modules/artifact-protocol.md`: writes no artifact by default — the deliverable is the resolved, staged tree and a per-file summary in chat. When at least one conflict needed a user decision, or the operation spans more than ~10 conflicted files or several rebase stops, also writes `<prefix>-conflict_resolution-<suffix>.md` (suffix = the branch pair, e.g. `-settings-screen-into-main`, `-rebase-onto-main`)
+- `../_modules/git-worktrees.md`
 
 - **Authorization**: invoking the skill authorizes editing the conflicted files, regenerating lockfiles and generated files, and staging the resolved paths. It does **not** authorize `commit`, `merge --continue`, `rebase --continue`, `cherry-pick --continue`, `push`, or dropping a stash. Those need the word `continue`/`commit` in the invocation or an explicit instruction from the user.
 - **Isolation**: a conflict lives in the checkout where the operation is in progress, so resolve it there. Under `git-worktrees` › *Golden Invariants* the main checkout is read-only while a skill worktree is active for the repo. If the conflict is in the main checkout at that point, stop and ask. When the invocation contains `worktree` or `/git-worktrees` and has to *start* the operation (e.g. "update my branch with main"), run it in a workspace worktree per `git-worktrees` › *Workspace Lifecycle*.

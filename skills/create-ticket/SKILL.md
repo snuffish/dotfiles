@@ -22,9 +22,11 @@ Turns a follow-up, decision or defect that is already written down into one well
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes no artifact — updates at most one line in the source artifact
+- `../_modules/core.md`
+- `../_modules/artifact-protocol.md`: writes no artifact — updates at most one line in the source artifact
 
 - **No artifact of its own.** It consumes an existing source (an artifact section, a selection, a thread, the conversation) and updates at most one line in the source artifact (*Step 8*).
 - **Content files** (`spec.json`, `description.html`, `acceptance.html`, `repro.html` or `body.md`) live in the host's scratchpad, `<scratchpad>/ticket-<slug>/`, never in the repo or at the workspace root.

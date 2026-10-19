@@ -51,16 +51,18 @@ skills/
 
 ## Modules & Precedence
 
-Every **Command** opens with a `## Modules` section that tells the model to read each Module it depends on before step 1, by absolute path (a relative link breaks when the skill is read through its `~/.claude/skills` symlink). A Module that depends on another Module links it relatively (`[core.md](core.md)`), because Modules are never symlinked. Each line also carries the Command's setting for that Module:
+Every **Command** opens with a `## Modules` section that tells the model to read each Module it depends on before step 1, by a path relative to the skill's real folder (`../_modules/<name>.md`, or `../../../_modules/<name>.md` under `Projects/<Project>/`). The section opens with a sentence telling the model to resolve those paths through `realpath`, since a string join breaks through the `~/.claude/skills` symlink, and to stop if a Module cannot be read ([ADR-0002](../docs/adr/0002-module-paths-relative-to-real-skill-folder.md)). A Module that depends on another Module links it relatively (`[core.md](core.md)`), because Modules are never symlinked. Each line also carries the Command's setting for that Module:
 
 ```markdown
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-code_review-<suffix>.md`
-- `~/.terminal/skills/_modules/git-worktrees.md`: snapshot by default
-- `~/.terminal/skills/_modules/pr-counterpart.md`
+- `../_modules/core.md`: read-only until `/proceed`
+- `../_modules/artifact-protocol.md`: writes `<prefix>-code_review-<suffix>.md`
+- `../_modules/git-worktrees.md`: snapshot by default
+- `../_modules/pr-counterpart.md`
 ```
 
 1. **[`core`](_modules/core.md)**: golden invariants, execution gates (`/proceed`, post-edit verification, worktree opt-in), codebase investigation protocol and the precedence model. Depends on nothing.
@@ -103,11 +105,13 @@ Some loaders (like `~/.claude/skills` on macOS/Linux or `%USERPROFILE%\.claude\s
 #### macOS / Linux (Bash/Zsh)
 
 ```bash
+SKILLS="$PWD"   # run from this skills/ folder
+
 # A single skill:
-ln -s ~/.terminal/skills/Projects/GR.PRIIS/priis-backend-ef-core ~/.claude/skills/priis-backend-ef-core
+ln -s "$SKILLS/Projects/GR.PRIIS/priis-backend-ef-core" ~/.claude/skills/priis-backend-ef-core
 
 # Every skill in the tree (general + all projects), flattened by name:
-find ~/.terminal/skills -name SKILL.md -print0 | while IFS= read -r -d '' f; do
+find "$SKILLS" -name SKILL.md -print0 | while IFS= read -r -d '' f; do
   d="$(dirname "$f")"
   ln -sfn "$d" ~/.claude/skills/"$(basename "$d")"
 done
@@ -116,11 +120,13 @@ done
 #### Windows (PowerShell)
 
 ```powershell
+$Skills = (Get-Location).Path   # run from this skills\ folder
+
 # A single skill:
-New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\skills\priis-backend-ef-core" -Value "$env:USERPROFILE\.terminal\skills\Projects\GR.PRIIS\priis-backend-ef-core"
+New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\skills\priis-backend-ef-core" -Value "$Skills\Projects\GR.PRIIS\priis-backend-ef-core"
 
 # Every skill in the tree (general + all projects), flattened by name:
-Get-ChildItem -Path "$env:USERPROFILE\.terminal\skills" -Filter "SKILL.md" -Recurse | ForEach-Object {
+Get-ChildItem -Path $Skills -Filter "SKILL.md" -Recurse | ForEach-Object {
     $srcDir = $_.DirectoryName
     $destDir = Join-Path "$env:USERPROFILE\.claude\skills" $_.Directory.Name
     New-Item -ItemType SymbolicLink -Path $destDir -Value $srcDir -Force
@@ -132,5 +138,5 @@ Get-ChildItem -Path "$env:USERPROFILE\.terminal\skills" -Filter "SKILL.md" -Recu
 **Current live state:** All 55 skills are flat-symlinked (Modules never are) into the flat skills directory (`~/.claude/skills`), each pointing back into this tree. Verify on macOS/Linux with:
 
 ```bash
-ls -la ~/.claude/skills | grep -c '\-> .*/.terminal/skills/'   # expect 55
+ls -la ~/.claude/skills | grep -c -- "-> $PWD/"   # run from this skills/ folder; expect 55
 ```

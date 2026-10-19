@@ -1,21 +1,23 @@
 ---
 name: reload-skills
-description: Scans, discovers, validates, and synchronizes all skills across the local skills registry (~/.terminal/skills). Reconciles missing flat-loader symlinks in ~/.claude/skills, checks workspace .agents/skills.json configurations, prunes broken symlinks, updates the registry README inventory, and refreshes active agent awareness of newly authored skills. Trigger on /reload-skills, "reload skills", "sync skills", "refresh skills", "load new skills", "rescan skills".
+description: Scans, discovers, validates, and synchronizes all skills across the local skills registry. Reconciles missing flat-loader symlinks in ~/.claude/skills, checks workspace .agents/skills.json configurations, prunes broken symlinks, updates the registry README inventory, and refreshes active agent awareness of newly authored skills. Trigger on /reload-skills, "reload skills", "sync skills", "refresh skills", "load new skills", "rescan skills".
 ---
 
 # Skill: `/reload-skills` — Skill Registry Scanner & Live Loader Synchronizer
 
 Systematically scans the local skill registry (`<registry>`), audits all discovered skill directories for specification compliance, synchronizes flat symlinks into live loader directories (`~/.claude/skills`), verifies workspace registration (`.agents/skills.json` and `.agents/AGENTS.md`), updates registry inventories, and immediately hydrates the current session with complete awareness of newly authored skills.
 
-`<registry>` is the registry root: the parent of this skill's real directory (`dirname "$(realpath ~/.claude/skills/reload-skills)"`), which is `~/.terminal/skills` by default. Resolve it once and use the absolute path everywhere below, so the run works wherever the registry is cloned.
+`<registry>` is the registry root: the parent of this skill's real directory (`dirname "$(realpath ~/.claude/skills/reload-skills)"`). Resolve it once and use the absolute path everywhere below, so the run works wherever the registry is cloned.
 
 ---
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-skills_sync_report[-<suffix>].md` only when requested or for a major registry audit (e.g. `-full-audit`, `-broken-links`)
+- `../_modules/core.md`
+- `../_modules/artifact-protocol.md`: writes `<prefix>-skills_sync_report[-<suffix>].md` only when requested or for a major registry audit (e.g. `-full-audit`, `-broken-links`)
 
 - For regular synchronizations, execute atomic link/inventory updates directly and output a structured discovery summary in the chat response.
 
@@ -29,7 +31,7 @@ Read these before step 1:
 > 1. **ZERO DRIFT BETWEEN REPOSITORY & FLAT LOADERS.**
 >    Every valid skill directory in `<registry>/` (top-level general or `Projects/<Project>/`) must have an active, matching symlink in `~/.claude/skills/<name>`.
 > 2. **MODULES ARE NEVER SKILLS.**
->    `<registry>/_modules/` holds Modules (plain markdown, no frontmatter; ADR-0001 in `~/.terminal/docs/adr/`). Never symlink anything from it, never count it in the skill inventory, and flag any `SKILL.md` found inside it as an error.
+>    `<registry>/_modules/` holds Modules (plain markdown, no frontmatter; ADR-0001 and ADR-0002 in `<registry>/../docs/adr/`). Never symlink anything from it, never count it in the skill inventory, and flag any `SKILL.md` found inside it as an error.
 > 3. **STRICT SPECIFICATION VALIDATION BEFORE PROMOTION.**
 >    A directory is only considered a valid skill if it contains a `SKILL.md` with valid YAML frontmatter containing `name` and `description`. The directory name must **identically match** the `name:` frontmatter attribute.
 > 4. **SAFE PRUNING (NEVER PURGE UNRELATED LOADERS).**
@@ -106,7 +108,8 @@ For each skill, extract:
 Enforce the following quality checks on each skill:
 1. **Name Alignment**: Confirm `name:` in `SKILL.md` exactly matches the enclosing directory name.
 2. **Module Integrity**:
-   - Every `<registry>/_modules/<name>.md` path named in a `## Modules` section exists on disk.
+   - Every path named in a `## Modules` section is relative (no `~/` or `/` prefix) and, resolved from the skill's real folder, lands on an existing file in `<registry>/_modules/` (ADR-0002).
+   - Every `## Modules` section carries the stop sentence (*If any Module cannot be read, stop and report the path.*).
    - No skill still links to the retired `core` or `git-worktrees` skill files, and no skill refers to a Module section by section number.
    - `_modules/` contains no `SKILL.md`.
 3. **Trigger Description**: Ensure `description` is non-empty and contains actionable trigger phrases.
@@ -187,7 +190,8 @@ discovered_skills = {}
 validation_errors = []
 
 modules_root = os.path.join(skills_root, '_modules')
-module_ref = re.compile(r'~/\.terminal/skills/_modules/([\w.-]+\.md)')
+module_ref = re.compile(r'^- `([^`]*_modules/[^`]+\.md)`', re.MULTILINE)
+module_guard = 'If any Module cannot be read, stop and report the path.'
 retired_ref = re.compile(r'(?<![\w-])(?:core|git-worktrees)/SKILL\.md|(?<![\w-])(?:core|git-worktrees|artifacts)`? §')
 
 for root, dirs, files in os.walk(skills_root):
@@ -204,9 +208,15 @@ for root, dirs, files in os.walk(skills_root):
             match_name = re.search(r'^name:\s*([^\r\n]+)', content, re.MULTILINE)
             name = match_name.group(1).strip() if match_name else None
             match_desc = re.search(r'^description:\s*([^\r\n]+)', content, re.MULTILINE)
-            for module in module_ref.findall(content):
-                if not os.path.exists(os.path.join(modules_root, module)):
-                    validation_errors.append(f"{root}: Module '{module}' does not exist.")
+            modules = module_ref.findall(content)
+            for module in modules:
+                target = os.path.realpath(os.path.join(root, module))
+                if module.startswith(('/', '~')):
+                    validation_errors.append(f"{root}: Module path '{module}' is absolute; use a path relative to the skill's real folder.")
+                elif not (os.path.isfile(target) and os.path.dirname(target) == modules_root):
+                    validation_errors.append(f"{root}: Module '{module}' does not resolve to a file in _modules/.")
+            if modules and module_guard not in content:
+                validation_errors.append(f"{root}: ## Modules section has no stop sentence.")
             if retired_ref.search(content):
                 validation_errors.append(f"{root}: Retired core/git-worktrees link or § reference into a Module.")
             desc = match_desc.group(1).strip() if match_desc else ''

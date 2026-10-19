@@ -11,10 +11,12 @@ Systematically restructures codebase directories and files to eliminate clutter,
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-organize_plan-<suffix>.md` (suffix from the target subsystem or directory, e.g. `-matching-components`, `-ticket-features`)
-- `~/.terminal/skills/_modules/git-worktrees.md`
+- `../_modules/core.md`
+- `../_modules/artifact-protocol.md`: writes `<prefix>-organize_plan-<suffix>.md` (suffix from the target subsystem or directory, e.g. `-matching-components`, `-ticket-features`)
+- `../_modules/git-worktrees.md`
 
 ---
 

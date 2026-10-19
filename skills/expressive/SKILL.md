@@ -11,10 +11,12 @@ Elevates code readability and maintainability by refactoring low-level, nested, 
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-expressive-<suffix>.md` when requested or providing an in-depth review (suffix from the target component or refactoring topic, e.g. `-ticket-category`, `-review-ratings`)
-- `~/.terminal/skills/_modules/git-worktrees.md`
+- `../_modules/core.md`
+- `../_modules/artifact-protocol.md`: writes `<prefix>-expressive-<suffix>.md` when requested or providing an in-depth review (suffix from the target component or refactoring topic, e.g. `-ticket-category`, `-review-ratings`)
+- `../_modules/git-worktrees.md`
 
 - When asked directly on specific code lines (e.g. *"make lines 168–174 more expressive"*), propose and apply the clean refactoring directly to the file while explaining the transformation.
 

@@ -11,10 +11,12 @@ Surgically sanitizes a source file by eliminating dead code, unused exports, unr
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-clean_report-<suffix>.md` for a directory / multi-file target only (suffix derived from the target, e.g. `-audit-endpoint`)
-- `~/.terminal/skills/_modules/git-worktrees.md`
+- `../_modules/core.md`
+- `../_modules/artifact-protocol.md`: writes `<prefix>-clean_report-<suffix>.md` for a directory / multi-file target only (suffix derived from the target, e.g. `-audit-endpoint`)
+- `../_modules/git-worktrees.md`
 
 - **Single-file target (default)**: `/clean` is itself the authorization to edit the target file — apply edits directly, no implementation plan or `/proceed` gate. Report with the chat summary in §5.
 - **Directory / multi-file target**: write `<prefix>-clean_report-<suffix>.md` at the **workspace root** (prefix and suffix resolved per the `artifact-protocol` protocol, suffix derived from the target, e.g. `-audit-endpoint`), list the per-file findings, and clean the files one at a time with verification between each.

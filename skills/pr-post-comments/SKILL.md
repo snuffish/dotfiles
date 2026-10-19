@@ -22,10 +22,12 @@ Turns feedback that has already been written and read by the user — review fin
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes no artifact of its own — it consumes an existing artifact (typically `<prefix>-code_review-<suffix>.md` or `<prefix>-pr_feedback_review-<suffix>.md` at the workspace root) and updates only its *Posted to PR* row
-- `~/.terminal/skills/_modules/pr-counterpart.md`
+- `../_modules/core.md`
+- `../_modules/artifact-protocol.md`: writes no artifact of its own — it consumes an existing artifact (typically `<prefix>-code_review-<suffix>.md` or `<prefix>-pr_feedback_review-<suffix>.md` at the workspace root) and updates only its *Posted to PR* row
+- `../_modules/pr-counterpart.md`
 
 - **Payload files** live in the host's scratchpad, `<scratchpad>/pr<id>/`, never in the repo or at the workspace root.
 

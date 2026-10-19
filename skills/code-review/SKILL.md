@@ -23,11 +23,13 @@ Use this skill whenever the user requests a code review, feedback on a pull requ
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-code_review-<suffix>.md` (suffix e.g. `-18176-contract-templates`, `-category-demand-statistics`)
-- `~/.terminal/skills/_modules/git-worktrees.md`: snapshot by default
-- `~/.terminal/skills/_modules/pr-counterpart.md`
+- `../_modules/core.md`: read-only until `/proceed`
+- `../_modules/artifact-protocol.md`: writes `<prefix>-code_review-<suffix>.md` (suffix e.g. `-18176-contract-templates`, `-category-demand-statistics`)
+- `../_modules/git-worktrees.md`: snapshot by default
+- `../_modules/pr-counterpart.md`
 
 - Never copy another model's review under your own prefix — a review file must be the output of the model it names.
 - With a workspace `[worktree-context]` block (e.g. `/implement-feature` reviewing its own workspace worktree), *Review Context* reports the worktree's branch as the reviewed head and the user's main-checkout branch separately as "not reviewed".

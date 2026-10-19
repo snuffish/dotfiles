@@ -13,9 +13,11 @@ Applicable to **any software project, language, framework, or technology stack**
 
 ## Modules
 
+Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+
 Read these before step 1:
-- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
-- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-what_am_i_missing-<suffix>.md` at the **workspace root** (suffix derived from the evaluated topic, PR, or branch, e.g. `-municipality-sync`, `-matching-inactivity`)
+- `../_modules/core.md`: read-only until `/proceed`
+- `../_modules/artifact-protocol.md`: writes `<prefix>-what_am_i_missing-<suffix>.md` at the **workspace root** (suffix derived from the evaluated topic, PR, or branch, e.g. `-municipality-sync`, `-matching-inactivity`)
 
 ---
 
