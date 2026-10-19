@@ -40,7 +40,7 @@ Invoke this skill whenever:
 |---|---|
 | Tidying one file: unused exports, dead variables, debug statements (nested ternaries only) | [`/clean`](../clean/SKILL.md) |
 | Moving files, splitting modules, reshaping folders | [`/organize`](../organize/SKILL.md) |
-| Duplication across files, or aligning with past decisions | [`/refine`](../refine/SKILL.md) / `backend-dry` |
+| Duplication across files, or aligning with past decisions | [`/refine`](../refine/SKILL.md) / `priis-backend-dry` |
 
 ---
 

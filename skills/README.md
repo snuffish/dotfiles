@@ -11,7 +11,7 @@ Everything in the Registry is one of four kinds (defined in [`../GLOSSARY.md`](.
 | Kind | What it is | Is a skill? | Examples |
 |---|---|:---:|---|
 | **Command** | Carries out a workflow, invoked by name or by a matching request | yes | `/code-review`, `/create-ticket`, `squash-ef-core-migrations` |
-| **Reference** | Knowledge the model loads by topic, never run as a workflow | yes | `modern-csharp`, `backend-ef-core` |
+| **Reference** | Knowledge the model loads by topic, never run as a workflow | yes | `modern-csharp`, `priis-backend-ef-core` |
 | **Profile** | Project-specific facts one Command reads to adapt to that project | yes | `implement-feature-priis-profile` |
 | **Module** | A shared contract Commands depend on; never runs on its own | **no** | `core`, `artifact-protocol`, `git-worktrees`, `pr-counterpart` |
 
@@ -23,10 +23,8 @@ skills/
   _modules/                        # Modules: plain <name>.md, no frontmatter, never symlinked (ADR-0001)
   Projects/
     GR.PRIIS/                      # everything scoped to the GR.PRIIS product lives here
-      backend-<skill>/
-      frontend-<skill>/
-      source-command-backend-<skill>/
-      source-command-frontend-<skill>/
+      priis-backend-<skill>/
+      priis-frontend-<skill>/
       implement-feature-priis-profile/
 ```
 
@@ -42,15 +40,14 @@ skills/
 | --- | --- | :---: | --- |
 | General (top level) | Command | 30 | `artifacts`, `ask-question`, `clean`, `code-documentation`, `code-review`, `create-skill`, `create-ticket`, `explain`, `expressive`, `implement-feature`, `investigate`, `manual-testing`, `organize`, `plan`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `refine`, `reload-skills`, `resolve-conflicts`, `review`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `suggestion`, `verify-assumptions`, `what-am-I-missing` |
 | General (top level) | Reference | 2 | `modern-csharp`, `typescript-conventions` |
-| `GR.PRIIS/backend-*` | Reference | 7 | `dry`, `ef-core`, `fastendpoints`, `notifications`, `signalr`, `testing`, `workflow` |
-| `GR.PRIIS/frontend-*` | Reference | 6 | `component-patterns`, `forms`, `routing`, `rtk-query`, `testing`, `workflow` |
-| `GR.PRIIS/backend-*`, `GR.PRIIS/frontend-*` | Command | 2 | `backend-review`, `frontend-review` — repo-tuned PR / branch / working-tree review, each with a `references/lessons-from-prs.md` catalog |
-| `GR.PRIIS/source-command-backend-*` | Command | 6 | `health-check`, `migrate-to-tunit` (retired — migration complete), `release-notes`, `scaffold`, `ship`, `verify` |
-| `GR.PRIIS/source-command-frontend-*` | Command | 3 | `health-check`, `scaffold`, `verify` |
+| `GR.PRIIS/priis-backend-*` | Reference | 7 | `dry`, `ef-core`, `fastendpoints`, `notifications`, `signalr`, `testing`, `workflow` |
+| `GR.PRIIS/priis-frontend-*` | Reference | 6 | `component-patterns`, `forms`, `routing`, `rtk-query`, `testing`, `workflow` |
+| `GR.PRIIS/priis-backend-*` | Command | 7 | `health-check`, `migrate-to-tunit` (retired — migration complete), `release-notes`, `review`, `scaffold`, `ship`, `verify` |
+| `GR.PRIIS/priis-frontend-*` | Command | 4 | `health-check`, `review`, `scaffold`, `verify` |
 | `GR.PRIIS/implement-feature-*` | Profile | 1 | `priis-profile` — project profile consumed by the general `implement-feature` orchestrator |
 | `_modules/` | Module | 4 | `core`, `artifact-protocol`, `git-worktrees`, `pr-counterpart` |
 
-(Project skill names are the group prefix + the listed suffix — e.g. `backend-ef-core`, `source-command-frontend-verify`.)
+(Project skill names are the group prefix + the listed suffix — e.g. `priis-backend-ef-core`, `priis-frontend-verify`. The names match the repo-local copies in each repo's `.claude/skills/`; the `review` skills carry a `references/lessons-from-prs.md` catalog.)
 
 ## Modules & Precedence
 
@@ -82,12 +79,11 @@ A Command lists only the Modules it uses directly; a Module lists its own depend
 
 | Prefix                                                   | Meaning                                                                                                          |
 | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `backend-*`                                              | Reference specific to **GR.PRIIS.Backend** (.NET / FastEndpoints / EF Core). Exception: `backend-review` is a Command. |
-| `frontend-*`                                             | Reference specific to **GR.PRIIS.Frontend** (React / RTK Query / TanStack Router). Exception: `frontend-review` is a Command. |
-| `source-command-backend-*` / `source-command-frontend-*` | Commands ported from a project slash-command (`.claude/commands/`); operational recipes rather than reference knowledge. |
+| `priis-backend-*`                                        | Skill specific to **GR.PRIIS.Backend** (.NET / FastEndpoints / EF Core) — a Reference, or a Command for `health-check`, `migrate-to-tunit`, `release-notes`, `review`, `scaffold`, `ship`, `verify`. |
+| `priis-frontend-*`                                       | Skill specific to **GR.PRIIS.Frontend** (React / RTK Query / TanStack Router) — a Reference, or a Command for `health-check`, `review`, `scaffold`, `verify`. |
 | `implement-feature-<project>-profile`                    | Profile read by the general `implement-feature` orchestrator: resolved facts per phase (tracker, skills, verify, ship, contracts, known drift). |
 
-The `backend-`/`frontend-` prefix distinguishes the two apps within the single GR.PRIIS product folder, and keeps every skill name unique.
+The `priis-backend-`/`priis-frontend-` prefix matches the names the repos use for their own copies, distinguishes the two apps within the single GR.PRIIS product folder, and keeps every skill name unique.
 
 Every project-specific skill is also **gated in its `description`**: it opens with `[Project: GR.PRIIS.X]` and closes with `Load ONLY when working on the GR.PRIIS.X project or in the GR repository.`
 
@@ -108,7 +104,7 @@ Some loaders (like `~/.claude/skills` on macOS/Linux or `%USERPROFILE%\.claude\s
 
 ```bash
 # A single skill:
-ln -s ~/.terminal/skills/Projects/GR.PRIIS/backend-ef-core ~/.claude/skills/backend-ef-core
+ln -s ~/.terminal/skills/Projects/GR.PRIIS/priis-backend-ef-core ~/.claude/skills/priis-backend-ef-core
 
 # Every skill in the tree (general + all projects), flattened by name:
 find ~/.terminal/skills -name SKILL.md -print0 | while IFS= read -r -d '' f; do
@@ -121,7 +117,7 @@ done
 
 ```powershell
 # A single skill:
-New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\skills\backend-ef-core" -Value "$env:USERPROFILE\.terminal\skills\Projects\GR.PRIIS\backend-ef-core"
+New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\skills\priis-backend-ef-core" -Value "$env:USERPROFILE\.terminal\skills\Projects\GR.PRIIS\priis-backend-ef-core"
 
 # Every skill in the tree (general + all projects), flattened by name:
 Get-ChildItem -Path "$env:USERPROFILE\.terminal\skills" -Filter "SKILL.md" -Recurse | ForEach-Object {

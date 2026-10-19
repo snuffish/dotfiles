@@ -17,7 +17,7 @@ A skill that carries out a workflow, whether the user invokes it by name or by a
 _Avoid_: operational skill, slash command, source command
 
 **Reference**:
-A skill holding knowledge the model loads by topic, never run as a workflow, such as `modern-csharp` or `backend-ef-core`.
+A skill holding knowledge the model loads by topic, never run as a workflow, such as `modern-csharp` or `priis-backend-ef-core`.
 _Avoid_: pattern skill, tech skill, reference skill
 
 **Module**:

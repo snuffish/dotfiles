@@ -38,7 +38,7 @@ This skill is invoked when:
 | Declarative rewrite of imperative code | [`/expressive`](../expressive/SKILL.md) |
 | Moving files, splitting modules, reshaping folders | [`/organize`](../organize/SKILL.md) |
 | Reviewing a branch diff against acceptance criteria | [`/code-review`](../code-review/SKILL.md) |
-| Backend duplication across endpoints / validators / queries | `backend-dry` |
+| Backend duplication across endpoints / validators / queries | `priis-backend-dry` |
 
 ---
 

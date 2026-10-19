@@ -179,7 +179,7 @@ Compose the body first (Steps 1–3). Then push it to the live PR — **never fa
 
 Derive the host from the git remote (`git remote -v`), then find the open PR whose **source branch** is the target branch (default: the current branch, `git branch --show-current`):
 
-- **Azure DevOps** (remote host contains `visualstudio.com` or `dev.azure.com`) — use the `az repos` CLI. Derive `ORG`, `PROJECT`, and `REPO` from the remote URL; a project-scoped workflow skill (e.g. `backend-workflow` / `frontend-workflow`) may already document the constants.
+- **Azure DevOps** (remote host contains `visualstudio.com` or `dev.azure.com`) — use the `az repos` CLI. Derive `ORG`, `PROJECT`, and `REPO` from the remote URL; a project-scoped workflow skill (e.g. `priis-backend-workflow` / `priis-frontend-workflow`) may already document the constants.
 
   ```bash
   ORG=https://dev.azure.com/<org>   # never the legacy <org>.visualstudio.com host — the cached az login token is bound to dev.azure.com

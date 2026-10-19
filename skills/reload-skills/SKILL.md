@@ -93,7 +93,7 @@ Scan `<registry>` recursively for all files named `SKILL.md`, skipping `_modules
 
 Categorize each discovered skill:
 - **General (top-level)**: Direct children of `skills/` (e.g. `skills/clean/SKILL.md`).
-- **Project-Scoped**: Nested under `skills/Projects/<Project>/` (e.g. `skills/Projects/GR.PRIIS/backend-ef-core/SKILL.md`).
+- **Project-Scoped**: Nested under `skills/Projects/<Project>/` (e.g. `skills/Projects/GR.PRIIS/priis-backend-ef-core/SKILL.md`).
 
 For each skill, extract:
 - `name`: Value from YAML frontmatter.

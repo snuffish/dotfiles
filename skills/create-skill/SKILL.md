@@ -38,7 +38,7 @@ A shared contract that several Commands depend on and that never runs on its own
 | Kind | What it is | Gets a `## Modules` section? |
 |---|---|---|
 | **Command** | Carries out a workflow, invoked by name or by a matching request (`/code-review`, `squash-ef-core-migrations`) | Yes |
-| **Reference** | Knowledge the model loads by topic, never run as a workflow (`modern-csharp`, `backend-ef-core`) | No — inherits standards through `core` › *Precedence* |
+| **Reference** | Knowledge the model loads by topic, never run as a workflow (`modern-csharp`, `priis-backend-ef-core`) | No — inherits standards through `core` › *Precedence* |
 | **Profile** | Project-specific facts one Command reads to adapt to that project (`implement-feature-priis-profile`) | No |
 
 **Scope.** By default, **skills should be general, universal, and project-agnostic**. They should encapsulate reusable engineering patterns, architectural disciplines, workflows, and tools that function across any codebase, language, or stack.
