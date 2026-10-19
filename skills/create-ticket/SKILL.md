@@ -20,9 +20,12 @@ Turns a follow-up, decision or defect that is already written down into one well
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes no artifact — updates at most one line in the source artifact
+
 - **No artifact of its own.** It consumes an existing source (an artifact section, a selection, a thread, the conversation) and updates at most one line in the source artifact (*Step 8*).
 - **Content files** (`spec.json`, `description.html`, `acceptance.html`, `repro.html` or `body.md`) live in the host's scratchpad, `<scratchpad>/ticket-<slug>/`, never in the repo or at the workspace root.
 

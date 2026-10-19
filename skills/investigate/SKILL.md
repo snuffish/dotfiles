@@ -11,11 +11,11 @@ A plan built on assumptions breaks down during implementation. This skill guaran
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill strictly adheres to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: `<prefix>-investigation-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` under Antigravity IDE, `claude-sonnet-3.7-` under Claude Code).
-- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` (e.g. `-draft-close-dialog`, `-municipality-sync`). Never emit unsuffixed or un-modeled generic files.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-investigation-<suffix>.md` at the **workspace root** (suffix e.g. `-draft-close-dialog`, `-municipality-sync`)
 
 ---
 
@@ -110,7 +110,7 @@ Before reading code, establish strict research boundaries to avoid sprawling:
 
 ### Step 1 — Orient & Recover Context
 1. **Workspace Rulebooks**: Check `CLAUDE.md`, `GEMINI.md`, and `.agents/rules/` for global architectural patterns, forbidden libraries, or repository constraints.
-2. **Project-Scoped Skills**: Identify and load relevant domain skills per the [core precedence model](../core/SKILL.md) (e.g. `Projects/GR.PRIIS/backend-fastendpoints`, `frontend-rtk-query`).
+2. **Project-Scoped Skills**: Identify and load relevant domain skills per `core` › *Precedence* (e.g. `Projects/GR.PRIIS/backend-fastendpoints`, `frontend-rtk-query`).
 3. **Repository Topology**: Determine if the change crosses repository or package boundaries (e.g., Backend API, Frontend SPA, Shared Contracts, Shared Worker).
 4. **Historical Decisions**: Inspect recent commits (`git log -n 5 -p`) and search past conversational transcripts (`<appDataDir>/brain/` or `~/.claude/projects/`) to honor established decisions and avoid relitigating resolved debates.
 
@@ -257,7 +257,7 @@ Save the investigation artifact directly to the **workspace root** using the hos
 
 ## 5. Chat Response Protocol
 
-Per [core §1.3](../core/SKILL.md), chat output must remain concise and high-signal, pointing directly to the artifact:
+Per `core` › *Golden invariants* (3), chat output must remain concise and high-signal, pointing directly to the artifact:
 
 1. **Headline**: 1–2 sentences summarizing the most critical finding or recommended direction.
 2. **Clickable Artifact Link**:

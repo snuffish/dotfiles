@@ -13,11 +13,15 @@ Use this skill whenever the user requests a pull request (PR) summary, PR descri
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifact**: none — the summary is printed in chat (preview) or written to the open PR (`update` mode). Never an implementation plan.
-- **Repo root** (per [`git-worktrees`](../git-worktrees/SKILL.md) §3): the `repo-root` of a `[worktree-context]` block handed in by the caller when one is present (e.g. `/implement-feature` shipping from its workspace worktree); otherwise the repo you discover from the workspace. Every `git` command below is `git -C <repo-root> …`. Before Step 0's `status`, `add`, `commit` or `push`, confirm the target is that root — Step 0 against the user's main checkout would commit and push *their* unrelated work. If no block was handed in but `git -C <repo> worktree list --porcelain` shows a **locked** worktree whose reason begins with `claude-skill:` for the same branch, stop and ask which tree is meant.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes no artifact — the summary is printed in chat (preview) or written to the open PR (`update` mode). Never an implementation plan.
+- `~/.terminal/skills/_modules/git-worktrees.md`
+- `~/.terminal/skills/_modules/pr-counterpart.md`
+
+- Confirm the repo root before Step 0's `status`, `add`, `commit` or `push` — Step 0 against the user's main checkout would commit and push *their* unrelated work.
 
 ---
 
@@ -194,7 +198,7 @@ Handle these edge cases explicitly — do **not** guess:
 - **No open PR** for the branch → do not invent one. Print the composed body (Step 4) and tell the user no PR was found, offering to create one (`az repos pr create` / `gh pr create`).
 - **More than one** open PR for the branch → list them and ask which to update.
 - **Branch exists in several repos** (cross-repo change) → locate and update the PR in **each** repo, one per repo.
-- **Counterpart under a different branch name** → run the lookup in [`core`](../core/SKILL.md) §4.1 even when the branch exists in one repo only, because the halves of a change usually carry different work-item ids and branch names. Every PR it finds gets the relation link (5.3). An *expected but missing* half is reported back, never papered over with a placeholder.
+- **Counterpart under a different branch name** → run the lookup in `pr-counterpart` › *Counterpart discovery* even when the branch exists in one repo only, because the halves of a change usually carry different work-item ids and branch names. Every PR it finds gets the relation link (5.3). An *expected but missing* half is reported back, never papered over with a placeholder.
 
 ### 5.2 — Show what will be replaced, then update
 

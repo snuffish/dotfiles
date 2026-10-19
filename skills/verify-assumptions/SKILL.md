@@ -9,12 +9,12 @@ Takes what the current context *believes* about tools, libraries, platforms and 
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: chat by default. With `deep`, or when more than 10 claims are checked, writes `<prefix>-assumption_check-<suffix>.md` at the **workspace root** (suffix derived from the checked plan, decision or topic, e.g. `-skill-modules`, `-tunit-migration`)
 
-- **Target Artifact**: chat by default. With `deep`, or when more than 10 claims are checked, write `<prefix>-assumption_check-<suffix>.md` at the **workspace root** (where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
-- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append a descriptive kebab-case `<suffix>` derived from the checked plan, decision or topic (e.g. `-skill-modules`, `-tunit-migration`). Never write unsuffixed or un-modeled generic files.
 - **Read-only until `/proceed`, for you and every sub-agent.** No edits to code, plans, ADRs, glossaries, settings or trackers. A contradicted claim produces a *proposed* edit, never an applied one. Reading files, read-only CLI calls (`--version`, `config get`, `git log`), code-index queries and web fetches are fine.
 - **Facts are verified, decisions are not.** Preferences, trade-off choices and naming are the user's; they are never "contradicted by the docs". Only claims about how something *behaves* are in scope.
 

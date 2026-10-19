@@ -9,15 +9,13 @@ Finds out **why** a pull request's pipeline is failing, separates real regressio
 
 ---
 
-## Operating Standards & Invariants
+## Modules
 
-This skill adheres strictly to the **[core](../core/SKILL.md)** operating standards and the **[artifacts](../artifacts/SKILL.md)** delivery protocol.
-- **Target Artifacts** (both at the **workspace root**, where `<prefix>` is `<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-opus-5.5-`):
-  - `<prefix>-investigation-<suffix>.md` — the diagnosis (format owned by `/investigate`).
-  - `<prefix>-implementation_plan-<suffix>.md` — the fix (format owned by `/plan`).
-- **Suffix**: `<prId>-pipeline-<slug>` (e.g. `-18542-pipeline-statistics-granularity`). For a multi-repo fix, use the lead PR id and list every PR in the artifact header.
-- **Anti-Overwrite Rule**: Always include the active AI model in `<prefix>` and append the descriptive `<suffix>`. Never write unsuffixed or un-modeled generic files.
-- **Isolation**: when the invocation contains `worktree` or `/git-worktrees` (e.g. `/<skill> <request> /git-worktrees`), or when running under `/implement-feature`, edits happen in a workspace worktree per [`git-worktrees`](../git-worktrees/SKILL.md) §5 (the main checkout stays read-only, core §2.4); otherwise in place as today. Honour a handed-in `[worktree-context]` block: every `git` command and every file path resolves under its `repo-root`.
+Read these before step 1:
+- `~/.terminal/skills/_modules/core.md`: read-only until `/proceed`
+- `~/.terminal/skills/_modules/artifact-protocol.md`: writes `<prefix>-investigation-<suffix>.md` (the diagnosis, format owned by `/investigate`) and `<prefix>-implementation_plan-<suffix>.md` (the fix, format owned by `/plan`); suffix `<prId>-pipeline-<slug>` (e.g. `-18542-pipeline-statistics-granularity`) — for a multi-repo fix, use the lead PR id and list every PR in the artifact header
+- `~/.terminal/skills/_modules/git-worktrees.md`
+- `~/.terminal/skills/_modules/pr-counterpart.md`
 
 > [!CAUTION]
 > **Golden invariants**
@@ -57,7 +55,7 @@ Invoke this skill whenever:
    gh pr view --json number,title,headRefName,baseRefName,statusCheckRollup
    ```
    Report repos with no PR — that is a finding, not a skip.
-   **Then the counterpart:** run the lookup in [`core`](../core/SKILL.md) §4.1 for every resolved PR, even when only one PR was given. Pull the counterpart's pipeline status too. A paired change merges only when both halves are green, and a red half often comes from a contract the other half changed (classify it as cross-repo contract drift). A counterpart whose pipeline is green is listed as such, not skipped silently.
+   **Then the counterpart:** run the lookup in `pr-counterpart` › *Counterpart discovery* for every resolved PR, even when only one PR was given. Pull the counterpart's pipeline status too. A paired change merges only when both halves are green, and a red half often comes from a contract the other half changed (classify it as cross-repo contract drift). A counterpart whose pipeline is green is listed as such, not skipped silently.
 4. **Read the PR description and linked work items** so the plan knows the change's intent (same commands as `/code-review` § *Pull-Request References*).
 
 ### Step 2: Collect the Evidence
@@ -151,7 +149,7 @@ Chat response, short:
 Next: <the single unblocking action>. Type `/proceed` to implement.
 ```
 
-Links follow the host link format in the **[artifacts](../artifacts/SKILL.md)** protocol.
+Links follow the host link format in the **`artifact-protocol`** protocol.
 
 ---
 
