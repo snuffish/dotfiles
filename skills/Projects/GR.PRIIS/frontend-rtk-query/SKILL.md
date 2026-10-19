@@ -16,7 +16,7 @@ Endpoint builders are modular functions organized by domain under `source/priis-
 ```
 src/store/api/
   base.ts                    ← createApi (no endpoints), base query, tagTypes, Builder, TypedEndpoint
-  index.ts                   ← barrel only: one `export *` line per API domain
+  index.ts                   ← barrel only: `base`, `shared` and one `export *` line per API domain
   tags.ts                    ← TagDescription + tagOf helper only
   endpoint-builders/
     shared/index.ts          ← shared DTOs (Id, Name, PaginatedRequest, PaginatedListResponse, Breadcrumbs, …)
@@ -29,10 +29,10 @@ src/store/api/
 Each `index.ts` exports named endpoint builder functions:
 
 ```typescript
-import { Builder } from '../../base';               // Builder type
-import { suppliersTags } from './tags';             // this domain's tags
-import { Id, PaginatedListResponse } from '../shared'; // shared DTOs
+// source/priis-web/src/store/api/endpoint-builders/supplier-notes/index.ts
 import { Guid } from '~/types/guid';
+import { Builder } from '../../base';               // Builder type
+import { supplierNotesTags } from './tags';         // this domain's tags (§4)
 
 export type SupplierNote = {
     id: Guid;
@@ -56,10 +56,7 @@ export const listSupplierNotes = (builder: Builder) =>
             method: 'get',
             url: `suppliers/${supplierId}/notes`,
         }),
-        providesTags: (_result, _error, { supplierId }) => [
-            suppliersTags.notes,
-            { type: 'SupplierNotes', id: supplierId },
-        ],
+        providesTags: (_result, _error, { supplierId }) => [supplierNotesTags.listBySupplier(supplierId)],
     });
 
 export const createSupplierNote = (builder: Builder) =>
@@ -69,10 +66,7 @@ export const createSupplierNote = (builder: Builder) =>
             url: `suppliers/${supplierId}/notes`,
             body: { content },
         }),
-        invalidatesTags: (_result, _error, { supplierId }) => [
-            suppliersTags.notes,
-            { type: 'SupplierNotes', id: supplierId },
-        ],
+        invalidatesTags: (_result, _error, { supplierId }) => [supplierNotesTags.listBySupplier(supplierId)],
     });
 ```
 
@@ -136,6 +130,13 @@ providesTags: [dashboardTags.tickets, matchingSubscriptions.list],
 
 **Every mutation must have `invalidatesTags`** — omitting it causes stale UI after mutations.
 
+**Check both sides of every cross-domain effect.** Before finishing an endpoint builder, answer two questions:
+
+1. Does my new query show another domain's data? Provide that domain's subscription. A control-ticket profile that shows the operation's status provides `operationsSubscriptions.details`, so `changeOperationStatus`, `cascadeOperationStatus` and `changeContractStatus` refresh it without naming control tickets. If the read is not published yet, add it to the owning domain's `*Subscriptions`.
+2. Does my new mutation write another domain's data? Announce that domain's change set. Closing a control ticket that applies a status to the operation and its contracts spreads `operationsChanged()` and `contractsChanged()`. A mutation that only *reads* another domain (a guard, a count) announces nothing for it.
+
+A query whose data changes through admin screens needs its own published read (`usersSubscriptions.devPersonas`) so those mutations can refresh it. Reviews find a missing side in almost every PR that adds a domain.
+
 ---
 
 ## 4. Adding a New Tag
@@ -150,14 +151,19 @@ const tagTypes = [
 ] as const;
 ```
 
-**Step 2** — add the tag constants to the owning domain's `endpoint-builders/<domain>/tags.ts`, and add the new type to that domain's `<domain>Changed()`:
+**Step 2** — add the tag constants to the owning domain's `endpoint-builders/<domain>/tags.ts`, and add the new type to that domain's `<domain>Changed()`. A new domain gets its own file:
 ```typescript
+// source/priis-web/src/store/api/endpoint-builders/supplier-notes/tags.ts
+import { Guid } from '~/types/guid';
+import { TagDescription, tagOf } from '../../tags';
+
 export const supplierNotesTags = {
     all: tagOf('SupplierNotes'),
     listBySupplier: (supplierId: Guid) => tagOf('SupplierNotes', `List-${supplierId}`),
 } as const;
 
-export const suppliersChanged = (): TagDescription[] => [tagOf('Suppliers'), tagOf('SupplierNotes')];
+/** Every cached read of this API domain; announced by mutations in other domains that write its data. */
+export const supplierNotesChanged = (): TagDescription[] => [tagOf('SupplierNotes')];
 ```
 
 ---
@@ -183,6 +189,8 @@ export const { useListSupplierNotesQuery, useCreateSupplierNoteMutation } = supp
 
 The domain api is named `<camelCasedFolder>Api`. Endpoint names must be unique across all domains (`injectEndpoints` ignores a duplicate name).
 
+The one exception is `dev/index.ts`: the dev-only endpoints inject themselves as `devApi` in the builder module and are not exported from the barrel; import them from `endpoint-builders/dev` directly.
+
 **Referencing an endpoint object** (modal `preloadData`, `GlobalModal` mutation slots, `paginated-table`) or a typed util goes through the domain api — `priisApi` from `base.ts` has no endpoints in its type:
 
 ```typescript
@@ -190,7 +198,7 @@ import { operationsApi } from '~api';
 
 preloadData={{ endpoint: operationsApi.endpoints.getOperationProfile, request: { operationId } }}
 dispatch(matchingApi.util.updateQueryData('getMatchingSelectionProcess', { id }, (draft) => { /* … */ }));
-dispatch(priisApi.util.invalidateTags(usersChanged())); // untyped utils may stay on priisApi
+dispatch(priisApi.util.invalidateTags(notificationsChanged())); // untyped utils may stay on priisApi
 ```
 
 ---
@@ -245,6 +253,8 @@ Global defaults (from `createApi` config): `keepUnusedDataFor: 10`, `refetchOnMo
 ```
 ❌ fetch() or axios.get() in components — use RTK Query hooks
 ❌ Mutations without invalidatesTags — stale UI after save
+❌ A new query that shows another domain's data without providing that domain's <domain>Subscriptions entry (see §3)
+❌ A request body built by spreading the request object (`...body`) — build it field by field with `satisfies ApiXRequest`, and never send an id in both the route and the body
 ❌ Hardcoded tag strings like ['Suppliers'] — use the domain's <domain>Tags / <domain>Changed()
 ❌ Naming another domain's individual tags (invalidate or provide) — use <domain>Changed() / <domain>Subscriptions
 ❌ A new tag type missing from its domain's <domain>Changed()

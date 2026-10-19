@@ -227,7 +227,7 @@ Run from the backend repo root (`dotnet-ef` is a local tool; there is no `--migr
 dotnet ef migrations add <MigrationName> -p source/GR.PRIIS.Library -s source/GR.PRIIS.API
 ```
 
-Review the generated file before committing. Integration tests apply migrations themselves through `TUnitApiWebFactory`; to apply and seed a local database use `cd source/GR.PRIIS.CLI && dotnet run -- migrations -s -d`. Several migrations accumulated on one branch → [`squash-ef-core-migrations`](../../../squash-ef-core-migrations/SKILL.md).
+Review the generated file before committing. Integration tests apply migrations themselves through `TUnitApiWebFactory`; to apply and seed a local database use `cd source/GR.PRIIS.CLI && dotnet run -- migrations -s -d`. Several migrations accumulated on one branch → the `squash-ef-core-migrations` skill.
 
 ---
 
