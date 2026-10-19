@@ -15,7 +15,7 @@ Use this skill whenever the user requests a code review, feedback on a pull requ
 > **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
 >
 > 1. **MANDATORY .MD ARTIFACT & SUMMARY (NO EXCUSES):** Every single `/code-review` response MUST ALWAYS write or update the complete review report as `<prefix>-code_review-<suffix>.md` **at the workspace root**, and begin the response with a clickable link to it plus clickable section anchors, built exactly as *Artifact Links* below specifies. If an active `<prefix>-implementation_plan-<suffix>.md` exists, link that too. The user frequently needs to click and open it in the IDE.
-> 2. **DO NOT MODIFY CODE OR THE MAIN WORKING TREE:** Never edit code files, stage commits, run migrations, check out branches, `git stash push`/`pop`, or execute any command that changes the main checkout during or immediately after a `/code-review`. The **only** git writes allowed are the ones `git-worktrees` snapshot mode performs (*Step 1b*): `git fetch`, `git stash create` (writes one unreferenced commit object, nothing else) and `git worktree add --detach` / `remove` / `prune` on a snapshot directory **outside** the repo. If the tree is not the one to review, snapshot the right ref instead of checking it out (see *Get the right code into the snapshot*).
+> 2. **DO NOT MODIFY CODE OR THE MAIN WORKING TREE:** Never edit code files, stage commits, run migrations, check out branches, `git stash push`/`pop`, or execute any command that changes the main checkout during or immediately after a `/code-review`. The **only** git writes allowed are the ones `git-worktrees` snapshot mode performs (*Step 1b*): `git fetch`, `git stash create` (writes one unreferenced commit object, nothing else) and `git worktree add --detach` / `remove` / `prune` on a snapshot directory **outside** the repo. If the tree is not the one to review, snapshot the right ref instead of checking it out (see *Get the right code into the snapshot*). **One exception:** when the counterpart lookup classifies **None**, every other repo in the workspace is switched to its default branch (*Counterpart PRs* › *None*). The reviewed repo's checkout is never touched.
 > 3. **DO NOT AUTO-PROCEED:** Never begin implementing fixes or refactorings automatically. Wait for explicit user instruction or `/proceed`.
 > 4. **NO UNVERIFIED FINDINGS:** Every 🔴/🟡 must survive Step 6 (*Verify*) before it is written.
 
@@ -171,7 +171,18 @@ What a classified counterpart means for this review:
 - **Found** → it joins the scope without asking. It gets its own snapshot (*Step 1b*), its own Spec source (*Step 2*), its own Standards sources (*Step 3*), and its own row in every *Review Context* field. Findings cite whichever repo they live in. Cross-repo contract checks (*Heuristics*) run against the counterpart's real code, not against what its description claims.
 - **Found, excluded** (the user said "backend only") → review only the named side. Name the counterpart and its head in *Review Context* as **not reviewed**, and raise any contract the diff touches as a finding, because nobody checked the other side.
 - **Expected but missing** → a Spec finding (🟡, or 🔴 when the product breaks at runtime without the other half).
-- **None** → say "single-repo change" in *Review Context*.
+- **None** → say "single-repo change" in *Review Context*, then switch every other repo in the workspace to its default branch (usually `main`) before any read of that side. The other repo is often left on an unrelated feature branch. The IDE, CodeGraph and every cross-repo contract check read its main checkout, so they would compare against that branch instead of what this PR merges against:
+
+  ```bash
+  git -C <other> fetch origin
+  git -C <other> symbolic-ref --short refs/remotes/origin/HEAD   # → origin/<default>; fall back to main when unset
+  git -C <other> switch <default>
+  git -C <other> merge --ff-only origin/<default>                # local <default> may be stale
+  ```
+
+  Skip the switch and keep the repo where it is when `git -C <other> status --porcelain --untracked-files=no` prints anything (`git switch` would carry the user's uncommitted work onto `<default>`), when `git status` reports a merge, rebase, cherry-pick or revert in progress, or when `git switch` refuses. Never stash, reset or force to make it work. A refused fast-forward (local `<default>` has its own commits) leaves the switch in place. Report the outcome in *Local checkout* and in the chat response: `switched <from> → <default>`, `already on <default>`, or `on <branch>, not switched: <reason>`. Contract reads of a repo that stayed on another branch name that branch.
+
+  Not for **Expected but missing** or **Found, excluded**: the other half may be sitting unpushed, or deliberately checked out, on the current branch.
 
 A review that spans both repos with a contract change is the case where `deep` is worth suggesting (*Modes*).
 
@@ -239,7 +250,7 @@ git rev-parse origin/<sourceRefName>                  # → the head for Step 1b
 git -C "$SNAP_DIR" diff origin/<targetRef>...HEAD     # inside the snapshot, HEAD is the PR head
 ```
 
-No checkout is ever needed: the snapshot is the checkout. Never `git checkout`, `git switch`, `git stash push` or reset the main checkout on your own.
+No checkout is ever needed: the snapshot is the checkout. Never `git checkout`, `git switch`, `git stash push` or reset the main checkout on your own. The only switch this skill makes is the other repo's move to its default branch when there is no counterpart (*Counterpart PRs* › *None*).
 
 Review the **committed PR head**. Uncommitted changes in the main checkout are outside the review unless the user asks for the `working` or `staged` scope.
 
@@ -492,7 +503,7 @@ If you edit the artifact after emitting the header, the line numbers have moved 
 
 Sections in this order, and **nothing after In Plain Terms**:
 
-1. `## Review Context` — a small table: PR(s) and work item(s) per repo, **Counterpart** (the `pr-counterpart` › *Classification*: `<repo> !<id>` reviewed / found, not reviewed / expected but missing / single-repo change), base, **Head reviewed** per repo as `` `<source-ref>` @ `<short-sha>` `` (*Step 1b-a*) — e.g. `` Backend `origin/feature/31085_permit-…` @ `65c726bb` `` — never a bare SHA, **Reviewed from** (`` snapshot of `<source-ref>` @ `<short-sha>` (removed) `` / `… (kept at <path>)` / `` live checkout of `<branch>` ``), **Local checkout** per repo (its branch and `same commit` / `local ahead N / behind M` / `on <other-branch> — PR branch not checked out`), **Untracked, not in snapshot** (`working`/`staged` only: file list or "none"), Spec source (or "none available"), Standards sources loaded, mode (standard/deep, plus `feedback`). With `feedback`: a **PR feedback** row linking the `pr_feedback_review` artifact(s), and giving the human thread count, how many threads attach to findings, and how many findings were added from threads. If *Step 6b* was skipped, the row says why.
+1. `## Review Context` — a small table: PR(s) and work item(s) per repo, **Counterpart** (the `pr-counterpart` › *Classification*: `<repo> !<id>` reviewed / found, not reviewed / expected but missing / single-repo change), base, **Head reviewed** per repo as `` `<source-ref>` @ `<short-sha>` `` (*Step 1b-a*) — e.g. `` Backend `origin/feature/31085_permit-…` @ `65c726bb` `` — never a bare SHA, **Reviewed from** (`` snapshot of `<source-ref>` @ `<short-sha>` (removed) `` / `… (kept at <path>)` / `` live checkout of `<branch>` ``), **Local checkout** per repo (its branch and `same commit` / `local ahead N / behind M` / `on <other-branch> — PR branch not checked out`; for a repo without a counterpart, the *None* switch outcome: `switched <from> → <default>` / `already on <default>` / `on <branch>, not switched: <reason>`), **Untracked, not in snapshot** (`working`/`staged` only: file list or "none"), Spec source (or "none available"), Standards sources loaded, mode (standard/deep, plus `feedback`). With `feedback`: a **PR feedback** row linking the `pr_feedback_review` artifact(s), and giving the human thread count, how many threads attach to findings, and how many findings were added from threads. If *Step 6b* was skipped, the row says why.
 2. `## Feature in Brief` — what the feature is and what it is meant to achieve, before any code is mentioned (see *Feature in Brief* below).
 3. `## Summary of Changes` — 1–3 sentences on what the changes accomplish and their architectural intent.
 4. `## Findings Summary` — the summary table. With `feedback`, the table gains a **Thread** column (`[#110776](#thread-110776)` with its host link, or `—`), and a `### PR Feedback Cross-Check` table follows it: one row per human thread with its *Thread*, *State at head* and *Disposition* (`covers finding N` / `added as finding N` / `decided — finding N lowered` / `refuted: <evidence>` / `no code defect`). The table accounts for every thread.

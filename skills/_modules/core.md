@@ -38,6 +38,7 @@ To prevent accidental regressions and unapproved mutations:
   ```text
   /proceed
   ```
+- `/proceed` is the [`proceed`](../proceed/SKILL.md) Command. It is user-invoked only; a plain "proceed" or "go ahead" from the user counts the same.
 - Even if a plan or review is flawless, **never auto-proceed without explicit authorization**.
 
 ### Post-edit verification

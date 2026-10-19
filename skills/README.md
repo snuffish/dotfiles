@@ -36,14 +36,15 @@ skills/
 
 ## Inventory
 
-54 skills total — 31 general + 23 under `Projects/GR.PRIIS/` — plus 4 Modules.
+56 skills total — 31 general + 25 under `Projects/GR.PRIIS/` — plus 4 Modules.
 
 | Group | Kind | Count | Entries |
 | --- | --- | :---: | --- |
-| General (top level) | Command | 29 | `artifacts`, `ask-question`, `clean`, `code-documentation`, `code-review`, `create-skill`, `create-ticket`, `explain`, `expressive`, `implement-feature`, `investigate`, `manual-testing`, `organize`, `plan`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`, `refine`, `reload-skills`, `resolve-conflicts`, `review`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `suggestion`, `verify-assumptions`, `what-am-I-missing` |
+| General (top level) | Command | 30 | `artifacts`, `ask-question`, `clean`, `code-documentation`, `code-review`, `create-skill`, `create-ticket`, `explain`, `expressive`, `implement-feature`, `investigate`, `manual-testing`, `organize`, `plan`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `refine`, `reload-skills`, `resolve-conflicts`, `review`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `suggestion`, `verify-assumptions`, `what-am-I-missing` |
 | General (top level) | Reference | 2 | `modern-csharp`, `typescript-conventions` |
 | `GR.PRIIS/backend-*` | Reference | 7 | `dry`, `ef-core`, `fastendpoints`, `notifications`, `signalr`, `testing`, `workflow` |
 | `GR.PRIIS/frontend-*` | Reference | 6 | `component-patterns`, `forms`, `routing`, `rtk-query`, `testing`, `workflow` |
+| `GR.PRIIS/backend-*`, `GR.PRIIS/frontend-*` | Command | 2 | `backend-review`, `frontend-review` — repo-tuned PR / branch / working-tree review, each with a `references/lessons-from-prs.md` catalog |
 | `GR.PRIIS/source-command-backend-*` | Command | 6 | `health-check`, `migrate-to-tunit` (retired — migration complete), `release-notes`, `scaffold`, `ship`, `verify` |
 | `GR.PRIIS/source-command-frontend-*` | Command | 3 | `health-check`, `scaffold`, `verify` |
 | `GR.PRIIS/implement-feature-*` | Profile | 1 | `priis-profile` — project profile consumed by the general `implement-feature` orchestrator |
@@ -81,8 +82,8 @@ A Command lists only the Modules it uses directly; a Module lists its own depend
 
 | Prefix                                                   | Meaning                                                                                                          |
 | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `backend-*`                                              | Reference specific to **GR.PRIIS.Backend** (.NET / FastEndpoints / EF Core).                                    |
-| `frontend-*`                                             | Reference specific to **GR.PRIIS.Frontend** (React / RTK Query / TanStack Router).                              |
+| `backend-*`                                              | Reference specific to **GR.PRIIS.Backend** (.NET / FastEndpoints / EF Core). Exception: `backend-review` is a Command. |
+| `frontend-*`                                             | Reference specific to **GR.PRIIS.Frontend** (React / RTK Query / TanStack Router). Exception: `frontend-review` is a Command. |
 | `source-command-backend-*` / `source-command-frontend-*` | Commands ported from a project slash-command (`.claude/commands/`); operational recipes rather than reference knowledge. |
 | `implement-feature-<project>-profile`                    | Profile read by the general `implement-feature` orchestrator: resolved facts per phase (tracker, skills, verify, ship, contracts, known drift). |
 
@@ -132,8 +133,8 @@ Get-ChildItem -Path "$env:USERPROFILE\.terminal\skills" -Filter "SKILL.md" -Recu
 
 (If the loader globs recursively — `skills/**/SKILL.md` — point it at this root directly and the grouping is honored as-is.)
 
-**Current live state:** All 54 skills are flat-symlinked (Modules never are) into the flat skills directory (`~/.claude/skills`), each pointing back into this tree. Verify on macOS/Linux with:
+**Current live state:** All 55 skills are flat-symlinked (Modules never are) into the flat skills directory (`~/.claude/skills`), each pointing back into this tree. Verify on macOS/Linux with:
 
 ```bash
-ls -la ~/.claude/skills | grep -c '\-> .*/.terminal/skills/'   # expect 54
+ls -la ~/.claude/skills | grep -c '\-> .*/.terminal/skills/'   # expect 55
 ```
