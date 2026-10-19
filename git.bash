@@ -129,10 +129,16 @@ function gw() {
     return 0
   fi
 
+  # Pre-select the current worktree's row; skipped with a query, where positions refer to the filtered list
+  local -a pos_bind
+  local cur_pos
+  cur_pos=$(printf '%s\n' "$rows" | awk -F '\t' -v cur="$current_root" '$2 == cur { print NR; exit }')
+  [[ -z "$*" && -n "$cur_pos" ]] && pos_bind=(--bind "load:pos($cur_pos)")
+
   # Match the query against the label only; the shared parent path would fuzzy-match everything
   local wt_line
   wt_line=$(printf '%s\n' "$rows" | fzf --header 'Select worktree to switch to:' --delimiter '\t' --nth 1 --tiebreak=index \
-    --query "$*" --select-1 --exit-0 \
+    --query "$*" --select-1 --exit-0 "${pos_bind[@]}" \
     --preview 'git -C {2} -c color.status=always status -sb; echo; git -C {2} log --oneline --color=always -n 20' \
     --height 50% --layout reverse)
   [[ -n "$wt_line" ]] || return 0
