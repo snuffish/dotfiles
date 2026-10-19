@@ -1,6 +1,6 @@
 # artifact-protocol
 
-How every Command names, places and links the markdown artifacts it writes at the workspace root: host and model prefix, mandatory contextual suffix, link formats, PR thread links and the canonical artifact catalog.
+How every Command names, places and links the markdown artifacts it writes at the workspace root: host and model prefix, mandatory contextual suffix, session ownership and collision-safe creation (no session ever overwrites another's artifact), link formats, PR thread links and the canonical artifact catalog.
 
 ---
 
@@ -10,6 +10,7 @@ Claude Code and Antigravity IDE share one workspace root, and multiple agents, s
 - An **unprefixed** filename means whichever host runs second silently overwrites the other host's work.
 - A **model-less** prefix (e.g. bare `antigravity-code_review.md` or `claude-implementation_plan.md`) causes different models or subsequent sessions on the same platform to collide and overwrite findings.
 - An **unsuffixed generic** filename guarantees that different tasks or PR reviews overwrite each other.
+- Even a fully prefixed and suffixed name is shared by **every session** of the same host and model on the same task. Naming alone cannot stop a second session from overwriting the first. *Ownership* and *Claim* (below) can.
 
 **Universal Naming Pattern:**
 ```text
@@ -44,9 +45,30 @@ Detect the active host and slugify the active AI model name:
      1. **Work Item / PR / Ticket ID + Slug**: If associated with an explicit work item, ticket, or PR, prefix the slug with that ID (e.g. `-18176-verksamhetsobjekt`, `-29982-verksamhetsobjekt`, `-1480-009204`).
      2. **Branch or Feature Name**: If working on a git branch, use a kebab-case slug of the branch name (e.g. branch `feature/new-users-audit` → `-new-users-audit`, `bugfix/draft-close-dialog` → `-draft-close-dialog`).
      3. **Topic / Task Descriptor**: If running on a general task or request, derive a concise (2–4 words, kebab-case) topic slug from the task or user prompt (e.g. `-begar-prefix`, `-ticket-category-config`).
-3. **Idempotent Same-Task Updates**: Within the *same* ongoing task, branch, or PR review, an agent running with that model may update that specific suffixed artifact rather than creating runaway duplicates, while preserving all artifacts from other models and tasks.
-4. **Single Identity Rule**: Never write multiple host/model variants in one turn.
-5. **No Cross-Host / Cross-Model Overwrite Rule**: Never overwrite another host's or another model's active artifact — leave them intact.
+3. **Ownership (No-Overwrite Invariant)**: a session may update an artifact only when **this session owns it**. It owns it when this session created it, which its owner marker proves (*Claim*). Every other artifact is read-only to it. That includes artifacts from another host or model, and also artifacts from **another session of the same host and model**, such as an earlier session on the same PR or a parallel one. A re-run in a new session writes a new file (*Claim* gives it the next free name). It never rewrites the old one. Only two exceptions exist:
+   - **The user names the file and asks for it to be updated** in this conversation ("update `claude-…-code_review-18715-….md`"). A general request such as "review it again" is not that. Re-read the file immediately before the edit and keep its owner marker unchanged.
+   - **Record lines** that a Command's own steps define, such as `/pr-post-comments` *Posted to PR* or the `/create-ticket` id line. These only append to that one line or row. They never rewrite other content.
+
+   A file with no owner marker (written before this rule) belongs to no session. Treat it as read-only unless this conversation created it.
+4. **Claim (atomic create; counter on collision)**: file-writing tools overwrite silently, and two sessions can check for "does it exist?" at the same moment. So a new artifact is never created by checking first and writing second. Draft it in a session-private path (the host's scratchpad, else `mktemp`), then publish it with an exclusive create. Under `set -C` (noclobber), `>` refuses an existing file at the OS level (`O_EXCL`), so claiming the name and writing it are one step:
+
+   ```bash
+   # $1 = draft file, $2 = target path without ".md"; prints the path actually written
+   publish_new_artifact() {
+     local p="$2.md" n=1
+     until ( set -C; cat "$1" > "$p" ) 2>/dev/null; do n=$((n + 1)); p="$2-$n.md"; done
+     printf '%s\n' "$p"
+   }
+   ```
+
+   - **Collision counter**: when `<prefix>-<base>-<suffix>.md` is taken, the artifact becomes `<prefix>-<base>-<suffix>-2.md`, then `-3`, and so on. A gap left by a deleted file may be reused: the slot is empty, so nothing is overwritten. Readers order the family by the owner marker, not by the counter.
+   - **Owner marker**: the draft's first line is
+     `<!-- artifact-owner: <host>-<model> · session <session-id> · created <ISO-8601 timestamp> -->`
+     Markdown preview does not show it. `<session-id>` is the host's session or conversation id: in Claude Code, the session UUID in the scratchpad path or `~/.claude/projects/<project>/<uuid>.jsonl`; in Antigravity, the conversation id. If the host exposes neither, use one `uuidgen` value generated at the first write and reused for the rest of the conversation. Before any later update, read the marker and update only if it names this session.
+   - **Later updates by the owner** use the normal edit tools. Re-run the anchor `grep` afterwards, because line numbers shift.
+   - **Use the path that was actually written**, as printed by the function, in every chat link and every follow-up step. If a counter was added, say so in the chat response, e.g. "`…-2.md`: the base name is owned by another session."
+   - **Readers** (`/artifacts`, `/pr-post-comments`, `/squash-code-review`, anything that picks "the latest artifact for this PR") treat `<name>.md`, `<name>-2.md`, … as one family. They pick the newest by the marker's `created` timestamp, else by modification time, and list the whole family when the user has to choose.
+5. **Single Identity Rule**: Never write multiple host/model variants in one turn.
 6. **Clickability Rule**: Always write directly to the **workspace root**. That location is what makes links clickable across IDEs.
 
 ---
@@ -98,6 +120,7 @@ When artifacts reference discussion threads or comments from a pull request (suc
 |---|---|---|---|---|
 | `implementation_plan-<suffix>.md` | `claude-sonnet-3.7-implementation_plan-begar-prefix.md` | `antigravity-gemini-3.8-flash-implementation_plan-begar-prefix.md` | `/plan`, `/problem`, `/refine`, `/implement-feature`, `/pr-fix-pipeline` | Technical design, phase breakdown, task checklist, gating approval |
 | `code_review-<suffix>.md` | `claude-sonnet-3.7-code_review-18176-verksamhetsobjekt.md` | `antigravity-gemini-3.8-flash-code_review-category-demand-statistics.md` | `/code-review` | Code quality audit, severity findings (Critical/Important/Minor), diffs |
+| `squashed_code_review-<suffix>.md` | `claude-sonnet-3.7-squashed_code_review-18176-verksamhetsobjekt.md` | `antigravity-gemini-3.8-flash-squashed_code_review-18176-verksamhetsobjekt.md` | `/squash-code-review` | Two or more code reviews of one change squashed into one verified review, with a reconciliation table and folded-in PR threads |
 | `pr_feedback_review-<suffix>.md` | `claude-sonnet-3.7-pr_feedback_review-18176-backend.md` | `antigravity-gemini-3.8-flash-pr_feedback_review-18176-backend.md` | `/pr-feedback-review` | PR comment triage matrix, technical resolutions, draft responses |
 | `investigation-<suffix>.md` | `claude-sonnet-3.7-investigation-draft-close-dialog.md` | `antigravity-gemini-3.8-flash-investigation-draft-close-dialog.md` | `/investigate`, `/pr-fix-pipeline` | Pre-plan research: current-state map, prior art, constraints, options, confidence ledger |
 | `explanation-<suffix>.md` | `claude-sonnet-3.7-explanation-matching-ticket.md` | `antigravity-gemini-3.8-flash-explanation-matching-ticket.md` | `/explain` | Deep architectural and code intent breakdown |
