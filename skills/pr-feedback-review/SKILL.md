@@ -30,6 +30,7 @@ Read these before step 1:
 - `../_modules/artifact-protocol.md`: writes `<prefix>-pr_feedback_review-<suffix>.md` (suffix e.g. `-18176-backend`, `-18176-18177-verksamhetsobjekt`)
 - `../_modules/git-worktrees.md`: snapshot by default
 - `../_modules/pr-counterpart.md`
+- `../_modules/pr-host.md`
 
 - Without a handed-in `[worktree-context]` block, the repo root is the snapshot this skill creates in *Step 2.3*.
 
@@ -43,7 +44,7 @@ Read these before step 1:
 | `/pr-feedback-review deep [target]` | **Deep** | Verification, Merit and Impact each run in an isolated parallel sub-agent (see *Deep Mode*), then aggregate |
 | `/pr-feedback-review live [target]` | Standard or deep, **no snapshot** | Reads the main checkout directly instead of the snapshot from *Step 2.3*. Only when no snapshot is possible, or the user wants threads checked against unpushed local commits |
 
-`live` is a modifier, not a mode: `/pr-feedback-review deep live <target>` is valid. The words `worktree`, `worktrees` and `/git-worktrees` in the arguments are accepted and change nothing — the snapshot is already the default.
+`live` is a modifier, not a mode: `/pr-feedback-review deep live <target>` is valid. The token `/git-worktrees` in the arguments is accepted and changes nothing, because the snapshot is already the default.
 
 The three axes every thread is assessed on:
 
@@ -76,32 +77,7 @@ Parse the arguments or current workspace context to identify the target PR:
 | Bare PR ID (e.g. `18170`, `#18170`) | Use current repo remote to infer host/org/project |
 | No argument | Detect open PR for current git branch |
 
-### Parsing PR URLs
-
-- **Azure DevOps**:
-
-  ```text
-  https://dev.azure.com/{org}/{project}/_git/{repo}/pullrequest/{prId}
-  https://{org}.visualstudio.com/{project}/_git/{repo}/pullrequest/{prId}
-  ```
-
-- **GitHub**:
-
-  ```text
-  https://github.com/{owner}/{repo}/pull/{prId}
-  ```
-
-### Branch Auto-Discovery (When No URL or ID Given)
-
-```bash
-# Azure DevOps (run inside repository)
-az repos pr list --source-branch "$(git rev-parse --abbrev-ref HEAD)" \
-  --status active --detect true \
-  --query '[0].{id:pullRequestId,title:title,target:targetRefName}' -o json
-
-# GitHub
-gh pr view --json number,title,baseRefName,url
-```
+Parsing a URL, resolving a bare id or the current branch to a PR, and choosing the organization URL are **`pr-host`** › *Parse a PR or work-item URL*, *Resolve the PR from a branch* and *Organization URL*.
 
 ### Counterpart PRs — every resolved PR, every time
 
@@ -122,7 +98,7 @@ Gather complete PR information including status, reviewers, vote states, and dis
 
 ```bash
 # Azure DevOps — Details & Reviewers
-az repos pr show --id <prId> --detect true -o json
+az repos pr show --id <prId> --org <org-url> -o json   # <org-url>: pr-host › Organization URL
 ```
 
 Key reviewer vote values in Azure DevOps:
@@ -140,67 +116,7 @@ gh pr view <prId> --json title,body,state,headRefName,baseRefName,reviewDecision
 
 ### 2.2 — Discussion Threads & Comments
 
-#### Azure DevOps API (using `az devops invoke`)
-
-Azure DevOps CLI does not have a native `az repos pr thread` command. Use `az devops invoke` or REST API:
-
-```bash
-python3 -c "
-import json, subprocess
-
-cmd = ['az', 'devops', 'invoke', '--area', 'git', '--resource', 'pullRequestThreads',
-       '--route-parameters', 'project=<PROJECT>', 'repositoryId=<REPO>', 'pullRequestId=<PR_ID>',
-       '--detect', 'true', '-o', 'json']
-res = subprocess.run(cmd, capture_output=True, text=True)
-data = json.loads(res.stdout)
-
-for thread in data.get('value', []):
-    comments = thread.get('comments', [])
-    status = thread.get('status') # active, fixed, closed, pending, etc.
-    thread_ctx = thread.get('threadContext')
-    file_path = thread_ctx.get('filePath') if thread_ctx else None
-    line = (thread_ctx.get('rightFileStart') or {}).get('line') if thread_ctx else None  # CommentPosition {line, offset}
-    t_id = thread.get('id')
-    
-    # Filter out automated bot comments (e.g., test coverage services) unless relevant
-    human_comments = [c for c in comments if c.get('author', {}).get('displayName') != 'Azure Pipelines Test Service' and c.get('commentType') != 'system']
-    if human_comments:
-        print(f'=== Thread ID: {t_id} | Status: {status} | File: {file_path} | Line: {line} ===')
-        for c in human_comments:
-            author = c.get('author', {}).get('displayName')
-            content = c.get('content')
-            published = c.get('publishedDate')
-            print(f'[{author}] ({published}):\n{content}\n')
-"
-```
-
-#### GitHub API (using `gh api`)
-
-```bash
-# Inline review comments on the diff (REST pages at 30 by default, so always paginate)
-gh api --paginate repos/{owner}/{repo}/pulls/{prId}/comments
-# General conversation comments (a PR is an issue; these are not in /pulls/…/comments)
-gh api --paginate repos/{owner}/{repo}/issues/{prId}/comments
-```
-
-REST review comments carry no resolved or outdated state, and *State at head* needs both. Get them per thread from GraphQL:
-
-```bash
-gh api graphql --paginate -F owner='{owner}' -F repo='{repo}' -F pr={prId} -f query='
-  query($owner: String!, $repo: String!, $pr: Int!, $endCursor: String) {
-    repository(owner: $owner, name: $repo) {
-      pullRequest(number: $pr) {
-        reviewThreads(first: 100, after: $endCursor) {
-          pageInfo { hasNextPage endCursor }
-          nodes { isResolved isOutdated path line
-                  comments(first: 1) { nodes { databaseId } } }
-        }
-      }
-    }
-  }'
-```
-
-Join the two on `comments.nodes[0].databaseId`, which is the REST comment `id` of each thread's first comment.
+Fetch every thread per **`pr-host`** › *Fetch discussion threads*: the Azure DevOps `az devops invoke` dump with human comments filtered from bots and system notices, or GitHub's inline and general comments (paginated) plus each thread's resolved/outdated state from GraphQL. Run it for every PR in scope.
 
 #### Keep the dump
 
@@ -260,16 +176,14 @@ Do not analyze comments in a vacuum. Cross-reference each comment with the actua
 
 ## Step 4 — Triage & Technical Assessment
 
-Group each comment/thread into a clear severity / triage category:
+Put each thread in one triage category. These are **not** `/code-review` severities, so they use their own markers. `/code-review` *Step 6b* and `/squash-code-review` read this matrix next to their own 🔴/🟡/🟢, and shared emoji would read as the same scale:
 
-- 🔴 **Blocking / Defect / Change Requested**:
-  - Reviewer voted `-5` or `-10`, or pointed out a data integrity bug, race condition, security leak, or broken requirement.
-- 🟡 **Design Proposal / Trade-off / Architectural Alternative**:
-  - Reviewer suggested an alternative pattern, simplification, refactoring, or question of intent. Needs deliberate evaluation of tradeoffs (effort, blast radius, downstream impact).
-- 🟢 **Minor / Polish / Convention**:
-  - Small naming adjustment, code style, docstring clarification, or test coverage addition.
-- ⚪ **Informational / Clarification / Already Answered**:
-  - Questions about rationale, discussions already converged, or automated system notices.
+- ⛔ **Blocking**: a defect the thread points out (data integrity, race condition, security leak, broken requirement) that would block the merge on its merits.
+- 💡 **Proposal**: an alternative pattern, simplification, refactoring or question of intent. Needs deliberate evaluation of the trade-offs (effort, blast radius, downstream impact).
+- ✏️ **Polish**: naming, code style, a docstring, or a test to add.
+- ⚪ **Info**: questions about rationale, discussions already converged, automated notices.
+
+Judge the category from what the thread says, checked against the code. A reviewer's vote (`-5` waiting for author, `-10` rejected) is recorded in the matrix's **Vote** column, not used as the category. A `-5` on a naming nit is still ✏️ Polish, and the vote column shows why the PR is held.
 
 ---
 
@@ -294,8 +208,8 @@ For every non-trivial thread:
 ### 6.1 — Write the Markdown Artifact
 
 Always write the complete PR feedback review report to `<prefix>-pr_feedback_review-<suffix>.md` **at the workspace root** (never inside the snapshot) before returning the response, then remove the snapshot (*Step 2.3*).
-- **Prefix Resolution**: Prefix `<prefix>-` includes both the active host and the actual AI model (`<host>-<model>-`, e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
-- **Suffix Resolution**: Derive `<suffix>` from PR ID and topic (e.g. `-18176-backend`, `-18176-18177-verksamhetsobjekt`).
+- **Name**: `<prefix>` and the rules for it are `artifact-protocol`'s. Derive `<suffix>` from PR ID and topic (e.g. `-18176-backend`, `-18176-18177-verksamhetsobjekt`).
+- **Ownership**: a new artifact is published through *Claim*, with its owner marker. "Update" means updating an artifact **this session** created (`artifact-protocol` › rule 3); a re-run in a new session writes `…-2.md` and links the earlier one, never overwriting another session's file.
 
 ### 6.2 — Artifact Links
 
@@ -322,10 +236,10 @@ Always start your response with a clickable link to `<prefix>-pr_feedback_review
 
 ## Executive Summary & Triage Matrix
 
-| Thread | PR | File | Reviewer | Category | State at head | Recommendation |
-|---|---|---|---|---|---|---|
-| [#106735](#thread-106735) ([devops](https://dev.azure.com/<org>/<project>/_git/<repo>/pullrequest/<prId>?discussionId=106735)) | Backend !18707 | PriisDbContext.cs | Nebojsa | 🟡 Optimization | ⏸ Not addressed | Refactor cascade loop to Queue worklist |
-| [#106740](#thread-106740) ([devops](…)) | Frontend !18708 | Foo.tsx | Daniel | 🔴 Bug | ✅ Fixed (`abc1234`) | Reply, resolve |
+| Thread | PR | File | Reviewer | Vote | Category | State at head | Recommendation |
+|---|---|---|---|---|---|---|---|
+| [#106735](#thread-106735) ([devops](https://dev.azure.com/<org>/<project>/_git/<repo>/pullrequest/<prId>?discussionId=106735)) | Backend !18707 | PriisDbContext.cs | Nebojsa | 0 | 💡 Proposal: optimization | ⏸ Not addressed | Refactor cascade loop to Queue worklist |
+| [#106740](#thread-106740) ([devops](…)) | Frontend !18708 | Foo.tsx | Daniel | −5 | ⛔ Blocking: bug | ✅ Fixed (`abc1234`) | Reply, resolve |
 
 *State at head* is one of ✅ Fixed (commit) · ◐ Partial · ⏸ Not addressed · ↩ Superseded · ⚪ n/a. With a single PR in scope, drop the *PR* column.
 

@@ -109,25 +109,7 @@ Produce a concise, structured review report using this template:
 > **Plan Artifact Reference Requirement:**
 > Always begin the review response with the target plan artifact reference and clickable key sections header. The user frequently closes the artifact tab in the IDE; this provides an immediate, one-click way to reopen the plan and navigate to specific sections directly from chat.
 
-**Under Antigravity IDE:**
-```markdown
-📄 [antigravity-<model>-implementation_plan-<suffix>.md](file://<workspace-root>/antigravity-<model>-implementation_plan-<suffix>.md)
-
-Key Sections:
-- 📄 [Context & Goal](file://<workspace-root>/antigravity-<model>-implementation_plan-<suffix>.md#L8): [1-sentence summary of context/decisions]
-- 📄 [Proposed Changes](file://<workspace-root>/antigravity-<model>-implementation_plan-<suffix>.md#L24): [1-sentence summary of touched files/components]
-- 📄 [Verification Plan](file://<workspace-root>/antigravity-<model>-implementation_plan-<suffix>.md#L61): [1-sentence summary of test & build verification]
-```
-
-**Under Claude Code:**
-```markdown
-📄 [claude-<model>-implementation_plan-<suffix>.md](claude-<model>-implementation_plan-<suffix>.md)
-
-Key Sections:
-- 📄 [Context & Goal](claude-<model>-implementation_plan-<suffix>.md#L8): [1-sentence summary of context/decisions]
-- 📄 [Proposed Changes](claude-<model>-implementation_plan-<suffix>.md#L24): [1-sentence summary of touched files/components]
-- 📄 [Verification Plan](claude-<model>-implementation_plan-<suffix>.md#L61): [1-sentence summary of test & build verification]
-```
+Use the plan link block from [`/plan`](../plan/SKILL.md) › *§2 Link block*, with the reviewed plan's real line numbers (`grep -n`) and a one-sentence summary after each section link: what the context decides, what the changes touch, how it is verified.
 
 Then the review itself:
 

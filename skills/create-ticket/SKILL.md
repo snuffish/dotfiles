@@ -27,6 +27,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 - `../_modules/core.md`
 - `../_modules/artifact-protocol.md`: writes no artifact — updates at most one line in the source artifact
+- `../_modules/pr-host.md`: *Organization URL* for `<org-url>`
 
 - **No artifact of its own.** It consumes an existing source (an artifact section, a selection, a thread, the conversation) and updates at most one line in the source artifact (*Step 8*).
 - **Content files** (`spec.json`, `description.html`, `acceptance.html`, `repro.html` or `body.md`) live in the host's scratchpad, `<scratchpad>/ticket-<slug>/`, never in the repo or at the workspace root.
@@ -65,7 +66,7 @@ Invoke this skill whenever:
 
 ### Step 2 — Resolve the tracker
 
-- **Azure DevOps:** the repo's `origin` (`dev.azure.com/<org>/<project>/_git/<repo>`, or the legacy `<org>.visualstudio.com`), or the tracker the workspace rulebook names. Always pass `--org https://dev.azure.com/<org>`. The legacy host fails authentication even when `az` is signed in.
+- **Azure DevOps:** the repo's `origin` (`dev.azure.com/<org>/<project>/_git/<repo>`, or the legacy `<org>.visualstudio.com`), or the tracker the workspace rulebook names. Always pass `--org <org-url>`, in the form the workspace already uses (`pr-host` › *Organization URL*); both forms work.
 - **GitHub:** `gh repo view --json nameWithOwner`, or the repo the request names.
 - In a multi-repo workspace the ticket goes to the project that owns the work. A ticket spanning repos is one ticket in the shared project, not one per repo, unless the team files per repo (*Step 3* shows which).
 - A project profile or workflow skill (for example `implement-feature-<project>-profile`, `<project>-workflow`) can state ticket rules, such as implementing-ID rules or "tasks are English, stories Swedish". Those rules win over what *Step 3* infers.
@@ -76,7 +77,7 @@ Read before writing. Tickets that look like the team's own get triaged; foreign-
 
 ```bash
 # Azure DevOps: the last ~25 items touched in the project
-az boards query --org https://dev.azure.com/<org> --project <project> --wiql "
+az boards query --org <org-url> --project <project> --wiql "
   SELECT [System.Id],[System.WorkItemType],[System.Title],[System.State],[System.AreaPath],[System.IterationPath],[System.Tags]
   FROM WorkItems WHERE [System.TeamProject]='<project>' AND [System.ChangedDate] >= @Today-60
   ORDER BY [System.ChangedDate] DESC" \

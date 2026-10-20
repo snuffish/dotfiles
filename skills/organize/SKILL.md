@@ -149,7 +149,7 @@ When a file named `helper.*`, `utils.*`, or `common.*` accumulates multiple dist
 ### Phase 2: Formulate the Reorganization Plan Artifact
 
 Create `<prefix>-organize_plan-<suffix>.md` at the **workspace root** adhering to the **`artifact-protocol`** protocol:
-- Prefix `<prefix>-` includes both the host and active AI model: `<host>-<model>-` (e.g. `antigravity-gemini-3.8-flash-` or `claude-sonnet-3.7-`).
+- Prefix `<prefix>-` includes both the host and active AI model: `<host>-<model>-` (e.g. `antigravity-gemini-3.8-flash-` or `claude-opus-5.5-`).
 - Append descriptive `<suffix>` based on the target directory or component.
 
 #### Artifact Structure:

@@ -29,6 +29,7 @@ Read these before step 1:
 - `../_modules/artifact-protocol.md`: writes `<prefix>-squashed_code_review-<suffix>.md` (suffix: the sources' shared suffix, e.g. `-18715-18716-rtk-api-domains`)
 - `../_modules/git-worktrees.md`: snapshot by default
 - `../_modules/pr-counterpart.md`
+- `../_modules/pr-host.md`
 
 - Also read [`code-review`](../code-review/SKILL.md). Severity, axes, verification, artifact structure, *In Plain Terms* and the link format all come from there. This skill adds only what is specific to squashing.
 - Read [`pr-feedback-review`](../pr-feedback-review/SKILL.md) › *2.2 — Discussion Threads & Comments* for the thread fetch, and its *State at head* vocabulary.
@@ -83,7 +84,7 @@ Invoke this skill whenever:
 
 ### Step 2 — Pin the head and measure drift
 
-- Resolve the PR(s) and counterpart(s) the sources reviewed (`/code-review` › *Pull-Request References*, `pr-counterpart` › *Counterpart discovery*). Fetch and pin the **current** head per repo (`/code-review` › *Step 1b — Review Snapshot*).
+- Resolve the PR(s) and counterpart(s) the sources reviewed (`pr-host` › *Resolve the PR from a branch* and *Fetch the PR, its work items and acceptance criteria*, `pr-counterpart` › *Counterpart discovery*). Fetch and pin the **current** head per repo (`/code-review` › *Step 1b — Review Snapshot*).
 - For each source, compare its head with the pinned head: `git -C <repo> diff --stat <source-head> <pinned-head>`. Record `same head` or `N commits since`, and list the files that changed under any finding the source cites. Those findings must be re-located before they are judged.
 - Targeted re-checks may read the pinned tree straight from the object store (`git -C <repo> show <sha>:<path>`, `git -C <repo> grep <pattern> <sha> -- <path>`). Create a snapshot worktree only when whole files must be navigated. Either way, record which one you used in *Review Context*.
 
@@ -117,7 +118,7 @@ For each cluster, at the pinned head:
 5. **Pick the fix.** When sources propose different fixes, keep the one that holds up against the code and the repo's own rules. Drop options that only work by gaming a check, such as a name chosen to pass a lint rule. Name the dropped option in the reconciliation row.
 6. **Apply the thread state:**
    - ✅ Fixed at head → the finding is resolved. It goes to *Refuted / dropped* as "fixed at head (thread #id, commit)", not into the findings.
-   - A recorded decision from the author or a reviewer ("intentional", "follow-up story #123") → keep the finding only if the code contradicts that decision or the decision leaves a defect in place. Quote the decision either way.
+   - A recorded decision from the author or a reviewer ("intentional", "follow-up story #123") → apply `/code-review` › *Step 6b* exactly: quote the decision, and keep the severity only if the code contradicts it or it leaves a defect in place; otherwise the finding stays, lowered to 🟢 "decided in thread #id". It is not dropped, so the same input gives the same output whichever skill ran.
    - ⏸ / ◐ → keep the finding, and link the thread in its *Where* line so `/pr-post-comments` replies there instead of opening a duplicate.
 7. **Classify the outcome:** Verified · Plausible (say what would confirm it) · Refuted (moves to *Refuted / dropped*).
 
@@ -135,7 +136,7 @@ For each cluster, at the pinned head:
    - **Read from**: snapshot / object reads at `<sha>` / live checkout.
 2. **Findings Summary** gains a **Sources** column on the main table, e.g. `A B`, `B`, `A T#110776`. It is followed by:
    - **Reconciliation**: one row per cluster that was not unanimous on both claim and severity. Columns: *Point* · one column per source (its claim and rating, or "not raised") · *Verdict* (outcome, and the fact or line that settled it).
-   - **Refuted / dropped**: one line per source finding that did not survive. Give its source key and number, why it was dropped (refuted with evidence, fixed at head, duplicate of N, or decided in thread #id), and where its substance went, if anywhere.
+   - **Refuted / dropped**: one line per source finding that did not survive. Give its source key and number, why it was dropped (refuted with evidence, fixed at head, or duplicate of N; a thread decision lowers a finding to 🟢 instead of dropping it), and where its substance went, if anywhere.
 3. **Detailed Review Findings** follow `/code-review` › *Detailed Findings*. Each heading ends with `· Verified|Plausible`. The *Where* line names its sources and any linked thread with the dual link from `artifact-protocol` › *PR Discussion Thread Links*. Write the text fresh from the verified code. Do not paste a source's paragraph; quote it only when its wording is the point.
 4. **Minor Findings** keep the cap of 8 and carry source keys.
 5. **Posted to PR**: carry over every source's *Posted to PR* entries verbatim, each tagged with its source key, and map each thread id to its squashed finding number. This lets `/pr-post-comments` skip what is already posted.

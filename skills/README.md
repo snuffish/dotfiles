@@ -13,7 +13,7 @@ Everything in the Registry is one of four kinds (defined in [`../GLOSSARY.md`](.
 | **Command** | Carries out a workflow, invoked by name or by a matching request | yes | `/code-review`, `/create-ticket`, `squash-ef-core-migrations` |
 | **Reference** | Knowledge the model loads by topic, never run as a workflow | yes | `modern-csharp`, `priis-backend-ef-core` |
 | **Profile** | Project-specific facts a Command reads to adapt to that project: a base profile shared by the project's Commands, plus one Command profile per Command | yes | `priis-profile`, `implement-feature-priis-profile`, `code-review-priis-profile` |
-| **Module** | A shared contract Commands depend on; never runs on its own | **no** | `core`, `artifact-protocol`, `git-worktrees`, `pr-counterpart`, `project-profile` |
+| **Module** | A shared contract Commands depend on; never runs on its own | **no** | `core`, `artifact-protocol`, `git-worktrees`, `pr-counterpart`, `pr-host`, `project-profile` |
 
 ## Layout
 
@@ -36,7 +36,7 @@ skills/
 
 ## Inventory
 
-61 skills total — 34 general + 27 under `Projects/GR.PRIIS/` — plus 5 Modules.
+61 skills total — 34 general + 27 under `Projects/GR.PRIIS/` — plus 6 Modules.
 
 | Group | Kind | Count | Entries |
 | --- | --- | :---: | --- |
@@ -47,7 +47,7 @@ skills/
 | `GR.PRIIS/priis-backend-*` | Command | 7 | `health-check`, `migrate-to-tunit` (retired — migration complete), `release-notes`, `review`, `scaffold`, `ship`, `verify` |
 | `GR.PRIIS/priis-frontend-*` | Command | 4 | `health-check`, `review`, `scaffold`, `verify` |
 | `GR.PRIIS/*-profile` | Profile | 3 | `priis-profile` (base), `implement-feature-priis-profile` (read by `implement-feature`), `code-review-priis-profile` (read by `code-review`) |
-| `_modules/` | Module | 5 | `core`, `artifact-protocol`, `git-worktrees`, `pr-counterpart`, `project-profile` |
+| `_modules/` | Module | 6 | `core`, `artifact-protocol`, `git-worktrees`, `pr-counterpart`, `pr-host`, `project-profile` |
 
 (Project skill names are the group prefix + the listed suffix — e.g. `priis-backend-ef-core`, `priis-frontend-verify`. The names match the repo-local copies in each repo's `.claude/skills/`; the `review` skills carry a `references/lessons-from-prs.md` catalog. The repo-local `priis-*-review` on `origin/main` are the upstream; the registry copies are mirrors marked as such.)
 
@@ -69,16 +69,12 @@ Read these before step 1:
 
 1. **[`core`](_modules/core.md)**: golden invariants, execution gates (`/proceed`, post-edit verification, worktree opt-in), codebase investigation protocol and the precedence model. Depends on nothing.
 2. **[`artifact-protocol`](_modules/artifact-protocol.md)**: host & AI model prefix (`<host>-<model>-`), mandatory contextual suffix, link formats, PR thread links and the canonical artifact catalog.
-3. **[`git-worktrees`](_modules/git-worktrees.md)**: worktree isolation. `/code-review` and `/pr-feedback-review` snapshot through it, `/implement-feature` implements in a workspace worktree, and any Command switches to it when invoked with `worktree`. A plain prompt reaches it through the `git-worktrees` Command (same name, different kind), which runs the prompt under it. It hands a `[worktree-context]` block to every delegated skill so no skill acts on the user's main checkout.
+3. **[`git-worktrees`](_modules/git-worktrees.md)**: worktree isolation. `/code-review` and `/pr-feedback-review` snapshot through it, `/implement-feature` implements in a workspace worktree, and any Command switches to it when its invocation contains the token `/git-worktrees`. A plain prompt reaches it through the `git-worktrees` Command (same name, different kind), which runs the prompt under it. It hands a `[worktree-context]` block to every delegated skill so no skill acts on the user's main checkout.
 4. **[`pr-counterpart`](_modules/pr-counterpart.md)**: finds the sibling-repo PR of a dual-repo change.
 5. **[`project-profile`](_modules/project-profile.md)**: how a Command finds, layers and applies a project's Profiles (base profile + Command profile), the shared fields, overrides, upstream content and pointers ([ADR-0003](../docs/adr/0003-profile-resolution-is-a-module.md)). Read by `implement-feature` and `code-review`.
+6. **[`pr-host`](_modules/pr-host.md)**: reading a PR from its host: URL parsing, the organization URL (`<org-url>`), `refs/heads/` stripping, resolving the PR from a branch, fetching the PR with its work items and acceptance criteria, fetching threads, and failed fetches ([ADR-0004](../docs/adr/0004-pr-host-access-is-a-module.md)). Read-only. Used by every Command that reads a PR.
 
-A Command lists only the Modules it uses directly; a Module lists its own dependencies. Sections inside a Module are referred to by name (`` `git-worktrees` › *Workspace Lifecycle* ``), never by number. **References** and **Profiles** carry no `## Modules` section and inherit the standards through the precedence model. Instruction precedence resolves in this order:
-
-1. **Workspace Rulebooks** (`CLAUDE.md` / `GEMINI.md` / `.agents/rules/`)
-2. **Project-scoped References and Profiles** (`Projects/<Project>/...`)
-3. **General References** (`modern-csharp`, `typescript-conventions`, etc.)
-4. **Modules** (`core`, `artifact-protocol`, `git-worktrees`, `pr-counterpart`, `project-profile`)
+A Command lists only the Modules it uses directly; a Module lists its own dependencies. Sections inside a Module are referred to by name (`` `git-worktrees` › *Workspace Lifecycle* ``), never by number. **References** and **Profiles** carry no `## Modules` section and inherit the standards through the precedence model. The order (workspace rulebooks, then project-scoped References and Profiles, then general References, then Modules) is defined once, in [`core` › *Precedence*](_modules/core.md#precedence).
 
 ## Naming convention (inside `Projects/GR.PRIIS/`)
 

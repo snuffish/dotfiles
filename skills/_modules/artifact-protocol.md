@@ -27,16 +27,14 @@ Detect the active host and slugify the active AI model name:
 
 | Running as | System Prompt Indicator | Active Model Indicator | Prefix (`<host>-<model>-`) | Artifact Target Path Example |
 |---|---|---|---|---|
-| Claude Code | *"You are Claude"* | Claude 3.7 Sonnet | `claude-sonnet-3.7-` | `<workspace-root>/claude-sonnet-3.7-<artifact>-<suffix>.md` |
-| Claude Code | *"You are Claude"* | Claude 3.5 Sonnet | `claude-sonnet-3.5-` | `<workspace-root>/claude-sonnet-3.5-<artifact>-<suffix>.md` |
+| Claude Code | *"You are Claude Code"* | Opus 5.5 | `claude-opus-5.5-` | `<workspace-root>/claude-opus-5.5-<artifact>-<suffix>.md` |
 | Antigravity IDE | *"You are Antigravity"* | Gemini 3.8 Flash | `antigravity-gemini-3.8-flash-` | `<workspace-root>/antigravity-gemini-3.8-flash-<artifact>-<suffix>.md` |
-| Antigravity IDE | *"You are Antigravity"* | Gemini 2.5 Pro | `antigravity-gemini-2.5-pro-` | `<workspace-root>/antigravity-gemini-2.5-pro-<artifact>-<suffix>.md` |
 | Any other host | *(none of above)* | Active model | `<host>-<model>-` (or `<model>-`) | `<workspace-root>/<prefix>-<artifact>-<suffix>.md` |
 
 - **Model Detection**:
-  - **Antigravity IDE**: Inspect active model selection/metadata from user settings or context (e.g. `gemini-3.8-flash`, fallback: `gemini`).
-  - **Claude Code**: Inspect environment (`ANTHROPIC_MODEL`), CLI options, or system prompt (e.g. `sonnet-3.7`, `sonnet-3.5`, fallback: `sonnet`).
-- **Model Slug Format**: Lowercase alphanumeric and periods/hyphens (e.g., `gemini-3.8-flash`, `sonnet-3.7`).
+  - **Claude Code**: the system prompt names the model ("You are powered by the model named Opus 5.5"). Slugify that name: "Opus 5.5" → `opus-5.5`, "Sonnet 5.5" → `sonnet-5.5`. `ANTHROPIC_MODEL` is usually unset, so do not rely on it. Fallback: `claude`.
+  - **Antigravity IDE**: inspect the active model selection or metadata from user settings or context (e.g. `gemini-3.8-flash`). Fallback: `gemini`.
+- **Model Slug Format**: Lowercase alphanumeric and periods/hyphens (e.g., `gemini-3.8-flash`, `opus-5.5`).
 
 2. **Mandatory Contextual Suffix (Anti-Overwrite Invariant)**:
    - **Always append a descriptive kebab-case suffix (`-<suffix>`)** to every artifact.
@@ -79,8 +77,8 @@ Chat links and document anchors must follow strict formatting rules depending on
 
 | Host | Chat Link Syntax | Example |
 |---|---|---|
-| **Antigravity IDE** | Absolute path with `file://` scheme *(relative links render dead/unclickable)* | `[antigravity-plan-auth.md](file://<workspace-root>/antigravity-implementation_plan-auth.md#L8)` |
-| **Claude Code** | Workspace-relative path without scheme *(`file://` URIs render dead)* | `[claude-plan-auth.md](claude-implementation_plan-auth.md#L8)` |
+| **Antigravity IDE** | Absolute path with `file://` scheme *(relative links render dead/unclickable)* | `[antigravity-gemini-3.8-flash-implementation_plan-auth.md](file://<workspace-root>/antigravity-gemini-3.8-flash-implementation_plan-auth.md#L8)` |
+| **Claude Code** | Workspace-relative path without scheme *(`file://` URIs render dead)* | `[claude-opus-5.5-implementation_plan-auth.md](claude-opus-5.5-implementation_plan-auth.md#L8)` |
 
 ### Section Anchor / Fragment Rules:
 - **Chat Links (Both Hosts)**: Always use `#L<line>` (e.g. `#L8` or `#L8-L20`), **never** heading slugs (`#context--goal` fails in Claude Code). Read the actual line numbers from the file after writing:
@@ -118,23 +116,23 @@ When artifacts reference discussion threads or comments from a pull request (suc
 
 | Base Filename Pattern | Claude Code Example | Antigravity IDE Example | Written / Managed By | Primary Purpose |
 |---|---|---|---|---|
-| `implementation_plan-<suffix>.md` | `claude-sonnet-3.7-implementation_plan-begar-prefix.md` | `antigravity-gemini-3.8-flash-implementation_plan-begar-prefix.md` | `/plan`, `/problem`, `/refine`, `/implement-feature`, `/pr-fix-pipeline` | Technical design, phase breakdown, task checklist, gating approval |
-| `code_review-<suffix>.md` | `claude-sonnet-3.7-code_review-18176-verksamhetsobjekt.md` | `antigravity-gemini-3.8-flash-code_review-category-demand-statistics.md` | `/code-review` | Code quality audit, severity findings (Critical/Important/Minor), diffs |
-| `squashed_code_review-<suffix>.md` | `claude-sonnet-3.7-squashed_code_review-18176-verksamhetsobjekt.md` | `antigravity-gemini-3.8-flash-squashed_code_review-18176-verksamhetsobjekt.md` | `/squash-code-review` | Two or more code reviews of one change squashed into one verified review, with a reconciliation table and folded-in PR threads |
-| `pr_feedback_review-<suffix>.md` | `claude-sonnet-3.7-pr_feedback_review-18176-backend.md` | `antigravity-gemini-3.8-flash-pr_feedback_review-18176-backend.md` | `/pr-feedback-review` | PR comment triage matrix, technical resolutions, draft responses |
-| `investigation-<suffix>.md` | `claude-sonnet-3.7-investigation-draft-close-dialog.md` | `antigravity-gemini-3.8-flash-investigation-draft-close-dialog.md` | `/investigate`, `/pr-fix-pipeline` | Pre-plan research: current-state map, prior art, constraints, options, confidence ledger |
-| `explanation-<suffix>.md` | `claude-sonnet-3.7-explanation-matching-ticket.md` | `antigravity-gemini-3.8-flash-explanation-matching-ticket.md` | `/explain` | Deep architectural and code intent breakdown |
-| `suggestion-<suffix>.md` | `claude-sonnet-3.7-suggestion-cache-invalidation-strategy.md` | `antigravity-gemini-3.8-flash-suggestion-pdf-export-library.md` | `/suggestion deep` | Ranked approaches with trade-offs, a recommendation and next steps |
-| `assumption_check-<suffix>.md` | `claude-sonnet-3.7-assumption_check-skill-modules.md` | `antigravity-gemini-3.8-flash-assumption_check-skill-modules.md` | `/verify-assumptions` | Claim-by-claim verification against primary sources, verdicts and the decisions they affect |
-| `what_am_i_missing-<suffix>.md` | `claude-sonnet-3.7-what_am_i_missing-municipality-sync.md` | `antigravity-gemini-3.8-flash-what_am_i_missing-municipality-sync.md` | `/what-am-I-missing` | Blind spots, failure modes, invariant audits |
-| `spec_verification-<suffix>.md` | `claude-sonnet-3.7-spec_verification-18176-verksamhetsobjekt.md` | `antigravity-gemini-3.8-flash-spec_verification-18176-verksamhetsobjekt.md` | `/spec-verification` | Requirement-by-requirement traceability against the work item, PR or plan |
-| `manual_test_plan-<suffix>.md` | `claude-sonnet-3.7-manual_test_plan-31071-unverified-addresses.md` | `antigravity-gemini-3.8-flash-manual_test_plan-31071-unverified-addresses.md` | `/manual-testing` | Runnable manual test plan: setup, logins, test data, risk-ordered scenarios, regression watchlist |
-| `conflict_resolution-<suffix>.md` | `claude-sonnet-3.7-conflict_resolution-feature-x-into-main.md` | `antigravity-gemini-3.8-flash-conflict_resolution-feature-x-into-main.md` | `/resolve-conflicts` | Per-hunk resolution record when a merge or rebase crosses the threshold for a written record |
-| `expressive-<suffix>.md` | `claude-sonnet-3.7-expressive-matching-filters.md` | `antigravity-gemini-3.8-flash-expressive-matching-filters.md` | `/expressive` | Readability sweep findings and proposed declarative rewrites |
-| `walkthrough-<suffix>.md` | `claude-sonnet-3.7-walkthrough-29982-verksamhetsobjekt.md` | `antigravity-gemini-3.8-flash-walkthrough-29982-verksamhetsobjekt.md` | `/implement-feature` | Verification results, screenshots, completed summary |
-| `organize_plan-<suffix>.md` | `claude-sonnet-3.7-organize_plan-matching-components.md` | `antigravity-gemini-3.8-flash-organize_plan-matching-components.md` | `/organize` | Directory/module structure refactoring proposal |
-| `clean_report-<suffix>.md` | `claude-sonnet-3.7-clean_report-audit-endpoint.md` | `antigravity-gemini-3.8-flash-clean_report-audit-endpoint.md` | `/clean` | Multi-file dead-code pruning & sanitation report |
-| `skills_sync_report-<suffix>.md` | `claude-sonnet-3.7-skills_sync_report-full-audit.md` | `antigravity-gemini-3.8-flash-skills_sync_report-full-audit.md` | `/sync-skills` | Registry discovery & loader synchronization audit |
-| `health_check-<suffix>.md` | `claude-sonnet-3.7-health_check-backend.md` | `antigravity-gemini-3.8-flash-health_check-frontend.md` | `priis-backend-health-check`, `priis-frontend-health-check` | Convention-drift scorecard per inspection area |
+| `implementation_plan-<suffix>.md` | `claude-opus-5.5-implementation_plan-begar-prefix.md` | `antigravity-gemini-3.8-flash-implementation_plan-begar-prefix.md` | `/plan`, `/problem`, `/refine`, `/implement-feature`, `/pr-fix-pipeline` | Technical design, phase breakdown, task checklist, gating approval |
+| `code_review-<suffix>.md` | `claude-opus-5.5-code_review-18176-verksamhetsobjekt.md` | `antigravity-gemini-3.8-flash-code_review-category-demand-statistics.md` | `/code-review` | Code quality audit, severity findings (Critical/Important/Minor), diffs |
+| `squashed_code_review-<suffix>.md` | `claude-opus-5.5-squashed_code_review-18176-verksamhetsobjekt.md` | `antigravity-gemini-3.8-flash-squashed_code_review-18176-verksamhetsobjekt.md` | `/squash-code-review` | Two or more code reviews of one change squashed into one verified review, with a reconciliation table and folded-in PR threads |
+| `pr_feedback_review-<suffix>.md` | `claude-opus-5.5-pr_feedback_review-18176-backend.md` | `antigravity-gemini-3.8-flash-pr_feedback_review-18176-backend.md` | `/pr-feedback-review` | PR comment triage matrix, technical resolutions, draft responses |
+| `investigation-<suffix>.md` | `claude-opus-5.5-investigation-draft-close-dialog.md` | `antigravity-gemini-3.8-flash-investigation-draft-close-dialog.md` | `/investigate`, `/pr-fix-pipeline` | Pre-plan research: current-state map, prior art, constraints, options, confidence ledger |
+| `explanation-<suffix>.md` | `claude-opus-5.5-explanation-matching-ticket.md` | `antigravity-gemini-3.8-flash-explanation-matching-ticket.md` | `/explain` | Deep architectural and code intent breakdown |
+| `suggestion-<suffix>.md` | `claude-opus-5.5-suggestion-cache-invalidation-strategy.md` | `antigravity-gemini-3.8-flash-suggestion-pdf-export-library.md` | `/suggestion deep` | Ranked approaches with trade-offs, a recommendation and next steps |
+| `assumption_check-<suffix>.md` | `claude-opus-5.5-assumption_check-skill-modules.md` | `antigravity-gemini-3.8-flash-assumption_check-skill-modules.md` | `/verify-assumptions` | Claim-by-claim verification against primary sources, verdicts and the decisions they affect |
+| `what_am_i_missing-<suffix>.md` | `claude-opus-5.5-what_am_i_missing-municipality-sync.md` | `antigravity-gemini-3.8-flash-what_am_i_missing-municipality-sync.md` | `/what-am-I-missing` | Blind spots, failure modes, invariant audits |
+| `spec_verification-<suffix>.md` | `claude-opus-5.5-spec_verification-18176-verksamhetsobjekt.md` | `antigravity-gemini-3.8-flash-spec_verification-18176-verksamhetsobjekt.md` | `/spec-verification` | Requirement-by-requirement traceability against the work item, PR or plan |
+| `manual_test_plan-<suffix>.md` | `claude-opus-5.5-manual_test_plan-31071-unverified-addresses.md` | `antigravity-gemini-3.8-flash-manual_test_plan-31071-unverified-addresses.md` | `/manual-testing` | Runnable manual test plan: setup, logins, test data, risk-ordered scenarios, regression watchlist |
+| `conflict_resolution-<suffix>.md` | `claude-opus-5.5-conflict_resolution-feature-x-into-main.md` | `antigravity-gemini-3.8-flash-conflict_resolution-feature-x-into-main.md` | `/resolve-conflicts` | Per-hunk resolution record when a merge or rebase crosses the threshold for a written record |
+| `expressive-<suffix>.md` | `claude-opus-5.5-expressive-matching-filters.md` | `antigravity-gemini-3.8-flash-expressive-matching-filters.md` | `/expressive` | Readability sweep findings and proposed declarative rewrites |
+| `walkthrough-<suffix>.md` | `claude-opus-5.5-walkthrough-29982-verksamhetsobjekt.md` | `antigravity-gemini-3.8-flash-walkthrough-29982-verksamhetsobjekt.md` | `/implement-feature` | Verification results, screenshots, completed summary |
+| `organize_plan-<suffix>.md` | `claude-opus-5.5-organize_plan-matching-components.md` | `antigravity-gemini-3.8-flash-organize_plan-matching-components.md` | `/organize` | Directory/module structure refactoring proposal |
+| `clean_report-<suffix>.md` | `claude-opus-5.5-clean_report-audit-endpoint.md` | `antigravity-gemini-3.8-flash-clean_report-audit-endpoint.md` | `/clean` | Multi-file dead-code pruning & sanitation report |
+| `skills_sync_report-<suffix>.md` | `claude-opus-5.5-skills_sync_report-full-audit.md` | `antigravity-gemini-3.8-flash-skills_sync_report-full-audit.md` | `/sync-skills` | Registry discovery & loader synchronization audit |
+| `health_check-<suffix>.md` | `claude-opus-5.5-health_check-backend.md` | `antigravity-gemini-3.8-flash-health_check-frontend.md` | `priis-backend-health-check`, `priis-frontend-health-check` | Convention-drift scorecard per inspection area |
 
 *(Older unprefixed, un-modeled, or unsuffixed files written before the full convention should still be recognized during scans).*

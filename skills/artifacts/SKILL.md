@@ -32,7 +32,7 @@ ls -lt *.md
 ```
 Parse filenames into:
 - **Host**: `claude`, `antigravity`, or `(standalone)`
-- **AI Model**: e.g. `gemini-3.8-flash`, `sonnet-3.7`, `gemini-2.5-pro`, `sonnet-3.5`
+- **AI Model**: e.g. `gemini-3.8-flash`, `opus-5.5`, `sonnet-5.5`
 - **Base Type**: `implementation_plan`, `code_review`, `pr_feedback_review`, `investigation`, etc.
 - **Suffix / Topic**: The trailing identifier (e.g. `category-demand-statistics`, `18176-verksamhetsobjekt`, `begar-prefix`)
 
@@ -52,9 +52,9 @@ Present discovered artifacts in a structured table:
 | # | Artifact | Host · Model | Topic / Suffix | Summary / Goal | Link |
 |---|---|---|---|---|---|
 | 1 | `antigravity-gemini-3.8-flash-code_review-category-demand-statistics.md` | Antigravity · Gemini 3.8 Flash | `category-demand-statistics` | Category demand statistics code review | [view](file://<workspace-root>/antigravity-gemini-3.8-flash-code_review-category-demand-statistics.md) |
-| 2 | `claude-sonnet-3.7-code_review-18176-verksamhetsobjekt.md` | Claude Code · Sonnet 3.7 | `18176-verksamhetsobjekt` | PR #18176 code review | [view](claude-sonnet-3.7-code_review-18176-verksamhetsobjekt.md) |
+| 2 | `claude-opus-5.5-code_review-18176-verksamhetsobjekt.md` | Claude Code · Opus 5.5 | `18176-verksamhetsobjekt` | PR #18176 code review | [view](claude-opus-5.5-code_review-18176-verksamhetsobjekt.md) |
 | 3 | `antigravity-gemini-3.8-flash-implementation_plan-begar-prefix.md` | Antigravity · Gemini 3.8 Flash | `begar-prefix` | Begär-prefix refactor plan | [view](file://<workspace-root>/antigravity-gemini-3.8-flash-implementation_plan-begar-prefix.md) |
-| 4 | `claude-sonnet-3.7-walkthrough-29982-verksamhetsobjekt.md` | Claude Code · Sonnet 3.7 | `29982-verksamhetsobjekt` | Verification results | [view](claude-sonnet-3.7-walkthrough-29982-verksamhetsobjekt.md) |
+| 4 | `claude-opus-5.5-walkthrough-29982-verksamhetsobjekt.md` | Claude Code · Opus 5.5 | `29982-verksamhetsobjekt` | Verification results | [view](claude-opus-5.5-walkthrough-29982-verksamhetsobjekt.md) |
 ```
 
 ### Interactive Targeting

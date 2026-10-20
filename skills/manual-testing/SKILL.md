@@ -19,6 +19,7 @@ Read these before step 1:
 - `../_modules/core.md`: read-only until `/proceed`
 - `../_modules/artifact-protocol.md`: writes `<prefix>-manual_test_plan-<suffix>.md` (suffix `<workItemId>-<slug>`, e.g. `-31071-unverified-addresses`; else the branch slug)
 - `../_modules/pr-counterpart.md`
+- `../_modules/pr-host.md`
 
 > [!CAUTION]
 > **ABSOLUTE RULES**
@@ -78,9 +79,9 @@ Skip only when there is no argument **and** the branch name or commit subjects a
 
 A diff tells you what changed. The PR description and acceptance criteria tell you **what a human should be able to do afterwards**, which is exactly what a test plan asserts. They turn "click the new tab" into "the AC says the selected-count sits under Ja-svar, so verify that placement".
 
-**Resolution is delegated.** [code-review](../code-review/SKILL.md) › Step 1 › *Pull-Request References* owns it. Follow it as written: URL parsing, resolving the PR from the current branch, the `az repos pr show` / `gh pr view` / `glab mr view` and `az boards work-item show` recipes, fetch failures and the offline fallback, and the trust rule (**description states intent, diff states truth**).
+**Resolution is delegated** to the **`pr-host`** Module. Follow it as written: *Parse a PR or work-item URL*, *Resolve the PR from a branch*, *Fetch the PR, its work items and acceptance criteria* (with its trust rule: **the description states intent, the diff states truth**) and *When a fetch fails*.
 
-Run it **once per repo**, even when the user pasted one PR link. Then run code-review's *Counterpart PRs* step (backed by `pr-counterpart` › *Counterpart discovery*):
+Run it **once per repo**, even when the user pasted one PR link. Then run the counterpart lookup in `pr-counterpart` › *Counterpart discovery*:
 - A **found** counterpart adds its branch to Setup and its behaviour to Scenarios.
 - An **expected but missing** half goes in *Before you start*, because that half's behaviour cannot be tested yet.
 - A **stacked** PR (targets another feature branch) means the local branch carries both PRs. Say which scenarios belong to which PR.

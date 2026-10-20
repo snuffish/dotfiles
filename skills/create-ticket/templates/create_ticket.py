@@ -54,8 +54,9 @@ def validate(spec):
     if host == "ado":
         if not spec.get("type"):
             sys.exit("type is required for ado")
-        if not spec.get("ado", {}).get("org", "").startswith("https://dev.azure.com/"):
-            sys.exit("ado.org must be https://dev.azure.com/<org>; the legacy visualstudio.com host fails auth")
+        org = spec.get("ado", {}).get("org", "")
+        if not (org.startswith("https://dev.azure.com/") or (org.startswith("https://") and org.rstrip("/").endswith(".visualstudio.com"))):
+            sys.exit("ado.org must be https://dev.azure.com/<org> or https://<org>.visualstudio.com (pr-host › Organization URL)")
         if spec["type"] == "Task" and not spec.get("parent"):
             print("warning: a Task without a parent; most boards expect tasks under a story")
     if host == "github" and not spec.get("body_file"):
