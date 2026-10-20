@@ -54,7 +54,7 @@ cm-sync sync    # pull, import other devices, export this one, commit and push
 
 | Command | Does |
 | --- | --- |
-| `cm-sync sync` | Pull → import → export → commit only this device's folder → push |
+| `cm-sync` / `cm-sync sync` | Pull → import → export → commit only this device's folder → push (sync is the default command) |
 | `cm-sync import` | Pull the memory repo, then import other devices' rows and apply their deletions (`--no-pull` to skip the pull, `--full` after a database reset) |
 | `cm-sync export` | Write this device's rows to `claude-mem/devices/<device-id>/` (`--with-prompts` to include raw prompts) |
 | `cm-sync status` | Worker, redaction, counts per device, last push |
@@ -65,7 +65,7 @@ How it works:
 
 - Each device publishes only the rows it created, as JSON Lines, and imports the others through the claude-mem worker (`POST /api/import`), so search and vector indexes stay correct. Nothing writes to `claude-mem.db` directly.
 - Deleting a row on the device that created it publishes a tombstone, and the other devices delete their copy on the next import.
-- Export refuses to run while claude-mem redaction is off, skips `sensitive` observations, and aborts when a row looks like a secret (`--exclude-flagged` keeps those rows local). Local state lives in `~/.local/state/cm-sync/`.
+- Export refuses to run while claude-mem redaction is off, skips `sensitive` observations, and when a row looks like a secret it asks whether to delete it, otherwise it aborts (`--exclude-flagged` keeps those rows local instead). Local state lives in `~/.local/state/cm-sync/`.
 - Tests: `python3 -I -m unittest discover -s ~/.terminal/claude -p 'test_*.py'`
 
 If a secret reaches a commit anyway, deleting the row is not enough: rewrite the memory repo's history and re-clone it on every device.
