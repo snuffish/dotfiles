@@ -182,8 +182,8 @@ The exclude entry is local and never committed; it keeps the directory out of `g
 
 A worktree is a fresh checkout: ignored files and dependencies are absent.
 
-1. Copy each file on the project's **Worktree include list** (profile field; typical entries: `appsettings.local.json`, `.env.local`, local secrets) from `main-checkout` into `repo-root` — a read of the main checkout, never a write. Report what was copied; say which listed files did not exist.
-2. Run the project's **Dependency hydration** commands inside `repo-root` (e.g. `npm ci` in the package directory; .NET restores on first build). Without a profile, derive them from the lockfiles present. Dependency symlinking is off unless the profile enables it.
+1. Copy each file on the project's **Worktree include list** ([project-profile.md](project-profile.md) › *Shared fields*, answered by the base profile; typical entries: `appsettings.local.json`, `.env.local`, local secrets) from `main-checkout` into `repo-root` — a read of the main checkout, never a write. Report what was copied; say which listed files did not exist.
+2. Run the project's **Dependency hydration** commands inside `repo-root` from the base profile (*Shared fields*; e.g. `npm ci` in the package directory; .NET restores on first build). Without a base profile, derive them from the lockfiles present. Dependency symlinking is off unless the base profile enables it.
 3. Do **not** copy `.claude/settings.local.json` or other host state; it is not needed to build or test.
 
 **d. Work**
@@ -202,7 +202,7 @@ Run the project's verify commands inside `repo-root`. First check for parallel r
 git -C <repo> worktree list --porcelain | grep -c '^locked claude-skill:'
 ```
 
-If another `claude-skill:` worktree of the same repo is active, run **targeted suites only** and say why: dev-server ports, a local API port and a local database (the profile's **Shared local services**) are shared between worktrees, so concurrent full suites collide and flake.
+If another `claude-skill:` worktree of the same repo is active, run **targeted suites only** and say why: dev-server ports, a local API port and a local database (the base profile's **Shared local services**, [project-profile.md](project-profile.md) › *Shared fields*) are shared between worktrees, so concurrent full suites collide and flake.
 
 **f. Land**
 
@@ -262,7 +262,7 @@ A locked `claude-skill:` worktree from an earlier session is reported to the use
 | Implement without touching the checkout | §5 workspace, `<repo>/.claude/worktrees/<slug>`, `--lock --reason`, project branch name | `EnterWorktree`, `worktree-<name>`, `cd` |
 | Tell a delegated skill where the repo is | paste the `[worktree-context]` block | rely on its cwd discovery |
 | Branch already checked out in the main checkout | stop and ask | `checkout` the user's tree, `-f` |
-| Missing `appsettings.local.json` / `.env` | copy from the profile's include list | run tests against defaults |
+| Missing `appsettings.local.json` / `.env` | copy from the base profile's *Worktree include list* | run tests against defaults |
 | Second run on the same repo | targeted suites, say why | full suite in parallel |
 | Done | landed → unlock, remove, prune; else keep and report | `remove --force` on unpushed work |
 | Branch | keep | delete |

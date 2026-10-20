@@ -8,7 +8,7 @@ description: "Orchestrator for implementing a feature, task or bug end-to-end in
 Runs one piece of work from ticket to draft pull request, across one repository or every repository in a workspace.
 This skill owns **the order of phases, the gates between them, and where sub-agents are used**. Everything else — code
 patterns, test helpers, build and ship commands, tracker specifics — comes from the project itself: its rulebooks, its
-project-scoped skills and, where one exists, its *profile skill* (see *Project profile*). Load those and read a sibling
+project-scoped skills and, where they exist, its *profile skills* (see *Project profile*). Load those and read a sibling
 implementation in the repo; never reproduce pattern code from memory.
 
 Usage: `/implement-feature <ticket-id | ticket-url>` or `/implement-feature <short description>`
@@ -24,6 +24,7 @@ Read these before step 1:
 - `../_modules/artifact-protocol.md`: writes `<prefix>-implementation_plan-<suffix>.md` and `<prefix>-what_am_i_missing-<suffix>.md` (Phase 2), and `<prefix>-walkthrough-<suffix>.md` (Phase 7) at the **workspace root** — the directory the IDE opened, which in a multi-repo workspace is the folder that holds the repos; `<suffix>` is `<ticket-id>-<feature-slug>` when there is a ticket, else a 2–4 word topic slug
 - `../_modules/git-worktrees.md`: workspace by default
 - `../_modules/pr-counterpart.md`
+- `../_modules/project-profile.md`: profile `implement-feature-<project>-profile`
 
 - **Repos**: work in a **workspace worktree per repo in scope**, created in Phase 0 and removed in Phase 7 through `git-worktrees` › *Workspace Lifecycle*. The user's main checkout is read-only for the whole run (`git-worktrees` › *Golden Invariants*) — they keep editing it while this skill runs. Use absolute paths and `git -C <repo-root>`, where `repo-root` is the worktree from the repo's `[worktree-context]` block; never `cd`, and never let the session's working directory move. Paste the block into every delegated skill invocation and every sub-agent brief — delegated skills discover "the repo" from the workspace otherwise and would act on the main checkout.
 
@@ -48,25 +49,14 @@ For conventions (not gates) the `core` › *Precedence* model applies: workspace
 
 ## Project profile
 
-Everything project-specific this skill needs is a small set of facts, resolved once in Phase 0 and restated in the scope statement so the user can correct it. Resolve in this order and stop at the first source that answers a field:
-
-1. **Profile skill** — a project-scoped skill named `implement-feature-<project>-profile` (registry: `Projects/<Project>/implement-feature-<project>-profile/`, gated `[Project: …]` in its description). It is the authoritative, pre-verified answer and is organized by the phases below. Load it when the workspace matches its gate.
-2. **Workspace rulebooks** — `CLAUDE.md` / `AGENTS.md` / `GEMINI.md` at the workspace root and in each repo, `.agents/rules/`, and whatever canonical rulebook they point to (for example `.github/copilot-instructions.md`), plus `CONTRIBUTING.md`.
-3. **Project-scoped skills** — anything in the skill listing gated `[Project: …]` for this workspace, in particular `*-workflow`, `*-scaffold`, `*-verify`, `*-ship` and the pattern skills.
-4. **The repo itself** — `git remote get-url origin` for the host/tracker, CI YAML and `package.json` / `*.csproj` / `Makefile` for the real build, lint and test commands, and the PR template under `docs/` or `.github/`.
+Everything project-specific this skill needs is a small set of facts, resolved once in Phase 0 and restated in the scope statement so the user can correct it. Resolve them per `project-profile`: discovery (the base profile `<project>-profile`, then the Command profile `implement-feature-<project>-profile`, whose sections are keyed to the phases below), *Resolution order*, the *Shared fields* (layout, tracker, pattern skills, sibling chain, contract touchpoints, known drift, worktree setup) and *Overrides*. This skill's own fields:
 
 | Field | What to resolve | Fallback when nothing documents it |
 |-------|-----------------|-----------------------------------|
-| **Layout** | Single repo, or a workspace root holding several repos (each with its own `.git`); which repo is the API/producer and which the client/consumer | `find <root> -maxdepth 2 -name .git` |
-| **Tracker** | Azure DevOps Boards, GitHub Issues, GitLab, Jira, or none; org/project URL; the CLI (`az boards`, `gh issue`, `glab issue`) and whether it can read the discussion thread | Detect from the remote host; if no tracker, the user's description is the spec |
 | **Implementing ID** | Which ticket ID goes on branch, commit and PR (the leaf task/bug vs. the parent story) and how to find it in the relations | The ticket the user gave |
-| **Pattern skills per layer** | Which skills to load for an endpoint, data access, UI, forms, data fetching, routing, tests, background jobs, realtime | The repo's rulebook sections on those topics |
-| **Sibling chain** | The ordered list of layers a feature passes through in each repo, so research can trace one existing feature end to end | Derive it from one recent feature's commit (`git log --stat`) |
 | **Scaffold skills** | Project `*-scaffold` skills, if any | Copy the sibling |
 | **Verify** | Project `*-verify` skills, or the exact format / lint / build / test / e2e commands and any known flake behaviour | Commands from CI YAML and the rulebook |
 | **Ship** | Project `*-workflow` / `*-ship` skills: branch pattern, commit subject format, PR title, PR template, draft vs. ready, attribution trailers allowed or not, paired-PR linking | `feature/<id>-<slug>`, `#<id>: <imperative subject>`, draft PR, harness default for trailers |
-| **Contract touchpoints** | Anything shared between repos or with external consumers: generated API clients and their snapshot, shared enums/permission tables, event or hub names, locale rules | Workspace-root rulebook "contracts" section; else none known |
-| **Known drift** | Documented places where the docs or scaffolds lag the code | None known — trust the code |
 
 When a field has no source and no safe fallback, it becomes an *Open Question* in the plan, not a guess.
 
@@ -103,7 +93,7 @@ Research brief template (per repo):
 
 | Need | Load |
 |------|------|
-| Project facts for every phase | the `implement-feature-<project>-profile` skill, else the sources in *Project profile* |
+| Project facts for every phase | the `<project>-profile` and `implement-feature-<project>-profile` skills (`project-profile`), else the sources in its *Resolution order* |
 | Isolated worktree per repo: create, `[worktree-context]` block, hydrate, land, remove (Phase 0 and Phase 7) | `git-worktrees` › *Workspace Lifecycle*, invoked, not imitated |
 | Deep research before planning | [`/investigate`](../investigate/SKILL.md) |
 | Blind-spot pass on the plan (every plan, Phase 2b) | [`/what-am-I-missing`](../what-am-I-missing/SKILL.md) |
@@ -123,7 +113,7 @@ Research brief template (per repo):
 
 ## Phase 0 — Intake
 
-1. **Resolve the project profile** (see above) before touching the ticket. If a profile skill exists, load it now; its *Intake* section may refine the steps below.
+1. **Resolve the project profile** (see above) before touching the ticket. If profile skills exist, load the base profile and then this Command's profile now; the Command profile's *Intake* section may refine the steps below.
 
 2. **Fetch the ticket** (read-only). Pick the CLI the tracker provides and ask for relations/links so the parent and child items come along:
 
@@ -328,7 +318,7 @@ Write `<prefix>-walkthrough-<suffix>.md` at the workspace root:
 - Files changed per repo and why (grouped, not a raw diff).
 - Verification results — the summary line of each command, the migration check, any flakes ruled out and how.
 - Self-review outcome: spec-verification grades, unresolved code-review findings, and the blind-spot closure (each finding → the code and test that cover it, or why it was deferred), linking `<prefix>-what_am_i_missing-<suffix>.md`.
-- Manual verification steps generated with `/manual-testing` (environment, user to log in as, click path).
+- Manual verification: a link to the `<prefix>-manual_test_plan-<suffix>.md` that `/manual-testing` wrote, plus its start command and recommended login inline.
 - Open items for the user: tracker transitions not yet run, the second PR, drafted ticket comments, questions the plan left open. If CI goes red later → `/pr-fix-pipeline`.
 - **Worktree hand-off** (`git-worktrees` › *Workspace Lifecycle* step h), per repo: which branch holds the work; that the user's checkout is unchanged and on which branch; whether the worktree was removed (branch pushed, PR open → step g landed procedure ran) or kept and why; how to see the work (`git -C <repo> checkout <branch>` after stashing their own changes, or open the kept worktree directly). Manual testing runs from the kept worktree or after that checkout — nothing of the feature is in the main checkout.
 
@@ -342,7 +332,7 @@ In chat: link the walkthrough, give the hand-off line and list the open items. D
 
 | Topic | Use | Not |
 |-------|-----|-----|
-| Project facts | the `implement-feature-<project>-profile` skill, then rulebooks, project skills, the repo | memory of "how projects like this usually work" |
+| Project facts | the `<project>-profile` and `implement-feature-<project>-profile` skills, then rulebooks, project skills, the repo | memory of "how projects like this usually work" |
 | Ticket for branch/commit/PR | the implementing leaf task or bug; the story only when it has no suitable child | creating a task |
 | Ticket discussion | read via CLI when it can; otherwise ask the user to paste it | assuming the description is the whole spec |
 | Tracker writes | proposed in chat, run on a yes | silent assign / comment / transition |

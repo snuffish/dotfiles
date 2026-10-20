@@ -25,5 +25,5 @@ A shared contract that Commands depend on and that never runs on its own, such a
 _Avoid_: core utility, protocol, shared skill, lib, root skill
 
 **Profile**:
-Project-specific facts that one Command reads to adapt itself to that project, such as the PRIIS profile read by `/implement-feature`.
+Project-specific facts that a Command reads to adapt itself to that project. A **base profile** (`priis-profile`) holds the facts all of a project's Commands share; a **Command profile** (`implement-feature-priis-profile`, `code-review-priis-profile`) holds only what one Command needs and points to the base profile for the rest.
 _Avoid_: project config, project skill

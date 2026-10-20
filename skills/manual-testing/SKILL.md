@@ -1,17 +1,13 @@
 ---
 name: manual-testing
-description: Triggered by /manual-testing or requests like "how do I try this out", "how do I test this branch/PR", "which credentials do I log in with". Accepts an optional pull-request URL/ID or work-item ID and reads its description and acceptance criteria first. Derives a runnable manual test plan from the actual diff — environment setup, gotchas, test users, click paths, and a regression watchlist.
+description: Writes a runnable manual test plan artifact (<prefix>-manual_test_plan-<suffix>.md) for the current branch, a PR or a work item — environment setup, blocking gotchas, test logins, seeded records, risk-ordered click-path scenarios with checkboxes, a regression watchlist and what cannot be tested by hand. Reads the PR description, linked work item and acceptance criteria first, finds the counterpart PR in a sibling repo, then derives every scenario from the actual diff. Trigger on /manual-testing, "how do I try this out", "how do I test this branch/PR", "which credentials do I log in with", "what should I click to see this".
 ---
 
 # Skill: `/manual-testing` — Manual Test Plan From the Diff
 
-Produces the answer to *"how do I see this change working with my own eyes?"* — for the current branch, PR, or a named feature.
+Answers *"how do I see this change working with my own eyes?"* for the current branch, a PR or a named feature.
 
-The output is a **test plan a human executes**, not a summary of the code. Every scenario must end at something observable: a screen, a badge, a number, an email, a row in a table, an HTTP response.
-
-> **Never** enter planning mode and never produce an implementation plan. This skill reports; it does not change code.
->
-> **Never** fix defects you find while writing the plan. Note them in the regression watchlist and move on — the user asked how to test, not for a patch.
+The deliverable is a **test plan a human executes**, written as an artifact at the workspace root. It is not a summary of the code. Every scenario ends at something observable: a screen, a badge, a number, an email, a row in a table, an HTTP response.
 
 ---
 
@@ -21,295 +17,332 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 
 Read these before step 1:
 - `../_modules/core.md`: read-only until `/proceed`
-- `../_modules/artifact-protocol.md`: writes no artifact — the test plan is returned in chat
+- `../_modules/artifact-protocol.md`: writes `<prefix>-manual_test_plan-<suffix>.md` (suffix `<workItemId>-<slug>`, e.g. `-31071-unverified-addresses`; else the branch slug)
 - `../_modules/pr-counterpart.md`
 
-- Read-only: no code changes, no fixes for defects found while writing it.
+> [!CAUTION]
+> **ABSOLUTE RULES**
+> 1. **Artifact first.** Every run writes a new artifact through *Claim* and never overwrites another session's plan. The chat reply begins with its link and section anchors (§4).
+> 2. **Read-only.** Inspect with `git`, `cat`, `grep`, `ls` and read-only tracker CLIs. Never install, build, migrate, seed or start the app unless the user explicitly asks, because a half-run setup is worse than none. Never enter planning mode or produce an implementation plan.
+> 3. **Never invent** a URL, port, username, password, route or record. Quote the real value with a file link. When you cannot find it, write `not found — checked <where>`.
+> 4. **Never fix** a defect you find while writing the plan. It goes in the regression watchlist.
+> 5. **Label destructive setup** in the same sentence that recommends it ("recreate the database — **destructive**, wipes local data"). The user decides.
+> 6. **Secrets:** development-only values (seeded demo users, local container passwords, `.env.example`) may be quoted. For anything that looks production-grade, point at its location and do not print it.
 
 ---
 
-## 1. Triggering
+## 1. When to Use
 
-Invoke this skill when the user:
+Invoke when the user:
+- runs `/manual-testing`, with or without an argument;
+- asks how to try out, run, demo, verify or manually test the current branch, PR or feature;
+- asks which credentials, logins, seeded users, ports or URLs to use;
+- asks "what should I click to see this?" or "how do I reproduce this?".
 
-- Runs `/manual-testing`, with or without an argument.
-- Asks how to try out, run, demo, verify, or manually test the current branch / PR / feature.
-- Asks which credentials, logins, seeded users, ports, or URLs to use.
-- Asks "what should I click to see this?" or "how do I reproduce this?".
-
-The argument, when present, is a **pointer to the intent** — resolve it in Phase 0 before touching the diff:
+The argument is a **pointer to the intent**. Resolve it in Step 1 before touching the diff:
 
 | Argument | Meaning |
-| --- | --- |
-| A pull-request URL | Read that PR: description, acceptance criteria, linked work items, source branch |
-| A bare number (`18106`) | A PR ID in the current repo's remote |
-| `#30342`, `AB#30342` | A work item / issue ID — read it, then find its PR or branch |
-| A branch name | Diff that branch instead of `HEAD` |
+|---|---|
+| PR URL | That PR: description, linked work items, source branch |
+| Bare number (`18106`) | A PR id in the current repo's remote |
+| `#30342`, `AB#30342` | A work item / issue: read it, then find its PR or branch |
+| Branch name | Diff that branch instead of `HEAD` |
 | Free text (`the statistics tab`) | Narrow the plan to scenarios touching that area |
-| *(nothing)* | The current branch plus uncommitted changes — still resolve each repo's PR from its branch |
+| *(none)* | Current branch plus uncommitted changes. Still resolve each repo's PR from its branch |
+
+| Situation | Use instead |
+|---|---|
+| Finding bugs and convention breaches in the diff | [`/code-review`](../code-review/SKILL.md) |
+| Does the code cover every line of the story? | [`/spec-verification`](../spec-verification/SKILL.md) |
+| Lint, build and test gates | the project's verify skill |
 
 ---
 
-## 2. Guardrails
+## 2. Workflow
 
-| Rule | Why |
-| --- | --- |
-| **Do not run** installs, builds, migrations, seeders, or the app itself unless the user explicitly asks. | The user is about to do this themselves; a half-run setup is worse than none. Read-only inspection only (`git`, `cat`, `grep`, `ls`). |
-| **Flag destructive setup steps as destructive** and let the user decide. | "Recreate the database" wipes their local state. Say so in the same sentence you recommend it. |
-| **Never invent** a URL, port, username, or password. | An invented credential costs the user ten minutes of doubt. If you cannot find it, say `not found — check <where you looked>`. |
-| **Quote real values** found in the repo, with a file link. | Lets the user verify and lets them find the next one themselves. |
-| Secrets that are clearly **development-only** (seeded demo users, local container passwords, `.env.example` values) are fine to quote. **Real** secrets are not — if a value looks production-grade, point at its location instead of printing it. | |
+Each step feeds one part of the artifact:
 
----
+| Step | Feeds |
+|---|---|
+| 1. Resolve the intent | Context, scenario wording |
+| 2. Pin the scope | Context (branch and head per repo) |
+| 3. Diff → observable behaviour | Scenarios |
+| 4. Trace consumers | Regression watchlist |
+| 5. Find how to run it | Setup |
+| 6. Find logins and test data | Logins, Test data |
+| 7. Setup gotchas | Before you start, scenario preconditions |
 
-## 3. Phase 0 — Read the intent before reading the diff
+### Step 1 — Resolve the intent
 
-Skip only when invoked with no argument **and** the branch name/commit subjects already state the intent.
+Skip only when there is no argument **and** the branch name or commit subjects already state the intent.
 
-A diff tells you what changed. A PR description and its acceptance criteria tell you **what a human was supposed to be able to do afterwards** — which is exactly what a manual test plan asserts. Read them first; they turn "click the new tab" into "the AC says the selected-count must sit under Ja-svar, so verify that placement".
+A diff tells you what changed. The PR description and acceptance criteria tell you **what a human should be able to do afterwards**, which is exactly what a test plan asserts. They turn "click the new tab" into "the AC says the selected-count sits under Ja-svar, so verify that placement".
 
-### 3.1 Resolve the reference — delegated
+**Resolution is delegated.** [code-review](../code-review/SKILL.md) › Step 1 › *Pull-Request References* owns it. Follow it as written: URL parsing, resolving the PR from the current branch, the `az repos pr show` / `gh pr view` / `glab mr view` and `az boards work-item show` recipes, fetch failures and the offline fallback, and the trust rule (**description states intent, diff states truth**).
 
-**[code-review](../code-review/SKILL.md) → Step 1 → *Pull-Request References* owns this.** Follow it as written; do not restate it here. It covers:
-
-- parsing an ADO/GitHub/GitLab/Bitbucket PR URL into `{org}/{project}/{repo}/{prId}`;
-- **resolving the PR from the current branch when no URL was given** — per repo in a multi-repo workspace, plus walking work-item relations to find the counterpart PR in the sibling repo;
-- the `az repos pr show` / `gh pr view` / `glab mr view` fetch recipes, plus `az boards work-item show` for the linked work item where acceptance criteria usually live;
-- what to do when the fetch fails (auth error, missing CLI, blocked) and the offline fallback of reading the work-item id out of the branch name;
-- getting the PR's source branch checked out without clobbering a dirty tree;
-- the trust rule — **description states intent, diff states truth**.
-
-Run it **once per repo**. Two repos means two PRs, two descriptions, and usually two different work items — resolving only the one you are standing in gets you half the intent. This holds **even when the user pasted one PR link**. Code-review's *Counterpart PRs* step, backed by `pr-counterpart` › *Counterpart discovery*, finds the other half. A counterpart that was found adds its branch to the environment setup and its behaviour to the click paths. One that is *expected but missing* goes to the top of the plan, because that half's behaviour cannot be tested yet.
-
-Everything below is what *this* skill does with the result.
-
-### 3.2 What to extract, and what to do with it
+Run it **once per repo**, even when the user pasted one PR link. Then run code-review's *Counterpart PRs* step (backed by `pr-counterpart` › *Counterpart discovery*):
+- A **found** counterpart adds its branch to Setup and its behaviour to Scenarios.
+- An **expected but missing** half goes in *Before you start*, because that half's behaviour cannot be tested yet.
+- A **stacked** PR (targets another feature branch) means the local branch carries both PRs. Say which scenarios belong to which PR.
 
 | From the PR / work item | Use it for |
-| --- | --- |
-| Title + work-item ID | The plan's Context line, so the user knows they are testing the right thing |
+|---|---|
+| Title, ids, AC present or absent | Context |
 | **Acceptance criteria** | One scenario per criterion, in the AC's own words |
-| "How to test" / "Verification" sections | Fold in directly — the author already knows the click path |
-| Screenshots / mockups | The expected-result wording |
-| Explicit out-of-scope notes | The *Not manually testable* / not-covered section |
+| "How to test" / "Verification" sections | Fold in directly; the author knows the click path |
+| Screenshots / mockups | Expected-result wording |
+| Explicit out-of-scope notes | *Not manually testable* |
 | Linked bug reports | A reproduction scenario for the original defect |
 
-Applying code-review's trust rule to a **test plan** rather than a review:
+Applying the trust rule to a test plan:
+- AC promises behaviour the diff does not implement: still write the scenario, with the expectation *claimed but not implemented — expect this to fail*.
+- The diff changes user-visible behaviour the description never mentions: it earns a scenario, usually a high-risk one.
+- The description was written against an earlier revision: follow the diff and say the description is stale.
 
-- AC promises behavior the diff does not implement → still write the scenario, and mark its expected result *claimed but not implemented — expect this to fail*. A tester who finds it missing is the point.
-- The diff changes user-visible behavior the description never mentions → it earns a scenario anyway, usually a high-risk one.
-- Description written against an earlier revision → follow the diff and say the description is stale.
+The description is evidence, not an outline. Never let its structure or omissions shape the plan.
 
-Never let the description's structure or omissions shape the plan. It is evidence, not an outline.
+### Step 2 — Pin the scope
 
----
-
-## 4. Phase 1 — Determine scope
-
-Reuse the diff-gathering and branch-base discovery from [code-review](../code-review/SKILL.md) Step 1 rather than reinventing it — including its rule that a resolved PR's `targetRefName` *is* the base. Otherwise: the remote's default branch (never `@{u}` — on a feature branch that is its own remote copy and yields an empty diff), always three-dot syntax.
+Reuse code-review Step 1's diff and base discovery, including its rule that a resolved PR's `targetRefName` *is* the base. Otherwise use the remote default branch. Never use `@{u}`: on a feature branch that is its own remote copy and yields an empty diff. Always use three-dot syntax.
 
 ```bash
-git symbolic-ref --short refs/remotes/origin/HEAD   # e.g. origin/main → <base>
+git symbolic-ref --short refs/remotes/origin/HEAD   # → <base>
 git diff --name-status <base>...HEAD
-git diff --stat                      # uncommitted work counts too — the user is testing their working tree
-git log --oneline <base>...HEAD      # commit subjects usually name the work item / intent
+git diff --stat                                     # uncommitted work counts: the user tests what is on disk
+git log --oneline <base>...HEAD                     # subjects usually name the work item
 ```
 
-Include **uncommitted changes**. The user is testing what is on disk, not what is pushed.
-
-### Multi-repo workspaces
-
-If the workspace root holds several repos (each with its own `.git`), check every one:
+**Multi-repo workspaces:** check every repo.
 
 ```bash
 for d in */; do [ -d "$d/.git" ] && echo "$d $(git -C "$d" rev-parse --abbrev-ref HEAD)"; done
 ```
 
-A feature split across repos is only testable when **both** counterpart branches are checked out. State explicitly which branch each repo must be on, and if one is still on the integration branch, say so up front — that is usually the whole reason a manual test "doesn't show anything".
+A feature split across repos is testable only when **both** counterpart branches are checked out. State the branch each repo must be on. If one is still on the integration branch, lead with it: that is usually why a manual test "doesn't show anything". A repo with no PR is worth reporting too, because its half is either unpushed or not started.
 
-Phase 0 should already have resolved a PR per repo. If one repo produced no PR, that is worth reporting too: either its half is unpushed, or the counterpart work has not started.
+### Step 3 — Translate the diff into observable behaviour
 
----
+For each change, ask **who sees this, and where?** Discard changes with no observable consequence (refactors, renamed internals, test-only edits) and list them under *Not covered by design*, so the reader knows the plan is complete and not lazy.
 
-## 5. Phase 2 — Translate the diff into observable behavior
+| Change in the diff | What to test |
+|---|---|
+| New or changed endpoint, field, response shape | The screen that renders it, plus the empty/zero/null case |
+| New enum member or changed enum semantics | Each member's rendered label, and what the UI shows for `null` |
+| Validation added or relaxed | Submit the now-invalid input and read the message; submit the boundary value |
+| Required/optional flipped on a request field | The form that omits it: does it still submit? |
+| Permission / role / policy change | One role that **has** it and one that **does not** |
+| Background job, cron, scheduler | When it fires, and how to stop it to observe the pre-state |
+| Migration or data backfill | Pre-state and post-state on realistic data |
+| Notification, email, SMS | Where the dev mail/SMS catcher is |
+| New UI component | Loading, empty, error and long-content states; mobile width if the project cares |
+| One-off CLI / admin run | Dry-run, a limited run, the full run, a re-run (idempotence), the failure exit code |
+| **A signal that was removed** | Below. This is the highest-value case |
 
-For each change, ask: **who sees this, and where?** Discard anything with no observable consequence (pure refactors, renamed internals, test-only changes) — but say you discarded them, so the user knows the plan is complete rather than lazy.
-
-| Change in the diff | What to actually test |
-| --- | --- |
-| New/changed endpoint, field, or response shape | The screen that renders it; also the empty/zero/null case |
-| New enum member or changed enum semantics | Each member's rendered label, plus the value the UI shows when the field is `null` |
-| Validation rule added or relaxed | Submit the now-invalid input and read the message; submit the boundary value |
-| Required/optional flipped on a request field | The form that omits it — does it still submit? |
-| Permission / role / policy change | Log in as a role that **has** it and one that **does not** |
-| Background job, cron, scheduler | How long until it fires, and how to stop it firing so you can observe the pre-state |
-| Migration or data backfill | Run it on realistic data; verify the pre-state and post-state |
-| Notification, email, SMS | Where the dev mail/SMS catcher UI is |
-| New UI component | Loading, empty, error, and long-content states; mobile width if the project cares |
-| **A signal that was removed** | See below — this is the highest-value case |
-
-### Removed and repurposed signals
-
-The most valuable scenarios come from behavior the diff **stopped** producing. A field that used to be nulled, zeroed, clamped, or overwritten on some path — and no longer is — will silently change every consumer that read that value as a sentinel.
-
-Hunt for these deliberately:
+**Removed and repurposed signals.** A field that used to be nulled, zeroed, clamped or overwritten on some path, and no longer is, silently changes every consumer that read it as a sentinel. Hunt for these deliberately:
 
 ```bash
-# In the diff, look for deletions that assigned a sentinel
 git diff $(git merge-base HEAD <base>)...HEAD | grep -E '^-.*(= *null|= *now|= *0|= *(true|false)|\.Clear\(\)|= *\[\]|= *undefined)'
 ```
 
-For each hit, grep the whole codebase — **and any sibling repo** — for readers of that field, then check whether the diff also updated them. Every reader the diff did *not* touch is a test scenario and a probable regression.
+For each hit, grep the whole codebase **and any sibling repo** for readers of that field, then check whether the diff updated them. Each reader it did not update is a scenario and a probable regression. Deleted comments are strong evidence: a removed `// cleared to indicate X` names the contract that just broke.
 
-Deleted comments are strong evidence here: a removed line like `// cleared to indicate X` names the contract that was just broken.
+### Step 4 — Trace consumers of changed contracts
 
----
-
-## 6. Phase 3 — Trace consumers of changed contracts
-
-For every field, enum, route, or DTO the diff touched:
+For every field, enum, route or DTO the diff touched:
 
 ```bash
-grep -rn "<FieldName>" <source dirs> --include='*.<ext>'      # per language
-grep -rn "<fieldName>" <sibling repo>/src                     # cross-repo consumers
+grep -rn "<FieldName>" <source dirs> --include='*.<ext>'
+grep -rn "<fieldName>" <sibling repo>/src
 ```
 
-Sort the call sites into:
+Sort the call sites:
+- **Updated by this diff:** verify the new behaviour (Scenarios).
+- **Not updated, but gated** by a status check, flag or permission: verify the gate still holds (Scenarios).
+- **Not updated and ungated:** **regression watchlist**, with the file, line and what the user will see.
 
-- **Updated by this diff** → verify the new behavior.
-- **Not updated, but gated by something else** (a status check, a feature flag, a permission) → verify the gate still holds.
-- **Not updated and ungated** → **regression watchlist**. Name the file, the line, and what the user will see.
+Also check **merge order** when the change ships as several PRs (counterpart or stacked). If one half can land before the other, write down what the user sees in between. One example is a frontend reading a field that only the base backend PR adds. That goes in the watchlist.
 
-This phase is what turns a generic "click around the feature" list into a plan that finds real bugs.
+### Step 5 — Find how to run it
 
----
+Never guess. Look in this order and stop at a working command:
 
-## 7. Phase 4 — Discover how to run it
-
-Never guess. Look, in this order, and stop when you have a working command:
-
-1. **Project instructions** — `CLAUDE.md`, `AGENTS.md`, `README.md`, `CONTRIBUTING.md`, `docs/`, and any `.github/*-instructions.md`. A "Commands" or "Getting started" section usually has the whole answer.
-2. **Orchestrator** — a single entry point that starts everything: an Aspire AppHost, `docker-compose.yml`, `Procfile`, `Taskfile`, `Makefile`, `tilt`/`skaffold` config. Prefer it over starting services one by one, and say what it starts.
-3. **Scripts** — `package.json` scripts, `*.csproj`/`*.sln` run targets, `pyproject.toml`, `justfile`.
-4. **Ports and URLs** — read them from config rather than assuming defaults. Grep the orchestrator and launch profiles:
-
+1. **Project instructions:** `CLAUDE.md`, `AGENTS.md`, `README.md`, `CONTRIBUTING.md`, `docs/`, `.github/*-instructions.md`.
+2. **Orchestrator:** Aspire AppHost, `docker-compose.yml`, `Procfile`, `Taskfile`, `Makefile`, `tilt`/`skaffold`. Prefer it over starting services one by one, and say what it starts. Check whether it also starts the sibling repo (for example a frontend from `../`). If it does, the user needs **one** command, not two.
+3. **Scripts:** `package.json`, `*.csproj`/`*.sln` run targets, `pyproject.toml`, `justfile`.
+4. **Ports and URLs:** read them from config, never from habit.
    ```bash
    grep -rn "port\|Port\|localhost:\|applicationUrl" <orchestrator/config/launchSettings>
    ```
+5. **Prerequisites:** container runtime, toolchain pins (`.nvmrc`, `global.json`, Volta/`engines`), private feed auth.
 
-5. **Prerequisites** — container runtime, language/toolchain version pins (`.nvmrc`, `global.json`, Volta/`engines`), and whether a private package feed needs auth.
+Collect every URL the user needs: app, API and its docs, dashboard, mail catcher, database.
 
-Produce a table of every URL the user will need — app, API/API docs, admin/dashboard, mail catcher, DB.
-
-### Does the orchestrator already cover the sibling repo?
-
-Some orchestrators start a frontend from a sibling directory. If so, both branches run together and the user needs **one** command, not two. Check before telling them to run two dev servers.
-
----
-
-## 8. Phase 5 — Discover credentials and test data
-
-Search, in this order:
+### Step 6 — Find logins and test data
 
 ```bash
-# Seeded / fixture users, in seeders, migrations, and fixtures
-grep -rni "password\|CreateAsync(user\|AddUser\|createUser" <seed/fixture dirs>
-
-# E2E auth setup usually names the canonical test account
-ls e2e/ tests/e2e/ cypress/ playwright/ 2>/dev/null
+grep -rni "password\|CreateAsync(user\|AddUser\|createUser" <seed/fixture dirs>       # seeded users
+ls e2e/ tests/e2e/ cypress/ playwright/ 2>/dev/null                                 # e2e auth setup
 grep -rn "login\|password\|storageState" **/auth.setup.* 2>/dev/null
-
-# Local env templates and container passwords
-cat .env.example .env.local 2>/dev/null
-grep -rn "password\|PASSWORD" docker-compose*.yml <apphost config> 2>/dev/null
+cat .env.example .env.local 2>/dev/null                                              # env templates
+grep -rn "password\|PASSWORD" docker-compose*.yml <orchestrator config> 2>/dev/null  # container passwords
 ```
 
-Then report:
+Report:
+- **Logins:** identifier, password, role, and *what each one is for*. The role column matters most, because the user needs the account that reaches the changed screen. Mark one recommended account.
+- **MFA / SSO friction:** which accounts are frictionless and where codes go (mail catcher, log, fixed code). Recommend the frictionless one.
+- **Seeded records:** the concrete entity (ticket, order, operation) whose state matches each scenario, with the seeder line. Read the seeded state: a record that already meets a job's trigger condition will change on its own.
+- **Role mapping:** if the project documents personas, map the changed permission to one account that has it and one that does not.
+- **Reset snippets:** if a scenario consumes its precondition (verifies, closes, terminates), give the read-only query to inspect state and the local command to restore it.
 
-- A **table** of logins: identifier, password, role, and *what each one is for*. The role column is what makes it useful — the user needs the account that can reach the changed screen.
-- **Second-factor / SSO friction.** If some accounts have MFA enabled and others do not, say which ones are frictionless and where the code is delivered (dev mail catcher, log output, fixed test code). Recommend the frictionless account.
-- **Which seeded records to use.** Do not stop at "log in" — name the concrete demo entity (ticket, order, customer, operation) whose state matches the scenario, and cite the seeder line. Read the seeded state: a record that already satisfies a job's trigger condition will change on its own.
-- **Authorization mapping.** If the project documents personas/roles, map the changed permission to the account that has it and one that does not.
+### Step 7 — Setup gotchas
 
----
+Each item here pre-empts a "why doesn't it work?" question.
 
-## 9. Phase 6 — Setup gotchas
-
-Check these before writing the plan; each one is a "why doesn't it work" support question you can pre-empt.
-
-- **Migrations that can fail on existing local data.** Read any new migration for guard clauses that abort (`THROW`, `RAISERROR`, a thrown exception, a precondition count). Determine whether data produced by the *old* seeder satisfies them. If not, the user must recreate their database — and if the app's startup gates on migrations completing, nothing will boot. Lead with this.
-- **Seeders that changed.** If the diff touched the seeder, existing local data is stale in a way that matters.
-- **Background jobs.** If a cron/scheduled job mutates the state you want to observe, find its schedule and **which process hosts it**, then tell the user how to disable that process so they can see the pre-state. Also note the reverse: a job that fires within a minute may reproduce a scenario with zero manual steps.
-- **Feature flags / config toggles** that gate the new code.
+- **Migrations that fail on existing data.** Read new migrations for guard clauses (`THROW`, `RAISERROR`, thrown exceptions, precondition counts). If the old seeder's data violates them, the user must recreate the database (**destructive**). If startup gates on migrations, nothing boots. Lead with this.
+- **Migrations that change existing rows' meaning**, for example a new nullable column that makes every existing row "unverified" or "unset". That pre-state is often the easiest scenario. It also disappears once a backfill runs, so order scenarios around it.
+- **Seeder changes:** existing local data is stale in a way that matters.
+- **Background jobs** that mutate the observed state: find the schedule and **which process hosts it**, and how to disable that process. A job that fires within a minute may also reproduce a scenario with zero manual steps.
+- **Local fakes of external services** (mock clients, stub flags in `appsettings.Development.json`, MSW handlers). Read what the fake actually returns. It may make an outcome unreachable locally (a validator that never rejects), so name the outcomes that cannot be produced and how to force the others (config flag, SQL reset). Switching a fake to the real client is outward-facing: say so.
+- **Tools run outside the orchestrator** (CLI, scripts) may read a different connection string, secret or environment than the orchestrated services. Check the tool's own config and override chain before giving its command.
+- **Feature flags / config toggles** gating the new code.
 - **Caches** (in-memory, distributed, HTTP, RTK Query/SWR tags) that hide a change until invalidated or restarted.
-- **Codegen.** If an API schema file changed, note whether the client regenerates on dev/build automatically or needs an explicit command, and whether generated output is committed or ignored.
-- **Quality gates that will fail before the app starts** — a lint rule with zero-warning tolerance, a typecheck in the build. If the branch currently trips one, say so and name the file, since it will block `build` but often *not* `dev`.
+- **Codegen:** whether a changed API schema regenerates on dev/build or needs a command, and whether output is committed.
+- **Quality gates that fail before the app starts** (zero-warning lint, typecheck in build). Name the file. It often blocks `build` but not `dev`.
 
 ---
 
-## 10. Output format
+## 3. Artifact `<prefix>-manual_test_plan-<suffix>.md`
 
-Lead with the blocking gotcha if there is one. Otherwise lead with the setup command.
+Draft in the scratchpad, then publish with *Claim* (`publish_new_artifact`) so the owner marker is the first line. A re-run writes a new file (`…-2.md`) unless the user names an existing one to update.
 
-### Context
+````markdown
+<!-- artifact-owner: <host>-<model> · session <id> · created <ISO-8601> -->
+# Manual Test Plan — <title> (#<workItemId>)
 
-One or two lines, only when Phase 0 resolved a reference: PR title and ID, linked work item, and the branch each repo must be on. Ends the "am I even testing the right thing?" question before the user runs anything. Omit entirely for a plain current-branch run.
+| | |
+|---|---|
+| **Work item** | [#<id>](<url>) <title> · AC present / absent (PR descriptions used) |
+| **PRs** | <repo> [!<id>](<url>) → `<target>` · <repo> [!<id>](<url>) → `<target>` (stacked on !<id>) |
+| **Branches** | `<repo>`: `<branch>` @ `<sha>` · `<repo>`: `<branch>` @ `<sha>` · uncommitted changes: yes / no |
+| **Counterpart** | Found / Found, excluded / Expected but missing / None |
 
-### ⚠️ Before you start
+**At a glance:** <N> scenarios (<n> 🔴) · log in as `<account>` · blocker: <one line, or "none">
 
-Only if a destructive or blocking prerequisite exists. State what breaks, why, and the exact command — labelled destructive if it destroys data.
+> [!WARNING]
+> **Before you start.** Only when a destructive or blocking prerequisite exists: what breaks, why, the exact command, and **destructive** if it destroys data.
 
-### Setup
+## <a id="setup"></a>1. Setup
 
-The minimal command sequence, with the URL/port table.
+```bash
+<minimal command sequence, each read from the repo>
+```
 
-### Logins
+| Service | Address | Source |
+|---|---|---|
+| App | http://localhost:<port> | [<config>](<path>#L<n>) |
 
-The credentials table, with the recommended account marked.
+## <a id="logins"></a>2. Logins
 
-### What to test
+| | Account | Password | Role | Use for |
+|---|---|---|---|---|
+| ⭐ | `<id>` | `<dev password>` | <role / persona> | <which scenarios> |
 
-Numbered scenarios, ordered **most-likely-to-be-broken first**, not in diff order. Each one:
+## <a id="test-data"></a>3. Test data
 
-> **N. <observable outcome, phrased as a claim>**
-> **Preconditions** — role, seeded record, flag/job state. Omit the line if there are none.
-> **Steps** — numbered clicks/requests, concrete route paths, real record names.
-> **Expected** — what a correct build shows.
-> **⚠️ Watch for** — the specific wrong output this change could produce. Omit if the scenario is a plain happy path.
+| Record | Seeded state | Used in | Source |
+|---|---|---|---|
+| <name> | <state that matters> | S1, S4 | [<seeder>](<path>#L<n>) |
 
-Keep it to the scenarios that earn their place. Six sharp scenarios beat twenty that restate the diff.
+<inspect query and reset snippet, if a scenario consumes its precondition>
 
-### Regression watchlist
+## <a id="scenarios"></a>4. Scenarios
 
-Surfaces that read data whose meaning changed but were **not** updated by the diff. File link, line, and what the user will see. This is the section that finds bugs — do not drop it, and say "none found" if that is the honest answer.
+| # | Scenario | As | Risk |
+|---|---|---|---|
+| [S1](#s1) | <claim> | `<account>` | 🔴 |
 
-### Not manually testable
+### <a id="s1"></a>S1 · <observable outcome, phrased as a claim>
 
-Be explicit about what this plan cannot cover and why — migration behavior that needs a production-shaped backup, race conditions, timing windows, load-dependent paths, third-party integrations without a sandbox. Name the safety net that does cover it (integration test, dry-run script, staging) or flag that there is none.
+**As** `<account>` · **Record** <seeded record> · **Risk** 🔴 <why: the Step 3/4 finding behind it>
+**Given** <preconditions; omit the line if none>
+
+1. <step: concrete route, UI labels in the app's language>
+2. …
+
+**Expect**
+- [ ] <observable result>
+- [ ] …
+
+> ⚠️ **Watch for:** <the specific wrong output this change could produce; omit for a plain happy path>
+
+## <a id="watchlist"></a>5. Regression watchlist
+
+| Surface | Where | What you would see |
+|---|---|---|
+| <screen / API / merge order> | [<file>:<line>](<path>#L<line>) | <symptom> |
+
+## <a id="not-testable"></a>6. Not manually testable
+
+| What | Why not by hand | Safety net |
+|---|---|---|
+| <outcome / race / volume / third party> | <reason> | <test name, dry-run, staging — or "none"> |
+
+## <a id="not-covered"></a>7. Not covered by design
+
+- <refactor / test-only / internal change>: no observable effect.
+````
+
+**Layout rules**
+- **Context** always appears, even for a plain current-branch run. The branch per repo answers "am I testing the right thing?".
+- **Scenarios** are ordered **most-likely-to-be-broken first**, not in diff order. Each scenario is one observable claim. Six sharp scenarios beat twenty that restate the diff.
+- **Risk:** 🔴 high (removed signal, ungated consumer, contract, permission, migration) · 🟠 medium (changed behaviour on an updated path) · 🟢 low (happy path, cosmetic).
+- **Expect** lines are checkboxes, so the tester can tick them in the file.
+- Order scenarios that **consume** a precondition (a backfill run, a status change) after the ones that need it, and say so in their *Given*.
+- **Links:** code references are clickable `path#Lline` links in the host's format (`artifact-protocol` › *Link Formats*). In-document references use the HTML anchors (`#s3`, `#watchlist`).
+- Quote UI labels and messages in the app's language. Write the rest in the conversation's language.
+- *Before you start*, a scenario's *Given* and *Watch for*, and empty table rows are omitted when there is nothing to say. *Regression watchlist* is never omitted: write `None found — checked <what>` when that is the honest answer.
 
 ---
 
-## 11. Quality bar
+## 4. Chat Response
+
+Begin with the artifact link and anchors. Read the line numbers off the written file with `grep -n '^## \|^# \|^> \[!' <file>`:
+
+```markdown
+📄 **[<prefix>-manual_test_plan-<suffix>.md](<prefix>-manual_test_plan-<suffix>.md)**
+
+Key Sections:
+- 📄 [Before you start](…#L<n>) · [Setup](…#L<n>) · [Logins](…#L<n>) · [Test data](…#L<n>)
+- 📄 [Scenarios](…#L<n>): <N>, riskiest first
+- 📄 [Regression watchlist](…#L<n>) · [Not manually testable](…#L<n>)
+```
+
+Then, in at most five lines of prose: the blocker (if any), the one start command, the recommended login, and the top watchlist items. Nothing else: the artifact carries the rest. If *Claim* added a counter, say so ("`…-2.md`: the base name is owned by another session").
+
+---
+
+## 5. Before Sending
 
 A finished plan passes all of these:
 
-- Every command was **read from the repo**, not recalled from habit.
-- Every credential, port, and route is quoted from a file the user can open.
-- Every scenario names a **specific seeded record**, not "a ticket".
-- Scenarios are ordered by risk, and the riskiest one exists *because* of Phase 2/3 analysis — not because it was the biggest hunk.
-- The user can execute the whole thing without asking a follow-up question.
-- If a PR or work item was resolved, **every acceptance criterion** is either covered by a scenario or named under *Not manually testable* — none silently dropped.
-- Any gap between what the description promised and what the diff delivers is stated, not smoothed over.
-
-### Anti-patterns
+- [ ] Every command was **read from the repo**, not recalled from habit.
+- [ ] Every credential, port and route is quoted from a file linked in the artifact.
+- [ ] Every scenario names a **specific seeded record**, not "a ticket".
+- [ ] Scenarios are risk-ordered, and the riskiest exists *because of* Steps 3–4, not because it was the biggest hunk.
+- [ ] If a PR or work item was resolved, **every acceptance criterion** is a scenario or is listed under *Not manually testable*. None is silently dropped.
+- [ ] Every gap between what the description promised and what the diff delivers is stated, not smoothed over.
+- [ ] Each 🔴 scenario has a *Watch for* line.
+- [ ] Anchors resolve: the scenario index links match the `<a id>` tags.
+- [ ] The user can run the whole plan without asking a follow-up question.
 
 | Don't | Do |
-| --- | --- |
-| "Log in and verify the feature works." | Name the account, the route, and the expected value. |
-| Restating the diff as a checklist. | Test observable outcomes; skip invisible refactors (and say you skipped them). |
-| Assuming `localhost:3000`, `admin/admin`. | Read the config and the seeder. |
-| Listing every changed file as a scenario. | Group by user-visible behavior; risk-order it. |
-| Silently omitting what can't be checked by hand. | Put it under *Not manually testable*. |
-| Fixing a bug you spotted mid-plan. | Add it to the regression watchlist. |
-| Taking the PR description as the spec and skipping the diff. | Description = intent, diff = truth; test the gap between them. |
-| Ignoring a PR URL the user passed, or guessing its contents from the branch name. | Resolve it via code-review Step 1, or say the fetch failed and how to fix it. |
+|---|---|
+| "Log in and verify the feature works." | Name the account, the route and the expected value. |
+| Restate the diff as a checklist. | Test observable outcomes; list invisible changes under *Not covered by design*. |
+| Assume `localhost:3000`, `admin/admin`. | Read the config and the seeder. |
+| One scenario per changed file. | Group by user-visible behaviour; risk-order it. |
+| Silently omit what can't be checked by hand. | List it under *Not manually testable* with its safety net. |
+| Fix a bug spotted mid-plan. | Add it to the regression watchlist. |
+| Take the PR description as the spec and skip the diff. | Description = intent, diff = truth; test the gap between them. |
+| Ignore a PR URL, or guess its contents from the branch name. | Resolve it via code-review Step 1, or say the fetch failed and how to fix it. |
+| Put the plan in chat. | Write the artifact; the chat carries the link and the five-line summary. |

@@ -1,5 +1,7 @@
 # What our reviewers actually catch — GR.PRIIS.Backend
 
+> Registry copy of `GR.PRIIS.Backend/.claude/skills/priis-backend-review/` @ `970b7c19` (`origin/main`, 2026-10-19). The upstream wins; `/code-review` reads the upstream directly (`code-review-priis-profile`). Re-copy when it changes.
+
 Source: human review threads on the 50 newest active and completed PRs in GR.PRIIS.Backend as of 2026-10-17 (PR 18183 to 18721). 25 of them had human threads, 117 threads in total. Pipeline and system comments are excluded. Each entry gives the pattern, how it was detected, the fix that was accepted, and the PR it comes from (`!18659` = https://grutbildning.visualstudio.com/PRIIS/_git/GR.PRIIS.Backend/pullrequest/18659).
 
 Rough weight of the themes, by number of threads:

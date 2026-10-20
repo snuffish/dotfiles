@@ -41,14 +41,14 @@ A shared contract that several Commands depend on and that never runs on its own
 |---|---|---|
 | **Command** | Carries out a workflow, invoked by name or by a matching request (`/code-review`, `squash-ef-core-migrations`) | Yes |
 | **Reference** | Knowledge the model loads by topic, never run as a workflow (`modern-csharp`, `priis-backend-ef-core`) | No — inherits standards through `core` › *Precedence* |
-| **Profile** | Project-specific facts one Command reads to adapt to that project (`implement-feature-priis-profile`) | No |
+| **Profile** | Project-specific facts a Command reads to adapt to that project: a base profile (`priis-profile`) plus one Command profile per Command (`implement-feature-priis-profile`, `code-review-priis-profile`) | No |
 
 **Scope.** By default, **skills should be general, universal, and project-agnostic**. They should encapsulate reusable engineering patterns, architectural disciplines, workflows, and tools that function across any codebase, language, or stack.
 
 | Placement | Directory Target | Use Case | Naming Convention |
 |---|---|---|---|
 | **General (Default / Standard)** | `skills/<name>/` | Universal workflows, architectural patterns, tooling, or disciplines that apply to any project | Single kebab-case name (e.g. `organize`, `code-review`, `expressive`, `problem`) |
-| **Project-Scoped (Explicit Request Only)** | `skills/Projects/<Project>/<name>/` | Only when the user explicitly requests rules restricted to a single specific repository/product, and always for a Profile | Prefixed kebab-case (`backend-*`, `frontend-*`, `source-command-*`, `implement-feature-<project>-profile`) |
+| **Project-Scoped (Explicit Request Only)** | `skills/Projects/<Project>/<name>/` | Only when the user explicitly requests rules restricted to a single specific repository/product, and always for a Profile | Prefixed kebab-case (`backend-*`, `frontend-*`, `source-command-*`, `<project>-profile`, `<command>-<project>-profile`) |
 
 Never place a skill under `skills/_modules/`; that directory holds Modules only and must never contain a `SKILL.md`.
 
@@ -130,6 +130,8 @@ Invoke this skill whenever:
 #### Reference and Profile template
 
 Same frontmatter and title, then the content sections directly — no `## Modules` section. A project-scoped description starts with `[Project: <Project>]` and ends with its `Load ONLY when …` gate.
+
+A Profile follows `project-profile` (`skills/_modules/project-profile.md`, [ADR-0003](../../docs/adr/0003-profile-resolution-is-a-module.md)): the project's base profile `<project>-profile` answers the Module's *Shared fields*; a Command profile `<command>-<project>-profile` answers only the fields in that Command's *Project profile* table, points to the base profile by field name, and lists its *Precedence overrides*. Create the base profile first if the project has none. The Command it serves must list `project-profile` in its `## Modules`.
 
 ---
 

@@ -1,13 +1,13 @@
 ---
 name: implement-feature-priis-profile
-description: "[Project: GR.PRIIS] Project profile consumed by the general /implement-feature orchestrator — the PRIIS workspace's resolved facts for every phase: Azure DevOps intake rules, implementing-ID rule, which backend/frontend pattern, scaffold, verify and ship skills to load, the sibling chain per repo, the cross-repo contract touchpoints (SystemAction, enum metadata, swagger snapshot, SignalR), verified implementation and verification facts, ship conventions and known documentation drift. Load together with implement-feature when implementing a feature, work item or user story in the GR workspace. Load ONLY when working on the GR.PRIIS.Backend or GR.PRIIS.Frontend project or in the GR repository."
+description: "[Project: GR.PRIIS] Command profile consumed by the general /implement-feature orchestrator — the PRIIS facts only implementation needs, keyed to its phases: Azure DevOps intake rules, implementing-ID rule, scaffold, verify and ship skills, worktree branch, entity sibling patterns, verified implementation and verification facts, and ship conventions. Shared facts (layout, tracker, pattern skills, sibling chain, contract touchpoints, known drift, worktree setup) live in priis-profile. Load together with implement-feature and priis-profile when implementing a feature, work item or user story in the GR workspace. Load ONLY when working on the GR.PRIIS.Backend or GR.PRIIS.Frontend project or in the GR repository."
 ---
 
 # `implement-feature-priis-profile` — PRIIS project profile for `/implement-feature`
 
 Reference data for the general `implement-feature` skill (`/implement-feature`), the orchestrator. It does not own phases, gates or sub-agent rules — those are the orchestrator's. Each section below is keyed to the orchestrator's phase it feeds. Facts marked *verified <date>* were checked against the code on that date; when the code has moved on, follow the code and update the date here.
 
-Workspace: the `GR` folder that holds both product repos, `~/Projects/GR` by default (workspace root; itself a git repo that tracks only workspace files such as `.agents/` and `.github/`, and **ignores** both product directories — so it is a shell for `git-worktrees` repo resolution, and worktrees are created per product repo) holding `GR.PRIIS.Backend/` (.NET 10, FastEndpoints, EF Core, TUnit) and `GR.PRIIS.Frontend/` (React 18, TypeScript, Vite, RTK Query, TanStack Router, Playwright), each its own git repo on `origin/main`. Artifacts go to the workspace root.
+The shared PRIIS fields — the workspace, Layout, Tracker, PR tooling, Pattern skills per layer, Sibling chain, Contract touchpoints, Report language, Known drift, Worktree include list, Dependency hydration and Shared local services — are in the `priis-profile` skill › *Profile fields*. Load it first; nothing here restates them.
 
 ---
 
@@ -15,20 +15,12 @@ Workspace: the `GR` folder that holds both product repos, `~/Projects/GR` by def
 
 | Field | Value |
 |-------|-------|
-| **Layout** | Two repos under one workspace root. Backend is the producer; frontend consumes the committed OpenAPI snapshot. |
-| **Tracker** | Azure DevOps Boards, org `https://dev.azure.com/grutbildning` (never the `visualstudio.com` host — it fails auth). CLI: `az boards`. The CLI **cannot** read work-item discussion comments here. |
+| **Shared fields** | See the `priis-profile` skill › *Profile fields*. |
 | **Implementing ID** | Branch, commit and PR use the **Task or Bug** ID, never the parent story. For a User Story, look for a `Backend` / `Frontend`-tagged child task in the relations; if none exists use the story ID itself. Do not create one. |
-| **Pattern skills per layer** | See *Phase 1* below. |
-| **Sibling chain** | Backend: endpoint → library/entity method → entity + EF configuration → integration test class. Frontend: route file → feature component → endpoint builder + tags → schema → e2e test IDs. |
 | **Scaffold skills** | `priis-backend-scaffold`, `priis-frontend-scaffold` |
 | **Verify** | `priis-backend-verify` (incl. its architecture-tests phase), `priis-frontend-verify` (+ `npm run e2e`, which the verify skill lacks). |
 | **Ship** | `priis-backend-ship` (covers both repos), `priis-backend-workflow`, `priis-frontend-workflow`, `pr-summary`. Conventions in *Phase 6*. |
-| **Contract touchpoints** | `SystemAction` integer values, `[EmitOpenApiMetadata]` enum metadata (`x-enumMetadata`), `x-roleAccessRules`, the committed `openapi/swagger.json` snapshot, the SignalR hub URL `/realtime/account`, Swedish (`sv-SE`) UI text with English URL paths. |
-| **Known drift** | Repo-local `<repo>/.claude/skills/`, `<repo>/.claude/commands/` and both `.github/copilot-instructions.md` files are stale and diverge from the registry skills. The backend scaffold template shows `CreateClientAndLoginAsNoAccessUserAsync` (gone). Three legacy `'zod/v4'` imports remain in the frontend. Older entities thread `IReadOnlyPriisDbContext` through static methods. Follow the code. |
 | **Worktree branch** | `feature/<id>_<english-kebab-slug>` (`bugfix/`, `hotfix/`) — the same convention as *Phase 6*; never `worktree-<name>`. Base: freshly fetched `origin/main` in both repos. |
-| **Worktree include list** (`git-worktrees` › *Workspace Lifecycle* step c, *verified 2026-10-16*) | Backend, all gitignored: `source/GR.PRIIS.API/appsettings.local.json`, `source/GR.PRIIS.CLI/appsettings.local.json`, `source/GR.PRIIS.Worker/appsettings.local.json` — copy from the main checkout or the integration suite targets the default connection string. Frontend: none — every `source/priis-web/.env*` file is tracked. Do not copy `.claude/settings.local.json`. |
-| **Dependency hydration** (`git-worktrees` › *Workspace Lifecycle* step c) | Frontend: `(cd <repo-root>/source/priis-web && npm ci)` (~460 MB, minutes). Backend: none — `dotnet build` restores. Dependency symlinking: **off** (a lockfile change on the branch would otherwise mutate the main checkout's install); enable here if it is ever wanted. |
-| **Shared local services** (`git-worktrees` › *Workspace Lifecycle* step e) | The API on `http://127.0.0.1:5033` (contract sync, `codegen:refresh`), the Playwright dev server, and the local SQL database the integration suite uses. Shared between worktrees and with the user's own running app: a second concurrent run of the same repo verifies with targeted suites only and says so. |
 
 ### Precedence overrides for delegated PRIIS skills
 
@@ -52,32 +44,15 @@ Workspace: the `GR` folder that holds both product repos, `~/Projects/GR` by def
 
 ## Phase 1 — Research
 
-### Pattern skills
+Pattern skills, the sibling chain and the cross-cutting checks: the `priis-profile` skill › *Pattern skills* and *Cross-cutting and cross-repo checks*. What each check means for an implementation:
 
-| Scope | Load |
-|-------|------|
-| Backend — endpoint or library change | `priis-backend-fastendpoints`, `priis-backend-ef-core`, `modern-csharp`, `priis-backend-testing` |
-| Backend — background job / event / notification | `priis-backend-ef-core`, `priis-backend-notifications`, `modern-csharp` |
-| Backend — realtime | `priis-backend-signalr` |
-| Backend — refactor | `priis-backend-dry` plus the above |
-| Frontend — feature or page | `priis-frontend-component-patterns`, `priis-frontend-forms`, `priis-frontend-rtk-query`, `priis-frontend-routing`, `priis-frontend-testing` |
+- New `SystemAction` → both halves in Phase 3.
+- Entity change → a migration step in the plan, plus the migration check in Phase 4 (tests do not run migrations).
+- API shape change → a contract-sync step in the plan (Phase 3 *Contract sync*).
 
 ### Sibling patterns
 
 - Entities: `sealed partial` with `Create(CreationData)` and a nested `AsyncMutations` class in its own partial file, as in `Operation` and `MatchingTicket`. Older entities still thread `IReadOnlyPriisDbContext` through static methods — do not copy that.
-
-### Cross-cutting and cross-repo checks
-
-| Concern | Where it lives | Consequence |
-|---------|----------------|-------------|
-| New `SystemAction` | Enum: `source/GR.PRIIS.Library/Common/Users/AccessRules/Actions/SystemAction.cs` (`[Display(Name = "…")]` is the Swedish label). Grants: `AccessRules/Roles/<Role>AccessRules.cs` → `AllowedActions`. | Two-repo change — see Phase 3. |
-| Entity change | Entity + `source/GR.PRIIS.Library/DataAccess/Migrations` | Migration step in the plan, plus the migration check in Phase 4 (tests do not run migrations). |
-| API shape change (request/response/enum) | Frontend `source/priis-web/openapi/swagger.json` snapshot | Contract-sync step in the plan; backend PR merges first or the frontend branch carries the snapshot. |
-| Enum exposed to the frontend | `[EmitOpenApiMetadata]` on the backend enum; frontend facade `src/enums/<enum>.ts` is scaffolded on first codegen | Both repos. |
-| SignalR hub URL `/realtime/account` | Fixed contract | Do not change without coordinating both repos. |
-| Notification / job | `priis-backend-notifications` | TickerQ job + handler + definition. |
-
-Cross-layer mapping for this stack (`core` › *Codebase investigation*): backend ↔ frontend means DTO synchronization, route paths, payload serialization and the RTK Query hooks; domain ↔ persistence means EF Core mappings, migrations, foreign keys and validation rules.
 
 ---
 

@@ -6,6 +6,8 @@ argument-hint: "[PR id | PR URL | work item id | branch] [--base <ref>] [--live]
 
 # /priis-backend-review — Backend code review
 
+> Registry copy of `GR.PRIIS.Backend/.claude/skills/priis-backend-review/` @ `970b7c19` (`origin/main`, 2026-10-19). The upstream wins; `/code-review` reads the upstream directly (`code-review-priis-profile`). Re-copy when it changes.
+
 A review here is a hunt for the things our own reviewers keep finding, not a generic lint pass. The catalog of what they found in the last ~50 PRs, with the fix that was accepted each time, is in [references/lessons-from-prs.md](references/lessons-from-prs.md). Read it once per review session; the passes below point into it.
 
 **Invariants.** The review is read-only: no edits, no checkouts of the main working tree, no `git stash push`, no commits, no installs, builds or test runs (PR builds compile and run the tests, `/priis-backend-verify` covers format and the grep-able anti-patterns). The only git writes are `git fetch`, `git stash create` (one unreferenced commit object, nothing else) and `git worktree add/remove/prune` on a review worktree. Never start fixing what you found unless the user asks. Every Blocking or Should-fix finding is verified (Step 4) before it is reported. Posting to ADO needs explicit approval (Step 6).
