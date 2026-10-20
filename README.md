@@ -16,6 +16,7 @@ Personal dotfiles: modular Bash setup, Neovim (LazyVim), tmux, WezTerm, Ghostty 
 | `vscode/` | VS Code settings and keybindings |
 | `autohotkey/` | AutoHotkey scripts for Windows |
 | `skills/` | Claude Code agent skills |
+| `claude/` | Claude Code statusline script |
 | `docs/`, `GLOSSARY.md` | ADRs and agent docs |
 
 ## Setup
@@ -35,4 +36,7 @@ ln -sf ~/.terminal/tmux/tmux.conf ~/.tmux.conf
 
 # WezTerm
 mkdir -p ~/.config/wezterm && ln -sf ~/.terminal/wezterm/wezterm.lua ~/.wezterm.lua
+
+# Claude Code statusline (also set "statusLine": { "type": "command", "command": "bash ~/.claude/statusline.sh" } in ~/.claude/settings.json)
+mkdir -p ~/.claude && ln -sf ~/.terminal/claude/statusline.sh ~/.claude/statusline.sh
 ```
