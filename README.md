@@ -1,5 +1,23 @@
 # Snuffish dotfiles
 
+Personal dotfiles: modular Bash setup, Neovim (LazyVim), tmux, WezTerm, Ghostty and IdeaVim configs, plus Claude Code agent skills.
+
+## What's inside
+
+| Path | Description |
+| --- | --- |
+| `__init__.bash`, `*.bash` | Bash entry point and modules (aliases, git, docker, dotnet, azure, pulumi, fzf, network, iot/esp32, …) |
+| `utils/`, `installer/` | Helper scripts and tool installers |
+| `nvim/` | Neovim config based on LazyVim |
+| `tmux/` | tmux config and plugins |
+| `wezterm/` | WezTerm config |
+| `ghostty.bash` | Ghostty helpers |
+| `.ideavimrc` | IdeaVim (JetBrains) config |
+| `vscode/` | VS Code settings and keybindings |
+| `autohotkey/` | AutoHotkey scripts for Windows |
+| `skills/` | Claude Code agent skills |
+| `docs/`, `GLOSSARY.md` | ADRs and agent docs |
+
 ## Setup
 
 Run this in the terminal: `echo "source ~/.terminal/__init__.bash" >> ~/.bash_profile`
