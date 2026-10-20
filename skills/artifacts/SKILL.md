@@ -19,10 +19,6 @@ Read these before step 1:
 
 ---
 
-## When to Use
-- The user issues `/artifacts`.
-- The user asks: *"Show my recent plans"*, *"Which artifacts exist?"*, or *"Target an artifact"*.
-
 ## Discovery Protocol
 
 ### Step 1: Scan Workspace-Root Artifacts

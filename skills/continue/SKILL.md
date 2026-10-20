@@ -30,8 +30,7 @@ Read these before step 1:
 
 ## 1. When to Use
 
-Invoke this skill whenever:
-- The user runs `/continue`, with or without arguments. It is user-invoked only: another session may still be running the same work, and only the user knows whether it is safe to take over.
+`/continue` is user-invoked only (`disable-model-invocation`): another session may still be running the same work, and only the user knows whether it is safe to take over.
 
 ### When *not* to use
 

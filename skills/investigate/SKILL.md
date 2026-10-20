@@ -1,6 +1,6 @@
 ---
 name: investigate
-description: Deep read-only research, discovery, and architectural reconnaissance pass that establishes ground truth before designing a solution. Traces symbols, maps call flows and blast radius, uncovers prior art and conventions, surfaces cross-layer constraints, weighs solution options, and builds an evidence-backed confidence ledger. Writes the host-prefixed investigation artifact (<prefix>-investigation-<suffix>.md) consumed by /plan. Trigger whenever the user asks to "research this", "how does X work before we change it", "what would it take to add Y", "scope this out", "explore this feature", "is this feasible", or runs /investigate (bare or with a topic). Strictly read-only; never writes code or modifies workspace state.
+description: "Deep read-only research before designing a change: traces symbols, maps call flows and blast radius, uncovers prior art and conventions, surfaces cross-layer constraints, weighs options, and writes an evidence-backed `<prefix>-investigation-<suffix>.md` that /plan builds on. Use for /investigate, \"research this\", \"how does X work before we change it?\", \"what would it take to add Y?\", \"scope this out\", \"is this feasible?\". Not for a quick lookup such as \"where is X defined?\" (just search), something already failing (/problem), or choosing between known options (/suggestion)."
 ---
 
 # Skill: `/investigate` — Pre-Plan Research & Discovery
@@ -34,12 +34,6 @@ Read these before step 1:
 ---
 
 ## 1. When to Use
-
-Invoke this skill whenever:
-- The user issues `/investigate` (bare or with a topic).
-- The user asks: *"Research this"*, *"How does X work before we touch it?"*, *"What would it take to add Y?"*, *"Scope this feature out"*, *"Where is Z defined?"*, or *"Is this approach feasible?"*.
-- A feature request or issue description has arrived and the structural blast radius is still undefined.
-- An attempt at `/plan` stalled due to missing context or unverified architectural dependencies.
 
 ### Skill Neighborhood & Routing
 

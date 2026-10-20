@@ -21,10 +21,6 @@ Read these before step 1:
 
 ## 1. When to Use
 
-Invoke this skill whenever:
-- The user runs `/create-skill` (with or without arguments).
-- The user asks to *"create a new skill"*, *"scaffold a skill"*, *"add a skill for X"*, or *"author a new skill"*.
-
 ### When *not* to use
 
 A shared contract that several Commands depend on and that never runs on its own is a **Module**, not a skill. Write it as `skills/_modules/<name>.md` (plain markdown, no frontmatter, never symlinked; see [ADR-0001](../../docs/adr/0001-modules-live-outside-skill-loaders.md) and [ADR-0002](../../docs/adr/0002-module-paths-relative-to-real-skill-folder.md)) and add it to the `## Modules` section of each Command that uses it.
@@ -87,18 +83,20 @@ Read these before step 1:
 - `../_modules/core.md`<: read-only until `/proceed` — for research, review and diagnostic Commands>
 - `../_modules/artifact-protocol.md`: writes `<prefix>-<artifact_name>-<suffix>.md`   <or: writes no artifact — reason>
 - `../_modules/git-worktrees.md`<: snapshot by default | workspace by default — only if the Command reads or edits a repository>
+- `../_modules/pr-host.md`   <only if the Command reads a pull request or work item>
 - `../_modules/pr-counterpart.md`   <only if the Command resolves a pull request>
 
 <Command-specific rules, as bullets>
 
 ---
 
-## 1. When to Use
+## 1. When *not* to use
 
-Invoke this skill whenever:
-- The user runs `/<name>`.
-- [Specific trigger phrase 1]
-- [Specific trigger phrase 2]
+| Situation | Use instead |
+|---|---|
+| <a request that sounds similar but belongs to a neighbour> | [`/<neighbour>`](../<neighbour>/SKILL.md) |
+
+(Trigger phrases belong in the `description`, not here: the router sees only the description.)
 
 ---
 

@@ -30,11 +30,6 @@ Read these before step 1:
 
 ## 1. When to Use
 
-Invoke this skill whenever:
-- The user runs `/spec-verification [work-item URL | id | PR URL | branch | spec file]`.
-- The user asks "verify the spec/story/ticket against this implementation", "does this do what #NNNN asks", "check the acceptance criteria", "what did we miss from the story", "requirements coverage/traceability".
-- A `/code-review` Spec axis found gaps and the user wants the full picture rather than samples.
-
 | Situation | Use instead |
 |---|---|
 | Finding bugs and convention breaches in the diff | [`/code-review`](../code-review/SKILL.md) (its Spec axis samples; this skill walks every line) |
@@ -66,7 +61,7 @@ az boards work-item show --id <id> --org <org-url> --expand all -o json   # fiel
 - Record the **revision and last-changed date** in the header: a spec that changed after the branch was cut explains "drift" findings.
 - **Follow every relation** (`System.LinkTypes.Hierarchy-Reverse` parent, `Hierarchy-Forward` children, `Related`, `Dependency-Forward` successor). Fetch each one's title, type, state and first lines of description. This is how you tell *deferred* from *missing*: a child task "PDF-export (broken out)" or a successor story "Rapport …" moves those spec lines to ↗, and a related bug may already name a known gap.
 - **Discussion comments** often carry product decisions. Try `az devops invoke --area wit --resource comments --route-parameters project=<p> workItemId=<id> --api-version 7.1-preview.4`; the CLI may reject preview versions (*"could not convert string to float"*) and `az rest` may answer with a sign-in page. If both fail, **say so in the header** instead of pretending the description is the whole spec.
-- **Wiki plan pages** referenced by the item (`/Utvecklingsplaner/...`): `az devops wiki page show --wiki <name> --path "<path>" --include-content`; an empty `content` means not readable — say so.
+- **Wiki plan pages** referenced by the item (e.g. `/<WikiSection>/<page>`): `az devops wiki page show --wiki <name> --path "<path>" --include-content`; an empty `content` means not readable — say so.
 - **PR descriptions** are the *authors'* statement of intent, not the spec. Keep them as a separate column of evidence: where PR text and story disagree, the story wins for grading and the disagreement is itself a row (⚠ or ❔).
 
 ### Step 2: Pin the implementation
@@ -85,9 +80,9 @@ git -C <repo> status --short | wc -l                        # dirty?
 
 Turn prose into one row per checkable claim, numbered by section (A1…, B1…, C1…). Typical sections:
 
-- **A. Behaviour** — lifecycle (create / save-and-return / close), who may do what, notifications and their content, time windows, guards ("must not X while Y"), list columns, search fields, filters, "Mina/Alla" splits, visibility per persona, hide/show rules.
+- **A. Behaviour** — lifecycle (create / save-and-return / close), who may do what, notifications and their content, time windows, guards ("must not X while Y"), list columns, search fields, filters, "mine / all" splits, visibility per persona, hide/show rules.
 - **B/C. Fields** — one row per field: label, required/optional, control type (select / multiselect / datepicker / textarea), **every option value**, **every max length**, defaults, derivation ("fetched automatically from …").
-- **Deferred markers** — lines the spec itself tags (*"senare user stories"*, *"önskvärt"*, *"later"*, *"nice to have"*) or that a linked child/successor owns. Keep them as rows graded ↗ with the owning item id; do not drop them.
+- **Deferred markers** — lines the spec itself tags (*"later"*, *"nice to have"*, *"a later user story"*, or the same words in the spec's own language) or that a linked child/successor owns. Keep them as rows graded ↗ with the owning item id; do not drop them.
 - **Self-contradictions** — when two sentences of the spec disagree (e.g. "must not see status" followed by "sees number, reason, handler, status"), make one ❔ row that quotes both, states what the code does, and asks product to pick. Never silently choose a side.
 
 ### Step 4: Grade every line against the code
@@ -97,12 +92,12 @@ For each row, find the evidence in **every layer that enforces it** and open it 
 | Claim type | Where to look |
 |---|---|
 | Option list / label | backend enum `[Display(Name)]` members; frontend enum facade / `…Names` map; the control that renders it (combobox / radio / multiselect) |
-| Max length / required | backend `FieldLimitConstants` (or equivalent) + request validator + entity config; frontend schema (`zod`/`yup`) + generated constants; the DB column |
+| Max length / required | the backend's field-limit constants + request validator + entity config; frontend schema (`zod`/`yup`) + generated constants; the DB column |
 | Date rule ("today or future") | backend domain rule with time zone; frontend `minDate` + schema; what happens to an unchanged stored past date on edit |
 | Permission / visibility | role → action grants; endpoint policies; per-row predicates; the restricted DTO's field list (what is *absent* matters) |
-| List column / filter / search | the list endpoint's projection, `CreateFilter` / predicate builder, the request record; the frontend column definitions and filter bar |
+| List column / filter / search | the list endpoint's projection, its filter / predicate builder, the request record; the frontend column definitions and filter bar |
 | Lifecycle rule | the aggregate method (`Close`, `Update`, …) and its tests; the endpoint that calls it; guards in sibling endpoints that bypass the aggregate (raw SQL cascades, bulk updates) |
-| Notification content | the sender's `BuildContent`: which facts/notes are included, which roles receive it, and under which condition |
+| Notification content | the notification sender's content builder: which facts/notes are included, which roles receive it, and under which condition |
 | Hide-when-empty / UI rules | the component and the helper it uses; whether the rule is per field or per section |
 
 Grade with this legend and nothing else:

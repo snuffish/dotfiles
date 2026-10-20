@@ -35,13 +35,6 @@ Read these before step 1:
 
 ## 1. When to Use
 
-Invoke this skill whenever:
-- The user runs `/organize` (bare or with a target path).
-- The user asks to *"organize these files"*, *"clean up this folder structure"*, *"separate concerns in folder X"*, *"modularize this messy directory"*, or *"how should we structure this subsystem?"*.
-- A directory has become a flat dumping ground of mixed concerns (e.g., components, static assets, heavy datasets, hooks, types, and styles in one flat directory).
-- A monolithic helper file (`utils.ts`, `helper.cs`, `common.py`) has become a kitchen-sink file containing unrelated responsibilities.
-- Files need relocation across projects, libraries, or architectural layers.
-
 ### When *not* to use — pick the right neighbor
 
 | Situation | Correct skill |

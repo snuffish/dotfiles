@@ -58,15 +58,6 @@ Modifiers combine: `/squash-code-review deep feedback @a.md @b.md`.
 
 ---
 
-## 1. When to Use
-
-Invoke this skill whenever:
-- The user runs `/squash-code-review`.
-- The user asks to squash, merge, combine, reconcile or consolidate two or more code reviews.
-- The user asks which of two reviews is right about a finding they disagree on, across the whole review.
-
----
-
 ## 2. Core Protocol & Workflow
 
 ### Step 1 — Resolve the sources

@@ -34,12 +34,6 @@ Read these before step 1:
 
 ## 1. When to Use
 
-Invoke when the user:
-- runs `/manual-testing`, with or without an argument;
-- asks how to try out, run, demo, verify or manually test the current branch, PR or feature;
-- asks which credentials, logins, seeded users, ports or URLs to use;
-- asks "what should I click to see this?" or "how do I reproduce this?".
-
 The argument is a **pointer to the intent**. Resolve it in Step 1 before touching the diff:
 
 | Argument | Meaning |

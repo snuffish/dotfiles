@@ -19,15 +19,6 @@ Read these before step 1:
 
 ---
 
-## 1. When to Use
-
-Invoke this skill whenever:
-- The user types `/plan` (either bare or followed by instructions / suffix).
-- The user asks to *"open the plan"*, *"show me the plan"*, *"view the implementation plan"*, or *"link to the plan"*.
-- The user asks to draft a new plan or update the existing plan for a feature or task.
-
----
-
 ## 2. The Plan Contract
 
 ### Status values

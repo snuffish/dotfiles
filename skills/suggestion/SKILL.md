@@ -1,6 +1,6 @@
 ---
 name: suggestion
-description: Answers a question with ranked, evidence-backed suggestions and approaches — "how should I do X", "what's the best way to handle Y", "which option would you pick", "give me some ideas for Z". Gathers the relevant codebase and convention context, enumerates viable approaches, weighs trade-offs against the project's actual constraints, and gives one clear recommendation. Bare /suggestion answers briefly in chat with no artifact; /suggestion deep widens the research for cross-cutting decisions and writes a workspace-root artifact (<prefix>-suggestion-<suffix>.md) with a short linked chat summary. Read-only — never implements the chosen approach without /proceed.
+description: "Answers an open \"how should I do X?\" with ranked, evidence-backed approaches and one clear recommendation, weighed against the project's actual code and conventions. Use when nothing is chosen yet: /suggestion, \"what's the best way to handle Y?\", \"which option would you pick?\", \"is there a better way to do this?\", \"give me some ideas for Z\". Bare /suggestion answers in chat; /suggestion deep researches cross-cutting decisions and writes `<prefix>-suggestion-<suffix>.md`. Not for stress-testing an approach already chosen (/what-am-I-missing) or checking stated facts against docs (/verify-assumptions). Read-only until /proceed."
 ---
 
 # Skill: `/suggestion` — Recommended Approaches & Suggestions
@@ -24,11 +24,6 @@ Read these before step 1:
 ---
 
 ## 1. When to Use
-
-Invoke this skill whenever:
-- The user runs `/suggestion <question>` or `/suggestion deep <question>`.
-- The user asks an open advisory question: *"How should I …?"*, *"What's the best way to …?"*, *"Which approach would you recommend for …?"*, *"Any suggestions for …?"*, *"Give me a few ideas / options for …"*, *"Is there a better way to do this?"*, *"Which library / pattern / structure should I use for …?"*.
-- The user has a draft approach in mind and wants alternatives compared against it before committing.
 
 ### Modes
 

@@ -26,11 +26,6 @@ Read these before step 1:
 
 ## 1. When to Use
 
-Invoke this skill whenever:
-- The user runs `/git-worktrees <request>`, or bare `/git-worktrees`.
-- A prompt that invokes no other Command contains `/git-worktrees` anywhere: "Merge PR 123 & 456 /git-worktrees".
-- The user asks to do something "in a worktree", "in a separate worktree" or "without touching my checkout".
-
 ### When *not* to use
 
 - The prompt starts with another Command. That Command handles the token.

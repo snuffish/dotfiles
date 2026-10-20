@@ -1,6 +1,6 @@
 ---
 name: plan-review
-description: "Conducts a thorough, read-only architectural and technical review of an implementation plan, design proposal, or PR without executing or modifying code. STRICT INVARIANT: NEVER proceeds or implements changes without an explicit /proceed command."
+description: "Reviews an implementation plan or design proposal before any code is written: fit with the architecture and the project's conventions, missing edge cases, security and authorization, data and migration safety, test and verification coverage. Gives a READY / NEEDS REVISION / BLOCKED verdict with findings by severity. Use for /plan-review, \"review this plan\", \"does this plan make sense?\", \"poke holes in this design\". Not for a code diff or PR (/code-review). Read-only until /proceed."
 ---
 
 # Skill: `/plan-review` — Strict Plan & Design Review
@@ -16,6 +16,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 - `../_modules/core.md`: read-only until `/proceed`
 - `../_modules/artifact-protocol.md`: references and manages `<prefix>-implementation_plan-<suffix>.md` at the **workspace root**
+- `../_modules/project-profile.md`: base profile only (no Command profile); reads *Pattern skills per layer*, *Contract touchpoints*, *Sibling chain* and an optional *Plan-review checks* field
 
 ---
 
@@ -32,15 +33,6 @@ Read these before step 1:
 >    /proceed
 >    ```
 >    **NEVER proceed without an explicit `/proceed` command from the user.**
-
----
-
-## 1. When to Use
-
-Invoke this skill whenever:
-- The user issues `/plan-review` (bare or with a specific plan suffix).
-- An `<prefix>-implementation_plan-<suffix>.md` has been drafted and needs a rigorous sanity check before execution.
-- The user asks: *"Does this plan make sense?"*, *"Review this approach"*, or *"Check for design flaws"*.
 
 ---
 
@@ -62,42 +54,37 @@ Invoke this skill whenever:
    - If an argument or suffix was supplied (e.g. `/plan-review 18176`, `/plan-review begar-prefix`), target that specific plan artifact.
    - If invoked bare, check for matching plans via `ls -lt <prefix>-implementation_plan-*.md` at the workspace root. If multiple exist, match against the current branch or ask the user to specify.
 2. If reviewing a branch, PR, or code diff, locate the relevant files or work items (composing with `code-review` principles if reviewing already-written code).
-3. Read the relevant project rulebooks and conventions:
-   - Root rulebook: [CLAUDE.md](CLAUDE.md) (or [GEMINI.md](GEMINI.md) under Antigravity)
-   - Backend guidelines: [copilot-instructions.md](GR.PRIIS.Backend/.github/copilot-instructions.md)
-   - Frontend guidelines: [copilot-instructions.md](GR.PRIIS.Frontend/.github/copilot-instructions.md)
+3. Read the project's own rules, per `core` › *Precedence*: the workspace rulebooks (`CLAUDE.md`, or `GEMINI.md` under Antigravity, and any rulebook they point to, such as `.github/copilot-instructions.md`), the project-scoped References for the layers the plan touches, and the project's base profile when one matches the workspace (`project-profile` › *Discovery*). The profile's *Pattern skills per layer*, *Contract touchpoints* and *Plan-review checks* fields name the concrete conventions to check below.
 
 ### Step 2: Evaluate Against Core Pillars
 
 Examine the proposal across five core evaluation dimensions:
 
-#### 1. Architecture & Domain Modeling (DDD)
-- Are aggregate boundaries and entities respected?
-- Is domain logic housed within entities or nested `AsyncMutations` domain services rather than leaking into API endpoints or DTOs?
-- Does the design avoid antipatterns (e.g. improper inheritance where composition is needed, or bypassing private invariants)?
+#### 1. Architecture & Domain Modeling
+- Are aggregate or module boundaries respected, and does domain logic live in the domain layer rather than leaking into endpoints, controllers or DTOs?
+- Does the design follow the nearest existing feature of the same kind (the profile's *Sibling chain*), or explain why it departs from it?
+- Does it avoid antipatterns such as inheritance where composition is needed, or bypassing an entity's own invariants?
 
-#### 2. Project Rulebook & Code Standards
-- **Classes:** Are classes marked `sealed` by default?
-- **Interfaces:** Are interfaces strictly reserved for external I/O (SMS, Email, third-party clients) or Library boundary decoupling, avoiding unnecessary domain-layer interfaces?
-- **FastEndpoints:** Are endpoints inheriting from `ExtendedEndpoint`, using `Policy(SystemAction...)`, returning `SystemResult`, and using `SendAndSaveChangesAsync`?
-- **EF Core:** Do read queries use `.Select()` projections rather than eager `.Include()` chains? Are temporal tables, change tracking, and concurrency handled properly?
-- **Frontend:** Does it follow Radix UI themes, React Hook Form + Zod v4 (`from 'zod'` — the `/v4` subpath is legacy — with `zodResolver` from `@hookform/resolvers/zod`), TanStack Router file-based conventions, and centralized test IDs?
+#### 2. Project Conventions
+- Does every new endpoint, query, component, form and test follow the project's pattern skills for its layer, and the rulebook's language idioms (e.g. `modern-csharp`, `typescript-conventions`)?
+- Are new abstractions justified (an interface for real I/O or a library boundary, not for every class)?
+- Does it touch a cross-repo contract (the profile's *Contract touchpoints*), and does it update both sides of it?
 
 #### 3. Security, Authorization & Access Rules
-- Are appropriate `SystemAction` policies assigned to endpoints?
-- Does data access route through `.ApplyAccessRules()` or delegation rules where tenant/user scoping is required?
-- Are there any privilege escalation risks or unprotected write paths?
+- Does every new endpoint or write path carry the project's authorization mechanism, and is data scoped to the caller (tenant, owner, role)?
+- Are there privilege escalation risks or unprotected write paths?
 
 #### 4. Edge Cases, Resilience & Invariants
-- What happens on validation failure? Are error messages in Swedish (`sv-SE`)?
-- Are database constraints, cascade deletes, or foreign key restrictions satisfied?
-- Are cancellation tokens (`CancellationToken ct`) threaded through all asynchronous calls?
-- Are mutations idempotent or safely handled in transactions if multiple tables are updated?
+- What happens on validation failure, and do messages follow the project's language and locale rules?
+- Are database constraints, cascades and foreign keys satisfied, and is a migration safe for existing data?
+- Are cancellation tokens threaded through asynchronous calls?
+- Are multi-table mutations transactional, and are retried requests idempotent?
 
 #### 5. Verification & Testing Completeness
-- Does the plan have a concrete automated test strategy?
-- Are backend endpoints covered by integration tests (TUnit/xUnit with TestContainers and `AutoRollback`)?
-- Does it verify authorized, forbidden, and unauthorized flows?
+- Does the plan have a concrete automated test strategy, in the project's test framework and fixtures?
+- Does it cover the authorized, forbidden and unauthenticated paths, not just the happy path?
+
+When the project's profile has a *Plan-review checks* field, check every item in it as well, under the pillar it names.
 
 ---
 

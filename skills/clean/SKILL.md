@@ -1,6 +1,6 @@
 ---
 name: clean
-description: Surgically cleans and tidies a target source file — removing unused exports (verifying zero external consumers across the workspace), dead variables and constants, obsolete comments, leftover debug statements, and redundant code, and refactoring nested ternaries into declarative, expressive constructs (lookup tables, guard clauses, internal closures, or pure helpers) while preserving public contracts, architectural documentation, and functional integrity. Trigger on /clean, "clean this file", "tidy up this file", "remove unused code in X", "strip dead code / console logs from X".
+description: "Removes dead weight from a target file without changing behaviour: unused exports (after proving zero consumers across the workspace), dead variables and constants, obsolete comments, leftover debug statements and redundant code, plus nested ternaries it meets in that file. Preserves public contracts and architectural documentation. Use for /clean, \"clean this file\", \"tidy up this file\", \"remove unused code in X\", \"strip dead code / console logs from X\". Not for readability rewrites of whole functions or modules (/expressive) or reshaping folders (/organize)."
 ---
 
 # Skill: `/clean` — File Sanitation & Dead Code Pruning
@@ -46,11 +46,6 @@ Read these before step 1:
 ---
 
 ## 1. When to Use
-
-Invoke this skill whenever:
-
-- The user runs `/clean` (with a file path, or targeting the file open/selected in the IDE).
-- The user asks to *"clean up / tidy this file"*, *"remove unused exports in X"*, *"strip dead variables and comments in Y"*, *"remove console logs and unused imports"*, *"tidy this component before shipping"*.
 
 ### When *not* to use — pick the right neighbor
 
