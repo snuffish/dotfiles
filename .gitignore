@@ -6,3 +6,6 @@
 # Files
 .DS_Store
 .env*
+
+# Claude memory (separate private repo: snuffish/claude-memory)
+memory/
