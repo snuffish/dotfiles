@@ -9,3 +9,6 @@
 
 # Claude memory (separate private repo: snuffish/claude-memory)
 memory/
+
+# Python
+__pycache__/
