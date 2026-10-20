@@ -36,11 +36,6 @@ Read these before step 1:
 
 ## 1. When to Use
 
-Invoke this skill whenever:
-- The user runs `/create-ticket [draft] [what]`.
-- The user asks to "create a ticket / story / task / bug / issue for this", "file a work item", "make an ADO ticket", or "open a GitHub issue".
-- A review, plan or feedback artifact has a follow-up item ("Follow-up story: …", "Path B, as a follow-up") and the user asks for it to be tracked.
-
 | Situation | Use instead |
 |---|---|
 | Commenting on an existing PR or thread | [`/pr-post-comments`](../pr-post-comments/SKILL.md) |

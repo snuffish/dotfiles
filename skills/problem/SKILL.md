@@ -1,6 +1,6 @@
 ---
 name: problem
-description: Triggered when the user reports an error, bug, or compiler/lint/test failure, particularly from a previous implementation. Audits git status, recent changes, logs, active file context, and previous conversation transcripts to diagnose issues and plan a fix.
+description: "Diagnoses something that is failing now: an error message, a failing build, lint or test, a crash, or behaviour that \"stopped working\", often after a recent change. Audits git status and recent commits, logs, the active files and past conversation transcripts, finds the root cause, writes a fix plan and fixes only after approval. Use for /problem, \"this is broken\", \"why does this fail?\", \"I get this error\", \"the tests fail after your change\". Not for a red CI pipeline on a PR (/pr-fix-pipeline), researching a change that does not exist yet (/investigate), or auditing code that works (/refine)."
 ---
 
 # Skill: `/problem` — Troubleshooting, Diagnostics & Context Recovery
@@ -85,11 +85,9 @@ Check which exists before searching; do not assume.
 
 Errors commonly stem from structural mismatches between components. Perform the following checks:
 
-1. **API / DTO Synchronization**: Compare frontend requests and backend models.
-   - Frontend RTK Query endpoints (`src/store/api/endpoint-builders/`) vs Backend controllers/endpoints.
-   - Check if response field casing or types (e.g. `Guid` vs `string`, casing of keys) match.
-2. **Validation Schema vs Domain Entity**: Compare frontend validation schemas (e.g. Zod validators) with backend validation rules (e.g. FluentValidation rules) and the EF entities.
-3. **Imports & Aliases**: Check imports, path aliases (e.g. `~api`, `~components`), and library namespace dependencies. Ensure third-party package conventions are strictly followed (e.g., import `zod/v4` instead of `zod`).
+1. **API / DTO Synchronization**: compare the client's requests with the server's models: the client's data-fetching layer or generated API client against the endpoints it calls. Check that field names, casing and types match (e.g. a GUID typed as `Guid` on one side and `number` on the other).
+2. **Validation Schema vs Domain Entity**: compare the client's validation schema with the server's validation rules and the persisted entity (required fields, max lengths, allowed values).
+3. **Imports & Aliases**: check imports, path aliases and package entry points against the project's conventions. The project's Profile and pattern skills name the concrete layers, aliases and contract touchpoints (`core` › *Codebase investigation* › *Cross-Layer Mapping*).
 
 ---
 

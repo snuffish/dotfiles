@@ -454,7 +454,7 @@ Sections in this order, and **nothing after In Plain Terms**:
 
 Write 3–5 short sentences, or a few bullets, covering:
 
-- **Who** it is for — the user role or persona (e.g. "case handlers (Amalia)", "suppliers (Lena/Hadya)").
+- **Who** it is for — the user role or persona (e.g. "case handlers", "suppliers", or the project's named personas when its Profile lists them).
 - **The problem** they have today, or the gap the work closes. When the PR is a follow-up, also say what the earlier work left out.
 - **The outcome** — what they can see or do once this ships.
 - **Where it sits** — the parent story or feature it belongs to, and the counterpart PR in another repo when the work is split.

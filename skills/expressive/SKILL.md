@@ -1,6 +1,6 @@
 ---
 name: expressive
-description: Transforms imperative, convoluted, nested, or procedural code into declarative, intent-revealing, domain-expressive code — replacing nested ternaries with lookup tables, decomposing nested conditionals, introducing domain predicates, flattening control flow with guard clauses, and extracting `&&`-chained markup into early-return subcomponents. Trigger on /expressive, "make this more expressive", "use early returns instead", "flatten this", "clean up this conditional mess", or when asked to sweep a PR for readability.
+description: "Rewrites imperative, nested or procedural code into declarative, intent-revealing code without changing behaviour: lookup tables for nested ternaries, domain predicates for complex booleans, guard clauses for nested conditionals, dispatch maps, declarative pipelines, and early-return subcomponents for `&&`-chained markup. Use for /expressive, \"make this more expressive\", \"use early returns instead\", \"flatten this\", \"clean up this conditional mess\", or a readability sweep of a PR. Not for removing dead code (/clean) or finding bugs (/code-review)."
 ---
 
 # Skill: `/expressive` — Make Code Expressive & Intent-Revealing
@@ -19,20 +19,6 @@ Read these before step 1:
 - `../_modules/git-worktrees.md`
 
 - When asked directly on specific code lines (e.g. *"make lines 168–174 more expressive"*), propose and apply the clean refactoring directly to the file while explaining the transformation.
-
----
-
-## 1. When to Use
-
-Invoke this skill whenever:
-- The user runs `/expressive` (or mentions "make it more expressive").
-- The user asks to:
-  - *"make this more expressive"*
-  - *"refactor for expressiveness / intent"*
-  - *"clean up this nested logic / ternary ladder"*
-  - *"make this code read like domain English"*
-  - *"use early returns instead of this"* / *"flatten this"*
-  - *"look through the rest of this PR for more of these"*
 
 ---
 

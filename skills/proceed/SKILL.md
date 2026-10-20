@@ -24,13 +24,6 @@ The rules of the gate are `core` › *The `/proceed` gate*: one item only, no ou
 
 ---
 
-## 1. When to Use
-
-Invoke this skill whenever:
-- The user runs `/proceed`, with or without arguments.
-
----
-
 ## 2. Core Protocol & Workflow
 
 ### Step 1: Resolve the pending item

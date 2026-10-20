@@ -54,12 +54,6 @@ Read these before step 1:
 
 ## 1. When to Use
 
-Invoke this skill whenever:
-- The user runs `/pr-post-comments [draft] [what] [pr]`.
-- After `/code-review`: "post the findings", "post 🟡 1–5 as threads", "also post the new findings".
-- After `/pr-feedback-review`: "reply to the threads", "send the drafted replies".
-- "Leave a general comment on the PR saying …" with the text already agreed.
-
 | Situation | Use instead |
 |---|---|
 | Nothing drafted yet | [`/code-review`](../code-review/SKILL.md) or [`/pr-feedback-review`](../pr-feedback-review/SKILL.md) first |

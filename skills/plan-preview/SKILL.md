@@ -25,11 +25,6 @@ Read these before step 1:
 
 ## 1. When to Use
 
-Invoke this skill whenever:
-- The user runs `/plan-preview`, bare or with a path or suffix (`/plan-preview code-review-priis-profile`, `/plan-preview claude-opus-5.5-implementation_plan-x.md`).
-- The user says they closed the plan preview by accident and want it back.
-- An agent or Command (`/plan`, `/implement-feature`, `/pr-fix-pipeline`, a sub-agent) delivered the plan only as a markdown file or a chat reply, and the user wants to review it in the preview.
-
 ### When *not* to use
 
 - To get a clickable link to the plan file, or to draft or change a plan, use the [`plan`](../plan/SKILL.md) skill.

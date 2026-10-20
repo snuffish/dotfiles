@@ -31,10 +31,6 @@ Read these before step 1:
 
 ## 1. When to Use
 
-Invoke this skill whenever:
-- The user runs `/pr-fix-pipeline` (bare, or with a PR URL/id, run/build id, or repo name).
-- *"The PR build is red"*, *"why is CI failing?"*, *"build validation failed"*, *"check the pipeline for errors and plan a fix"*.
-
 | Situation | Use instead |
 |---|---|
 | A local build/test/lint error with no pipeline involved | [`/problem`](../problem/SKILL.md) |

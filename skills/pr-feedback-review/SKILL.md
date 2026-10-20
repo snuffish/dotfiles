@@ -1,6 +1,6 @@
 ---
 name: pr-feedback-review
-description: Review, triage, and evaluate reviewer feedback, discussion threads, and votes on a pull request. Analyzes technical implications against the codebase and provides actionable recommendations and response options. Always looks for a counterpart PR in a sibling repo (a dual-repo change such as backend + frontend) and triages both PRs' threads, since a comment on one half often needs its fix on the other. `deep` runs the three analysis axes (Verification, Merit, Impact) as parallel sub-agents. Reads the PR head from a detached snapshot worktree by default so the user can keep editing the main checkout meanwhile; `live` opts out.
+description: "Triages the discussion on a pull request: every reviewer thread, comment and vote, checked against the code at the PR head, with a triage category, its state at head, a recommendation and a ready-to-send reply per thread, in `<prefix>-pr_feedback_review-<suffix>.md`. Also triages the counterpart PR in a sibling repo, where a comment's fix often lands. `deep` runs Verification, Merit and Impact as parallel sub-agents; reads from a detached snapshot (`live` opts out). Use for /pr-feedback-review, \"triage the PR comments\", \"what did the reviewers say?\", \"draft replies to the threads\". Not for reviewing the code yourself (/code-review) or posting the replies (/pr-post-comments)."
 ---
 
 # PR Feedback Review Skill
@@ -128,7 +128,7 @@ Threads are assessed against the PR's **remote head** — what reviewers see —
 
 The lifecycle — create, read, map paths back, remove, fallback — is **`git-worktrees` › *Snapshot Lifecycle* (snapshot mode)** with `<skill>=pr-feedback-review`; follow it for the mechanics. What is specific here:
 
-- **Repo:** the workspace repo whose `origin` matches the PR's `{repo}` (*Repo Resolution* — in a multi-repo workspace, e.g. `GR.PRIIS.Backend` for a `_git/GR.PRIIS.Backend/pullrequest/…` URL). One snapshot per PR in scope.
+- **Repo:** the workspace repo whose `origin` matches the PR's `{repo}` (*Repo Resolution*; in a multi-repo workspace, e.g. the `Shop.Api` checkout for a `_git/Shop.Api/pullrequest/…` URL). One snapshot per PR in scope.
 - **Head and source ref** (*Snapshot Lifecycle* a, *PR whose branch is not checked out* row — used even when it is checked out, since local commits are not what reviewers see):
 
   `<sourceBranch>` / `<targetBranch>` are the PR's `sourceRefName` / `targetRefName` from Step 2.1 with `refs/heads/` stripped (GitHub: `headRefName` / `baseRefName`, already bare):
@@ -168,8 +168,8 @@ Do not analyze comments in a vacuum. Cross-reference each comment with the actua
    - Check the counterpart PR (*Counterpart PRs*, Step 1): does the thread's suggestion change something the other repo consumes, and is the other half already there, or contradicted, at the counterpart's head?
 3. **Assess Technical & Architectural Constraints**:
    - **Database & Migrations**: Temporal tables, data preservation (`sp_rename` vs drop/create), indexes, foreign keys.
-   - **Framework & Conventions**: FastEndpoints, EF Core tracking/filters, Radix UI, Zod validation, sealed classes, etc.
-   - **Security & Authorization**: Access rules, global query filters (`AddCategoryProtectionQueryFilter`), role permissions.
+   - **Framework & Conventions**: the project's pattern skills for the layer the thread is about (the Profile's *Pattern skills per layer*): endpoint, data access, UI, forms, validation.
+   - **Security & Authorization**: the project's access rules, global query filters and role permissions.
    - **API Contracts & Breaking Changes**: Does the suggestion alter client/frontend request/response contracts?
 
 ---
@@ -199,7 +199,7 @@ For every non-trivial thread:
    - **Path A (Direct Fix / Refactor Now)**: Exact steps and code diffs required if adopting the feedback immediately.
    - **Path B (Clarify / Defer to Follow-up)**: Rationale for keeping current scope (e.g. minimal blast radius, prerequisite rename for stacked PR) and handling in a dedicated follow-up task.
 4. **Draft Ready-to-Send Responses**:
-   - Provide a clear, respectful, well-reasoned comment draft (in the project's working language, e.g. Swedish or English) that the author can copy and paste directly into the PR thread.
+   - Provide a clear, respectful, well-reasoned comment draft (in the language of the PR conversation) that the author can copy and paste directly into the PR thread.
 
 ---
 
@@ -266,7 +266,7 @@ Always start your response with a clickable link to `<prefix>-pr_feedback_review
 + new code
 ```
 
-#### Ready-to-Send Reply (Swedish / Project Language)
+#### Ready-to-Send Reply (in the PR's language)
 > <Draft reply ready to copy-paste directly into the PR thread>
 
 ---
@@ -301,4 +301,4 @@ Always start your response with a clickable link to `<prefix>-pr_feedback_review
 - **Check the reviewer's fix, not only the reviewer's claim**: a correct diagnosis can come with a fix that breaks something else. When the branch chose a different mechanism than the one proposed, the reply must say why the proposed one was not taken.
 - **Check for stacked branches**: If another active feature branch branches off this PR, major refactoring in this PR will require rebasing the downstream branch. Mention this tradeoff explicitly.
 - **Differentiate opinion vs defect**: A suggestion to use implicit relationships or rename a variable is an architectural preference or cleanup; a missing authorization filter or data loss migration is a defect. Make the distinction crisp.
-- **Match the language of the PR conversation**: If the PR thread discussions and reviewers communicate in Swedish (common in Swedish public sector / municipal projects like PRIIS), provide draft replies in Swedish, along with English technical summaries.
+- **Match the language of the PR conversation**: draft replies in the language the reviewers write in, with an English technical summary when that language is not English. The project Profile's *Report language* field overrides this when it says otherwise.

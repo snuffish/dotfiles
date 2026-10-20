@@ -5,13 +5,13 @@ description: General C# 14 idioms and best practices — collection expressions,
 
 # Modern C# 14 Idioms and Best Practices
 
-This skill documents the C# 14 features and conventions used in this codebase. These are not optional style preferences — they are enforced by CI (`dotnet format`) and code review.
+General C# 14 idioms for any C# project. A workspace rulebook or project-scoped Reference that says otherwise wins (`core` › *Precedence*). Where a project enforces these with `dotnet format` or an analyzer, its configuration is the final word.
 
 ---
 
 ## 1. Collection Expressions
 
-Use collection expressions everywhere. The old constructors are forbidden.
+Prefer collection expressions over the old constructors: one syntax for every collection type, and the compiler picks the most efficient construction for the target.
 
 ```csharp
 // ✅ Correct
@@ -20,7 +20,7 @@ List<Guid> ids = [id1, id2, id3];
 string[] empty = [];                           // not Array.Empty<string>()
 List<string> merged = [..existing, newItem];   // spread operator for combining
 
-// ❌ Forbidden
+// ❌ Avoid
 new List<string>()
 new string[] { "a", "b" }
 new[] { "a", "b" }
@@ -33,7 +33,7 @@ A collection expression has no natural type, so it needs a target type: `var mer
 In properties and method returns:
 
 ```csharp
-protected static SystemAction[] SystemActions { get; private set; } = [];   // ✅
+protected static Permission[] RequiredPermissions { get; private set; } = [];   // ✅
 
 public IReadOnlyList<string> GetNames() => [.. _names.Select(n => n.ToUpper())];  // ✅
 ```
@@ -42,31 +42,32 @@ public IReadOnlyList<string> GetNames() => [.. _names.Select(n => n.ToUpper())];
 
 ## 2. Primary Constructors for Dependency Injection
 
-All FastEndpoints endpoints and services use primary constructors for DI. No field declarations needed — the parameters are captured automatically.
+Endpoints, handlers and services take their dependencies through a primary constructor. No field declarations are needed; the parameters are captured automatically. (The examples use FastEndpoints; the rule is the same for controllers and minimal-API handlers.)
 
 ```csharp
 // ✅ Correct — primary constructor with DI
 public sealed class CreateFooEndpoint(
-    PriisDbContext dbContext,
+    AppDbContext dbContext,
     ICurrentUser currentUser,
-    FusionCache fusionCache)
-    : ExtendedEndpoint<CreateFooRequest, CreateFooResponse>
+    IMemoryCache cache)
+    : Endpoint<CreateFooRequest, CreateFooResponse>
 {
     public override async Task HandleAsync(CreateFooRequest req, CancellationToken ct)
     {
-        // dbContext, currentUser, fusionCache available directly — no this.field needed
+        // dbContext, currentUser, cache available directly — no this.field needed
         var result = await Foo.CreateAsync(req, dbContext, currentUser);
-        await SendAndSaveChangesAsync(result, dbContext, ct);
+        await dbContext.SaveChangesAsync(ct);
+        await Send.OkAsync(result, ct);
     }
 }
 
 // ❌ Old pattern — do not write this
-public sealed class CreateFooEndpoint : ExtendedEndpoint<CreateFooRequest, CreateFooResponse>
+public sealed class CreateFooEndpoint : Endpoint<CreateFooRequest, CreateFooResponse>
 {
-    private readonly PriisDbContext _dbContext;
+    private readonly AppDbContext _dbContext;
     private readonly ICurrentUser _currentUser;
 
-    public CreateFooEndpoint(PriisDbContext dbContext, ICurrentUser currentUser)
+    public CreateFooEndpoint(AppDbContext dbContext, ICurrentUser currentUser)
     {
         _dbContext = dbContext;
         _currentUser = currentUser;
@@ -112,12 +113,12 @@ All concrete classes should be `sealed` unless inheritance is deliberately desig
 
 ```csharp
 // ✅ Always seal these:
-public sealed class CreateFooEndpoint(...) : ExtendedEndpoint<...> { }
+public sealed class CreateFooEndpoint(...) : Endpoint<...> { }
 public sealed class CreateFooRequestValidator : Validator<CreateFooRequest> { }
 public sealed class FooCreatedEventHandler : INotificationHandler<FooCreated> { }
 
 // ✅ Break the seal only for deliberate base classes:
-public abstract class BaseUserEndpoint<TRequest>(...) : ExtendedEndpoint<TRequest, UserResponse> { }
+public abstract class BaseUserEndpoint<TRequest>(...) : Endpoint<TRequest, UserResponse> { }
 public sealed class CreateInternalUserEndpoint(...) : BaseUserEndpoint<CreateInternalUserRequest> { }
 ```
 
@@ -137,9 +138,9 @@ public static class OperationStatusExtensions
     {
         public string ToDisplayString() => status switch
         {
-            OperationStatus.Active   => "Aktiv",
-            OperationStatus.Inactive => "Inaktiv",
-            OperationStatus.Pending  => "Väntande",
+            OperationStatus.Active   => "Active",
+            OperationStatus.Inactive => "Inactive",
+            OperationStatus.Pending  => "Pending",
             _                        => status.ToString()
         };
 
@@ -162,23 +163,23 @@ Use raw string literals for multi-line content — email templates, SQL, JSON, l
 ```csharp
 // ✅ Raw string literal (""" ... """)
 var emailBody = """
-    Hej {Name},
+    Hi {Name},
 
-    Ditt ärende #{CaseNumber} har registrerats.
+    Your case #{CaseNumber} has been registered.
 
-    Med vänliga hälsningar,
-    PRIIS
+    Kind regards,
+    The Support Team
     """;
 
 // ✅ Raw string with interpolation ($""" ... """)
 var greeting = $"""
-    Hej {name},
+    Hi {name},
 
-    Ditt ärende #{caseNumber} har registrerats.
+    Your case #{caseNumber} has been registered.
     """;
 
 // ❌ Old string concatenation
-var body = "Hej " + name + ",\r\n\r\nDitt ärende #" + caseNumber + " har registrerats.";
+var body = "Hi " + name + ",\r\n\r\nYour case #" + caseNumber + " has been registered.";
 ```
 
 **SQL is the exception: never interpolate values into SQL text.** A string built beforehand can only reach `FromSqlRaw` / `SqlQueryRaw` / `ExecuteSqlRaw`, which send the value verbatim, so this is SQL injection. Pass the interpolated raw string straight to `FromSql` (or `SqlQuery` / `ExecuteSql`) instead. It takes a `FormattableString` and turns every `{value}` into a `DbParameter`, so the placeholder gets no quotes:
@@ -283,7 +284,7 @@ public string Name { get; set; } = default!;  // use = "" or make it nullable
 Use source-generated regex for static patterns — compile-time validation and zero allocation at runtime.
 
 ```csharp
-// ✅ Source-generated regex (as used in IRuleBuilderExtensions.cs)
+// ✅ Source-generated regex
 [GeneratedRegex(@"^\+?[0-9\s\-\(\)]{7,20}$")]
 private static partial Regex PhonePattern();
 
@@ -330,7 +331,7 @@ Write a comment only to state something the code cannot show on its own — a no
 
 // ✅ States the current responsibility / a real constraint
 /// Builds the display-ready model for the "Matchningsdokumentation" PDF: verifies access,
-/// resolves the chosen selection, and projects it into Swedish-formatted values.
+/// resolves the chosen selection, and projects it into locale-formatted values.
 // Access check runs WITHOUT IgnoreQueryFilters so the CategoryProtection global filter still applies.
 ```
 
@@ -344,9 +345,9 @@ Write a comment only to state something the code cannot show on its own — a no
 
 ---
 
-## Quick Reference: Forbidden → Preferred
+## Quick Reference: Avoid → Prefer
 
-| Forbidden | Preferred |
+| Avoid | Prefer |
 |-----------|-----------|
 | `new List<T>()` | `[]` |
 | `new T[] { a, b }` | `[a, b]` |
@@ -355,7 +356,7 @@ Write a comment only to state something the code cannot show on its own — a no
 | `this._field = param` in constructor | Primary constructor capture |
 | A new `public static … (this Foo foo)` extension method | An `extension(Foo foo) { … }` block in the same static class (existing `this` methods can stay) |
 | `new Regex(pattern)` static field | `[GeneratedRegex] partial` method |
-| `throw new ArgumentException(...)` for expected failures | `return SystemResult.Failure(...)` |
+| `throw new ArgumentException(...)` for expected failures | Return the project's result type (e.g. `Result.Failure(...)`) |
 | `var act = async () => ...` | `async Task Act() { ... }` (PascalCase local function) |
 | `// mirrors X / same as the Y export` (cross-ref archaeology) | State what *this* type does |
 | `// fixed CI / changed in PR #n` (history in a comment) | Leave history to git/PR; document current behavior |

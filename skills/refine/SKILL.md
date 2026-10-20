@@ -1,6 +1,6 @@
 ---
 name: refine
-description: Triggered by /refine or requests to find odd behaviors, code smells, or improvements. Uses previous conversation history and transcripts to align with past decisions.
+description: "Audits existing, working code for odd behaviour, code smells and missed improvements, checked against the project's skills and against decisions recorded in past conversations, and proposes a refinement plan that waits for approval. Use for /refine, \"anything odd about this code?\", \"find code smells in X\", \"what would you improve here?\". Not for something failing now (/problem), removing dead code (/clean), readability rewrites (/expressive), or reviewing a diff or PR (/code-review)."
 ---
 
 # Skill: `/refine` — Code Refinement & Historical Alignment
@@ -21,15 +21,9 @@ Read these before step 1:
 - `../_modules/git-worktrees.md`
 
 ---
-## 1. Triggering & Purpose
+## 1. Purpose
 
-This skill is invoked when:
-
-- The user uses the `/refine` command or requests to "refine" a file, class, or feature.
-- The user asks to find odd behaviors, improvements, or other weird stuff in the codebase.
-- The agent needs to align its current coding tasks with past decisions, custom styles, or specific context recorded in previous conversations.
-
----
+Audits code that already works, for what looks odd or could be better, and checks every finding against the decisions recorded in past conversations, so the proposal does not undo a choice the user already made.
 
 ### When *not* to use — pick the right neighbor
 

@@ -1,6 +1,6 @@
 ---
 name: verify-assumptions
-description: Verifies the load-bearing assumptions behind the current context — a plan, a set of design decisions, an ADR, an artifact, an answer just given, or a pasted list of claims — against primary sources, in particular the official documentation for the version in use, plus changelogs, the library's own source and the local environment. Extracts each assumption as a falsifiable claim, routes it to its authoritative source, verifies groups in parallel read-only sub-agents, and returns a ledger grading every claim (confirmed, contradicted, partial, undocumented) with a quote and URL#section or path:line, then maps each non-confirmed verdict to the decisions it weakens or reopens. Read-only; never edits the plan or code until /proceed. Trigger on /verify-assumptions, "check the official docs", "verify your assumptions", "fact-check this plan", "is that actually documented?", "double-check that against the docs".
+description: "Checks the load-bearing claims behind a plan, decision, ADR, artifact or answer against primary sources: the official docs for the version in use, changelogs, the library's source and the local machine. Turns each assumption into a falsifiable claim, verifies them in parallel read-only sub-agents, grades each (confirmed, contradicted, partial, undocumented) with a quote and its source, and says which decisions each verdict weakens or reopens. Use for /verify-assumptions, \"check the official docs\", \"verify your assumptions\", \"fact-check this plan\", \"is that actually documented?\". Not for finding a risk nobody has stated (/what-am-I-missing). Read-only until /proceed."
 ---
 
 # Skill: `/verify-assumptions` — Assumption Check Against Primary Sources
@@ -23,12 +23,6 @@ Read these before step 1:
 ---
 
 ## 1. When to Use
-
-Invoke this skill whenever:
-
-- The user runs `/verify-assumptions` (bare, with a path, or with pasted claims).
-- The user asks to "check the official docs", "verify your assumptions", "fact-check this plan", or questions whether something is "actually documented".
-- A plan or design is about to be approved and parts of it rest on remembered tool behaviour rather than on something read in this session.
 
 | Argument | Scope |
 |---|---|

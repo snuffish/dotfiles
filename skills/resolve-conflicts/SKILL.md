@@ -37,12 +37,6 @@ Read these before step 1:
 
 ## 1. When to Use
 
-Invoke this skill whenever:
-- The user runs `/resolve-conflicts` (optionally with `no-commit`, a target branch, or `/git-worktrees`).
-- `git status` shows unmerged paths (`UU`, `AA`, `DU`, `UD`, `AU`, `UA`, `DD`) or "You have unmerged paths".
-- A merge, rebase, cherry-pick, revert or `stash pop/apply` stopped on conflicts.
-- A PR reports conflicts with its target, or the user asks to bring a branch up to date with `main` (preview first, see Step 0b).
-
 ### When *not* to use — pick the right neighbor
 
 | Situation | Use instead |

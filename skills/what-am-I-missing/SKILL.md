@@ -1,6 +1,6 @@
 ---
 name: what-am-I-missing
-description: Universal blind spot and critical omission detector. Discovers the single most critical hidden assumption, edge case, failure mode, or architectural implication across any software project, tech stack, or situation. Triggered by /what-am-I-missing or requests like "what am I missing here?"
+description: "Finds the single most important blind spot in an approach that is already chosen (a plan, design, fix or decision): the hidden assumption, edge case, failure mode or architectural consequence most likely to hurt, with its trigger, impact and fix. Answers in chat; `deep`, or a call from /implement-feature, writes `<prefix>-what_am_i_missing-<suffix>.md`. Use for /what-am-I-missing, \"what am I missing here?\", \"is there a hidden trap?\", \"sanity check this approach\", \"what could go wrong?\". Not for choosing between options (/suggestion), checking stated claims against docs (/verify-assumptions), or reviewing a diff (/code-review)."
 ---
 
 # Skill: `/what-am-I-missing` — Blind Spot & Critical Omission Detector
@@ -17,16 +17,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 
 Read these before step 1:
 - `../_modules/core.md`: read-only until `/proceed`
-- `../_modules/artifact-protocol.md`: writes `<prefix>-what_am_i_missing-<suffix>.md` at the **workspace root** (suffix derived from the evaluated topic, PR, or branch, e.g. `-municipality-sync`, `-matching-inactivity`)
-
----
-
-## 1. When to Use
-
-Invoke this skill whenever:
-- The user issues `/what-am-I-missing`.
-- The user asks: *"What am I missing here?"*, *"What's the most important thing I overlooked?"*, *"What are my blind spots?"*, *"Is there any hidden trap here?"*, or *"Sanity check this approach"*.
-- A feature, bug fix, or architecture change appears complete locally, but needs a rigorous systems-level audit for subtle failure modes before shipping.
+- `../_modules/artifact-protocol.md`: answers in chat by default. With `deep`, or when another Command calls it (e.g. `/implement-feature` Phase 2b), writes `<prefix>-what_am_i_missing-<suffix>.md` at the **workspace root** (suffix derived from the evaluated topic, PR, or branch, e.g. `-municipality-sync`, `-matching-inactivity`)
 
 ---
 
@@ -38,6 +29,8 @@ Invoke this skill whenever:
 | Auditing a drafted implementation plan | [`/plan-review`](../plan-review/SKILL.md) |
 | Reviewing a diff | [`/code-review`](../code-review/SKILL.md) |
 | Something is already failing | [`/problem`](../problem/SKILL.md) |
+| Nothing is chosen yet; comparing approaches | [`/suggestion`](../suggestion/SKILL.md) |
+| Checking stated claims against official docs | [`/verify-assumptions`](../verify-assumptions/SKILL.md) |
 
 ---
 
@@ -83,10 +76,14 @@ When evaluating the user's current task, active file, recent diff, or conversati
 
 ## 3. Output Format & Artifact Deliverable
 
-1. **Write the Analysis Artifact**:
-   - Always write a dedicated markdown artifact, `<prefix>-what_am_i_missing-<suffix>.md`, at the **workspace
-     root**. That location is what makes the link clickable, so do not put it elsewhere.
-   - The artifact must follow this high-impact structure:
+| Invocation | Output |
+|---|---|
+| `/what-am-I-missing [target]`, or a casual "what am I missing?" | **Chat only.** The structure below, compressed: the bold #1 sentence, then *Trigger · Impact · Why it went unnoticed* in three lines, up to two secondary blind spots in one line each, and the *Immediate Fix*. No file. |
+| `/what-am-I-missing deep [target]`, or a call from another Command (`/implement-feature` Phase 2b) | **Artifact.** The full structure below in `<prefix>-what_am_i_missing-<suffix>.md`, plus the chat summary in step 2. The caller links the file, so it has to exist. |
+
+A quick question deserves a quick answer. The artifact is for when the finding has to outlive the conversation: a plan that cites it, a review that closes it.
+
+1. **The structure** (an artifact is written at the **workspace root**, which is what makes the link clickable; do not put it elsewhere):
 
 ```markdown
 # 🎯 The #1 Most Important Thing You Are Missing
@@ -120,7 +117,7 @@ When evaluating the user's current task, active file, recent diff, or conversati
 - 📄 [Active Plan / Relevant File](path/to/relevant/file.ts#L10)
 ```
 
-2. **Report Back in Chat**:
+2. **Report Back in Chat** (artifact mode):
    - In the conversation response, provide:
      - The bold **#1 Most Important Thing You Are Missing** takeaway sentence.
      - A clickable link to open the artifact in the IDE, formatted for your host (or dual format):

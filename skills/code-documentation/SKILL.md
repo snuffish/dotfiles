@@ -34,17 +34,6 @@ The output ranges from single-file READMEs to multi-document developer guides, a
 - Support JSDoc, docstrings, GoDoc, Javadoc, and Rustdoc formats
 - Adapt documentation style to the project's language and ecosystem
 
-## When to Use This Skill
-
-**Always load this skill when:**
-
-- User asks to "document", "create docs", or "write documentation" for any code
-- User requests a README, API reference, or developer guide
-- User shares a codebase or repository and wants documentation generated
-- User asks to improve or update existing documentation
-- User needs architecture documentation, including diagrams
-- User requests a changelog or migration guide
-
 ## Documentation Workflow
 
 ### Phase 1: Codebase Analysis
