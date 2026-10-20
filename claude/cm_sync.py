@@ -642,6 +642,13 @@ def has_upstream(cfg):
     return git(cfg, "rev-parse", "--abbrev-ref", "@{upstream}", check=False).returncode == 0
 
 
+def pull(cfg):
+    require_repo(cfg)
+    if has_upstream(cfg):
+        git(cfg, "pull", "--rebase", "--autostash", "--quiet")
+        info("Pulled " + git(cfg, "log", "-1", "--format=%h %s").stdout.strip())
+
+
 def run_gitleaks(path):
     if not shutil.which("gitleaks"):
         return
@@ -652,9 +659,7 @@ def run_gitleaks(path):
 
 def sync(cfg, state, worker, **export_args):
     device = state.require_device()
-    require_repo(cfg)
-    if has_upstream(cfg):
-        git(cfg, "pull", "--rebase", "--autostash", "--quiet")
+    pull(cfg)
     import_all(cfg, state, worker)
     result = export(cfg, state, worker, **export_args)
 
@@ -822,6 +827,7 @@ def main(argv=None):
     sub.add_parser("export", parents=[export_flags, quiet_flag], help="publish this device's rows to the repo")
     p_import = sub.add_parser("import", parents=[quiet_flag], help="import other devices' rows")
     p_import.add_argument("--full", action="store_true", help="re-send rows already imported (after a database reset)")
+    p_import.add_argument("--no-pull", action="store_true", help="import what is checked out without pulling the repo first")
     sub.add_parser("sync", parents=[export_flags, quiet_flag], help="pull, import, export, commit and push")
     sub.add_parser("status", help="show sync state")
     sub.add_parser("hooks", help="print the Claude Code hooks for automatic sync")
@@ -842,6 +848,8 @@ def main(argv=None):
         if args.command == "export":
             export(cfg, state, worker, **export_args)
         elif args.command == "import":
+            if not args.no_pull:
+                pull(cfg)
             import_all(cfg, state, worker, full=args.full)
         elif args.command == "sync":
             sync(cfg, state, worker, **export_args)
