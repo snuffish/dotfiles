@@ -73,6 +73,11 @@ $abs_path"
   printf "%s\n" "$result" | pbcopy
 }
 
+unalias catc 2>/dev/null
+function catc() {
+  cat "$@" | pbcopy
+}
+
 alias q="exit"
 alias c="clear"
 
