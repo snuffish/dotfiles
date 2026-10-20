@@ -1,6 +1,7 @@
 ---
 name: pr-summary
 description: Generate standardized, high-quality pull request summaries from the changes in any repository.
+argument-hint: "[update] [branch | base]"
 ---
 
 # PR Summary Generator Skill

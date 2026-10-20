@@ -135,11 +135,23 @@ function gw() {
   cur_pos=$(printf '%s\n' "$rows" | awk -F '\t' -v cur="$current_root" '$2 == cur { print NR; exit }')
   [[ -z "$*" && -n "$cur_pos" ]] && pos_bind=(--bind "load:pos($cur_pos)")
 
+  # Two preview modes: status + per-file change stat + log, or the full diff (untracked files included)
+  local preview_status='git -C {2} -c color.status=always status -sb; echo;'
+  preview_status+=' git -C {2} diff HEAD --quiet 2>/dev/null || { git -C {2} diff HEAD --stat --color=always; echo; };'
+  preview_status+=' git -C {2} log --oneline --color=always -n 20'
+  local preview_diff='cd {2} || exit;'
+  preview_diff+=' if git diff HEAD --quiet 2>/dev/null && [ -z "$(git ls-files --others --exclude-standard)" ]; then echo "No changes"; exit; fi;'
+  preview_diff+=' git diff HEAD --color=always;'
+  preview_diff+=' git ls-files -z --others --exclude-standard | xargs -0 -n1 git diff --no-index --color=always -- /dev/null 2>/dev/null; true'
+
   # Match the query against the label only; the shared parent path would fuzzy-match everything
   local wt_line
-  wt_line=$(printf '%s\n' "$rows" | fzf --header 'Select worktree to switch to:' --delimiter '\t' --nth 1 --tiebreak=index \
+  wt_line=$(printf '%s\n' "$rows" | fzf --header 'Select worktree to switch to:  (ctrl-d: diff · ctrl-s: status · shift-↑/↓: scroll)' \
+    --delimiter '\t' --nth 1 --tiebreak=index \
     --query "$*" --select-1 --exit-0 "${pos_bind[@]}" \
-    --preview 'git -C {2} -c color.status=always status -sb; echo; git -C {2} log --oneline --color=always -n 20' \
+    --preview "$preview_status" --preview-label ' status ' \
+    --bind "ctrl-d:change-preview-label( diff )+change-preview:$preview_diff" \
+    --bind "ctrl-s:change-preview-label( status )+change-preview:$preview_status" \
     --height 50% --layout reverse)
   [[ -n "$wt_line" ]] || return 0
 

@@ -47,6 +47,7 @@ To prevent accidental regressions and unapproved mutations:
 
 ### Worktree opt-in
 - When the invocation's arguments contain `worktree`, `worktrees` or `/git-worktrees`, or a `[worktree-context]` block was handed in, read [git-worktrees.md](git-worktrees.md) (same folder as this file) and run under it, even if this Command does not list it.
+- A prompt that contains `/git-worktrees` but invokes no Command is handled by the `git-worktrees` Command.
 
 ---
 
