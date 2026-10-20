@@ -67,7 +67,7 @@ Present discovered artifacts in a structured table:
 Once an artifact is selected:
 1. **Summarize**: Concise status, open questions, and proposed changes.
 2. **Next Steps**:
-   - **Review**: *"Run `/review <suffix>` to conduct a strict read-only audit of this plan."*
+   - **Review**: *"Run `/plan-review <suffix>` to conduct a strict read-only audit of this plan."*
    - **Proceed**: *"Type `/proceed` to begin implementing this plan."*
    - **Refine / Edit**: *"Tell me what modifications you'd like to make to the plan."*
    - **View Details**: Provide a clickable direct link to open the file in the IDE.

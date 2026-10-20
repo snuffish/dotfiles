@@ -38,7 +38,7 @@ Invoke this skill whenever:
 |---|---|
 | Finding bugs and convention breaches in the diff | [`/code-review`](../code-review/SKILL.md) (its Spec axis samples; this skill walks every line) |
 | Triaging reviewer threads on the PR | [`/pr-feedback-review`](../pr-feedback-review/SKILL.md) |
-| Auditing a plan before it is built | [`/review`](../review/SKILL.md) |
+| Auditing a plan before it is built | [`/plan-review`](../plan-review/SKILL.md) |
 | How to try the change by hand | [`/manual-testing`](../manual-testing/SKILL.md) |
 
 ---

@@ -1,9 +1,9 @@
 ---
-name: review
+name: plan-review
 description: "Conducts a thorough, read-only architectural and technical review of an implementation plan, design proposal, or PR without executing or modifying code. STRICT INVARIANT: NEVER proceeds or implements changes without an explicit /proceed command."
 ---
 
-# Skill: `/review` — Strict Plan & Design Review
+# Skill: `/plan-review` — Strict Plan & Design Review
 
 Conducts a deep, systematic, read-only technical audit and review of an implementation plan (`<prefix>-implementation_plan-<suffix>.md`), architectural proposal, or change design.
 
@@ -24,8 +24,8 @@ Read these before step 1:
 > [!CAUTION]
 > **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
 >
-> 1. **MANDATORY PLAN.MD REFERENCE (NO EXCUSES):** Every single `/review` response MUST ALWAYS include a clickable link to the active plan file, built exactly as *Plan Artifact Reference* below specifies (`[<prefix>-implementation_plan-<suffix>.md](...)`). The user frequently needs to click and open it in the IDE. This applies to ALL review responses, including follow-up reviews and questions asked under `/review`.
-> 2. **DO NOT MODIFY CODE:** You must **NEVER** edit files, create new source files, run modifying CLI commands (e.g. migrations, git commits, code scaffolding), or begin implementation during or immediately after a `/review`.
+> 1. **MANDATORY PLAN.MD REFERENCE (NO EXCUSES):** Every single `/plan-review` response MUST ALWAYS include a clickable link to the active plan file, built exactly as *Plan Artifact Reference* below specifies (`[<prefix>-implementation_plan-<suffix>.md](...)`). The user frequently needs to click and open it in the IDE. This applies to ALL review responses, including follow-up reviews and questions asked under `/plan-review`.
+> 2. **DO NOT MODIFY CODE:** You must **NEVER** edit files, create new source files, run modifying CLI commands (e.g. migrations, git commits, code scaffolding), or begin implementation during or immediately after a `/plan-review`.
 > 3. **DO NOT AUTO-PROCEED:** Even if the plan is completely sound, verified, flawless, or approved, you must **NEVER** start implementing it automatically.
 > 4. **MANDATORY GATE:** Implementation of any plan must **ALWAYS and ONLY** begin when the user explicitly issues the command:
 >    ```text
@@ -38,7 +38,7 @@ Read these before step 1:
 ## 1. When to Use
 
 Invoke this skill whenever:
-- The user issues `/review` (bare or with a specific plan suffix).
+- The user issues `/plan-review` (bare or with a specific plan suffix).
 - An `<prefix>-implementation_plan-<suffix>.md` has been drafted and needs a rigorous sanity check before execution.
 - The user asks: *"Does this plan make sense?"*, *"Review this approach"*, or *"Check for design flaws"*.
 
@@ -59,7 +59,7 @@ Invoke this skill whenever:
 
 ### Step 1: Locate the Target Plan & Context
 1. Locate `<prefix>-implementation_plan-<suffix>.md` at the **workspace root**:
-   - If an argument or suffix was supplied (e.g. `/review 18176`, `/review begar-prefix`), target that specific plan artifact.
+   - If an argument or suffix was supplied (e.g. `/plan-review 18176`, `/plan-review begar-prefix`), target that specific plan artifact.
    - If invoked bare, check for matching plans via `ls -lt <prefix>-implementation_plan-*.md` at the workspace root. If multiple exist, match against the current branch or ask the user to specify.
 2. If reviewing a branch, PR, or code diff, locate the relevant files or work items (composing with `code-review` principles if reviewing already-written code).
 3. Read the relevant project rulebooks and conventions:

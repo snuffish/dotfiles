@@ -42,7 +42,7 @@ Look back through this session for the most recent gated handoff that has not ye
 
 | Gated by | What it left waiting | Next step `/proceed` authorizes |
 |---|---|---|
-| `review` | A plan or proposal with a verdict | Implement the reviewed plan, applying its 🔴 findings first |
+| `plan-review` | A plan or proposal with a verdict | Implement the reviewed plan, applying its 🔴 findings first |
 | `pr-fix-pipeline` | An investigation and an `implementation_plan` | Implement the fix plan, unblock-first, then run its local verification commands |
 | `implement-feature` | The plan gate | Resume `implement-feature` at its implementation phase |
 | `suggestion` | Ranked approaches with a recommendation | Act on the recommended approach (or the one the arguments pick): through `/plan` when the change is non-trivial, otherwise directly |
