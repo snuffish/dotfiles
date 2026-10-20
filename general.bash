@@ -73,9 +73,35 @@ $abs_path"
   printf "%s\n" "$result" | pbcopy
 }
 
-unalias catc 2>/dev/null
-function catc() {
-  cat "$@" | pbcopy
+unalias filec 2>/dev/null
+function filec() {
+  if [[ $# -eq 0 ]]; then
+    echo "usage: filec <file>..." >&2
+    return 1
+  fi
+
+  local paths=() f
+  for f in "$@"; do
+    if [[ ! -e "$f" ]]; then
+      echo "filec: $f: no such file or directory" >&2
+      return 1
+    fi
+    paths+=("$(cd "$(dirname "$f")" && pwd)/$(basename "$f")")
+  done
+
+  if [[ $ENV_PROFILE == "Linux" ]]; then
+    printf "file://%s\n" "${paths[@]}" | wl-copy --type text/uri-list
+  else
+    # delay: exiting right after the write drops every file but the first
+    osascript -l JavaScript -e '
+      function run(argv) {
+        ObjC.import("AppKit");
+        const pb = $.NSPasteboard.generalPasteboard;
+        pb.clearContents;
+        pb.writeObjects($(argv.map(p => $.NSURL.fileURLWithPath(p))));
+        delay(0.2);
+      }' "${paths[@]}"
+  fi
 }
 
 alias q="exit"
