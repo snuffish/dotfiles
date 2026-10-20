@@ -17,7 +17,7 @@ Personal dotfiles: modular Bash setup, Neovim (LazyVim), tmux, WezTerm, Ghostty 
 | `autohotkey/` | AutoHotkey scripts for Windows |
 | `skills/` | Claude Code agent skills |
 | `claude/` | Claude Code statusline |
-| `claude.bash` | `cm-sync` shell function ([snuffish/cm-sync](https://github.com/snuffish/cm-sync), cloned at `~/Projects/cm-sync`) |
+| `claude.bash` | `cm-sync` shell function and `cm` (opens the claude-mem dashboard at `cm-sync url`) ([snuffish/cm-sync](https://github.com/snuffish/cm-sync), cloned at `~/Projects/cm-sync`) |
 | `docs/`, `GLOSSARY.md` | ADRs and agent docs |
 
 ## Setup
