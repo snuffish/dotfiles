@@ -385,21 +385,33 @@ def export(cfg, state, worker=None, with_prompts=False, allow_unredacted=False, 
             needed[session["id"]] = session
     own["sessions"] = [dict(s, user_prompt=s["user_prompt"] if with_prompts else None) for s in needed.values()]
 
-    flagged = []
+    flagged = {}
     for kind in KINDS:
         for row in own[kind]:
             for column, pattern in scan_secrets(kind, row):
-                flagged.append((kind, row["id"], column, pattern))
+                flagged.setdefault((kind, row["id"]), (row, []))[1].append(f"{column} matches {pattern}")
     if flagged:
-        lines = [f"  {kind[:-1]} #{row_id}: {column} matches {pattern}" for kind, row_id, column, pattern in flagged]
-        if not exclude_flagged:
+        lines = [f"  {kind[:-1]} #{row_id} ({(row.get('title') or row.get('custom_title') or row.get('request') or '')[:60]}): {', '.join(hits)}"
+                 for (kind, row_id), (row, hits) in flagged.items()]
+        listing = "possible secrets found:\n" + "\n".join(lines)
+        deletable = {k: v for k, v in flagged.items() if k[0] != "sessions"}
+        if not exclude_flagged and worker and deletable and ask_tty(
+                listing + f"\nDelete these {len(deletable)} rows from claude-mem now?", default=True):
+            for (kind, _), (row, _) in deletable.items():
+                worker.delete(kind, row)
+                all_present.discard(row_key(kind, row))
+            info(f"Deleted {len(deletable)} rows")
+            kept = [k for k in flagged if k[0] == "sessions"]
+            if kept:
+                warn("Kept local only (sessions are never deleted here): " + ", ".join(f"session #{i}" for _, i in kept))
+        elif not exclude_flagged:
             raise CmSyncError(
-                "possible secrets found, nothing was written:\n" + "\n".join(lines) +
+                listing.replace("found:", "found, nothing was written:", 1) +
                 f"\nDelete those rows in the claude-mem viewer ({cfg.worker_url}), or pass --exclude-flagged to keep them local only."
             )
-        warn("Kept local only (possible secrets):\n" + "\n".join(lines))
-        drop = {(kind, row_id) for kind, row_id, _, _ in flagged}
-        own = {kind: [r for r in rows if (kind, r["id"]) not in drop] for kind, rows in own.items()}
+        else:
+            warn("Kept local only " + listing)
+        own = {kind: [r for r in rows if (kind, r["id"]) not in flagged] for kind, rows in own.items()}
 
     published = {kind: sorted(((row_key(kind, r), public(kind, r)) for r in own[kind]),
                               key=lambda kr: (kr[1].get("created_at_epoch") or kr[1].get("started_at_epoch") or 0, kr[0]))
@@ -644,9 +656,17 @@ def has_upstream(cfg):
 
 def pull(cfg):
     require_repo(cfg)
-    if has_upstream(cfg):
-        git(cfg, "pull", "--rebase", "--autostash", "--quiet")
-        info("Pulled " + git(cfg, "log", "-1", "--format=%h %s").stdout.strip())
+    if not has_upstream(cfg):
+        return
+    branch = git(cfg, "symbolic-ref", "--short", "HEAD").stdout.strip()
+    remote = git(cfg, "config", f"branch.{branch}.remote").stdout.strip()
+    merge = git(cfg, "config", f"branch.{branch}.merge").stdout.strip().removeprefix("refs/heads/")
+    # Naming the branch keeps FETCH_HEAD to one entry even when an editor fetches at the same time
+    args = ("pull", "--rebase", "--autostash", "--quiet", remote, merge)
+    if git(cfg, *args, check=False).returncode != 0:
+        time.sleep(1)
+        git(cfg, *args)
+    info("Pulled " + git(cfg, "log", "-1", "--format=%h %s").stdout.strip())
 
 
 def run_gitleaks(path):
@@ -675,7 +695,7 @@ def sync(cfg, state, worker, **export_args):
         info("Committed locally (no upstream branch to push to)")
         return
     if git(cfg, "push", "--quiet", check=False).returncode != 0:
-        git(cfg, "pull", "--rebase", "--autostash", "--quiet")
+        pull(cfg)
         git(cfg, "push", "--quiet")
     info("Pushed")
 
@@ -686,6 +706,11 @@ def sync(cfg, state, worker, **export_args):
 def ask(question, default=False, assume_yes=False):
     if assume_yes:
         return True
+    return ask_tty(question, default)
+
+
+def ask_tty(question, default=False):
+    """Prompt only on an interactive terminal; otherwise answer no."""
     if not sys.stdin.isatty():
         return False
     suffix = " [Y/n] " if default else " [y/N] "
@@ -806,6 +831,24 @@ def hooks():
 
 # ------------------------------------------------------------------ cli
 
+GLOBAL_OPTIONS_WITH_VALUE = ("--repo", "--state-dir")
+
+
+def with_default_command(argv, commands, default="sync"):
+    """Insert `default` after the global options when no command is given: `cm-sync` means `cm-sync sync`."""
+    i = 0
+    while i < len(argv):
+        arg = argv[i]
+        if arg in commands or arg in ("-h", "--help"):
+            return argv
+        if arg in GLOBAL_OPTIONS_WITH_VALUE:
+            i += 2
+        elif arg.split("=", 1)[0] in GLOBAL_OPTIONS_WITH_VALUE:
+            i += 1
+        else:
+            break
+    return argv[:i] + [default] + argv[i:]
+
 
 def main(argv=None):
     global QUIET
@@ -835,7 +878,7 @@ def main(argv=None):
     p_refile.add_argument("session", help="Claude Code session id (the transcript file name)")
     p_refile.add_argument("project", help="target claude-mem project, e.g. .terminal")
 
-    args = parser.parse_args(argv)
+    args = parser.parse_args(with_default_command(sys.argv[1:] if argv is None else list(argv), set(sub.choices)))
     QUIET = getattr(args, "quiet", False)
     cfg = Config(args.repo, args.state_dir)
     state = State(cfg)

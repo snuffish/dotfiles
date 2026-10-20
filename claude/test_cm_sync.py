@@ -5,6 +5,7 @@ import threading
 import unittest
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
+from unittest import mock
 
 import cm_sync as cm
 
@@ -228,6 +229,23 @@ class CmSyncTests(unittest.TestCase):
         self.a.export(exclude_flagged=True)
         self.assertEqual(self.rows(self.a, "observations"), [])
 
+    def test_secret_prompt_deletes_flagged_rows_then_exports(self):
+        token = "ghp_" + "A1b2C3d4" * 5
+        self.a.add_session()
+        self.a.add_observation("clean")
+        leak = self.a.add_observation("leak", narrative=f"the token is {token}", epoch=101)
+        worker = cm.Worker(self.a.worker_url)
+        with mock.patch.object(cm, "ask_tty", return_value=True) as prompt:
+            cm.export(self.a.cfg, self.a.state, worker)
+        self.assertIn("leak", prompt.call_args[0][0])
+        self.assertNotIn(token, prompt.call_args[0][0])
+        self.assertIn(("DELETE", f"/api/observation/{leak}", None), FakeWorker.requests)
+        self.assertEqual([r["title"] for r in self.rows(self.a, "observations")], ["clean"])
+        with mock.patch.object(cm, "ask_tty", return_value=False):
+            self.a.add_observation("leak again", narrative=f"the token is {token}", epoch=102)
+            with self.assertRaises(cm.CmSyncError):
+                cm.export(self.a.cfg, self.a.state, worker)
+
     def test_export_refuses_without_redaction(self):
         self.a.cfg.settings["CLAUDE_MEM_REDACT_ENABLED"] = "false"
         with self.assertRaises(cm.CmSyncError):
@@ -251,6 +269,15 @@ class CmSyncTests(unittest.TestCase):
         self.assertEqual(deletes, [f"/api/observation/{first}", f"/api/observation/{second}"])
         with self.assertRaises(cm.CmSyncError):
             cm.refile(self.a.cfg, self.a.worker, "missing", ".terminal")
+
+    def test_sync_is_the_default_command(self):
+        commands = {"sync", "import", "export", "status"}
+        self.assertEqual(cm.with_default_command([], commands), ["sync"])
+        self.assertEqual(cm.with_default_command(["--exclude-flagged"], commands), ["sync", "--exclude-flagged"])
+        self.assertEqual(cm.with_default_command(["--repo", "/r", "-q"], commands), ["--repo", "/r", "sync", "-q"])
+        self.assertEqual(cm.with_default_command(["--state-dir=/s"], commands), ["--state-dir=/s", "sync"])
+        self.assertEqual(cm.with_default_command(["--repo", "/r", "import"], commands), ["--repo", "/r", "import"])
+        self.assertEqual(cm.with_default_command(["--help"], commands), ["--help"])
 
     def test_import_posts_rows_with_their_sessions_once(self):
         self.a.add_session()
