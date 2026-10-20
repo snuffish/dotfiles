@@ -7,7 +7,9 @@ function cm-sync() {
     echo "cm-sync is not installed: git clone git@github.com:snuffish/cm-sync.git ~/Projects/cm-sync" >&2
     return 1
   fi
-  python3 -I "$engine" "$@"
+  CM_SYNC_REPO="${CM_SYNC_REPO:-$HOME/.terminal/memory}" \
+  CM_SYNC_REMOTE="${CM_SYNC_REMOTE:-git@github.com:snuffish/claude-memory.git}" \
+    python3 -I "$engine" "$@"
 }
 
 # Open the claude-mem dashboard in the browser
