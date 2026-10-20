@@ -6,6 +6,8 @@ argument-hint: "[PR id | PR URL | work item id | branch] [--base <ref>] [--live]
 
 # /priis-frontend-review — Frontend code review
 
+> Registry copy of `GR.PRIIS.Frontend/.claude/skills/priis-frontend-review/` @ `5726e81c` (`origin/main`, 2026-10-19). The upstream wins; `/code-review` reads the upstream directly (`code-review-priis-profile`). Re-copy when it changes.
+
 A review here is a hunt for the things our own reviewers keep finding, not a generic lint pass. The catalog of what they found in the last ~50 PRs, with the fix that was accepted each time, is in [references/lessons-from-prs.md](references/lessons-from-prs.md). Read it once per review session; the passes below point into it.
 
 **Invariants.** The review is read-only: no edits, no checkouts of the main working tree, no `git stash push`, no commits. The only git writes are `git fetch`, `git stash create` (one unreferenced commit object, nothing else) and `git worktree add/remove/prune` on a review worktree. No installs, builds, lint or test runs except what Pass F needs to start the app (CI runs lint and build, `/priis-frontend-verify` covers the grep-able anti-patterns). Never start fixing what you found unless the user asks. Every Blocking or Should-fix finding is verified (Step 4) before it is reported. Posting to ADO needs explicit approval (Step 6).

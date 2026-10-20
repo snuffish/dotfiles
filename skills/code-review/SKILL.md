@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: "Perform a structured, high-quality review of code changes along three axes — Correctness (bugs, security, performance), Standards (does the code follow this repo's documented conventions and cross-repo contracts?) and Spec (does it implement what the PR / work item / acceptance criteria asked for?). Accepts an optional pull-request URL/ID, work-item ID, or fixed point (\"since main\", a SHA, a tag) — and resolves the PR from the current branch when none is given. Always looks for a counterpart PR in a sibling repo (a dual-repo change such as backend + frontend) and reviews both halves. `deep` runs the axes as parallel sub-agents. `feedback` also runs /pr-feedback-review after the findings are verified and folds the PR's discussion threads into the review. Reviews from a detached snapshot worktree by default so the user can keep editing the main checkout meanwhile; `live` opts out. Project-agnostic: conventions and cross-repo contracts come from the workspace's own rulebooks and project-scoped skills. Use when the user asks for a code review, PR review, \"review since X\", or feedback on a branch or working changes."
+description: "Perform a structured, high-quality review of code changes along three axes — Correctness (bugs, security, performance), Standards (does the code follow this repo's documented conventions and cross-repo contracts?) and Spec (does it implement what the PR / work item / acceptance criteria asked for?). Accepts an optional pull-request URL/ID, work-item ID, or fixed point (\"since main\", a SHA, a tag) — and resolves the PR from the current branch when none is given. Always looks for a counterpart PR in a sibling repo (a dual-repo change such as backend + frontend) and reviews both halves. `deep` runs the axes as parallel sub-agents. `feedback` also runs /pr-feedback-review after the findings are verified and folds the PR's discussion threads into the review. Reviews from a detached snapshot worktree by default so the user can keep editing the main checkout meanwhile; `live` opts out. Project-agnostic: conventions and cross-repo contracts come from the workspace's own rulebooks and project-scoped skills, and a project profile (`code-review-<project>-profile`) can add the team's own review checklists and lessons when one exists. Use when the user asks for a code review, PR review, \"review since X\", or feedback on a branch or working changes."
 ---
 
 # Code Review Skill
@@ -30,6 +30,7 @@ Read these before step 1:
 - `../_modules/artifact-protocol.md`: writes `<prefix>-code_review-<suffix>.md` (suffix e.g. `-18176-contract-templates`, `-category-demand-statistics`)
 - `../_modules/git-worktrees.md`: snapshot by default
 - `../_modules/pr-counterpart.md`
+- `../_modules/project-profile.md`: profile `code-review-<project>-profile`
 
 - Never copy another model's review under your own prefix — a review file must be the output of the model it names.
 - With a workspace `[worktree-context]` block (e.g. `/implement-feature` reviewing its own workspace worktree), *Review Context* reports the worktree's branch as the reviewed head and the user's main-checkout branch separately as "not reviewed".
@@ -61,9 +62,29 @@ Read these before step 1:
 
 ---
 
+## Project profile
+
+A project can tune the review through profile skills, resolved per `project-profile` before Step 1: the base profile `<project>-profile`, then the Command profile `code-review-<project>-profile`, with its *Resolution order*, *Shared fields*, *Overrides*, *Upstream content* and *Pointers*. A profile adds project facts and checklists; it never relaxes this skill's invariants (read-only, snapshot, no installs or test runs, verified findings, threads only with `feedback`). Without a profile, every field takes its fallback and the review runs exactly as written below. This skill's own fields:
+
+| Field | What to resolve | Fallback when nothing documents it |
+|---|---|---|
+| **PR tooling** | The MCP server or CLI for PRs, threads and work items, and its fallback | The `az` / `gh` / `glab` commands in Step 1 |
+| **Counterpart pathspecs** | Per repo, the paths to diff on the other side of a dual-repo change | The whole counterpart diff |
+| **Review base exceptions** | Release or hotfix bases a branch may target instead of the default | *Branch Discovery* |
+| **Sibling hints** | Where the nearest existing feature usually lives, by kind of change | A recent feature's commit (`git log --stat`) |
+| **Review checklists** | Per repo: the upstream skill path, the exact headings that apply, which axis each feeds, and what is excluded | None: Step 3's sources only |
+| **Lessons catalogs** | Per repo: the upstream path of a catalog of past review findings, and which sections record decisions that rule a finding out | None |
+| **Axis and severity mapping** | How the project's own finding tags and severities map onto Correctness / Standards / Spec and 🔴/🟡/🟢 | Not needed |
+| **Report additions** | Subsections the project adds inside *Detailed Review Findings* | None |
+| **Hand-offs** | What the project checks with other skills instead (verify skills, manual testing) | None |
+
+Name the profiles loaded, and the upstream sha of every checklist and catalog, in the Review Context **Profile** row. A pointed-to heading that cannot be found is reported in the same row.
+
+---
+
 ## Step 1 — Determine Scope
 
-Before reviewing any code, establish **what** to review:
+Before reviewing any code, resolve the project profile (*Project profile*), then establish **what** to review:
 
 | User says | What to diff |
 |---|---|
@@ -307,6 +328,7 @@ If nothing is found, say so in the header ("Spec: none available — Spec axis l
 
 Do not review against conventions from memory. Load what the repo documents, following the `core` precedence (workspace rulebooks > project-scoped skills > tech skills):
 
+0. **The profile's review checklists and lessons catalogs**, when a profile names them: read each from its upstream per `project-profile` › *Upstream content* (never from the snapshot or a registry copy), keep only the headings the profile says apply, and file each under the axis the profile maps it to. Record each as `<repo> origin/<default> @ <short-sha>`.
 1. **Rulebooks** for every repo the diff touches: the repo's `CLAUDE.md` / `GEMINI.md`, and whatever canonical rulebook it points to (e.g. `.github/copilot-instructions.md`), plus `CONTRIBUTING.md` / `CODING_STANDARDS.md` if present.
 2. **Project-scoped skills** for the touched side — the `[Project: …]`-gated skills the registry provides for this workspace (the workspace rulebook or `.agents/skills.json` lists them, typically one per layer: endpoints, data access, forms, routing, testing, …). Load only those matching the files changed.
 3. **Cross-repo contracts** from the workspace-root rulebook — whatever couples the repos: enums shared by integer value, fixed realtime or endpoint URLs, generated clients and checked-in API snapshots, the product's UI language. Use them as a checklist whenever the diff touches either side of a contract — see *Heuristics*.
@@ -391,7 +413,7 @@ Rank severity **within** each axis on its own merits — a spotless Standards re
 Before writing the artifact, re-check each 🔴/🟡 against the code — not against your notes:
 
 1. **Re-open the cited `path:line`** in the snapshot and confirm the code says what the finding claims. Fix any drifted line numbers.
-2. **Try to refute it:** look for the guard, caller, config, or test that would make it a non-issue (e.g. a check one layer up, a query that already filters, a validator that runs first).
+2. **Try to refute it:** look for the guard, caller, config, or test that would make it a non-issue (e.g. a check one layer up, a query that already filters, a validator that runs first). A finding that a profile's lessons catalog records as a team decision is refuted unless the code contradicts the decision.
 3. **Classify:**
    - **Verified** — you traced the failing path in code.
    - **Plausible** — the evidence points to it but part of the path could not be confirmed by reading (runtime config, external service, behaviour needing a test run). Say what would confirm it.
@@ -505,11 +527,11 @@ If you edit the artifact after emitting the header, the line numbers have moved 
 
 Sections in this order, and **nothing after In Plain Terms**:
 
-1. `## Review Context` — a small table: PR(s) and work item(s) per repo, **Counterpart** (the `pr-counterpart` › *Classification*: `<repo> !<id>` reviewed / found, not reviewed / expected but missing / single-repo change), base, **Head reviewed** per repo as `` `<source-ref>` @ `<short-sha>` `` (*Step 1b-a*) — e.g. `` Backend `origin/feature/31085_permit-…` @ `65c726bb` `` — never a bare SHA, **Reviewed from** (`` snapshot of `<source-ref>` @ `<short-sha>` (removed) `` / `… (kept at <path>)` / `` live checkout of `<branch>` ``), **Local checkout** per repo (its branch and `same commit` / `local ahead N / behind M` / `on <other-branch> — PR branch not checked out`; for a repo without a counterpart, the *None* switch outcome: `switched <from> → <default>` / `already on <default>` / `on <branch>, not switched: <reason>`), **Untracked, not in snapshot** (`working`/`staged` only: file list or "none"), Spec source (or "none available"), Standards sources loaded, mode (standard/deep, plus `feedback`). With `feedback`: a **PR feedback** row linking the `pr_feedback_review` artifact(s), and giving the human thread count, how many threads attach to findings, and how many findings were added from threads. If *Step 6b* was skipped, the row says why.
+1. `## Review Context` — a small table: PR(s) and work item(s) per repo, **Counterpart** (the `pr-counterpart` › *Classification*: `<repo> !<id>` reviewed / found, not reviewed / expected but missing / single-repo change), base, **Head reviewed** per repo as `` `<source-ref>` @ `<short-sha>` `` (*Step 1b-a*) — e.g. `` Backend `origin/feature/31085_permit-…` @ `65c726bb` `` — never a bare SHA, **Reviewed from** (`` snapshot of `<source-ref>` @ `<short-sha>` (removed) `` / `… (kept at <path>)` / `` live checkout of `<branch>` ``), **Local checkout** per repo (its branch and `same commit` / `local ahead N / behind M` / `on <other-branch> — PR branch not checked out`; for a repo without a counterpart, the *None* switch outcome: `switched <from> → <default>` / `already on <default>` / `on <branch>, not switched: <reason>`), **Untracked, not in snapshot** (`working`/`staged` only: file list or "none"), Spec source (or "none available"), Standards sources loaded, **Profile** (the profiles loaded, each upstream checklist and catalog as `<repo> origin/<default> @ <short-sha>` or "registry copy (upstream missing)", and any pointed-to heading not found; "none" without a profile), mode (standard/deep, plus `feedback`). With `feedback`: a **PR feedback** row linking the `pr_feedback_review` artifact(s), and giving the human thread count, how many threads attach to findings, and how many findings were added from threads. If *Step 6b* was skipped, the row says why.
 2. `## Feature in Brief` — what the feature is and what it is meant to achieve, before any code is mentioned (see *Feature in Brief* below).
 3. `## Summary of Changes` — 1–3 sentences on what the changes accomplish and their architectural intent.
 4. `## Findings Summary` — the summary table. With `feedback`, the table gains a **Thread** column (`[#110776](#thread-110776)` with its host link, or `—`), and a `### PR Feedback Cross-Check` table follows it: one row per human thread with its *Thread*, *State at head* and *Disposition* (`covers finding N` / `added as finding N` / `decided — finding N lowered` / `refuted: <evidence>` / `no code defect`). The table accounts for every thread.
-5. `## Detailed Review Findings` — 🔴/🟡 findings with their fix inline, then `### 🟢 Minor Findings`, then `### 💙 Praise`.
+5. `## Detailed Review Findings` — 🔴/🟡 findings with their fix inline, then `### 🟢 Minor Findings`, then any subsections the profile's *Report additions* name (in the order it lists), then `### 💙 Praise`. A profile adds subsections here only, never top-level sections.
 6. `## In Plain Terms` — only when there is at least one 🔴/🟡.
 
 ### Feature in Brief
@@ -626,6 +648,7 @@ Rules:
    - **Correctness** — "Find bugs, edge cases, race conditions, security and performance issues in this diff. Read whole files where the diff lacks context. For each: `path:line`, the failing path as a concrete sequence, proposed severity (🔴/🟡/🟢). Under 500 words."
    - **Standards** — include the list of Standards source files from Step 3 **and the smell baseline table pasted in full** (the sub-agent has no other access to it). "Report every place the diff violates a documented standard — cite the source file and rule — and any baseline smell you spot, labelled as a judgement call. A documented repo standard overrides the baseline. Check the listed cross-repo contracts on both sides. Skip anything tooling enforces. Under 500 words."
    - **Spec** — include the fetched spec/AC text (not a link). "Report: (a) requirements missing or partial; (b) behaviour in the diff that wasn't asked for; (c) requirements that look implemented but where the implementation looks wrong. Quote the spec line for each. Under 400 words." Skip this sub-agent when there is no Spec source, and say so.
+   - With a profile, the aggregator reads the review checklists and lessons catalogs once (Step 3, source 0) and **pastes** the sections mapped to each axis into that axis's brief. A sub-agent never follows a pointer or reads upstream content itself.
    - All sub-agents are **read-only**: no edits, no checkouts, no worktree commands, no installs, builds or tests. They read only under `repo-root` and report `path:line` already mapped to `workspace-path`.
 3. **Aggregate** into the single artifact: de-duplicate findings raised by more than one axis (keep the axis that owns the root cause), assign final severities within each axis, re-check that no citation points into a snapshot directory, then run **Step 6 — Verify** on every 🔴/🟡 yourself before writing. With `feedback`, run *Step 6b* after that, still yourself; the axis sub-agents never see the threads. Write *Feature in Brief* yourself from the Step 2 spec source; no sub-agent writes it. Remove the snapshot(s) afterwards (*Step 1b-e*), after `/pr-feedback-review` has finished with them.
 

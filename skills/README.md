@@ -12,8 +12,8 @@ Everything in the Registry is one of four kinds (defined in [`../GLOSSARY.md`](.
 |---|---|:---:|---|
 | **Command** | Carries out a workflow, invoked by name or by a matching request | yes | `/code-review`, `/create-ticket`, `squash-ef-core-migrations` |
 | **Reference** | Knowledge the model loads by topic, never run as a workflow | yes | `modern-csharp`, `priis-backend-ef-core` |
-| **Profile** | Project-specific facts one Command reads to adapt to that project | yes | `implement-feature-priis-profile` |
-| **Module** | A shared contract Commands depend on; never runs on its own | **no** | `core`, `artifact-protocol`, `git-worktrees`, `pr-counterpart` |
+| **Profile** | Project-specific facts a Command reads to adapt to that project: a base profile shared by the project's Commands, plus one Command profile per Command | yes | `priis-profile`, `implement-feature-priis-profile`, `code-review-priis-profile` |
+| **Module** | A shared contract Commands depend on; never runs on its own | **no** | `core`, `artifact-protocol`, `git-worktrees`, `pr-counterpart`, `project-profile` |
 
 ## Layout
 
@@ -25,7 +25,9 @@ skills/
     GR.PRIIS/                      # everything scoped to the GR.PRIIS product lives here
       priis-backend-<skill>/
       priis-frontend-<skill>/
+      priis-profile/                 # base profile: facts every PRIIS Command profile shares
       implement-feature-priis-profile/
+      code-review-priis-profile/
 ```
 
 - **Top level** = general, project-agnostic skills.
@@ -34,20 +36,20 @@ skills/
 
 ## Inventory
 
-58 skills total — 33 general + 25 under `Projects/GR.PRIIS/` — plus 4 Modules.
+60 skills total — 33 general + 27 under `Projects/GR.PRIIS/` — plus 5 Modules.
 
 | Group | Kind | Count | Entries |
 | --- | --- | :---: | --- |
-| General (top level) | Command | 30 | `artifacts`, `clean`, `code-documentation`, `code-review`, `continue`, `create-skill`, `create-ticket`, `explain`, `expressive`, `implement-feature`, `investigate`, `manual-testing`, `organize`, `plan`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `refine`, `reload-skills`, `resolve-conflicts`, `review`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `suggestion`, `verify-assumptions`, `what-am-I-missing` |
+| General (top level) | Command | 31 | `artifacts`, `clean`, `code-documentation`, `code-review`, `continue`, `create-skill`, `create-ticket`, `explain`, `expressive`, `implement-feature`, `investigate`, `manual-testing`, `organize`, `plan`, `plan-preview`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `refine`, `reload-skills`, `resolve-conflicts`, `review`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `suggestion`, `verify-assumptions`, `what-am-I-missing` |
 | General (top level) | Reference | 2 | `modern-csharp`, `typescript-conventions` |
 | `GR.PRIIS/priis-backend-*` | Reference | 7 | `dry`, `ef-core`, `fastendpoints`, `notifications`, `signalr`, `testing`, `workflow` |
 | `GR.PRIIS/priis-frontend-*` | Reference | 6 | `component-patterns`, `forms`, `routing`, `rtk-query`, `testing`, `workflow` |
 | `GR.PRIIS/priis-backend-*` | Command | 7 | `health-check`, `migrate-to-tunit` (retired — migration complete), `release-notes`, `review`, `scaffold`, `ship`, `verify` |
 | `GR.PRIIS/priis-frontend-*` | Command | 4 | `health-check`, `review`, `scaffold`, `verify` |
-| `GR.PRIIS/implement-feature-*` | Profile | 1 | `priis-profile` — project profile consumed by the general `implement-feature` orchestrator |
-| `_modules/` | Module | 4 | `core`, `artifact-protocol`, `git-worktrees`, `pr-counterpart` |
+| `GR.PRIIS/*-profile` | Profile | 3 | `priis-profile` (base), `implement-feature-priis-profile` (read by `implement-feature`), `code-review-priis-profile` (read by `code-review`) |
+| `_modules/` | Module | 5 | `core`, `artifact-protocol`, `git-worktrees`, `pr-counterpart`, `project-profile` |
 
-(Project skill names are the group prefix + the listed suffix — e.g. `priis-backend-ef-core`, `priis-frontend-verify`. The names match the repo-local copies in each repo's `.claude/skills/`; the `review` skills carry a `references/lessons-from-prs.md` catalog.)
+(Project skill names are the group prefix + the listed suffix — e.g. `priis-backend-ef-core`, `priis-frontend-verify`. The names match the repo-local copies in each repo's `.claude/skills/`; the `review` skills carry a `references/lessons-from-prs.md` catalog. The repo-local `priis-*-review` on `origin/main` are the upstream; the registry copies are mirrors marked as such.)
 
 ## Modules & Precedence
 
@@ -69,13 +71,14 @@ Read these before step 1:
 2. **[`artifact-protocol`](_modules/artifact-protocol.md)**: host & AI model prefix (`<host>-<model>-`), mandatory contextual suffix, link formats, PR thread links and the canonical artifact catalog.
 3. **[`git-worktrees`](_modules/git-worktrees.md)**: worktree isolation. `/code-review` and `/pr-feedback-review` snapshot through it, `/implement-feature` implements in a workspace worktree, and any Command switches to it when invoked with `worktree`. It hands a `[worktree-context]` block to every delegated skill so no skill acts on the user's main checkout.
 4. **[`pr-counterpart`](_modules/pr-counterpart.md)**: finds the sibling-repo PR of a dual-repo change.
+5. **[`project-profile`](_modules/project-profile.md)**: how a Command finds, layers and applies a project's Profiles (base profile + Command profile), the shared fields, overrides, upstream content and pointers ([ADR-0003](../docs/adr/0003-profile-resolution-is-a-module.md)). Read by `implement-feature` and `code-review`.
 
 A Command lists only the Modules it uses directly; a Module lists its own dependencies. Sections inside a Module are referred to by name (`` `git-worktrees` › *Workspace Lifecycle* ``), never by number. **References** and **Profiles** carry no `## Modules` section and inherit the standards through the precedence model. Instruction precedence resolves in this order:
 
 1. **Workspace Rulebooks** (`CLAUDE.md` / `GEMINI.md` / `.agents/rules/`)
 2. **Project-scoped References and Profiles** (`Projects/<Project>/...`)
 3. **General References** (`modern-csharp`, `typescript-conventions`, etc.)
-4. **Modules** (`core`, `artifact-protocol`, `git-worktrees`, `pr-counterpart`)
+4. **Modules** (`core`, `artifact-protocol`, `git-worktrees`, `pr-counterpart`, `project-profile`)
 
 ## Naming convention (inside `Projects/GR.PRIIS/`)
 
@@ -83,7 +86,8 @@ A Command lists only the Modules it uses directly; a Module lists its own depend
 | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | `priis-backend-*`                                        | Skill specific to **GR.PRIIS.Backend** (.NET / FastEndpoints / EF Core) — a Reference, or a Command for `health-check`, `migrate-to-tunit`, `release-notes`, `review`, `scaffold`, `ship`, `verify`. |
 | `priis-frontend-*`                                       | Skill specific to **GR.PRIIS.Frontend** (React / RTK Query / TanStack Router) — a Reference, or a Command for `health-check`, `review`, `scaffold`, `verify`. |
-| `implement-feature-<project>-profile`                    | Profile read by the general `implement-feature` orchestrator: resolved facts per phase (tracker, skills, verify, ship, contracts, known drift). |
+| `<project>-profile`                                      | Base profile: the project's shared fields (layout, tracker, PR tooling, pattern skills, contracts, report language, known drift, worktree setup), loaded before any Command profile. |
+| `<command>-<project>-profile`                            | Command profile read by that general Command, only the fields it needs: `implement-feature-<project>-profile` (facts per phase: implementing ID, scaffold, verify, ship), `code-review-<project>-profile` (review checklists, lessons, axis mapping, report additions). |
 
 The `priis-backend-`/`priis-frontend-` prefix matches the names the repos use for their own copies, distinguishes the two apps within the single GR.PRIIS product folder, and keeps every skill name unique.
 
