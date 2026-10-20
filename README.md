@@ -55,7 +55,7 @@ cm-sync sync    # pull, import other devices, export this one, commit and push
 | Command | Does |
 | --- | --- |
 | `cm-sync sync` | Pull → import → export → commit only this device's folder → push |
-| `cm-sync import` | Import other devices' rows and apply their deletions (`--full` after a database reset) |
+| `cm-sync import` | Pull the memory repo, then import other devices' rows and apply their deletions (`--no-pull` to skip the pull, `--full` after a database reset) |
 | `cm-sync export` | Write this device's rows to `claude-mem/devices/<device-id>/` (`--with-prompts` to include raw prompts) |
 | `cm-sync status` | Worker, redaction, counts per device, last push |
 | `cm-sync hooks` | Print Claude Code hooks that import on session start and sync on session end |
