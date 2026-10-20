@@ -114,7 +114,14 @@ For each failure: identify the **first** error (later errors often cascade), tra
 
 ### Step 4: Reproduce (when cheap)
 
-Reproduce the failing step locally on the PR's commit using the repo's documented commands (its `CLAUDE.md`/README/CI YAML), scoped to the failing project/test. Record the command and outcome. If reproduction needs a checkout, Docker, secrets or a long full-suite run, **ask first** and record "not reproduced" otherwise. A local pass + CI fail points at environment, ordering or time-dependence.
+Reproduce the failing step locally **on the run's commit** using the repo's documented commands (its `CLAUDE.md`/README/CI YAML), scoped to the failing project/test. Check which code you are about to run first. The main checkout is often on another branch or carries local edits, and a reproduction on the wrong tree proves nothing:
+
+```bash
+git -C <repo> rev-parse HEAD                       # must equal the run's source commit
+git -C <repo> status --porcelain --untracked-files=no   # must be empty
+```
+
+If either check fails, never switch the main checkout (invariant 1). Reproduce in a `git-worktrees` snapshot of the run's commit instead (*Snapshot Lifecycle*). Restoring dependencies there (`npm ci`, `dotnet restore`) takes time and disk, so **ask first**. Record the command, the commit it ran on and the outcome. If reproduction needs Docker, secrets or a long full-suite run, **ask first** too, and otherwise record "not reproduced". A local pass + CI fail points at environment, ordering or time-dependence.
 
 ### Step 5: Review & Write the Investigation
 

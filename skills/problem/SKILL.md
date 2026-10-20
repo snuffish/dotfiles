@@ -55,7 +55,7 @@ Before going back in history, establish what is currently modified or committed 
 
 To understand the original intent, design decisions, and requirements of the code that is failing, you must inspect the conversation history:
 
-1. **Identify Current Conversation ID**: Locate the conversation ID in `<user_information>`.
+1. **Identify Current Conversation ID**: under Antigravity, it is in `<user_information>`. Under Claude Code, it is the session UUID: the newest `~/.claude/projects/<workspace-slug>/*.jsonl`, or the UUID in the scratchpad path when the system prompt names one.
 2. **Search Transcripts**: **Transcript location depends on the host IDE:**
 
 | Host | Transcripts |
@@ -109,6 +109,6 @@ Consolidate your findings into a structured Diagnostic report:
 When preparing to apply the fix:
 
 1. **Enter Planning Mode**: You **MUST** document the changes in `<prefix>-implementation_plan-<suffix>.md` first.
-2. **Request User Feedback**: Set `UserFacing = true` and `RequestFeedback = true`.
+2. **Request User Feedback**: under Antigravity, set `UserFacing = true` and `RequestFeedback = true` in the plan's `ArtifactMetadata`, so the plan opens for review. Under Claude Code, link the plan and its sections in the chat response (`artifact-protocol`) and ask for approval there.
 3. **Halt for Approval**: Do not edit any files in the workspace until the user explicitly approves.
 4. **Verify**: Run tests and build checks after editing to ensure the problem is fully resolved.

@@ -63,7 +63,7 @@ Read those comments — they tell you what the scaffolder will do wrong again.
 
 Watch for:
 
-- **Table/column renames.** EF diffs by *name*, so it never infers a rename. See Step 5.
+- **Table/column renames.** EF diffs by *name*, so it never infers a rename. See Step 6 › *The rename trap*.
 - **Data movement / backfills** — `UPDATE`, `INSERT ... SELECT`, computed backfills.
 - **Temporal (system-versioned) tables** — DDL that toggles `SYSTEM_VERSIONING` off and on.
 - **Anything guarded by `IF EXISTS`** — written for a specific database state.
@@ -71,12 +71,13 @@ Watch for:
 ## Step 2 — Back up before deleting
 
 ```bash
-mkdir -p /tmp/mig-backup
-cp <MigrationsDir>/<each-candidate>* /tmp/mig-backup/
-cp <MigrationsDir>/<Context>ModelSnapshot.cs /tmp/mig-backup/snapshot-branch.cs
+BACKUP=$(mktemp -d -t mig-backup.XXXXXX)   # unique per run: parallel sessions and worktrees never share it
+cp <MigrationsDir>/<each-candidate>* "$BACKUP"/
+cp <MigrationsDir>/<Context>ModelSnapshot.cs "$BACKUP"/snapshot-branch.cs
+echo "$BACKUP"                              # note the path; later steps diff against it
 ```
 
-These are your reference for the hand-written SQL and your diff target in Step 5. Do not rely on `git` alone
+These are your reference for the hand-written SQL and your diff target in Step 6. Do not rely on `git` alone
 — you will be checking files out over the top of them.
 
 ## Step 3 — Establish the baseline
