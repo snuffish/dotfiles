@@ -19,7 +19,7 @@ Read these before step 1:
 - `../_modules/git-worktrees.md`
 
 - **Authorization**: invoking the skill authorizes editing the conflicted files, regenerating lockfiles and generated files, staging the resolved paths, and concluding the operation once Step 6's gate holds (the merge commit, `rebase --continue`, `cherry-pick --continue`, `revert --continue`). `no-commit`, `stage-only` or "don't commit" in the invocation withdraws the concluding step. It never authorizes `push` or dropping a stash.
-- **Isolation**: a conflict lives in the checkout where the operation is in progress, so resolve it there. Under `git-worktrees` › *Golden Invariants* the main checkout is read-only while a skill worktree is active for the repo. If the conflict is in the main checkout at that point, stop and ask, and name the commit or `--continue` in the question: a yes covers resolving and concluding there. When the invocation contains `worktree` or `/git-worktrees` and has to *start* the operation (e.g. "update my branch with main"), run it in a workspace worktree per `git-worktrees` › *Workspace Lifecycle*.
+- **Isolation**: a conflict lives in the checkout where the operation is in progress, so resolve it there. Under `git-worktrees` › *Golden Invariants* the main checkout is read-only while a skill worktree is active for the repo. If the conflict is in the main checkout at that point, stop and ask, and name the commit or `--continue` in the question: a yes covers resolving and concluding there. When the invocation contains the token `/git-worktrees` and has to *start* the operation (e.g. "update my branch with main"), run it in a workspace worktree per `git-worktrees` › *Workspace Lifecycle*.
 
 ---
 
@@ -38,7 +38,7 @@ Read these before step 1:
 ## 1. When to Use
 
 Invoke this skill whenever:
-- The user runs `/resolve-conflicts` (optionally with `no-commit`, a target branch, or `worktree`).
+- The user runs `/resolve-conflicts` (optionally with `no-commit`, a target branch, or `/git-worktrees`).
 - `git status` shows unmerged paths (`UU`, `AA`, `DU`, `UD`, `AU`, `UA`, `DD`) or "You have unmerged paths".
 - A merge, rebase, cherry-pick, revert or `stash pop/apply` stopped on conflicts.
 - A PR reports conflicts with its target, or the user asks to bring a branch up to date with `main` (preview first, see Step 0b).

@@ -6,6 +6,7 @@ Dual-repo PR counterpart discovery: finds the other half of a change that ships 
 
 Read these before using this one:
 - [git-worktrees.md](git-worktrees.md) (same folder as this file): only its *Repo Resolution* section, to list the repos in the workspace
+- [pr-host.md](pr-host.md): *Organization URL* (`<org-url>`) and *Fetch the PR, its work items and acceptance criteria*, for the counterpart's metadata
 
 ---
 
@@ -24,7 +25,7 @@ Run it when the workspace holds more than one repo (`git-worktrees` › *Repo Re
 | 5 | The other repo's checkout is on a matching branch | `git -C <other> rev-parse --abbrev-ref HEAD` |
 | 6 | The diff touches a cross-repo contract the rulebook names (shared enum, API shape, generated client or API snapshot, realtime URL) | The counterpart is **expected**, even when signals 1–5 find nothing |
 
-Never conclude "no counterpart" from signal 4 alone: sibling halves usually carry different work-item ids. Fetch the counterpart's metadata, work items and head with the same commands as the primary PR. For Azure DevOps that means `--org https://dev.azure.com/<org>`; the legacy `<org>.visualstudio.com` host fails auth.
+Never conclude "no counterpart" from signal 4 alone: sibling halves usually carry different work-item ids. Fetch the counterpart's metadata, work items and head with the same commands as the primary PR. For Azure DevOps that means `--org <org-url>` ([pr-host.md](pr-host.md) › *Organization URL*).
 
 ## Classification
 

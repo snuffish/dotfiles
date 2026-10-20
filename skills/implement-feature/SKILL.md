@@ -24,6 +24,7 @@ Read these before step 1:
 - `../_modules/artifact-protocol.md`: writes `<prefix>-implementation_plan-<suffix>.md` and `<prefix>-what_am_i_missing-<suffix>.md` (Phase 2), and `<prefix>-walkthrough-<suffix>.md` (Phase 7) at the **workspace root** — the directory the IDE opened, which in a multi-repo workspace is the folder that holds the repos; `<suffix>` is `<ticket-id>-<feature-slug>` when there is a ticket, else a 2–4 word topic slug
 - `../_modules/git-worktrees.md`: workspace by default
 - `../_modules/pr-counterpart.md`
+- `../_modules/pr-host.md`: ticket and PR intake (`<org-url>`, work items, acceptance criteria)
 - `../_modules/project-profile.md`: profile `implement-feature-<project>-profile`
 
 - **Repos**: work in a **workspace worktree per repo in scope**, created in Phase 0 and removed in Phase 7 through `git-worktrees` › *Workspace Lifecycle*. The user's main checkout is read-only for the whole run (`git-worktrees` › *Golden Invariants*) — they keep editing it while this skill runs. Use absolute paths and `git -C <repo-root>`, where `repo-root` is the worktree from the repo's `[worktree-context]` block; never `cd`, and never let the session's working directory move. Paste the block into every delegated skill invocation and every sub-agent brief — delegated skills discover "the repo" from the workspace otherwise and would act on the main checkout.
@@ -118,8 +119,8 @@ Research brief template (per repo):
 2. **Fetch the ticket** (read-only). Pick the CLI the tracker provides and ask for relations/links so the parent and child items come along:
 
    ```bash
-   # Azure DevOps Boards (use the dev.azure.com/<org> form; legacy *.visualstudio.com hosts can fail auth)
-   az boards work-item show --id <ID> --org https://dev.azure.com/<org> --expand relations --output json
+   # Azure DevOps Boards (<org-url>: pr-host › Organization URL)
+   az boards work-item show --id <ID> --org <org-url> --expand relations --output json
    # GitHub Issues
    gh issue view <N> --json number,title,body,labels,assignees,milestone,comments
    # GitLab
@@ -172,25 +173,27 @@ Check each row that applies; the profile's *Contract touchpoints* make this conc
 
 ## Phase 2 — Implementation Plan
 
-Write `<prefix>-implementation_plan-<suffix>.md` at the workspace root following `/plan`. Required sections:
+Write `<prefix>-implementation_plan-<suffix>.md` at the workspace root following `/plan` › *§2 The Plan Contract*: create it through *Claim*, use its skeleton, and add these sections:
 
 ```markdown
-# <Feature name> (#<id>)
-
-## Context & Goal                  <!-- include the resolved project profile fields the plan relies on -->
-## User Review Required            <!-- breaking changes, migrations, irreversible steps, as > [!WARNING] -->
-## Open Questions                  <!-- incl. unverified sub-agent claims, unresolved profile fields, anything awaiting the discussion thread -->
-## Blind-spot Pass                 <!-- added in Phase 2b: link, the #1 finding in one sentence, where each finding landed -->
-## Proposed Changes
-### <Repo> — [NEW|MODIFY|DELETE] <path> — what and why
-### Cross-repo order               <!-- which PR first, what the second one depends on; omit for a single repo -->
-## Task Checklist                  <!-- the live checklist; tick items here during Phase 3 -->
-## Verification Plan               <!-- exact commands, migration check, manual steps, e2e specs to run -->
+# Implementation Plan: <Feature name> (#<id>)
 
 **Status:** Awaiting User Review
+
+## 1. Context & Goal              <!-- include the resolved project profile fields the plan relies on -->
+## User Review Required           <!-- added: breaking changes, migrations, irreversible steps, as > [!WARNING] -->
+## 2. Decisions
+## 3. Proposed Changes
+### <Repo> — [NEW|MODIFY|DELETE] <path> — what and why
+### Cross-repo order              <!-- added: which PR first, what the second one depends on; omit for a single repo -->
+## 4. Verification Plan           <!-- exact commands, migration check, manual steps, e2e specs to run -->
+## 5. Risks
+## Blind-spot Pass                <!-- added in Phase 2b: link, the #1 finding in one sentence, where each finding landed -->
+## 6. Open Questions              <!-- incl. unverified sub-agent claims, unresolved profile fields, anything awaiting the discussion thread -->
+## 7. Task Checklist              <!-- the live checklist; tick items here during Phase 3 -->
 ```
 
-The *Task Checklist* inside the plan is the working checklist — there is no separate task file. Mark items `[/]` when started and `[x]` when done. Status values are `/plan`'s: `Draft` → `Awaiting User Review` → `Approved` → `Completed`.
+The *Task Checklist* inside the plan is the working checklist; there is no separate task file. Mark items `[/]` when started and `[x]` when done. Status values are `/plan`'s (*§2 Status values*): `Draft` → `Awaiting User Review` → `Approved` → `Completed`.
 
 ### 2b. Blind-spot pass (every plan)
 

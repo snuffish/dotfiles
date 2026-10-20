@@ -23,6 +23,7 @@ Read these before step 1:
 - `../_modules/artifact-protocol.md`: writes no artifact — the summary is printed in chat (preview) or written to the open PR (`update` mode). Never an implementation plan.
 - `../_modules/git-worktrees.md`
 - `../_modules/pr-counterpart.md`
+- `../_modules/pr-host.md`
 
 - Confirm the repo root before Step 0's `status`, `add`, `commit` or `push` — Step 0 against the user's main checkout would commit and push *their* unrelated work.
 
@@ -189,7 +190,7 @@ Derive the host from the git remote (`git remote -v`), then find the open PR who
 - **Azure DevOps** (remote host contains `visualstudio.com` or `dev.azure.com`) — use the `az repos` CLI. Derive `ORG`, `PROJECT`, and `REPO` from the remote URL; a project-scoped workflow skill (e.g. `priis-backend-workflow` / `priis-frontend-workflow`) may already document the constants.
 
   ```bash
-  ORG=https://dev.azure.com/<org>   # never the legacy <org>.visualstudio.com host — the cached az login token is bound to dev.azure.com
+  ORG=<org-url>   # the form the workspace already uses: pr-host › Organization URL
   BR=$(git branch --show-current)
   az repos pr list --org "$ORG" --project <PROJECT> --repository <REPO> --source-branch "$BR" --status active --query "[0].pullRequestId" -o tsv
   ```

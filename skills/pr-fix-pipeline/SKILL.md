@@ -18,6 +18,7 @@ Read these before step 1:
 - `../_modules/artifact-protocol.md`: writes `<prefix>-investigation-<suffix>.md` (the diagnosis, format owned by `/investigate`) and `<prefix>-implementation_plan-<suffix>.md` (the fix, format owned by `/plan`); suffix `<prId>-pipeline-<slug>` (e.g. `-18542-pipeline-statistics-granularity`) — for a multi-repo fix, use the lead PR id and list every PR in the artifact header
 - `../_modules/git-worktrees.md`
 - `../_modules/pr-counterpart.md`
+- `../_modules/pr-host.md`
 
 > [!CAUTION]
 > **Golden invariants**
@@ -48,17 +49,10 @@ Invoke this skill whenever:
 
 1. **Find every repo in scope.** If the workspace root is not itself a git repo, enumerate child repos (`find . -maxdepth 2 -name .git`). Run the rest of this skill **per repo** — a frontend PR can be red because of the backend (and vice versa).
 2. **Detect the CI host** from `git remote get-url origin`: `dev.azure.com` / `visualstudio.com` → Azure DevOps; `github.com` → GitHub Actions.
-3. **Resolve the PR**: use the argument if given; otherwise from the current branch:
-   ```bash
-   # Azure DevOps (run inside the repo; --detect reads org/project from the remote)
-   az repos pr list --source-branch "$(git rev-parse --abbrev-ref HEAD)" --status active --detect true \
-     --query "[].{id:pullRequestId,title:title,target:targetRefName}" -o json
-   # GitHub
-   gh pr view --json number,title,headRefName,baseRefName,statusCheckRollup
-   ```
+3. **Resolve the PR**: use the argument if given; otherwise resolve it from the current branch per **`pr-host`** › *Resolve the PR from a branch*. On GitHub, add `statusCheckRollup` to the `gh pr view --json` fields for the check states.
    Report repos with no PR — that is a finding, not a skip.
    **Then the counterpart:** run the lookup in `pr-counterpart` › *Counterpart discovery* for every resolved PR, even when only one PR was given. Pull the counterpart's pipeline status too. A paired change merges only when both halves are green, and a red half often comes from a contract the other half changed (classify it as cross-repo contract drift). A counterpart whose pipeline is green is listed as such, not skipped silently.
-4. **Read the PR description and linked work items** so the plan knows the change's intent (same commands as `/code-review` § *Pull-Request References*).
+4. **Read the PR description and linked work items** so the plan knows the change's intent (`pr-host` › *Fetch the PR, its work items and acceptance criteria*).
 
 ### Step 2: Collect the Evidence
 
@@ -82,7 +76,7 @@ az devops invoke --area build --resource logs \
   --route-parameters project=<project> buildId=<runId> logId=<logId> --org <orgUrl> --api-version 7.1 \
   --query "value" -o tsv | grep -nE '##\[error\]|error [A-Z]+[0-9]+|\[Test Failure\]|failed|FAIL'
 ```
-Gotchas: `--org` without `--project` errors on `az repos`/`az pipelines` — pass both, or use `--detect true` from inside the repo. Use the `dev.azure.com/<org>` URL form; legacy `*.visualstudio.com` can fail auth. In zsh, don't stash flags in one variable (`$FLAGS` is not word-split) — inline them.
+Gotchas: `--org` without `--project` errors on `az repos`/`az pipelines` — pass both, or use `--detect true` from inside the repo. Use the organization URL form the workspace already uses (`pr-host` › *Organization URL*); both forms work. In zsh, don't stash flags in one variable (`$FLAGS` is not word-split) — inline them.
 
 **GitHub Actions**
 ```bash

@@ -26,8 +26,9 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 
 Read these before step 1:
 - `../_modules/core.md`
-- `../_modules/artifact-protocol.md`: writes no artifact of its own — it consumes an existing artifact (typically `<prefix>-code_review-<suffix>.md` or `<prefix>-pr_feedback_review-<suffix>.md` at the workspace root) and updates only its *Posted to PR* row
+- `../_modules/artifact-protocol.md`: writes no artifact of its own — it consumes an existing artifact (`<prefix>-code_review-<suffix>.md`, `<prefix>-squashed_code_review-<suffix>.md` or `<prefix>-pr_feedback_review-<suffix>.md` at the workspace root) and updates only its *Posted to PR* row
 - `../_modules/pr-counterpart.md`
+- `../_modules/pr-host.md`
 
 - **Payload files** live in the host's scratchpad, `<scratchpad>/pr<id>/`, never in the repo or at the workspace root.
 
@@ -83,14 +84,16 @@ Invoke this skill whenever:
    | "clean" / "again" after the user deleted the threads | the same selection, re-posted from the artifact's **current** text (findings may have been revised since the first post) |
 
    **Resolved findings** (✅, or marked resolved/refuted in the artifact) are never posted as threads; at most they appear as one line in the minor-findings block.
-3. **PR.** From the artifact's *Review Context*, the user's link, or the branch (`az repos pr list --source-branch … --detect true` / `gh pr view`). Azure DevOps: always `--org https://dev.azure.com/<org>`; the legacy `<org>.visualstudio.com` host fails auth even when signed in.
+
+   **A finding that already has a thread is a reply.** `/code-review` *Step 6b* and `/squash-code-review` link a reviewer's existing ⏸ / ◐ thread in the finding's *Where* line when the finding covers it. Post such a finding as `"kind": "reply"` with that `thread_id`, not as a new inline thread, so the discussion stays in one place. Say so per item in the dry run and the draft preview.
+3. **PR.** From the artifact's *Review Context*, the user's link, or the branch (`az repos pr list --source-branch … --detect true` / `gh pr view`). Azure DevOps `--org`: the form the workspace already uses (`pr-host` › *Organization URL*).
 4. **One artifact, several PRs.** When the review spans repos (e.g. backend + frontend PR), route every item to the PR whose code it cites, and keep **one spec per PR** (the script posts to one PR per spec). An item citing both sides goes to the PR that owns the defect; the other side is mentioned by PR number in the body. Take the PR set from the artifact's *Counterpart* field, and confirm it with the lookup in `pr-counterpart` › *Counterpart discovery*. If the user named only one PR, post that PR's items, list the counterpart's items as held back, and offer to post them.
 
 ### Step 2 — Pin the PR head and detect drift
 
 ```bash
 # Azure DevOps — latest iteration and its source commit
-az devops invoke --org https://dev.azure.com/<org> --area git --resource pullRequestIterations \
+az devops invoke --org <org-url> --area git --resource pullRequestIterations \
   --route-parameters project=<project> repositoryId=<repo> pullRequestId=<id> --api-version 7.1 \
   --query 'value[-1].{id:id,src:sourceRefCommit.commitId}' -o json
 # GitHub

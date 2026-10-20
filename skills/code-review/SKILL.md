@@ -31,6 +31,7 @@ Read these before step 1:
 - `../_modules/git-worktrees.md`: snapshot by default
 - `../_modules/pr-counterpart.md`
 - `../_modules/project-profile.md`: profile `code-review-<project>-profile`
+- `../_modules/pr-host.md`
 
 - Never copy another model's review under your own prefix — a review file must be the output of the model it names.
 - With a workspace `[worktree-context]` block (e.g. `/implement-feature` reviewing its own workspace worktree), *Review Context* reports the worktree's branch as the reviewed head and the user's main-checkout branch separately as "not reviewed".
@@ -140,50 +141,7 @@ Report it as `same commit`, `local ahead N / behind M`, or `on <other-branch> �
 
 When the user passes a PR/MR URL or id, resolve it **before** diffing. The description and its acceptance criteria state what the change was *supposed* to do — the single most useful piece of context a reviewer can have, and the only way to spot "promised but not implemented". It is the primary source for the **Spec** axis.
 
-Parse the URL into its parts. Azure DevOps:
-
-```text
-https://dev.azure.com/{org}/{project}/_git/{repo}/pullrequest/{prId}
-
-e.g.  .../acme/Shop/_git/52f22501-...-f597ebeaacf9/pullrequest/18106
-      org = acme   project = Shop   repo = <guid>   prId = 18106
-```
-
-`{repo}` is often a GUID rather than a name — pass it through unchanged, the API accepts either. Other hosts: GitHub `/{owner}/{repo}/pull/{n}`, GitLab `/{group}/{project}/-/merge_requests/{n}`, Bitbucket `/{workspace}/{repo}/pull-requests/{n}`.
-
-Always use the `https://dev.azure.com/<org>` form for `--org`. The legacy `https://<org>.visualstudio.com` host fails with an authentication error even when `az` is signed in.
-
-#### No URL given — resolve the PR from the branch
-
-Do not skip the description just because the user did not paste a link. A checked-out branch almost always *has* a PR; find it.
-
-```bash
-# Azure DevOps — run inside the repo; --detect reads org/project from the git remote
-az repos pr list --source-branch "$(git rev-parse --abbrev-ref HEAD)" \
-  --status active --detect true \
-  --query '[].{id:pullRequestId,title:title,tgt:targetRefName}' -o json
-
-# GitHub — no argument means "the PR for the current branch"
-gh pr view --json number,title,body,baseRefName
-```
-
-`--detect true` resolves org/project from either an HTTPS or an SSH `dev.azure.com` remote. Add `--status all` if the PR may already be completed or abandoned; widen to `--repository <name>` when reviewing a repo you are not standing in.
-
-Then feed the resulting id into the fetch commands below.
-
-**In a multi-repo workspace, do this per repo.** A feature split across repos has one PR *per repo*, each with its own description and its own work item — resolving only the one you happen to be standing in gets you half the intent:
-
-```bash
-for d in */; do
-  [ -d "$d/.git" ] || continue
-  b=$(git -C "$d" rev-parse --abbrev-ref HEAD)
-  echo "== $d ($b)"
-  (cd "$d" && az repos pr list --source-branch "$b" --status active --detect true \
-     --query '[].{id:pullRequestId,title:title}' -o tsv)
-done
-```
-
-Report which repos resolved to a PR and which did not — a repo still sitting on the integration branch is itself worth saying out loud.
+Parsing the URL, choosing the organization URL and, when no URL was given, resolving the PR from the branch are **`pr-host`** › *Parse a PR or work-item URL*, *Organization URL* and *Resolve the PR from a branch*. Follow them as written. Do not skip the description just because the user did not paste a link: a checked-out branch almost always has a PR. **In a multi-repo workspace, resolve every repo**, because a feature split across repos has one PR per repo, each with its own description and work item. Report which repos resolved to a PR and which did not.
 
 #### Counterpart PRs — every resolved PR, every time
 
@@ -213,63 +171,16 @@ A review that spans both repos with a contract change is the case where `deep` i
 
 #### Fetch the PR and its work item
 
-Use whichever CLI the host provides. Check availability first (`command -v az gh glab`):
+Fetch the PR, its linked work items and their acceptance criteria per **`pr-host`** › *Fetch the PR, its work items and acceptance criteria*. Failures and the offline fallback are `pr-host` › *When a fetch fails*. The acceptance criteria are the primary source for the **Spec** axis. When only an id from the branch name was available, *Review Context* says so.
 
-```bash
-# Azure DevOps (az + azure-devops extension)
-az repos pr show --id <prId> --org https://dev.azure.com/<org> \
-  --query '{title:title,status:status,repo:repository.name,src:sourceRefName,tgt:targetRefName,desc:description}' -o json
-az repos pr work-item list --id <prId> --org https://dev.azure.com/<org> -o json   # linked work items
-
-# GitHub
-gh pr view <n> --json title,body,headRefName,baseRefName,state,files
-
-# GitLab
-glab mr view <n>
-```
-
-Follow linked work items — that is usually where the acceptance criteria actually live:
-
-```bash
-az boards work-item show --id <workItemId> --org https://dev.azure.com/<org> \
-  --query '{title:fields."System.Title",state:fields."System.State",desc:fields."System.Description",ac:fields."Microsoft.VSTS.Common.AcceptanceCriteria"}' -o json
-```
-
-Descriptions and AC fields are usually **HTML**. Strip the tags before quoting them. When the work item has no AC field, say so and name what you used instead (parent feature, description, linked wiki page).
-
-**A resolved PR also settles the diff base:** its `targetRefName` *is* the base — use it directly instead of the fallback chain in *Branch Discovery* below.
-
-#### When the fetch fails
-
-Do not silently continue as if no reference was given, and do not guess the contents from the branch name.
-
-- **Auth error** (`The requested resource requires user authentication`) — first check the `--org` URL is the `dev.azure.com` form. If it is, the CLI is not signed in. Give the user the one-liner and continue diff-only meanwhile, saying so:
-  ```bash
-  az devops login --organization https://dev.azure.com/<org>   # paste a PAT with Code: Read
-  # or: export AZURE_DEVOPS_EXT_PAT=<pat>
-  ```
-- **CLI missing** — say which one and offer to work from the diff alone.
-- **Fetch blocked entirely** — ask the user to paste the description.
-
-An unauthenticated web fetch of a private PR URL returns a login page, not the PR. Never treat that as the description.
-
-#### Offline fallback
-
-When no CLI is authenticated, the branch name and commit subjects still carry the work item id — most conventions embed it (`feature/30342_persist-...`, `#30342: <subject>`):
-
-```bash
-git rev-parse --abbrev-ref HEAD
-git log --oneline <base>...HEAD
-```
-
-That gives you the id to quote and to hand back to the user, but **not** the acceptance criteria. Say which one you have. Never infer what a description said from a branch slug.
+**A resolved PR also settles the diff base:** its target branch *is* the base (`pr-host` › *Branch names*). Use it directly instead of the fallback chain in *Branch Discovery* below.
 
 #### Get the right code into the snapshot
 
 A PR URL usually means the user is *not* on that branch. Verify before diffing, state the mismatch, and snapshot the PR's own head instead of whatever is checked out:
 
 ```bash
-SRC=${sourceRefName#refs/heads/}; TGT=${targetRefName#refs/heads/}   # az returns full refs
+SRC=${sourceRefName#refs/heads/}; TGT=${targetRefName#refs/heads/}   # pr-host › Branch names
 git rev-parse --abbrev-ref HEAD                       # where am I? — say so if it differs from $SRC
 git fetch origin "$SRC" "$TGT"                        # read-only: updates remote refs only
 git rev-parse "origin/$SRC"                           # → the head for Step 1b-b

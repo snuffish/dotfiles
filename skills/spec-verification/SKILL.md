@@ -15,8 +15,9 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 
 Read these before step 1:
 - `../_modules/core.md`: read-only until `/proceed`
-- `../_modules/artifact-protocol.md`: writes `<prefix>-spec_verification-<suffix>.md` (suffix `<workItemId>-<slug>`, e.g. `-30758-control-tickets`)
+- `../_modules/artifact-protocol.md`: writes `<prefix>-spec_verification-<suffix>.md` (suffix `<workItemId>-<slug>`, e.g. `-30758-control-tickets`), created through *Claim*. It updates only an artifact this session owns (rule 3); otherwise a re-run writes a new one
 - `../_modules/pr-counterpart.md`
+- `../_modules/pr-host.md`
 
 > [!CAUTION]
 > **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
@@ -56,11 +57,11 @@ Accept, in order of preference:
 Fetch the full item, not just the description:
 
 ```bash
-az boards work-item show --id <id> --org https://dev.azure.com/<org> --expand all -o json   # fields + relations
+az boards work-item show --id <id> --org <org-url> --expand all -o json   # fields + relations
 # fields of interest: System.Description, Microsoft.VSTS.Common.AcceptanceCriteria, System.Rev, System.ChangedDate
 ```
 
-- **Always use the `https://dev.azure.com/<org>` form** for `--org`; the `visualstudio.com` host fails auth.
+- **`--org`**: the form the workspace already uses (`pr-host` › *Organization URL*). Fetching the item and stripping its HTML follow `pr-host` › *Fetch the PR, its work items and acceptance criteria*; what is specific here is below.
 - **Strip HTML** before quoting (`<li>` → `- `, `<br>`/`</p>` → newline, drop tags, unescape entities).
 - Record the **revision and last-changed date** in the header: a spec that changed after the branch was cut explains "drift" findings.
 - **Follow every relation** (`System.LinkTypes.Hierarchy-Reverse` parent, `Hierarchy-Forward` children, `Related`, `Dependency-Forward` successor). Fetch each one's title, type, state and first lines of description. This is how you tell *deferred* from *missing*: a child task "PDF-export (broken out)" or a successor story "Rapport …" moves those spec lines to ↗, and a related bug may already name a known gap.
@@ -78,7 +79,7 @@ git -C <repo> status --short | wc -l                        # dirty?
 
 - Verify against the **PR head on the remote**, and state whether the local tree equals it. If local is behind, read changed files with `git show "origin/<branch>:<path>"` (quote or brace the ref — zsh treats `$B:source/...` and `$B:tests/...` as history modifiers).
 - **Counterpart PRs:** whatever the input (story, PR URL, branch), run the counterpart lookup in `pr-counterpart` › *Counterpart discovery* and pin every PR it finds. A story is usually implemented by sibling tasks in different repos, each with its own PR, so starting from one PR link finds only half the evidence. A requirement graded against one half is never ✅ when the other half owns part of it. Record the classification in the artifact's *Context*. An *expected but missing* half grades the lines it owns as ✗ or ↗ (with the owning item id), never as ✅.
-- In a **multi-repo workspace**, resolve the PR for every repo (`az repos pr list --source-branch <b> --detect true` per repo) and verify both halves: a field limit is a backend constant *and* a frontend schema rule *and* a column length; a select's option list is a backend enum *and* a frontend facade.
+- In a **multi-repo workspace**, resolve the PR for every repo (`pr-host` › *Resolve the PR from a branch*) and verify both halves: a field limit is a backend constant *and* a frontend schema rule *and* a column length; a select's option list is a backend enum *and* a frontend facade.
 
 ### Step 3: Decompose the spec into atomic lines
 
@@ -201,4 +202,4 @@ Before sending:
 3. **Every ❌ names what was searched** (request record, filter bar, DTO) so a reader can confirm the absence.
 4. **Every ↗ names the owning item id**; a deferred row with no owner is a ❌.
 5. **Every ❔ quotes both readings** of the spec.
-6. **Re-run on request** ("check again", "refresh after the new commits"): diff the heads, re-grade only the rows whose files changed, update *Context* with the new SHAs and what changed, and keep the row numbering stable so earlier references ("→ A12") still resolve.
+6. **Re-run on request** ("check again", "refresh after the new commits"): in the same session, update this session's artifact; in a new session, write a new one through *Claim* and carry the earlier one's rows over. Either way, diff the heads, re-grade only the rows whose files changed, update *Context* with the new SHAs and what changed, and keep the row numbering stable so earlier references ("→ A12") still resolve.

@@ -199,7 +199,7 @@ Then:
 - **Unused state**: remove `useState` only when neither the value nor the setter is used. A setter used without reading the value may still trigger needed re-renders — keep it and flag it.
 - **Unused effects/memos**: an effect with side effects is not dead just because nothing reads its output.
 - **`import React`**: remove only when `tsconfig` uses the automatic runtime (`"jsx": "react-jsx"`) and the file doesn't use `React.*` APIs.
-- **Prefer `type` over `interface`** per `core` — but converting existing interfaces is out of `/clean`'s scope unless the user asks.
+- **`type` vs `interface`**: the rule is [`typescript-conventions`](../typescript-conventions/SKILL.md)'s. Converting existing interfaces is out of `/clean`'s scope unless the user asks.
 
 ### C# / .NET
 
