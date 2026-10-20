@@ -9,3 +9,14 @@ function cm-sync() {
   fi
   python3 -I "$engine" "$@"
 }
+
+# Open the claude-mem dashboard in the browser
+function cm() {
+  local url
+  url="$(cm-sync url)" || return 1
+  case "$ENV_PROFILE" in
+    Mac) command open "$url" ;;
+    Windows) explorer.exe "$url" ;;
+    *) xdg-open "$url" >/dev/null 2>&1 & ;;
+  esac
+}
