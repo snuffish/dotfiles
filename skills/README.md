@@ -40,7 +40,7 @@ skills/
 
 | Group | Kind | Count | Entries |
 | --- | --- | :---: | --- |
-| General (top level) | Command | 32 | `artifacts`, `clean`, `code-documentation`, `code-review`, `continue`, `create-skill`, `create-ticket`, `explain`, `expressive`, `git-worktrees`, `implement-feature`, `investigate`, `manual-testing`, `organize`, `plan`, `plan-preview`, `plan-review`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `refine`, `reload-skills`, `resolve-conflicts`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `suggestion`, `verify-assumptions`, `what-am-I-missing` |
+| General (top level) | Command | 32 | `artifacts`, `clean`, `code-documentation`, `code-review`, `continue`, `create-skill`, `create-ticket`, `explain`, `expressive`, `git-worktrees`, `implement-feature`, `investigate`, `manual-testing`, `organize`, `plan`, `plan-preview`, `plan-review`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `refine`, `resolve-conflicts`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `suggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing` |
 | General (top level) | Reference | 2 | `modern-csharp`, `typescript-conventions` |
 | `GR.PRIIS/priis-backend-*` | Reference | 7 | `dry`, `ef-core`, `fastendpoints`, `notifications`, `signalr`, `testing`, `workflow` |
 | `GR.PRIIS/priis-frontend-*` | Reference | 6 | `component-patterns`, `forms`, `routing`, `rtk-query`, `testing`, `workflow` |
@@ -104,7 +104,9 @@ Load these skills directly by registering their paths in the workspace configura
 }
 ```
 
-Some loaders (like `~/.claude/skills` on macOS/Linux or `%USERPROFILE%\.claude\skills` on Windows) expect a **flat** root — each skill a direct child (`root/<name>/SKILL.md`), with no grouping folders. To activate from this grouped staging tree, symlink the specific skills you want.
+Some loaders (like `~/.claude/skills` on macOS/Linux or `%USERPROFILE%\.claude\skills` on Windows) expect a **flat** root — each skill a direct child (`root/<name>/SKILL.md`), with no grouping folders. To activate from this grouped staging tree, run `/sync-skills`, which applies the rule below, or symlink by hand.
+
+**Which skills to link:** every general (top-level) skill and every Profile (`*-profile`). Do **not** link a project Reference or Command that the project's own repo also ships in `.claude/skills/`. Claude Code resolves a name clash as *personal over project*, so the global link would silently override the repo's newer copy. Allow-list the exceptions, one name per line, in `Projects/<Project>/.flat-links`.
 
 #### macOS / Linux (Bash/Zsh)
 
@@ -112,12 +114,11 @@ Some loaders (like `~/.claude/skills` on macOS/Linux or `%USERPROFILE%\.claude\s
 SKILLS="$PWD"   # run from this skills/ folder
 
 # A single skill:
-ln -s "$SKILLS/Projects/GR.PRIIS/priis-backend-ef-core" ~/.claude/skills/priis-backend-ef-core
+ln -s "$SKILLS/code-review" ~/.claude/skills/code-review
 
-# Every skill in the tree (general + all projects), flattened by name:
-find "$SKILLS" -name SKILL.md -print0 | while IFS= read -r -d '' f; do
-  d="$(dirname "$f")"
-  ln -sfn "$d" ~/.claude/skills/"$(basename "$d")"
+# Every general skill and every Profile, flattened by name:
+for d in "$SKILLS"/*/ "$SKILLS"/Projects/*/*-profile/; do
+  [ -f "$d/SKILL.md" ] && ln -sfn "${d%/}" ~/.claude/skills/"$(basename "$d")"
 done
 ```
 
@@ -127,10 +128,11 @@ done
 $Skills = (Get-Location).Path   # run from this skills\ folder
 
 # A single skill:
-New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\skills\priis-backend-ef-core" -Value "$Skills\Projects\GR.PRIIS\priis-backend-ef-core"
+New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\skills\code-review" -Value "$Skills\code-review"
 
-# Every skill in the tree (general + all projects), flattened by name:
-Get-ChildItem -Path $Skills -Filter "SKILL.md" -Recurse | ForEach-Object {
+# Every general skill and every Profile, flattened by name:
+@(Get-ChildItem -Path $Skills -Directory) + @(Get-ChildItem -Path "$Skills\Projects\*\*-profile" -Directory) |
+  ForEach-Object { Get-Item (Join-Path $_.FullName "SKILL.md") -ErrorAction SilentlyContinue } | ForEach-Object {
     $srcDir = $_.DirectoryName
     $destDir = Join-Path "$env:USERPROFILE\.claude\skills" $_.Directory.Name
     New-Item -ItemType SymbolicLink -Path $destDir -Value $srcDir -Force
@@ -139,8 +141,9 @@ Get-ChildItem -Path $Skills -Filter "SKILL.md" -Recurse | ForEach-Object {
 
 (If the loader globs recursively — `skills/**/SKILL.md` — point it at this root directly and the grouping is honored as-is.)
 
-**Current live state:** All 55 skills are flat-symlinked (Modules never are) into the flat skills directory (`~/.claude/skills`), each pointing back into this tree. Verify on macOS/Linux with:
+**Current live state:** every general skill and the PRIIS Profiles are flat-symlinked into `~/.claude/skills` (Modules never are). A project skill that its own repo also ships in `.claude/skills/` is **not** linked: Claude Code gives personal skills precedence over project skills, so a global link would shadow the repo's newer copy. `/sync-skills` reports the live count and any drift. Check by hand on macOS/Linux with:
 
 ```bash
-ls -la ~/.claude/skills | grep -c -- "-> $PWD/"   # run from this skills/ folder; expect 55
+find ~/.claude/skills -maxdepth 1 -xtype l          # dead links: expect none
+ls -la ~/.claude/skills | grep -c -- "-> $PWD/"    # links into this tree (run from this skills/ folder)
 ```

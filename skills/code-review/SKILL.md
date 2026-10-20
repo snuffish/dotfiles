@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: "Perform a structured, high-quality review of code changes along three axes — Correctness (bugs, security, performance), Standards (does the code follow this repo's documented conventions and cross-repo contracts?) and Spec (does it implement what the PR / work item / acceptance criteria asked for?). Accepts an optional pull-request URL/ID, work-item ID, or fixed point (\"since main\", a SHA, a tag) — and resolves the PR from the current branch when none is given. Always looks for a counterpart PR in a sibling repo (a dual-repo change such as backend + frontend) and reviews both halves. `deep` runs the axes as parallel sub-agents. `feedback` also runs /pr-feedback-review after the findings are verified and folds the PR's discussion threads into the review. Reviews from a detached snapshot worktree by default so the user can keep editing the main checkout meanwhile; `live` opts out. Project-agnostic: conventions and cross-repo contracts come from the workspace's own rulebooks and project-scoped skills, and a project profile (`code-review-<project>-profile`) can add the team's own review checklists and lessons when one exists. Use when the user asks for a code review, PR review, \"review since X\", or feedback on a branch or working changes."
+description: "Reviews code changes along three axes: Correctness (bugs, security, performance), Standards (the repo's documented conventions and cross-repo contracts) and Spec (does it do what the PR, work item or acceptance criteria asked). Writes a verified `<prefix>-code_review-<suffix>.md`. Takes an optional PR URL/id, work-item id or fixed point (\"since main\", a SHA, a tag); with none it resolves the PR from the current branch, and it always reviews the counterpart PR of a dual-repo change too. Reads from a detached snapshot so the user can keep editing (`live` opts out); `deep` runs the axes as parallel sub-agents; `feedback` also folds in the PR's threads via /pr-feedback-review. Conventions come from workspace rulebooks, project skills and an optional `code-review-<project>-profile`. Use for /code-review, \"review this PR/branch\", \"review since X\", \"review my changes\". Not for triaging comments others left (/pr-feedback-review) or merging existing reviews (/squash-code-review)."
 ---
 
 # Code Review Skill
@@ -54,7 +54,7 @@ Read these before step 1:
 
 | Situation | Use instead |
 |---|---|
-| Auditing an implementation plan, not code | [`/review`](../review/SKILL.md) |
+| Auditing an implementation plan, not code | [`/plan-review`](../plan-review/SKILL.md) |
 | Reviewer comments, threads and votes on the PR | [`/pr-feedback-review`](../pr-feedback-review/SKILL.md), or `/code-review feedback` for a review and a thread triage in one run |
 | The PR's pipeline is red | [`/pr-fix-pipeline`](../pr-fix-pipeline/SKILL.md) |
 | How to try the change by hand | [`/manual-testing`](../manual-testing/SKILL.md) |

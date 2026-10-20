@@ -49,7 +49,7 @@ Invoke this skill whenever:
 | Deep research into architecture *before* deciding how to change it | [`/investigate`](../investigate/SKILL.md) |
 | Structuring an entire new feature or system implementation | [`/plan`](../plan/SKILL.md) |
 | Restructuring directories, files, assets, and modularizing helpers | **`/organize`** (this skill) |
-| Code review of an already completed reorganization or PR | [`/code-review`](../code-review/SKILL.md) or [`/review`](../review/SKILL.md) |
+| Code review of an already completed reorganization or PR | [`/code-review`](../code-review/SKILL.md) |
 | Diagnosing a broken build or test failure caused by misplaced files | [`/problem`](../problem/SKILL.md) |
 
 ---

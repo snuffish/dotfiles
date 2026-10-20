@@ -1,6 +1,6 @@
 ---
 name: create-skill
-description: Orchestrates, designs, scaffolds, validates, and registers a new Registry entry — a Command, Reference or Profile skill — into the skills registry. Resolves the kind first, enforces naming and gating conventions, wires the Modules a Command depends on, and updates the README inventory.
+description: Orchestrates, designs, scaffolds, validates, and registers a new Registry entry — a Command, Reference or Profile skill — into the skills registry. Resolves the kind first, enforces naming and gating conventions, wires the Modules a Command depends on, and updates the README inventory. Use on /create-skill or when adding a Command, Reference or Profile to this registry; for evals, benchmarks or description tuning use skill-creator.
 ---
 
 # Skill: `/create-skill` — Skill Creator & Registry Orchestrator
@@ -48,13 +48,18 @@ A shared contract that several Commands depend on and that never runs on its own
 | Placement | Directory Target | Use Case | Naming Convention |
 |---|---|---|---|
 | **General (Default / Standard)** | `skills/<name>/` | Universal workflows, architectural patterns, tooling, or disciplines that apply to any project | Single kebab-case name (e.g. `organize`, `code-review`, `expressive`, `problem`) |
-| **Project-Scoped (Explicit Request Only)** | `skills/Projects/<Project>/<name>/` | Only when the user explicitly requests rules restricted to a single specific repository/product, and always for a Profile | Prefixed kebab-case (`backend-*`, `frontend-*`, `source-command-*`, `<project>-profile`, `<command>-<project>-profile`) |
+| **Project-Scoped (Explicit Request Only)** | `skills/Projects/<Project>/<name>/` | Only when the user explicitly requests rules restricted to a single specific repository/product, and always for a Profile | Prefixed kebab-case: `<project>-<app>-*` (e.g. `priis-backend-*`, `priis-frontend-*`), `<project>-profile`, `<command>-<project>-profile` |
 
 Never place a skill under `skills/_modules/`; that directory holds Modules only and must never contain a `SKILL.md`.
 
 #### Description & Trigger Rules:
 - **General Skills (Default)**: Write a crisp, domain-focused `description` detailing the exact trigger conditions, intent, and capabilities. Do NOT bind or gate the description to any specific project.
-- **Project-Scoped Skills**: Only use project gating if the user explicitly demands product-specific isolation. Otherwise, write universal descriptions that allow the skill to be leveraged everywhere.
+- **Project-Scoped Skills**: always gated. The description opens with `[Project: <Project>]` and closes with `Load ONLY when working on the <Project> project or in the <workspace> repository.` A skill under `Projects/` that loads everywhere pollutes every other project's sessions.
+- **What, then when.** Put the key use case first, then the trigger phrases ("Use for /x, 'phrase', 'phrase'"). The router sees only the description; a "When to Use" list in the body never helps triggering.
+- **Name the neighbour.** When another skill overlaps, end with "Not for X (use /y)."
+- **Keep it short.** At most 1024 characters (Agent Skills spec). Claude Code truncates at 1,536, and when the shared listing overflows its budget it drops descriptions, least-used skills first.
+- **`disable-model-invocation: true`** for a Command only the user should start (e.g. `/proceed`), and `argument-hint` for its arguments. Both are Claude Code keys; Antigravity documents only `name` and `description`, so never make safety depend on them alone.
+- **Lean body.** Keep `SKILL.md` to the workflow; move catalogs, templates and long examples into `references/` and link them.
 
 ---
 
@@ -65,7 +70,7 @@ Never place a skill under `skills/_modules/`; that directory holds Modules only 
 ```markdown
 ---
 name: <exact-directory-name>
-description: <concise, universal trigger description and domain capabilities>
+description: <what it does, then when to use it (trigger phrases), then "Not for X (use /y)"; ≤1024 chars>
 ---
 
 # Skill: `/<name>` — <Human-Readable Title>
@@ -157,7 +162,7 @@ Update [`skills/README.md`](../README.md):
 
 1. **Verify Integrity**:
    - Ensure the directory name **exactly matches** the `name:` field in frontmatter.
-   - Verify every relative link to another skill resolves. `## Modules` paths are checked by [`/reload-skills`](../reload-skills/SKILL.md) (Step 2 › *Module Integrity*).
+   - Verify every relative link to another skill resolves. [`/sync-skills`](../sync-skills/SKILL.md) lints this, the `## Modules` paths and the description length (Step 1).
 2. **Symlink / Activation Output**:
    - Present the user with the exact symlink command to activate the new skill in their live flat loader (e.g. Claude Code):
      ```bash
@@ -165,4 +170,5 @@ Update [`skills/README.md`](../README.md):
      ```
      `<registry>` is the parent of this skill's real folder: `dirname "$(realpath <base directory>)"`.
    - Or display the JSON entry for `.agents/skills.json` if using Antigravity / workspace loader.
-   - Or run [`/reload-skills`](../reload-skills/SKILL.md), which symlinks every registry skill into the flat loader, prunes dead links and refreshes the README inventory in one pass.
+   - Or run [`/sync-skills`](../sync-skills/SKILL.md), which links general skills and Profiles into the flat loader, keeps project References out unless allow-listed, prunes dead links and refreshes the README inventory in one pass.
+   - Claude Code picks up a newly linked skill within the running session; no restart is needed.

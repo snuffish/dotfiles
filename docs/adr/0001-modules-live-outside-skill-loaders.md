@@ -14,5 +14,5 @@ Shared contracts that Commands depend on (`core`, `artifact-protocol`, `git-work
 - Module paths in Commands are absolute. A relative link breaks when a skill is read through its `~/.claude/skills/<name>` symlink. Superseded by [ADR-0002](0002-module-paths-relative-to-real-skill-folder.md).
 - Module-to-Module references are relative (`[core.md](core.md)`). A Module is never symlinked, so it is always read from its real folder, and the reference survives the registry moving to another machine or path.
 - A Module that grows into a folder must never contain a `SKILL.md`.
-- `reload-skills` skips `_modules/` explicitly.
+- `sync-skills` (formerly `reload-skills`) skips `_modules/` explicitly.
 - Reading a Module is a read outside the working directory, which needs permission unless a `Read` allow rule covers `~/.terminal/skills/`. Skill folders get no automatic exemption.

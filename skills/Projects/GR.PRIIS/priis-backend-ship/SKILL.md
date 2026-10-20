@@ -1,6 +1,6 @@
 ---
 name: priis-backend-ship
-description: "[Project: GR.PRIIS] Branch, commit, push, and open a draft PR for current work — following PRIIS workflow conventions for both Frontend and Backend repositories."
+description: "[Project: GR.PRIIS] Branch, commit, push, and open a draft PR for current work — following PRIIS workflow conventions for both Frontend and Backend repositories. Load ONLY when working on the GR.PRIIS.Backend or GR.PRIIS.Frontend project or in the GR repository."
 ---
 
 # /priis-backend-ship — Branch · Commit · Push · PR

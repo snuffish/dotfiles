@@ -58,7 +58,7 @@ Present discovered artifacts in a structured table:
 ```
 
 ### Interactive Targeting
-- If multiple options exist, use `ask_question` or present a numbered list allowing the user to pick an artifact with a single click.
+- If multiple options exist, let the user pick one: under Antigravity with `ask_question`, under Claude Code with `AskUserQuestion`, otherwise with a numbered list.
 
 ---
 
