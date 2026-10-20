@@ -129,8 +129,9 @@ Key Sections:
 - 📄 [Verification Plan](claude-<model>-implementation_plan-<suffix>.md#L61): [1-sentence summary of test & build verification]
 ```
 
----
+Then the review itself:
 
+````markdown
 # 🔍 Plan Review: [Feature / Topic Name]
 
 ## 🚦 Verdict
@@ -170,7 +171,7 @@ Key Sections:
 > ```text
 > /proceed
 > ```
-```
+````
 
 ---
 

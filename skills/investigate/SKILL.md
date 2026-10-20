@@ -49,7 +49,7 @@ Invoke this skill whenever:
 | Synthesizing gathered evidence into a phased task plan | [`/plan`](../plan/SKILL.md) |
 | Explaining an isolated symbol, expression, error, or PR comment | [`/explain`](../explain/SKILL.md) |
 | Diagnosing an active regression, failing test, or runtime crash | [`/problem`](../problem/SKILL.md) |
-| Auditing an existing plan or pull request diff | [`/review`](../review/SKILL.md) or [`/code-review`](../code-review/SKILL.md) |
+| Auditing an existing plan or pull request diff | [`/plan-review`](../plan-review/SKILL.md) (plans) or [`/code-review`](../code-review/SKILL.md) (diffs) |
 | Auditing a proposed architecture for hidden edge cases and failure modes | [`/what-am-I-missing`](../what-am-I-missing/SKILL.md) |
 
 ---

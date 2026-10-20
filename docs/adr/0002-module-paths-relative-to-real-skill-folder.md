@@ -13,5 +13,5 @@ ADR-0001 was right that a plain relative path breaks. Claude Code hands the mode
 ## Consequences
 
 - Every Command run costs one `realpath` call before its first Module read.
-- The number of `../` encodes the skill's depth. A skill that moves between depths must update them. `/reload-skills` lints every `## Modules` path from the real `SKILL.md` folder and reports missing paths, absolute paths and blocks without the stop sentence.
+- The number of `../` encodes the skill's depth. A skill that moves between depths must update them. `/sync-skills` (formerly `/reload-skills`) lints every `## Modules` path from the real `SKILL.md` folder and reports missing paths, absolute paths and blocks without the stop sentence.
 - A Module that cannot be read stops the Command instead of letting it run without `core`'s gates.
