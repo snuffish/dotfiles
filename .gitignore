@@ -12,3 +12,7 @@ memory/
 
 # Python
 __pycache__/
+
+# Agent artifacts written at the repo root (<host>-<model>-<artifact>-<suffix>.md, see skills/_modules/artifact-protocol.md)
+/claude-*.md
+/antigravity-*.md
