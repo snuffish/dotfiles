@@ -25,8 +25,8 @@ Read these before step 1:
 > [!CAUTION]
 > **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
 >
-> 1. **PROPOSAL & PLAN FIRST.** Never start moving, renaming, or modifying files without first producing `<prefix>-organize_plan-<suffix>.md` at the workspace root and presenting the before/after structure.
-> 2. **THE APPROVAL GATE (`/proceed`).** Unless the user explicitly requested instant execution with an unambiguous scope, treat reorganization proposals as gated. Do not mutate files until the user authorizes the plan.
+> 1. **PROPOSAL & PLAN FIRST.** Before moving, renaming or modifying files, write `<prefix>-organize_plan-<suffix>.md` at the workspace root and present the before/after structure. A reorganization touches every importer of every moved file, so the user needs to see the blast radius before it happens. The one exception: when the user names the exact moves themselves (`a/x.ts → b/x.ts`, …), those moves are the plan. List them in chat and skip the artifact.
+> 2. **THE APPROVAL GATE (`/proceed`).** Do not mutate files until the user authorizes the plan, including the exact-moves case above.
 > 3. **PRESERVE GIT HISTORY WITH `git mv`.** Never use plain `rm`/`cp`/`mv` or filesystem-only writes that break git file identity, blame, and history tracking.
 > 4. **ZERO BROKEN REFERENCES (CODE & NON-CODE).** Updating import statements is not enough. Reorganization must scan and update dynamic imports, CSS `url()` assets, test fixtures, string path references, build configs, and `.csproj` inclusions.
 > 5. **MANDATORY POST-MIGRATION VERIFICATION.** Every reorganization must culminate in running formatters, linters, type-checkers/builds, and targeted tests. Never declare completion on unverified moves.
@@ -103,7 +103,7 @@ When a file named `helper.*`, `utils.*`, or `common.*` accumulates multiple dist
                                ▼
 ┌─────────────────────────────────────────────────────────────┐
 │ 2. DRAFT REORGANIZATION PLAN ARTIFACT                       │
-│    Write <prefix>-organize_plan.md at workspace root        │
+│    Write <prefix>-organize_plan-<suffix>.md at the root     │
 └──────────────────────────────┬──────────────────────────────┘
                                │
                                ▼
@@ -205,7 +205,7 @@ path/to/target/
 ### Phase 3: The Approval Gate
 
 Present a high-signal summary in the chat with a direct link to `<prefix>-organize_plan-<suffix>.md`.
-Unless the user already instructed you to execute immediately without a plan, wait for confirmation:
+Then wait for confirmation (Golden Invariant 2). This holds even when the user named the exact moves:
 ```text
 I have drafted the reorganization plan in [antigravity-<model>-organize_plan-<suffix>.md](file://<workspace-root>/antigravity-<model>-organize_plan-<suffix>.md#L8).
 To proceed with the physical migration, please reply with `/proceed`.
@@ -253,7 +253,7 @@ Once approved, perform the migration in controlled, atomic steps:
 Execute the project's quality verification suite in order:
 
 1. **Format Check / Fix**:
-   - Run workspace formatter (e.g., `npx prettier --write .` or `dotnet format`).
+   - Run the workspace formatter on the moved and edited files only (e.g. `npx prettier --write <files>`, `dotnet format --include <files>`). A whole-repo format run rewrites unrelated files and buries the reorganization in the diff.
 2. **Linter Verification**:
    - Run workspace linter (e.g., `npm run lint` or `eslint`).
 3. **Typecheck & Compilation**:

@@ -146,7 +146,8 @@ The artifact's *🟢 Minor Findings* list becomes **one general comment per PR**
    ```bash
    az devops invoke … --resource pullRequestThreads --route-parameters project=<p> repositoryId=<r> pullRequestId=<id> \
      --api-version 7.1 -o json   # keep threads where !isDeleted and some comment is !isDeleted and commentType != "system"
-   gh api repos/<owner>/<repo>/pulls/<n>/comments --paginate --jq '.[].body'
+   gh api repos/<owner>/<repo>/pulls/<n>/comments --paginate --jq '.[].body'    # inline threads
+   gh api repos/<owner>/<repo>/issues/<n>/comments --paginate --jq '.[].body'   # general comments, incl. the minor-findings one
    ```
    On Azure DevOps, deleted threads stay in the list with `isDeleted: true` (or with every comment deleted). CI bots (e.g. coverage checks) post their own threads. Neither counts as "already posted". The artifact's *Posted to PR* row is a hint, not the truth: the user may have deleted those threads. Trust the live list.
 2. **Spec + dry run.** Copy [`templates/post_pr_comments.py`](templates/post_pr_comments.py) into `<scratchpad>/pr<id>/`, write `spec.json` beside it (format in the script's docstring), and run `python3 -I post_pr_comments.py spec.json`. It writes one payload file per item and prints each anchor; check them before posting. **In draft mode, stop here** and give the *Draft preview* (see *Output Format*).

@@ -64,12 +64,16 @@ Check which exists before searching; do not assume.
    - Generic search command (replace `<target_name_or_keyword>` with your active file or search term):
 
      ```bash
+     # Claude Code
+     grep -rnwi "<target_name_or_keyword>" ~/.claude/projects/<workspace-slug>/
+
+     # Antigravity
      grep -rnwi "<target_name_or_keyword>" <app_data_dir>/brain/ --exclude-dir=node_modules
      ```
 
 3. **Analyze Past Transcripts**:
-   - Locate the folder of relevant past conversations.
-   - Use `grep -C 5` or `head`/`tail` to examine the steps (`USER_INPUT`, `PLANNER_RESPONSE`) inside `transcript.jsonl` or `transcript_full.jsonl`.
+   - Locate the relevant past conversations.
+   - Use `grep -C 5` or `head`/`tail` to examine them. Under Antigravity, the steps are `USER_INPUT` / `PLANNER_RESPONSE` entries in `transcript.jsonl` or `transcript_full.jsonl`. Under Claude Code, each session file holds one JSON object per line, with `"type":"user"` / `"type":"assistant"` messages.
    - Identify:
      - What was the problem?
      - Why did the user prefer a specific approach? (e.g., did they ask to "skip format", avoid a certain package, or enforce a specific naming convention?)
@@ -107,6 +111,6 @@ After completing the analysis and cross-referencing with both the history and ex
 When proposing or implementing refinements, you **MUST ALWAYS** enter `Planning Mode` before modifying any source code files. Follow this sequence:
 
 1. **Create the Implementation Plan**: Document your findings, historical context, and proposed modifications in `<prefix>-implementation_plan-<suffix>.md` at the **workspace root**, providing a clickable chat link and section anchors formatted according to the **`artifact-protocol`** protocol.
-2. **Request Feedback**: Set `UserFacing = true` and `RequestFeedback = true` in the plan's `ArtifactMetadata`.
+2. **Request Feedback**: under Antigravity, set `UserFacing = true` and `RequestFeedback = true` in the plan's `ArtifactMetadata`, so the plan opens for review. Under Claude Code, link the plan and its sections in the chat response and ask for approval there.
 3. **Halt for Approval**: Stop and wait for the user's explicit approval/feedback on the proposed changes. Do not modify any code files in the workspace until the plan is approved.
 4. **Execute**: Once the user approves, proceed to edit the files and implement the refinements.

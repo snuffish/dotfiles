@@ -78,18 +78,22 @@ Find exactly what changed. Choose the appropriate strategy in order:
 When comparing a branch, find the correct base — **do not guess**:
 
 ```bash
-# 1. Check the upstream tracking ref recorded for this branch
-git -C <repo-root> rev-parse --abbrev-ref --symbolic-full-name @{u}   # e.g. origin/main
+# 1. A PR exists: its target branch is the base. Azure DevOps returns a full ref, so strip refs/heads/
+#    (az repos pr list --source-branch <branch> --query '[0].targetRefName' -o tsv; gh pr view --json baseRefName -q .baseRefName)
+BASE=origin/${targetRefName#refs/heads/}
 
-# 2. Fall back: find the merge-base against common integration branches
-git -C <repo-root> merge-base HEAD origin/main
-git -C <repo-root> merge-base HEAD origin/develop
+# 2. No PR: the remote's default branch
+BASE=$(git -C <repo-root> symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null) \
+  || { git -C <repo-root> remote set-head origin -a >/dev/null && BASE=$(git -C <repo-root> symbolic-ref --short refs/remotes/origin/HEAD); } \
+  || BASE=origin/main
 
 # 3. Build the diff using three-dot syntax (only commits introduced by this branch):
-git -C <repo-root> diff $(git -C <repo-root> merge-base HEAD <base>)...HEAD --name-only
+git -C <repo-root> diff "$BASE...HEAD" --name-only
 ```
 
-Always use the **three-dot** form so you see only what this branch introduces, not divergent commits on the base.
+Do **not** use `@{u}` as the base (Step 0's unpushed-commits check is the one place it belongs). On a pushed feature branch the upstream is the branch's own remote copy (`origin/feature/x`), not the integration branch, so the diff comes out empty or nearly empty. In `update` mode that empty summary would replace the live PR description.
+
+Always use the **three-dot** form so you see only what this branch introduces, not divergent commits on the base. Confirm the diff is non-empty before composing anything.
 
 ---
 
@@ -97,7 +101,7 @@ Always use the **three-dot** form so you see only what this branch introduces, n
 
 1. **List changed files first** (`--name-status` or `--name-only`) to grasp the scope.
 2. **For small diffs** (< ~200 lines): read the raw diff directly.
-3. **For large diffs**: read each changed file in full with `view_file` — do **not** rely on truncated diff output.
+3. **For large diffs**: read each changed file in full (`view_file` under Antigravity, `Read` under Claude Code); do **not** rely on truncated diff output.
 4. **Identify the core objective**: new feature, new content, bug fix, performance improvement, refactoring, dependency update, test coverage, or documentation. See the classification vocabulary in Step 3 — in particular, distinguish a genuinely new capability (*new feature*) from merely extending an existing mechanism with more values (*new content*).
 5. **Look for a PR template**: if a file like `docs/pull_request_template.md` exists in the repo root, read it and use it as the structural basis for the output.
 6. **Capture the work item / ticket reference**: extract it from the branch name (e.g. `feature/28048_my-feature` → `28048`), commit messages, or user input. Include it in the output.

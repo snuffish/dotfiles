@@ -159,7 +159,7 @@ for thread in data.get('value', []):
     status = thread.get('status') # active, fixed, closed, pending, etc.
     thread_ctx = thread.get('threadContext')
     file_path = thread_ctx.get('filePath') if thread_ctx else None
-    line = thread_ctx.get('rightFileStart') if thread_ctx else None
+    line = (thread_ctx.get('rightFileStart') or {}).get('line') if thread_ctx else None  # CommentPosition {line, offset}
     t_id = thread.get('id')
     
     # Filter out automated bot comments (e.g., test coverage services) unless relevant
@@ -177,11 +177,30 @@ for thread in data.get('value', []):
 #### GitHub API (using `gh api`)
 
 ```bash
-# PR line-level comments and review comments
-gh api repos/{owner}/{repo}/pulls/{prId}/comments
-# PR issue-level conversation comments
-gh api repos/{owner}/{repo}/issues/{prId}/comments
+# Inline review comments on the diff (REST pages at 30 by default, so always paginate)
+gh api --paginate repos/{owner}/{repo}/pulls/{prId}/comments
+# General conversation comments (a PR is an issue; these are not in /pulls/…/comments)
+gh api --paginate repos/{owner}/{repo}/issues/{prId}/comments
 ```
+
+REST review comments carry no resolved or outdated state, and *State at head* needs both. Get them per thread from GraphQL:
+
+```bash
+gh api graphql --paginate -F owner='{owner}' -F repo='{repo}' -F pr={prId} -f query='
+  query($owner: String!, $repo: String!, $pr: Int!, $endCursor: String) {
+    repository(owner: $owner, name: $repo) {
+      pullRequest(number: $pr) {
+        reviewThreads(first: 100, after: $endCursor) {
+          pageInfo { hasNextPage endCursor }
+          nodes { isResolved isOutdated path line
+                  comments(first: 1) { nodes { databaseId } } }
+        }
+      }
+    }
+  }'
+```
+
+Join the two on `comments.nodes[0].databaseId`, which is the REST comment `id` of each thread's first comment.
 
 #### Keep the dump
 
@@ -195,6 +214,8 @@ The lifecycle — create, read, map paths back, remove, fallback — is **`git-w
 
 - **Repo:** the workspace repo whose `origin` matches the PR's `{repo}` (*Repo Resolution* — in a multi-repo workspace, e.g. `GR.PRIIS.Backend` for a `_git/GR.PRIIS.Backend/pullrequest/…` URL). One snapshot per PR in scope.
 - **Head and source ref** (*Snapshot Lifecycle* a, *PR whose branch is not checked out* row — used even when it is checked out, since local commits are not what reviewers see):
+
+  `<sourceBranch>` / `<targetBranch>` are the PR's `sourceRefName` / `targetRefName` from Step 2.1 with `refs/heads/` stripped (GitHub: `headRefName` / `baseRefName`, already bare):
 
   ```bash
   git -C <repo> fetch origin <sourceBranch> <targetBranch>

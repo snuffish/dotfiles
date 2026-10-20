@@ -28,7 +28,7 @@ Read these before step 1:
 
 - **Repos**: work in a **workspace worktree per repo in scope**, created in Phase 0 and removed in Phase 7 through `git-worktrees` › *Workspace Lifecycle*. The user's main checkout is read-only for the whole run (`git-worktrees` › *Golden Invariants*) — they keep editing it while this skill runs. Use absolute paths and `git -C <repo-root>`, where `repo-root` is the worktree from the repo's `[worktree-context]` block; never `cd`, and never let the session's working directory move. Paste the block into every delegated skill invocation and every sub-agent brief — delegated skills discover "the repo" from the workspace otherwise and would act on the main checkout.
 
-### Three hard gates
+### Hard gates
 
 | Gate | Rule |
 |------|------|
@@ -256,13 +256,15 @@ Run the profile's verify skill for each touched repo — or the repo's documente
 
 Before presenting the ship gate:
 
-Invoke both skills **with the `[worktree-context]` block(s)**; without it they resolve the repo from the workspace and would grade or snapshot the user's main checkout — an empty scope at best, the user's unrelated edits at worst.
+Invoke every skill below **with the `[worktree-context]` block(s)**; without it they resolve the repo from the workspace and would grade or snapshot the user's main checkout — an empty scope at best, the user's unrelated edits at worst.
 
 1. `/spec-verification` against the ticket (include the discussion thread if the user supplied it), reading `repo-root`. Every acceptance criterion is *implemented* or explicitly *deferred* in the plan.
 2. `/code-review` on the working changes — `deep` when more than one repo or a contract changed. With the block, its `working` scope snapshots the worktree's tree (`git -C <repo-root> stash create`) and its Review Context names the worktree branch as the reviewed head. Hand it **every** repo's block in one invocation, so its counterpart lookup (`pr-counterpart` › *Counterpart discovery*) resolves to the sibling worktree and reviews both halves together. Separate per-repo runs would each miss the cross-repo contract checks.
 3. **Blind-spot closure.** Re-open the plan's *Blind-spot Pass* section. For each finding the plan accepted, point to the code and the test that cover it (`path:line`), and confirm the test fails with the fix reverted when that is cheap to check. A finding with no covering test counts as 🔴. Do not re-run `/what-am-I-missing` on the diff; reviewing a diff is `/code-review`'s job. Re-run it only if implementation forced a design change the user has not seen, and present that change before shipping.
 
 Fix 🔴 findings and re-run the affected Phase 4 checks. List 🟡 findings you chose not to fix at the ship gate, one line each.
+
+4. **Manual test plan.** Once the 🔴 findings are fixed, invoke `/manual-testing` with the `[worktree-context]` block(s), so its scenarios come from the worktree's final diff, not the main checkout. Phase 7 links the `<prefix>-manual_test_plan-<suffix>.md` it writes. Skip it only for changes with no runtime surface (docs, build config), and say so in the walkthrough.
 
 ---
 

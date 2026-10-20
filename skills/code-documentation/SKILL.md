@@ -67,20 +67,19 @@ Identify the project fundamentals:
 
 #### Step 1.2: Code Structure Analysis
 
-Use sandbox tools to explore the codebase:
+Explore the repository itself. Use the code index when one exists (e.g. a `.codegraph/` directory), the host's file-read and search tools otherwise:
 
 ```bash
-# Get directory structure
-ls /mnt/user-data/uploads/project-dir/
+# Directory structure, ignoring build output and dependencies
+git -C <repo-root> ls-files | sed 's|/[^/]*$||' | sort -u | head -100
 
-# Read key files
-read_file /mnt/user-data/uploads/project-dir/package.json
-read_file /mnt/user-data/uploads/project-dir/pyproject.toml
+# Key manifests: read whichever exist (package.json, pyproject.toml, *.csproj, go.mod, Cargo.toml)
 
-# Search for public API surfaces
-grep -r "export " /mnt/user-data/uploads/project-dir/src/
-grep -r "def " /mnt/user-data/uploads/project-dir/src/ --include="*.py"
-grep -r "func " /mnt/user-data/uploads/project-dir/ --include="*.go"
+# Public API surfaces
+git -C <repo-root> grep -n "^export "             -- '*.ts' '*.tsx'
+git -C <repo-root> grep -n "^def \|^class "       -- '*.py'
+git -C <repo-root> grep -n "^\s*public "          -- '*.cs'
+git -C <repo-root> grep -n "^func [A-Z]"          -- '*.go'
 ```
 
 #### Step 1.3: Identify Documentation Scope
@@ -405,15 +404,16 @@ Ensure:
 | Go | GoDoc comments | Effective Go |
 | Rust | Rustdoc (`///`) | Rust API Guidelines |
 | Java | Javadoc | Oracle Javadoc Guide |
+| C# | XML doc comments (`///`, `<summary>`) | .NET documentation comments guide; slim, per the workspace rulebook |
 | C/C++ | Doxygen | Doxygen manual |
 
 ## Output Handling
 
 After generation:
 
-- Save documentation files to `/mnt/user-data/outputs/`
-- For multi-file documentation, maintain the project directory structure
-- Present generated files to the user using the `present_files` tool
+- Write documentation into the repository where it belongs (`README.md` at the root, `docs/` for guides and architecture, comments next to the code), following the repo's existing layout
+- For multi-file documentation, mirror the project's directory structure
+- Link every file you created or changed in the chat response, using the host's link format (`artifact-protocol` › *Host-Specific Link Formats*)
 - Offer to iterate on specific sections or adjust the level of detail
 - Suggest additional documentation that might be valuable
 
@@ -424,4 +424,4 @@ After generation:
 - For large codebases, prioritize documenting the public API surface and key abstractions first
 - Documentation should be written in the same language as the project's existing docs; default to English if none exist
 - When generating changelogs, use the [Keep a Changelog](https://keepachangelog.com/) format
-- This skill works well in combination with the `deep-research` skill for documenting third-party integrations or dependencies
+- For third-party integrations or dependencies, check facts against their official docs at the version in use ([`/verify-assumptions`](../verify-assumptions/SKILL.md) does this systematically)

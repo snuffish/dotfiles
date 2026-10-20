@@ -96,9 +96,11 @@ Used by `/code-review`, `/pr-feedback-review` and by any read-only skill asked f
 | Scope | Head to snapshot | Source ref to record |
 |---|---|---|
 | branch head (default) | `git -C <repo> rev-parse HEAD` | `<local-branch>` |
-| PR whose branch is not checked out | `git -C <repo> fetch origin <sourceRefName>`, then `git -C <repo> rev-parse origin/<sourceRefName>` | `origin/<sourceRefName>` |
+| PR whose branch is not checked out | `git -C <repo> fetch origin <source-branch>`, then `git -C <repo> rev-parse origin/<source-branch>` | `origin/<source-branch>` |
 | working tree | `SNAP=$(git -C <repo> stash create)` → head is `$SNAP` | `<local-branch> + working tree` |
 | index | `SNAP=$(git -C <repo> stash create)` → head is `$SNAP^2` | `<local-branch> + index` |
+
+`<source-branch>` and `<target-branch>` are the PR's branch names **without** the `refs/heads/` prefix. Azure DevOps (`sourceRefName` / `targetRefName`, in both the REST API and `az repos pr show`) returns the full ref, e.g. `refs/heads/feature/x`, and `origin/refs/heads/feature/x` never resolves. Strip it first: `SRC=${sourceRefName#refs/heads/}`. GitHub's `headRefName` / `baseRefName` are already bare.
 
 `<local-branch>` is `git -C <repo> rev-parse --abbrev-ref HEAD` (`detached` when it prints `HEAD`). The snapshot is detached, so its own `HEAD` carries no branch name: capture the source ref **now** and carry it next to the SHA everywhere the head is mentioned. A bare SHA in an artifact is a defect.
 

@@ -227,9 +227,11 @@ const STATUS_COLORS: Record<Status, BadgeColor> = {
 };
 
 function getBadgeColor(status: Status): BadgeColor {
-    return STATUS_COLORS[status] ?? 'gray';
+    return STATUS_COLORS[status];
 }
 ```
+
+This assumes `Status` has exactly these four members; the old `default:` covered `Archived`. The exhaustive `Record` makes the compiler demand a color for every new member, which `default:` silently swallowed. Do not add `?? 'gray'`: under the `Record` type it is dead code, and it would hide a missing key at runtime. If some members really should fall back, say so in the type: `Partial<Record<Status, BadgeColor>>` plus an explicit `?? 'gray'`.
 
 ---
 

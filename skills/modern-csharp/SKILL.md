@@ -17,9 +17,8 @@ Use collection expressions everywhere. The old constructors are forbidden.
 // ✅ Correct
 string[] names = ["Alice", "Bob", "Charlie"];
 List<Guid> ids = [id1, id2, id3];
-var empty = Array.Empty<string>();      // ❌ wrong
-var empty = (string[])[];              // ✅ correct: []
-var merged = [..existing, newItem];    // spread operator for combining
+string[] empty = [];                           // not Array.Empty<string>()
+List<string> merged = [..existing, newItem];   // spread operator for combining
 
 // ❌ Forbidden
 new List<string>()
@@ -28,6 +27,8 @@ new[] { "a", "b" }
 Array.Empty<string>()
 Enumerable.Empty<int>()
 ```
+
+A collection expression has no natural type, so it needs a target type: `var merged = [..existing, newItem];` does not compile (CS9176). Declare the type on the left, or use it where a parameter, property or return type supplies one.
 
 In properties and method returns:
 
@@ -126,31 +127,31 @@ Marking a class `sealed` enables JIT devirtualization and signals intent to futu
 
 ## 5. C# 14 Extension Blocks
 
-C# 14 introduces extension blocks as a replacement for static extension method classes. This codebase uses them for domain type extensions.
+C# 14 adds extension blocks: `extension(<receiver>) { … }` declares extension members for that receiver. A block lives **inside** a top-level, non-generic `static class`, just like `this`-parameter extension methods. A block at namespace or file level does not compile (CS9283).
 
 ```csharp
-// ✅ C# 14 extension block syntax
-extension(OperationStatus status)
-{
-    public string ToDisplayString() => status switch
-    {
-        OperationStatus.Active   => "Aktiv",
-        OperationStatus.Inactive => "Inaktiv",
-        OperationStatus.Pending  => "Väntande",
-        _                        => status.ToString()
-    };
-
-    public bool IsTerminal() => status is OperationStatus.Closed or OperationStatus.Cancelled;
-}
-
-// ❌ Old C# static extension class syntax (avoid for new extension methods)
+// ✅ Prefer for new extension members
 public static class OperationStatusExtensions
 {
-    public static string ToDisplayString(this OperationStatus status) => ...;
+    extension(OperationStatus status)
+    {
+        public string ToDisplayString() => status switch
+        {
+            OperationStatus.Active   => "Aktiv",
+            OperationStatus.Inactive => "Inaktiv",
+            OperationStatus.Pending  => "Väntande",
+            _                        => status.ToString()
+        };
+
+        public bool IsTerminal() => status is OperationStatus.Closed or OperationStatus.Cancelled;
+    }
+
+    // Still valid: the classic form compiles to the same IL and can sit in the same class
+    public static string ToShortCode(this OperationStatus status) => status.ToString()[..1];
 }
 ```
 
-Extension blocks replace the `public static class FooExtensions` pattern. When adding new extension methods to domain types, use extension blocks.
+Use blocks for new extension members: they group the members of one receiver, and they also allow extension properties and static extension members. The `this`-parameter form is not deprecated. The two are binary- and source-compatible, so existing methods need no conversion.
 
 ---
 
@@ -170,15 +171,30 @@ var emailBody = """
     """;
 
 // ✅ Raw string with interpolation ($""" ... """)
-var query = $"""
-    SELECT Id, Name
-    FROM Operations
-    WHERE SupplierId = '{supplierId}'
-      AND Status = 'Active'
+var greeting = $"""
+    Hej {name},
+
+    Ditt ärende #{caseNumber} har registrerats.
     """;
 
 // ❌ Old string concatenation
 var body = "Hej " + name + ",\r\n\r\nDitt ärende #" + caseNumber + " har registrerats.";
+```
+
+**SQL is the exception: never interpolate values into SQL text.** A string built beforehand can only reach `FromSqlRaw` / `SqlQueryRaw` / `ExecuteSqlRaw`, which send the value verbatim, so this is SQL injection. Pass the interpolated raw string straight to `FromSql` (or `SqlQuery` / `ExecuteSql`) instead. It takes a `FormattableString` and turns every `{value}` into a `DbParameter`, so the placeholder gets no quotes:
+
+```csharp
+// ❌ Injectable: the value is pasted into the SQL text
+var sql = $"""SELECT Id, Name FROM Operations WHERE SupplierId = '{supplierId}'""";
+var rows = dbContext.Operations.FromSqlRaw(sql);
+
+// ✅ Parameterised: {supplierId} becomes @p0
+var rows = dbContext.Operations.FromSql($"""
+    SELECT Id, Name
+    FROM Operations
+    WHERE SupplierId = {supplierId}
+      AND Status = 'Active'
+    """);
 ```
 
 ---
@@ -337,7 +353,7 @@ Write a comment only to state something the code cannot show on its own — a no
 | `Array.Empty<T>()` | `[]` |
 | `Enumerable.Empty<T>()` | `(IEnumerable<T>)[]` |
 | `this._field = param` in constructor | Primary constructor capture |
-| `static class FooExtensions { public static ... this Foo }` | `extension(Foo foo) { ... }` |
+| A new `public static … (this Foo foo)` extension method | An `extension(Foo foo) { … }` block in the same static class (existing `this` methods can stay) |
 | `new Regex(pattern)` static field | `[GeneratedRegex] partial` method |
 | `throw new ArgumentException(...)` for expected failures | `return SystemResult.Failure(...)` |
 | `var act = async () => ...` | `async Task Act() { ... }` (PascalCase local function) |
