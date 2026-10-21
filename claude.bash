@@ -17,34 +17,20 @@ function sync-skills() {
   python3 -I "$HOME/.terminal/skills/sync-skills/sync_skills.py" "$@"
 }
 
-# Pick one of this directory's Claude Code sessions with fzf and resume it; extra args go to claude
+# Pick a Claude Code session with fzf and resume it in its own directory; extra args go to claude
 function claude-resume() {
-  local dir="$HOME/.claude/projects/${PWD//[^[:alnum:]]/-}"
-  local pick
-  if [[ ! -d "$dir" ]]; then
-    echo "No Claude sessions for $PWD" >&2
-    return 1
-  fi
+  local sessions="$HOME/.terminal/claude/sessions.sh" scope=here prompt='This dir> ' pick
+  # Start with every session when this directory has none
+  [[ -d "$HOME/.claude/projects/${PWD//[^[:alnum:]]/-}" ]] || { scope=all; prompt='All> '; }
   pick="$(
-    for f in "$dir"/*.jsonl; do
-      jq -rn --arg f "$f" '
-        [inputs] as $l
-        | ($l | map(select(.type == "user" and (.isMeta | not))
-                    | .message.content | if type == "array" then map(.text? // empty) | join(" ") else . end
-                    | select(type == "string" and length > 0 and (startswith("<") | not)))
-              | first // "") as $prompt
-        | ([$l[] | .customTitle // empty] | last) // ([$l[] | .aiTitle // empty] | last) // $prompt
-        | select(. != "") as $title
-        | ([$l[] | .timestamp // empty] | last // "") as $ts
-        | [if $ts == "" then "" else $ts[0:19] + "Z" | fromdate | localtime | strftime("%Y-%m-%d %H:%M") end,
-($f | split("/") | last | rtrimstr(".jsonl")), ($title | gsub("\\s+"; " ") | .[0:100]), $f] | @tsv
-      ' "$f"
-    done | sort -r | fzf --header 'Select session to resume (ctrl-s copies its id):' --delimiter='\t' --with-nth=1,2,3 --tiebreak=index \
+    bash "$sessions" list "$scope" | fzf --header '[Enter] Resume | [Ctrl-T] This dir / All | [Ctrl-S] Copy id' \
+      --prompt "$prompt" --delimiter='\t' --with-nth=1,2,3 --tiebreak=index \
+      --bind="ctrl-t:transform:[ \"\$FZF_PROMPT\" = 'All> ' ] && echo 'change-prompt(This dir> )+reload(bash $sessions list here)' || echo 'change-prompt(All> )+reload(bash $sessions list all)'" \
       --bind="ctrl-s:execute-silent(printf %s {2} | (wl-copy 2>/dev/null || xclip -selection clipboard 2>/dev/null || pbcopy 2>/dev/null))+abort" \
-      --preview="jq -r 'select(.type == \"user\" or .type == \"assistant\") | .message.content | if type == \"array\" then map(.text? // empty) | join(\" \") else . end | select(type == \"string\" and length > 0) | \"• \" + .[0:400]' {4} | tail -n 40" \
+      --preview="bash $sessions preview {4}" \
       --preview-window wrap --height 50% --layout reverse
   )" || return
-  claude --resume "$(cut -f2 <<< "$pick")" "$@"
+  (cd "$(cut -f5 <<< "$pick")" && claude --resume "$(cut -f2 <<< "$pick")" "$@")
 }
 
 # Open the claude-mem dashboard in the browser
