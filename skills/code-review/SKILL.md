@@ -47,7 +47,7 @@ Read these before step 1:
 | `/code-review live [scope]` | Standard or deep, **no snapshot** | Reads the main checkout directly instead of the snapshot from *Step 1b*. Only for what cannot be snapshotted — e.g. specific files that were never committed |
 | `/code-review feedback [scope]` | Standard or deep, **full thread triage** | Once the review's own findings are verified, runs `/pr-feedback-review`, which writes its own artifact, and folds the PR threads into the review (see *Step 6b*) |
 
-`live` and `feedback` are modifiers, not modes: `/code-review deep live <scope>` and `/code-review deep feedback <pr>` are valid. Suggest `deep` in the chat response (do not switch silently) when the diff exceeds ~1,500 changed lines or spans both repos with contract changes.
+`live` and `feedback` are modifiers, not modes: `/code-review deep live <scope>` and `/code-review deep feedback <pr>` are valid. The token `/no-worktrees` means `live`; `/worktrees` changes nothing, because the snapshot is already the default. Suggest `deep` in the chat response (do not switch silently) when the diff exceeds ~1,500 changed lines or spans both repos with contract changes.
 
 ---
 
