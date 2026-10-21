@@ -55,6 +55,7 @@ Never place a skill under `skills/_modules/`; that directory holds Modules only 
 - **Name the neighbour.** When another skill overlaps, end with "Not for X (use /y)."
 - **Keep it short.** At most 1024 characters (Agent Skills spec). Claude Code truncates at 1,536, and when the shared listing overflows its budget it drops descriptions, least-used skills first.
 - **`disable-model-invocation: true`** for a Command only the user should start (e.g. `/proceed`), and `argument-hint` for its arguments. Both are Claude Code keys; Antigravity documents only `name` and `description`, so never make safety depend on them alone.
+- **`user-invocable: false`** for every Profile: the Command that reads it loads it, and run on its own it is only reference data. It hides the skill from the `/` menu but leaves model invocation on; never use `disable-model-invocation` there, or the Command cannot load its profile.
 - **Lean body.** Keep `SKILL.md` to the workflow; move catalogs, templates and long examples into `references/` and link them.
 
 ---

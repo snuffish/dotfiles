@@ -1,6 +1,7 @@
 ---
 name: priis-profile
 description: "[Project: GR.PRIIS] Base profile for the GR workspace — the PRIIS facts every Command profile shares: workspace layout, Azure DevOps tracker and PR tooling (org, project, repository ids, MCP server and az fallbacks), pattern skills per layer, sibling chain per repo, cross-repo contract touchpoints (SystemAction, enum metadata, swagger snapshot, SignalR), report language, known documentation drift, worktree include list, dependency hydration and shared local services. Load before any `<command>-priis-profile` (implement-feature-priis-profile, code-review-priis-profile). Load ONLY when working on the GR.PRIIS.Backend or GR.PRIIS.Frontend project or in the GR repository."
+user-invocable: false
 ---
 
 # `priis-profile` — PRIIS base profile

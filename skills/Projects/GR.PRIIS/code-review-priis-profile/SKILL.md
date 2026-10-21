@@ -1,6 +1,7 @@
 ---
 name: code-review-priis-profile
 description: "[Project: GR.PRIIS] Command profile consumed by the general /code-review skill — tunes a review in the GR workspace to what the PRIIS team actually catches: which sections of the team's priis-backend-review / priis-frontend-review checklists apply and which review axis each feeds, the lessons-from-prs catalogs read from origin/main, counterpart pathspecs, the hotfix base, sibling hints, the axis and severity mapping, report additions (test coverage, acceptance criteria) and the hand-offs to the verify skills and /manual-testing. Shared facts (tracker, PR tooling, contracts, report language, known drift) live in priis-profile. Load together with code-review and priis-profile when reviewing a PR, branch or diff in the GR workspace. Load ONLY when working on the GR.PRIIS.Backend or GR.PRIIS.Frontend project or in the GR repository."
+user-invocable: false
 ---
 
 # `code-review-priis-profile` — PRIIS project profile for `/code-review`
