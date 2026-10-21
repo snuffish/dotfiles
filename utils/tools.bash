@@ -26,15 +26,14 @@ function convertPathToWin32() {
 function loadSource() {
   FILE=$1
 
-  if [[ -f "$FILE" ]]; then
-    # shellcheck source=/dev/null
-    source "$FILE"
-    filename=$(getFileName "$FILE")
-
-    printf "Loaded => %s\n" "$filename"
-  else
-    printf "Missing required file: %s" "$FILE"
+  if [[ ! -f "$FILE" ]]; then
+    printf "\e[31m✗ Missing required file: %s\e[0m\n" "$FILE" >&2
+    return 1
   fi
+
+  # shellcheck source=/dev/null
+  source "$FILE"
+  return 0
 }
 
 function aliasExists() {

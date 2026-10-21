@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Add ssh-key
-eval && ssh-add "$HOME/.ssh/id_rsa"
+ssh-add -q "$HOME/.ssh/id_rsa" 2>/dev/null
 
 # LazyGit
 alias lg="lazygit"
