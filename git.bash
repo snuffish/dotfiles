@@ -92,7 +92,7 @@ function gb() {
   # Keep only existing branches (drops detached SHAs), first occurrence wins
   printf '%s\n%s\n' "$recent" "$branches" \
     | awk 'FNR == NR { ok[$0] = 1; next } ok[$0] && !seen[$0]++' <(printf '%s\n' "$branches") - \
-    | fzf --header 'Select branch to checkout:' --tiebreak=index --preview 'git show --color=always {-1}' --bind 'enter:become(git checkout {-1})' --height 50% --layout reverse
+    | fzf --border --border-label ' Checkout branch ' --header '[Enter] Checkout' --tiebreak=index --preview 'git show --color=always {-1}' --bind 'enter:become(git checkout {-1})' --height 50% --layout reverse
 }
 
 # Switch to another worktree of the current repo (agent-locked ones are flagged)
@@ -148,7 +148,8 @@ function gw() {
 
   # Match the query against the label only; the shared parent path would fuzzy-match everything
   local wt_line
-  wt_line=$(printf '%s\n' "$rows" | fzf --header 'Select worktree to switch to:  (ctrl-d: diff · ctrl-s: status · shift-↑/↓: scroll)' \
+  wt_line=$(printf '%s\n' "$rows" | fzf --border --border-label ' Switch worktree ' \
+    --header '[Enter] Switch | [Ctrl-D] Diff | [Ctrl-S] Status | [Shift-↑/↓] Scroll preview' \
     --delimiter '\t' --nth 1 --tiebreak=index \
     --query "$*" --select-1 --exit-0 "${pos_bind[@]}" \
     --preview "$preview_status" --preview-label ' status ' \

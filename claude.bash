@@ -24,6 +24,7 @@ function claude-resume() {
   [[ -d "$HOME/.claude/projects/${PWD//[^[:alnum:]]/-}" ]] || { scope=all; prompt='All> '; }
   pick="$(
     bash "$sessions" list "$scope" | fzf --header '[Enter] Resume | [Ctrl-T] This dir / All | [Ctrl-S] Copy id' \
+      --border --border-label ' Resume Claude session ' \
       --prompt "$prompt" --delimiter='\t' --with-nth=1,2,3 --tiebreak=index \
       --bind="ctrl-t:transform:[ \"\$FZF_PROMPT\" = 'All> ' ] && echo 'change-prompt(This dir> )+reload(bash $sessions list here)' || echo 'change-prompt(All> )+reload(bash $sessions list all)'" \
       --bind="ctrl-s:execute-silent(printf %s {2} | (wl-copy 2>/dev/null || xclip -selection clipboard 2>/dev/null || pbcopy 2>/dev/null))+abort" \

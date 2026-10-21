@@ -90,13 +90,13 @@ run_fzf_json() {
     return 1
   fi
 
-  # Set header: use provided title or fallback to the key name
-  local fzf_header="${title:-Select command ($key):}"
+  # Set border label: use provided title or fallback to the key name
+  local fzf_title="${title:-Run command ($key)}"
 
   # Extract keys in original order using keys_unsorted
   local choice_name
   choice_name=$(jq -j --arg k "$key" '.[$k] | keys_unsorted[] + "\u0000"' "$config_file" |
-    fzf --read0 --height 40% --reverse --header "$fzf_header" \
+    fzf --read0 --height 40% --reverse --border --border-label " $fzf_title " --header '[Enter] Run' \
       --preview "jq -r --arg k \"$key\" --arg c {} '.[\$k][\$c]' \"$config_file\"" \
       --preview-window "down:3:wrap" \
       --preview-label " Command " \
