@@ -35,7 +35,7 @@ Read these before step 1:
 
 ### Step 1: Discover and lint
 
-Run the script in *Sync script* below. It walks `<registry>` (skipping `_modules/`) and checks every `SKILL.md`:
+Run the script in *Sync script* below in check mode. It walks `<registry>` (skipping `_modules/`) and checks every `SKILL.md`:
 
 - **Name** in the frontmatter equals the folder name.
 - **Description** is present, single-line and at most 1024 characters (the Agent Skills spec limit). Over 1024 is an error. Over 700 is a warning, because every installed skill shares one listing budget and Claude Code drops descriptions when it overflows, least-used skills first.
@@ -47,7 +47,7 @@ Run the script in *Sync script* below. It walks `<registry>` (skipping `_modules
 
 ### Step 2: Reconcile `~/.claude/skills`
 
-The same script then:
+Run it again with `--apply` when check mode planned changes. If the plan unlinks anything, list those names and ask first: an unlink takes a skill away from every session. With `--apply` the script:
 
 1. Creates a missing link, or repoints a wrong one, for every general skill, every Profile and every allow-listed project skill.
 2. Prunes a link into `<registry>` whose target is gone.
@@ -58,7 +58,7 @@ Claude Code watches `~/.claude/skills` and picks up added, edited or removed ski
 
 ### Step 3: Check `.agents/skills.json`
 
-In the active workspace, read `.agents/skills.json`. Antigravity scans each entry's direct children, so every `Projects/<Project>` folder whose skills that workspace needs must be listed. Report a missing entry and propose the exact JSON line; add it only if the user asks. If the workspace has `.agents/AGENTS.md`, check that new skills are documented there too.
+The script checks the `.agents/skills.json` of every workspace in a project's `.workspaces`; also read the active workspace's file when it is not one of them. Antigravity scans each entry's direct children, so every `Projects/<Project>` folder (or repo `.claude/skills`) whose skills that workspace needs must be listed. Report a missing or dead entry and propose the exact JSON line; add it only if the user asks. If the workspace has `.agents/AGENTS.md`, check that new skills are documented there too.
 
 ### Step 4: Update the README inventory
 
@@ -72,109 +72,17 @@ Run `git -C <registry> status -s` and list new or modified skills that are not c
 
 ## Sync script
 
-Run it with `python3 - <<'PY' … PY`, after replacing `<registry>` if `~/.claude/skills/sync-skills` is not linked yet (the first run after a rename).
+[`sync_skills.py`](sync_skills.py) next to this file holds the lint and the link rules. It finds the registry from its own location, so it runs before any skill is linked, and the shell has it as `skills-sync` (`claude.bash`):
 
-```python
-import json, os, re
-
-_self = os.path.realpath(os.path.expanduser('~/.claude/skills/sync-skills'))
-root = os.path.dirname(_self) if os.path.isdir(_self) else os.path.expanduser('<registry>')
-flat = os.path.expanduser('~/.claude/skills')
-modules = os.path.join(root, '_modules')
-os.makedirs(flat, exist_ok=True)
-
-errors, warnings, skills = [], [], {}
-module_ref = re.compile(r'^- `([^`]*_modules/[^`]+\.md)`', re.M)
-link_ref = re.compile(r'\]\(((?:\.\./)*[\w./-]*(?:SKILL\.md|_modules/[\w-]+\.md|references/[\w./-]+))(?:#[^)]*)?\)')
-guard = 'If any Module cannot be read, stop and report the path.'
-retired = re.compile(r'(?<![\w-])core/SKILL\.md|(?<![\w-])(?:core|git-worktrees|artifact-protocol)`? §')
-
-def allowed(project_dir):
-    path = os.path.join(project_dir, '.flat-links')
-    return set(open(path).read().split()) if os.path.isfile(path) else set()
-
-for d, _, files in os.walk(root):
-    if d == modules or d.startswith(modules + os.sep):
-        if 'SKILL.md' in files:
-            errors.append(f'{d}: SKILL.md inside _modules/')
-        continue
-    if 'SKILL.md' not in files or '/.git' in d:
-        continue
-    text = open(os.path.join(d, 'SKILL.md'), encoding='utf-8').read()
-    m = re.match(r'---\n(.*?)\n---\n', text, re.S)
-    if not m:
-        errors.append(f'{d}: no frontmatter'); continue
-    fm = m.group(1)
-    name = (re.search(r'^name:\s*(.+)$', fm, re.M) or [None, None])[1]
-    raw = (re.search(r'^description:\s*(.+)$', fm, re.M) or [None, ''])[1].strip()
-    desc = json.loads(raw) if raw.startswith('"') else raw.strip("'")
-    folder = os.path.basename(d)
-    project = os.path.relpath(d, root).startswith('Projects' + os.sep)
-    if name != folder:
-        errors.append(f'{d}: name {name!r} != folder {folder!r}')
-    if not desc or desc in ('>', '>-', '|', '|-'):
-        errors.append(f'{d}: description missing or multi-line')
-    elif len(desc) > 1024:
-        errors.append(f'{d}: description {len(desc)} chars > 1024')
-    elif len(desc) > 700:
-        warnings.append(f'{d}: description {len(desc)} chars (listing budget)')
-    if project and not (desc.startswith('[Project:') and 'Load ONLY when' in desc):
-        errors.append(f'{d}: project skill not gated')
-    mods = module_ref.findall(text)
-    for mod in mods:
-        target = os.path.realpath(os.path.join(d, mod))
-        if mod.startswith(('/', '~')) or not (os.path.isfile(target) and os.path.dirname(target) == modules):
-            errors.append(f'{d}: Module path {mod!r} does not resolve into _modules/')
-    if mods and guard not in text:
-        errors.append(f'{d}: ## Modules has no stop sentence')
-    for link in link_ref.findall(text):
-        if '<' in link or '…' in link:
-            continue
-        if not os.path.exists(os.path.realpath(os.path.join(d, link))):
-            errors.append(f'{d}: dead link {link}')
-    if retired.search(text):
-        errors.append(f'{d}: retired core link or numbered Module section')
-    if sum(1 for line in text.splitlines() if line.lstrip().startswith('`' * 3)) % 2:
-        warnings.append(f'{d}: odd number of code fences (unclosed block)')
-    if name == folder:
-        is_profile = folder.endswith('-profile')
-        link = (not project) or is_profile or folder in allowed(os.path.dirname(d))
-        skills[folder] = {'path': d, 'project': project, 'link': link}
-
-created, repointed, pruned, unlisted, foreign_dead = [], [], [], [], []
-for item in sorted(os.listdir(flat)):
-    p = os.path.join(flat, item)
-    if not os.path.islink(p):
-        continue
-    target = os.path.join(flat, os.readlink(p))
-    target = os.path.normpath(target)
-    if not os.path.exists(p):
-        if target.startswith(root + os.sep):
-            os.unlink(p); pruned.append(item)
-        else:
-            foreign_dead.append(f'{item} -> {target}')
-    elif target.startswith(os.path.join(root, 'Projects') + os.sep) and item in skills and not skills[item]['link']:
-        os.unlink(p); unlisted.append(item)
-
-for name, meta in sorted(skills.items()):
-    if not meta['link']:
-        continue
-    p = os.path.join(flat, name)
-    if not os.path.lexists(p):
-        os.symlink(meta['path'], p); created.append(name)
-    elif os.path.islink(p) and os.path.normpath(os.path.join(flat, os.readlink(p))) != meta['path']:
-        os.unlink(p); os.symlink(meta['path'], p); repointed.append(name)
-
-held = sorted(n for n, m in skills.items() if not m['link'])
-print(f'skills: {len(skills)} (general {sum(not m["project"] for m in skills.values())}, project {sum(m["project"] for m in skills.values())})')
-for label, items in [('created', created), ('repointed', repointed), ('pruned dead', pruned),
-                     ('unlinked (not allow-listed)', unlisted), ('held out of ~/.claude/skills', held),
-                     ('dead links outside registry (untouched)', foreign_dead),
-                     ('ERRORS', errors), ('warnings', warnings)]:
-    print(f'{label}: {len(items)}')
-    for i in items:
-        print(f'  - {i}')
+```bash
+python3 -I <registry>/sync-skills/sync_skills.py            # check: lint, planned link changes, workspace checks; writes nothing
+python3 -I <registry>/sync-skills/sync_skills.py --apply    # also fixes ~/.claude/skills
 ```
+
+- `--apply` refuses to run from a `.claude/worktrees/` checkout, which would point every link into the worktree. Pass `--registry <main checkout>/skills` to override.
+- `Projects/<Project>/.workspaces` lists the workspaces that use the project, one path per line (`~` allowed). For each one present on this machine the check reports project skills that are neither linked nor shipped in a repo's `.claude/skills/`, and problems in its `.agents/skills.json`. A workspace missing on this machine is skipped.
+- `.flat-links` and `.workspaces` take one entry per line; blank lines and `#` comments are ignored.
+- Exit status 1 when the lint finds errors or a link change fails.
 
 ---
 
@@ -204,6 +112,7 @@ Answer in chat, in this shape:
 
 ## Verification
 
+- A second check-mode run plans no link changes.
 - `find ~/.claude/skills -maxdepth 1 -xtype l` prints only links that point outside `<registry>`.
 - Every general skill and every Profile has a link; no project skill outside `.flat-links` does.
 - The README counts match the script's counts.
