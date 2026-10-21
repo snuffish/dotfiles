@@ -13,7 +13,7 @@ function cm-sync() {
 }
 
 # Lint the skills registry and check ~/.claude/skills against it; --apply fixes the links
-function skills-sync() {
+function sync-skills() {
   python3 -I "$HOME/.terminal/skills/sync-skills/sync_skills.py" "$@"
 }
 
