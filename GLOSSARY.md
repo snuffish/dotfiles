@@ -21,7 +21,7 @@ A skill holding knowledge the model loads by topic, never run as a workflow, suc
 _Avoid_: pattern skill, tech skill, reference skill
 
 **Module**:
-A shared contract that Commands depend on and that never runs on its own, such as `core` or the worktree lifecycle. A Command may share a Module's name when it does nothing but launch that Module for a plain prompt: the `git-worktrees` Command runs a request under the `git-worktrees` Module.
+A shared contract that Commands depend on and that never runs on its own, such as `core` or the worktree lifecycle. A Command may do nothing but launch a Module for a plain prompt: the `worktrees` Command runs a request under the `git-worktrees` Module, and `no-worktrees` runs one in place.
 _Avoid_: core utility, protocol, shared skill, lib, root skill
 
 **Profile**:

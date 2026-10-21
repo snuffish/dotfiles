@@ -44,7 +44,7 @@ Read these before step 1:
 | `/pr-feedback-review deep [target]` | **Deep** | Verification, Merit and Impact each run in an isolated parallel sub-agent (see *Deep Mode*), then aggregate |
 | `/pr-feedback-review live [target]` | Standard or deep, **no snapshot** | Reads the main checkout directly instead of the snapshot from *Step 2.3*. Only when no snapshot is possible, or the user wants threads checked against unpushed local commits |
 
-`live` is a modifier, not a mode: `/pr-feedback-review deep live <target>` is valid. The token `/git-worktrees` in the arguments is accepted and changes nothing, because the snapshot is already the default.
+`live` is a modifier, not a mode: `/pr-feedback-review deep live <target>` is valid. The token `/worktrees` in the arguments is accepted and changes nothing, because the snapshot is already the default. The token `/no-worktrees` means `live`.
 
 The three axes every thread is assessed on:
 

@@ -47,8 +47,10 @@ To prevent accidental regressions and unapproved mutations:
 - If tests or builds fail, diagnose and fix the issue before claiming completion.
 
 ### Worktree opt-in
-- When the invocation's arguments contain the token `/git-worktrees`, or a `[worktree-context]` block was handed in, read [git-worktrees.md](git-worktrees.md) (same folder as this file) and run under it, even if this Command does not list it. The bare word `worktree` is not the token (`git-worktrees` › *Modes* › *Opt-in token* says why).
-- A prompt that contains `/git-worktrees` but invokes no Command is handled by the `git-worktrees` Command.
+- When the invocation's arguments contain the token `/worktrees`, or a `[worktree-context]` block was handed in, read [git-worktrees.md](git-worktrees.md) (same folder as this file) and run under it, even if this Command does not list it. The bare word `worktree` is not the token (`git-worktrees` › *Modes* › *Opt-in token* says why).
+- A prompt that contains `/worktrees` but invokes no Command is handled by the `worktrees` Command.
+- When the arguments contain the token `/no-worktrees`, create no worktree and run in place, even if this Command isolates by default: a Command that snapshots by default reads the live checkout (as its `live` modifier does), and one that edits in a workspace worktree by default edits the user's checkout. It does not move work that already lives in a kept worktree. When both tokens are present, ask which one applies.
+- A prompt that contains `/no-worktrees` but invokes no Command is handled by the `no-worktrees` Command.
 
 ---
 

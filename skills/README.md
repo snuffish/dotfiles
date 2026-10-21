@@ -36,11 +36,11 @@ skills/
 
 ## Inventory
 
-61 skills total — 34 general + 27 under `Projects/GR.PRIIS/` — plus 6 Modules.
+62 skills total — 35 general + 27 under `Projects/GR.PRIIS/` — plus 6 Modules.
 
 | Group | Kind | Count | Entries |
 | --- | --- | :---: | --- |
-| General (top level) | Command | 32 | `artifacts`, `clean`, `code-documentation`, `code-review`, `continue`, `create-skill`, `create-ticket`, `explain`, `expressive`, `git-worktrees`, `implement-feature`, `investigate`, `manual-testing`, `organize`, `plan`, `plan-preview`, `plan-review`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `refine`, `resolve-conflicts`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `suggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing` |
+| General (top level) | Command | 33 | `artifacts`, `clean`, `code-documentation`, `code-review`, `continue`, `create-skill`, `create-ticket`, `explain`, `expressive`, `implement-feature`, `investigate`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `plan-preview`, `plan-review`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `refine`, `resolve-conflicts`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `suggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing`, `worktrees` |
 | General (top level) | Reference | 2 | `modern-csharp`, `typescript-conventions` |
 | `GR.PRIIS/priis-backend-*` | Reference | 7 | `dry`, `ef-core`, `fastendpoints`, `notifications`, `signalr`, `testing`, `workflow` |
 | `GR.PRIIS/priis-frontend-*` | Reference | 6 | `component-patterns`, `forms`, `routing`, `rtk-query`, `testing`, `workflow` |
@@ -69,7 +69,7 @@ Read these before step 1:
 
 1. **[`core`](_modules/core.md)**: golden invariants, execution gates (`/proceed`, post-edit verification, worktree opt-in), codebase investigation protocol and the precedence model. Depends on nothing.
 2. **[`artifact-protocol`](_modules/artifact-protocol.md)**: host & AI model prefix (`<host>-<model>-`), mandatory contextual suffix, link formats, PR thread links and the canonical artifact catalog.
-3. **[`git-worktrees`](_modules/git-worktrees.md)**: worktree isolation. `/code-review` and `/pr-feedback-review` snapshot through it, `/implement-feature` implements in a workspace worktree, and any Command switches to it when its invocation contains the token `/git-worktrees`. A plain prompt reaches it through the `git-worktrees` Command (same name, different kind), which runs the prompt under it. It hands a `[worktree-context]` block to every delegated skill so no skill acts on the user's main checkout.
+3. **[`git-worktrees`](_modules/git-worktrees.md)**: worktree isolation. `/code-review` and `/pr-feedback-review` snapshot through it, `/implement-feature` implements in a workspace worktree, and any Command switches to it when its invocation contains the token `/worktrees`, and `/no-worktrees` makes any Command work in place instead. A plain prompt reaches it through the `worktrees` Command, which runs the prompt under it; `no-worktrees` is its in-place counterpart. It hands a `[worktree-context]` block to every delegated skill so no skill acts on the user's main checkout.
 4. **[`pr-counterpart`](_modules/pr-counterpart.md)**: finds the sibling-repo PR of a dual-repo change.
 5. **[`project-profile`](_modules/project-profile.md)**: how a Command finds, layers and applies a project's Profiles (base profile + Command profile), the shared fields, overrides, upstream content and pointers ([ADR-0003](../docs/adr/0003-profile-resolution-is-a-module.md)). Read by `implement-feature` and `code-review`.
 6. **[`pr-host`](_modules/pr-host.md)**: reading a PR from its host: URL parsing, the organization URL (`<org-url>`), `refs/heads/` stripping, resolving the PR from a branch, fetching the PR with its work items and acceptance criteria, fetching threads, and failed fetches ([ADR-0004](../docs/adr/0004-pr-host-access-is-a-module.md)). Read-only. Used by every Command that reads a PR.

@@ -1,9 +1,9 @@
 ---
-name: git-worktrees
-description: Runs any request in a git worktree so the user's main checkout stays untouched. It is the launcher for the git-worktrees Module when no other Command is invoked. Strips the `/git-worktrees` token wherever it sits in the prompt (start or end, e.g. "Merge PR 123 & 456 /git-worktrees"), routes a request that matches a registry Command to that Command with the opt-in token, and otherwise carries out the request itself. It works in a workspace worktree when the request changes anything (merge, rebase, fix, refactor, generate) and in a detached snapshot when the request only reads. It ships a recipe for combining several PRs on a local integration branch. Bare `/git-worktrees` lists the active skill worktrees per repo. Trigger whenever a prompt contains `/git-worktrees` anywhere and invokes no other Command, or asks to do something "in a worktree", "in a separate worktree" or "without touching my checkout".
+name: worktrees
+description: Runs any request in a git worktree so the user's main checkout stays untouched. It is the launcher for the git-worktrees Module when no other Command is invoked. Strips the `/worktrees` token wherever it sits in the prompt (start or end, e.g. "Merge PR 123 & 456 /worktrees"), routes a request that matches a registry Command to that Command with the opt-in token, and otherwise carries out the request itself. It works in a workspace worktree when the request changes anything (merge, rebase, fix, refactor, generate) and in a detached snapshot when the request only reads. It ships a recipe for combining several PRs on a local integration branch. Bare `/worktrees` lists the active skill worktrees per repo. Trigger whenever a prompt contains `/worktrees` anywhere and invokes no other Command, or asks to do something "in a worktree", "in a separate worktree" or "without touching my checkout".
 ---
 
-# Skill: `/git-worktrees` — Run a Request in a Worktree
+# Skill: `/worktrees` — Run a Request in a Worktree
 
 Gives a plain prompt the same worktree isolation a Command gets from the `git-worktrees` Module: it picks the mode, creates one worktree per repo, does the work there and reports where the work is.
 
@@ -18,7 +18,7 @@ Read these before step 1:
 - `../_modules/artifact-protocol.md`: writes no artifact — a Command it routes to writes its own
 - `../_modules/git-worktrees.md`: workspace for a request that changes anything, snapshot for one that only reads
 
-- **The token belongs to whoever was invoked.** When the prompt starts with another Command (`/refine … /git-worktrees`), that Command handles the token under `core` › *Worktree opt-in*. This skill is not involved.
+- **The token belongs to whoever was invoked.** When the prompt starts with another Command (`/refine … /worktrees`), that Command handles the token under `core` › *Worktree opt-in*. This skill is not involved.
 - **One owner per worktree.** A worktree is created by the routed Command, or by this skill when it runs the request itself. Never by both.
 - **This skill adds no gates and lifts none.** The request keeps the gates it would have without a worktree: a plan before a non-trivial change (`core` › *Planning mode first*), and the routed Command's own gates. Pushing, creating or completing a PR, and posting to a host happen only when the user asks for them explicitly.
 
@@ -30,6 +30,7 @@ Read these before step 1:
 
 - The prompt starts with another Command. That Command handles the token.
 - The user wants to step into a worktree that was kept from an earlier run. Give them the path and `EnterWorktree path:<dir>` (`git-worktrees` › *Workspace Lifecycle* › *Hand-off line*).
+- The user wants the request done in their own checkout. That is [`/no-worktrees`](../no-worktrees/SKILL.md).
 - The request only changes a remote, such as completing a PR on the host or editing a PR description. There is nothing to isolate. Say so, and run it only on an explicit ask.
 
 ---
@@ -38,14 +39,14 @@ Read these before step 1:
 
 ### Step 1: Parse the prompt
 
-1. Remove every `/git-worktrees` token. What remains is the **request**.
-2. **No request (bare `/git-worktrees`):** list the worktrees per repo (`git-worktrees` › *Repo Resolution*, then *Workspace Lifecycle* › *Crash recovery*). Show each locked `claude-skill:` worktree with its path, branch, lock reason and `git -C <dir> status --short` count. Change nothing, then stop.
+1. Remove every `/worktrees` token. What remains is the **request**.
+2. **No request (bare `/worktrees`):** list the worktrees per repo (`git-worktrees` › *Repo Resolution*, then *Workspace Lifecycle* › *Crash recovery*). Show each locked `claude-skill:` worktree with its path, branch, lock reason and `git -C <dir> status --short` count. Change nothing, then stop.
 
 ### Step 2: Route
 
 | The request | Route |
 |---|---|
-| Names a registry Command or matches its trigger ("review PR 123" → `code-review`, "resolve the conflicts" → `resolve-conflicts`, "clean up X" → `clean`) | Invoke that Command with the request plus the token `worktree`. It runs `git-worktrees` itself, so this skill is done. Report only that the request was routed. |
+| Names a registry Command or matches its trigger ("review PR 123" → `code-review`, "resolve the conflicts" → `resolve-conflicts`, "clean up X" → `clean`) | Invoke that Command with the request plus the token `/worktrees`. It runs `git-worktrees` itself, so this skill is done. Report only that the request was routed. |
 | Matches several Commands in sequence ("review PR 123 and fix what you find") | Route to the first. Say which Command picks up the rest. |
 | Matches no Command (merge PRs, try a rebase, bump a package, run a codemod) | Carry it out here, from Step 3 on. |
 
@@ -58,7 +59,7 @@ Read these before step 1:
 
 1. **Base:** `origin/<default>` as fetched, unless the request names another base (a release branch, a PR's target).
 2. **Branch:** the project's branch convention from its workflow skill or profile (`git-worktrees` › *Workspace Lifecycle* › *Base and branch*). Without a convention, propose `<type>/<kebab-slug>` from the request (`chore/`, `fix/`, `integrate/`) and confirm it in the first chat line. Never use `worktree-<name>`.
-3. **Create** per *Workspace Lifecycle* › *Create*, with `<skill>` = `git-worktrees` in the lock reason.
+3. **Create** per *Workspace Lifecycle* › *Create*, with `<skill>` = `worktrees` in the lock reason.
 4. **Hydrate** (*Hydrate*) only when the request builds, tests or runs the project.
 
 In snapshot mode, *Snapshot Lifecycle* › *Resolve the head* and *Create* apply instead.
@@ -115,6 +116,6 @@ When the request was routed, the response is one line naming the Command it went
 ## 4. Verification & Validation
 
 - The main checkout's `git -C <repo> status --porcelain` and `rev-parse HEAD` are the same before and after the run.
-- `git -C <repo> worktree list --porcelain` shows the kept worktree with its `claude-skill:git-worktrees` lock reason, or no longer shows a removed one.
+- `git -C <repo> worktree list --porcelain` shows the kept worktree with its `claude-skill:worktrees` lock reason, or no longer shows a removed one.
 - Every path in chat uses `workspace-path`, never the worktree or scratchpad path (*Snapshot Lifecycle* › *Map paths back*).
 - No push, PR or host write happened without an explicit ask.
