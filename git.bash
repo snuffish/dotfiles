@@ -13,6 +13,8 @@ alias lgst="lg stash"
 # Git
 alias g="git"
 
+alias g="run_fzf_json gg --title 'Git'"
+
 alias gP="g pull"
 alias gc="g commit --no-verify -m"
 unalias gd 2>/dev/null
