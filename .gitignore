@@ -16,3 +16,6 @@ __pycache__/
 # Agent artifacts written at the repo root (<host>-<model>-<artifact>-<suffix>.md, see skills/_modules/artifact-protocol.md)
 /claude-*.md
 /antigravity-*.md
+
+# Session handoff briefing from /claude-mem:handoff (scratch, read by /continue)
+/HANDOFF.md
