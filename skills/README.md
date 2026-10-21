@@ -36,7 +36,7 @@ skills/
 
 ## Inventory
 
-62 skills total — 35 general + 27 under `Projects/GR.PRIIS/` — plus 6 Modules.
+63 skills total — 35 general + 28 under `Projects/GR.PRIIS/` — plus 6 Modules.
 
 | Group | Kind | Count | Entries |
 | --- | --- | :---: | --- |
@@ -44,6 +44,7 @@ skills/
 | General (top level) | Reference | 2 | `modern-csharp`, `typescript-conventions` |
 | `GR.PRIIS/priis-backend-*` | Reference | 7 | `dry`, `ef-core`, `fastendpoints`, `notifications`, `signalr`, `testing`, `workflow` |
 | `GR.PRIIS/priis-frontend-*` | Reference | 6 | `component-patterns`, `forms`, `routing`, `rtk-query`, `testing`, `workflow` |
+| `GR.PRIIS/priis-*` | Reference | 1 | `local-env` (the running local stack: DB, seeded records, eligibility, test data) |
 | `GR.PRIIS/priis-backend-*` | Command | 7 | `health-check`, `migrate-to-tunit` (retired — migration complete), `release-notes`, `review`, `scaffold`, `ship`, `verify` |
 | `GR.PRIIS/priis-frontend-*` | Command | 4 | `health-check`, `review`, `scaffold`, `verify` |
 | `GR.PRIIS/*-profile` | Profile | 3 | `priis-profile` (base), `implement-feature-priis-profile` (read by `implement-feature`), `code-review-priis-profile` (read by `code-review`) |

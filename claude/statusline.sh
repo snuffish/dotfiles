@@ -63,6 +63,9 @@ if [ -n "$used" ]; then
   parts+=("$(printf '\033[33mctx %.0f%%\033[0m' "$used")")
 fi
 
+# Full id so it can be copied into `claude --resume <id>`
+[ -n "$session" ] && parts+=("$(printf '\033[2m%s\033[0m' "$session")")
+
 out=""
 for p in "${parts[@]}"; do
   if [ -z "$out" ]; then out="$p"; else out="$out | $p"; fi
