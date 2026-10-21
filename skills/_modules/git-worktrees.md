@@ -85,7 +85,7 @@ source-ref=<ref the head came from>       # snapshot mode: the branch or origin/
 
 Every delegated skill follows the *Repo root* rule in *Using this Module from a Command*.
 
-The lock reason (§5b) is the discovery mechanism, so no marker file is left in the tree and `git status` stays clean.
+The lock reason (§5b) is the discovery mechanism, so no marker file is left in the tree and `git status` stays clean. Its `session:` token ties a worktree to the session that created it; the Claude Code status line (`claude/statusline.sh`) matches it against its own `session_id` to show the worktrees this session works in. A new session (`/clear`) no longer matches a kept worktree.
 
 ---
 
@@ -173,7 +173,7 @@ DEFAULT=$(git -C <repo> symbolic-ref --short refs/remotes/origin/HEAD)   # e.g. 
 ```bash
 SLUG=<ticket-id>-<kebab-slug>                                   # or the branch slug
 DIR=<repo>/.claude/worktrees/$SLUG
-REASON="claude-skill:<skill> ticket:<id> branch:<branch> started:$(date +%F)"
+REASON="claude-skill:<skill> ticket:<id> branch:<branch> started:$(date +%F) session:<session-id>"   # session id as in artifact-protocol › Claim › owner marker
 git -C <repo> worktree prune
 EXCLUDE="$(git -C <repo> rev-parse --path-format=absolute --git-common-dir)/info/exclude"   # absolute: a relative .git would resolve against the session cwd, i.e. the wrong repo
 git -C <repo> check-ignore -q .claude/worktrees/probe || echo '.claude/worktrees/' >> "$EXCLUDE"   # idempotent: skipped when any rule already ignores the path
