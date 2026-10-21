@@ -12,6 +12,11 @@ function cm-sync() {
     python3 -I "$engine" "$@"
 }
 
+# Lint the skills registry and check ~/.claude/skills against it; --apply fixes the links
+function skills-sync() {
+  python3 -I "$HOME/.terminal/skills/sync-skills/sync_skills.py" "$@"
+}
+
 # Open the claude-mem dashboard in the browser
 function cm() {
   local url
