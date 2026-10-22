@@ -126,22 +126,22 @@ Use two or three distinctive terms from the title, not generic words. If an open
 
 ### Step 6 — Spec, dry run, preview
 
-1. Copy [`templates/create_ticket.py`](templates/create_ticket.py) into `<scratchpad>/ticket-<slug>/`. Write the content files and `spec.json` beside it (format in the script's docstring).
-2. Run `python3 -I create_ticket.py spec.json`. It validates the spec, prints every field it will set, and runs nothing.
+1. Write the content files and `spec.json` in `<scratchpad>/ticket-<slug>/` (format in the docstring of [`scripts/create_ticket.py`](scripts/create_ticket.py)).
+2. Run the script in place from this skill's real folder: `python3 -I <skill-dir>/scripts/create_ticket.py <scratchpad>/ticket-<slug>/spec.json`. It validates the spec, prints every field it will set, and runs nothing.
 3. **Draft mode, or a standing draft-only instruction:** stop here and give the *Draft preview*.
 
 ### Step 7 — Create, verify, or hand over
 
-1. **Create:** `python3 -I create_ticket.py spec.json --create`. It creates the item, adds the parent link when the spec has one, and prints the id and URL.
+1. **Create:** the same command with `--create`. It creates the item, adds the parent link when the spec has one, and prints the id and URL.
 2. **Verify** by reading it back: type, title, state, area, iteration, tags, that the description and acceptance criteria are non-empty, and the parent relation.
    ```bash
    az boards work-item show --org … --id <id> --expand relations \
      --query '{t:fields."System.WorkItemType",title:fields."System.Title",s:fields."System.State",a:fields."System.AreaPath",i:fields."System.IterationPath",tags:fields."System.Tags",d:length(fields."System.Description"),ac:length(fields."Microsoft.VSTS.Common.AcceptanceCriteria"),parent:relations[?rel==`System.LinkTypes.Hierarchy-Reverse`].url}'
    gh issue view <n> --repo <owner>/<name> --json number,title,labels,url
    ```
-3. **Denied** (the auto-mode classifier or a permission rule blocks the external write): say plainly that nothing was created and hand over the command with absolute paths:
+3. **Denied** (the auto-mode classifier or a permission rule blocks the external write): say plainly that nothing was created and hand over the command with absolute paths, with `<skill-dir>` expanded to this skill's real folder:
    ```bash
-   python3 -I /<scratchpad>/ticket-<slug>/create_ticket.py /<scratchpad>/ticket-<slug>/spec.json --create
+   python3 -I /<skill-dir>/scripts/create_ticket.py /<scratchpad>/ticket-<slug>/spec.json --create
    ```
    Mention that a permission rule for `az boards work-item create` / `gh issue create` lets the agent file next time, and ask the user to paste the printed id.
 

@@ -1,8 +1,8 @@
 """Create one tracker ticket (Azure DevOps work item or GitHub issue) from a spec file.
 
-Usage:
-  python3 -I create_ticket.py spec.json            # dry run: validates the spec, prints every field, runs nothing
-  python3 -I create_ticket.py spec.json --create   # create it, add the parent link if any, print id and URL
+Usage (run in place; files named in the spec are read from beside spec.json):
+  python3 -I <skill-dir>/scripts/create_ticket.py <dir>/spec.json            # dry run: validates the spec, prints every field, runs nothing
+  python3 -I <skill-dir>/scripts/create_ticket.py <dir>/spec.json --create   # create it, add the parent link if any, print id and URL
 
 spec.json:
   {
