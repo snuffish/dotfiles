@@ -93,9 +93,20 @@ Aggregate yourself. **Re-open every `path:line` a sub-agent cites** before it en
   - **Recommendation**: 1–2 sentences that answer the question directly — the pick, or a plain yes/no when the question is "is X suitable?".
   - **Why**: 2–4 concise bullets with the deciding facts and trade-offs, each grounded in a clickable `path:line` link or a named doc where one exists.
   - **Alternatives**: one line per other viable approach (at most two) saying when it would win instead. Omit when there is none.
-  - **Next step**: one line — the first concrete action, and that `/proceed` acts on the pick.
+  - **What `/proceed` will do**: the *Proceed plan* (below) as a short numbered list.
 - Name an assumed goal in the *Recommendation* line when the user did not state one. Offer `deep` in one line when the question outgrew bare mode.
 - No header table, no comparison table, no section anchors. Keep the whole answer readable in under a minute.
+
+### The Proceed plan
+
+Both modes end with the list of what `/proceed` will do for the recommended pick, so the user approves a concrete plan rather than a direction:
+
+- **3–7 numbered steps in execution order**, each a concrete action on a named file, command, script or data set ("add the 6 API prompts to the trigger-eval set", not "improve the evals"). Flag a step whose location or tooling you have not verified yet as "find … first".
+- **Measure before changing** when the gap is a hypothesis: the first step proves it, and the plan names the **stop condition** ("if the current version already passes, stop and report").
+- **How it is verified**: the command, test or comparison that decides success, and the bar it must clear.
+- **What it will not do**: commits, pushes, PR descriptions or comments, tracker writes and other outward-facing actions each need their own request (`core` › *The `/proceed` gate*). Name the ones this plan is near.
+
+Keep each step to one line. A plan that needs more than seven steps is a `/plan`: say so and make step 1 "draft the plan with `/plan`".
 
 ### `/suggestion deep` — artifact
 
@@ -113,7 +124,7 @@ Write `<prefix>-suggestion-<suffix>.md` at the **workspace root** containing, in
    - **Impact**: files touched, contract/migration impact, tests affected, effort (T-shirt size).
 6. `## Comparison` — a table across the dimensions that actually differ (only when there are three or more approaches; otherwise omit).
 7. `## Decision & Rationale` — why the pick wins against the goal and constraints; what single fact would flip it.
-8. `## Suggested Next Steps` — concrete, ordered, none executed (e.g. "run `/plan` with approach 1", "confirm X with the team").
+8. `## What /proceed will do` — the *Proceed plan*: ordered steps, stop condition, verification, and what it will not do. None executed.
 9. `## Open Questions / Unverified` — anything inferred rather than read. Omit when empty.
 
 A cheap, no-code diagnostic or experiment that would settle the question faster than building anything belongs in its own `## Try This First` section after *Context & Prior Art*.
@@ -130,7 +141,7 @@ Format all links per the **`artifact-protocol`** (workspace-relative in Claude C
 - 📄 [Recommendation](claude-<model>-suggestion-<suffix>.md#L<n>): [the pick in one sentence]
 - 📄 [Approaches](claude-<model>-suggestion-<suffix>.md#L<n>): [the candidates, in ranked order]
 - 📄 [Decision & Rationale](claude-<model>-suggestion-<suffix>.md#L<n>): [what would flip it]
-- 📄 [Suggested Next Steps](claude-<model>-suggestion-<suffix>.md#L<n>): [the first step]
+- 📄 [What /proceed will do](claude-<model>-suggestion-<suffix>.md#L<n>): [the steps in one line, and the stop condition]
 ```
 
 After the links, the chat adds only: the mode and head SHA, and the 2–3 facts most likely to change the user's mind. Do not repeat the document.
@@ -139,7 +150,7 @@ After the links, the chat adds only: the mode and head SHA, and the 2–3 facts 
 
 ## 4. Verification & Validation
 
-- **Self-check before answering**: every approach cites at least one real location or document where the codebase or docs have one; the recommendation respects every constraint from Step 1 or explicitly flags the violation; no approach is "recommended" that the user has already ruled out; the next step is actionable without further clarification.
+- **Self-check before answering**: every approach cites at least one real location or document where the codebase or docs have one; the recommendation respects every constraint from Step 1 or explicitly flags the violation; no approach is "recommended" that the user has already ruled out; the *Proceed plan* is concrete enough to approve without asking what it means, names its verification and stop condition, and lists the outward-facing actions it will not take.
 - **Artifact check** (`deep` only): the artifact exists at the workspace root under the model-prefixed, suffixed name, and every chat anchor points at the heading it names. Bare mode wrote nothing.
 - **Precedent check**: if the recommended approach has no precedent in the codebase while another candidate does, say so and justify the departure.
 - **Read-only check**: confirm no files were modified (`git status` is unchanged), apart from the suggestion artifact at the workspace root in `deep` mode.
