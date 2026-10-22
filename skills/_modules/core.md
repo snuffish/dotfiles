@@ -67,6 +67,29 @@ When investigating, explaining, refining, or troubleshooting:
 
 ---
 
+## Skill gaps
+
+When a skill from this registry led you wrong, report it so the file gets fixed instead of remembered. Raise a gap only when:
+- a fact in a loaded Command, Module, Profile or Reference contradicts the code, the tools or their output, or
+- the user corrected something a skill told you to do.
+
+Exploring what a skill never claimed to cover is not a gap.
+
+Scope: only skills whose `realpath` is under `~/.terminal/skills`. A skill that lives elsewhere (e.g. a repo's `.claude/skills/`) follows its own rules.
+
+Finish the task, then end with one block per gap:
+
+```markdown
+**Skill gap (<skill>):** <what it missed or got wrong>
+- **Evidence:** <command and output, or `path:line`>
+- **Proposed edit:** `<realpath of the file>` › <heading>: replace `<old>` with `<new>`
+- **Check:** `/sync-skills`, plus anything that shows the fix works
+```
+
+The edit is its own gate item (*The `/proceed` gate*, rule 1): a `/proceed` for the task does not cover it, and it is never made from a snapshot. Edit only after the user says yes to that gap.
+
+---
+
 ## Precedence
 
 When multiple skills and rules apply to a task, instructions resolve in the following order of precedence (highest to lowest):
