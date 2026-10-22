@@ -94,6 +94,7 @@ Aggregate yourself. **Re-open every `path:line` a sub-agent cites** before it en
   - **Why**: 2–4 concise bullets with the deciding facts and trade-offs, each grounded in a clickable `path:line` link or a named doc where one exists.
   - **Alternatives**: one line per other viable approach (at most two) saying when it would win instead. Omit when there is none.
   - **What `/proceed` will do**: the *Proceed plan* (below) as a short numbered list.
+  - **Next step**: the *Next step* line (below).
 - Name an assumed goal in the *Recommendation* line when the user did not state one. Offer `deep` in one line when the question outgrew bare mode.
 - No header table, no comparison table, no section anchors. Keep the whole answer readable in under a minute.
 
@@ -107,6 +108,17 @@ Both modes end with the list of what `/proceed` will do for the recommended pick
 - **What it will not do**: commits, pushes, PR descriptions or comments, tracker writes and other outward-facing actions each need their own request (`core` › *The `/proceed` gate*). Name the ones this plan is near.
 
 Keep each step to one line. A plan that needs more than seven steps is a `/plan`: say so and make step 1 "draft the plan with `/plan`".
+
+### Next step: proceed or plan
+
+Both modes end with one **Next step** line that tells the user which gate to open. Choose the route from the *Proceed plan*:
+
+| Route | When | Line |
+|---|---|---|
+| **Direct** | The plan fits in at most seven steps, stays in one repo, and changes no contract, schema or migration. Each step is reversible and the verification is named | `**Next step:** /proceed to run the steps above directly, or /plan <suffix> if you want a written plan first.` |
+| **Plan first** | Any of the above fails: more than seven steps, cross-repo, contract or migration changes, or an open question the steps depend on | `**Next step:** /plan <suffix> to turn this into an implementation plan (/proceed does the same: it drafts the plan first).` |
+
+The direct route is the exception to `core` › *Planning mode first*: the *Proceed plan* is the plan, approved by `/proceed`. When in doubt, use plan first. `<suffix>` follows `artifact-protocol` › rule 2.
 
 ### `/suggestion deep` — artifact
 
@@ -144,7 +156,7 @@ Format all links per the **`artifact-protocol`** (workspace-relative in Claude C
 - 📄 [What /proceed will do](claude-<model>-suggestion-<suffix>.md#L<n>): [the steps in one line, and the stop condition]
 ```
 
-After the links, the chat adds only: the mode and head SHA, and the 2–3 facts most likely to change the user's mind. Do not repeat the document.
+After the links, the chat adds only: the mode and head SHA, the 2–3 facts most likely to change the user's mind, and the *Next step* line. Do not repeat the document.
 
 ---
 
@@ -154,4 +166,5 @@ After the links, the chat adds only: the mode and head SHA, and the 2–3 facts 
 - **Artifact check** (`deep` only): the artifact exists at the workspace root under the model-prefixed, suffixed name, and every chat anchor points at the heading it names. Bare mode wrote nothing.
 - **Precedent check**: if the recommended approach has no precedent in the codebase while another candidate does, say so and justify the departure.
 - **Read-only check**: confirm no files were modified (`git status` is unchanged), apart from the suggestion artifact at the workspace root in `deep` mode.
+- **Route check**: the *Next step* line offers `/proceed` directly only when every *Direct* condition holds; otherwise it leads with `/plan`.
 - **User validation**: the user confirms the goal assumption, picks an approach, and runs `/proceed` (or `/plan` / `/implement-feature`) to act on it. Until then, nothing is implemented.
