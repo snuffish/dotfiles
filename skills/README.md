@@ -67,7 +67,7 @@ Read these before step 1:
 - `../_modules/pr-counterpart.md`
 ```
 
-1. **[`core`](_modules/core.md)**: golden invariants, execution gates (`/proceed`, post-edit verification, worktree opt-in), codebase investigation protocol and the precedence model. Depends on nothing.
+1. **[`core`](_modules/core.md)**: golden invariants, execution gates (`/proceed`, post-edit verification, worktree opt-in), codebase investigation protocol, skill gaps and the precedence model. Depends on nothing.
 2. **[`artifact-protocol`](_modules/artifact-protocol.md)**: host & AI model prefix (`<host>-<model>-`), mandatory contextual suffix, link formats, PR thread links and the canonical artifact catalog.
 3. **[`git-worktrees`](_modules/git-worktrees.md)**: worktree isolation. `/code-review` and `/pr-feedback-review` snapshot through it, `/implement-feature` implements in a workspace worktree, and any Command switches to it when its invocation contains the token `/worktrees`, and `/no-worktrees` makes any Command work in place instead. A plain prompt reaches it through the `worktrees` Command, which runs the prompt under it; `no-worktrees` is its in-place counterpart. It hands a `[worktree-context]` block to every delegated skill so no skill acts on the user's main checkout.
 4. **[`pr-counterpart`](_modules/pr-counterpart.md)**: finds the sibling-repo PR of a dual-repo change.
