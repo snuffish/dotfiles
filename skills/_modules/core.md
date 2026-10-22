@@ -84,7 +84,10 @@ Finish the task, then end with one block per gap:
 - **Evidence:** <command and output, or `path:line`>
 - **Proposed edit:** `<realpath of the file>` › <heading>: replace `<old>` with `<new>`
 - **Check:** `/sync-skills`, plus anything that shows the fix works
+- **Logged:** [<file name>](<absolute path of the gap file>)
 ```
+
+Log each gap before printing its block, so it outlives the chat. Claim `~/.terminal/skill-gaps/<prefix>-skill_gap-<skill>-<topic>.md` (`mkdir -p` the directory first) with `artifact-protocol` › *Claim*. The file holds a `# Skill gap: <skill>` heading, one `Status: open · Command: <the running Command, or none> · Repo: <repo path> @ <head SHA>` line, then the block. The directory is git-ignored and sits outside every repo, so the write is allowed under read-only Commands and from snapshots. When a later session fixes the gap, it sets that line to `Status: fixed`.
 
 The edit is its own gate item (*The `/proceed` gate*, rule 1): a `/proceed` for the task does not cover it, and it is never made from a snapshot. Edit only after the user says yes to that gap.
 

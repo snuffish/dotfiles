@@ -17,5 +17,12 @@ __pycache__/
 /claude-*.md
 /antigravity-*.md
 
+# Agent artifacts written while working inside skills/ (exports, simulations)
+/skills/claude-*.md
+/skills/antigravity-*.md
+
+# Skill gap log (core › Skill gaps); quotes paths and output from other repos
+/skill-gaps/
+
 # Session handoff briefing from /claude-mem:handoff (scratch, read by /continue)
 /HANDOFF.md
