@@ -1063,10 +1063,12 @@
     "launchpad": true
   },
   "workbench.editorAssociations": {
-    "*.md": "vscode.markdown.preview.editor"
+    "*.md": "vscode.markdown.preview.editor",
+    "*.html": "analyticsignal.preview-html"
   },
   "workbench.diffEditorAssociations": {
-    "*.md": "default"
+    "*.md": "default",
+    "*.html": "default"
   },
   "python.languageServer": "Default"
 }
