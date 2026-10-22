@@ -8,22 +8,72 @@ transcript=$(echo "$input" | /usr/bin/jq -r '.transcript_path // empty')
 session=$(echo "$input" | /usr/bin/jq -r '.session_id // empty')
 git_wt=$(echo "$input" | /usr/bin/jq -r '.workspace.git_worktree // empty')
 
-# /rename sets customTitle; otherwise fall back to the generated aiTitle
-title=""
-if [ -f "$transcript" ]; then
+# Empty text prints nothing, so join drops it without leaving a stray separator
+color() { [ -n "$2" ] && printf '\033[%sm%s\033[0m' "$1" "$2"; }
+join() {
+  local sep=$1 out="" p
+  shift
+  for p in "$@"; do [ -n "$p" ] && out="${out:+$out$sep}$p"; done
+  printf '%s' "$out"
+}
+
+title=$(echo "$input" | /usr/bin/jq -r '.session_name // empty')
+
+# Fallback when stdin lacks session_name: /rename sets customTitle, otherwise the generated aiTitle
+if [ -z "$title" ] && [ -f "$transcript" ]; then
   title=$(grep -o '"customTitle":"[^"]*"' "$transcript" | tail -1 | cut -d'"' -f4)
   [ -z "$title" ] && title=$(grep -o '"aiTitle":"[^"]*"' "$transcript" | tail -1 | cut -d'"' -f4)
 fi
 
-parts=()
-[ -n "$model" ] && parts+=("$(printf '\033[36m%s\033[0m' "$model")")
-[ -n "$title" ] && parts+=("$(printf '\033[35m%s\033[0m' "$title")")
+# Skills whose bodies are in context. Every load (slash command, Skill tool, post-compact re-injection)
+# writes "Base directory for this skill: <dir>"; a compact_boundary resets the set.
+# Scanned incrementally: a full scan of a large transcript outlasts the statusline's update cadence
+skills=""
+if [ -f "$transcript" ] && [ -n "$session" ]; then
+  cache_dir="${TMPDIR:-/tmp}/claude-statusline"
+  cache="$cache_dir/$session.skills"
+  size=$(stat -f %z "$transcript")
+  offset=0; cached_path=""; list=""
+  [ -f "$cache" ] && { read -r offset cached_path; list=$(cat); } < "$cache"
+  if ! [[ "$offset" =~ ^[0-9]+$ ]] || [ "$cached_path" != "$transcript" ] || [ "$offset" -gt "$size" ]; then
+    offset=0; list=""
+  fi
 
+  # Only advance over complete lines, so a write in progress can't split a marker
+  if [ "$size" -gt "$offset" ] && [ -z "$(tail -c +"$size" "$transcript" | head -c 1)" ]; then
+    # Request blobs repeat the transcript; raw quotes in the anchors skip tool calls that merely mention the marker
+    new=$(tail -c +$((offset + 1)) "$transcript" | head -c $((size - offset)) | awk '
+      index($0, "{\"type\":\"api-request-blob\"") == 1 { next }
+      index($0, "\"subtype\":\"compact_boundary\"") && index($0, "\"type\":\"system\"") { reset = 1; n = 0; next }
+      {
+        s = $0
+        while (match(s, /"(text|content)":"Base directory for this skill: \/[A-Za-z0-9._\/~ -]+/)) {
+          m = substr(s, RSTART, RLENGTH); sub(/.*skill: /, "", m); buf[++n] = m
+          s = substr(s, RSTART + RLENGTH)
+        }
+      }
+      END { if (reset) print "\001"; for (i = 1; i <= n; i++) print buf[i] }
+    ' | sed -E 's#.*/plugins/cache/[^/]+/([^/]+)/[^/]+/skills/(.*/)?([^/]+)$#\1:\3#; s#.*/##')
+    if [ "${new%%$'\n'*}" = $'\001' ]; then
+      list=""; new=$(printf '%s\n' "$new" | sed '1d')
+    fi
+    # Keep each skill at the position of its latest load
+    list=$(printf '%s\n%s\n' "$list" "$new" | sed '/^$/d' | tail -r | awk '!seen[$0]++' | tail -r)
+    mkdir -p "$cache_dir"
+    { printf '%s %s\n' "$size" "$transcript"; [ -n "$list" ] && printf '%s\n' "$list"; } > "$cache.$$" && mv -f "$cache.$$" "$cache"
+  fi
+
+  if [ -n "$list" ]; then
+    total=$(printf '%s\n' "$list" | wc -l | tr -d ' ')
+    skills=$(printf '%s\n' "$list" | tail -3 | paste -sd, -)
+    [ "$total" -gt 3 ] && skills="$skills +$((total - 3))"
+  fi
+fi
+
+where=""
 if [ -n "$dir" ]; then
-  parts+=("$(printf '\033[34m%s\033[0m' "$(basename "$dir")")")
   branch=$(git --no-optional-locks -C "$dir" symbolic-ref --short -q HEAD 2>/dev/null)
   [ -z "$branch" ] && branch=$(git --no-optional-locks -C "$dir" rev-parse --short HEAD 2>/dev/null)
-  [ -n "$branch" ] && parts+=("$(printf '\033[32m%s\033[0m' "$branch")")
 
   # cwd inside a linked worktree: its git dir differs from the common dir. Fallback when stdin lacks git_worktree
   { read -r toplevel; read -r git_dir; read -r common_dir; } < <(git --no-optional-locks -C "$dir" rev-parse --path-format=absolute --show-toplevel --git-dir --git-common-dir 2>/dev/null)
@@ -54,20 +104,20 @@ if [ -n "$dir" ]; then
     done | awk '!seen[$0]++' | while read -r d; do [ -d "$d" ] && basename "$d"; done | paste -sd, -)
   fi
 
-  [ -n "$cwd_wt" ] && parts+=("$(printf '\033[31mwt:%s\033[0m' "$cwd_wt")")
-  [ -n "$owned" ] && parts+=("$(printf '\033[31mwt→%s\033[0m' "$owned")")
-  [ -z "$cwd_wt$owned" ] && [ -n "$toplevel" ] && parts+=("$(printf '\033[2mno-wt\033[0m')")
+  nowt=""
+  [ -z "$cwd_wt$owned" ] && [ -n "$toplevel" ] && nowt="no-wt"
+
+  # Dir, branch and worktree state share a segment: together they describe where the edits land
+  where=$(join ' · ' "$(color 34 "$(basename "$dir")")" "$(color 32 "$branch")" \
+    "$(color 31 "${cwd_wt:+wt:$cwd_wt}")" "$(color 31 "${owned:+wt→$owned}")" "$(color 2 "$nowt")")
 fi
 
-if [ -n "$used" ]; then
-  parts+=("$(printf '\033[33mctx %.0f%%\033[0m' "$used")")
-fi
+# ctx and skills share a segment: both describe what is in the context window
+used_txt=""
+[ -n "$used" ] && used_txt=$(printf 'ctx %.0f%%' "$used")
+ctx=$(join ' · ' "$(color 33 "$used_txt")" "$(color '38;5;208' "${skills:+skills:$skills}")")
 
-# Full id so it can be copied into `claude --resume <id>`
-[ -n "$session" ] && parts+=("$(printf '\033[2m%s\033[0m' "$session")")
+# Title and id both identify the session; the full id goes last so it can be copied into `claude --resume <id>`
+sess=$(join ' · ' "$(color 35 "$title")" "$(color 2 "$session")")
 
-out=""
-for p in "${parts[@]}"; do
-  if [ -z "$out" ]; then out="$p"; else out="$out | $p"; fi
-done
-printf '%s' "$out"
+join ' | ' "$(color 36 "$model")" "$where" "$ctx" "$sess"

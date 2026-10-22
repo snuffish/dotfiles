@@ -148,5 +148,8 @@ _initPrintGroup "env" "${init_envs[@]}"
 _initPrintGroup "mods" "${init_modules[@]}"
 printf "\n"
 
+# The private tmux popup (tmux/tmux.conf) starts on a clean screen
+[[ -n "$TMUX_POPUP" ]] && clear
+
 unset init_utils init_envs init_modules init_failed init_count init_took init_start_ms init_clock_ms
 unset -f _initPrintGroup _initClock
