@@ -72,7 +72,7 @@ Run `git -C <registry> status -s` and list new or modified skills that are not c
 
 ## Sync script
 
-[`sync_skills.py`](sync_skills.py) next to this file holds the lint and the link rules. It finds the registry from its own location, so it runs before any skill is linked, and the shell has it as `skills-sync` (`claude.bash`):
+[`sync_skills.py`](sync_skills.py) next to this file holds the lint and the link rules. It finds the registry from its own location, so it runs before any skill is linked, and the shell has it as `sync-skills` (`claude.bash`), which runs the check and then asks before applying:
 
 ```bash
 python3 -I <registry>/sync-skills/sync_skills.py            # check: lint, planned link changes, workspace checks; writes nothing
