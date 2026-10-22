@@ -1,9 +1,9 @@
 """Post drafted PR feedback (inline threads, thread replies, general comments) to Azure DevOps or GitHub.
 
-Usage:
-  python3 -I post_pr_comments.py spec.json                     # dry run: writes payload-<key>.json, prints anchors
-  python3 -I post_pr_comments.py spec.json --post              # post every item
-  python3 -I post_pr_comments.py spec.json --post --only 6,7   # post a subset (post one, verify, then the rest)
+Usage (run in place; payload files are written beside spec.json):
+  python3 -I <skill-dir>/scripts/post_pr_comments.py <dir>/spec.json                     # dry run: writes payload-<key>.json, prints anchors
+  python3 -I <skill-dir>/scripts/post_pr_comments.py <dir>/spec.json --post              # post every item
+  python3 -I <skill-dir>/scripts/post_pr_comments.py <dir>/spec.json --post --only 6,7   # post a subset (post one, verify, then the rest)
 
 spec.json:
   {

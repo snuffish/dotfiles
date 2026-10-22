@@ -145,7 +145,10 @@ A Profile follows `project-profile` (`skills/_modules/project-profile.md`, [ADR-
    - General: `skills/<name>/`
    - Project: `skills/Projects/<Project>/<name>/`
 2. Write `SKILL.md` containing the structured content formulated in Step 2.
-3. If the skill requires reference files or templates, place them in a subfolder (e.g. `skills/<name>/references/` or `skills/<name>/templates/`).
+3. If the skill requires supporting files, place them in a subfolder:
+   - `skills/<name>/references/` for reference material.
+   - `skills/<name>/templates/` for files the agent fills in or adapts.
+   - `skills/<name>/scripts/` for helpers run as they are. The skill runs them in place through their interpreter (`python3 -I <skill-dir>/scripts/<tool>.py`), never by bare path and never as a copy.
 
 ---
 
