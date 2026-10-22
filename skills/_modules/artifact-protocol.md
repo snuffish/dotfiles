@@ -45,7 +45,7 @@ Detect the active host and slugify the active AI model name:
      3. **Topic / Task Descriptor**: If running on a general task or request, derive a concise (2–4 words, kebab-case) topic slug from the task or user prompt (e.g. `-begar-prefix`, `-ticket-category-config`).
 3. **Ownership (No-Overwrite Invariant)**: a session may update an artifact only when **this session owns it**. It owns it when this session created it, which its owner marker proves (*Claim*). Every other artifact is read-only to it. That includes artifacts from another host or model, and also artifacts from **another session of the same host and model**, such as an earlier session on the same PR or a parallel one. A re-run in a new session writes a new file (*Claim* gives it the next free name). It never rewrites the old one. Only two exceptions exist:
    - **The user names the file and asks for it to be updated** in this conversation ("update `claude-…-code_review-18715-….md`"). A general request such as "review it again" is not that. Re-read the file immediately before the edit and keep its owner marker unchanged.
-   - **Record lines** that a Command's own steps define, such as `/pr-post-comments` *Posted to PR* or the `/create-ticket` id line. These only append to that one line or row. They never rewrite other content.
+   - **Record lines** that a Command's own steps define, such as `/pr-post-comments` *Posted to PR*, the `/create-ticket` id line, or the `Status:` line of a `skill_gap` file (`core` › *Skill gaps*). These only append to or flip that one line or row. They never rewrite other content.
 
    A file with no owner marker (written before this rule) belongs to no session. Treat it as read-only unless this conversation created it.
 4. **Claim (atomic create; counter on collision)**: file-writing tools overwrite silently, and two sessions can check for "does it exist?" at the same moment. So a new artifact is never created by checking first and writing second. Draft it in a session-private path (the host's scratchpad, else `mktemp`), then publish it with an exclusive create. Under `set -C` (noclobber), `>` refuses an existing file at the OS level (`O_EXCL`), so claiming the name and writing it are one step:
@@ -67,7 +67,7 @@ Detect the active host and slugify the active AI model name:
    - **Use the path that was actually written**, as printed by the function, in every chat link and every follow-up step. If a counter was added, say so in the chat response, e.g. "`…-2.md`: the base name is owned by another session."
    - **Readers** (`/artifacts`, `/pr-post-comments`, `/squash-code-review`, anything that picks "the latest artifact for this PR") treat `<name>.md`, `<name>-2.md`, … as one family. They pick the newest by the marker's `created` timestamp, else by modification time, and list the whole family when the user has to choose.
 5. **Single Identity Rule**: Never write multiple host/model variants in one turn.
-6. **Clickability Rule**: Always write directly to the **workspace root**. That location is what makes links clickable across IDEs.
+6. **Clickability Rule**: Always write directly to the **workspace root**. That location is what makes links clickable across IDEs. The one exception is `skill_gap` files, which go to `~/.terminal/skill-gaps/` whatever the workspace (`core` › *Skill gaps*). Link them by absolute path, with no scheme.
 
 ---
 
@@ -134,6 +134,7 @@ When artifacts reference discussion threads or comments from a pull request (suc
 | `clean_report-<suffix>.md` | `claude-opus-5.5-clean_report-audit-endpoint.md` | `antigravity-gemini-3.8-flash-clean_report-audit-endpoint.md` | `/clean` | Multi-file dead-code pruning & sanitation report |
 | `skills_sync_report-<suffix>.md` | `claude-opus-5.5-skills_sync_report-full-audit.md` | `antigravity-gemini-3.8-flash-skills_sync_report-full-audit.md` | `/sync-skills` | Registry discovery & loader synchronization audit |
 | `health_check-<suffix>.md` | `claude-opus-5.5-health_check-backend.md` | `antigravity-gemini-3.8-flash-health_check-frontend.md` | `priis-backend-health-check`, `priis-frontend-health-check` | Convention-drift scorecard per inspection area |
+| `skill_gap-<suffix>.md` | `claude-opus-5.5-skill_gap-widget-local-env-port.md` | `antigravity-gemini-3.8-flash-skill_gap-plan-status-values.md` | Any Command, per `core` › *Skill gaps* | One registry skill fact that proved wrong, with evidence, the proposed edit and an open/fixed status; written to `~/.terminal/skill-gaps/`, not the workspace root |
 | `export-<suffix>.<ext>` | `claude-opus-5.5-export-code-review-18815-local-env-scripts.md` | `antigravity-gemini-3.8-flash-export-explanation-matching-ticket.html` | `/export-file` | Standalone copy of conversation content (`.md`, `.html` or `.txt`); written to the current working directory unless the user names a location |
 
 *(Older unprefixed, un-modeled, or unsuffixed files written before the full convention should still be recognized during scans).*
