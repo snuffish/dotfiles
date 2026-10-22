@@ -12,9 +12,16 @@ function cm-sync() {
     python3 -I "$engine" "$@"
 }
 
-# Lint the skills registry and check ~/.claude/skills against it; --apply fixes the links
+# Lint the skills registry and check ~/.claude/skills against it, then ask y/n to fix the links (--apply skips the prompt)
 function sync-skills() {
-  python3 -I "$HOME/.terminal/skills/sync-skills/sync_skills.py" "$@"
+  local script="$HOME/.terminal/skills/sync-skills/sync_skills.py" answer
+  [[ " $* " == *" --apply "* ]] && { python3 -I "$script" "$@"; return; }
+  python3 -I "$script" "$@"
+  printf 'Apply the link changes to ~/.claude/skills? [y/N] '
+  read -r answer
+  if [[ "$answer" == [yY]* ]]; then
+    python3 -I "$script" --apply "$@"
+  fi
 }
 
 # Pick a Claude Code session with fzf and resume it in its own directory; extra args go to claude
