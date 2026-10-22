@@ -100,7 +100,7 @@ Load these skills directly by registering their paths in the workspace configura
 }
 ```
 
-Some loaders (like `~/.claude/skills` on macOS/Linux or `%USERPROFILE%\.claude\skills` on Windows) expect a **flat** root — each skill a direct child (`root/<name>/SKILL.md`), with no grouping folders. To activate from this grouped staging tree, run `skills-sync --apply` from any shell (`claude.bash`; it runs [`sync-skills/sync_skills.py`](sync-skills/sync_skills.py), plain `skills-sync` only reports) or `/sync-skills`, which apply the rule below, or symlink by hand.
+Some loaders (like `~/.claude/skills` on macOS/Linux or `%USERPROFILE%\.claude\skills` on Windows) expect a **flat** root — each skill a direct child (`root/<name>/SKILL.md`), with no grouping folders. To activate from this grouped staging tree, run `sync-skills` (it reports, then asks before applying) from any shell (`claude.bash`; it runs [`sync-skills/sync_skills.py`](sync-skills/sync_skills.py)) or `/sync-skills`, which apply the rule below, or symlink by hand.
 
 **Which skills to link:** every general (top-level) skill and every Profile (`*-profile`). Do **not** link a project Reference or Command that the project's own repo also ships in `.claude/skills/`. Claude Code resolves a name clash as *personal over project*, so the global link would silently override the repo's newer copy. Allow-list the exceptions, one name per line, in `Projects/<Project>/.flat-links`. List the workspaces that use a project in `Projects/<Project>/.workspaces` (one path per line, `~` allowed): the check then warns about a project skill that is neither linked nor shipped by that workspace's repos, and about gaps in its `.agents/skills.json`.
 
