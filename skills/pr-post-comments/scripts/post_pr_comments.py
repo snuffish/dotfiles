@@ -5,20 +5,11 @@ Usage (run in place; payload files are written beside spec.json):
   python3 -I <skill-dir>/scripts/post_pr_comments.py <dir>/spec.json --post              # post every item
   python3 -I <skill-dir>/scripts/post_pr_comments.py <dir>/spec.json --post --only 6,7   # post a subset (post one, verify, then the rest)
 
-spec.json:
-  {
-    "host": "ado" | "github",
-    "ado":    {"org": "https://dev.azure.com/<org>", "project": "<p>", "repo": "<name-or-guid>", "pr": 123, "iteration": 1},
-    "github": {"repo": "<owner>/<name>", "pr": 123, "commit": "<head sha>"},
-    "items": [
-      {"key": "6", "kind": "thread", "path": "/src/Foo.cs", "start": 122, "end": 125, "end_offset": 117,
-       "change_tracking_id": 10, "body": "**🟡 ...**"},
-      {"key": "r1", "kind": "reply", "thread_id": 110776, "body_file": "reply-r1.md"},
-      {"key": "r2", "kind": "reply", "thread_id": 110777, "body_file": "reply-r2.md", "resolve": true},
-      {"key": "g1", "kind": "general", "body": "..."}
-    ]
-  }
+spec.json: copy <skill-dir>/templates/spec.json to <dir>/spec.json, keep only the items you are posting and
+replace every <placeholder>. The script refuses a spec whose active host block or selected items still hold one;
+a "body" counts only when the whole body is a placeholder, so `List<T>` in a body is fine.
 
+"host" is "ado" or "github"; only that host's block is read. "kind" is "thread", "reply" or "general".
 "body_file" is resolved relative to spec.json. "end_offset" and "change_tracking_id" are Azure DevOps only;
 GitHub ignores them and anchors on the RIGHT side of "commit".
 "resolve" (replies only) sets the thread to Resolved once the reply is posted: Azure DevOps status "fixed",
@@ -26,19 +17,42 @@ GitHub resolveReviewThread on the review thread whose first comment is "thread_i
 """
 import json
 import os
+import re
 import subprocess
 import sys
+
+PLACEHOLDER = re.compile(r"<[^<>\s]+>")
 
 
 def load_spec(path):
     with open(path, encoding="utf-8") as f:
         spec = json.load(f)
-    base = os.path.dirname(os.path.abspath(path))
-    for item in spec["items"]:
+    return spec, os.path.dirname(os.path.abspath(path))
+
+
+def selected_items(spec, only):
+    return [item for item in spec["items"] if only is None or item["key"] in only]
+
+
+def find_placeholders(spec, items):
+    host = spec["host"]
+    found = [f"{host}.{field}" for field, value in spec[host].items()
+             if isinstance(value, str) and PLACEHOLDER.search(value)]
+    for item in items:
+        for field, value in item.items():
+            if not isinstance(value, str):
+                continue
+            match = PLACEHOLDER.fullmatch(value) if field == "body" else PLACEHOLDER.search(value)
+            if match:
+                found.append(f"{item['key']}.{field}")
+    return found
+
+
+def read_body_files(items, base):
+    for item in items:
         if "body_file" in item:
             with open(os.path.join(base, item["body_file"]), encoding="utf-8") as f:
                 item["body"] = f.read().strip()
-    return spec, base
 
 
 def ado_payload(item, iteration):
@@ -160,9 +174,13 @@ def main():
 
     host = spec["host"]
     cfg = spec[host]
-    for item in spec["items"]:
-        if only is not None and item["key"] not in only:
-            continue
+    items = selected_items(spec, only)
+    placeholders = find_placeholders(spec, items)
+    if placeholders:
+        print(f"Template placeholders left in the spec (replace them, or delete the item): {', '.join(placeholders)}")
+        sys.exit(2)
+    read_body_files(items, base)
+    for item in items:
         if item.get("resolve") and item["kind"] != "reply":
             print(f"[{item['key']}] 'resolve' is only allowed on replies; new threads are posted active")
             sys.exit(2)
