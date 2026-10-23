@@ -156,4 +156,35 @@ usage=$(join ' · ' "${usage_parts[@]}")
 # Title and id both identify the session; the full id goes last so it can be copied into `claude --resume <id>`
 sess=$(join ' · ' "$(color 35 "$title")" "$(color 2 "$session")")
 
-join ' | ' "$(color 36 "$model")" "$where" "$ctx" "$usage" "$sess"
+shopt -s extglob
+# Display width: colors stripped, characters counted as UTF-8
+vlen() { local LC_ALL=en_US.UTF-8 s=${1//$'\033['*([0-9;])m/}; VLEN=${#s}; }
+
+# Joins the non-empty cells with │; MARKS lists the column of each │, WIDTH the row's display width
+sep=$(color 2 ' │ ')
+row_layout() {
+  ROW=""; MARKS=" "; WIDTH=0
+  local c
+  for c in "$@"; do
+    [ -n "$c" ] || continue
+    if [ -n "$ROW" ]; then MARKS+="$((WIDTH + 1)) "; ROW+=$sep; WIDTH=$((WIDTH + 3)); fi
+    vlen "$c"; ROW+=$c; WIDTH=$((WIDTH + VLEN))
+  done
+}
+row_layout "$(color 36 "$model")" "$where" "$ctx"; row1=$ROW; up=$MARKS; w=$WIDTH
+row_layout "$usage" "$sess"; row2=$ROW; down=$MARKS; [ "$WIDTH" -gt "$w" ] && w=$WIDTH
+
+if [ -n "$row2" ]; then
+  # The rule spans the terminal and joins each │ above (┴), below (┬) or both (┼). Claude Code
+  # exports COLUMNS; the 4 spare columns cover its statusline indent so the rule never wraps
+  [[ "$COLUMNS" =~ ^[0-9]+$ ]] && [ "$COLUMNS" -gt 4 ] && w=$((COLUMNS - 4))
+  rule=""
+  for ((x = 0; x < w; x++)); do
+    case "$up" in *" $x "*) u=1 ;; *) u=0 ;; esac
+    case "$down" in *" $x "*) d=1 ;; *) d=0 ;; esac
+    case "$u$d" in 11) rule+="┼" ;; 10) rule+="┴" ;; 01) rule+="┬" ;; *) rule+="─" ;; esac
+  done
+  printf '%s\n%s\n%s' "$row1" "$(color 2 "$rule")" "$row2"
+else
+  printf '%s' "$row1"
+fi
