@@ -43,6 +43,7 @@ Every base profile answers these. A Command profile never restates them; it poin
 | **Worktree include list** | Gitignored local files a fresh worktree needs (`appsettings.local.json`, `.env.local`, local secrets) | None |
 | **Dependency hydration** | The install command per repo for a fresh worktree, and whether dependency symlinking is allowed | Derive from the lockfiles present; symlinking off |
 | **Shared local services** | Ports, local APIs and databases that concurrent worktrees share | None known |
+| **PR labels** | The labels every PR must carry, the rule that picks them (changed paths, work-item type), and how to read and add them | None: set no labels |
 
 ## Restating
 

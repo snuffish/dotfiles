@@ -1,6 +1,6 @@
 ---
 name: pr-summary
-description: "Writes a pull request description from the branch's actual diff, following the repo's PR template and conventions, with the work-item reference. Preview by default: prints a paste-ready block and changes nothing. `update` first commits and pushes the branch's pending work, then replaces the live PR's description on Azure DevOps or GitHub. Use for /pr-summary, \"write the PR description\", \"summarize this branch for the PR\", \"update the PR description\". Not for reviewing the change (/code-review)."
+description: "Writes a pull request description from the branch's actual diff, following the repo's PR template and conventions, with the work-item reference. Preview by default: prints a paste-ready block and changes nothing. `update` first commits and pushes the branch's pending work, then replaces the live PR's description on Azure DevOps or GitHub and adds the labels the project profile requires. Use for /pr-summary, \"write the PR description\", \"summarize this branch for the PR\", \"update the PR description\". Not for reviewing the change (/code-review)."
 argument-hint: "[update] [branch | base]"
 ---
 
@@ -24,8 +24,20 @@ Read these before step 1:
 - `../_modules/git-worktrees.md`
 - `../_modules/pr-counterpart.md`
 - `../_modules/pr-host.md`
+- `../_modules/project-profile.md`: base profile only (no Command profile); reads *PR labels* and *Report language*
 
 - Confirm the repo root before Step 0's `status`, `add`, `commit` or `push` — Step 0 against the user's main checkout would commit and push *their* unrelated work.
+
+---
+
+## Project profile
+
+Before Step 0, load the project's base profile `<project>-profile` with the Skill tool when the workspace matches its `[Project: …]` gate (`project-profile` › *Discovery*; e.g. `priis-profile` in the GR workspace). There is no `pr-summary-<project>-profile`. Resolve per `project-profile` › *Resolution order*:
+
+- **PR labels** — the labels the PR must carry and how to add them (Step 5.4). No profile, or a profile without the field: set no labels and say nothing about them.
+- **Report language** — the language of the body (Step 3 › *Language*).
+
+A profile adds facts; it never widens what update mode may write (*Scope & authorization*).
 
 ---
 
@@ -171,7 +183,7 @@ Wrap the final PR body in a fenced markdown block so the user can copy-paste it 
 ```
 ````
 
-Do **not** add extra commentary around the block unless the user asks a question. The output should be immediately paste-ready. **In update mode**, still show this block (so the user sees what was pushed), then continue to Step 5 to write it to the live PR.
+Do **not** add extra commentary around the block unless the user asks a question. The output should be immediately paste-ready. When the profile defines *PR labels*, add one line after the block naming the labels the rule picks for this diff, e.g. `Labels: Backend, Frontend` (preview mode only lists them; Step 5.4 sets them). **In update mode**, still show this block (so the user sees what was pushed), then continue to Step 5 to write it to the live PR.
 
 **Before printing, verify the length budget**: measure the composed body (e.g. write it to a temp file and `wc -m`) and confirm it is **≤ 4000 characters**. If it exceeds the budget, condense per the Step 3 length rules and re-measure — do not print an over-budget body.
 
@@ -225,9 +237,20 @@ Handle these edge cases explicitly — do **not** guess:
 
 For a cross-repo change, once **both** PR IDs are known, fill each body's footer relation link with the *other* repo's real PR number (`This PR relates to: !<other-id>`) before updating — never leave a `!<placeholder>` in a live description.
 
+### 5.4 — Labels (when the profile defines *PR labels*)
+
+Apply the profile's rule to the same three-dot diff as Step 1 (and the work-item type when the rule uses it), then:
+
+1. Read the PR's current labels with the profile's read command.
+2. Add each label the rule picks that the PR lacks, one call per label, with the profile's add command.
+3. **Never remove a label**, including one the rule would not pick: reviewers and boards set their own.
+4. Read the labels back and report them, marking which were added.
+
+A rule that picks no label (for example a change outside every area folder) adds nothing; say so in the report. A failed label write is reported with its error; it does not undo the description update.
+
 ### Scope & authorization
 
-- Update the **description/body** only. Leave the PR **title** unchanged unless the user explicitly asks (title updates use `--title` on the same commands).
+- Update the **description/body**, and add the profile's **missing labels** (5.4). Leave the PR **title** unchanged unless the user explicitly asks (title updates use `--title` on the same commands). Never remove a label, change the draft state, vote or touch reviewers.
 - Update mode writes to a real, outward-facing artifact. The `update` keyword **is** the user's authorization to write — but still show the current description first (5.2) so the overwrite stays transparent.
 
 ---

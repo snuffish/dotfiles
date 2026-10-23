@@ -274,7 +274,7 @@ Always start your response with a clickable link to `<prefix>-pr_feedback_review
 | [#106735](#thread-106735) ([devops](https://dev.azure.com/<org>/<project>/_git/<repo>/pullrequest/<prId>?discussionId=106735)) | Backend !18707 | PriisDbContext.cs | Nebojsa | 0 | 💡 Proposal: optimization | ⏸ Not addressed | Refactor cascade loop to Queue worklist |
 | [#106740](#thread-106740) ([devops](…)) | Frontend !18708 | Foo.tsx | Daniel | −5 | ⛔ Blocking: bug | ✅ Fixed (`abc1234`) | Reply, resolve |
 
-*State at head* is one of ✅ Fixed (commit) · ◐ Partial · ⏸ Not addressed · ↩ Superseded · ⚪ n/a. With a single PR in scope, drop the *PR* column.
+*State at head* is one of ✅ Fixed (commit) · ◐ Partial · ⏸ Not addressed · ↩ Superseded · ⚪ n/a, plus 🕓 Fixed, not pushed (`<sha>`) for a fix that exists only locally (e.g. under `/proceed`). ✅ means the fix is at the PR head. With a single PR in scope, drop the *PR* column.
 
 ---
 
@@ -282,7 +282,7 @@ Always start your response with a clickable link to `<prefix>-pr_feedback_review
 
 ### <a id="thread-<ThreadId>"></a>Thread [#<ThreadId>](https://dev.azure.com/<org>/<project>/_git/<repo>/pullrequest/<prId>?discussionId=<ThreadId>): <File / Topic Summary>
 - **Author:** <Name> (<Timestamp>)
-- **Status:** Active / Closed
+- **Status:** Active / Resolved (<date>, reply <comment id>) / Closed
 - **Location:** `[<file>:<line>]`
 - **Selected code** (`<file>:<start>-<end>` @ `<short-sha>`, iteration <n>; omit for general threads):
   ```<lang>
@@ -293,7 +293,7 @@ Always start your response with a clickable link to `<prefix>-pr_feedback_review
 
 #### Technical Analysis
 - **Core Concern:** <What the reviewer is pointing out>
-- **State at head:** <Addressed / partial / not — commit and `path:line` at head; the test that pins it>
+- **State at head (iteration <n>):** <Addressed / partial / not — commit and `path:line` at head; the test that pins it>
 - **Architectural Assessment:** <Is the reviewer right? Is the proposed fix right? How this fits the codebase, EF Core / API conventions, constraints>
 - **Tradeoffs & Risks:** <Pros/cons of changing vs keeping as-is, downstream impact>
 
@@ -312,6 +312,18 @@ Always start your response with a clickable link to `<prefix>-pr_feedback_review
 - [ ] Task 1
 - [ ] Task 2
 ```
+
+### 6.4 — Status fields
+
+The artifact states each thread's progress in five places. These are its **status fields** (`artifact-protocol` rule 3 › *Status fields*):
+
+1. the header **Status:** line (votes, active and resolved thread counts, conflicts);
+2. the **Executive Summary** paragraph's opening claim about what is addressed;
+3. the triage matrix's **State at head** column;
+4. each thread's **Status:** line;
+5. the **Action Checklist**, including any *Applied* note above it.
+
+Every later step that changes a thread's state updates all five together (`artifact-protocol` rule 7): `/proceed` applying fixes (🕓 Fixed, not pushed), a push that puts the fix at the PR head (✅ Fixed (`<sha>`)), `/pr-post-comments` posting and resolving a reply (thread **Status:** Resolved, header counts). Leave *Recommendation* and *Technical Analysis* as written; when they no longer describe the code, add a dated `Update <date>:` line under the thread's *State at head (iteration <n>)* bullet instead of rewriting them. That bullet carries its iteration so a later reader, and the stale-marker `grep`, can tell history from current state: a hit inside a bullet labelled with an older iteration and followed by an *Update* line is history, not stale. A step run by another session may change only these fields (`artifact-protocol` rule 3).
 
 ---
 

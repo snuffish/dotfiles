@@ -72,6 +72,8 @@ Run `core` › *Post-edit verification*: the plan's own verification commands fi
 
 Set the plan's `Status` to `Completed` when every phase in scope is done and verified; leave it `Approved` and note what remains when only part of the scope ran.
 
+When the item came from a review artifact (`pr_feedback_review`, `code_review`), recording the work there means updating every **status field** that artifact's Command declares (`artifact-protocol` rule 7), not only its checklist. A fix that is not yet pushed is 🕓 Fixed, not pushed (`<sha>`); a fix becomes ✅ only once it is at the PR head. Before reporting, `grep` the artifact for the old markers (`⏸`, `Not addressed`, `uncommitted`) and resolve every stale hit.
+
 ---
 
 ## 3. Output Format & Deliverables
@@ -95,3 +97,4 @@ Next: <the single next action, usually a commit/push or ship command for the use
 - [ ] No edit landed in a snapshot worktree.
 - [ ] Verification commands ran and their results are reported faithfully.
 - [ ] The plan's `Status` reflects what actually ran.
+- [ ] A review artifact the work came from shows the same state in every status field: the header, the matrix, the per-item lines and the checklist.
