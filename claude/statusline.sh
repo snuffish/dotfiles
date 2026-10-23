@@ -1,15 +1,16 @@
 #!/bin/bash
 input=$(cat)
 
-model=$(echo "$input" | /usr/bin/jq -r '.model.display_name // empty')
+model=$(echo "$input" | /usr/bin/jq -r 'if (.model.effort // "") != "" and ((.model.display_name // "") | contains("(") | not) then "\(.model.display_name) (\(.model.effort))" else (.model.display_name // empty) end')
 dir=$(echo "$input" | /usr/bin/jq -r '.workspace.current_dir // .cwd // empty')
 used=$(echo "$input" | /usr/bin/jq -r '.context_window.used_percentage // empty')
 transcript=$(echo "$input" | /usr/bin/jq -r '.transcript_path // empty')
-session=$(echo "$input" | /usr/bin/jq -r '.session_id // empty')
+session=$(echo "$input" | /usr/bin/jq -r '.session_id // .conversation_id // empty')
 git_wt=$(echo "$input" | /usr/bin/jq -r '.workspace.git_worktree // empty')
+product=$(echo "$input" | /usr/bin/jq -r '.product // empty')
 # One per line: a tab-joined read would collapse empty fields
 { read -r cost; read -r limit_5h; read -r limit_7d; } < <(echo "$input" | /usr/bin/jq -r \
-  '.cost.total_cost_usd, .rate_limits.five_hour.used_percentage, .rate_limits.seven_day.used_percentage | . // ""')
+  '(.cost.total_cost_usd // .cost.total_usd), .rate_limits.five_hour.used_percentage, .rate_limits.seven_day.used_percentage | . // ""')
 
 # Empty text prints nothing, so join drops it without leaving a stray separator
 color() { [ -n "$2" ] && printf '\033[%sm%s\033[0m' "$1" "$2"; }
@@ -24,9 +25,13 @@ heat() {
   if [ "$1" -ge 85 ]; then printf 31; elif [ "$1" -ge 70 ]; then printf '38;5;208'; else printf '%s' "$2"; fi
 }
 
-title=$(echo "$input" | /usr/bin/jq -r '.session_name // empty')
+title=$(echo "$input" | /usr/bin/jq -r '.session_name // .conversation_title // empty')
 
-# Fallback when stdin lacks session_name: /rename sets customTitle, otherwise the generated aiTitle
+# Fallback when stdin lacks session_name / conversation_title: Antigravity SQLite DB, or Claude /rename customTitle / aiTitle
+if [ -z "$title" ] && [ "$product" = "antigravity" ] && [ -n "$session" ] && [ -f ~/.gemini/antigravity-cli/conversation_summaries.db ] && command -v sqlite3 >/dev/null 2>&1; then
+  safe_id="${session//\'/\'\'}"
+  title=$(sqlite3 ~/.gemini/antigravity-cli/conversation_summaries.db "SELECT title FROM conversation_summaries WHERE conversation_id = '$safe_id' LIMIT 1;" 2>/dev/null)
+fi
 if [ -z "$title" ] && [ -f "$transcript" ]; then
   title=$(grep -o '"customTitle":"[^"]*"' "$transcript" | tail -1 | cut -d'"' -f4)
   [ -z "$title" ] && title=$(grep -o '"aiTitle":"[^"]*"' "$transcript" | tail -1 | cut -d'"' -f4)
@@ -37,19 +42,21 @@ fi
 # Scanned incrementally: a full scan of a large transcript outlasts the statusline's update cadence
 skills=""
 if [ -f "$transcript" ] && [ -n "$session" ]; then
+  transcript_src="$transcript"
+  [ -f "${transcript%.jsonl}_full.jsonl" ] && transcript_src="${transcript%.jsonl}_full.jsonl"
   cache_dir="${TMPDIR:-/tmp}/claude-statusline"
   cache="$cache_dir/$session.skills"
-  size=$(stat -f %z "$transcript")
+  size=$(wc -c < "$transcript_src" | tr -d ' ')
   offset=0; cached_path=""; list=""
   [ -f "$cache" ] && { read -r offset cached_path; list=$(cat); } < "$cache"
-  if ! [[ "$offset" =~ ^[0-9]+$ ]] || [ "$cached_path" != "$transcript" ] || [ "$offset" -gt "$size" ]; then
+  if ! [[ "$offset" =~ ^[0-9]+$ ]] || [ "$cached_path" != "$transcript_src" ] || [ "$offset" -gt "$size" ]; then
     offset=0; list=""
   fi
 
   # Only advance over complete lines, so a write in progress can't split a marker
-  if [ "$size" -gt "$offset" ] && [ -z "$(tail -c +"$size" "$transcript" | head -c 1)" ]; then
+  if [ "$size" -gt "$offset" ] && [ -z "$(tail -c +"$size" "$transcript_src" | head -c 1)" ]; then
     # Request blobs repeat the transcript; raw quotes in the anchors skip tool calls that merely mention the marker
-    new=$(tail -c +$((offset + 1)) "$transcript" | head -c $((size - offset)) | awk '
+    new=$(tail -c +$((offset + 1)) "$transcript_src" | head -c $((size - offset)) | awk '
       index($0, "{\"type\":\"api-request-blob\"") == 1 { next }
       index($0, "\"subtype\":\"compact_boundary\"") && index($0, "\"type\":\"system\"") { reset = 1; n = 0; next }
       {
@@ -59,17 +66,39 @@ if [ -f "$transcript" ] && [ -n "$session" ]; then
           s = substr(s, RSTART + RLENGTH)
         }
       }
+      /"type":"(USER_INPUT|SYSTEM_MESSAGE)"/ && /<SKILL>/ {
+        s = $0
+        while (match(s, /<SKILL>The user (has explicitly invoked the \([A-Za-z0-9_:-]+\)|requested you read and use the \\"[A-Za-z0-9_:-]+\\") skill\./)) {
+          m = substr(s, RSTART, RLENGTH)
+          if (match(m, /\([A-Za-z0-9_:-]+\)/)) {
+            buf[++n] = substr(m, RSTART + 1, RLENGTH - 2)
+          } else if (match(m, /\\"[A-Za-z0-9_:-]+\\"/)) {
+            buf[++n] = substr(m, RSTART + 2, RLENGTH - 4)
+          }
+          s = substr(s, RSTART + RLENGTH)
+        }
+      }
+      /"type":"PLANNER_RESPONSE"/ && /"tool_calls":/ && /"(read_file|view_file)"/ {
+        s = $0
+        while (match(s, /"(Path|AbsolutePath)":(\\"|")[^"\\]+\/skills\/[A-Za-z0-9._-]+\/SKILL\.md(\\"|")/)) {
+          m = substr(s, RSTART, RLENGTH)
+          sub(/^.*\/skills\//, "", m)
+          sub(/\/SKILL\.md(\\"|")$/, "", m)
+          if (m != "_modules") buf[++n] = m
+          s = substr(s, RSTART + RLENGTH)
+        }
+      }
       END { if (reset) print "\001"; for (i = 1; i <= n; i++) print buf[i] }
     ' | sed -E 's#.*/plugins/cache/[^/]+/([^/]+)/[^/]+/skills/(.*/)?([^/]+)$#\1:\3#; s#.*/##')
     if [ "${new%%$'\n'*}" = $'\001' ]; then
       list=""; new=$(printf '%s\n' "$new" | sed '1d')
     fi
     # Keep each skill at the position of its latest load
-    list=$(printf '%s\n%s\n' "$list" "$new" | sed '/^$/d' | tail -r | awk '!seen[$0]++' | tail -r)
+    list=$(printf '%s\n%s\n' "$list" "$new" | sed '/^$/d' | awk '{ a[++n] = $0; last[$0] = n } END { for (i = 1; i <= n; i++) if (last[a[i]] == i) print a[i] }')
     mkdir -p "$cache_dir"
     # Temp files of killed runs, and caches of sessions long gone
     find "$cache_dir" \( -name '*.skills.*' -mmin +1 -o -name '*.skills' -mtime +7 \) -delete 2>/dev/null
-    { printf '%s %s\n' "$size" "$transcript"; [ -z "$list" ] || printf '%s\n' "$list"; } > "$cache.$$" && mv -f "$cache.$$" "$cache"
+    { printf '%s %s\n' "$size" "$transcript_src"; [ -z "$list" ] || printf '%s\n' "$list"; } > "$cache.$$" && mv -f "$cache.$$" "$cache"
   fi
 
   if [ -n "$list" ]; then
