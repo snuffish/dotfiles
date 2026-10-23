@@ -38,7 +38,9 @@ ln -sf ~/.terminal/tmux/tmux.conf ~/.tmux.conf
 # WezTerm
 mkdir -p ~/.config/wezterm && ln -sf ~/.terminal/wezterm/wezterm.lua ~/.wezterm.lua
 
-# Claude Code statusline (also set "statusLine": { "type": "command", "command": "bash ~/.claude/statusline.sh" } in ~/.claude/settings.json)
+# Claude Code & Antigravity CLI statusline
+# - In ~/.claude/settings.json: "statusLine": { "type": "command", "command": "bash ~/.claude/statusline.sh" }
+# - In ~/.gemini/antigravity-cli/settings.json: "statusLine": { "type": "command", "command": "bash ~/.claude/statusline.sh", "enabled": true, "stack_with_default": true }
 mkdir -p ~/.claude && ln -sf ~/.terminal/claude/statusline.sh ~/.claude/statusline.sh
 ```
 
