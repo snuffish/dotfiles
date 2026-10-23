@@ -7,6 +7,9 @@ used=$(echo "$input" | /usr/bin/jq -r '.context_window.used_percentage // empty'
 transcript=$(echo "$input" | /usr/bin/jq -r '.transcript_path // empty')
 session=$(echo "$input" | /usr/bin/jq -r '.session_id // empty')
 git_wt=$(echo "$input" | /usr/bin/jq -r '.workspace.git_worktree // empty')
+# One per line: a tab-joined read would collapse empty fields
+{ read -r cost; read -r limit_5h; read -r limit_7d; } < <(echo "$input" | /usr/bin/jq -r \
+  '.cost.total_cost_usd, .rate_limits.five_hour.used_percentage, .rate_limits.seven_day.used_percentage | . // ""')
 
 # Empty text prints nothing, so join drops it without leaving a stray separator
 color() { [ -n "$2" ] && printf '\033[%sm%s\033[0m' "$1" "$2"; }
@@ -15,6 +18,10 @@ join() {
   shift
   for p in "$@"; do [ -n "$p" ] && out="${out:+$out$sep}$p"; done
   printf '%s' "$out"
+}
+# Color for a percentage that warms up towards a hard limit (auto-compact, rate limits)
+heat() {
+  if [ "$1" -ge 85 ]; then printf 31; elif [ "$1" -ge 70 ]; then printf '38;5;208'; else printf '%s' "$2"; fi
 }
 
 title=$(echo "$input" | /usr/bin/jq -r '.session_name // empty')
@@ -60,7 +67,9 @@ if [ -f "$transcript" ] && [ -n "$session" ]; then
     # Keep each skill at the position of its latest load
     list=$(printf '%s\n%s\n' "$list" "$new" | sed '/^$/d' | tail -r | awk '!seen[$0]++' | tail -r)
     mkdir -p "$cache_dir"
-    { printf '%s %s\n' "$size" "$transcript"; [ -n "$list" ] && printf '%s\n' "$list"; } > "$cache.$$" && mv -f "$cache.$$" "$cache"
+    # Temp files of killed runs, and caches of sessions long gone
+    find "$cache_dir" \( -name '*.skills.*' -mmin +1 -o -name '*.skills' -mtime +7 \) -delete 2>/dev/null
+    { printf '%s %s\n' "$size" "$transcript"; [ -z "$list" ] || printf '%s\n' "$list"; } > "$cache.$$" && mv -f "$cache.$$" "$cache"
   fi
 
   if [ -n "$list" ]; then
@@ -72,8 +81,20 @@ fi
 
 where=""
 if [ -n "$dir" ]; then
-  branch=$(git --no-optional-locks -C "$dir" symbolic-ref --short -q HEAD 2>/dev/null)
-  [ -z "$branch" ] && branch=$(git --no-optional-locks -C "$dir" rev-parse --short HEAD 2>/dev/null)
+  # Branch (short sha when detached), "*" unstaged or untracked, "+" staged, ↑↓ commits ahead/behind upstream
+  { read -r branch; read -r dirty; read -r ab; } < <(git --no-optional-locks -C "$dir" status --porcelain=v2 --branch 2>/dev/null | awk '
+    /^# branch\.oid / { oid = substr($3, 1, 7) }
+    /^# branch\.head / { head = $3 }
+    /^# branch\.ab / { a = substr($3, 2) + 0; b = substr($4, 2) + 0 }
+    /^[12] / { if (substr($2, 1, 1) != ".") staged = 1; if (substr($2, 2, 1) != ".") unstaged = 1 }
+    /^[u?] / { unstaged = 1 }
+    END {
+      if (head == "" && oid == "") exit
+      print (head == "(detached)" ? oid : head)
+      print (unstaged ? "*" : "") (staged ? "+" : "")
+      print (a > 0 ? "↑" a : "") (b > 0 ? "↓" b : "")
+    }
+  ')
 
   # cwd inside a linked worktree: its git dir differs from the common dir. Fallback when stdin lacks git_worktree
   { read -r toplevel; read -r git_dir; read -r common_dir; } < <(git --no-optional-locks -C "$dir" rev-parse --path-format=absolute --show-toplevel --git-dir --git-common-dir 2>/dev/null)
@@ -108,16 +129,31 @@ if [ -n "$dir" ]; then
   [ -z "$cwd_wt$owned" ] && [ -n "$toplevel" ] && nowt="no-wt"
 
   # Dir, branch and worktree state share a segment: together they describe where the edits land
-  where=$(join ' · ' "$(color 34 "$(basename "$dir")")" "$(color 32 "$branch")" \
+  where=$(join ' · ' "$(color 34 "$(basename "$dir")")" "$(color 32 "$branch")$(color 33 "$dirty${ab:+ $ab}")" \
     "$(color 31 "${cwd_wt:+wt:$cwd_wt}")" "$(color 31 "${owned:+wt→$owned}")" "$(color 2 "$nowt")")
 fi
 
 # ctx and skills share a segment: both describe what is in the context window
-used_txt=""
-[ -n "$used" ] && used_txt=$(printf 'ctx %.0f%%' "$used")
-ctx=$(join ' · ' "$(color 33 "$used_txt")" "$(color '38;5;208' "${skills:+skills:$skills}")")
+used_txt=""; ctx_color=33
+if [ -n "$used" ]; then
+  pct=$(printf '%.0f' "$used")
+  used_txt="ctx $pct%"
+  ctx_color=$(heat "$pct" 33)
+fi
+ctx=$(join ' · ' "$(color "$ctx_color" "$used_txt")" "$(color '38;5;208' "${skills:+skills:$skills}")")
+
+# Session cost and plan rate limits share a segment: both describe spend
+usage_parts=()
+[ -n "$cost" ] && usage_parts+=("$(color 2 "$(printf '$%.2f' "$cost")")")
+for w in 5h 7d; do
+  v=limit_${w}; v=${!v}
+  [ -n "$v" ] || continue
+  p=$(printf '%.0f' "$v")
+  usage_parts+=("$(color "$(heat "$p" 2)" "$w $p%")")
+done
+usage=$(join ' · ' "${usage_parts[@]}")
 
 # Title and id both identify the session; the full id goes last so it can be copied into `claude --resume <id>`
 sess=$(join ' · ' "$(color 35 "$title")" "$(color 2 "$session")")
 
-join ' | ' "$(color 36 "$model")" "$where" "$ctx" "$sess"
+join ' | ' "$(color 36 "$model")" "$where" "$ctx" "$usage" "$sess"

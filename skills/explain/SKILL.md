@@ -65,7 +65,7 @@ Use when the user runs `/explain` (without `deep`), asks "explain this", or asks
 - **In-Chat Response Structure**:
   - **What it is**: 1–2 sentences explaining the symbol, prop, or expression in plain English.
   - **What it does / Why it is here**: 2–4 concise bullet points explaining the mechanism and purpose in the component.
-  - Use clickable file and symbol links in the host's format (`artifact-protocol` › *Host-Specific Link Formats*): `[Symbol](file://<abs-path>/file.tsx#L123)` under Antigravity, `[Symbol](src/file.tsx#L123)` (workspace-relative) under Claude Code.
+  - Use clickable file and symbol links in the host's format (`artifact-protocol` › *Host-Specific Link Formats*): `[Symbol](file://<abs-path>/file.tsx#L123)` under Antigravity, `[Symbol](src/file.tsx#L123)` (workspace-relative) in the Claude Code IDE extension, `[Symbol](antigravity-ide://file/<abs-path>/file.tsx:123)` in the Claude Code terminal CLI.
   - Keep the whole answer readable in 30 seconds.
 
 ---

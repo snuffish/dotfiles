@@ -1,6 +1,6 @@
 ---
 name: plan
-description: Opens, inspects, creates, or updates the active, host-prefixed implementation plan (<prefix>-implementation_plan-<suffix>.md). When invoked without arguments (/plan), immediately returns a direct, clickable file link to open the active plan in the IDE along with its status and section anchors. When invoked with instructions, drafts or updates the plan with a mandatory contextual suffix.
+description: Opens, inspects, creates, or updates the active, host-prefixed implementation plan (<prefix>-implementation_plan-<suffix>.md). When invoked without arguments (/plan), immediately returns a direct, clickable file link to open the active plan in the IDE along with its status and section anchors; when several plans exist, it first asks which one. When invoked with instructions, drafts or updates the plan with a mandatory contextual suffix.
 ---
 
 # Skill: `/plan` — Implementation Plan Manager
@@ -69,7 +69,7 @@ Every chat response that presents a plan starts with this block. Take the line n
 **Status:** <value>
 ```
 
-`<link>` follows `artifact-protocol` › *Host-Specific Link Formats*: `file://<workspace-root>/<file>` under Antigravity, the bare workspace-relative `<file>` under Claude Code. A Command may append a one-line summary after each section link (`/plan-review` does).
+`<link>` follows `artifact-protocol` › *Host-Specific Link Formats*: `file://<workspace-root>/<file>` under Antigravity, the bare workspace-relative `<file>` in the Claude Code IDE extension, and `antigravity-ide://file/<workspace-root>/<file>` in the Claude Code terminal CLI, where section links end in `:<n>` instead of `#L<n>`. A Command may append a one-line summary after each section link (`/plan-review` does).
 
 ---
 
@@ -79,9 +79,14 @@ Every chat response that presents a plan starts with this block. Take the line n
 
 1. **Locate the plan:**
    - Scan for `<prefix>-implementation_plan-*.md` at the **workspace root**. Treat `<name>.md`, `<name>-2.md`, … as one family (`artifact-protocol` › *Claim*).
-   - If one matches the current git branch or the active topic, select it. If several candidates remain, list them and let the user pick (or target one with `/plan <suffix>`). If only one exists, use it.
+   - If only one family exists, use it.
+   - If several families exist, **ask the user which one** before rendering anything: under Claude Code with `AskUserQuestion`, under Antigravity with `ask_question`, otherwise with a numbered list. Do not auto-select, even when one matches the branch or topic.
+     - One option per family, labelled by its suffix, with the latest revision's `Status` and modification time as the description.
+     - Put the family matching the current git branch or active topic first and mark it `(Recommended)`; order the rest newest first.
+     - `AskUserQuestion` takes at most 4 options: show the top 4 and name the rest in the question text, so the user can type one under *Other*.
+     - Tell the user they can skip the question next time with `/plan <suffix>`.
    - If none exists, say so and offer to create one from the user's next prompt.
-2. **Render the link block** (*§2 Link block*) with the plan's current `Status`. Do not edit anything or run background commands.
+2. **Render the link block** (*§2 Link block*) for the chosen plan, with its current `Status`. Do not edit anything or run background commands.
 
 ### Case B: Command With Instructions (`/plan <instructions>`)
 

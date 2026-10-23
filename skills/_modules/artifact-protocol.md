@@ -78,10 +78,13 @@ Chat links and document anchors must follow strict formatting rules depending on
 | Host | Chat Link Syntax | Example |
 |---|---|---|
 | **Antigravity IDE** | Absolute path with `file://` scheme *(relative links render dead/unclickable)* | `[antigravity-gemini-3.8-flash-implementation_plan-auth.md](file://<workspace-root>/antigravity-gemini-3.8-flash-implementation_plan-auth.md#L8)` |
-| **Claude Code** | Workspace-relative path without scheme *(`file://` URIs render dead)* | `[claude-opus-5.5-implementation_plan-auth.md](claude-opus-5.5-implementation_plan-auth.md#L8)` |
+| **Claude Code, IDE extension** | Workspace-relative path without scheme *(`file://` URIs render dead)* | `[claude-opus-5.5-implementation_plan-auth.md](claude-opus-5.5-implementation_plan-auth.md#L8)` |
+| **Claude Code, terminal CLI** | Antigravity IDE editor URL: `antigravity-ide://file/` + absolute path + `:<line>`, spaces as `%20` *(a click opens the file in Antigravity IDE; relative paths open nothing from the terminal)* | `[claude-opus-5.5-implementation_plan-auth.md](antigravity-ide://file/<workspace-root>/claude-opus-5.5-implementation_plan-auth.md:8)` |
+
+Tell the two Claude Code hosts apart by `$CLAUDE_CODE_ENTRYPOINT`: `cli` is the terminal; anything else (`claude-vscode`, …) is the IDE extension. Check it once per session.
 
 ### Section Anchor / Fragment Rules:
-- **Chat Links (Both Hosts)**: Always use `#L<line>` (e.g. `#L8` or `#L8-L20`), **never** heading slugs (`#context--goal` fails in Claude Code). Read the actual line numbers from the file after writing:
+- **Chat Links (All Hosts)**: Point at a line, **never** at a heading slug (`#context--goal` fails in Claude Code). Use `#L<line>` (e.g. `#L8` or `#L8-L20`), except in a terminal-CLI editor URL, which takes `:<line>` and no range. Read the actual line numbers from the file after writing:
   ```bash
   grep -n '^#\{1,3\} ' <prefix>-<artifact>-<suffix>.md
   ```

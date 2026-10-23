@@ -230,7 +230,7 @@ Always write the complete PR feedback review report to `<prefix>-pr_feedback_rev
 
 ### 6.2 — Artifact Links
 
-Format all chat links and section anchors according to the **`artifact-protocol`** protocol (`file://` absolute for Antigravity IDE, workspace-relative for Claude Code, `#L<line>` line fragments for chat).
+Format all chat links and section anchors according to the **`artifact-protocol`** protocol (`file://` absolute for Antigravity IDE, workspace-relative in the Claude Code IDE extension, an `antigravity-ide://` editor URL in the Claude Code terminal CLI).
 
 Always start your response with a clickable link to `<prefix>-pr_feedback_review-<suffix>.md` and direct anchors to its main sections.
 
