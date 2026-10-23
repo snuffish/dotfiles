@@ -1,6 +1,6 @@
 ---
 name: pr-post-comments
-description: "Posts feedback already drafted in a review artifact to the PR on Azure DevOps or GitHub: /code-review or /squash-code-review findings as inline threads anchored to the right lines, the 🟢 minor findings as one general comment per PR, /pr-feedback-review ready-to-send replies into their existing threads, and agreed general comments. Verifies every anchor at the PR head, skips what is already posted, dry-runs the payloads, posts one and checks it before the rest, routes items across counterpart PRs, and records thread ids back in the artifact. `draft` previews the payloads and asks before posting. After a reply is posted, sets that thread to Resolved when the fix is verified at the PR head (`keep-open` skips this). Never closes threads, votes or edits the description unless asked. Use for /pr-post-comments, \"post the findings to the PR\", \"reply to the threads\", \"draft the PR comments first\", \"post them again clean\". Not for writing the feedback itself."
+description: "Posts feedback already drafted in a review artifact to the PR on Azure DevOps or GitHub: /code-review or /squash-code-review findings as inline threads anchored to the right lines, the 🟢 minor findings with them as one general comment per PR, /pr-feedback-review ready-to-send replies into their existing threads, and agreed general comments. Verifies every anchor at the PR head, skips what is already posted, dry-runs the payloads, posts one and checks it before the rest, routes items across counterpart PRs, and records thread ids back in the artifact. `draft` previews the payloads and asks before posting. After a reply is posted, sets that thread to Resolved when the fix is verified at the PR head (`keep-open` skips this). Never closes threads, votes or edits the description unless asked. Use for /pr-post-comments, \"post the findings to the PR\", \"reply to the threads\", \"draft the PR comments first\", \"post them again clean\". Not for writing the feedback itself."
 ---
 
 # Skill: `/pr-post-comments` — Post Drafted Feedback to a Pull Request
@@ -16,7 +16,7 @@ Turns feedback that has already been written and read by the user — review fin
 > 2. **POST ONLY WHAT WAS DRAFTED AND SHOWN TO THE USER.** Reformat for the PR (see *Step 4*), never rewrite the substance, add findings, or translate unless asked.
 > 3. **RESOLVE ONLY A REPLIED THREAD THAT IS RESOLVED; NEVER CLOSE, VOTE, OR EDIT THE PR DESCRIPTION** unless that exact action is also asked for. A thread is set to Resolved only after its reply posted, and only when *Step 4* › *Which replied threads to resolve* holds. New threads are posted **active**, and stay active.
 > 4. **A DENIED POST IS FINAL FOR THIS TURN.** If the permission system blocks the write, do not route around it (other tools, other CLIs, a test runner). Leave the dry-run payloads in place and hand the user the exact command — see *Step 6*.
-> 5. **DO NOT MODIFY CODE OR THE WORKING TREE.** Read the PR head through `git show <sha>:<path>`; the only local writes are the payload files in the scratchpad and the *Posted to PR* row in the source artifact.
+> 5. **DO NOT MODIFY CODE OR THE WORKING TREE.** Read the PR head through `git show <sha>:<path>`; the only local writes are the payload files in the scratchpad, and in the source artifact the *Posted to PR* row and the status fields its Command declares (*Step 7*).
 
 ---
 
@@ -26,7 +26,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 
 Read these before step 1:
 - `../_modules/core.md`
-- `../_modules/artifact-protocol.md`: writes no artifact of its own — it consumes an existing artifact (`<prefix>-code_review-<suffix>.md`, `<prefix>-squashed_code_review-<suffix>.md` or `<prefix>-pr_feedback_review-<suffix>.md` at the workspace root) and updates only its *Posted to PR* row
+- `../_modules/artifact-protocol.md`: writes no artifact of its own — it consumes an existing artifact (`<prefix>-code_review-<suffix>.md`, `<prefix>-squashed_code_review-<suffix>.md` or `<prefix>-pr_feedback_review-<suffix>.md` at the workspace root) and updates only its *Posted to PR* row and its declared status fields (rule 7)
 - `../_modules/pr-counterpart.md`
 - `../_modules/pr-host.md`
 
@@ -78,8 +78,9 @@ Read these before step 1:
 
    | User says | Posted as |
    |---|---|
-   | "the findings" | every open 🔴/🟡, one inline thread each |
-   | "the new findings" | open 🔴/🟡 not in the artifact's *Posted to PR* row |
+   | "the findings" | every open 🔴/🟡, one inline thread each, **plus** the 🟢 minor findings as one general comment per PR (see *Minor-findings block*) |
+   | "the new findings" | open 🔴/🟡 not in the artifact's *Posted to PR* row, plus the minor-findings comment when the PR has no live one yet |
+   | "only the 🔴/🟡" / "without the minor findings" | the open 🔴/🟡 threads alone, no minor-findings comment |
    | "the minor findings" / "the 🟢" | **one standalone general comment per PR** holding that PR's 🟢 items, never one thread per item (see *Minor-findings block*) |
    | "the replies" | every *Ready-to-Send Reply* whose thread action includes "reply" |
    | "clean" / "again" after the user deleted the threads | the same selection, re-posted from the artifact's **current** text (findings may have been revised since the first post) |
@@ -130,7 +131,7 @@ git -C <repo> show <head>:<path> | awk 'NR>=<start> && NR<=<end> {print NR": "le
 - **Title line:** `**<severity> <one-line claim>**` (e.g. `**🟡 The backfill can price an extra from a value added after the lock**`). Drop artifact-only markers: *Verified/Plausible*, finding numbers, `(from the X review)`, `[plain]` links.
 - **Body:** the *What and why* (failing path as a numbered sequence), then the *Fix* code block, then *Test to add* if the finding has one. *Decision needed* findings become "Options: (a) … (b) …".
 - **References:** repo-relative `File.cs:123` only. No workspace-root prefixes, no scratchpad paths, no links to local artifacts. Point at sibling threads by file ("see the thread on `SelectContractEndpoint`"), never by artifact finding number.
-- **Not posted:** *In Plain Terms*, *Feature in Brief*, praise, 🟢 unless asked.
+- **Not posted:** *In Plain Terms*, *Feature in Brief*, praise. The 🟢 items go out as the minor-findings block, never as threads.
 - **Language:** as drafted. A reply drafted in Swedish is posted in Swedish.
 - **Replies** (`/pr-feedback-review`): post the *Ready-to-Send Reply* text verbatim.
 
@@ -155,7 +156,7 @@ Only reply items qualify. A new thread from `/code-review` is the reviewer's own
 
 #### Minor-findings block
 
-The artifact's *🟢 Minor Findings* list becomes **one general comment per PR** (`kind: "general"`, no file anchor), so it reads as a single non-blocking note instead of a dozen threads to resolve.
+The artifact's *🟢 Minor Findings* list becomes **one general comment per PR** (`kind: "general"`, no file anchor), so it reads as a single non-blocking note instead of a dozen threads to resolve. It goes out with every findings selection (*Step 1*) unless the user excludes it, and the *Step 5* dedupe skips it when the PR already has a live minor-findings comment. An artifact with no 🟢 items for a PR posts no block there.
 
 - **Title:** `**🟢 Minor findings (non-blocking)**`.
 - **Only that PR's items.** In a multi-repo review, split the list by the repo each item cites. An item about a cross-repo check (e.g. "contract checked against the frontend PR: consistent") goes in the block of the PR that owns the contract.
@@ -197,10 +198,14 @@ and mention that a permission rule for `az devops invoke` / `gh api` lets the ag
 Add or extend the *Posted to PR* row in the source artifact's *Review Context* table:
 
 ```markdown
-| Posted to PR | 2026-10-16 — findings 1–5 as active inline threads on iteration 1: 110776 (1), 110777 (2), …; 6–7: 110781 (6), 110782 (7). 🟢 minor findings not posted. |
+| Posted to PR | 2026-10-16 — findings 1–5 as active inline threads on iteration 1: 110776 (1), 110777 (2), …; 6–7: 110781 (6), 110782 (7); 🟢 minor findings as one general comment: 110783. |
 ```
 
-Mark each reply whose thread was resolved, e.g. `replies on 111595 (comment 3, resolved), 111598 (comment 2, kept active: PO decision pending)`. Append to the row on later batches; never rewrite earlier entries. A clean re-post after the user deleted threads is appended as its own entry naming the deleted ids (`— <date>, clean re-post after the user deleted 110776–110784: …`). Record the minor-findings comments separately (`minor findings as one general comment per PR: 110797 (!18707), 110798 (!18708)`). If the artifact's header links were emitted earlier in the conversation and lines shifted, re-emit them.
+Mark each reply whose thread was resolved, e.g. `replies on 111595 (comment 3, resolved), 111598 (comment 2, kept active: PO decision pending)`. Append to the row on later batches; never rewrite earlier entries. A clean re-post after the user deleted threads is appended as its own entry naming the deleted ids (`— <date>, clean re-post after the user deleted 110776–110784: …`). Record the minor-findings comments separately (`minor findings as one general comment per PR: 110797 (!18707), 110798 (!18708)`).
+
+Then update the artifact's **status fields** in the same edit (`artifact-protocol` rule 7; for a `pr_feedback_review` they are listed in `/pr-feedback-review` › *6.4 — Status fields*). Every resolved thread's **Status:** line becomes `Resolved (<date>, reply <comment id>)`, and its matrix *State at head* becomes ✅ Fixed (`<sha>`) when it is not already. The header **Status:** counts change to match, and the checklist item that posts the replies is ticked. A thread kept active keeps its state. Finally `grep` the artifact for `⏸` and `Not addressed` and fix every stale hit.
+
+If the artifact's header links were emitted earlier in the conversation and lines shifted, re-emit them.
 
 ---
 
