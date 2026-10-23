@@ -26,19 +26,27 @@ function sync-skills() {
 
 # Pick a Claude Code session with fzf and resume it in its own directory; extra args go to claude
 function claude-resume() {
-  local sessions="$HOME/.terminal/claude/sessions.sh" scope=here prompt='This dir> ' pick
+  local sessions="$HOME/.terminal/claude/sessions.sh" scope=here prompt='This dir> ' out key pick
   # Start with every session when this directory has none
   [[ -d "$HOME/.claude/projects/${PWD//[^[:alnum:]]/-}" ]] || { scope=all; prompt='All> '; }
-  pick="$(
-    bash "$sessions" list "$scope" | fzf --header '[Enter] Resume | [Ctrl-T] This dir / All | [Ctrl-S] Copy id' \
-      --border --border-label ' Resume Claude session ' \
-      --prompt "$prompt" --delimiter='\t' --with-nth=1,2,3 --tiebreak=index \
-      --bind="ctrl-t:transform:[ \"\$FZF_PROMPT\" = 'All> ' ] && echo 'change-prompt(This dir> )+reload(bash $sessions list here)' || echo 'change-prompt(All> )+reload(bash $sessions list all)'" \
-      --bind="ctrl-s:execute-silent(printf %s {2} | (wl-copy 2>/dev/null || xclip -selection clipboard 2>/dev/null || pbcopy 2>/dev/null))+abort" \
-      --preview="bash $sessions preview {4}" \
-      --preview-window wrap --height 50% --layout reverse
+  # Fields: age, short id, branch, label (shown), then id, transcript, cwd
+  out="$(
+    bash "$sessions" list "$scope" | fzf --ansi --header 'enter resume · ctrl-o fork · ctrl-t this dir / all · ctrl-g titles / text · ctrl-s copy id' \
+      --border rounded --border-label ' Resume Claude session ' --preview-border rounded \
+      --color 'border:8,label:6:bold,preview-border:8,preview-label:6:bold,header:8:italic,info:8,separator:8,scrollbar:8' \
+      --color 'prompt:6:bold,pointer:5,marker:5,hl:3:bold,hl+:3:bold,fg+:-1:bold,query:-1:bold' \
+      --prompt "$prompt" --delimiter='\t' --with-nth=1,2,3,4 --no-sort --expect=ctrl-o \
+      --bind='focus:transform-preview-label:printf " %s " {4}' \
+      --bind="ctrl-t:transform:bash $sessions key scope" \
+      --bind="ctrl-g:transform:bash $sessions key mode" \
+      --bind="change:transform:bash $sessions key change" \
+      --bind="ctrl-s:execute-silent(printf %s {5} | (wl-copy 2>/dev/null || xclip -selection clipboard 2>/dev/null || pbcopy 2>/dev/null))+abort" \
+      --preview="bash $sessions preview {6}" \
+      --preview-window 'right,55%,wrap,follow' --height 60% --layout reverse
   )" || return
-  (cd "$(cut -f5 <<< "$pick")" && claude --resume "$(cut -f2 <<< "$pick")" "$@")
+  key="$(head -n 1 <<< "$out")" pick="$(sed -n 2p <<< "$out")"
+  # ctrl-o resumes into a new session id, leaving the original as it was
+  (cd "$(cut -f7 <<< "$pick")" && claude --resume "$(cut -f5 <<< "$pick")" ${key:+--fork-session} "$@")
 }
 
 # Open the claude-mem dashboard in the browser
