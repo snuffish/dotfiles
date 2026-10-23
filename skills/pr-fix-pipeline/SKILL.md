@@ -136,19 +136,23 @@ Stop. Do not implement until the user types `/proceed`.
 
 ## 3. Output Format & Deliverables
 
-Chat response, short:
+Chat response, short. It opens with the two artifacts, each as its full file name (`.md` included) followed by anchors to its main sections, the way every other Command links its artifact:
 
 ```markdown
+📄 [<prefix>-investigation-<suffix>.md](<link>)
+· [TL;DR](<link>#L<n>) · [Run table](<link>#L<n>) · [Confidence Ledger](<link>#L<n>)
+
+📄 [<prefix>-implementation_plan-<suffix>.md](<link>)
+· [Proposed Changes](<link>#L<n>) · [Verification Plan](<link>#L<n>) · [Handover](<link>#L<n>)
+
 **<repo> PR !<id>** — <pipeline> run <runId> ❌ <failing step>
 - Cause: <one line> · class: <class> · ✅/⚠️/❓
 **<repo> PR !<id>** — ✅ green / no PR
 
-📄 [Investigation](<link>) · 📄 [Fix plan](<link>)
-
 Next: <the single unblocking action>. Type `/proceed` to implement.
 ```
 
-Links follow the host link format in the **`artifact-protocol`** protocol.
+Links follow the host link format in the **`artifact-protocol`** protocol. Read the anchor line numbers from the written files (`grep -n '^#\{1,3\} '`), never from the drafts.
 
 ---
 
