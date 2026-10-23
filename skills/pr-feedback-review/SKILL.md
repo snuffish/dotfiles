@@ -122,6 +122,23 @@ Fetch every thread per **`pr-host`** › *Fetch discussion threads*: the Azure D
 
 Save the raw JSON and the filtered human-readable dump to the scratchpad (e.g. `threads.json`, `threads-human.txt`) rather than only printing them. The dump is the single source for Steps 3–5, and in deep mode the sub-agents read it from there instead of re-fetching. Record for each thread its **status**, **file/line**, and the **iteration** it was written against (`pullRequestThreadContext.iterationContext`) — the iteration tells you how far the code may have moved since.
 
+#### Capture the selected code
+
+An inline thread is anchored to the lines the reviewer selected. Quote that selection in the artifact (*6.3* › **Selected code**), so the reader sees what the comment is about without opening the PR. Take it from the commit the reviewer saw, not from head: head shows what the code is *now*, which is the job of *State at head*.
+
+- **Azure DevOps:** the selection is `threadContext.rightFileStart.line` … `rightFileEnd.line` (new side). When only `leftFileStart`/`leftFileEnd` are set, the reviewer selected removed lines on the base side. The commit is the iteration's: map `iterationContext.secondComparingIteration` to that iteration's `sourceRefCommit.commitId` (left side: `commonRefCommit.commitId`). Fetch the iterations once per PR:
+
+  ```bash
+  az devops invoke --org <org-url> --area git --resource pullRequestIterations \
+    --route-parameters project=<project> repositoryId=<repo> pullRequestId=<prId> --api-version 7.1 -o json > iterations.json
+  # filePath starts with '/': strip it
+  git -C <repo> show <iteration-commit>:<filePath-without-leading-slash> | sed -n '<start>,<end>p'
+  ```
+
+- **GitHub:** a review comment carries `path`, `original_commit_id`, `original_start_line` (null for a one-line selection) and `original_line`, plus `side` (`LEFT` = removed lines). Read `git -C <repo> show <original_commit_id>:<path> | sed -n '<start>,<end>p'`. When the commit cannot be read, use the tail of the comment's `diff_hunk`.
+- **Commit unreachable** (the branch was force-pushed and `git fetch origin <sha>` fails): quote the same range at head, and label it `(at head — iteration commit no longer reachable)`.
+- Keep the snippet next to the thread in the dump, so deep-mode sub-agents get it too. Quote up to 20 lines. A longer selection shows its first 20 lines and then `// … <n> more lines`. General threads (no file) have no snippet: omit the field.
+
 ### 2.3 — Pin the head in a snapshot
 
 Threads are assessed against the PR's **remote head** — what reviewers see — never against the iteration they were written on, and never against whatever happens to be checked out locally. That head is materialised in a **detached `git worktree` outside the repo** and everything in Steps 3–5 reads from there, so the user can keep editing the main checkout the whole run. `/pr-feedback-review live …` skips the snapshot and reads the main checkout as-is.
@@ -251,6 +268,10 @@ Always start your response with a clickable link to `<prefix>-pr_feedback_review
 - **Author:** <Name> (<Timestamp>)
 - **Status:** Active / Closed
 - **Location:** `[<file>:<line>]`
+- **Selected code** (`<file>:<start>-<end>` @ `<short-sha>`, iteration <n>; omit for general threads):
+  ```<lang>
+  <the lines the reviewer selected, from Step 2.2 › Capture the selected code>
+  ```
 - **Reviewer Comment:**
   > <Quote of reviewer's comment>
 

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-alias py="python"
+alias py="python3"
