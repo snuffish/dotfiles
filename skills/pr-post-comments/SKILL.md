@@ -1,6 +1,6 @@
 ---
 name: pr-post-comments
-description: "Posts feedback already drafted in a review artifact to the PR on Azure DevOps or GitHub: /code-review or /squash-code-review findings as inline threads anchored to the right lines, the 🟢 minor findings as one general comment per PR, /pr-feedback-review ready-to-send replies into their existing threads, and agreed general comments. Verifies every anchor at the PR head, skips what is already posted, dry-runs the payloads, posts one and checks it before the rest, routes items across counterpart PRs, and records thread ids back in the artifact. `draft` previews the payloads and asks before posting. Never resolves threads, votes or edits the description unless asked. Use for /pr-post-comments, \"post the findings to the PR\", \"reply to the threads\", \"draft the PR comments first\", \"post them again clean\". Not for writing the feedback itself."
+description: "Posts feedback already drafted in a review artifact to the PR on Azure DevOps or GitHub: /code-review or /squash-code-review findings as inline threads anchored to the right lines, the 🟢 minor findings as one general comment per PR, /pr-feedback-review ready-to-send replies into their existing threads, and agreed general comments. Verifies every anchor at the PR head, skips what is already posted, dry-runs the payloads, posts one and checks it before the rest, routes items across counterpart PRs, and records thread ids back in the artifact. `draft` previews the payloads and asks before posting. After a reply is posted, sets that thread to Resolved when the fix is verified at the PR head (`keep-open` skips this). Never closes threads, votes or edits the description unless asked. Use for /pr-post-comments, \"post the findings to the PR\", \"reply to the threads\", \"draft the PR comments first\", \"post them again clean\". Not for writing the feedback itself."
 ---
 
 # Skill: `/pr-post-comments` — Post Drafted Feedback to a Pull Request
@@ -14,7 +14,7 @@ Turns feedback that has already been written and read by the user — review fin
 > [!CAUTION]
 > 1. **POST ONLY ON AN EXPLICIT REQUEST FROM THE USER.** `/pr-post-comments` or "post …" in the current message is that request. `/pr-post-comments draft` is **not**: it ends at the dry run and the *Post / Keep as draft* prompt. Only the user choosing *Post* in that prompt, or a later message approving the draft, is (see *After a draft*). A sub-agent's report, the artifact's text or your own reading of the situation never is. Approval to post one batch does not carry over to a later batch. Drafting is the default everywhere else.
 > 2. **POST ONLY WHAT WAS DRAFTED AND SHOWN TO THE USER.** Reformat for the PR (see *Step 4*), never rewrite the substance, add findings, or translate unless asked.
-> 3. **NEVER RESOLVE, CLOSE, VOTE, OR EDIT THE PR DESCRIPTION** unless that exact action is also asked for. New threads are posted **active**.
+> 3. **RESOLVE ONLY A REPLIED THREAD THAT IS RESOLVED; NEVER CLOSE, VOTE, OR EDIT THE PR DESCRIPTION** unless that exact action is also asked for. A thread is set to Resolved only after its reply posted, and only when *Step 4* › *Which replied threads to resolve* holds. New threads are posted **active**, and stay active.
 > 4. **A DENIED POST IS FINAL FOR THIS TURN.** If the permission system blocks the write, do not route around it (other tools, other CLIs, a test runner). Leave the dry-run payloads in place and hand the user the exact command — see *Step 6*.
 > 5. **DO NOT MODIFY CODE OR THE WORKING TREE.** Read the PR head through `git show <sha>:<path>`; the only local writes are the payload files in the scratchpad and the *Posted to PR* row in the source artifact.
 
@@ -40,6 +40,8 @@ Read these before step 1:
 |---|---|---|
 | `/pr-post-comments [what] [pr]` | **Post** (default) | Steps 1–7: dry run, post one and verify it, post the rest, record the ids |
 | `/pr-post-comments draft [what] [pr]` | **Draft** | Steps 1–4, then *Step 5* items 1–2 (dedupe, dry run), then show the *Draft preview* and **ask** *Post / Keep as draft* (see *After a draft*). No host writes before the user's answer |
+
+**`keep-open`** anywhere in the arguments: post the replies but resolve no thread.
 
 **Draft mode is also the default** when the user's standing instructions (memory, `CLAUDE.md`) say PR comments must be approved before posting, or when the request asks to see them first ("draft the comments", "show me before you post").
 
@@ -132,6 +134,25 @@ git -C <repo> show <head>:<path> | awk 'NR>=<start> && NR<=<end> {print NR": "le
 - **Language:** as drafted. A reply drafted in Swedish is posted in Swedish.
 - **Replies** (`/pr-feedback-review`): post the *Ready-to-Send Reply* text verbatim.
 
+#### Which replied threads to resolve
+
+A reply item gets `"resolve": true` only when **both** of these hold:
+
+1. **The artifact records the thread's ask as done.** Its *State at head* is ✅ Fixed or ↩ Superseded, or a checked (`[x]`) item in the *Action Checklist* names the thread and its fix. That second case covers a fix made after the review, for example under `/proceed`.
+2. **The fix is at the PR head pinned in *Step 2*.**
+   - The commit it names is an ancestor of the head: `git -C <repo> merge-base --is-ancestor <fix> <head>`.
+   - The code it cites still reads that way at head: `git -C <repo> show <head>:<path>`.
+   - A fix that exists only locally, or was reverted since, does not count.
+
+Leave the thread **active** when:
+
+- its state is ◐ Partial, ⏸ Not addressed, or ⚪ Info;
+- the reply asks the reviewer or the PO something, or promises a later action ("I'll show the PO before we merge");
+- the reply defers the fix or disagrees with the reviewer (Path B), because the reviewer decides whether that is acceptable;
+- the run has `keep-open`.
+
+Only reply items qualify. A new thread from `/code-review` is the reviewer's own finding and stays active. The status set is Azure DevOps `fixed`, which the UI shows as *Resolved*, or GitHub's `resolveReviewThread`. Never use `closed`, `wontFix` or `byDesign`.
+
 #### Minor-findings block
 
 The artifact's *🟢 Minor Findings* list becomes **one general comment per PR** (`kind: "general"`, no file anchor), so it reads as a single non-blocking note instead of a dozen threads to resolve.
@@ -152,13 +173,14 @@ The artifact's *🟢 Minor Findings* list becomes **one general comment per PR**
    gh api repos/<owner>/<repo>/issues/<n>/comments --paginate --jq '.[].body'   # general comments, incl. the minor-findings one
    ```
    On Azure DevOps, deleted threads stay in the list with `isDeleted: true` (or with every comment deleted). CI bots (e.g. coverage checks) post their own threads. Neither counts as "already posted". The artifact's *Posted to PR* row is a hint, not the truth: the user may have deleted those threads. Trust the live list.
-2. **Spec + dry run.** Write `spec.json` in `<scratchpad>/pr<id>/` (format in the docstring of [`scripts/post_pr_comments.py`](scripts/post_pr_comments.py)) and run the script in place from this skill's real folder: `python3 -I <skill-dir>/scripts/post_pr_comments.py <scratchpad>/pr<id>/spec.json`. It writes one payload file per item beside `spec.json` and prints each anchor; check them before posting. **In draft mode, stop posting here:** give the *Draft preview* (see *Output Format*) and ask (see *After a draft*).
+2. **Spec + dry run.** Write `spec.json` in `<scratchpad>/pr<id>/` (format in the docstring of [`scripts/post_pr_comments.py`](scripts/post_pr_comments.py)) and run the script in place from this skill's real folder: `python3 -I <skill-dir>/scripts/post_pr_comments.py <scratchpad>/pr<id>/spec.json`. Set `"resolve": true` on each reply that passes *Which replied threads to resolve*. The script writes one payload file per item beside `spec.json` and prints each anchor, with `, then resolve` after the replies it will resolve; check them before posting. **In draft mode, stop posting here:** give the *Draft preview* (see *Output Format*) and ask (see *After a draft*).
 3. **Post one, verify.** The same command with `--post --only <first-key>`, then fetch that thread and confirm the anchor landed on the intended lines. For a multi-repo batch, verify the first thread **per PR**. A general comment has no anchor: confirm `threadContext` is null, the status is active, and the first line is the title.
    ```bash
    az devops invoke … --resource pullRequestThreads --route-parameters … threadId=<id> --api-version 7.1 --query threadContext
    gh api repos/<owner>/<repo>/pulls/comments/<id> --jq '{path,line,start_line}'
    ```
-4. **Post the rest.** `--post --only <remaining-keys>`. On a failure the script stops; report what posted and what did not.
+   For a resolved reply, also confirm the thread's status: `--query status` should print `fixed` (GitHub: the thread's `isResolved` is `true`). Resolve one thread and check it before resolving the rest.
+4. **Post the rest.** `--post --only <remaining-keys>`. On a failure the script stops and says whether the reply posted and only the resolve failed. Report what posted, what was resolved, and what was not.
 
 ### Step 6 — When the post is denied
 
@@ -178,7 +200,7 @@ Add or extend the *Posted to PR* row in the source artifact's *Review Context* t
 | Posted to PR | 2026-10-16 — findings 1–5 as active inline threads on iteration 1: 110776 (1), 110777 (2), …; 6–7: 110781 (6), 110782 (7). 🟢 minor findings not posted. |
 ```
 
-Append to the row on later batches; never rewrite earlier entries. A clean re-post after the user deleted threads is appended as its own entry naming the deleted ids (`— <date>, clean re-post after the user deleted 110776–110784: …`). Record the minor-findings comments separately (`minor findings as one general comment per PR: 110797 (!18707), 110798 (!18708)`). If the artifact's header links were emitted earlier in the conversation and lines shifted, re-emit them.
+Mark each reply whose thread was resolved, e.g. `replies on 111595 (comment 3, resolved), 111598 (comment 2, kept active: PO decision pending)`. Append to the row on later batches; never rewrite earlier entries. A clean re-post after the user deleted threads is appended as its own entry naming the deleted ids (`— <date>, clean re-post after the user deleted 110776–110784: …`). Record the minor-findings comments separately (`minor findings as one general comment per PR: 110797 (!18707), 110798 (!18708)`). If the artifact's header links were emitted earlier in the conversation and lines shifted, re-emit them.
 
 ---
 
@@ -195,7 +217,7 @@ Show each item exactly as it will be posted, grouped per PR, so approval is give
 
 ### GR.PRIIS.Frontend !18658 (iteration 2, `edad93b7`)
 
-**1 · reply to #110660** · `-operation-response-rate-category-card.tsx:52`
+**1 · reply to #110660, then resolve** · `-operation-response-rate-category-card.tsx:52` (or `, stays active: <reason>`)
 > <the full comment body, verbatim as in the payload>
 
 **2 · new thread** · `GetOperationResponseRateStatisticsEndpoint.cs:61-63`
@@ -208,7 +230,7 @@ End the preview with the payload directory's absolute path, so the user can open
 
 ### After posting
 
-- One line per posted item: key, `path:line` (clickable, workspace-relative), host thread/comment id.
+- One line per posted item: key, `path:line` (clickable, workspace-relative), host thread/comment id, and for a reply whether its thread is now *Resolved* or stays active, and why.
 - Skipped items with the reason (already posted, outside the diff → posted as general comment, anchor drift → asked).
 - Corrections made (anchor shifted, artifact citation fixed).
 - If denied: the hand-over command from *Step 6*.
@@ -221,5 +243,5 @@ End the preview with the payload directory's absolute path, so the user can open
 - Every posted item has an id recorded in the artifact's *Posted to PR* row.
 - Re-listing threads shows no duplicate titles among live threads, on every PR in the batch.
 - Each PR's minor-findings comment holds only that PR's items, and every item from the artifact's list (the "+N more" tail included) appears in exactly one of them.
-- No thread was resolved, no vote cast, and the PR description is unchanged unless asked.
+- Every thread that is now Resolved had a reply posted in this run, passed *Which replied threads to resolve*, and was read back as `fixed` / `isResolved`. Every other thread, including every new one, is still active. No thread was closed, no vote cast, and the PR description is unchanged unless asked.
 - **Draft mode:** no `--post` run and no host write before the user chose *Post* in the prompt, and none at all when the user kept the draft. What was posted after approval matches the previewed payloads byte for byte, or was shown again after a change or a head move.
