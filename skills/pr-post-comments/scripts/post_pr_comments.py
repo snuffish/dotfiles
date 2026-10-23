@@ -14,12 +14,15 @@ spec.json:
       {"key": "6", "kind": "thread", "path": "/src/Foo.cs", "start": 122, "end": 125, "end_offset": 117,
        "change_tracking_id": 10, "body": "**🟡 ...**"},
       {"key": "r1", "kind": "reply", "thread_id": 110776, "body_file": "reply-r1.md"},
+      {"key": "r2", "kind": "reply", "thread_id": 110777, "body_file": "reply-r2.md", "resolve": true},
       {"key": "g1", "kind": "general", "body": "..."}
     ]
   }
 
 "body_file" is resolved relative to spec.json. "end_offset" and "change_tracking_id" are Azure DevOps only;
 GitHub ignores them and anchors on the RIGHT side of "commit".
+"resolve" (replies only) sets the thread to Resolved once the reply is posted: Azure DevOps status "fixed",
+GitHub resolveReviewThread on the review thread whose first comment is "thread_id".
 """
 import json
 import os
@@ -88,11 +91,60 @@ def github_command(cfg, item, payload_path):
     return ["gh", "api", endpoint, "--method", "POST", "--input", payload_path, "--jq", ".id"]
 
 
+GITHUB_THREADS_QUERY = """
+query($owner: String!, $name: String!, $pr: Int!, $endCursor: String) {
+  repository(owner: $owner, name: $name) {
+    pullRequest(number: $pr) {
+      reviewThreads(first: 100, after: $endCursor) {
+        pageInfo { hasNextPage endCursor }
+        nodes { id comments(first: 1) { nodes { databaseId } } }
+      }
+    }
+  }
+}"""
+
+GITHUB_RESOLVE_MUTATION = "mutation($id: ID!) { resolveReviewThread(input: {threadId: $id}) { thread { isResolved } } }"
+
+
+def run(command):
+    result = subprocess.run(command, capture_output=True, text=True)
+    if result.returncode != 0:
+        raise RuntimeError(result.stderr.strip())
+    return result.stdout.strip()
+
+
+def resolve_ado(cfg, item, base):
+    status_path = os.path.join(base, f"payload-{item['key']}-resolve.json")
+    with open(status_path, "w", encoding="utf-8") as f:
+        json.dump({"status": "fixed"}, f)
+    route = [f"project={cfg['project']}", f"repositoryId={cfg['repo']}", f"pullRequestId={cfg['pr']}",
+             f"threadId={item['thread_id']}"]
+    return run([
+        "az", "devops", "invoke", "--org", cfg["org"], "--area", "git", "--resource", "pullRequestThreads",
+        "--route-parameters", *route, "--http-method", "PATCH", "--in-file", status_path,
+        "--api-version", "7.1", "--query", "status", "-o", "tsv",
+    ])
+
+
+def resolve_github(cfg, item):
+    owner, name = cfg["repo"].split("/", 1)
+    pages = run(["gh", "api", "graphql", "--paginate", "-F", f"owner={owner}", "-F", f"name={name}",
+                 "-F", f"pr={cfg['pr']}", "-f", f"query={GITHUB_THREADS_QUERY}",
+                 "--jq", ".data.repository.pullRequest.reviewThreads.nodes[] | [.id, .comments.nodes[0].databaseId] | @tsv"])
+    node_id = next((line.split("\t")[0] for line in pages.splitlines()
+                    if line.split("\t")[1] == str(item["thread_id"])), None)
+    if node_id is None:
+        raise RuntimeError(f"no review thread starts with comment {item['thread_id']}")
+    resolved = run(["gh", "api", "graphql", "-F", f"id={node_id}", "-f", f"query={GITHUB_RESOLVE_MUTATION}",
+                    "--jq", ".data.resolveReviewThread.thread.isResolved"])
+    return "resolved" if resolved == "true" else f"isResolved={resolved}"
+
+
 def describe(item):
     if item["kind"] == "thread":
         return f"thread  {item['path']}:{item['start']}-{item['end']}"
     if item["kind"] == "reply":
-        return f"reply   -> thread {item['thread_id']}"
+        return f"reply   -> thread {item['thread_id']}" + (", then resolve" if item.get("resolve") else "")
     return "general"
 
 
@@ -111,6 +163,9 @@ def main():
     for item in spec["items"]:
         if only is not None and item["key"] not in only:
             continue
+        if item.get("resolve") and item["kind"] != "reply":
+            print(f"[{item['key']}] 'resolve' is only allowed on replies; new threads are posted active")
+            sys.exit(2)
         payload = ado_payload(item, cfg.get("iteration")) if host == "ado" else github_payload(item, cfg.get("commit"))
         payload_path = os.path.join(base, f"payload-{item['key']}.json")
         with open(payload_path, "w", encoding="utf-8") as f:
@@ -124,6 +179,13 @@ def main():
             print(f"    FAILED: {result.stderr.strip()}")
             sys.exit(1)
         print(f"    posted id {result.stdout.strip()}")
+        if item.get("resolve"):
+            try:
+                status = resolve_ado(cfg, item, base) if host == "ado" else resolve_github(cfg, item)
+            except RuntimeError as error:
+                print(f"    reply posted, but RESOLVE FAILED: {error}")
+                sys.exit(1)
+            print(f"    thread {item['thread_id']} -> {status}")
     if not post:
         print("Dry run only. Re-run with --post to create them.")
 
