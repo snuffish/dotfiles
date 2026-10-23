@@ -24,9 +24,20 @@ function sync-skills() {
   fi
 }
 
+# The pid of a running claude that has session $1 open (Claude Code keeps ~/.claude/sessions/<pid>.json for each);
+# fails when none has. A second claude on a session that is still open gets suspended as it starts
+function _claude_open_pid() {
+  local f pid
+  while IFS= read -r f; do
+    pid=${f##*/}; pid=${pid%.json}
+    kill -0 "$pid" 2>/dev/null && { echo "$pid"; return 0; }
+  done < <(grep -rlF --include='*.json' "\"sessionId\":\"$1\"" "$HOME/.claude/sessions" 2>/dev/null)
+  return 1
+}
+
 # Pick a Claude Code session with fzf and resume it in its own directory; extra args go to claude
 function claude-resume() {
-  local sessions="$HOME/.terminal/claude/sessions.sh" scope=here prompt='This dir> ' out key pick
+  local sessions="$HOME/.terminal/claude/sessions.sh" scope=here prompt='This dir> ' out key pick id pid
   # Start with every session when this directory has none
   [[ -d "$HOME/.claude/projects/${PWD//[^[:alnum:]]/-}" ]] || { scope=all; prompt='All> '; }
   # Fields: age, short id, branch, label (shown), then id, transcript, cwd
@@ -44,9 +55,13 @@ function claude-resume() {
       --preview="bash $sessions preview {6}" \
       --preview-window 'right,55%,wrap,follow' --height 60% --layout reverse
   )" || return
-  key="$(head -n 1 <<< "$out")" pick="$(sed -n 2p <<< "$out")"
-  # ctrl-o resumes into a new session id, leaving the original as it was
-  (cd "$(cut -f7 <<< "$pick")" && claude --resume "$(cut -f5 <<< "$pick")" ${key:+--fork-session} "$@")
+  key="$(head -n 1 <<< "$out")" pick="$(sed -n 2p <<< "$out")" id="$(cut -f5 <<< "$pick")"
+  # ctrl-o resumes into a new session id, leaving the original as it was; so does a session still open elsewhere
+  if [[ -z "$key" ]] && pid="$(_claude_open_pid "$id")"; then
+    echo "Session ${id:0:8} is open in claude (pid $pid): resuming a fork of it" >&2
+    key=fork
+  fi
+  (cd "$(cut -f7 <<< "$pick")" && claude --resume "$id" ${key:+--fork-session} "$@")
 }
 
 # Open the claude-mem dashboard in the browser
@@ -60,4 +75,45 @@ function cm() {
   esac
 }
 
+# Search claude-mem's memories, session summaries and your prompts with fzf: enter prints one, ctrl-o resumes the
+# session it came from (extra args go to claude)
+function claude-mem-search() {
+  local mem="$HOME/.terminal/claude/memory.sh" scope=here prompt='Memories · This project> ' project out key pick cwd sid pid
+  project="$(bash "$mem" project)" || return
+  # Start with every record when claude-mem never saw this directory
+  [[ -n "$project" ]] || { scope=all; prompt='Memories · All> '; }
+  # Fields: age, type, ref, label (shown), then ref, Claude session id
+  out="$(
+    bash "$mem" list memories "$scope" | fzf --ansi \
+      --header $'enter print · ctrl-o resume · ctrl-y copy ref · ctrl-r reveal\nctrl-s memories / summaries / prompts · ctrl-t scope · ctrl-g text' \
+      --border rounded --border-label " Search claude-mem${project:+ · $project} " --preview-border rounded \
+      --color 'border:8,label:6:bold,preview-border:8,preview-label:6:bold,header:8:italic,info:8,separator:8,scrollbar:8' \
+      --color 'prompt:6:bold,pointer:5,marker:5,hl:3:bold,hl+:3:bold,fg+:-1:bold,query:-1:bold' \
+      --prompt "$prompt" --delimiter='\t' --with-nth=1,2,3,4 --tabstop=1 --no-sort --expect=ctrl-o \
+      --bind='focus:transform-preview-label:printf " %s " {5}' \
+      --bind="ctrl-s:transform:bash $mem key source" \
+      --bind="ctrl-t:transform:bash $mem key scope" \
+      --bind="ctrl-g:transform:bash $mem key mode" \
+      --bind="change:transform:bash $mem key change" \
+      --bind="ctrl-y:execute-silent(printf %s {5} | (wl-copy 2>/dev/null || xclip -selection clipboard 2>/dev/null || pbcopy 2>/dev/null))+abort" \
+      --bind="ctrl-r:change-preview(bash $mem preview {5} reveal)" \
+      --preview="bash $mem preview {5}" \
+      --preview-window 'right,55%,wrap' --height 60% --layout reverse
+  )" || return
+  key="$(head -n 1 <<< "$out")" pick="$(sed -n 2p <<< "$out")"
+  if [[ -z "$key" ]]; then
+    bash "$mem" show "$(cut -f5 <<< "$pick")"
+    return
+  fi
+  sid="$(cut -f6 <<< "$pick")"
+  [[ -n "$sid" ]] || { echo "No Claude session recorded for $(cut -f5 <<< "$pick")" >&2; return 1; }
+  cwd="$(bash "$mem" session "$sid")" || return
+  if pid="$(_claude_open_pid "$sid")"; then
+    echo "Session ${sid:0:8} is open in claude (pid $pid): resuming a fork of it" >&2
+    set -- --fork-session "$@"
+  fi
+  (cd "$cwd" && claude --resume "$sid" "$@")
+}
+
 alias cr="claude-resume"
+alias cms="claude-mem-search"
