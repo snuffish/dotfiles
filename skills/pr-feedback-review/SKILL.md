@@ -31,8 +31,23 @@ Read these before step 1:
 - `../_modules/git-worktrees.md`: snapshot by default
 - `../_modules/pr-counterpart.md`
 - `../_modules/pr-host.md`
+- `../_modules/project-profile.md`: base profile only (no Command profile); reads *Tracker*, *PR tooling*, *Pattern skills per layer*, *Contract touchpoints*, *Report language* and *Known drift*
 
 - Without a handed-in `[worktree-context]` block, the repo root is the snapshot this skill creates in *Step 2.3*.
+
+---
+
+## Project profile
+
+Before Step 1, load the project's base profile `<project>-profile` with the Skill tool when the workspace matches its `[Project: …]` gate (`project-profile` › *Discovery*; e.g. `priis-profile` in the GR workspace). There is no `pr-feedback-review-<project>-profile`. Resolve the fields named in *Modules* per `project-profile` › *Resolution order*:
+
+- **Tracker** and **PR tooling** pick the org URL, repository ids and the thread-fetch tool for Steps 1–2, ahead of `pr-host`'s generic order.
+- **Pattern skills per layer** names the skills to load for the layer a thread is about (Step 3).
+- **Contract touchpoints** is the list Step 3 and the *Impact* axis check a suggested change against.
+- **Report language** sets the language of the artifact and the drafted replies (*Heuristics* › *Match the language*).
+- **Known drift** tells which rulebook or skill claims to distrust when a thread cites them.
+
+A profile adds facts; it never relaxes this skill's invariants (read-only, snapshot, no posting). Name the loaded profile in the artifact header's **Profile** line, or write "none" when no profile matches.
 
 ---
 
@@ -245,6 +260,7 @@ Always start your response with a clickable link to `<prefix>-pr_feedback_review
 > **Read from:** snapshot of `origin/<source>` @ `<short-sha>` (removed) / (kept at <path>) / live checkout of `<branch>`  
 > **Local checkout:** on `<branch>` — same commit / local ahead <n> / behind <n> / PR branch not checked out  
 > **Mode:** standard / deep  
+> **Profile:** `<project>-profile` / none (*Project profile*)  
 > **Status:** Active / Needs Attention — <votes>, <n> threads active, <n> resolved  
 > **Reviewers:**  
 > - **<Reviewer Name>:** `<Vote / Status>`
