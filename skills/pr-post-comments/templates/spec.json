@@ -1,0 +1,45 @@
+{
+  "host": "ado",
+  "ado": {
+    "org": "https://dev.azure.com/<org>",
+    "project": "<project>",
+    "repo": "<repo-name-or-guid>",
+    "pr": "<pr-id>",
+    "iteration": "<iteration>"
+  },
+  "github": {
+    "repo": "<owner>/<name>",
+    "pr": "<pr-number>",
+    "commit": "<head-sha>"
+  },
+  "items": [
+    {
+      "key": "6",
+      "kind": "thread",
+      "path": "/<path/to/File.cs>",
+      "start": "<start-line>",
+      "end": "<end-line>",
+      "end_offset": "<end-line-length-plus-1>",
+      "change_tracking_id": "<change-tracking-id>",
+      "body": "<finding-markdown>"
+    },
+    {
+      "key": "r1",
+      "kind": "reply",
+      "thread_id": "<thread-id>",
+      "body_file": "<reply-r1.md>"
+    },
+    {
+      "key": "r2",
+      "kind": "reply",
+      "thread_id": "<thread-id>",
+      "body_file": "<reply-r2.md>",
+      "resolve": true
+    },
+    {
+      "key": "g1",
+      "kind": "general",
+      "body": "<general-comment-markdown>"
+    }
+  ]
+}
