@@ -70,14 +70,15 @@ When investigating, explaining, refining, or troubleshooting:
 ## Skill gaps
 
 When a skill from this registry led you wrong, report it so the file gets fixed instead of remembered. Raise a gap only when:
-- a fact in a loaded Command, Module, Profile or Reference contradicts the code, the tools or their output, or
+- a fact in a loaded Command, Module, Profile or Reference contradicts the code, the tools or their output,
+- you changed, wrapped or worked around a command or script a skill gave you to make it work (an added flag, a prefix, an edited argument), or
 - the user corrected something a skill told you to do.
 
 Exploring what a skill never claimed to cover is not a gap.
 
 Scope: only skills whose `realpath` is under `~/.terminal/skills`. A skill that lives elsewhere (e.g. a repo's `.claude/skills/`) follows its own rules.
 
-Finish the task, then end with one block per gap:
+**Log a gap when you notice it, not at the end.** Write its file (below) before the next step of the task, even when the workaround already got you past it: a gap noted in passing is lost by the end of a long task. Then finish the task, and end with one block per gap you logged:
 
 ```markdown
 **Skill gap (<skill>):** <what it missed or got wrong>
