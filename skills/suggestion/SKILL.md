@@ -145,7 +145,7 @@ The artifact may run long but never pads.
 
 ### `/suggestion deep` — chat response
 
-Format all links per the **`artifact-protocol`** (workspace-relative in Claude Code, `file://` absolute in Antigravity). Get the anchor line numbers with `grep -n '^#\{1,3\} ' <artifact>` after the final write — re-run it if you edit the artifact again.
+Format all links per the **`artifact-protocol`** (`file://` absolute in Antigravity, workspace-relative in the Claude Code IDE extension, an `antigravity-ide://` editor URL in the Claude Code terminal CLI). Get the anchor line numbers with `grep -n '^#\{1,3\} ' <artifact>` after the final write — re-run it if you edit the artifact again.
 
 ```markdown
 📄 **[claude-<model>-suggestion-<suffix>.md](claude-<model>-suggestion-<suffix>.md)**

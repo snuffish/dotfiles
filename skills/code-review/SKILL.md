@@ -371,7 +371,7 @@ Runs only with the `feedback` modifier, and only **after** Step 6. The findings 
 
 ### Artifact Links
 
-Format all chat links and section anchors according to the **`artifact-protocol`** protocol (`file://` absolute for Antigravity IDE, workspace-relative for Claude Code, `#L<line>` line fragments for chat).
+Format all chat links and section anchors according to the **`artifact-protocol`** protocol (`file://` absolute for Antigravity IDE, workspace-relative in the Claude Code IDE extension, an `antigravity-ide://` editor URL in the Claude Code terminal CLI).
 
 - **Fragment format for INTRA-DOCUMENT links inside markdown files**:
   Internal links *within* the document itself (such as the summary table, finding links, or links to plain terms) must NEVER use `#L<line>`! They are rendered by Markdown Preview and browser HTML renderers, which navigate using HTML anchor tags. Always use semantic HTML anchors `<a id="..."></a>` (e.g., `<a id="finding-1"></a>`, `<a id="finding-1-plain"></a>`, `<a id="minor-findings"></a>`) and links `[1](#finding-1)` / `[plain](#finding-1-plain)` / `[Minor Findings](#minor-findings)`.

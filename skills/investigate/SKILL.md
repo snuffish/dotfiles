@@ -61,7 +61,7 @@ When the user runs `/investigate` without instructions:
      ```markdown
      Here is the active investigation:
 
-     📄 **[<prefix>-investigation-<suffix>.md](file://<workspace-root>/<prefix>-investigation-<suffix>.md)** (or relative link under Claude Code)
+     📄 **[<prefix>-investigation-<suffix>.md](file://<workspace-root>/<prefix>-investigation-<suffix>.md)** (or the Claude Code link format from `artifact-protocol`)
 
      ### Key Sections:
      - 📄 [TL;DR](file://<workspace-root>/<prefix>-investigation-<suffix>.md#L16)
