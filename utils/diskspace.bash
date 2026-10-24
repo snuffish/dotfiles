@@ -335,7 +335,8 @@ _diskspace_limits() {
       _ds_limit_warn "systemd journal has no size cap (currently $(journalctl --disk-usage 2>/dev/null | grep -oE '[0-9.]+[KMGT]' | head -n 1))" \
         "sudo mkdir -p /etc/systemd/journald.conf.d" \
         "printf '[Journal]\\nSystemMaxUse=500M\\n' | sudo tee /etc/systemd/journald.conf.d/size.conf" \
-        "sudo systemctl restart systemd-journald"
+        "sudo systemctl restart systemd-journald" \
+        "sudo journalctl --vacuum-size=500M"
     fi
   fi
 
@@ -346,10 +347,12 @@ _diskspace_limits() {
       _ds_limit_ok "pacman cache is pruned automatically (paccache)"
     elif command -v paccache >/dev/null 2>&1; then
       _ds_limit_warn "pacman cache is never pruned ($(_ds_fmt_kb "$(_ds_dir_kb /var/cache/pacman/pkg)"))" \
-        "sudo systemctl enable --now paccache.timer"
+        "sudo systemctl enable --now paccache.timer" \
+        "sudo paccache -rk1"
     else
       _ds_limit_warn "pacman cache is never pruned ($(_ds_fmt_kb "$(_ds_dir_kb /var/cache/pacman/pkg)"))" \
-        "sudo pacman -S pacman-contrib && sudo systemctl enable --now paccache.timer"
+        "sudo pacman -S --needed pacman-contrib && sudo systemctl enable --now paccache.timer" \
+        "sudo paccache -rk1"
     fi
   fi
 
@@ -373,8 +376,9 @@ _diskspace_limits() {
       _ds_limit_ok "Docker build cache GC is configured ($cfg)"
     else
       _ds_limit_warn "Docker build cache grows without limit" \
-        "Add to $cfg:  \"builder\": { \"gc\": { \"enabled\": true, \"defaultKeepStorage\": \"10GB\" } }" \
-        "Then restart the Docker daemon"
+        "Add to $cfg (merge with existing JSON, preserving data-root if present):" \
+        "  \"builder\": { \"gc\": { \"enabled\": true, \"defaultKeepStorage\": \"10GB\" } }" \
+        "sudo systemctl restart docker"
     fi
   fi
 
@@ -450,6 +454,7 @@ maven|regen|user|any|Maven repository (~/.m2/repository)
 xcode|regen|user|mac|Xcode DerivedData
 trash|regen|user|any|User Trash
 pacman|regen|sudo|linux|pacman package cache
+aur|regen|user|linux|AUR build cache & packages (~/.cache/yay, ~/.cache/paru)
 snaprev|regen|sudo|linux|Disabled snap revisions
 journal|regen|sudo|linux|systemd journal (vacuum to 500M)
 jetbrains|state|user|any|Old JetBrains IDE versions (settings, plugins, caches)
@@ -549,7 +554,34 @@ _ds_probe_gradle()     { _ds_dir_kb "$HOME/.gradle/caches"; }
 _ds_probe_maven()      { _ds_dir_kb "$HOME/.m2/repository"; }
 _ds_probe_xcode()      { _ds_dir_kb "$HOME/Library/Developer/Xcode/DerivedData"; }
 _ds_probe_trash()      { _ds_dir_kb "$HOME/.Trash" "$HOME/.local/share/Trash"; }
-_ds_probe_pacman()     { command -v pacman >/dev/null 2>&1 && _ds_dir_kb /var/cache/pacman/pkg || echo 0; }
+_ds_probe_pacman() {
+  command -v pacman >/dev/null 2>&1 || { echo 0; return; }
+  if command -v paccache >/dev/null 2>&1; then
+    local out
+    out=$( { paccache -d -k 1 2>/dev/null; paccache -d -u -k 0 2>/dev/null; } | awk '
+      /disk space saved:/ {
+        for (i = 1; i <= NF; i++) {
+          if ($i ~ /^[0-9.]+$/ && $(i+1) ~ /^[KMGTkmgt]/) {
+            val = $i + 0
+            u = toupper(substr($(i+1), 1, 1))
+            m = (u == "T") ? 1024^3 : (u == "G") ? 1024^2 : (u == "M") ? 1024 : 1
+            total += val * m
+          }
+        }
+      }
+      END { printf "%d\n", total }
+    ')
+    echo "${out:-0}"
+    return
+  fi
+  _ds_dir_kb /var/cache/pacman/pkg
+}
+_ds_probe_aur() {
+  local kb=0
+  [[ -d "$HOME/.cache/yay" ]] && kb=$((kb + $(_ds_dir_kb "$HOME/.cache/yay")))
+  [[ -d "$HOME/.cache/paru" ]] && kb=$((kb + $(_ds_dir_kb "$HOME/.cache/paru")))
+  echo "$kb"
+}
 _ds_probe_journal() {
   command -v journalctl >/dev/null 2>&1 || { echo 0; return; }
   local kb
@@ -584,9 +616,9 @@ _ds_probe_nvm() {
 # --- Sudo hints (printed instead of running when --sudo isn't given) ----------
 _ds_hint_pacman() {
   if command -v paccache >/dev/null 2>&1; then
-    echo "sudo paccache -rk2 && sudo paccache -ruk0"
+    echo "sudo paccache -rk1 && sudo paccache -ruk0"
   else
-    echo "sudo pacman -Sc   (or install pacman-contrib for: sudo paccache -rk2)"
+    echo "sudo pacman -Sc   (or install pacman-contrib for: sudo paccache -rk1)"
   fi
 }
 _ds_hint_snaprev() {
@@ -691,13 +723,31 @@ _ds_clean_trash() {
 }
 
 _ds_clean_pacman() {
-  _ds_step "Pruning pacman package cache"
+  _ds_step "Pruning pacman package cache (keeping 1 version)"
   if command -v paccache >/dev/null 2>&1; then
-    sudo paccache -rk2 && sudo paccache -ruk0
+    sudo paccache -rk1 && sudo paccache -ruk0
   else
     sudo pacman -Sc --noconfirm
   fi
   _ds_done "pacman cache pruned."
+}
+
+_ds_clean_aur() {
+  _ds_step "Cleaning AUR helper cache (yay/paru)"
+  if command -v yay >/dev/null 2>&1; then
+    yay -Sc --noconfirm 2>/dev/null || true
+  fi
+  if command -v paru >/dev/null 2>&1; then
+    paru -Sc --noconfirm 2>/dev/null || true
+  fi
+  # Clean unneeded build directories and sources
+  local d
+  for d in "$HOME/.cache/yay" "$HOME/.cache/paru"; do
+    if [[ -d "$d" ]]; then
+      find "$d" -mindepth 2 -maxdepth 2 -type d \( -name src -o -name pkg \) -exec rm -rf {} + 2>/dev/null || true
+    fi
+  done
+  _ds_done "AUR cache cleaned."
 }
 
 _ds_clean_snaprev() {
@@ -766,7 +816,7 @@ _diskspace_clean() {
         echo "  --dry-run   Preview all reclaimable space without deleting anything"
         echo "  --all       Clean all regenerable caches with a single confirmation prompt"
         echo "  --docker    Clean Docker unused images, stopped containers & build cache only"
-        echo "  --pkg       Clean npm, pnpm, yarn, and NuGet package caches"
+        echo "  --pkg       Clean npm, pnpm, yarn, NuGet, and AUR (yay/paru) package caches"
         echo "  --sudo      Also run 🔒 items (asks for your password once, up front)"
         echo "  --yes, -y   Skip the --all confirmation prompt"
         echo ""
@@ -868,7 +918,7 @@ _diskspace_clean() {
     pkg)
       for entry in "${items[@]}"; do
         _ds_parse_item "$entry"
-        [[ "$_it_id" =~ ^(npm|pnpm|yarn|nuget)$ ]] && selected+=("$entry")
+        [[ "$_it_id" =~ ^(npm|pnpm|yarn|nuget|aur)$ ]] && selected+=("$entry")
       done
       ;;
     all)
@@ -1032,7 +1082,7 @@ diskspace() {
       echo "  diskspace clean --dry-run     Size-sorted list of reclaimable space with totals"
       echo "  diskspace clean --all         Clean all regenerable caches (add --sudo, --yes as needed)"
       echo "  diskspace clean --docker      Clean Docker images, stopped containers and build cache only"
-      echo "  diskspace clean --pkg         Clean npm, pnpm, yarn, and NuGet package caches"
+      echo "  diskspace clean --pkg         Clean npm, pnpm, yarn, NuGet, and AUR (yay/paru) package caches"
       echo "  diskspace clean --help        All clean options and markers"
       echo "  diskspace help storage        How to move Docker/Ollama data to another disk"
       echo "  diskspace help                Show this help message"
