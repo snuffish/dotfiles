@@ -1,6 +1,6 @@
 ---
 name: refine
-description: "Audits existing, working code for odd behaviour, code smells and missed improvements, checked against the project's skills and against decisions recorded in past conversations, and proposes a refinement plan that waits for approval. Use for /refine, \"anything odd about this code?\", \"find code smells in X\", \"what would you improve here?\". Not for something failing now (/problem), removing dead code (/clean), readability rewrites (/expressive), or reviewing a diff or PR (/code-review)."
+description: "\"Audits existing, working code for odd behaviour, code smells and missed improvements, checked against the project's skills and against decisions recorded in past conversations, and proposes a refinement plan that waits for approval. Use for /refine, \\\"anything odd about this code?\\\", \\\"find code smells in X\\\", \\\"what would you improve here?\\\"..\"."
 ---
 
 # Skill: `/refine` — Code Refinement & Historical Alignment

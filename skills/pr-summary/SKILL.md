@@ -1,6 +1,6 @@
 ---
 name: pr-summary
-description: "Writes a pull request description from the branch's actual diff, following the repo's PR template and conventions, with the work-item reference. Preview by default: prints a paste-ready block and changes nothing. `update` first commits and pushes the branch's pending work, then replaces the live PR's description on Azure DevOps or GitHub and adds the labels the project profile requires. Use for /pr-summary, \"write the PR description\", \"summarize this branch for the PR\", \"update the PR description\". Not for reviewing the change (/code-review)."
+description: "\"Writes a pull request description from the branch's actual diff, following the repo's PR template and conventions, with the work-item reference. Preview by default: prints a paste-ready block and changes nothing. `update` first commits and pushes the branch's pending work, then replaces the live PR's description on Azure DevOps or GitHub and adds the labels the project profile requires. Use for /pr-summary, \\\"write the PR description\\\", \\\"summarize this branch for the PR\\\", \\\"update the PR description\\\"..\"."
 argument-hint: "[update] [branch | base]"
 ---
 

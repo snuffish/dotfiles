@@ -1,6 +1,6 @@
 ---
 name: manual-testing
-description: Writes a runnable manual test plan artifact (<prefix>-manual_test_plan-<suffix>.md) for the current branch, a PR or a work item — environment setup, blocking gotchas, test logins, seeded records, risk-ordered click-path scenarios with checkboxes, a regression watchlist and what cannot be tested by hand. Reads the PR description, linked work item and acceptance criteria first, finds the counterpart PR in a sibling repo, then derives every scenario from the actual diff. Trigger on /manual-testing, "how do I try this out", "how do I test this branch/PR", "which credentials do I log in with", "what should I click to see this".
+description: "Writes a runnable manual test plan artifact (<prefix>-manual_test_plan-<suffix>.md) for the current branch, a PR or a work item — environment setup, blocking gotchas, test logins, seeded records, risk-ordered click-path scenarios with checkboxes, a regression watchlist and what cannot be tested by hand. Reads the PR description, linked work item and acceptance criteria first, finds the counterpart PR in a sibling repo, then derives every scenario from the actual diff. Trigger on /manual-testing, \"how do I try this out\", \"how do I test this branch/PR\", \"which credentials do I log in with\", \"what should I click to see this\"."
 ---
 
 # Skill: `/manual-testing` — Manual Test Plan From the Diff

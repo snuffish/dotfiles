@@ -1,6 +1,6 @@
 ---
 name: commit
-description: Stages changed files, runs documented pre-commit gates (formatters, linters, tests), formats commit messages matching repo conventions (Conventional Commits or branch work-item prefix), and pushes to upstream. Refuses commits on default branches or detached HEAD.
+description: "Stages changed files, runs documented pre-commit gates (formatters, linters, tests), formats commit messages matching repo conventions (Conventional Commits or branch work-item prefix), and pushes to upstream. Refuses commits on default branches or detached HEAD."
 argument-hint: "[no-push] [message or intent] [paths…]"
 ---
 

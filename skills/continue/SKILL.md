@@ -1,6 +1,6 @@
 ---
 name: continue
-description: Resumes interrupted work from transcripts, artifacts, memory, and git state without repeating completed actions.
+description: "Resumes interrupted work from transcripts, artifacts, memory, and git state without repeating completed actions."
 disable-model-invocation: true
 argument-hint: "[artifact | branch | work-item id | memory id | extra instructions]"
 ---

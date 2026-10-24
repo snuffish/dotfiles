@@ -1,6 +1,6 @@
 ---
 name: problem
-description: "Diagnoses something that is failing now: an error message, a failing build, lint or test, a crash, or behaviour that \"stopped working\", often after a recent change. Audits git status and recent commits, logs, the active files and past conversation transcripts, finds the root cause, writes a fix plan and fixes only after approval. Use for /problem, \"this is broken\", \"why does this fail?\", \"I get this error\", \"the tests fail after your change\". Not for a red CI pipeline on a PR (/pr-fix-pipeline), researching a change that does not exist yet (/investigate), or auditing code that works (/refine)."
+description: "\"Diagnoses something that is failing now: an error message, a failing build, lint or test, a crash, or behaviour that \\\"stopped working\\\", often after a recent change. Audits git status and recent commits, logs, the active files and past conversation transcripts, finds the root cause, writes a fix plan and fixes only after approval. Use for /problem, \\\"this is broken\\\", \\\"why does this fail?\\\", \\\"I get this error\\\", \\\"the tests fail after your change\\\"..\"."
 ---
 
 # Skill: `/problem` — Troubleshooting, Diagnostics & Context Recovery

@@ -1,6 +1,6 @@
 ---
 name: squash-code-review
-description: Squashes and reconciles multiple code review artifacts for the same change into a single verified report. Resolves conflicting findings by verifying against code at the PR head, integrates active PR comment threads, and produces a deduplicated findings matrix.
+description: "Squashes and reconciles multiple code review artifacts for the same change into a single verified report. Resolves conflicting findings by verifying against code at the PR head, integrates active PR comment threads, and produces a deduplicated findings matrix."
 ---
 
 # Skill: `/squash-code-review` — Squash Code Reviews

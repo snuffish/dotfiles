@@ -1,6 +1,6 @@
 ---
 name: modern-csharp
-description: General C# 14 idioms and best practices — collection expressions, primary constructors, records, sealed classes, extension blocks, pattern matching, nullable reference types, and comment/XML-doc conventions. Load when writing or reviewing C# code in any C# project.
+description: "General C# 14 idioms and best practices — collection expressions, primary constructors, records, sealed classes, extension blocks, pattern matching, nullable reference types, and comment/XML-doc conventions. Load when writing or reviewing C# code in any C# project."
 ---
 
 # Modern C# 14 Idioms and Best Practices

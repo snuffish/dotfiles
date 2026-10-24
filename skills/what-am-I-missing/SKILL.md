@@ -1,6 +1,6 @@
 ---
 name: what-am-I-missing
-description: "Finds the single most important blind spot in an approach that is already chosen (a plan, design, fix or decision): the hidden assumption, edge case, failure mode or architectural consequence most likely to hurt, with its trigger, impact and fix. Answers in chat; `deep`, or a call from /implement-feature, writes `<prefix>-what_am_i_missing-<suffix>.md`. Use for /what-am-I-missing, \"what am I missing here?\", \"is there a hidden trap?\", \"sanity check this approach\", \"what could go wrong?\". Not for choosing between options (/suggestion), checking stated claims against docs (/verify-assumptions), or reviewing a diff (/code-review)."
+description: "\"Finds the single most important blind spot in an approach that is already chosen (a plan, design, fix or decision): the hidden assumption, edge case, failure mode or architectural consequence most likely to hurt, with its trigger, impact and fix. Answers in chat; `deep`, or a call from /implement-feature, writes `<prefix>-what_am_i_missing-<suffix>.md`. Use for /what-am-I-missing, \\\"what am I missing here?\\\", \\\"is there a hidden trap?\\\", \\\"sanity check this approach\\\", \\\"what could go wrong?\\\"..\"."
 ---
 
 # Skill: `/what-am-I-missing` — Blind Spot & Critical Omission Detector

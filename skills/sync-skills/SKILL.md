@@ -1,6 +1,6 @@
 ---
 name: sync-skills
-description: Lints the skills registry, verifies links and Modules, syncs ~/.claude/skills symlinks, and audits .agents/skills.json.
+description: "Lints the skills registry, verifies links and Modules, syncs ~/.claude/skills symlinks, and audits .agents/skills.json."
 disable-model-invocation: true
 ---
 

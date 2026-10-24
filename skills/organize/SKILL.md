@@ -1,6 +1,6 @@
 ---
 name: organize
-description: Guides, designs, and executes safe, systematic codebase directory and file reorganization. Resolves mixed concerns, isolates static assets and datasets, extracts cross-cutting utilities and component-internal hooks, splits kitchen-sink helpers into focused modules, realigns C# namespaces and TypeScript barrel APIs, and verifies zero regressions. Always use when the user types /organize, asks to clean up folder structure, split messy files, isolate assets, or refactor directory layout.
+description: "Guides, designs, and executes safe, systematic codebase directory and file reorganization. Resolves mixed concerns, isolates static assets and datasets, extracts cross-cutting utilities and component-internal hooks, splits kitchen-sink helpers into focused modules, realigns C# namespaces and TypeScript barrel APIs, and verifies zero regressions. Always use when the user types /organize, asks to clean up folder structure, split messy files, isolate assets, or refactor directory layout."
 ---
 
 # Skill: `/organize` — Codebase & Directory Reorganization

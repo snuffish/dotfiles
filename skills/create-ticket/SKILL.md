@@ -1,6 +1,6 @@
 ---
 name: create-ticket
-description: Drafts and files tracker work items (Azure DevOps user stories, tasks, bugs, or GitHub issues) derived from review findings, plans, or PR discussions. Mirrors target tracker field conventions, checks for duplicates, formats acceptance criteria, and records the created ID into the source artifact.
+description: "Drafts and files tracker work items (Azure DevOps user stories, tasks, bugs, or GitHub issues) derived from review findings, plans, or PR discussions. Mirrors target tracker field conventions, checks for duplicates, formats acceptance criteria, and records the created ID into the source artifact."
 ---
 
 # Skill: `/create-ticket` — File a Tracker Ticket from Agreed Context

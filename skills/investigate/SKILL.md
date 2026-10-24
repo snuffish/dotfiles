@@ -1,6 +1,6 @@
 ---
 name: investigate
-description: "Deep read-only research before designing a change: traces symbols, maps call flows and blast radius, uncovers prior art and conventions, surfaces cross-layer constraints, weighs options, and writes an evidence-backed `<prefix>-investigation-<suffix>.md` that /plan builds on. Use for /investigate, \"research this\", \"how does X work before we change it?\", \"what would it take to add Y?\", \"scope this out\", \"is this feasible?\". Not for a quick lookup such as \"where is X defined?\" (just search), something already failing (/problem), or choosing between known options (/suggestion)."
+description: "\"Deep read-only research before designing a change: traces symbols, maps call flows and blast radius, uncovers prior art and conventions, surfaces cross-layer constraints, weighs options, and writes an evidence-backed `<prefix>-investigation-<suffix>.md` that /plan builds on. Use for /investigate, \\\"research this\\\", \\\"how does X work before we change it?\\\", \\\"what would it take to add Y?\\\", \\\"scope this out\\\", \\\"is this feasible?\\\"..\"."
 ---
 
 # Skill: `/investigate` — Pre-Plan Research & Discovery

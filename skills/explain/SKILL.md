@@ -1,6 +1,6 @@
 ---
 name: explain
-description: Explains code, PR review comments, complex expressions, architecture patterns, or design intent across the codebase. Supports fast, concise in-chat explanations (/explain) and `deep`, which researches the three explanation axes (Mechanism, Rationale, Context) in parallel sub-agents and writes a workspace-root artifact (/explain deep).
+description: "Explains code, PR review comments, complex expressions, architecture patterns, or design intent across the codebase. Supports fast, concise in-chat explanations (/explain) and `deep`, which researches the three explanation axes (Mechanism, Rationale, Context) in parallel sub-agents and writes a workspace-root artifact (/explain deep)."
 ---
 
 # Skill: `/explain` — Code, Architecture & Intent Explanation

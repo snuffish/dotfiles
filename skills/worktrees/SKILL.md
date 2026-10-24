@@ -1,6 +1,6 @@
 ---
 name: worktrees
-description: Runs commands or multi-step requests in isolated git worktrees or detached snapshots to keep the primary checkout clean. Supports mutating workflows in feature worktrees, read-only tasks in detached snapshots, and combining multiple PRs into local integration branches.
+description: "Runs commands or multi-step requests in isolated git worktrees or detached snapshots to keep the primary checkout clean. Supports mutating workflows in feature worktrees, read-only tasks in detached snapshots, and combining multiple PRs into local integration branches."
 ---
 
 # Skill: `/worktrees` — Run a Request in a Worktree

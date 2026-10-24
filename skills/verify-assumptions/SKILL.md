@@ -1,6 +1,6 @@
 ---
 name: verify-assumptions
-description: "Checks the load-bearing claims behind a plan, decision, ADR, artifact or answer against primary sources: the official docs for the version in use, changelogs, the library's source and the local machine. Turns each assumption into a falsifiable claim, verifies them in parallel read-only sub-agents, grades each (confirmed, contradicted, partial, undocumented) with a quote and its source, and says which decisions each verdict weakens or reopens. Use for /verify-assumptions, \"check the official docs\", \"verify your assumptions\", \"fact-check this plan\", \"is that actually documented?\". Not for finding a risk nobody has stated (/what-am-I-missing). Read-only until /proceed."
+description: "\"Checks the load-bearing claims behind a plan, decision, ADR, artifact or answer against primary sources: the official docs for the version in use, changelogs, the library's source and the local machine. Turns each assumption into a falsifiable claim, verifies them in parallel read-only sub-agents, grades each (confirmed, contradicted, partial, undocumented) with a quote and its source, and says which decisions each verdict weakens or reopens. Use for /verify-assumptions, \\\"check the official docs\\\", \\\"verify your assumptions\\\", \\\"fact-check this plan\\\", \\\"is that actually documented?\\\". Read-only until /proceed.\"."
 ---
 
 # Skill: `/verify-assumptions` — Assumption Check Against Primary Sources

@@ -1,6 +1,6 @@
 ---
 name: export-file
-description: Exports the latest review, plan, or explanation from chat into a standalone file.
+description: "Exports the latest review, plan, or explanation from chat into a standalone file."
 disable-model-invocation: true
 argument-hint: "[/markdown|/html|/txt] [directory or file path] [what to export]"
 ---

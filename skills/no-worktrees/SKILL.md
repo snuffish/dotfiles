@@ -1,6 +1,6 @@
 ---
 name: no-worktrees
-description: Directs commands to run directly in the working checkout without worktree or snapshot isolation.
+description: "Directs commands to run directly in the working checkout without worktree or snapshot isolation."
 disable-model-invocation: true
 ---
 
