@@ -66,7 +66,7 @@ Examine the proposal across five core evaluation dimensions:
 - Does it avoid antipatterns such as inheritance where composition is needed, or bypassing an entity's own invariants?
 
 #### 2. Project Conventions
-- Does every new endpoint, query, component, form and test follow the project's pattern skills for its layer, and the rulebook's language idioms (e.g. `modern-csharp`, `typescript-conventions`)?
+- Does every new endpoint, query, component, form and test follow the project's pattern skills for its layer, and the rulebook's language idioms (e.g. `modern-csharp`)?
 - Are new abstractions justified (an interface for real I/O or a library boundary, not for every class)?
 - Does it touch a cross-repo contract (the profile's *Contract touchpoints*), and does it update both sides of it?
 
