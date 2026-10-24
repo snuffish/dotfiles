@@ -11,7 +11,9 @@ Loader rules (see SKILL.md › Rules):
 - every general skill and every Profile (*-profile) gets one symlink
   ~/.claude/skills/<name> pointing at its registry folder;
 - a project skill is linked only when Projects/<Project>/.flat-links lists it;
-- only dead links into the registry are pruned; other links are reported.
+- every skill in ~/.agents/skills/<name> gets one symlink in ~/.claude/skills/<name>
+  unless the registry already defines <name> (registry wins on name clash);
+- only dead links into the registry or ~/.agents/skills are pruned; other links are reported.
 
 Workspace checks, read-only: Projects/<Project>/.workspaces lists the
 workspaces that use the project (one path per line, ~ allowed). For each one
@@ -94,9 +96,27 @@ def lint(root):
     return skills, errors, warnings
 
 
-def plan_links(root, flat, skills):
+def discover_agents_skills(agents_dir, registry_skills):
+    """Skills in ~/.agents/skills; registry skills take precedence on name clash."""
+    found, shadowed = {}, []
+    if not os.path.isdir(agents_dir):
+        return found, shadowed
+    for name in sorted(os.listdir(agents_dir)):
+        d = os.path.join(agents_dir, name)
+        if not os.path.isfile(os.path.join(d, 'SKILL.md')):
+            continue
+        if name in registry_skills:
+            shadowed.append(name)
+        else:
+            found[name] = {'path': os.path.realpath(d), 'project': None, 'link': True}
+    return found, shadowed
+
+
+def plan_links(root, flat, skills, agents_dir=None, agents_skills=None):
     """Return the link changes needed, as (action, name, target) tuples, plus untouched foreign dead links."""
     actions, foreign_dead = [], []
+    combined = dict(agents_skills or {})
+    combined.update(skills)
     if os.path.isdir(flat):
         for item in sorted(os.listdir(flat)):
             p = os.path.join(flat, item)
@@ -104,13 +124,13 @@ def plan_links(root, flat, skills):
                 continue
             target = os.path.normpath(os.path.join(flat, os.readlink(p)))
             if not os.path.exists(p):
-                if target.startswith(root + os.sep):
+                if target.startswith(root + os.sep) or (agents_dir and target.startswith(agents_dir + os.sep)):
                     actions.append(('prune', item, target))
                 else:
                     foreign_dead.append(f'{item} -> {target}')
             elif target.startswith(os.path.join(root, 'Projects') + os.sep) and item in skills and not skills[item]['link']:
                 actions.append(('unlink', item, target))
-    for name, meta in sorted(skills.items()):
+    for name, meta in sorted(combined.items()):
         if not meta['link']:
             continue
         p = os.path.join(flat, name)
@@ -189,6 +209,27 @@ def check_workspaces(root, skills):
     return lines, warnings
 
 
+def check_global_antigravity(agents_dir):
+    """Check ~/.gemini/config/skills.json when present."""
+    warnings = []
+    cfg = os.path.expanduser(os.path.join('~', '.gemini', 'config', 'skills.json'))
+    if not os.path.isfile(cfg):
+        return warnings
+    try:
+        raw_entries = [e['path'] for e in json.load(open(cfg, encoding='utf-8')).get('entries', [])]
+    except (ValueError, KeyError, TypeError, AttributeError) as e:
+        return [f'{cfg}: unreadable ({e})']
+    for p in raw_entries:
+        if not os.path.isabs(p):
+            warnings.append(f'{cfg}: entry {p!r} is not an absolute path (Antigravity rejects ~ in global skills.json)')
+        elif not os.path.isdir(p):
+            warnings.append(f'{cfg}: entry {p} does not exist')
+    resolved = [os.path.realpath(os.path.expanduser(p)) for p in raw_entries]
+    if os.path.isdir(agents_dir) and os.path.realpath(agents_dir) not in resolved:
+        warnings.append(f'{cfg}: ~/.agents/skills not listed, add {{"path": "{os.path.realpath(agents_dir)}"}}')
+    return warnings
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
     parser.add_argument('--apply', action='store_true', help='fix the ~/.claude/skills links (default: report only)')
@@ -197,24 +238,28 @@ def main():
 
     root = os.path.realpath(args.registry or os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
     flat = os.path.expanduser(os.path.join('~', '.claude', 'skills'))
+    agents_dir = os.path.expanduser(os.path.join('~', '.agents', 'skills'))
     if args.apply and not args.registry and os.sep + os.path.join('.claude', 'worktrees') + os.sep in root + os.sep:
         sys.exit(f'refusing --apply from a worktree ({root}): it would point every link into it. Pass --registry <main checkout>/skills.')
 
     skills, errors, warnings = lint(root)
-    actions, foreign_dead = plan_links(root, flat, skills)
+    agents_skills, agents_shadowed = discover_agents_skills(agents_dir, skills)
+    actions, foreign_dead = plan_links(root, flat, skills, agents_dir, agents_skills)
     failed = apply_links(flat, actions) if args.apply else []
     ws_lines, ws_warnings = check_workspaces(root, skills)
-    warnings += ws_warnings
+    warnings += ws_warnings + check_global_antigravity(agents_dir)
 
     general = sum(m['project'] is None for m in skills.values())
     print(f'registry: {root}')
-    print(f'skills: {len(skills)} (general {general}, project {len(skills) - general}) · {len(errors)} errors · {len(warnings)} warnings')
+    print(f'skills: {len(skills)} (general {general}, project {len(skills) - general}) · ~/.agents/skills: {len(agents_skills)} linked, {len(agents_shadowed)} shadowed · {len(errors)} errors · {len(warnings)} warnings')
     print(f'~/.claude/skills: {"applied" if args.apply else "check only (--apply to change)"}')
     for action in ('create', 'repoint', 'prune', 'unlink'):
         names = [n for a, n, _ in actions if a == action]
         print(f'  {action}: {len(names)}' + (f'  {", ".join(names)}' if names else ''))
     held = sorted(n for n, m in skills.items() if not m['link'])
     print(f'  held out (project skills not in .flat-links): {len(held)}')
+    if agents_shadowed:
+        print(f'  shadowed in ~/.agents/skills (registry wins): {len(agents_shadowed)}  {", ".join(agents_shadowed)}')
     for label, items in [('left alone', foreign_dead), ('FAILED', failed)]:
         if items:
             print(f'  {label}: {len(items)}')
