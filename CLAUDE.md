@@ -11,3 +11,7 @@ The five canonical triage labels are used as-is: `needs-triage`, `needs-info`, `
 ### Domain docs
 
 Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+
+### Skills registry
+
+Local skill registry is in `skills/`. Run `python3 -I skills/sync-skills/sync_skills.py` to lint and sync loader symlinks. See `skills/README.md`.
