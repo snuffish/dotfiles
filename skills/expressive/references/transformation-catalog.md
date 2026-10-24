@@ -277,3 +277,24 @@ function OrderCardFooter({ index, order, status, control, errors }: OrderCardFoo
 - **The component already early-returns** (loading → empty → main). Leave it.
 
 ---
+
+### Pattern 7: Prefer `type` over `interface` (TypeScript)
+
+**When to apply it:** Declaring props, state, payloads, and domain objects in TypeScript.
+
+```ts
+// Prefer:
+type ButtonProps = { label: string; onClick: () => void };
+
+// Avoid for domain shapes:
+interface ButtonProps { label: string; onClick: () => void }
+```
+
+**Why it is better:**
+- **One construct for every shape:** Unions, intersections, mapped and conditional types (`type Status = 'open' | 'closed'`) require `type`. Using `type` everywhere ensures uniformity.
+- **No silent declaration merging:** Duplicate `interface` declarations in scope merge silently, which can inadvertently widen types far from where they are defined. Duplicate `type` declarations produce an explicit compiler error.
+
+**When to use `interface` instead:**
+Augmenting third-party library modules or global objects (`declare module 'x' { interface ... }`, `interface Window { ... }`), or when a specific framework contract mandates it.
+
+---

@@ -1,6 +1,6 @@
 ---
 name: plan
-description: "Opens, inspects, creates, or updates the active, host-prefixed implementation plan (<prefix>-implementation_plan-<suffix>.md). When invoked without arguments (/plan), immediately returns a direct, clickable file link to open the active plan in the IDE along with its status and section anchors; when several plans exist, it first asks which one. When invoked with instructions, drafts or updates the plan with a mandatory contextual suffix."
+description: "Opens, inspects, creates, updates, or previews the active implementation plan (<prefix>-implementation_plan-<suffix>.md). Bare /plan returns links; /plan <instructions> drafts or updates; /plan preview reopens in the host preview panel."
 ---
 
 # Skill: `/plan` — Implementation Plan Manager
@@ -103,3 +103,16 @@ Every chat response that presents a plan starts with this block. Take the line n
    - **Existing plan:** update it only if its owner marker names this session, or if the user named that file and asked for it to be updated (`artifact-protocol` › rule 3). Otherwise write a new revision through *Claim*, and link the one it supersedes in **Inputs**.
    - Set `Status` to `Awaiting User Review` when it is complete.
 4. **Present the plan:** the link block, then the key decisions and open questions in a few lines. Wait for the user to open the gate (`core` › *The `/proceed` gate*) before any code change.
+
+### Case C: Preview Command (`/plan preview [target]`)
+
+Shows an existing plan in the host's planning preview panel (using `ExitPlanMode` when available), so the user can read, comment on, and approve it interactively.
+
+1. **Resolve plan:** Use argument (path or suffix), the session's active plan file, or the latest workspace-root plan family (Case A).
+2. **Host capability check:** If the host lacks `ExitPlanMode` (such as Antigravity IDE), output the plan's link block (Case A) and explain that the host renders plans directly via markdown links.
+3. **Enter plan mode & copy:** Call `EnterPlanMode`, read the host plan-file path from the system message, and copy the source plan into it (omitting the leading `<!-- artifact-owner: … -->` comment).
+4. **Open preview:** Call `ExitPlanMode`.
+5. **Handle decision:**
+   - *Approve*: User authorized implementation (`core` › *The `/proceed` gate*). Begin execution.
+   - *Keep planning / Feedback*: Stay in plan mode, pass feedback to Case B to update the plan, and reopen preview.
+   - *Closed / Error*: Report status and provide the file link.

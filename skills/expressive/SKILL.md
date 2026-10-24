@@ -41,6 +41,7 @@ Consult [Transformation Catalog](references/transformation-catalog.md) when refa
 - **Pattern 4:** Strategy & Dispatch Maps over Giant `switch`/`if-else` Chains
 - **Pattern 5:** Declarative Pipelines (`filter`/`map`/`reduce`) over Imperative Loops
 - **Pattern 6:** Early-Return Subcomponents over Mutually Exclusive Sibling `&&` Markup
+- **Pattern 7:** Prefer `type` over `interface` for shapes and domain models
 
 
 ## 3. Step-by-Step Refactoring Protocol
