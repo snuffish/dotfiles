@@ -36,6 +36,18 @@ LINK_REF = re.compile(r'\]\(((?:\.\./)*[\w./-]*(?:SKILL\.md|_modules/[\w-]+\.md|
 GUARD = 'If any Module cannot be read, stop and report the path.'
 RETIRED = re.compile(r'(?<![\w-])core/SKILL\.md|(?<![\w-])(?:core|git-worktrees|artifact-protocol)`? §')
 
+KNOWN_FM_KEYS = {
+    'name', 'description', 'when_to_use', 'argument-hint', 'arguments',
+    'disable-model-invocation', 'user-invocable', 'allowed-tools',
+    'disallowed-tools', 'model', 'effort', 'context', 'agent', 'background',
+    'hooks', 'paths', 'shell', 'metadata', 'license', 'compatibility'
+}
+BOOLEAN_KEYS = {'user-invocable', 'disable-model-invocation', 'background'}
+BOOLEAN_VALUES = {
+    'true': True, 'yes': True, 'on': True, '1': True,
+    'false': False, 'no': False, 'off': False, '0': False
+}
+
 LOADER_TARGETS = {
     'claude': os.path.expanduser(os.path.join('~', '.claude', 'skills')),
     'antigravity': os.path.expanduser(os.path.join('~', '.gemini', 'config', 'skills')),
@@ -97,12 +109,37 @@ def lint(root):
             errors.append(f'{d}: no frontmatter')
             continue
         fm = m.group(1)
+        fm_keys = {}
+        for line in fm.splitlines():
+            if not line or line.startswith('#'):
+                continue
+            if not line.startswith((' ', '\t')) and ':' in line:
+                k, v = line.split(':', 1)
+                fm_keys[k.strip()] = v.strip()
+        for k in fm_keys:
+            if k not in KNOWN_FM_KEYS:
+                errors.append(f'{d}: unknown frontmatter field {k!r}')
+        for bk in BOOLEAN_KEYS:
+            if bk in fm_keys:
+                raw_val = fm_keys[bk].lower().strip("\"'")
+                if raw_val not in BOOLEAN_VALUES:
+                    errors.append(f'{d}: {bk} must be boolean (true/false), got {fm_keys[bk]!r}')
         name = (re.search(r'^name:\s*(.+)$', fm, re.M) or [None, None])[1]
         raw = (re.search(r'^description:\s*(.+)$', fm, re.M) or [None, ''])[1].strip()
         desc = json.loads(raw) if raw.startswith('"') else raw.strip("'")
         folder = os.path.basename(d)
         rel = os.path.relpath(d, root).split(os.sep)
         project = rel[0] == 'Projects'
+        if folder.endswith('-profile'):
+            ui_val = fm_keys.get('user-invocable')
+            if ui_val is None:
+                errors.append(f"{d}: Profile skill missing required 'user-invocable: false'")
+            elif BOOLEAN_VALUES.get(ui_val.lower().strip("\"'")) is not False:
+                errors.append(f"{d}: Profile skill must have 'user-invocable: false'")
+            if 'disable-model-invocation' in fm_keys:
+                dmi_val = fm_keys['disable-model-invocation'].lower().strip("\"'")
+                if BOOLEAN_VALUES.get(dmi_val) is True:
+                    errors.append(f"{d}: Profile skill must not set 'disable-model-invocation: true'")
         if name != folder:
             errors.append(f'{d}: name {name!r} != folder {folder!r}')
         if not desc or desc in ('>', '>-', '|', '|-'):

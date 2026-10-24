@@ -39,6 +39,8 @@ Read these before step 1:
 
 Run the script in *Sync script* below in check mode. It walks `<registry>` (skipping `_modules/`) and checks every `SKILL.md`:
 
+- **Frontmatter attributes**: all declared fields match known Claude Code / Agent Skills keys. Boolean fields (`user-invocable`, `disable-model-invocation`, `background`) have valid boolean values.
+- **Profile gating**: every Profile (`*-profile`) has `user-invocable: false` and does not set `disable-model-invocation: true`.
 - **Name** in the frontmatter equals the folder name.
 - **Description** is present, single-line and at most 1024 characters (the Agent Skills spec limit). Over 1024 is an error. Over 700 is a warning, because every installed skill shares one listing budget and hosts drop descriptions when it overflows, least-used skills first.
 - **Project gating**: a skill under `Projects/<Project>/` has a description that opens with `[Project:` and contains `Load ONLY when`.
