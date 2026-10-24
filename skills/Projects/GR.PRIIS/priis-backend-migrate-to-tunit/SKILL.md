@@ -1,6 +1,7 @@
 ---
 name: priis-backend-migrate-to-tunit
-description: "[Project: GR.PRIIS.Backend] RETIRED — the xUnit → TUnit migration is complete: no xUnit remains in any test project and the separate .TUnit project was folded into tests/GR.PRIIS.API.IntegrationTests. Kept only as a conversion reference; do not load for new work. Load ONLY when working on the GR.PRIIS.Backend project or in the GR repository."
+description: "[Project: GR.PRIIS.Backend] Retired: Historical migration guide for xUnit to TUnit. Load ONLY when working on the GR.PRIIS.Backend project or in the GR repository."
+disable-model-invocation: true
 ---
 
 # priis-backend-migrate-to-tunit

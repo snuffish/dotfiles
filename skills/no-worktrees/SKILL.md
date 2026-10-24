@@ -1,6 +1,7 @@
 ---
 name: no-worktrees
-description: Runs a request in the user's own checkout, with no worktree or snapshot, even when the Command it routes to isolates by default (/code-review and /pr-feedback-review snapshot, /implement-feature uses a workspace worktree). Strips the `/no-worktrees` token wherever it sits in the prompt, routes a request that matches a registry Command to that Command with the opt-out token, and otherwise carries out the request in place. Trigger whenever a prompt contains `/no-worktrees` anywhere and invokes no other Command, or asks to do something "in my checkout", "without a worktree" or "in place". Not for isolating a request (/worktrees).
+description: Directs commands to run directly in the working checkout without worktree or snapshot isolation.
+disable-model-invocation: true
 ---
 
 # Skill: `/no-worktrees` — Run a Request in Place

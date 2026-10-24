@@ -1,6 +1,7 @@
 ---
 name: artifacts
-description: Discovers, inspects and targets workspace artifacts across hosts, models and sessions — lists recent plans, reviews, investigations and other root-level artifacts in one table, lets the user pick one, then summarizes it and offers the next step. Trigger on /artifacts, "show my recent plans", "which artifacts exist?", "target an artifact".
+description: Discovers, lists, and targets workspace artifacts across hosts and sessions.
+disable-model-invocation: true
 ---
 
 # Skill: `/artifacts` — Artifact Explorer

@@ -1,6 +1,6 @@
 ---
 name: spec-verification
-description: Verifies an implementation against its specification line by line — a work item / user story / ticket, a PR description, a plan or a pasted spec — and writes a traceability artifact grading every requirement (implemented, partial, missing, deferred, deviates, decision needed) with path:line evidence at the reviewed head, plus what the code does beyond the spec. Accepts a work-item URL/id, a PR URL/id, a branch, or a spec file; resolves linked items (parent, children, related, successor) to tell deferred scope from omissions. Trigger on /spec-verification, "verify the spec against this implementation", "does this PR do what the story says", "check the acceptance criteria", "requirements traceability", or "what's missing from the story".
+description: Verifies implementation completeness against functional specifications, user story acceptance criteria, or PR descriptions. Produces a traceability matrix mapping each requirement to line-level code evidence, grading status (implemented, partial, missing, deviated).
 ---
 
 # Skill: `/spec-verification` — Requirement-by-Requirement Traceability

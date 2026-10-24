@@ -1,6 +1,6 @@
 ---
 name: proceed
-description: Opens the `/proceed` gate. Authorizes the work a gated Command left waiting in this session — a reviewed plan, an /implement-feature plan gate, a /pr-fix-pipeline fix plan, a chosen /suggestion approach, an /investigate handoff — and carries out exactly the next step that Command named, then verifies it. Optional arguments narrow or pick the scope ("/proceed option 2", "/proceed phase 1 only"). User-invoked only; the model never opens its own gate.
+description: Authorizes and executes the next step of a gated read-only command.
 disable-model-invocation: true
 argument-hint: "[option | phase | step | extra instructions]"
 ---

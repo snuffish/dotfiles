@@ -1,6 +1,7 @@
 ---
 name: plan-preview
-description: Opens a plan in the host's planning preview, the review panel Claude Code shows when a plan leaves plan mode (in VS Code, the Plan preview with its approve / keep-planning choices). Use it when the preview was closed by accident, or when an agent returned the plan only as a markdown file or a chat reply. Resolves which plan to show (an explicit path or suffix, the session's current plan file, the markdown plan this conversation just wrote, or the workspace-root `<prefix>-implementation_plan-<suffix>.md` family), enters plan mode, loads that plan into the plan file the host names and calls ExitPlanMode so the preview opens. Edits no source code and writes no artifact. Trigger on /plan-preview, "open the planning preview", "reopen the plan preview", "I closed the plan preview", "show this plan in the preview", "open that markdown plan for approval".
+description: Reopens an implementation plan in the host planning preview panel.
+disable-model-invocation: true
 ---
 
 # Skill: `/plan-preview` — Reopen the Planning Preview

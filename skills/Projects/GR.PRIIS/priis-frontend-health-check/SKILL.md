@@ -1,6 +1,7 @@
 ---
 name: priis-frontend-health-check
-description: "[Project: GR.PRIIS.Frontend] Audit the frontend codebase for convention violations and generate a health scorecard. Load ONLY when working on the GR.PRIIS.Frontend project or in the GR repository."
+description: "[Project: GR.PRIIS.Frontend] Generates a project convention health scorecard across features and stores. Load ONLY when working on the GR.PRIIS.Frontend project or in the GR repository."
+disable-model-invocation: true
 ---
 
 # priis-frontend-health-check

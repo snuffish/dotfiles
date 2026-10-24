@@ -1,6 +1,7 @@
 ---
 name: priis-backend-health-check
-description: "[Project: GR.PRIIS.Backend] Audit the codebase against project conventions and generate a health scorecard. Load ONLY when working on the GR.PRIIS.Backend project or in the GR repository."
+description: "[Project: GR.PRIIS.Backend] Generates a project convention health scorecard across API and Library. Load ONLY when working on the GR.PRIIS.Backend project or in the GR repository."
+disable-model-invocation: true
 ---
 
 # priis-backend-health-check

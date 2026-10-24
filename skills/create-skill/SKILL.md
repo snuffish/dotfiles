@@ -1,6 +1,7 @@
 ---
 name: create-skill
-description: Orchestrates, designs, scaffolds, validates, and registers a new Registry entry — a Command, Reference or Profile skill — into the skills registry. Resolves the kind first, enforces naming and gating conventions, wires the Modules a Command depends on, and updates the README inventory. Use on /create-skill or when adding a Command, Reference or Profile to this registry; for evals, benchmarks or description tuning use skill-creator.
+description: Scaffolds, validates, and registers a new skill or profile in the local registry.
+disable-model-invocation: true
 ---
 
 # Skill: `/create-skill` — Skill Creator & Registry Orchestrator

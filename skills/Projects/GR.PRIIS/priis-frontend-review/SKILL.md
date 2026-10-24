@@ -1,6 +1,6 @@
 ---
 name: priis-frontend-review
-description: "[Project: GR.PRIIS.Frontend] Code review for GR.PRIIS.Frontend. Reviews an Azure DevOps PR (id or URL), a work item's PR, a branch, or the local working tree (committed, staged, unstaged and untracked) against origin/main or a --base ref, from a snapshot worktree so you can keep editing. Tuned to what this team actually catches in review — page shells, CSS and request types copied between sibling pages; shared components, hooks and ~/utility helpers not used; RTK Query tags not invalidated; schema rules that never run in another wizard; access checks on links; swagger and mock drift against the backend PR; hardcoded test ids; missing specs; acceptance criteria claimed but not implemented; UI issues found by clicking through — plus the repo's convention skills and a general modern-React lens. Use when asked to review, check, critique or give feedback on a PR, branch, diff or the current changes. Load ONLY when working on the GR.PRIIS.Frontend project or in the GR repository."
+description: "[Project: GR.PRIIS.Frontend] Reviews frontend changes against PRIIS architecture rules: RTK Query caching and invalidation, TanStack Router typed routes, React component colocation, form state handling, Swedish UI display labels, and Vitest coverage. Load ONLY when working on the GR.PRIIS.Frontend project or in the GR repository."
 argument-hint: "[PR id | PR URL | work item id | branch] [--base <ref>] [--live] [--no-browser] [--comment]"
 ---
 

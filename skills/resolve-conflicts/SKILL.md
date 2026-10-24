@@ -1,6 +1,6 @@
 ---
 name: resolve-conflicts
-description: "Resolves git conflicts from an in-progress merge, rebase, cherry-pick, revert or stash pop, and previews the conflicts a branch will have with its target. Names the sides by branch (ours/theirs swap during a rebase), reads each side's intent from the merge base and its commits, and resolves every hunk so both intents survive; lockfiles and generated files are regenerated, and genuinely competing values are asked about. Checks cleanly merged files for semantic breakage, runs the repo's type-check and tests, stages only resolved paths, then concludes the operation (`no-commit` stops at staged). Never pushes, aborts, blanket-picks a side or discards work. Use for /resolve-conflicts, \"fix the merge conflicts\", \"my rebase/cherry-pick/stash pop conflicted\", \"UU in git status\", \"the PR has conflicts with main\", \"update my branch with main\"."
+description: Resolves git merge, rebase, cherry-pick, and stash conflicts. Reconstructs intent from the merge base and both commit branches, preserves non-conflicting logic, regenerates lockfiles, runs verification builds/tests, and stages cleanly resolved hunks. Refuses destructive overwrites.
 ---
 
 # Skill: `/resolve-conflicts` — Git Conflict Resolution

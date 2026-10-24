@@ -1,6 +1,6 @@
 ---
 name: implement-feature-priis-profile
-description: "[Project: GR.PRIIS] Command profile consumed by the general /implement-feature orchestrator — the PRIIS facts only implementation needs, keyed to its phases: Azure DevOps intake rules, implementing-ID rule, scaffold, verify and ship skills, worktree branch, entity sibling patterns, verified implementation and verification facts, and ship conventions. Shared facts (layout, tracker, pattern skills, sibling chain, contract touchpoints, known drift, worktree setup) live in priis-profile. Load together with implement-feature and priis-profile when implementing a feature, work item or user story in the GR workspace. Load ONLY when working on the GR.PRIIS.Backend or GR.PRIIS.Frontend project or in the GR repository."
+description: "[Project: GR.PRIIS] Command profile adapting /implement-feature to PRIIS conventions: Azure DevOps work item intake rules, feature branch naming, scaffolding templates, verify/ship skill integration, and entity sibling patterns. Load with implement-feature when building features in the GR workspace. Load ONLY when working on GR.PRIIS or in the GR repository."
 user-invocable: false
 ---
 

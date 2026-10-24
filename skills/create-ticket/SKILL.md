@@ -1,6 +1,6 @@
 ---
 name: create-ticket
-description: Drafts and files a tracker ticket (an Azure DevOps user story, task, bug or feature, or a GitHub issue) from what is already on the table, such as a section of a review or plan artifact, a selected block, a decision in a PR thread, or a pasted note. Reads the tracker's own recent items to copy its conventions (type, title language and style, area, backlog or sprint, tags, parent), searches for duplicates, writes the description and acceptance criteria in the tracker's format, dry-runs the exact create command, and files only on an explicit request. When the write is blocked, it hands over a ready-to-run command. It records the new id back into the source artifact. `/create-ticket draft` stops at the preview. Trigger on /create-ticket, "create a ticket / story / task / bug / issue for this", "file a work item", "make an ADO ticket", "open a GitHub issue for this", "turn this follow-up into a story".
+description: Drafts and files tracker work items (Azure DevOps user stories, tasks, bugs, or GitHub issues) derived from review findings, plans, or PR discussions. Mirrors target tracker field conventions, checks for duplicates, formats acceptance criteria, and records the created ID into the source artifact.
 ---
 
 # Skill: `/create-ticket` — File a Tracker Ticket from Agreed Context

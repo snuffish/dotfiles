@@ -1,6 +1,6 @@
 ---
 name: continue
-description: Resumes work that stopped before it was finished — a dropped connection, a crashed or restarted agent, a rate-limit or context cut-off, or an interrupted tool call. Reconstructs what was in flight from the conversation, a HANDOFF.md, claude-mem memory, the last transcript, workspace artifacts, kept worktrees and git, re-checks every claim against the disk, re-runs only what was left unverified, and hands the work back to its owning Command at the step where it stopped. Never repeats an outward-facing action or assumes an approval the user did not give. User-invoked only (/continue).
+description: Resumes interrupted work from transcripts, artifacts, memory, and git state without repeating completed actions.
 disable-model-invocation: true
 argument-hint: "[artifact | branch | work-item id | memory id | extra instructions]"
 ---
