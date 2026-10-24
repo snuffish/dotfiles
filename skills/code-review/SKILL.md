@@ -165,7 +165,9 @@ On top of whatever the repo documents, the Standards axis carries the **smell ba
 
 ## Step 4 — Gather Context
 
-1. **List changed files** first (`--name-status`) to understand the blast radius before reading code.
+**Step 4 Exit Bound:** Before beginning line-by-line review in Step 5: (1) Run `git diff --name-status <base>...HEAD`, (2) record the blast radius and full file inventory, (3) for every deleted/moved symbol or file, verify zero dangling references via search.
+
+1. **List changed files** first (`--name-status`) to establish the blast radius before reading code.
 2. **For small diffs** (< ~200 lines): read the raw diff directly.
 3. **For large diffs**: read each changed file in full, from the snapshot, with the host's file-reading tool. Do **not** rely solely on truncated diff output — you will miss essential context.
 4. **Deleted / moved files**: for every deleted file, grep the snapshot for remaining imports or references to ensure nothing is left dangling.

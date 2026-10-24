@@ -93,7 +93,9 @@ The worktree has no `node_modules`; only Pass F needs them (`npm ci` there). Cit
 
 ---
 
-## Step 2 — Understand the change before judging it
+## Step 2 — Map the Change & Establish the Baseline
+
+**Step 2 Exit Bound:** Before proceeding to Step 3, generate: (1) 3-line intent summary, (2) acceptance criteria checklist, (3) changed file list with diff stats (`git diff --stat`), (4) list of all new symbols with their nearest existing sibling feature named. Do not open review passes without this baseline.
 
 1. **Intent and acceptance criteria.** Write a three-line intent summary. From the work item, list each acceptance criterion (or each promise in the PR description when there is no AC field) as a checklist item; Pass E ticks it off. *The description states intent; the diff states truth.* Where they disagree the diff wins and the disagreement is a finding. The description is evidence, not an outline: do not let its structure or omissions shape the review.
 2. **Blast radius.** `git diff --name-status` first. Under about 200 changed lines read the diff; above that read each changed file in full from the worktree. For every deleted or moved file, grep for remaining imports. When a type, context or hook changes, find every consumer. Skip generated files (`routeTree.gen.ts`, `*.gen.ts`, lockfiles), but check that generated artefacts which *should* have changed did (`swagger.json` after a backend DTO change, a scaffolded enum facade after a new `[EmitOpenApiMetadata]` enum).

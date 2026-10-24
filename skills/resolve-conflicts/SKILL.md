@@ -104,7 +104,9 @@ List each unmerged path with its porcelain code. Then classify it **before** edi
 
 Also note the files git **merged cleanly** that both sides touched (`git -C "$R" diff --name-only <merge-base> HEAD` ∩ the other side's changes). These are where semantic conflicts hide (Step 4).
 
-### Step 2 — Understand Both Sides' Intent
+### Step 2 — Extract Both Sides' Intent
+
+**Step 2 Exit Bound:** Before editing any hunk: (1) Run `git log --oneline <base>..HEAD` and `git log --oneline <base>..MERGE_HEAD`, (2) quote the commit message for the conflicting lines on both sides, (3) write down each side's intent in one sentence. Do not edit conflicted markers until both intents are stated.
 
 For each conflicted file, look at three versions and the history behind each side:
 

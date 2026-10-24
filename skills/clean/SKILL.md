@@ -163,8 +163,10 @@ Before touching any `export`, `public`, or `internal` symbol:
 
 ### Step 4: Surgical Application
 
+**Step 4 Exit Bound:** Verify that no syntax errors, dangling commas, or orphaned blocks remain before opening Step 5. The edited file must compile/lint cleanly without warnings introduced by the cleanup.
+
 1. Apply targeted edits (`Edit` / `replace_file_content`). Never rewrite the whole file to remove a few lines.
-2. Clean up orphaned blank lines, dangling commas, and now-empty blocks left by removals.
+2. Remove orphaned blank lines, dangling commas, and now-empty blocks left by removals.
 3. Place extracted helpers as an **internal closure** when they capture local scope; at module scope only when genuinely pure or shared.
 4. No renames, reformatting of untouched code, reordering, or style changes beyond what the removal requires.
 

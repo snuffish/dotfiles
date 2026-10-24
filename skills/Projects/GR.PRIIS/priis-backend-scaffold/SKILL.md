@@ -33,9 +33,11 @@ Generate a complete vertical slice for a new FastEndpoints endpoint. Provide a s
 
 ## Step 1: Gather Context
 
+**Step 1 Exit Bound:** Read and extract from the nearest sibling endpoint in the same feature domain: (1) namespace convention, (2) Route pattern, (3) SystemAction authorization attribute, (4) SystemResult return type. Verify the domain entity exists in `source/GR.PRIIS.Library/` before Step 2.
+
 Before generating, read:
-- The nearest `*Endpoint.cs` in the same feature domain to understand folder structure
-- The relevant entity in `source/GR.PRIIS.Library/` to understand the domain model
+- The nearest `*Endpoint.cs` in the same feature domain
+- The relevant entity in `source/GR.PRIIS.Library/`
 
 Ask for clarification if: request/response shape is unclear, or the domain entity doesn't exist yet.
 

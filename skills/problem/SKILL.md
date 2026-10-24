@@ -53,7 +53,9 @@ Before going back in history, establish what is currently modified or committed 
 
 ## Step 3 — Historical Context Lookup (Transcripts & Brain)
 
-To understand the original intent, design decisions, and requirements of the code that is failing, you must inspect the conversation history:
+**Step 3 Exit Bound:** Locate the exact commit or conversation turn that introduced the failing code (`git log -S'<symbol>'` or transcript search). Extract the original design requirements before drafting the fix plan in Step 4.
+
+Inspect the conversation history and commit log to reconstruct the original intent:
 
 1. **Identify Current Conversation ID**: under Antigravity, it is in `<user_information>`. Under Claude Code, it is the session UUID: the newest `~/.claude/projects/<workspace-slug>/*.jsonl`, or the UUID in the scratchpad path when the system prompt names one.
 2. **Search Transcripts**: **Transcript location depends on the host IDE:**
