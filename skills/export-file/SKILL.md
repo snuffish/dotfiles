@@ -1,6 +1,7 @@
 ---
 name: export-file
-description: "Exports content from the current conversation, by default the latest substantial answer (a review, plan, explanation, table or summary), into a standalone file. Writes markdown unless another format is given (/html, /txt), into the current working directory unless a directory or file path is given, under a collision-safe `<prefix>-export-<suffix>` name, and never overwrites an existing file. Rewrites chat-relative wording so the file reads on its own, without adding new findings. Use for /export-file, \"export /markdown\", \"export /html to docs/\", \"export this to an .md file\", \"save that review as markdown\", \"write the answer above to a file\". Not for the raw conversation transcript (use Claude Code's built-in /export) or for producing a new review, plan or investigation (use that Command)."
+description: Exports the latest review, plan, or explanation from chat into a standalone file.
+disable-model-invocation: true
 argument-hint: "[/markdown|/html|/txt] [directory or file path] [what to export]"
 ---
 

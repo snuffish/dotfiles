@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: "Reviews code changes along three axes: Correctness (bugs, security, performance), Standards (the repo's documented conventions and cross-repo contracts) and Spec (does it do what the PR, work item or acceptance criteria asked). Writes a verified `<prefix>-code_review-<suffix>.md`. Takes an optional PR URL/id, work-item id or fixed point (\"since main\", a SHA, a tag); with none it resolves the PR from the current branch, and it always reviews the counterpart PR of a dual-repo change too. Reads from a detached snapshot so the user can keep editing (`live` opts out); `deep` runs the axes as parallel sub-agents; `feedback` also folds in the PR's threads via /pr-feedback-review. Conventions come from workspace rulebooks, project skills and an optional `code-review-<project>-profile`. Use for /code-review, \"review this PR/branch\", \"review since X\", \"review my changes\". Not for triaging comments others left (/pr-feedback-review) or merging existing reviews (/squash-code-review)."
+description: Reviews code changes along Correctness (bugs, security, performance), Standards (project conventions, cross-repo contracts), and Spec (PR, ticket, acceptance criteria) axes. Writes a verified code review artifact. Handles PR URLs, work item IDs, branch comparisons, and dual-repo counterpart PRs. Reads detached git snapshots by default.
 ---
 
 # Code Review Skill

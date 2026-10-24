@@ -1,6 +1,6 @@
 ---
 name: worktrees
-description: Runs any request in a git worktree so the user's main checkout stays untouched. It is the launcher for the git-worktrees Module when no other Command is invoked. Strips the `/worktrees` token wherever it sits in the prompt (start or end, e.g. "Merge PR 123 & 456 /worktrees"), routes a request that matches a registry Command to that Command with the opt-in token, and otherwise carries out the request itself. It works in a workspace worktree when the request changes anything (merge, rebase, fix, refactor, generate) and in a detached snapshot when the request only reads. It ships a recipe for combining several PRs on a local integration branch. Bare `/worktrees` lists the active skill worktrees per repo. Trigger whenever a prompt contains `/worktrees` anywhere and invokes no other Command, or asks to do something "in a worktree", "in a separate worktree" or "without touching my checkout".
+description: Runs commands or multi-step requests in isolated git worktrees or detached snapshots to keep the primary checkout clean. Supports mutating workflows in feature worktrees, read-only tasks in detached snapshots, and combining multiple PRs into local integration branches.
 ---
 
 # Skill: `/worktrees` — Run a Request in a Worktree

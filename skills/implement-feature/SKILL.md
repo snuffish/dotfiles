@@ -1,6 +1,6 @@
 ---
 name: implement-feature
-description: "Orchestrator for implementing a feature, task or bug end-to-end in any repository or multi-repo workspace — ticket intake, research, plan, blind-spot pass, implementation, verification, self-review, shipping and walkthrough. Owns the phase order, the approval gates (plan, ship, tracker writes) and when to fan out sub-agents; resolves the project's conventions from its rulebooks, project-scoped skills and git remote (a project profile) instead of hard-coding them, and delegates patterns and commands to the investigate / plan / what-am-I-missing / code-review / spec-verification / pr-summary skills and whatever scaffold, verify and ship skills the project provides. Trigger on /implement-feature, \"implement this feature / story / ticket / issue\", \"build #1234 end to end\", or \"take this work item from plan to PR\"."
+description: Orchestrates end-to-end feature implementation, bug fixes, and user stories. Coordinates ticket intake, codebase research, implementation planning, execution in isolated worktrees, verification testing, self-review, and PR preparation according to repository-specific profiles and rulebooks.
 ---
 
 # Skill: `/implement-feature` — End-to-End Feature Implementation

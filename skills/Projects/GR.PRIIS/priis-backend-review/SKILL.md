@@ -1,6 +1,6 @@
 ---
 name: priis-backend-review
-description: "[Project: GR.PRIIS.Backend] Code review for GR.PRIIS.Backend. Reviews an Azure DevOps PR (id or URL), a work item's PR, a branch, or the local working tree (committed, staged, unstaged and untracked) against origin/main or a --base ref, from a snapshot worktree so you can keep editing. Tuned to what this team actually catches in review — copied helpers, expressions and test setup; existing infrastructure not used; protected-data and query-filter semantics; audited bulk updates; missing 401/403 coverage; narrow add-on tests; acceptance criteria claimed but not implemented; PR text and docs that drift from the code — plus the repo's convention skills and a general modern-code lens. Use when asked to review, check, critique or give feedback on a PR, branch, diff or the current changes. Load ONLY when working on the GR.PRIIS.Backend project or in the GR repository."
+description: "[Project: GR.PRIIS.Backend] Reviews backend changes against PRIIS architecture rules: FastEndpoints conventions, SystemResult error handling, EF Core query projection and tracking, FusionCache L2 safety, SystemAction authorization, and TUnit tests. Load ONLY when working on the GR.PRIIS.Backend project or in the GR repository."
 argument-hint: "[PR id | PR URL | work item id | branch] [--base <ref>] [--live] [--comment]"
 ---
 

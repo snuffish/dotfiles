@@ -1,6 +1,6 @@
 ---
 name: commit
-description: "Commits the current change and pushes it, in the repo's own convention. Stages only the files that belong to the change (never `git add -A`), keeps secrets, build output and local artifacts out, runs the repo's documented pre-commit gates (formatter, import sorter, lint) on the changed files, writes the message in the repo's format (work-item prefix from the branch, Conventional Commits, or whatever `git log` shows) with the attribution trailer the project allows, then pushes, setting the upstream when there is none. Refuses the default branch, detached HEAD and an in-progress merge or rebase, and never amends, force-pushes or skips hooks. `no-push` stops after the commit. Use for /commit, \"commit this\", \"commit and push\", \"push my changes\", \"commit with message …\". Not for opening a PR or branching from a work item (the project's ship skill), rewriting the PR description (/pr-summary update), or resolving conflicts (/resolve-conflicts)."
+description: Stages changed files, runs documented pre-commit gates (formatters, linters, tests), formats commit messages matching repo conventions (Conventional Commits or branch work-item prefix), and pushes to upstream. Refuses commits on default branches or detached HEAD.
 argument-hint: "[no-push] [message or intent] [paths…]"
 ---
 

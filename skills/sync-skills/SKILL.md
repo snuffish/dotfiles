@@ -1,6 +1,7 @@
 ---
 name: sync-skills
-description: "Lints the local skills registry and repairs its loader wiring. Validates every SKILL.md (name matches folder, description present and at most 1024 characters, `## Modules` paths resolve, links to other skills and Modules resolve, no SKILL.md under _modules/), symlinks general skills and Profiles into ~/.claude/skills, prunes dead registry links, keeps project References out of the flat loader unless allow-listed (a global link would shadow the project repo's own copy), checks .agents/skills.json, and updates the README inventory. Use for /sync-skills, \"sync skills\", \"lint the registry\", \"relink my skills\", \"a skill moved or was renamed\", or after /create-skill. Not needed just to pick up an edited or newly linked skill: Claude Code reloads ~/.claude/skills live, and its built-in /reload-skills covers a newly created skills directory."
+description: Lints the skills registry, verifies links and Modules, syncs ~/.claude/skills symlinks, and audits .agents/skills.json.
+disable-model-invocation: true
 ---
 
 # Skill: `/sync-skills` — Registry Lint & Loader Sync

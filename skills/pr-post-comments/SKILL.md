@@ -1,6 +1,6 @@
 ---
 name: pr-post-comments
-description: "Posts feedback already drafted in a review artifact to the PR on Azure DevOps or GitHub: /code-review or /squash-code-review findings as inline threads anchored to the right lines, the 🟢 minor findings with them as one general comment per PR, /pr-feedback-review ready-to-send replies into their existing threads, and agreed general comments. Verifies every anchor at the PR head, skips what is already posted, dry-runs the payloads, posts one and checks it before the rest, routes items across counterpart PRs, and records thread ids back in the artifact. `draft` previews the payloads and asks before posting. After a reply is posted, sets that thread to Resolved when the fix is verified at the PR head (`keep-open` skips this). Never closes threads, votes or edits the description unless asked. Use for /pr-post-comments, \"post the findings to the PR\", \"reply to the threads\", \"draft the PR comments first\", \"post them again clean\". Not for writing the feedback itself."
+description: Posts drafted review findings and thread replies from review artifacts to Azure DevOps or GitHub pull requests. Anchors inline comments to verified diff lines at PR head, batches minor findings into a summary comment, routes counterpart PR comments, and records remote thread IDs back into the artifact.
 ---
 
 # Skill: `/pr-post-comments` — Post Drafted Feedback to a Pull Request

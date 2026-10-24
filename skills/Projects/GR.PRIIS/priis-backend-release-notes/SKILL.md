@@ -1,6 +1,7 @@
 ---
 name: priis-backend-release-notes
-description: "[Project: GR.PRIIS.Backend] Generate and publish Swedish release notes to the PRIIS wiki from closed user stories and bugs in a sprint. Load ONLY when working on the GR.PRIIS.Backend project or in the GR repository."
+description: "[Project: GR.PRIIS.Backend] Generates formatted Swedish release notes for a sprint or tag. Load ONLY when working on the GR.PRIIS.Backend project or in the GR repository."
+disable-model-invocation: true
 ---
 
 # priis-backend-release-notes

@@ -1,6 +1,6 @@
 ---
 name: squash-code-review
-description: "Squashes two or more existing code reviews of the same change (typically /code-review artifacts from different models, hosts or runs) into one new, verified `<prefix>-squashed_code_review-<suffix>.md`. Matches findings by root cause, settles every disagreement (single-source finding, conflicting claims, severity split) by re-checking the code at the current PR head instead of voting, folds in the PR's discussion threads so points already raised, fixed or decided are linked rather than repeated, and accounts for every source finding in a reconciliation table. Read-only; never edits the sources. Use for /squash-code-review, \"squash/merge/combine these reviews\", \"reconcile the Fable and Opus reviews\". Needs at least two reviews; for a fresh review use /code-review."
+description: Squashes and reconciles multiple code review artifacts for the same change into a single verified report. Resolves conflicting findings by verifying against code at the PR head, integrates active PR comment threads, and produces a deduplicated findings matrix.
 ---
 
 # Skill: `/squash-code-review` — Squash Code Reviews

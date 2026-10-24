@@ -1,6 +1,6 @@
 ---
 name: pr-fix-pipeline
-description: Diagnoses a failing pull-request pipeline (CI/CD build validation) and plans the fix. Resolves the PR(s) for the current branch across every repo in the workspace (e.g. frontend + backend), pulls the failing runs, timelines, step logs and test results from Azure DevOps Pipelines or GitHub Actions, classifies each failure (code regression, test, flake, time-dependent, environment/agent, pipeline config, cross-repo contract drift), traces it to the code or YAML that caused it, then writes an /investigate artifact and an /plan implementation plan. Read-only until /proceed. Trigger on /pr-fix-pipeline, "the PR build is red", "why is CI failing on my PR", "fix the pipeline", "the build validation failed", "check the devops pipeline for errors".
+description: Diagnoses failing CI/CD pull request validation pipelines across Azure DevOps Pipelines and GitHub Actions. Correlates failed build/test step logs with git diffs, categorizes root causes (code regressions, flaky tests, pipeline configuration drift), and drafts a targeted fix plan.
 ---
 
 # Skill: `/pr-fix-pipeline` — PR Pipeline Failure Diagnosis & Fix Plan
