@@ -23,10 +23,10 @@ Read these before step 1:
 
 ## Rules
 
-1. **The registry is the source of truth; loaders follow it.** General skills and Profiles each get one symlink `~/.claude/skills/<name>` pointing at their folder in `<registry>`.
+1. **The registry is the source of truth; loaders follow it.** General skills and Profiles each get one symlink `~/.claude/skills/<name>` pointing at their folder in `<registry>`. Skills in `~/.agents/skills/<name>` also get one symlink in `~/.claude/skills/<name>` unless `<registry>` defines `<name>` (the registry wins on name clash).
 2. **Project References stay out of the flat loader unless allow-listed.** Claude Code resolves a name clash as *personal over project*, so a global link to `Projects/<Project>/<name>` silently overrides the copy the project's own repo ships in `.claude/skills/`. A project skill is linked only when its name is listed in `Projects/<Project>/.flat-links` (one name per line). Profiles (`*-profile`) are always linked, because no repo ships them.
 3. **Modules are never skills.** `<registry>/_modules/` holds Modules (plain markdown, no frontmatter; ADR-0001, ADR-0002). Nothing in it is linked or counted, and a `SKILL.md` there is an error.
-4. **Prune only what this registry owns.** A dead link is removed only when it points into `<registry>/`. Links into other places (`../../.agents/skills/*`, plugin folders) are reported, never touched.
+4. **Prune only what this registry or `~/.agents/skills` owns.** A dead link is removed only when it points into `<registry>/` or `~/.agents/skills/`. Links into other places (plugin folders) are reported, never touched.
 5. **Lint, don't rewrite.** The run edits loader links, `.agents/skills.json` entries and the README inventory. It never changes the instructions inside a `SKILL.md`; it reports problems for the user to fix.
 
 ---
