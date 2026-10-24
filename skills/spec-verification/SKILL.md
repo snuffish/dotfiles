@@ -1,6 +1,6 @@
 ---
 name: spec-verification
-description: Verifies implementation completeness against functional specifications, user story acceptance criteria, or PR descriptions. Produces a traceability matrix mapping each requirement to line-level code evidence, grading status (implemented, partial, missing, deviated).
+description: "Verifies implementation completeness against functional specifications, user story acceptance criteria, or PR descriptions. Produces a traceability matrix mapping each requirement to line-level code evidence, grading status (implemented, partial, missing, deviated)."
 ---
 
 # Skill: `/spec-verification` — Requirement-by-Requirement Traceability

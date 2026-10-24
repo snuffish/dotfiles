@@ -1,6 +1,6 @@
 ---
 name: artifacts
-description: Discovers, lists, and targets workspace artifacts across hosts and sessions.
+description: "Discovers, lists, and targets workspace artifacts across hosts and sessions."
 disable-model-invocation: true
 ---
 

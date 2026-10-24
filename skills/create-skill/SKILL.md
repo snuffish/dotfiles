@@ -1,6 +1,6 @@
 ---
 name: create-skill
-description: Scaffolds, validates, and registers a new skill or profile in the local registry.
+description: "Scaffolds, validates, and registers a new skill or profile in the local registry."
 disable-model-invocation: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: typescript-conventions
-description: General TypeScript conventions for any project — prefer `type` over `interface` for props, state, payloads and domain objects. Load when writing, reviewing or refactoring TypeScript or TSX code.
+description: "General TypeScript conventions for any project — prefer `type` over `interface` for props, state, payloads and domain objects. Load when writing, reviewing or refactoring TypeScript or TSX code."
 ---
 
 # TypeScript Conventions

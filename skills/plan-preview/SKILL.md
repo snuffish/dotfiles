@@ -1,6 +1,6 @@
 ---
 name: plan-preview
-description: Reopens an implementation plan in the host planning preview panel.
+description: "Reopens an implementation plan in the host planning preview panel."
 disable-model-invocation: true
 ---
 

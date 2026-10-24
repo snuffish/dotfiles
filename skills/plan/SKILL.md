@@ -1,6 +1,6 @@
 ---
 name: plan
-description: Opens, inspects, creates, or updates the active, host-prefixed implementation plan (<prefix>-implementation_plan-<suffix>.md). When invoked without arguments (/plan), immediately returns a direct, clickable file link to open the active plan in the IDE along with its status and section anchors; when several plans exist, it first asks which one. When invoked with instructions, drafts or updates the plan with a mandatory contextual suffix.
+description: "Opens, inspects, creates, or updates the active, host-prefixed implementation plan (<prefix>-implementation_plan-<suffix>.md). When invoked without arguments (/plan), immediately returns a direct, clickable file link to open the active plan in the IDE along with its status and section anchors; when several plans exist, it first asks which one. When invoked with instructions, drafts or updates the plan with a mandatory contextual suffix."
 ---
 
 # Skill: `/plan` — Implementation Plan Manager

@@ -1,6 +1,6 @@
 ---
 name: proceed
-description: Authorizes and executes the next step of a gated read-only command.
+description: "Authorizes and executes the next step of a gated read-only command."
 disable-model-invocation: true
 argument-hint: "[option | phase | step | extra instructions]"
 ---
