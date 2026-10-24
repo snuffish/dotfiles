@@ -45,7 +45,7 @@ Read these before step 1:
 2. **Stop and say why** when:
    - **Detached HEAD:** `git -C <repo-root> symbolic-ref -q HEAD` fails.
    - **An operation is in progress:** `.git/MERGE_HEAD`, `REBASE_HEAD`, `CHERRY_PICK_HEAD` or a `rebase-merge/` / `rebase-apply/` directory exists under `git rev-parse --git-dir`. That is `/resolve-conflicts`.
-   - **The branch is the default or a protected branch:** `main`, `master`, `develop`, `release/*`, or the remote's `origin/HEAD`. Propose a branch name in the repo's convention (from its workflow rulebook, else the shape of recent branches in `git branch -r`), and create it only when the user agrees.
+   - **The branch is the default or a protected branch:** `main`, `master`, `develop`, `release/*`, or the remote's `origin/HEAD` — unless the repo is a trunk-only personal repo (e.g. `~/.terminal` or `~/.terminal/memory`, where `git branch -r` has only `origin/main` and recent commits land directly on `main`). Otherwise, propose a branch name in the repo's convention (from its workflow rulebook, else the shape of recent branches in `git branch -r`), and create it only when the user agrees.
    - **Nothing to commit and nothing to push:** say so in one line and stop.
 
 ### Step 2: Choose what goes into the commit
