@@ -83,3 +83,7 @@ alias header="curl -I -L"
 alias portListener="sudo netstat -tolpn"
 
 alias tsd="tsx watch"
+
+if ! declare -f sync-skills >/dev/null 2>&1; then
+  alias sync-skills='python3 -I "$HOME/.terminal/skills/sync-skills/sync_skills.py"'
+fi
