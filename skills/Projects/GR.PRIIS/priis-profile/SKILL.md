@@ -40,9 +40,9 @@ Workspace (*verified 2026-10-24*): one git repo, `GR.PRIIS`, at `~/Projects/GR/G
 | Backend — background job / event / notification | `priis-backend-ef-core`, `priis-backend-notifications`, `modern-csharp` |
 | Backend — realtime | `priis-backend-signalr` |
 | Backend — refactor | The endpoint or library row above (`priis-backend-dry` is registry-only and not in the session's skill list) |
-| Frontend — feature or page | `priis-frontend-component-patterns`, `priis-frontend-forms`, `priis-frontend-rtk-query`, `priis-frontend-routing`, `priis-frontend-testing`, `typescript-conventions` |
+| Frontend — feature or page | `priis-frontend-component-patterns`, `priis-frontend-forms`, `priis-frontend-rtk-query`, `priis-frontend-routing`, `priis-frontend-testing` |
 
-Load each skill by the name the session lists, which comes from the repo-root `.claude/skills/` (*Known drift*). The repo also carries `priis-backend-modern-csharp`; the general `modern-csharp` reference covers the same ground. A change that spans both halves is reviewed with `priis-fullstack-review`.
+Load each skill by the name the session lists, which comes from the repo-root `.claude/skills/` (*Known drift*). The repo carries `priis-backend-modern-csharp` as the team's self-contained C# 14 standard; the personal `modern-csharp` reference covers the same ground. A change that spans both halves is reviewed with `priis-fullstack-review` (or `/priis-verify` for quality gates).
 
 ---
 

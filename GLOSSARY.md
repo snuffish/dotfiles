@@ -27,3 +27,10 @@ _Avoid_: core utility, protocol, shared skill, lib, root skill
 **Profile**:
 Project-specific facts that a Command reads to adapt itself to that project. A **base profile** (`priis-profile`) holds the facts all of a project's Commands share; a **Command profile** (`implement-feature-priis-profile`, `code-review-priis-profile`) holds only what one Command needs and points to the base profile for the rest.
 _Avoid_: project config, project skill
+
+**Personal Skill**:
+A skill living in the user's personal Registry (`~/.terminal/skills/`, `~/.agents/skills/`), providing personal developer workflows, engines, and project profiles.
+
+**Team Skill**:
+A skill checked into a product repository (`.claude/skills/`), owned by and self-contained for the entire engineering team on that project. Personal skills read team skills across a read-only seam via Profiles, but never replace, absorb, or delete them.
+_Avoid_: local skill, project skill
