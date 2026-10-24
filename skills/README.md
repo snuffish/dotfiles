@@ -100,7 +100,7 @@ Load these skills directly by registering their paths in the workspace configura
 }
 ```
 
-Some loaders (like `~/.claude/skills` on macOS/Linux or `%USERPROFILE%\.claude\skills` on Windows) expect a **flat** root — each skill a direct child (`root/<name>/SKILL.md`), with no grouping folders. To activate from this grouped staging tree, run `sync-skills` (it reports, then asks before applying) from any shell (`claude.bash`; it runs [`sync-skills/sync_skills.py`](sync-skills/sync_skills.py)) or `/sync-skills`, which apply the rule below, or symlink by hand.
+Some loaders (like `~/.claude/skills` on macOS/Linux, `~/.gemini/config/skills` for Antigravity, `~/.gemini/skills` for Gemini CLI, or `%USERPROFILE%\.claude\skills` on Windows) expect a **flat** root — each skill a direct child (`root/<name>/SKILL.md`), with no grouping folders. To activate from this grouped staging tree, run `sync-skills` (it reports, then asks before applying) from any shell (`claude.bash` / `code.bash`; it runs [`sync-skills/sync_skills.py`](sync-skills/sync_skills.py)) or `/sync-skills`, which apply the rule below, or symlink by hand.
 
 **Which skills to link:** every general (top-level) skill and every Profile (`*-profile`). Do **not** link a project Reference or Command that the project's own repo also ships in `.claude/skills/`. Claude Code resolves a name clash as *personal over project*, so the global link would silently override the repo's newer copy. Allow-list the exceptions, one name per line, in `Projects/<Project>/.flat-links`. List the workspaces that use a project in `Projects/<Project>/.workspaces` (one path per line, `~` allowed): the check then warns about a project skill that is neither linked nor shipped by that workspace's repos, and about gaps in its `.agents/skills.json`.
 
@@ -137,9 +137,9 @@ New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\skills\code-revi
 
 (If the loader globs recursively — `skills/**/SKILL.md` — point it at this root directly and the grouping is honored as-is.)
 
-**Current live state:** every general skill and the PRIIS Profiles are flat-symlinked into `~/.claude/skills` (Modules never are). A project skill that its own repo also ships in `.claude/skills/` is **not** linked: Claude Code gives personal skills precedence over project skills, so a global link would shadow the repo's newer copy. `/sync-skills` reports the live count and any drift. Check by hand on macOS/Linux with:
+**Current live state:** every general skill and the PRIIS Profiles are flat-symlinked across loaders (`~/.claude/skills`, `~/.gemini/config/skills`, `~/.gemini/skills`; Modules never are). A project skill that its own repo also ships in `.claude/skills/` or `.agents/skills/` is **not** linked: hosts give personal skills precedence over project skills, so a global link would shadow the repo's newer copy. `/sync-skills` reports the live count and any drift. Check by hand on macOS/Linux with:
 
 ```bash
-find ~/.claude/skills -maxdepth 1 -xtype l          # dead links: expect none
+find ~/.claude/skills ~/.gemini/config/skills ~/.gemini/skills -maxdepth 1 -xtype l          # dead links: expect none
 ls -la ~/.claude/skills | grep -c -- "-> $PWD/"    # links into this tree (run from this skills/ folder)
 ```

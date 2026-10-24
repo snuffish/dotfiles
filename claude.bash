@@ -12,12 +12,12 @@ function cm-sync() {
     python3 -I "$engine" "$@"
 }
 
-# Lint the skills registry and check ~/.claude/skills against it, then ask y/n to fix the links (--apply skips the prompt)
+# Lint the skills registry and check skill loaders against it, then ask y/n to fix the links (--apply skips the prompt)
 function sync-skills() {
   local script="$HOME/.terminal/skills/sync-skills/sync_skills.py" answer
   [[ " $* " == *" --apply "* ]] && { python3 -I "$script" "$@"; return; }
   python3 -I "$script" "$@"
-  printf 'Apply the link changes to ~/.claude/skills? [y/N] '
+  printf 'Apply link changes across loaders (Claude, Antigravity, Gemini)? [y/N] '
   read -r answer
   if [[ "$answer" == [yY]* ]]; then
     python3 -I "$script" --apply "$@"
