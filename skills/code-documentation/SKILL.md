@@ -38,7 +38,8 @@ The output ranges from single-file READMEs to multi-document developer guides, a
 
 ### Phase 1: Codebase Analysis
 
-Before writing any documentation, thoroughly understand the codebase.
+Establish a concrete structural inventory before generating documentation:
+- **Phase 1 Exit Bound:** Record: (1) primary language & framework manifests, (2) all exported entry points/routes via grep/AST, (3) existing doc files. Do not proceed to Phase 2 until this 3-point inventory is populated.
 
 #### Step 1.1: Project Discovery
 
