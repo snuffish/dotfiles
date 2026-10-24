@@ -59,7 +59,7 @@ When prompted to make code more expressive:
    - Manual loops with accumulators or flags → **Declarative Pipeline (Pattern 5)**
    - Mutually exclusive sibling `{cond && …}` blocks in markup → **Early-Return Subcomponent (Pattern 6)**
 3. **Verify Type Safety & Exhaustiveness**:
-   - In TypeScript, use `as const` or a typed `Record<Key, Value>` so the compiler enforces that all cases are covered. New types follow [`typescript-conventions`](../typescript-conventions/SKILL.md) (`type` over `interface`).
+   - In TypeScript, use `as const` or a typed `Record<Key, Value>` so the compiler enforces that all cases are covered. New types follow Pattern 7 (`type` over `interface`).
    - In C#, use exhaustive pattern-matching expressions (`status switch { ... }`).
 4. **Preserve Semantic Equivalence**:
    - Ensure null/undefined handling, edge cases, and defaults match the original logic 100%.
