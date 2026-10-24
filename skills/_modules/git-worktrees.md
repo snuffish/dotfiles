@@ -164,7 +164,7 @@ DEFAULT=$(git -C <repo> symbolic-ref --short refs/remotes/origin/HEAD)   # e.g. 
 - Default base: `origin/<default>` as just fetched ("branch out of latest main"). A caller may pass another base explicitly (a release branch, a PR head).
 - Branch name: the project's convention from its workflow skill or profile (e.g. `feature/<id>_<slug>`), **never** `worktree-<name>`.
 - If the branch already exists:
-  - checked out in no worktree → `git -C <repo> worktree add --lock --reason "<reason>" <dir> <branch>` (check it out, no `-b`);
+  - checked out in no worktree → `git -C <repo> worktree add --lock --reason "$REASON" <dir> <branch>` (check it out, no `-b`; format `$REASON` per step b);
   - checked out in the **main checkout** → **stop and ask** the user: switch the main checkout off it, or branch off its head under a derived name (`<branch>-wt`, say). Do not decide this alone; the main checkout is theirs.
   - checked out in another worktree → it belongs to another run; report the lock reason and ask.
 
@@ -180,7 +180,7 @@ git -C <repo> check-ignore -q .claude/worktrees/probe || echo '.claude/worktrees
 git -C <repo> worktree add --lock --reason "$REASON" --no-track -b <branch> "$DIR" <base>
 ```
 
-The exclude entry is local and never committed; it keeps the directory out of `git status` and the host's own `Grep` tool (`rg` also skips the hidden `.claude/` directory by default). `--no-track` matters: without it a branch created from `origin/<default>` would report that remote branch as its upstream, and §5g's "nothing unpushed" check would compare against the wrong ref. The lock reason is what §3's rule and §5i read. Emit the `[worktree-context]` with `mode=workspace`.
+The exclude entry is local and never committed; it keeps the directory out of `git status` and the host's own `Grep` tool (`rg` also skips the hidden `.claude/` directory by default). `--no-track` matters: without it a branch created from `origin/<default>` would report that remote branch as its upstream, and §5g's "nothing unpushed" check would compare against the wrong ref. The lock reason is what §3's rule, §5i, and `~/.terminal/claude/statusline.sh` read (the statusline matches `session:$session ` to show `wt→<name>`; omitting `session:<session-id>` or using freeform text causes it to report `no-wt`). Never omit `session:<session-id>` or use a freeform reason. Emit the `[worktree-context]` with `mode=workspace`.
 
 **c. Hydrate**
 

@@ -59,7 +59,9 @@ Read these before step 1:
 
 1. **Base:** `origin/<default>` as fetched, unless the request names another base (a release branch, a PR's target).
 2. **Branch:** the project's branch convention from its workflow skill or profile (`git-worktrees` › *Workspace Lifecycle* › *Base and branch*). Without a convention, propose `<type>/<kebab-slug>` from the request (`chore/`, `fix/`, `integrate/`) and confirm it in the first chat line. Never use `worktree-<name>`.
-3. **Create** per *Workspace Lifecycle* › *Create*, with `<skill>` = `worktrees` in the lock reason.
+3. **Create** per *Workspace Lifecycle* › *Create*, with `<skill>` = `worktrees` in the lock reason format:
+   `REASON="claude-skill:worktrees ticket:<id> branch:<branch> started:$(date +%F) session:<session-id>"`
+   Do **not** use freeform lock reasons: `session:<session-id>` is mandatory for `~/.terminal/claude/statusline.sh` to match and display the active worktree (`wt→<name>`); omitting it causes the statusline to show `no-wt`.
 4. **Hydrate** (*Hydrate*) only when the request builds, tests or runs the project.
 
 In snapshot mode, *Snapshot Lifecycle* › *Resolve the head* and *Create* apply instead.
