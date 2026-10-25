@@ -49,9 +49,7 @@ BOOLEAN_VALUES = {
 }
 
 LOADER_TARGETS = {
-    'claude': os.path.expanduser(os.path.join('~', '.claude', 'skills')),
-    'antigravity': os.path.expanduser(os.path.join('~', '.gemini', 'config', 'skills')),
-    'gemini': os.path.expanduser(os.path.join('~', '.gemini', 'skills')),
+    'flat-links': os.path.expanduser(os.path.join('~', '.terminal', 'skills', 'flat-links')),
 }
 
 WORKTREE_DIRS = (
