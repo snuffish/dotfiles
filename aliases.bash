@@ -1,4 +1,3 @@
-  alias .="cd ~"
 #!/usr/bin/env bash
 
 # ==============================================================================
@@ -36,11 +35,16 @@ if [[ "$ENV_PROFILE" == "Linux" ]]; then
   }
 elif [[ "$ENV_PROFILE" == "Windows" ]]; then
   if ! command -v open >/dev/null 2>&1; then
-    alias open="explorer.exe"
+    function open() {
+      explorer.exe "${@:-.}"
+    }
   fi
 fi
 
-alias o="open"
+unalias o 2>/dev/null
+function o() {
+  open "${@:-.}" &
+}
 
 # ==============================================================================
 # 3. System Power & Session Management

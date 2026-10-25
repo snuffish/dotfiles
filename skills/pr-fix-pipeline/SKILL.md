@@ -1,11 +1,11 @@
 ---
 name: pr-fix-pipeline
-description: "Diagnoses failing CI/CD pull request validation pipelines across Azure DevOps Pipelines and GitHub Actions. Correlates failed build/test step logs with git diffs, categorizes root causes (code regressions, flaky tests, pipeline configuration drift), drafts a targeted fix plan, and watches post-fix build validation to completion."
+description: "Diagnoses failing CI/CD pull request validation pipelines across Azure DevOps Pipelines and GitHub Actions. Correlates failed build/test step logs with git diffs, categorizes root causes (code regressions, flaky tests, pipeline configuration drift), drafts a targeted fix plan, and iterates through post-fix validation until the pipeline is verified passed by the agent."
 ---
 
 # Skill: `/pr-fix-pipeline` — PR Pipeline Failure Diagnosis & Fix Plan
 
-Finds out **why** a pull request's pipeline is failing, separates real regressions from noise, hands over an evidence-backed fix plan, and watches post-fix build validation to completion. It chains the [`/investigate`](../investigate/SKILL.md) protocol (ground truth from the run logs and code) into [`/plan`](../plan/SKILL.md) (the fix), with a review pass in between.
+Finds out **why** a pull request's pipeline is failing, separates real regressions from noise, hands over an evidence-backed fix plan, executes approved fixes, and iterates until the pipeline is verified passed by the agent. It chains the [`/investigate`](../investigate/SKILL.md) protocol (ground truth from the run logs and code) into [`/plan`](../plan/SKILL.md) (the fix), with a review pass in between.
 
 ---
 
@@ -26,7 +26,7 @@ Read these before step 1:
 > 2. **No outward-facing actions.** Never re-queue/retry a run, cancel a run, post PR comments, change policies, or edit pipeline definitions in the service. Recommend them in the plan; the user triggers them.
 > 3. **Cite the log.** Every failure claim carries the run id, step name and the exact error line(s) — plus `path:line` once traced into code.
 > 4. **Flake is a conclusion, not a default.** Mark a failure as a flake only with evidence (passes on re-run history, passes locally on the same commit, failure unrelated to the diff).
-> 5. **Watch validation to terminal state.** After the fix is pushed or the run is re-queued, do not stop or hand back early. Continuously monitor the triggered build validation until every required check succeeds or a new/remaining failure is identified and reported.
+> 5. **Never complete until verified passed by the agent.** After the fix is pushed or the run is re-queued, the skill does not complete until the agent has actively verified that every required pipeline check and build policy succeeds (all green). It never hands back or terminates on an intermediate failure. If a triggered run fails or remains red/flaky, the agent must immediately loop: re-diagnose the remaining failure from new logs, apply the fix, locally verify, push, and monitor the new run until it passes. Only an external blocker that fundamentally requires human action (infrastructure down, missing credentials/permissions) may pause execution, and the skill remains incomplete until the pass is verified.
 
 ---
 
@@ -133,7 +133,7 @@ Then follow `/plan` Case B, building on the investigation, to write `<prefix>-im
 
 Stop. Do not implement until the user types `/proceed`.
 
-### Step 7: Post-Fix Execution & Validation Watch (after `/proceed`)
+### Step 7: Post-Fix Execution & Autonomous Remediation Loop (after `/proceed`)
 
 Once the user approves with `/proceed`:
 1. **Implement and verify locally:** Apply the fix and run the plan's local verification commands first.
@@ -141,14 +141,26 @@ Once the user approves with `/proceed`:
 3. **Resolve the triggered run:**
    - **Azure DevOps:** Query `az repos pr policy list --id <prId> --query "[?configuration.type.displayName=='Build']"` to resolve the new `buildId` and evaluation status.
    - **GitHub Actions:** Query `gh pr checks <prId>` or `gh run list --branch <headRef>`.
-4. **Watch to completion (no early exit):**
-   - Continuously monitor the build validation run until it reaches a terminal state (`succeeded`, `failed`, `partiallySucceeded`, `canceled` on ADO; completed conclusion on GitHub).
+4. **Watch run progress (no early exit):**
+   - Continuously monitor the build validation run until it reaches a terminal status (`succeeded`, `failed`, `partiallySucceeded`, `canceled` on ADO; completed conclusion on GitHub).
    - Use non-blocking schedule timers / reactive notifications (e.g. 2–3 minute intervals); never use blocking shell `sleep` loops or abandon the task while the run is in-flight.
    - On ADO: poll `az pipelines build show --id <buildId> --query "{status:status, result:result}"` and inspect running timeline tasks.
    - On GitHub: poll `gh pr checks <prId>` or `gh run view <runId>`.
-5. **Terminal state outcome:**
-   - **All green (`succeeded` / `approved`):** Confirm every required PR build policy is satisfied and report the passing run.
-   - **Still red or flaky (`failed` / `rejected`):** If a required check fails or flakes are caught under strict policies (e.g. `failOnFlakyTests`), immediately fetch the failing step logs, determine whether it is a regression or a new/remaining flake, update the investigation/plan, and report the exact blocker with log citations.
+5. **Remediation loop — never complete until verified passed:**
+   - **All green (`succeeded` / `approved`):** Actively verify that every required PR build policy and status check succeeds. This is the **only condition** where the skill completes. Close out and report the verified passing run.
+   - **Still red, failing, or flaky (`failed` / `rejected` / `canceled`):** **DO NOT STOP. DO NOT HAND BACK AS COMPLETED.** The skill is incomplete. Immediately loop:
+     1. Pull failing step logs (`az devops invoke --area build --resource logs` / `gh run view <runId> --log-failed`).
+     2. Classify the new or remaining failure (regression, test defect, cascade error, flake).
+     3. Update the investigation artifact and implementation plan with the new run findings.
+     4. Implement the corrective code or test fix.
+     5. Run local verification commands to ensure tests/build pass locally.
+     6. Stage, commit, and push the fix (or prompt re-queue if flake/external).
+     7. Resolve the newly triggered run and resume non-blocking monitoring (back to step 3).
+     8. Repeat until all required checks are verified passed.
+   - **External blocker exception:** If blocked by external factors requiring human intervention (e.g. pipeline service outage, agent pool offline, missing credentials/tokens, manual security approval gates):
+     - Clearly notify the user that the skill is **paused (incomplete)** awaiting external resolution.
+     - Cite the exact log line or platform error requiring human action.
+     - Once unblocked by the user, resume the loop until the pipeline is verified passed.
 
 ---
 
@@ -172,6 +184,24 @@ Next: <the single unblocking action>. Type `/proceed` to implement.
 
 Links follow the host link format in the **`artifact-protocol`** protocol. Read the anchor line numbers from the written files (`grep -n '^#\{1,3\} '`), never from the drafts.
 
+### Post-Validation Completion (after `/proceed`)
+
+Once verified green:
+```markdown
+✅ **Pipeline verified passed by agent** — **<repo> PR !<id>**
+- Pipeline run: <pipeline> run <runId> (commit `<sha>`)
+- Required checks: all green (`approved` / `succeeded`)
+- Total iterations: <n>
+```
+
+If paused on an external blocker:
+```markdown
+⚠️ **Paused on external blocker (Skill incomplete)** — **<repo> PR !<id>**
+- Pipeline run: <pipeline> run <runId>
+- Blocker: <reason requiring human action>
+- Waiting for: <unblocking action> before resuming verification loop.
+```
+
 ---
 
 ## 4. Verification & Validation
@@ -188,5 +218,7 @@ After `/proceed` and the fix:
 - [ ] Run the plan's local verification commands.
 - [ ] Stage, commit, and push the fix (or confirm the run was re-queued).
 - [ ] Resolve the triggered pipeline run id and policy evaluation.
-- [ ] Watch the build validation run until it reaches a terminal state (`succeeded`, `failed`, `partiallySucceeded`).
-- [ ] Confirm every required PR policy is green, or cite the new failing log lines and classify the remaining blocker.
+- [ ] Watch the build validation run until completion.
+- [ ] If any check failed, looped autonomously through re-diagnosis, local fix, commit/push, and re-monitoring.
+- [ ] The pipeline was verified passed (`succeeded` / `approved` across all required PR checks) by the agent before marking the skill complete.
+- [ ] Never marked complete while checks remained failing, rejected, or unverified.

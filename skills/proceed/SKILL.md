@@ -39,7 +39,7 @@ Look back through this session for the most recent gated handoff that has not ye
 | `verify-assumptions` | *Proposed edits (after /proceed)* | Apply exactly those edits to the plan, ADR or doc |
 | `explain`, `manual-testing` | An explanation or a test plan | Only the follow-up step their output named, if any; otherwise *Nothing pending* |
 | `plan-review` | A plan or proposal with a verdict | Implement the reviewed plan, applying its 🔴 findings first |
-| `pr-fix-pipeline` | An investigation and an `implementation_plan` | Implement the fix plan, run local verification, push/re-queue, and watch build validation to completion |
+| `pr-fix-pipeline` | An investigation and an `implementation_plan` | Implement the fix plan, run local verification, push/re-queue, and iterate until the pipeline is verified passed by the agent |
 | `implement-feature` | The plan gate | Resume `implement-feature` at its implementation phase |
 | `suggestion` | Ranked approaches with a recommendation | Act on the recommended approach (or the one the arguments pick): through `/plan` when the change is non-trivial, otherwise directly |
 | `investigate` | Findings with a handoff | Draft the plan with `/plan`; implementing it needs a further `/proceed` |
