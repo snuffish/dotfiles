@@ -7,7 +7,40 @@ ag() {
 alias antigravity-editor="antigravity-ide"
 
 
+_agy_normalize_args() {
+  _agy_normalized=()
+  while [[ $# -gt 0 ]]; do
+    local arg="$1"
+    arg="${arg#\"}"
+    arg="${arg%\"}"
+    arg="${arg#\'}"
+    arg="${arg%\'}"
+
+    case "$arg" in
+      /resume|resume|--resume|-r)
+        if [[ -n "$2" && "$2" != -* ]]; then
+          _agy_normalized+=("--conversation" "$2")
+          shift 2
+          continue
+        else
+          _agy_normalized+=("--continue")
+          shift
+          continue
+        fi
+        ;;
+      *)
+        _agy_normalized+=("$1")
+        shift
+        ;;
+    esac
+  done
+}
+
 agy() {
+  local _agy_normalized=()
+  _agy_normalize_args "$@"
+  set -- "${_agy_normalized[@]}"
+
   # If running non-interactively, pass through directly
   if [[ ! -t 0 ]]; then
     command agy "$@"
@@ -41,8 +74,10 @@ agy() {
 }
 
 agyy() {
+  local _agy_normalized=()
+  _agy_normalize_args "$@"
   echo "⚡ Launching in auto-approval mode..."
-  command agy --mode accept-edits --dangerously-skip-permissions "$@"
+  command agy --mode accept-edits --dangerously-skip-permissions "${_agy_normalized[@]}"
 }
 
 agp() {

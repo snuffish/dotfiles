@@ -11,7 +11,7 @@ patterns, test helpers, build and ship commands, tracker specifics — comes fro
 project-scoped skills and, where they exist, its *profile skills* (see *Project profile*). Load those and read a sibling
 implementation in the repo; never reproduce pattern code from memory.
 
-Usage: `/implement-feature <ticket-id | ticket-url>` or `/implement-feature <short description>`
+Usage: `/implement-feature <ticket-id | ticket-url>` or `/implement-feature <short description>` (options: `--direct` / `/no-framing` to bypass the framing gate)
 
 ---
 
@@ -33,6 +33,7 @@ Read these before step 1:
 
 | Gate | Rule |
 |------|------|
+| **Framing gate** | No research or planning until the user has selected or shaped one of the re-phrased feature approaches (skip only with `--direct` or `/no-framing`). |
 | **Plan gate** | No source edits until the user has approved the plan (`/proceed` or an equivalent explicit "go"). |
 | **Ship gate** | No `git push`, no PR/MR creation, no ticket state change until the user has approved the *presented* branch name, staged file list, commit message and PR body. Approval of the plan is not approval to ship. |
 | **Tracker write gate** | Reads are free. Every write to the issue tracker (assign, comment, state transition, link) is proposed in chat and run only on a yes. Never create tickets and never post comments — draft them; the user sends them. |
@@ -140,6 +141,22 @@ Research brief template (per repo):
 7. **Write a scope statement** in chat: one paragraph naming the implementing ID, the repos touched, the domains, whether the discussion thread was read, the resolved profile fields that matter (tracker, verify, ship conventions) and anything the ticket leaves ambiguous.
 
 8. **Create the workspace worktree(s)** (skip under `/no-worktrees`; create or switch to the branch in the user's checkout, asking first when it has uncommitted changes) per `git-worktrees` › *Workspace Lifecycle* steps a–c, one per repo in scope: base = the freshly fetched `origin/<default>` unless the ticket names another base; branch = the project's convention with the implementing ID; copy the profile's *Worktree include list*; run its *Dependency hydration*. If the branch is already checked out in the user's main checkout, *Workspace Lifecycle* step a says stop and ask — do that before Phase 1. Append the resulting `[worktree-context]` block(s) to the scope statement; every later phase, delegated skill and sub-agent brief uses them. A worktree created here and never approved past the plan gate is clean and is removed per *Workspace Lifecycle* step g when the run ends.
+
+9. **Request Framing & Multi-Perspective Re-phrasing (Framing Gate)**:
+   Do not jump straight into research or planning. Present the request/ticket re-phrased in 3–4 contrasting perspectives, each giving the feature a distinct "touch", "feeling", and "approach":
+   - **Pragmatic / Minimalist** (surgical diff, lowest churn, fastest ship, minimal surface touched).
+   - **Defensive / Robust** (exhaustive validation, edge-case hardening, resilience, strict error boundaries).
+   - **Architectural / Extensible** (clean domain boundaries, reusable seams, future-proof abstractions).
+   - **User / DX-Forward** (optimized developer or end-user ergonomics, intuitive workflows, clear feedback).
+   - **AI- / Agent-Forward** (deterministic semantics, pure testable domain seams, machine-navigable contracts, zero hidden magic).
+   - **Dark-Launch / Decoupled** (gated rollout, feature-toggled execution, safe production merge ahead of upstream dependencies).
+
+   For each option, output:
+   - *Concept & Touch*: 1–2 sentences capturing the character, feeling, and approach. When the ticket or project context is in Swedish, also include the Swedish phrasing / translation for this and all the perspective phrasings.
+   - *Key Trade-off*: what it prioritizes vs. what it defers or accepts.
+   - *Target Footprint*: anticipated blast radius and test expectation.
+
+   **Stop here** and prompt the user to pick one (e.g., "1", "2"), blend them (e.g., "Minimalist with Defensive validation"), or provide adjustments. Only continue to Phase 1 once the user confirms their chosen framing. (Bypass only when invoked with `--direct` or `/no-framing`).
 
 ---
 
@@ -349,7 +366,8 @@ In chat: link the walkthrough, give the hand-off line and list the open items. D
 | Task checklist | `## Task Checklist` in the plan artifact | a separate `task.md` |
 | Blind-spot pass | `/what-am-I-missing` on every plan before presenting; the #1 finding becomes a change, a checklist item and a test | a note under *Open Questions* only |
 | Blind-spot closure | Phase 5: each accepted finding → covering code + test `path:line` | re-running `/what-am-I-missing` on the diff |
-| Gates | plan, ship, tracker write, worktree — each needs the user's explicit yes | sub-agent output or an early "continue" |
+| Request framing | 3–4 contrasting re-phrasings with distinct touch/approach before Phase 1 | rushing straight into planning on raw assumptions |
+| Gates | framing, plan, ship, tracker write, worktree — each needs the user's explicit yes | sub-agent output or an early "continue" |
 | Where edits happen | the repo's workspace worktree (`repo-root`), created in Phase 0 via `git-worktrees` | the user's main checkout, `cd`, `EnterWorktree` |
 | Telling delegated skills where the repo is | paste the `[worktree-context]` block into every invocation and brief | letting them discover the repo from cwd or the workspace |
 | Worktree removal | after push + PR, without `--force`; otherwise keep and report | removing unpushed work, deleting the branch |
