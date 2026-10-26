@@ -86,7 +86,7 @@ gh issue list --repo <owner>/<name> --state all --limit 25 --json number,title,l
 gh label list --repo <owner>/<name>
 ```
 
-With the `azure-devops` MCP server: `wit_query` `action: "wiql"` with the same WIQL (`project`, `top: 25`), then `wit_work_item` `action: "get"` per relative (`expand: "Relations"` and `fields` are mutually exclusive, so it takes two calls to get the relations as well as selected fields).
+With the `azure-devops` MCP server: `wit_query` `action: "wiql"` with the same WIQL (`project`, `top: 25`). It returns ids only, so read the columns with `wit_work_item` `action: "get_batch"` (`ids`, `fields` = the WIQL's columns). Then `wit_work_item` `action: "get"` per relative (`expand: "Relations"` and `fields` are mutually exclusive, so it takes two calls to get the relations as well as selected fields).
 
 Derive:
 
@@ -112,7 +112,7 @@ az boards query --org … --project <project> --wiql "
 gh issue list --repo <owner>/<name> --state open --search "<key terms>"
 ```
 
-With the MCP server: the same WIQL through `wit_query` `action: "wiql"`.
+With the MCP server: the same WIQL through `wit_query` `action: "wiql"`, then `get_batch` for the titles and states (*Step 3*).
 
 Use two or three distinctive terms from the title, not generic words. If an open item covers the same work, stop and show it. The user chooses between "create anyway" and "add to #id instead", and the second is out of this skill's scope unless asked.
 
