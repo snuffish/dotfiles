@@ -38,6 +38,14 @@ Read these before step 1:
 
 ---
 
+## Planning & Prompt Framing
+
+- Keep plans, proposals, and generated prompts lean and directional: outline intent, constraints, and boundaries without prescribing low-level code mechanics or file-level implementations upfront.
+- Sacrifice grammar for extreme brevity.
+- If genuine architectural forks or domain ambiguities exist, end with a concise bullet list of unresolved questions; omit if none.
+
+---
+
 ## 2. Step-by-Step Workflow
 
 ### Step 1: Parse Input & Ambiguity Check
