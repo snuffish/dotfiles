@@ -33,3 +33,10 @@ Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/ag
 ### Skills registry
 
 Local skill registry is in `skills/`. Run `python3 -I skills/sync-skills/sync_skills.py` to lint and sync loader symlinks. See `skills/README.md`.
+
+<claude-mem-context>
+# Memory Context from Past Sessions
+
+*No context yet. Complete your first session and context will appear here.*
+</claude-mem-context>
+

@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# Shared fzf session picker for Claude Code, Antigravity, and Unified Agent sessions
+
+run_agent_session_picker() {
+  local driver="" title="" header="" scope="here" prompt="" extra_binds=()
+  local out key pick id cwd
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --driver) driver="$2"; shift 2 ;;
+      --title) title="$2"; shift 2 ;;
+      --header) header="$2"; shift 2 ;;
+      --scope) scope="$2"; shift 2 ;;
+      --prompt) prompt="$2"; shift 2 ;;
+      --bind) extra_binds+=("--bind=$2"); shift 2 ;;
+      *) shift ;;
+    esac
+  done
+
+  [[ -n "$driver" ]] || { echo "run_agent_session_picker: --driver required" >&2; return 1; }
+  [[ -n "$title" ]] || title="Session Picker"
+  [[ -n "$prompt" ]] || {
+    if [[ "$scope" == "all" ]]; then prompt="All> "; else prompt="This dir> "; fi
+  }
+
+  local header_args=()
+  [[ -n "$header" ]] && header_args=(--header "$header")
+
+  out="$(
+    bash "$driver" list "$scope" | fzf --ansi \
+      "${header_args[@]}" \
+      --border rounded --border-label " $title " --preview-border rounded \
+      --color 'border:8,label:6:bold,preview-border:8,preview-label:6:bold,header:8:italic,info:8,separator:8,scrollbar:8' \
+      --color 'prompt:6:bold,pointer:5,marker:5,hl:3:bold,hl+:3:bold,fg+:-1:bold,query:-1:bold' \
+      --prompt "$prompt" --delimiter='\t' --with-nth=1,2,3,4 --no-sort --expect=ctrl-o \
+      --bind='focus:transform-preview-label:printf " %s " {4}' \
+      --bind="ctrl-t:transform:bash $driver key scope" \
+      --bind="ctrl-g:transform:bash $driver key mode" \
+      --bind="change:transform:bash $driver key change" \
+      --bind="ctrl-s:execute-silent(printf %s {5} | (wl-copy 2>/dev/null || xclip -selection clipboard 2>/dev/null || pbcopy 2>/dev/null))+abort" \
+      "${extra_binds[@]}" \
+      --preview="bash $driver preview {6}" \
+      --preview-window 'right,55%,wrap,follow' --height 60% --layout reverse
+  )" || return 1
+
+  printf "%s\n" "$out"
+}

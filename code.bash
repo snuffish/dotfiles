@@ -80,6 +80,112 @@ agyy() {
   command agy --mode accept-edits --dangerously-skip-permissions "${_agy_normalized[@]}"
 }
 
+_agy_open_pid() {
+  local lock="$HOME/.gemini/antigravity-cli/presence/$1.lock" pid
+  [[ -f "$lock" ]] || return 1
+  pid="$(lsof -t "$lock" 2>/dev/null | head -n1)"
+  [[ -n "$pid" ]] && kill -0 "$pid" 2>/dev/null && { echo "$pid"; return 0; }
+  return 1
+}
+
+# Pick an Antigravity session with fzf and resume it; extra args go to agy
+antigravity-resume() {
+  local picker="$HOME/.terminal/utils/agent-session-picker.sh"
+  local driver="$HOME/.terminal/antigravity/sessions.sh"
+  local focus_script="$HOME/.terminal/utils/agent-focus.sh"
+  local scope=here prompt='This dir> ' out pick id cwd pid
+
+  local db="$HOME/.gemini/antigravity-cli/conversation_summaries.db"
+  if [[ -f "$db" ]]; then
+    if ! sqlite3 -batch -noheader "file:$db?mode=ro" -cmd ".timeout 2000" \
+      "SELECT 1 FROM conversation_summaries WHERE workspace_uris LIKE '%$PWD%' LIMIT 1;" 2>/dev/null | grep -q 1; then
+      scope=all
+      prompt='All> '
+    fi
+  fi
+
+  out="$(
+    source "$picker"
+    run_agent_session_picker \
+      --driver "$driver" \
+      --title "Resume Antigravity session" \
+      --header 'enter resume · ctrl-t this dir / all · ctrl-g titles / text · ctrl-u subagents · ctrl-s copy id' \
+      --scope "$scope" \
+      --prompt "$prompt" \
+      --bind "ctrl-u:transform:bash $driver key subagent"
+  )" || return
+
+  pick="$(sed -n 2p <<< "$out")"
+  id="$(cut -f5 <<< "$pick")"
+  cwd="$(cut -f7 <<< "$pick")"
+  [[ -n "$id" ]] || return 0
+
+  if pid="$(_agy_open_pid "$id")"; then
+    echo "Session ${id:0:8} is already open in agy (pid $pid)." >&2
+    echo "Focusing active terminal window/pane..." >&2
+    bash "$focus_script" "$pid"
+    return 0
+  fi
+
+  (cd "${cwd:-$PWD}" && agy --conversation "$id" "$@")
+}
+
+agry() {
+  antigravity-resume --mode accept-edits --dangerously-skip-permissions "$@"
+}
+
+alias agr="antigravity-resume"
+
+# Pick from both Claude Code and Antigravity sessions in a unified picker
+agent-resume() {
+  local picker="$HOME/.terminal/utils/agent-session-picker.sh"
+  local driver="$HOME/.terminal/utils/unified-sessions.sh"
+  local focus_script="$HOME/.terminal/utils/agent-focus.sh"
+  local scope=here prompt='This dir> ' out key pick id cwd agent pid
+
+  out="$(
+    source "$picker"
+    run_agent_session_picker \
+      --driver "$driver" \
+      --title "Resume Agent session (Claude / Antigravity)" \
+      --header 'enter resume · ctrl-t this dir / all · ctrl-g titles / text · ctrl-a all / claude / agy · ctrl-s copy id' \
+      --scope "$scope" \
+      --prompt "$prompt" \
+      --bind "ctrl-a:transform:bash $driver key agent"
+  )" || return
+
+  key="$(head -n 1 <<< "$out")"
+  pick="$(sed -n 2p <<< "$out")"
+  id="$(cut -f5 <<< "$pick")"
+  cwd="$(cut -f7 <<< "$pick")"
+  agent="$(cut -f8 <<< "$pick")"
+  [[ -n "$id" ]] || return 0
+
+  if [[ "$agent" == "antigravity" ]]; then
+    if pid="$(_agy_open_pid "$id")"; then
+      echo "Session ${id:0:8} is already open in agy (pid $pid)." >&2
+      echo "Focusing active terminal window/pane..." >&2
+      bash "$focus_script" "$pid"
+      return 0
+    fi
+    (cd "${cwd:-$PWD}" && agy --conversation "$id" "$@")
+  else
+    if [[ -z "$key" ]] && pid="$(_claude_open_pid "$id" 2>/dev/null)"; then
+      echo "Session ${id:0:8} is open in claude (pid $pid): resuming a fork of it" >&2
+      bash "$focus_script" "$pid"
+      key=fork
+    fi
+    (cd "${cwd:-$PWD}" && claude --resume "$id" ${key:+--fork-session} "$@")
+  fi
+}
+
+ary() {
+  agent-resume --mode accept-edits --dangerously-skip-permissions "$@"
+}
+
+alias ar="agent-resume"
+
+
 agp() {
   echo "[AG_USER_DIR] $AG_USER_DIR"
   (

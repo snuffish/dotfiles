@@ -1,1 +1,1 @@
-/home/snuffish/.terminal/AGENTS.md
+AGENTS.md
