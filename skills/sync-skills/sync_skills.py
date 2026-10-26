@@ -49,7 +49,9 @@ BOOLEAN_VALUES = {
 }
 
 LOADER_TARGETS = {
-    'flat-links': os.path.expanduser(os.path.join('~', '.terminal', 'skills', 'flat-links')),
+    'claude': os.path.expanduser(os.path.join('~', '.claude', 'skills')),
+    'antigravity': os.path.expanduser(os.path.join('~', '.gemini', 'config', 'skills')),
+    'gemini': os.path.expanduser(os.path.join('~', '.gemini', 'skills')),
 }
 
 WORKTREE_DIRS = (
@@ -187,10 +189,53 @@ def discover_agents_skills(agents_dir, registry_skills):
     return found, shadowed
 
 
-def plan_links(root, flat, skills, agents_dir=None, agents_skills=None):
+def discover_plugin_skills(plugins_file, settings_file, existing_skills):
+    """Skills in Claude Code installed and enabled plugins; existing skills take precedence on name clash."""
+    found, shadowed = {}, []
+    if not os.path.isfile(plugins_file):
+        return found, shadowed
+    enabled = {}
+    if os.path.isfile(settings_file):
+        try:
+            enabled = json.load(open(settings_file, encoding='utf-8')).get('enabledPlugins', {})
+        except Exception:
+            pass
+    try:
+        data = json.load(open(plugins_file, encoding='utf-8'))
+    except Exception:
+        return found, shadowed
+    plugins = data.get('plugins', {})
+    for plugin_id, entries in sorted(plugins.items(), key=lambda x: (x[0] != 'claude-mem@thedotmack', x[0])):
+        if enabled.get(plugin_id) is False:
+            continue
+        if not isinstance(entries, list):
+            continue
+        for entry in entries:
+            install_path = entry.get('installPath')
+            if not install_path or not os.path.isdir(install_path):
+                continue
+            skills_dir = os.path.join(install_path, 'skills')
+            if not os.path.isdir(skills_dir):
+                continue
+            for name in sorted(os.listdir(skills_dir)):
+                d = os.path.join(skills_dir, name)
+                if not os.path.isfile(os.path.join(d, 'SKILL.md')):
+                    continue
+                if name in existing_skills or name in found:
+                    shadowed.append(name)
+                else:
+                    found[name] = {'path': os.path.realpath(d), 'project': None, 'link': True, 'plugin': plugin_id}
+    return found, shadowed
+
+
+def plan_links(root, flat, skills, agents_dir=None, agents_skills=None, plugin_skills=None, plugins_base=None, is_claude=False):
     """Return the link changes needed, as (action, name, target) tuples, plus untouched foreign dead links."""
     actions, foreign_dead = [], []
-    combined = dict(agents_skills or {})
+    combined = {}
+    if not is_claude and plugin_skills:
+        combined.update(plugin_skills)
+    if agents_skills:
+        combined.update(agents_skills)
     combined.update(skills)
 
     if is_monolithic_symlink(flat, root):
@@ -206,7 +251,7 @@ def plan_links(root, flat, skills, agents_dir=None, agents_skills=None):
                 continue
             target = os.path.normpath(os.path.join(flat, os.readlink(p)))
             if not os.path.exists(p):
-                if target.startswith(root + os.sep) or (agents_dir and target.startswith(agents_dir + os.sep)):
+                if target.startswith(root + os.sep) or (agents_dir and target.startswith(agents_dir + os.sep)) or (plugins_base and target.startswith(plugins_base + os.sep)):
                     actions.append(('prune', item, target))
                 else:
                     foreign_dead.append(f'{item} -> {target}')
@@ -324,6 +369,49 @@ def check_global_antigravity(agents_dir, targets=None):
     return warnings
 
 
+def plan_rule_links(root):
+    """Ensure global rules / instruction files point to AGENTS.md."""
+    source_agents = os.path.realpath(os.path.join(root, '..', 'AGENTS.md'))
+    if not os.path.isfile(source_agents):
+        source_agents = os.path.expanduser(os.path.join('~', '.terminal', 'AGENTS.md'))
+    if not os.path.isfile(source_agents):
+        return []
+
+    targets = [
+        ('terminal', os.path.join(os.path.dirname(source_agents), 'CLAUDE.md'), 'AGENTS.md'),
+        ('claude', os.path.expanduser(os.path.join('~', '.claude', 'CLAUDE.md')), source_agents),
+        ('antigravity', os.path.expanduser(os.path.join('~', '.gemini', 'GEMINI.md')), source_agents),
+    ]
+
+    actions = []
+    for host, link_path, target in targets:
+        os.makedirs(os.path.dirname(link_path), exist_ok=True)
+        if not os.path.lexists(link_path):
+            actions.append(('create', host, link_path, target))
+        elif os.path.islink(link_path):
+            curr_target = os.readlink(link_path)
+            curr_full = os.path.realpath(os.path.normpath(os.path.join(os.path.dirname(link_path), curr_target)))
+            target_full = os.path.realpath(os.path.normpath(os.path.join(os.path.dirname(link_path), target)))
+            if curr_full != target_full:
+                actions.append(('repoint', host, link_path, target))
+        else:
+            actions.append(('convert', host, link_path, target))
+    return actions
+
+
+def apply_rule_links(rule_actions):
+    failed = []
+    for action, host, link_path, target in rule_actions:
+        try:
+            if os.path.lexists(link_path):
+                os.unlink(link_path)
+            os.symlink(target, link_path)
+        except OSError as e:
+            failed.append(f'{action} {link_path}: {e}')
+    return failed
+
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
     parser.add_argument('--apply', action='store_true', help='fix the loader links (default: report only)')
@@ -333,6 +421,9 @@ def main():
 
     root = os.path.realpath(args.registry or os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
     agents_dir = os.path.expanduser(os.path.join('~', '.agents', 'skills'))
+    plugins_file = os.path.expanduser(os.path.join('~', '.claude', 'plugins', 'installed_plugins.json'))
+    plugins_settings = os.path.expanduser(os.path.join('~', '.claude', 'settings.json'))
+    plugins_base = os.path.expanduser(os.path.join('~', '.claude', 'plugins'))
 
     if args.apply and not args.registry and is_worktree_path(root):
         sys.exit(f'refusing --apply from a worktree ({root}): it would point every link into it. Pass --registry <main checkout>/skills.')
@@ -348,6 +439,8 @@ def main():
 
     skills, errors, warnings = lint(root)
     agents_skills, agents_shadowed = discover_agents_skills(agents_dir, skills)
+    existing_for_plugins = set(skills.keys()) | set(agents_skills.keys())
+    plugin_skills, plugin_shadowed = discover_plugin_skills(plugins_file, plugins_settings, existing_for_plugins)
 
     if args.apply:
         for target_name, target_path in targets.items():
@@ -358,7 +451,13 @@ def main():
     target_failed = {}
 
     for target_name, target_path in targets.items():
-        actions, foreign_dead = plan_links(root, target_path, skills, agents_dir, agents_skills)
+        is_claude = (target_name == 'claude')
+        actions, foreign_dead = plan_links(
+            root, target_path, skills,
+            agents_dir=agents_dir, agents_skills=agents_skills,
+            plugin_skills=plugin_skills, plugins_base=plugins_base,
+            is_claude=is_claude
+        )
         target_actions[target_name] = actions
         target_foreign[target_name] = foreign_dead
         if args.apply:
@@ -366,16 +465,35 @@ def main():
         else:
             target_failed[target_name] = []
 
+    rule_actions = plan_rule_links(root)
+    rule_failed = apply_rule_links(rule_actions) if args.apply else []
+
     ws_lines, ws_warnings = check_workspaces(root, skills)
     warnings += ws_warnings + check_global_antigravity(agents_dir, targets)
 
     general = sum(m['project'] is None for m in skills.values())
+    plugin_info = f' · plugins: {len(plugin_skills)} linked, {len(plugin_shadowed)} shadowed' if plugin_skills or plugin_shadowed else ''
     print(f'registry: {root}')
-    print(f'skills: {len(skills)} (general {general}, project {len(skills) - general}) · ~/.agents/skills: {len(agents_skills)} linked, {len(agents_shadowed)} shadowed · {len(errors)} errors · {len(warnings)} warnings')
+    print(f'skills: {len(skills)} (general {general}, project {len(skills) - general}) · ~/.agents/skills: {len(agents_skills)} linked, {len(agents_shadowed)} shadowed{plugin_info} · {len(errors)} errors · {len(warnings)} warnings')
     held = sorted(n for n, m in skills.items() if not m['link'])
     print(f'held out (project skills not in .flat-links): {len(held)}')
     if agents_shadowed:
         print(f'shadowed in ~/.agents/skills (registry wins): {len(agents_shadowed)}  {", ".join(agents_shadowed)}')
+    if plugin_shadowed:
+        print(f'shadowed in plugins (registry/agents win): {len(plugin_shadowed)}  {", ".join(sorted(set(plugin_shadowed)))}')
+
+    rules_status = "applied" if args.apply else "check only (--apply to change)"
+    print(f'rules (global AGENTS.md -> CLAUDE.md / GEMINI.md): {rules_status}')
+    for action in ('create', 'repoint', 'convert'):
+        names = [f'{host} ({link_path.replace(os.path.expanduser("~"), "~")})' for a, host, link_path, _ in rule_actions if a == action]
+        if names:
+            print(f'  {action}: {len(names)}  {", ".join(names)}')
+    if not rule_actions:
+        print('  up to date')
+    if rule_failed:
+        print(f'  FAILED: {len(rule_failed)}')
+        for i in rule_failed:
+            print(f'    - {i}')
 
     for target_name, target_path in targets.items():
         rel_target = target_path.replace(os.path.expanduser('~'), '~')
@@ -399,7 +517,7 @@ def main():
         print(f'{label}: {len(items)}')
         for i in items:
             print(f'  - {i.replace(root + os.sep, "")}')
-    any_failed = any(target_failed.values())
+    any_failed = any(target_failed.values()) or bool(rule_failed)
     sys.exit(1 if errors or any_failed else 0)
 
 

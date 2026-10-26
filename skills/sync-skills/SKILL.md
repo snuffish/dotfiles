@@ -24,12 +24,13 @@ Read these before step 1:
 
 ## Rules
 
-1. **The registry is the source of truth; loaders follow it.** General skills and Profiles each get one symlink in each loader target (`~/.claude/skills/<name>`, `~/.gemini/config/skills/<name>`, `~/.gemini/skills/<name>`) pointing at their folder in `<registry>`. Skills in `~/.agents/skills/<name>` also get one symlink in each loader target unless `<registry>` defines `<name>` (the registry wins on name clash).
+1. **The registry is the source of truth; loaders follow it.** General skills and Profiles each get one symlink in each loader target (`~/.claude/skills/<name>`, `~/.gemini/config/skills/<name>`, `~/.gemini/skills/<name>`) pointing at their folder in `<registry>`. Skills in `~/.agents/skills/<name>` also get one symlink in each loader target unless `<registry>` defines `<name>` (the registry wins on name clash). Skills in active Claude Code plugins (`~/.claude/plugins/installed_plugins.json`) are symlinked into non-Claude loaders (`~/.gemini/config/skills`, `~/.gemini/skills`) unless already provided by the registry or `~/.agents/skills`.
 2. **Monolithic loader symlinks are converted to flat link directories.** If a target directory (such as `~/.gemini/config/skills`) is a top-level symlink pointing to `<registry>`, `--apply` replaces it with a real directory containing individual leaf symlinks, leaving the registry contents untouched.
 3. **Project References stay out of flat loaders unless allow-listed.** Claude Code and Antigravity resolve a name clash as *personal over project*, so a global link to `Projects/<Project>/<name>` silently overrides the copy the project's own repo ships in `.claude/skills/` or `.agents/skills/`. A project skill is linked only when its name is listed in `Projects/<Project>/.flat-links` (one name per line). Profiles (`*-profile`) are always linked, because no repo ships them.
 4. **Modules are never skills.** `<registry>/_modules/` holds Modules (plain markdown, no frontmatter; ADR-0001, ADR-0002). Nothing in it is linked or counted, and a `SKILL.md` there is an error.
-5. **Prune only what this registry or `~/.agents/skills` owns.** A dead link is removed only when it points into `<registry>/` or `~/.agents/skills/`. Links into other places (plugin folders) are reported, never touched.
+5. **Prune only what this registry, `~/.agents/skills`, or installed plugins own.** A dead link is removed only when it points into `<registry>/`, `~/.agents/skills/`, or an installed Claude plugin directory (`~/.claude/plugins/`). Links into other places are reported, never touched.
 6. **Lint, don't rewrite.** The run edits loader links, audits `.agents/skills.json` and updates the README inventory. It never changes the instructions inside a `SKILL.md`; it reports problems for the user to fix.
+7. **Global instruction rules follow `AGENTS.md`.** `AGENTS.md` at registry parent (`~/.terminal/AGENTS.md`) is the canonical source of truth for global agent instructions. It is reconciled as a symlink to `~/.terminal/CLAUDE.md`, `~/.claude/CLAUDE.md`, and `~/.gemini/GEMINI.md`.
 
 ---
 
