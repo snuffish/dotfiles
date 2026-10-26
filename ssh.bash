@@ -2,8 +2,6 @@
 
 alias ssh_eval="eval \"$(ssh-agent -s)\""
 
-alias ssh_home="ssh HOME_PC_IP"
-
 SSH_SESSION_BG="${SSH_SESSION_BG:-#010f1a}"
 
 # Args: (colour) — sets this pane's background, or resets it when empty

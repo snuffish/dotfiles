@@ -74,3 +74,5 @@ if [[ "$ENV_PROFILE" == "Windows" ]]; then
 
   alias findport="tcpview"
 fi
+
+alias home="run_fzf_json home --title 'Home'"
