@@ -226,6 +226,23 @@ _ds_storage_warnings() {
         warnings+=("$label ($dir) is stored on the root disk ($root_src)")
     done <<< "Docker data|$(_ds_docker_root)
 Ollama models|$(_ds_ollama_models)"
+
+    # Check if a mount point under /mnt or /media is nested inside a path on root
+    local m parent
+    while IFS='|' read -r name size fstype mounts; do
+      [[ -z "$mounts" ]] && continue
+      mounts=$(echo "$mounts" | sed 's/\\x0a/ /g')
+      for m in $mounts; do
+        if [[ "$m" == /mnt/* || "$m" == /media/* ]]; then
+          parent="${m%/*}"
+          if [[ -n "$parent" && "$parent" != "/mnt" && "$parent" != "/media" ]]; then
+            if [[ "$(_ds_path_source "$parent")" == "$root_src" ]]; then
+              warnings+=("Mount $m is nested inside $parent, which sits on the root disk ($root_src)")
+            fi
+          fi
+        fi
+      done
+    done <<< "$disks"
   fi
 
   [[ ${#warnings[@]} -eq 0 ]] && return 0
@@ -434,6 +451,42 @@ _diskspace_top() {
 }
 
 # ------------------------------------------------------------------------------
+# Subcommand: large — Scan Largest Files
+# ------------------------------------------------------------------------------
+_diskspace_large() {
+  _ds_setup_colors
+  local target_dir="${1:-$HOME}"
+  local min_size="${2:-500M}"
+  local count="${3:-20}"
+
+  # Expand tilde if present
+  target_dir="${target_dir/#\~/$HOME}"
+  [[ "$target_dir" != "/" ]] && target_dir="${target_dir%/}"
+
+  if [[ ! -d "$target_dir" ]]; then
+    echo "Error: Directory '$target_dir' does not exist." >&2
+    return 1
+  fi
+
+  if [[ ! "$count" =~ ^[0-9]+$ ]]; then
+    echo "Error: Count must be a positive integer (got '$count')." >&2
+    return 1
+  fi
+
+  printf "%s%sScanning for files larger than %s in: %s%s%s\n\n" \
+    "$DS_BOLD" "$DS_CYAN" "$min_size" "$DS_RESET$DS_BOLD" "$target_dir" "$DS_RESET"
+
+  printf "%-10s %s\n" "SIZE" "FILE"
+  printf "%s\n" "--------------------------------------------------------"
+
+  find "$target_dir" -xdev -type f -size +"$min_size" -exec du -h {} + 2>/dev/null |
+    sort -hr | head -n "$count" | while IFS=$'\t' read -r sz file; do
+      printf "%-10s %s\n" "$sz" "$file"
+    done
+  printf "\n"
+}
+
+# ------------------------------------------------------------------------------
 # Cleanup Category Registry
 #   id | kind (regen = rebuilt on demand, state = holds settings/packages)
 #      | priv (user, sudo) | os (any, linux, mac) | label
@@ -455,7 +508,9 @@ xcode|regen|user|mac|Xcode DerivedData
 trash|regen|user|any|User Trash
 pacman|regen|sudo|linux|pacman package cache
 aur|regen|user|linux|AUR build cache & packages (~/.cache/yay, ~/.cache/paru)
+flatpak|regen|sudo|linux|Unused Flatpak runtimes
 snaprev|regen|sudo|linux|Disabled snap revisions
+snapdata|regen|user|linux|Obsolete user snap data (~/snap)
 journal|regen|sudo|linux|systemd journal (vacuum to 500M)
 jetbrains|state|user|any|Old JetBrains IDE versions (settings, plugins, caches)
 nvm|state|user|any|Old nvm Node.js versions (global npm packages)'
@@ -484,6 +539,33 @@ _ds_go_cache_dir() {
 _ds_snap_disabled() {
   command -v snap >/dev/null 2>&1 || return 0
   snap list --all 2>/dev/null | awk 'NR > 1 && $NF ~ /(^|,)disabled(,|$)/ { print $1, $3 }'
+}
+
+# Directories in ~/snap/*/<rev> that correspond to disabled revisions and are not the current symlink
+_ds_snap_user_stale() {
+  [[ -d "$HOME/snap" ]] || return 0
+  command -v snap >/dev/null 2>&1 || return 0
+  local disabled
+  disabled=" $(snap list --all 2>/dev/null | awk 'NR > 1 && $NF ~ /(^|,)disabled(,|$)/ { print $1 ":" $3 }' | tr '\n' ' ') "
+  [[ -z "${disabled// }" ]] && return 0
+
+  local app d rev cur_target app_name
+  for app in "$HOME/snap"/*; do
+    [[ -d "$app" ]] || continue
+    app_name="${app##*/}"
+    cur_target=""
+    [[ -L "$app/current" ]] && cur_target=$(readlink "$app/current" 2>/dev/null)
+    cur_target="${cur_target##*/}"
+
+    for d in "$app"/[0-9]*; do
+      [[ -d "$d" ]] || continue
+      rev="${d##*/}"
+      [[ "$rev" == "$cur_target" ]] && continue
+      if [[ "$disabled" == *" ${app_name}:${rev} "* ]]; then
+        echo "$d"
+      fi
+    done
+  done
 }
 
 # Paths of JetBrains version dirs older than the newest one per product
@@ -571,8 +653,10 @@ _ds_probe_pacman() {
       }
       END { printf "%d\n", total }
     ')
-    echo "${out:-0}"
-    return
+    if [[ "${out:-0}" -gt 0 ]]; then
+      echo "$out"
+      return
+    fi
   fi
   _ds_dir_kb /var/cache/pacman/pkg
 }
@@ -589,6 +673,26 @@ _ds_probe_journal() {
   # Vacuuming keeps 500M
   echo $(( kb > 512000 ? kb - 512000 : 0 ))
 }
+_ds_probe_flatpak() {
+  command -v flatpak >/dev/null 2>&1 || { echo 0; return; }
+  local unused
+  unused=$(flatpak uninstall --unused <<< "n" 2>/dev/null | awk '/^[[:space:]]+[0-9]+\./ { print $2 "/" $3 }')
+  [[ -z "$unused" ]] && { echo 0; return; }
+  flatpak list --columns=size,application,branch 2>/dev/null | awk -v unused="$unused" '
+    BEGIN { split(unused, uarr, "\n"); for (i in uarr) if (uarr[i] != "") is_u[uarr[i]] = 1 }
+    {
+      ref = $2 "/" $3
+      if (is_u[ref]) {
+        s = $1; gsub(/ /, "", s)
+        val = s; sub(/[A-Za-z]+/, "", val); val = val + 0
+        u = toupper(substr(s, length(val)+1, 1))
+        m = (u == "T") ? 1024^3 : (u == "G") ? 1024^2 : (u == "M") ? 1024 : 1
+        total += val * m
+      }
+    }
+    END { printf "%d\n", total }
+  '
+}
 _ds_probe_snaprev() {
   local -a files=()
   local name rev
@@ -597,6 +701,13 @@ _ds_probe_snaprev() {
   done < <(_ds_snap_disabled)
   [[ ${#files[@]} -eq 0 ]] && { echo 0; return; }
   _ds_dir_kb "${files[@]}"
+}
+_ds_probe_snapdata() {
+  local -a dirs=()
+  local d
+  while IFS= read -r d; do [[ -n "$d" ]] && dirs+=("$d"); done < <(_ds_snap_user_stale)
+  [[ ${#dirs[@]} -eq 0 ]] && { echo 0; return; }
+  _ds_dir_kb "${dirs[@]}"
 }
 _ds_probe_jetbrains() {
   local -a dirs=()
@@ -616,11 +727,12 @@ _ds_probe_nvm() {
 # --- Sudo hints (printed instead of running when --sudo isn't given) ----------
 _ds_hint_pacman() {
   if command -v paccache >/dev/null 2>&1; then
-    echo "sudo paccache -rk1 && sudo paccache -ruk0"
+    echo "sudo paccache -rk1 && sudo paccache -ruk0   (or full prune: sudo paccache -rk0)"
   else
     echo "sudo pacman -Sc   (or install pacman-contrib for: sudo paccache -rk1)"
   fi
 }
+_ds_hint_flatpak() { echo "sudo flatpak uninstall --unused -y"; }
 _ds_hint_snaprev() {
   echo "snap list --all | awk '\$NF ~ /disabled/ {print \$1, \$3}' | while read -r n r; do sudo snap remove \"\$n\" --revision=\"\$r\"; done"
 }
@@ -723,9 +835,15 @@ _ds_clean_trash() {
 }
 
 _ds_clean_pacman() {
-  _ds_step "Pruning pacman package cache (keeping 1 version)"
+  _ds_step "Pruning pacman package cache"
   if command -v paccache >/dev/null 2>&1; then
-    sudo paccache -rk1 && sudo paccache -ruk0
+    local saved_k1
+    saved_k1=$( { paccache -d -k 1 2>/dev/null; paccache -d -u -k 0 2>/dev/null; } | awk '/disk space saved:/ { for (i=1;i<=NF;i++) if ($i ~ /^[0-9.]+$/ && $(i+1) ~ /^[KMGTkmgt]/) s+=$i; } END { print s+0 }')
+    if [[ "${saved_k1:-0}" -gt 0 ]]; then
+      sudo paccache -rk1 && sudo paccache -ruk0
+    else
+      sudo paccache -rk0
+    fi
   else
     sudo pacman -Sc --noconfirm
   fi
@@ -750,6 +868,12 @@ _ds_clean_aur() {
   _ds_done "AUR cache cleaned."
 }
 
+_ds_clean_flatpak() {
+  _ds_step "Uninstalling unused Flatpak runtimes"
+  sudo flatpak uninstall --unused -y 2>/dev/null || flatpak uninstall --unused -y
+  _ds_done "Unused Flatpak runtimes removed."
+}
+
 _ds_clean_snaprev() {
   _ds_step "Removing disabled snap revisions"
   local name rev
@@ -757,6 +881,17 @@ _ds_clean_snaprev() {
     [[ -n "$name" ]] && sudo snap remove "$name" --revision="$rev"
   done < <(_ds_snap_disabled)
   _ds_done "Disabled snap revisions removed."
+}
+
+_ds_clean_snapdata() {
+  _ds_step "Removing obsolete user snap data"
+  local d
+  while IFS= read -r d; do
+    [[ -n "$d" ]] || continue
+    printf "   %s- %s%s\n" "$DS_DIM" "$d" "$DS_RESET"
+    rm -rf "$d"
+  done < <(_ds_snap_user_stale)
+  _ds_done "Obsolete user snap data removed."
 }
 
 _ds_clean_journal() {
@@ -1059,6 +1194,10 @@ diskspace() {
       shift
       _diskspace_top "$@"
       ;;
+    large)
+      shift
+      _diskspace_large "$@"
+      ;;
     clean|cleanup)
       shift
       _diskspace_clean "$@"
@@ -1077,6 +1216,7 @@ diskspace() {
       echo "  diskspace                     Show disk usage, capacity bars, and storage layout warnings"
       echo "  diskspace status              Explicit status overview (same as bare diskspace)"
       echo "  diskspace top [path] [n]      Show top [n] largest directories in [path] (default: \$HOME, 10)"
+      echo "  diskspace large [path] [size] Show largest files exceeding [size] (default: \$HOME, 500M)"
       echo "  diskspace limits              Check that journal/pacman/snap/Docker caches are capped"
       echo "  diskspace clean               Interactive multi-select cleanup menu"
       echo "  diskspace clean --dry-run     Size-sorted list of reclaimable space with totals"
