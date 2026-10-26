@@ -13,5 +13,9 @@
   },
   "gg": {
     "Reset origin": "git reset --hard origin/main"
+  },
+  "home": {
+    "[SSH] Snuffish-PC": "ssh 212.181.207.74",
+    "[TUNNEL] Ollama": "ollama-proxy"
   }
 }
