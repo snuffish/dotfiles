@@ -15,7 +15,7 @@ Turns a follow-up, decision or defect that is already written down into one well
 > 1. **CREATE ONLY ON AN EXPLICIT REQUEST IN THE CURRENT MESSAGE.** "Create a ticket for this", "file it" or `/create-ticket` is that request. `/create-ticket draft` is not, and neither is a standing instruction (memory, `CLAUDE.md`) that says tickets are drafted for the user to file. In those cases stop at the *Draft preview*. Approval of one draft does not carry over to another.
 > 2. **FILE ONLY WHAT THE SOURCE SAYS.** Restructure for the tracker, translate into the tracker's language, and add nothing of substance. No new requirements, estimates or claims. When a draft was shown, file it byte for byte, or show the changed version again.
 > 3. **NO SIDE EFFECTS BEYOND THE ONE TICKET.** Never assign, set a sprint, change state, set priority, link to a PR or commit, or comment on other items unless that exact action is asked for. A parent link is set only when the request or the source names the parent. Linking a ticket to a PR changes the PR.
-> 4. **A DENIED WRITE IS FINAL FOR THIS TURN.** If the permission system blocks the create, do not route around it (another CLI, a raw REST call, a script run through a test runner). Leave the spec and content files in place, hand over the exact command (*Step 7*), and ask for the new id.
+> 4. **A DENIED WRITE IS FINAL FOR THIS TURN.** If the permission system blocks the create, do not route around it (another CLI, the MCP server instead of the CLI or the reverse, a raw REST call, a script run through a test runner). Leave the spec and content files in place, hand over the exact command (*Step 7*), and ask for the new id.
 > 5. **DO NOT MODIFY CODE OR THE WORKING TREE.** The only local writes are the files in the scratchpad and the one line in the source artifact that records the id.
 
 ---
@@ -65,6 +65,7 @@ Read these before step 1:
 - **GitHub:** `gh repo view --json nameWithOwner`, or the repo the request names.
 - In a multi-repo workspace the ticket goes to the project that owns the work. A ticket spanning repos is one ticket in the shared project, not one per repo, unless the team files per repo (*Step 3* shows which).
 - A project profile or workflow skill (for example `implement-feature-<project>-profile`, `<project>-workflow`) can state ticket rules, such as implementing-ID rules or "tasks are English, stories Swedish". Those rules win over what *Step 3* infers.
+- **Tool.** When the project profile names an MCP server for the tracker (for example `azure-devops`) and it is connected in this session, use it for the reads (*Steps 3–4*), the create and the read-back (*Step 7*). The `az` / `gh` commands and `scripts/create_ticket.py` are the CLI path for when no such server is named or connected. An authentication failure of one path (`az` → "requires user authentication") is not a permission denial, so switch to the other. A denied write is (*Invariant 4*).
 
 ### Step 3 — Copy the tracker's conventions
 
@@ -84,6 +85,8 @@ az boards work-item show --org … --id <id> --expand relations -o json
 gh issue list --repo <owner>/<name> --state all --limit 25 --json number,title,labels,state
 gh label list --repo <owner>/<name>
 ```
+
+With the `azure-devops` MCP server: `wit_query` `action: "wiql"` with the same WIQL (`project`, `top: 25`), then `wit_work_item` `action: "get"` per relative (`expand: "Relations"` and `fields` are mutually exclusive, so it takes two calls to get the relations as well as selected fields).
 
 Derive:
 
@@ -109,6 +112,8 @@ az boards query --org … --project <project> --wiql "
 gh issue list --repo <owner>/<name> --state open --search "<key terms>"
 ```
 
+With the MCP server: the same WIQL through `wit_query` `action: "wiql"`.
+
 Use two or three distinctive terms from the title, not generic words. If an open item covers the same work, stop and show it. The user chooses between "create anyway" and "add to #id instead", and the second is out of this skill's scope unless asked.
 
 ### Step 5 — Write the content
@@ -133,17 +138,19 @@ Use two or three distinctive terms from the title, not generic words. If an open
 ### Step 7 — Create, verify, or hand over
 
 1. **Create:** the same command with `--create`. It creates the item, adds the parent link when the spec has one, and prints the id and URL.
+   **With the MCP server** (*Step 2* › Tool): `wit_work_item_write` `action: "create"` with `project`, `workItemType` = the spec's `type`, and `fields` taken from the spec the dry run validated: `System.Title`, `System.AreaPath`, `System.IterationPath`, `System.Tags` (the tags joined with `; `), each extra field in the spec's `fields`, and the content files verbatim as `System.Description`, `Microsoft.VSTS.Common.AcceptanceCriteria` or `Microsoft.VSTS.TCM.ReproSteps`, each with `format: "Html"`. Set only the fields in the spec. When the spec has a parent, add it next with `wit_work_item_link_write` `action: "link"`, `updates: [{id: <new id>, linkToId: <parent>, type: "parent"}]`.
 2. **Verify** by reading it back: type, title, state, area, iteration, tags, that the description and acceptance criteria are non-empty, and the parent relation.
    ```bash
    az boards work-item show --org … --id <id> --expand relations \
      --query '{t:fields."System.WorkItemType",title:fields."System.Title",s:fields."System.State",a:fields."System.AreaPath",i:fields."System.IterationPath",tags:fields."System.Tags",d:length(fields."System.Description"),ac:length(fields."Microsoft.VSTS.Common.AcceptanceCriteria"),parent:relations[?rel==`System.LinkTypes.Hierarchy-Reverse`].url}'
    gh issue view <n> --repo <owner>/<name> --json number,title,labels,url
    ```
-3. **Denied** (the auto-mode classifier or a permission rule blocks the external write): say plainly that nothing was created and hand over the command with absolute paths, with `<skill-dir>` expanded to this skill's real folder:
+   With the MCP server: `wit_work_item` `action: "get"` twice, once with `fields` for the values above and once with `expand: "Relations"` for the `System.LinkTypes.Hierarchy-Reverse` parent.
+3. **Denied** (the auto-mode classifier or a permission rule blocks the external write, through the CLI or the MCP server): say plainly that nothing was created and do not retry through the other path. Hand over the command with absolute paths, with `<skill-dir>` expanded to this skill's real folder:
    ```bash
    python3 -I /<skill-dir>/scripts/create_ticket.py /<scratchpad>/ticket-<slug>/spec.json --create
    ```
-   Mention that a permission rule for `az boards work-item create` / `gh issue create` lets the agent file next time, and ask the user to paste the printed id.
+   Mention that a permission rule for `az boards work-item create` / `gh issue create` (or the MCP `wit_work_item_write` tool) lets the agent file next time, and ask the user to paste the printed id.
 
 ### Step 8 — Record the id
 
