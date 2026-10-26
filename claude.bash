@@ -118,5 +118,5 @@ function claude-mem-search() {
 alias cr="claude-resume"
 alias cms="claude-mem-search"
 
-alias omp='omp'
+alias omp='ollama launch omp'
 alias omp-new='omp session start'
