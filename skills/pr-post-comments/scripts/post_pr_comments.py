@@ -65,8 +65,11 @@ def ado_payload(item, iteration):
             "rightFileStart": {"line": item["start"], "offset": 1},
             "rightFileEnd": {"line": item["end"], "offset": item["end_offset"]},
         }
+        ct_id = item.get("change_tracking_id")
+        if not ct_id:
+            raise ValueError(f"Item {item.get('key')} is a 'thread' but missing 'change_tracking_id'; Azure DevOps requires this for inline comments. Use 'kind': 'general' instead.")
         body["pullRequestThreadContext"] = {
-            "changeTrackingId": item["change_tracking_id"],
+            "changeTrackingId": ct_id,
             "iterationContext": {"firstComparingIteration": iteration, "secondComparingIteration": iteration},
         }
     return body
