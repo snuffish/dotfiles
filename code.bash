@@ -110,7 +110,7 @@ antigravity-resume() {
     run_agent_session_picker \
       --driver "$driver" \
       --title "Resume Antigravity session" \
-      --header $'enter resume · ctrl-f fork · ctrl-s copy id\nctrl-t this dir / all · ctrl-g titles / text · ctrl-u subagents' \
+      --header $'[Enter] Resume · [Ctrl-F] Fork · [Ctrl-S] Copy ID\n[Ctrl-T] This dir/All · [Ctrl-G] Titles/Text · [Ctrl-U] Subagents' \
       --scope "$scope" \
       --prompt "$prompt" \
       --bind "ctrl-u:transform:bash $driver key subagent"
@@ -159,7 +159,7 @@ agent-resume() {
     run_agent_session_picker \
       --driver "$driver" \
       --title "Resume Agent session (Claude / Antigravity)" \
-      --header $'enter resume · ctrl-f fork · ctrl-x cross-fork · ctrl-s copy id\nctrl-t this dir / all · ctrl-g titles / text · ctrl-a all / claude / agy' \
+      --header $'[Enter] Resume · [Ctrl-F] Fork · [Ctrl-X] Cross-fork · [Ctrl-S] Copy ID\n[Ctrl-T] This dir/All · [Ctrl-G] Titles/Text · [Ctrl-A] All/Claude/Agy' \
       --scope "$scope" \
       --prompt "$prompt" \
       --bind "ctrl-a:transform:bash $driver key agent"

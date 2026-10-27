@@ -230,6 +230,36 @@ function _gb_list() {
   '
 }
 
+# Wrap fzf header shortcuts dynamically so they do not get truncated behind the preview window
+function _git_fzf_wrap_header() {
+  local max_len="$1"
+  local header_str="$2"
+  python3 -I -c '
+import sys
+max_len = int(sys.argv[1])
+header = sys.argv[2]
+out_lines = []
+for line in header.split("\n"):
+    if len(line) <= max_len:
+        out_lines.append(line)
+        continue
+    sep = " | " if " | " in line else (" · " if " · " in line else " ")
+    parts = [p.strip() for p in line.split(sep) if p.strip()]
+    curr = ""
+    for p in parts:
+        if not curr:
+            curr = p
+        elif len(curr) + len(sep) + len(p) <= max_len:
+            curr += sep + p
+        else:
+            out_lines.append(curr)
+            curr = p
+    if curr:
+        out_lines.append(curr)
+print("\n".join(out_lines))
+' "$max_len" "$header_str" 2>/dev/null || printf "%s" "$header_str"
+}
+
 # Checkout a branch (or switch to its worktree if already checked out), most recently visited first (from the reflog), then the rest alphabetically
 unalias gb 2>/dev/null
 function gb() {
@@ -265,11 +295,17 @@ function gb() {
   local preview_log='git show --stat --color=always {5} 2>/dev/null; echo; git log --oneline --graph --color=always -n 20 {5} 2>/dev/null'
   local preview_diff='if git diff --quiet HEAD...{5} 2>/dev/null; then echo "No diff against HEAD"; else git diff --color=always HEAD...{5} 2>/dev/null; fi'
 
+  local cols="${COLUMNS:-$(tput cols 2>/dev/null || echo 100)}"
+  local max_len=$(( cols * 45 / 100 - 4 ))
+  [[ $max_len -lt 35 ]] && max_len=35
+  local header
+  header=$(_git_fzf_wrap_header "$max_len" '[Enter] Checkout/Switch · [Ctrl-T] Local/All · [Ctrl-D] Diff · [Ctrl-S] Log · [Ctrl-Y] Copy')
+
   local pick
   pick=$(printf '%s\n' "$rows" | fzf --ansi \
-    --header 'enter checkout/switch · ctrl-t local / all · ctrl-d diff · ctrl-s log · ctrl-y copy' \
+    --header "$header" \
     --border rounded --border-label ' Checkout branch ' --preview-border rounded \
-    --color 'border:8,label:6:bold,preview-border:8,preview-label:6:bold,header:8:italic,info:8,separator:8,scrollbar:8' \
+    --color 'border:8,label:6:bold,preview-border:8,preview-label:6:bold,info:8,separator:8,scrollbar:8' \
     --color 'prompt:6:bold,pointer:5,marker:5,hl:3:bold,hl+:3:bold,fg+:-1:bold,query:-1:bold' \
     --prompt "$prompt" --delimiter='\t' --with-nth=1,2,3 --nth=2,3 --tabstop=1 --tiebreak=index \
     --query "$*" --select-1 --exit-0 "${pos_bind[@]}" \
@@ -350,10 +386,16 @@ function gw() {
   preview_diff+=' git diff HEAD --color=always;'
   preview_diff+=' git ls-files -z --others --exclude-standard | xargs -0 -n1 git diff --no-index --color=always -- /dev/null 2>/dev/null; true'
 
+  local cols="${COLUMNS:-$(tput cols 2>/dev/null || echo 100)}"
+  local max_len=$(( cols * 50 / 100 - 4 ))
+  [[ $max_len -lt 35 ]] && max_len=35
+  local header
+  header=$(_git_fzf_wrap_header "$max_len" '[Enter] Switch · [Ctrl-D] Diff · [Ctrl-S] Status · [Shift-↑/↓] Scroll preview')
+
   # Match the query against the label only; the shared parent path would fuzzy-match everything
   local wt_line
   wt_line=$(printf '%s\n' "$rows" | fzf --border --border-label ' Switch worktree ' \
-    --header '[Enter] Switch | [Ctrl-D] Diff | [Ctrl-S] Status | [Shift-↑/↓] Scroll preview' \
+    --header "$header" \
     --delimiter '\t' --nth 1 --tiebreak=index \
     --query "$*" --select-1 --exit-0 "${pos_bind[@]}" \
     --preview "$preview_status" --preview-label ' status ' \

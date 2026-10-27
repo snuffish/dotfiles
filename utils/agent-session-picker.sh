@@ -59,7 +59,7 @@ print("\n".join(out_lines))
     bash "$driver" list "$scope" | fzf --ansi \
       "${header_args[@]}" \
       --border rounded --border-label " $title " --preview-border rounded \
-      --color 'border:8,label:6:bold,preview-border:8,preview-label:6:bold,header:8:italic,info:8,separator:8,scrollbar:8' \
+      --color 'border:8,label:6:bold,preview-border:8,preview-label:6:bold,info:8,separator:8,scrollbar:8' \
       --color 'prompt:6:bold,pointer:5,marker:5,hl:3:bold,hl+:3:bold,fg+:-1:bold,query:-1:bold' \
       --prompt "$prompt" --delimiter='\t' --with-nth=1,2,3,4 --no-sort --expect=ctrl-o,ctrl-f,ctrl-x \
       --bind='focus:transform-preview-label:printf " %s " {4}' \
