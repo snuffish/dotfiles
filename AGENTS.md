@@ -40,3 +40,4 @@ Local skill registry is in `skills/`. Run `python3 -I skills/sync-skills/sync_sk
 *No context yet. Complete your first session and context will appear here.*
 </claude-mem-context>
 
+@~/.claude-mem/MY-RULES.md
