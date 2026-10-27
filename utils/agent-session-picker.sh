@@ -24,7 +24,36 @@ run_agent_session_picker() {
   }
 
   local header_args=()
-  [[ -n "$header" ]] && header_args=(--header "$header")
+  if [[ -n "$header" ]]; then
+    local cols="${COLUMNS:-$(tput cols 2>/dev/null || echo 160)}"
+    local max_len=$(( cols * 45 / 100 - 4 ))
+    [[ $max_len -lt 35 ]] && max_len=35
+    local wrapped_header
+    wrapped_header="$(python3 -I -c '
+import sys
+max_len = int(sys.argv[1])
+header = sys.argv[2]
+out_lines = []
+for line in header.split("\n"):
+    if len(line) <= max_len:
+        out_lines.append(line)
+        continue
+    parts = [p.strip() for p in line.split(" · ") if p.strip()]
+    curr = ""
+    for p in parts:
+        if not curr:
+            curr = p
+        elif len(curr) + len(p) + 3 <= max_len:
+            curr += " · " + p
+        else:
+            out_lines.append(curr)
+            curr = p
+    if curr:
+        out_lines.append(curr)
+print("\n".join(out_lines))
+' "$max_len" "$header" 2>/dev/null || printf "%s" "$header")"
+    header_args=(--header "$wrapped_header")
+  fi
 
   out="$(
     bash "$driver" list "$scope" | fzf --ansi \
@@ -32,7 +61,7 @@ run_agent_session_picker() {
       --border rounded --border-label " $title " --preview-border rounded \
       --color 'border:8,label:6:bold,preview-border:8,preview-label:6:bold,header:8:italic,info:8,separator:8,scrollbar:8' \
       --color 'prompt:6:bold,pointer:5,marker:5,hl:3:bold,hl+:3:bold,fg+:-1:bold,query:-1:bold' \
-      --prompt "$prompt" --delimiter='\t' --with-nth=1,2,3,4 --no-sort --expect=ctrl-o \
+      --prompt "$prompt" --delimiter='\t' --with-nth=1,2,3,4 --no-sort --expect=ctrl-o,ctrl-f,ctrl-x \
       --bind='focus:transform-preview-label:printf " %s " {4}' \
       --bind="ctrl-t:transform:bash $driver key scope" \
       --bind="ctrl-g:transform:bash $driver key mode" \

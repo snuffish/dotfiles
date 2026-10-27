@@ -1,13 +1,13 @@
 ---
 name: investigate
-description: "\"Deep read-only research before designing a change: traces symbols, maps call flows and blast radius, uncovers prior art and conventions, surfaces cross-layer constraints, weighs options, and writes an evidence-backed `<prefix>-investigation-<suffix>.md` that /plan builds on. Use for /investigate, \\\"research this\\\", \\\"how does X work before we change it?\\\", \\\"what would it take to add Y?\\\", \\\"scope this out\\\", \\\"is this feasible?\\\"..\"."
+description: "\"Deep read-only research before designing a change: traces symbols, maps call flows and blast radius, uncovers prior art and conventions, surfaces cross-layer constraints, weighs options, audits critical blind spots (integrating /what-am-I-missing), and writes an evidence-backed `<prefix>-investigation-<suffix>.md` that /plan builds on. Use for /investigate, \\\"research this\\\", \\\"how does X work before we change it?\\\", \\\"what would it take to add Y?\\\", \\\"scope this out\\\", \\\"is this feasible?\\\"..\"."
 ---
 
 # Skill: `/investigate` — Pre-Plan Research & Discovery
 
-The dedicated reconnaissance pass executed **before** `/plan`. It replaces speculation with verifiable evidence, answering: *"What is actually true in this codebase today, and what are our viable options?"*
+The dedicated reconnaissance pass executed **before** `/plan`. It replaces speculation with verifiable evidence, answering: *"What is actually true in this codebase today, what are our viable options, and what critical traps are we missing?"*
 
-A plan built on assumptions breaks down during implementation. This skill guarantees that every assertion is anchored to real code or explicitly quarantined as an unverified inference, handing `/plan` a solid evidence foundation instead of a blank page.
+A plan built on assumptions breaks down during implementation. This skill guarantees that every assertion is anchored to real code or explicitly quarantined as an unverified inference, performs an adversarial blind-spot audit (incorporating the `/what-am-I-missing` flow), and hands `/plan` a battle-tested evidence foundation instead of a blank page.
 
 ---
 
@@ -39,12 +39,12 @@ Read these before step 1:
 
 | Objective / Context | Correct Skill |
 |---|---|
-| Deep-dive research, ground truth, and options **before** designing a change | **`/investigate`** (this skill) |
+| Deep-dive research, ground truth, options, and critical blind spots **before** designing a change | **`/investigate`** (this skill — includes the `/what-am-I-missing` audit) |
 | Synthesizing gathered evidence into a phased task plan | [`/plan`](../plan/SKILL.md) |
 | Explaining an isolated symbol, expression, error, or PR comment | [`/explain`](../explain/SKILL.md) |
 | Diagnosing an active regression, failing test, or runtime crash | [`/problem`](../problem/SKILL.md) |
 | Auditing an existing plan or pull request diff | [`/plan-review`](../plan-review/SKILL.md) (plans) or [`/code-review`](../code-review/SKILL.md) (diffs) |
-| Auditing a proposed architecture for hidden edge cases and failure modes | [`/what-am-I-missing`](../what-am-I-missing/SKILL.md) |
+| Standalone blind-spot audit of an already-chosen approach, plan, or diff | [`/what-am-I-missing`](../what-am-I-missing/SKILL.md) |
 
 ---
 
@@ -67,8 +67,9 @@ When the user runs `/investigate` without instructions:
      - 📄 [TL;DR](file://<workspace-root>/<prefix>-investigation-<suffix>.md#L16)
      - 📄 [Current-State Architecture](file://<workspace-root>/<prefix>-investigation-<suffix>.md#L32)
      - 📄 [Options & Trade-offs](file://<workspace-root>/<prefix>-investigation-<suffix>.md#L78)
-     - 📄 [Confidence Ledger](file://<workspace-root>/<prefix>-investigation-<suffix>.md#L110)
-     - 📄 [Plan Seed](file://<workspace-root>/<prefix>-investigation-<suffix>.md#L135)
+     - 📄 [Blind Spots (What Am I Missing?)](file://<workspace-root>/<prefix>-investigation-<suffix>.md#L95)
+     - 📄 [Confidence Ledger](file://<workspace-root>/<prefix>-investigation-<suffix>.md#L120)
+     - 📄 [Plan Seed](file://<workspace-root>/<prefix>-investigation-<suffix>.md#L145)
 
      **Status:** Complete | Blocked on open questions
      ```
@@ -85,7 +86,7 @@ Execute the complete **Investigation Protocol** below.
 
 ---
 
-## 3. The 7-Step Investigation Protocol
+## 3. The 8-Step Investigation Protocol
 
 ```mermaid
 flowchart TD
@@ -94,8 +95,9 @@ flowchart TD
     S2 --> S3["Step 3: Trace Real Code Cross-Layer"]
     S3 --> S4["Step 4: Surface Contracts, Constraints & Blast Radius"]
     S4 --> S5["Step 5: Frame Architectural Options & Trade-offs"]
-    S5 --> S6["Step 6: Assemble Confidence Ledger"]
-    S6 --> Art["Write & Deliver <prefix>-investigation-<suffix>.md"]
+    S5 --> S6["Step 6: Audit Blind Spots (What Am I Missing?)"]
+    S6 --> S7["Step 7: Assemble Confidence Ledger"]
+    S7 --> Art["Write & Deliver <prefix>-investigation-<suffix>.md"]
 ```
 
 ### Step 0 — Frame the Scope & Questions
@@ -139,7 +141,23 @@ Present 2–3 viable, contrasting implementation approaches:
 - **Prior Art Reference**: Which existing pattern or file each option resembles.
 - **Recommendation & Rationale**: Explicitly designate the recommended option and justify why it wins.
 
-### Step 6 — Assemble the Confidence Ledger
+### Step 6 — Audit Blind Spots & Critical Omissions (What Am I Missing?)
+Audit the leading/recommended option against the **7 Universal Blindspot Vectors**:
+1. **💾 Persistence, Transactions & Data Integrity**: Engine invariants, partial failure atomicity, schema locks, migration backfill.
+2. **⚡ Concurrency, State Drift & Lifecycles**: Race conditions, cache invalidation, terminal/archived lifecycle states.
+3. **🌐 Boundaries, Contracts & Blast Radius**: Downstream breaking changes, polymorphic coverage, third-party timeouts/fallbacks.
+4. **🔒 Security, Authorization & Tenancy**: Tenant isolation/IDOR, permission revocation, token/secret leakage.
+5. **🚀 Operational Realities & Performance**: Scale traps ($O(N)$ / N+1), resource leaks, observability/debuggability.
+6. **🧪 Testing Realities & False Confidence**: Mocks that lie, negative/asymmetric paths, idempotency under retry.
+7. **🧩 Leaky Abstractions & Design Consistency**: Developer traps, single source of domain truth.
+
+Identify and record:
+- 🎯 **The #1 Primary Blind Spot**: The single most critical unstated assumption or hidden invariant.
+- 💥 **Blast Radius / Failure Scenario**: Trigger condition, concrete impact, and why it went unnoticed.
+- 🔍 **Secondary Blind Spots**: 1–2 additional high-probability edge cases.
+- 🛠️ **Actionable Fix & Prevention**: Immediate fix for the plan seed plus structural/type-level prevention.
+
+### Step 7 — Assemble the Confidence Ledger
 Classify every key finding into one of three strict categories:
 - ✅ **Verified**: Confirmed by inspecting specific code (`path/to/file.ext:L12-L34`).
 - 🟡 **Inferred**: Plausible deduction based on convention or partial evidence. Include explicit instructions on how to verify before implementation.
@@ -227,7 +245,29 @@ Save the investigation artifact directly to the **workspace root** using the hos
 
 ---
 
-## 8. Confidence Ledger
+## 8. Blind Spots & Critical Omission Analysis (What Am I Missing?)
+
+### 🎯 The #1 Most Important Thing You Are Missing
+> **[One bold, unambiguous sentence identifying the primary blind spot or hidden invariant]**
+
+[Direct technical explanation: What is the unstated assumption or hidden invariant, why does it exist, and why is it easy to overlook?]
+
+#### 💥 The Failure Scenario
+- **Trigger:** [Exact condition, user action, edge case, or production event]
+- **Impact:** [Precise exception, data corruption, security vulnerability, or performance cliff]
+- **Why it went unnoticed:** [Why surface-level code inspection or existing tests didn't catch it]
+
+#### 🔍 Secondary Blind Spots & Nuances
+1. **[Secondary Risk 1]:** [Concise explanation of related implication]
+2. **[Secondary Risk 2]:** [Concise explanation of related implication]
+
+#### 🛠️ Actionable Recommendation
+1. **Immediate Fix:** [Concrete step to eliminate the #1 blind spot in the plan seed]
+2. **Structural Prevention:** [How to make this impossible to get wrong via types, architecture, or invariants]
+
+---
+
+## 9. Confidence Ledger
 | Finding / Assumption | Level | Evidence / Verification Method |
 |---|---|---|
 | Existing handler uses optimistic locking | ✅ Verified | `src/Handlers/OrderHandler.cs:L55` |
@@ -236,12 +276,12 @@ Save the investigation artifact directly to the **workspace root** using the hos
 
 ---
 
-## 9. Open Questions for User
+## 10. Open Questions for User
 <Decisions that belong exclusively to the user, or genuine blockers. Leave empty if none.>
 
 ---
 
-## 10. Plan Seed
+## 11. Plan Seed
 <High-level structural outline for /plan to build upon. No phases, no task lists, no code snippets.>
 - 1. Define domain contracts and event schemas adhering to Option A.
 - 2. Add database schema migration with backward-compatible defaults.
@@ -255,20 +295,21 @@ Save the investigation artifact directly to the **workspace root** using the hos
 
 Per `core` › *Golden invariants* (3), chat output must remain concise and high-signal, pointing directly to the artifact:
 
-1. **Headline**: 1–2 sentences summarizing the most critical finding or recommended direction.
+1. **Headline**: 1–2 sentences summarizing the most critical finding and primary direction.
 2. **Clickable Artifact Link**:
    - **Antigravity IDE**: `📄 [antigravity-<model>-investigation-<suffix>.md](file://<workspace-root>/antigravity-<model>-investigation-<suffix>.md)`
    - **Claude Code**: `📄 [claude-<model>-investigation-<suffix>.md](claude-<model>-investigation-<suffix>.md)`
 3. **Section Anchors**: Read exact line numbers (`grep -n '^#\{1,3\} ' <prefix>-investigation-<suffix>.md`) and output clickable links to:
    - `[Executive Summary]`
    - `[Options & Trade-offs]`
+   - `[Blind Spots & Critical Omissions]`
    - `[Confidence Ledger]`
    - `[Plan Seed]`
-4. **Primary Recommendation**: State the winning approach in one sentence.
+4. **Primary Recommendation & #1 Blind Spot**: State the winning approach and highlight the bold #1 blind spot directly in chat.
 5. **Open Questions**: Surface blocking user decisions directly in chat.
 6. **Standard Handoff Line**:
    ```markdown
-   **Next Step:** Type `/plan <suffix>` to convert the Plan Seed into a detailed implementation plan, or `/what-am-I-missing <suffix>` for a blind-spot review.
+   **Next Step:** Type `/plan <suffix>` to convert the Plan Seed into a detailed implementation plan.
    ```
 
 ---
@@ -279,6 +320,7 @@ Confirm every item before finalizing the response:
 - [ ] Strictly read-only: zero modifications to application source code or repository configuration.
 - [ ] No implementation plan was written: options and architecture seeds provided, no task phases.
 - [ ] Every factual statement contains a workspace-relative `path:line` citation.
+- [ ] Blind-spot audit across the 7 universal vectors completed and documented in Section 8.
 - [ ] Inferred assertions and unknown dependencies are documented in the Confidence Ledger.
 - [ ] Rulebooks (`CLAUDE.md`/`GEMINI.md`) and project-scoped skills were verified.
 - [ ] Target artifact was written directly to the workspace root using the correct host prefix.
