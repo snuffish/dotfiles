@@ -200,13 +200,16 @@ function _gb_list() {
         if (!(b in rank)) final[++out_n] = b
       }
 
+      # Size the branch column to the longest name rather than truncating: fzf matches the displayed text
+      b_width = 0
+      for (i = 1; i <= out_n; i++) if (length(final[i]) > b_width) b_width = length(final[i])
+
       for (i = 1; i <= out_n; i++) {
         b = final[i]
         marker = (wt_cur[b] ? "\033[32m●\033[0m " : (wt_dir[b] != "" ? "\033[31m◆\033[0m " : "  "))
         age_str = marker "\033[90m" pad(rel_age(b_ts[b], b_sdate[b]), 10) "\033[0m"
 
-        disp_b = ( length(b) > 28 ? substr(b, 1, 27) "…" : b )
-        b_col = (b_remote[b] ? "\033[36m" : "\033[35m") pad(disp_b, 28) "\033[0m"
+        b_col = (b_remote[b] ? "\033[36m" : "\033[35m") pad(b, b_width) "\033[0m"
 
         meta = ""
         if (b_remote[b]) meta = "\033[90morigin\033[0m"
@@ -221,7 +224,6 @@ function _gb_list() {
         }
 
         subj = b_subj[b]
-        if (length(subj) > 72) subj = substr(subj, 1, 71) "…"
         line_body = (meta != "" ? meta "  " subj : subj)
 
         printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n", age_str, b_col, line_body, b, b_ref[b], wt_dir[b], wt_lock[b]
