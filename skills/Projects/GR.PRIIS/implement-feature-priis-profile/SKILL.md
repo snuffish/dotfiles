@@ -123,7 +123,7 @@ The frontend never talks to the backend at build time; it reads the committed `s
 
 | Topic | Use | Not |
 |-------|-----|-----|
-| ADO org | `https://dev.azure.com/grutbildning` | `grutbildning.visualstudio.com` |
+| ADO org | `https://dev.azure.com/grutbildning` (`az` default; `visualstudio.com` also works) | treating an auth error as a broken host |
 | Work-item discussion | ask the user to paste it | `az devops invoke … comments` |
 | SystemAction label | `[Display(Name = "…")]` on the enum member | a texts file |
 | SystemAction grants | `AccessRules/Roles/<Role>AccessRules.cs` → `AllowedActions` | a static array in `UserRoleAccessRules.cs` |
