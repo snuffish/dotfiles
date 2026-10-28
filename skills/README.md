@@ -42,14 +42,11 @@ skills/
 | --- | --- | :---: | --- |
 | General (top level) | Command | 36 | `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `implement-feature`, `investigate`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `plan-review`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-conflicts`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `suggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing`, `worktrees` |
 | General (top level) | Reference | 1 | `modern-csharp` |
-| `GR.PRIIS/priis-backend-*` | Reference | 7 | `dry`, `ef-core`, `fastendpoints`, `notifications`, `signalr`, `testing`, `workflow` |
-| `GR.PRIIS/priis-frontend-*` | Reference | 6 | `component-patterns`, `forms`, `routing`, `rtk-query`, `testing`, `workflow` |
-| `GR.PRIIS/priis-backend-*` | Command | 7 | `health-check`, `migrate-to-tunit` (retired — migration complete), `release-notes`, `review`, `scaffold`, `ship`, `verify` |
-| `GR.PRIIS/priis-frontend-*` | Command | 4 | `health-check`, `review`, `scaffold`, `verify` |
+| `GR.PRIIS/priis-backend-*` | Reference | 1 | `dry` (the other PRIIS team skills ship in the repo's `.claude/skills/`, not here) |
 | `GR.PRIIS/*-profile` | Profile | 3 | `priis-profile` (base), `implement-feature-priis-profile` (read by `implement-feature`), `code-review-priis-profile` (read by `code-review`) |
 | `_modules/` | Module | 6 | `core`, `artifact-protocol`, `git-worktrees`, `pr-counterpart`, `pr-host`, `project-profile` |
 
-(Project skill names are the group prefix + the listed suffix — e.g. `priis-backend-ef-core`, `priis-frontend-verify`. The names match the repo-local copies in each repo's `.claude/skills/`; the `review` skills carry a `references/lessons-from-prs.md` catalog. The repo-local `priis-*-review` on `origin/main` are the upstream; the registry copies are mirrors marked as such.)
+(Project skill names are the group prefix + the listed suffix — e.g. `priis-backend-dry`. The PRIIS team skills (`priis-backend-*`, `priis-frontend-*`, `priis-fullstack-review`, `priis-ship`, …) live only in the GR.PRIIS repo's `.claude/skills/`; the registry keeps no copies.)
 
 ## Modules & Precedence
 
@@ -80,8 +77,8 @@ A Command lists only the Modules it uses directly; a Module lists its own depend
 
 | Prefix                                                   | Meaning                                                                                                          |
 | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `priis-backend-*`                                        | Skill specific to **GR.PRIIS.Backend** (.NET / FastEndpoints / EF Core) — a Reference, or a Command for `health-check`, `migrate-to-tunit`, `release-notes`, `review`, `scaffold`, `ship`, `verify`. |
-| `priis-frontend-*`                                       | Skill specific to **GR.PRIIS.Frontend** (React / RTK Query / TanStack Router) — a Reference, or a Command for `health-check`, `review`, `scaffold`, `verify`. |
+| `priis-backend-*`                                        | Skill specific to the GR.PRIIS backend (.NET / FastEndpoints / EF Core). Only `dry` lives here; the rest ship in the repo. |
+| `priis-frontend-*`                                       | Skill specific to the GR.PRIIS frontend (React / RTK Query / TanStack Router). All ship in the repo, none here. |
 | `<project>-profile`                                      | Base profile: the project's shared fields (layout, tracker, PR tooling, pattern skills, contracts, report language, known drift, worktree setup), loaded before any Command profile. |
 | `<command>-<project>-profile`                            | Command profile read by that general Command, only the fields it needs: `implement-feature-<project>-profile` (facts per phase: implementing ID, scaffold, verify, ship), `code-review-<project>-profile` (review checklists, lessons, axis mapping, report additions). |
 
