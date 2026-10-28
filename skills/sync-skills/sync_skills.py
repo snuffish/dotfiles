@@ -96,7 +96,7 @@ def lint(root):
     modules = os.path.join(root, '_modules')
     errors, warnings, skills = [], [], {}
     for d, dirs, files in os.walk(root):
-        dirs[:] = [x for x in dirs if x != '.git']
+        dirs[:] = [x for x in dirs if x not in ('.git', 'flat-links')]
         if d == modules or d.startswith(modules + os.sep):
             if 'SKILL.md' in files:
                 errors.append(f'{d}: SKILL.md inside _modules/')

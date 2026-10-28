@@ -93,7 +93,8 @@ antigravity-resume() {
   local picker="$HOME/.terminal/utils/agent-session-picker.sh"
   local driver="$HOME/.terminal/antigravity/sessions.sh"
   local focus_script="$HOME/.terminal/utils/agent-focus.sh"
-  local scope=here prompt='This dir> ' out pick id cwd pid
+  local fork_script="$HOME/.terminal/utils/agent-session-fork.py"
+  local scope=here prompt='This dir> ' out key pick id cwd pid
 
   local db="$HOME/.gemini/antigravity-cli/conversation_summaries.db"
   if [[ -f "$db" ]]; then
@@ -109,16 +110,25 @@ antigravity-resume() {
     run_agent_session_picker \
       --driver "$driver" \
       --title "Resume Antigravity session" \
-      --header 'enter resume · ctrl-t this dir / all · ctrl-g titles / text · ctrl-u subagents · ctrl-s copy id' \
+      --header $'[Enter] Resume · [Ctrl-F] Fork · [Ctrl-S] Copy ID\n[Ctrl-T] This dir/All · [Ctrl-G] Titles/Text · [Ctrl-U] Subagents' \
       --scope "$scope" \
       --prompt "$prompt" \
       --bind "ctrl-u:transform:bash $driver key subagent"
   )" || return
 
+  key="$(head -n 1 <<< "$out")"
   pick="$(sed -n 2p <<< "$out")"
   id="$(cut -f5 <<< "$pick")"
   cwd="$(cut -f7 <<< "$pick")"
   [[ -n "$id" ]] || return 0
+
+  if [[ "$key" == "ctrl-f" ]]; then
+    echo "Forking Antigravity session ${id:0:8}..." >&2
+    local new_id
+    new_id="$(python3 "$fork_script" --from agy --to agy --id "$id" --cwd "${cwd:-$PWD}")" || return 1
+    (cd "${cwd:-$PWD}" && agy --conversation "$new_id" "$@")
+    return $?
+  fi
 
   if pid="$(_agy_open_pid "$id")"; then
     echo "Session ${id:0:8} is already open in agy (pid $pid)." >&2
@@ -141,6 +151,7 @@ agent-resume() {
   local picker="$HOME/.terminal/utils/agent-session-picker.sh"
   local driver="$HOME/.terminal/utils/unified-sessions.sh"
   local focus_script="$HOME/.terminal/utils/agent-focus.sh"
+  local fork_script="$HOME/.terminal/utils/agent-session-fork.py"
   local scope=here prompt='This dir> ' out key pick id cwd agent pid
 
   out="$(
@@ -148,7 +159,7 @@ agent-resume() {
     run_agent_session_picker \
       --driver "$driver" \
       --title "Resume Agent session (Claude / Antigravity)" \
-      --header 'enter resume · ctrl-t this dir / all · ctrl-g titles / text · ctrl-a all / claude / agy · ctrl-s copy id' \
+      --header $'[Enter] Resume · [Ctrl-F] Fork · [Ctrl-X] Cross-fork · [Ctrl-S] Copy ID\n[Ctrl-T] This dir/All · [Ctrl-G] Titles/Text · [Ctrl-A] All/Claude/Agy' \
       --scope "$scope" \
       --prompt "$prompt" \
       --bind "ctrl-a:transform:bash $driver key agent"
@@ -161,22 +172,49 @@ agent-resume() {
   agent="$(cut -f8 <<< "$pick")"
   [[ -n "$id" ]] || return 0
 
-  if [[ "$agent" == "antigravity" ]]; then
-    if pid="$(_agy_open_pid "$id")"; then
-      echo "Session ${id:0:8} is already open in agy (pid $pid)." >&2
-      echo "Focusing active terminal window/pane..." >&2
-      bash "$focus_script" "$pid"
-      return 0
-    fi
-    (cd "${cwd:-$PWD}" && agy --conversation "$id" "$@")
-  else
-    if [[ -z "$key" ]] && pid="$(_claude_open_pid "$id" 2>/dev/null)"; then
-      echo "Session ${id:0:8} is open in claude (pid $pid): resuming a fork of it" >&2
-      bash "$focus_script" "$pid"
-      key=fork
-    fi
-    (cd "${cwd:-$PWD}" && claude --resume "$id" ${key:+--fork-session} "$@")
-  fi
+  case "$key" in
+    ctrl-x)
+      if [[ "$agent" == "claude" ]]; then
+        echo "Forking Claude session ${id:0:8} -> Antigravity..." >&2
+        local new_id
+        new_id="$(python3 "$fork_script" --from claude --to agy --id "$id" --cwd "${cwd:-$PWD}")" || return 1
+        (cd "${cwd:-$PWD}" && agy --conversation "$new_id" "$@")
+      else
+        echo "Forking Antigravity session ${id:0:8} -> Claude..." >&2
+        local new_id
+        new_id="$(python3 "$fork_script" --from agy --to claude --id "$id" --cwd "${cwd:-$PWD}")" || return 1
+        (cd "${cwd:-$PWD}" && claude --resume "$new_id" "$@")
+      fi
+      ;;
+    ctrl-f)
+      if [[ "$agent" == "claude" ]]; then
+        (cd "${cwd:-$PWD}" && claude --resume "$id" --fork-session "$@")
+      else
+        echo "Forking Antigravity session ${id:0:8}..." >&2
+        local new_id
+        new_id="$(python3 "$fork_script" --from agy --to agy --id "$id" --cwd "${cwd:-$PWD}")" || return 1
+        (cd "${cwd:-$PWD}" && agy --conversation "$new_id" "$@")
+      fi
+      ;;
+    *)
+      if [[ "$agent" == "antigravity" ]]; then
+        if pid="$(_agy_open_pid "$id")"; then
+          echo "Session ${id:0:8} is already open in agy (pid $pid)." >&2
+          echo "Focusing active terminal window/pane..." >&2
+          bash "$focus_script" "$pid"
+          return 0
+        fi
+        (cd "${cwd:-$PWD}" && agy --conversation "$id" "$@")
+      else
+        if [[ -z "$key" ]] && pid="$(_claude_open_pid "$id" 2>/dev/null)"; then
+          echo "Session ${id:0:8} is open in claude (pid $pid): resuming a fork of it" >&2
+          bash "$focus_script" "$pid"
+          key=fork
+        fi
+        (cd "${cwd:-$PWD}" && claude --resume "$id" ${key:+--fork-session} "$@")
+      fi
+      ;;
+  esac
 }
 
 ary() {
