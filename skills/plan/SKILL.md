@@ -57,7 +57,12 @@ A Command may add sections it needs (`/implement-feature` adds *User Review Requ
 
 ### Style
 
-The user's rule (`~/.claude/CLAUDE.md` › *Plans*): plans are extremely concise, grammar sacrificed for concision, with the unresolved questions at the end. Every plan writer applies it to the whole file:
+The user's rule (`~/.claude/CLAUDE.md` › *Plans*), verbatim:
+
+> - Make the plan extremely concise. Sacrifice grammar for the sake of concision.
+> - At the end of each plan, give me a list of unresolved questions to answer, if any.
+
+Every plan writer applies it to the whole file **and to the chat response that presents the plan**:
 
 - Fragments, not prose: no paragraphs, no full-sentence explanations.
 - About 15 words per bullet at most; split a longer one into sub-bullets.
@@ -112,7 +117,7 @@ Every chat response that presents a plan starts with this block. Take the line n
    - **New plan:** draft it in a session-private path, then publish it with *Claim* (`artifact-protocol` › rule 4). If the base name is taken, Claim writes `…-2.md`; use the path it printed and say so in chat.
    - **Existing plan:** update it only if its owner marker names this session, or if the user named that file and asked for it to be updated (`artifact-protocol` › rule 3). Otherwise write a new revision through *Claim*, and link the one it supersedes in **Inputs**.
    - Set `Status` to `Awaiting User Review` when it is complete.
-4. **Present the plan:** the link block, the key decisions in a few lines, then the open questions last, each with its recommendation (*§2 Style*). Wait for the user to open the gate (`core` › *The `/proceed` gate*) before any code change.
+4. **Present the plan:** the link block, the key decisions as at most ~5 fragment bullets, then the open questions last, each with its **Rec:** (*§2 Style* applies to this chat text too: no paragraphs, no full sentences). Wait for the user to open the gate (`core` › *The `/proceed` gate*) before any code change.
 
 ### Case C: Preview Command (`/plan preview [target]`)
 
