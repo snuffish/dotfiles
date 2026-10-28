@@ -190,7 +190,7 @@ Check each row that applies; the profile's *Contract touchpoints* make this conc
 
 ## Phase 2 — Implementation Plan
 
-Write `<prefix>-implementation_plan-<suffix>.md` at the workspace root following `/plan` › *§2 The Plan Contract*: create it through *Claim*, use its skeleton, and add these sections:
+Write `<prefix>-implementation_plan-<suffix>.md` at the workspace root following `/plan` › *§2 The Plan Contract*: create it through *Claim*, use its skeleton and its *Style*, and add these sections:
 
 ```markdown
 # Implementation Plan: <Feature name> (#<id>)
@@ -206,8 +206,8 @@ Write `<prefix>-implementation_plan-<suffix>.md` at the workspace root following
 ## 4. Verification Plan           <!-- exact commands, migration check, manual steps, e2e specs to run -->
 ## 5. Risks
 ## Blind-spot Pass                <!-- added in Phase 2b: link, the #1 finding in one sentence, where each finding landed -->
-## 6. Open Questions              <!-- incl. unverified sub-agent claims, unresolved profile fields, anything awaiting the discussion thread -->
-## 7. Task Checklist              <!-- the live checklist; tick items here during Phase 3 -->
+## 6. Task Checklist              <!-- the live checklist; tick items here during Phase 3 -->
+## 7. Open Questions              <!-- always last: unverified sub-agent claims, unresolved profile fields, anything awaiting the discussion thread -->
 ```
 
 The *Task Checklist* inside the plan is the working checklist; there is no separate task file. Mark items `[/]` when started and `[x]` when done. Status values are `/plan`'s (*§2 Status values*): `Draft` → `Awaiting User Review` → `Approved` → `Completed`.
