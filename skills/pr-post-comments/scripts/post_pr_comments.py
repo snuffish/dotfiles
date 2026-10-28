@@ -4,6 +4,7 @@ Usage (run in place; payload files are written beside spec.json):
   python3 -I <skill-dir>/scripts/post_pr_comments.py <dir>/spec.json                     # dry run: writes payload-<key>.json, prints anchors
   python3 -I <skill-dir>/scripts/post_pr_comments.py <dir>/spec.json --post              # post every item
   python3 -I <skill-dir>/scripts/post_pr_comments.py <dir>/spec.json --post --only 6,7   # post a subset (post one, verify, then the rest)
+  python3 -I <skill-dir>/scripts/post_pr_comments.py <dir>/spec.json --via mcp           # Azure DevOps MCP route: writes mcp-<key>.json, posts nothing
 
 spec.json: copy <skill-dir>/templates/spec.json to <dir>/spec.json, keep only the items you are posting and
 replace every <placeholder>. The script refuses a spec whose active host block or selected items still hold one;
@@ -14,6 +15,9 @@ a "body" counts only when the whole body is a placeholder, so `List<T>` in a bod
 GitHub ignores them and anchors on the RIGHT side of "commit".
 "resolve" (replies only) sets the thread to Resolved once the reply is posted: Azure DevOps status "fixed",
 GitHub resolveReviewThread on the review thread whose first comment is "thread_id".
+"--via mcp" (ado only) also writes mcp-<key>.json (and mcp-<key>-resolve.json): the tool name and arguments for the
+azure-devops MCP server, built from the same payload. The agent passes them unchanged; --post is refused with it.
+The MCP reply tool takes no parentCommentId, so a reply lands as a top-level comment in the thread (0, not 1).
 """
 import json
 import os
@@ -86,6 +90,42 @@ def ado_command(cfg, item, payload_path):
         "--route-parameters", *route, "--http-method", "POST", "--in-file", payload_path,
         "--api-version", "7.1", "--query", "id", "-o", "tsv",
     ]
+
+
+MCP_WRITE_TOOL = "mcp__azure-devops__repo_pull_request_thread_write"
+
+
+def mcp_calls(cfg, item, payload):
+    base = {"project": cfg["project"], "repositoryId": cfg["repo"], "pullRequestId": int(cfg["pr"])}
+    if item["kind"] == "reply":
+        calls = [{"action": "reply", **base, "threadId": int(item["thread_id"]), "content": payload["content"]}]
+        if item.get("resolve"):
+            calls.append({"action": "update_status", **base, "threadId": int(item["thread_id"]), "status": "Fixed"})
+        return [{"tool": MCP_WRITE_TOOL, "arguments": call} for call in calls]
+    call = {"action": "create", **base, "content": payload["comments"][0]["content"], "status": "Active"}
+    if item["kind"] == "thread":
+        context, pr_context = payload["threadContext"], payload["pullRequestThreadContext"]
+        call.update(
+            filePath=context["filePath"],
+            rightFileStartLine=int(context["rightFileStart"]["line"]),
+            rightFileStartOffset=int(context["rightFileStart"]["offset"]),
+            rightFileEndLine=int(context["rightFileEnd"]["line"]),
+            rightFileEndOffset=int(context["rightFileEnd"]["offset"]),
+            changeTrackingId=int(pr_context["changeTrackingId"]),
+            firstComparingIteration=int(pr_context["iterationContext"]["firstComparingIteration"]),
+            secondComparingIteration=int(pr_context["iterationContext"]["secondComparingIteration"]),
+        )
+    return [{"tool": MCP_WRITE_TOOL, "arguments": call}]
+
+
+def write_mcp_calls(base, item, calls):
+    paths = []
+    for call, suffix in zip(calls, ["", "-resolve"]):
+        path = os.path.join(base, f"mcp-{item['key']}{suffix}.json")
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(call, f, ensure_ascii=False, indent=2)
+        paths.append(path)
+    return paths
 
 
 def github_payload(item, commit):
@@ -171,12 +211,16 @@ def main():
         sys.exit(2)
     spec, base = load_spec(sys.argv[1])
     post = "--post" in sys.argv
+    via_mcp = "--via" in sys.argv and sys.argv[sys.argv.index("--via") + 1] == "mcp"
     only = None
     if "--only" in sys.argv:
         only = set(sys.argv[sys.argv.index("--only") + 1].split(","))
 
     host = spec["host"]
     cfg = spec[host]
+    if via_mcp and (post or host != "ado"):
+        print("--via mcp is for Azure DevOps dry runs only: post each mcp-<key>.json through its MCP tool")
+        sys.exit(2)
     items = selected_items(spec, only)
     placeholders = find_placeholders(spec, items)
     if placeholders:
@@ -192,6 +236,9 @@ def main():
         with open(payload_path, "w", encoding="utf-8") as f:
             json.dump(payload, f, ensure_ascii=False)
         print(f"[{item['key']}] {describe(item)}")
+        if via_mcp:
+            for path in write_mcp_calls(base, item, mcp_calls(cfg, item, payload)):
+                print(f"    {os.path.basename(path)}")
         if not post:
             continue
         command = ado_command(cfg, item, payload_path) if host == "ado" else github_command(cfg, item, payload_path)
@@ -207,7 +254,9 @@ def main():
                 print(f"    reply posted, but RESOLVE FAILED: {error}")
                 sys.exit(1)
             print(f"    thread {item['thread_id']} -> {status}")
-    if not post:
+    if via_mcp:
+        print("Dry run only. Post each mcp-<key>.json through its MCP tool, in key order.")
+    elif not post:
         print("Dry run only. Re-run with --post to create them.")
 
 
