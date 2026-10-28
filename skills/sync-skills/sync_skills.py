@@ -254,6 +254,25 @@ def discover_plugin_skills(plugins_file, settings_file, existing_skills):
     return found, shadowed
 
 
+def enabled_plugin_skill_names(plugins_file, settings_file):
+    """Folder names of every SKILL.md in enabled plugins, at any depth (some plugins nest skills/<category>/<name>)."""
+    try:
+        enabled = json.load(open(settings_file, encoding='utf-8')).get('enabledPlugins', {})
+        plugins = json.load(open(plugins_file, encoding='utf-8')).get('plugins', {})
+    except Exception:
+        return set()
+    names = set()
+    for plugin_id, entries in plugins.items():
+        if enabled.get(plugin_id) is False or not isinstance(entries, list):
+            continue
+        for entry in entries:
+            skills_dir = os.path.join(entry.get('installPath') or '', 'skills')
+            for dirpath, _, files in os.walk(skills_dir):
+                if 'SKILL.md' in files:
+                    names.add(os.path.basename(dirpath))
+    return names
+
+
 def plan_links(root, flat, skills, agents_dir=None, agents_skills=None, plugin_skills=None, plugins_base=None, is_claude=False):
     """Return the link changes needed, as (action, name, target) tuples, plus untouched foreign dead links."""
     actions, foreign_dead = [], []
@@ -469,6 +488,7 @@ def main():
     agents_skills, agents_shadowed = discover_agents_skills(agents_dir, skills)
     existing_for_plugins = set(skills.keys()) | set(agents_skills.keys())
     plugin_skills, plugin_shadowed = discover_plugin_skills(plugins_file, plugins_settings, existing_for_plugins)
+    claude_plugin_names = enabled_plugin_skill_names(plugins_file, plugins_settings)
 
     if args.apply:
         for target_name, target_path in targets.items():
@@ -480,9 +500,11 @@ def main():
 
     for target_name, target_path in targets.items():
         is_claude = (target_name == 'claude')
+        # Claude Code already loads enabled plugins' skills; a ~/.agents copy (or alias of one) only bloats the skill listing.
+        target_agents = {n: m for n, m in agents_skills.items() if os.path.basename(m['path']) not in claude_plugin_names} if is_claude else agents_skills
         actions, foreign_dead = plan_links(
             root, target_path, skills,
-            agents_dir=agents_dir, agents_skills=agents_skills,
+            agents_dir=agents_dir, agents_skills=target_agents,
             plugin_skills=plugin_skills, plugins_base=plugins_base,
             is_claude=is_claude
         )
