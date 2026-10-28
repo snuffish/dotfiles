@@ -14,6 +14,7 @@ Manages the active implementation plan (`<prefix>-implementation_plan-<suffix>.m
 Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
 
 Read these before step 1:
+
 - `../_modules/core.md`
 - `../_modules/artifact-protocol.md`: writes `<prefix>-implementation_plan-<suffix>.md` at the **workspace root**
 
@@ -26,7 +27,7 @@ Read these before step 1:
 A plan's second line carries `**Status:** <value>`, with one of:
 
 | Value | Meaning | Set by |
-|---|---|---|
+| --- | --- | --- |
 | `Draft` | Being written; not ready for review | The writer, while drafting |
 | `Awaiting User Review` | Complete and waiting at the gate | The writer, when presenting it |
 | `Approved` | The user opened the gate; implementation is running | `core` › *The `/proceed` gate* |
@@ -50,14 +51,14 @@ A short note may follow the value (`Approved — phase 2 of 3 done`). Readers ma
 ## 4. Verification Plan          <!-- exact commands, plus manual steps -->
 ## 5. Risks                      <!-- table: risk · mitigation -->
 ## 6. Task Checklist             <!-- the live checklist: [ ] / [/] / [x] -->
-## 7. Open Questions             <!-- always last; each with a recommendation -->
+## 7. Open Questions             <!-- unresolved questions; always last, if any; each with a recommendation -->
 ```
 
-A Command may add sections it needs (`/implement-feature` adds *User Review Required*, *Blind-spot Pass* and *Cross-repo order*). It keeps these seven, in this order, so `/plan`, `/plan-review` and `/proceed` can find them. *Open Questions* is always the last section; an added section goes before it.
+A Command may add sections it needs (`/implement-feature` adds *User Review Required*, *Blind-spot Pass* and *Cross-repo order*). It keeps these seven, in this order, so `/plan`, `/plan-review` and `/proceed` can find them. *Open Questions* (unresolved questions) is always the last section; an added section goes before it.
 
 ### Style
 
-The user's rule (`~/.claude/CLAUDE.md` › *Plans*), verbatim:
+The user's rule (`AGENTS.md` / `~/.claude/CLAUDE.md` › *Plans*), verbatim:
 
 > - Make the plan extremely concise. Sacrifice grammar for the sake of concision.
 > - At the end of each plan, give me a list of unresolved questions to answer, if any.
@@ -68,7 +69,7 @@ Every plan writer applies it to the whole file **and to the chat response that p
 - About 15 words per bullet at most; split a longer one into sub-bullets.
 - *Decisions* and *Risks* as tables.
 - Every open question carries **Rec:** with the recommended answer.
-- Nothing after *Open Questions*.
+- Nothing after *Open Questions*. If there are no unresolved questions, note "None" (or omit).
 
 ### Link block
 
