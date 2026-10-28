@@ -51,11 +51,11 @@ Read these before step 1:
 
 ### Step 0 — Detect the Operation, the Sides and the Repo
 
-Resolve the repo root first (`[worktree-context]` → `repo-root`, else `git rev-parse --show-toplevel`). Then find out which operation is in progress. Use `git rev-parse --git-path` so it also works inside linked worktrees, where `.git` is a file:
+Resolve the repo root first (`[worktree-context]` → `repo-root`, else `git rev-parse --show-toplevel`). Then find out which operation is in progress. Use `git rev-parse --git-path` so it also works inside linked worktrees, where `.git` is a file. A rebase is in progress only when `rebase-merge` or `rebase-apply` exists, as `git status` judges it; a lone `REBASE_HEAD` can be left over from a finished rebase, so it only names the commit being replayed once a rebase directory confirms one:
 
 ```bash
 R=<repo-root>
-for f in MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD REBASE_HEAD rebase-merge rebase-apply; do
+for f in MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD rebase-merge rebase-apply; do
   p=$(git -C "$R" rev-parse --git-path "$f"); [ -e "$R/$p" ] || [ -e "$p" ] && echo "$f"
 done
 git -C "$R" status --porcelain=v2 --branch
@@ -194,7 +194,7 @@ Conclude the operation as soon as all of these hold. If any fails, stop with eve
 | cherry-pick / revert | `GIT_EDITOR=true git -C "$R" cherry-pick --continue` / `revert --continue` | Repeat per stop for a range |
 | stash pop/apply | nothing to continue — the resolved changes stay in the working tree (`git restore --staged <paths>` unstages them if the user wants them unstaged) | The stash is **kept** by git after a conflicted pop. Tell the user; never `stash drop` it yourself |
 
-After concluding, check that the operation is over (`git -C "$R" rev-parse -q --verify MERGE_HEAD` and the other head files from Step 0 are gone), that `git -C "$R" log -1 --format=%B` carries no `# Conflicts:` lines, and report the new short SHA.
+After concluding, check that the operation is over (`git -C "$R" rev-parse -q --verify MERGE_HEAD` and the other files from Step 0's loop are gone), that `git -C "$R" log -1 --format=%B` carries no `# Conflicts:` lines, and report the new short SHA.
 
 Never push. If the branch was rebased, any push needs `--force-with-lease`, and that decision belongs to the user.
 
