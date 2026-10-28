@@ -128,7 +128,8 @@ if [[ "$1" == key ]]; then
     scope) if [[ $scope == all ]]; then scope=here; else scope=all; fi ;;
     mode) if [[ $text ]]; then text=; else text=1; fi ;;
     subagent) if [[ $sub ]]; then sub=; else sub=1; fi ;;
-    change) [[ $text ]] || exit 0 ;;
+    # Fuzzy mode can't search the hidden full id: a pasted session id searches its 8-char short id
+    change) [[ $text ]] || { [[ "$FZF_QUERY" =~ ^([0-9a-fA-F]{8})-[0-9a-fA-F-]*$ ]] && echo "search(${BASH_REMATCH[1]})"; exit 0; } ;;
   esac
   label='This dir'; [[ $scope == all ]] && label=All
   [[ $sub ]] && label="$label+sub"
@@ -212,6 +213,7 @@ def get_branch(d):
 
 now = int(time.time())
 
+out_rows = []
 for cid, title, prev, uris_raw, mtime, status, parent in rows:
     if not show_subs and parent != "":
         continue
@@ -259,15 +261,8 @@ for cid, title, prev, uris_raw, mtime, status, parent in rows:
     id_col = f"\033[90m{cid[:8]}\033[0m"
 
     branch = get_branch(cwd)
-    if len(branch) > 24:
-        branch_trunc = branch[:23] + "…"
-    else:
-        branch_trunc = branch
-    branch_col = f"\033[35m{branch_trunc:<24}\033[0m"
 
     display_title = (title or prev or "Untitled conversation").strip().replace("\t", " ")
-    if len(display_title) > 100:
-        display_title = display_title[:99] + "…"
 
     prefix = ""
     if scope == "all" and cwd:
@@ -277,5 +272,10 @@ for cid, title, prev, uris_raw, mtime, status, parent in rows:
         prefix += "\033[33m↳ subagent\033[0m "
 
     label_col = f"{prefix}{display_title}"
-    print(f"{age_col}\t{id_col}\t{branch_col}\t{label_col}\t{cid}\t{transcript}\t{cwd or cwd_filter}")
+    out_rows.append((age_col, id_col, branch, label_col, cid, transcript, cwd or cwd_filter))
+
+# fzf only searches what it shows, so the branch column fits the longest name instead of cutting it
+bw = max((len(r[2]) for r in out_rows), default=0)
+for age_col, id_col, branch, label_col, cid, transcript, cwd in out_rows:
+    print(f"{age_col}\t{id_col}\t\033[35m{branch:<{bw}}\033[0m\t{label_col}\t{cid}\t{transcript}\t{cwd}")
 ' "$db_path" "$presence_dir" "$brain_dir" "$scope" "$query" "$show_subs"

@@ -41,7 +41,8 @@ if [[ "$1" == key ]]; then
         antigravity) agent=all ;;
       esac
       ;;
-    change) [[ $text ]] || exit 0 ;;
+    # Fuzzy mode can't search the hidden full id: a pasted session id searches its 8-char short id
+    change) [[ $text ]] || { [[ "$FZF_QUERY" =~ ^([0-9a-fA-F]{8})-[0-9a-fA-F-]*$ ]] && echo "search(${BASH_REMATCH[1]})"; exit 0; } ;;
   esac
 
   label='This dir'; [[ $scope == all ]] && label=All
@@ -67,7 +68,7 @@ query="$3"
 agent_filter="${4:-all}"
 
 python3 -I -c '
-import subprocess, os, sys, signal
+import subprocess, os, re, sys, signal
 try:
     signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 except Exception:
@@ -112,6 +113,11 @@ if agent_filter in ("all", "antigravity") and os.path.isfile(agy_sh):
         pass
 
 rows.sort(key=lambda x: x[0], reverse=True)
+
+# Each driver pads its branch column to its own longest name; re-pad to the longest across both
+branch = lambda r: re.sub(r"\x1b\[[0-9;]*m", "", r[2]).rstrip()
+bw = max((len(branch(r)) for _, r in rows), default=0)
 for _, r in rows:
+    r[2] = "\033[35m" + branch(r).ljust(bw) + "\033[0m"
     print("\t".join(r))
 ' "$scope" "$query" "$agent_filter" "$claude_sessions" "$agy_sessions"

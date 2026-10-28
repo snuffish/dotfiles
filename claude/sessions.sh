@@ -76,8 +76,9 @@ if [[ "$1" == key ]]; then
   case "$2" in
     scope) if [[ $scope == all ]]; then scope=here; else scope=all; fi ;;
     mode) if [[ $text ]]; then text=; else text=1; fi ;;
-    # Fuzzy mode filters inside fzf; text mode asks the transcripts again
-    change) [[ $text ]] || exit 0 ;;
+    # Fuzzy mode filters inside fzf (fzf can't search the hidden full id, so a pasted session id searches its
+    # 8-char short id); text mode asks the transcripts again
+    change) [[ $text ]] || { [[ "$FZF_QUERY" =~ ^([0-9a-fA-F]{8})-[0-9a-fA-F-]*$ ]] && echo "search(${BASH_REMATCH[1]})"; exit 0; } ;;
   esac
   label='This dir'; [[ $scope == all ]] && label=All
   if [[ $text ]]; then
@@ -188,8 +189,10 @@ tails=$(perl -e 'for my $f (@ARGV) {
     end)
   | .["\u0000wt"] as $wt | .["\u0000owned"] as $owned | del(.["\u0000wt"], .["\u0000owned"])
   | to_entries | map(.value + {file: .key, title: (.value.custom // .value.ai // .value.prompt)})
-  | map(select(.title and .time)) | sort_by(-.time)[]
-  | (.title | .[0:300] | gsub("\\s+"; " ") | .[0:100]) as $title
+  | map(select(.title and .time)) | sort_by(-.time)
+  # fzf only searches what it shows, so the branch column fits the longest name instead of cutting it
+  | (map(.branch // "" | length) | max // 0) as $bw | .[]
+  | (.title | .[0:300] | gsub("\\s+"; " ")) as $title
   | (.file | split("/") | last | rtrimstr(".jsonl")) as $id
   # A removed worktree is only recognisable by its path
   | ($wt[.lastcwd // .cwd // ""] // (.lastcwd // .cwd // "" | capture("/\\.claude/worktrees/(?<n>[^/]+)|\\.worktrees/(?<m>[^/]+)") | (.n // .m) + " (removed)") // "") as $in
@@ -200,7 +203,7 @@ tails=$(perl -e 'for my $f (@ARGV) {
         + (if $age < 60 then "now" elif $age < 3600 then "\($age / 60 | floor)m ago" elif $age < 86400 then "\($age / 3600 | floor)h ago"
            elif $age < 604800 then "\($age / 86400 | floor)d ago" else .time | localtime | strftime("%Y-%m-%d") end | pad(10)),
       "\u001b[90m\($id[0:8])\u001b[0m",
-      "\u001b[35m\(.branch // "" | if length > 24 then .[0:23] + "…" else . end | pad(24))\u001b[0m",
+      "\u001b[35m\(.branch // "" | pad($bw))\u001b[0m",
       (if $scope == "all" then "\u001b[34m\(.cwd // "?" | sub("^\($home)"; "~"))\u001b[0m  " else "" end) + $wts + $title,
       $id, .file, .cwd // "" ] | @tsv
 '
