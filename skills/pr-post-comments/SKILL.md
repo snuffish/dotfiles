@@ -95,7 +95,12 @@ An authentication error is not a denial (invariant 4). If the permission system 
    **Resolved findings** (✅, or marked resolved/refuted in the artifact) are never posted as threads; at most they appear as one line in the minor-findings block.
 
    **A finding that already has a thread is a reply.** `/code-review` *Step 6b* and `/squash-code-review` link a reviewer's existing ⏸ / ◐ thread in the finding's *Where* line when the finding covers it. Post such a finding as `"kind": "reply"` with that `thread_id`, not as a new inline thread, so the discussion stays in one place. Say so per item in the dry run and the draft preview.
-3. **PR.** From the artifact's *Review Context*, the user's link, or the branch (`az repos pr list --source-branch … --detect true` / `gh pr view`). Azure DevOps `--org`: the form the workspace already uses (`pr-host` › *Organization URL*).
+3. **PR.** First match wins:
+   1. the user's link;
+   2. the artifact's *Review Context*;
+   3. the PR id in the artifact's file name or title (`…-18860-…`, `# Retro: … !18860`).
+
+   Fall back to the checked-out branch (`az repos pr list --source-branch … --detect true` / `gh pr view`) only when none of these names a PR. When the branch's PR differs from a PR the artifact names, ask. The checkout often sits on an unrelated branch. Azure DevOps `--org`: the form the workspace already uses (`pr-host` › *Organization URL*).
 4. **One artifact, several PRs.** When the review spans repos (e.g. backend + frontend PR), route every item to the PR whose code it cites, and keep **one spec per PR** (the script posts to one PR per spec). An item citing both sides goes to the PR that owns the defect; the other side is mentioned by PR number in the body. Take the PR set from the artifact's *Counterpart* field, and confirm it with the lookup in `pr-counterpart` › *Counterpart discovery*. If the user named only one PR, post that PR's items, list the counterpart's items as held back, and offer to post them.
 
 ### Step 2 — Pin the PR head and detect drift
@@ -233,7 +238,7 @@ Show each item exactly as it will be posted, grouped per PR, so approval is give
 ````markdown
 **Draft — nothing posted yet.**
 
-### GR.PRIIS.Frontend !18658 (iteration 2, `edad93b7`)
+### GR.PRIIS.Frontend !18658 "<PR title>" (iteration 2, `edad93b7`)
 
 **1 · reply to #110660, then resolve** · `-operation-response-rate-category-card.tsx:52` (or `, stays active: <reason>`)
 > <the full comment body, verbatim as in the payload>
