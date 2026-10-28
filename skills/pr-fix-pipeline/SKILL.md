@@ -23,7 +23,7 @@ Read these before step 1:
 > [!CAUTION]
 > **Golden invariants**
 > 1. **Read-only until `/proceed`.** No source edits, commits, pushes or branch switches. Local reproduction (build/lint/test of the failing step) is allowed — it does not change source.
-> 2. **No outward-facing actions.** Never re-queue/retry a run, cancel a run, post PR comments, change policies, or edit pipeline definitions in the service. Recommend them in the plan; the user triggers them.
+> 2. **Outward-facing actions only after `/proceed`, and only these.** Before `/proceed`, never commit, push, re-queue or retry a run. After `/proceed`, the gate authorizes committing and pushing the fix and re-queuing the evaluation a red Build policy points at (`az repos pr policy queue --id <prId> --evaluation-id <evaluationId>`); this is the Command's gate authorization that `core` › *The `/proceed` gate* rule 2 reads. Never cancel a run, post PR comments, change policies, or edit pipeline definitions in the service: recommend them in the plan; the user triggers them.
 > 3. **Cite the log.** Every failure claim carries the run id, step name and the exact error line(s) — plus `path:line` once traced into code.
 > 4. **Flake is a conclusion, not a default.** Mark a failure as a flake only with evidence (passes on re-run history, passes locally on the same commit, failure unrelated to the diff).
 > 5. **Never complete until verified passed by the agent.** After the fix is pushed or the run is re-queued, the skill does not complete until the agent has actively verified that every required pipeline check and build policy succeeds (all green). It never hands back or terminates on an intermediate failure. If a triggered run fails or remains red/flaky, the agent must immediately loop: re-diagnose the remaining failure from new logs, apply the fix, locally verify, push, and monitor the new run until it passes. Only an external blocker that fundamentally requires human action (infrastructure down, missing credentials/permissions) may pause execution, and the skill remains incomplete until the pass is verified.
@@ -57,9 +57,9 @@ Read these before step 1:
 ```bash
 # Required checks on the PR — which policy is red, and which build it points at
 az repos pr policy list --id <prId> --detect true \
-  --query "[].{policy:configuration.type.displayName,status:status,build:context.buildId,blocking:configuration.isBlocking}" -o table
+  --query "[].{policy:configuration.type.displayName,status:status,build:context.buildId,eval:evaluationId,blocking:configuration.isBlocking}" -o table
 
-# PR runs (PR builds run on the merge ref)
+# Run history only — a re-queued build can be missing here; the current run is the Build policy's context.buildId (above)
 az pipelines runs list --branch "refs/pull/<prId>/merge" --top 10 --detect true \
   --query "[].{id:id,def:definition.name,result:result,commit:sourceVersion,finished:finishTime}" -o json
 
@@ -73,7 +73,7 @@ az devops invoke --area build --resource logs \
   --route-parameters project=<project> buildId=<runId> logId=<logId> --org <orgUrl> --api-version 7.1 \
   --query "value" -o tsv | grep -nE '##\[error\]|error [A-Z]+[0-9]+|\[Test Failure\]|failed|FAIL'
 ```
-Gotchas: `--org` without `--project` errors on `az repos`/`az pipelines` — pass both, or use `--detect true` from inside the repo. Use the organization URL form the workspace already uses (`pr-host` › *Organization URL*); both forms work. In zsh, don't stash flags in one variable (`$FLAGS` is not word-split) — inline them.
+Gotchas: `--org` without `--project` errors on `az repos`/`az pipelines` — pass both, or use `--detect true` from inside the repo. Use the organization URL form the workspace already uses (`pr-host` › *Organization URL*); both forms work. In zsh, don't stash flags in one variable (`$FLAGS` is not word-split) — inline them. The run to diagnose and watch is the Build policy's `context.buildId`, never the newest row of `runs list`.
 
 **GitHub Actions**
 ```bash
@@ -128,8 +128,8 @@ Then follow `/plan` Case B, building on the investigation, to write `<prefix>-im
 - Order phases **unblock-first**: the fix that turns the required check green comes before hardening.
 - Per fix: repo, file(s), change, and the **local command that proves it** before pushing.
 - Multi-repo fixes: one phase per repo with explicit merge order.
-- Flakes: "re-queue run `<id>` (user action)" plus an optional stabilization task — never just "retry".
-- List the user-owned actions (re-queue, policy changes, infra tickets) in a **Handover** section.
+- Flakes: "re-queue policy evaluation `<evaluationId>` after `/proceed`" plus an optional stabilization task — never just "retry".
+- List the user-owned actions (policy changes, infra tickets) in a **Handover** section.
 
 Stop. Do not implement until the user types `/proceed`.
 
@@ -137,9 +137,9 @@ Stop. Do not implement until the user types `/proceed`.
 
 Once the user approves with `/proceed`:
 1. **Implement and verify locally:** Apply the fix and run the plan's local verification commands first.
-2. **Commit and push:** Stage the changed files, run pre-commit gates, and push (or notify the user to re-queue if no code changes were needed).
+2. **Commit and push:** Stage the changed files, run pre-commit gates, and push (or, when no code changes were needed, re-queue the red Build policy's evaluation: `az repos pr policy queue --id <prId> --evaluation-id <evaluationId>`).
 3. **Resolve the triggered run:**
-   - **Azure DevOps:** Query `az repos pr policy list --id <prId> --query "[?configuration.type.displayName=='Build']"` to resolve the new `buildId` and evaluation status.
+   - **Azure DevOps:** Query `az repos pr policy list --id <prId> --query "[?configuration.type.displayName=='Build']"` to resolve the new `buildId` and evaluation status. After a re-queue, confirm `context.buildId` differs from the failed run's id; if it is unchanged on the next poll, re-list the policies, and if still unchanged, pause as an external blocker instead of watching the old run.
    - **GitHub Actions:** Query `gh pr checks <prId>` or `gh run list --branch <headRef>`.
 4. **Watch run progress (no early exit):**
    - Continuously monitor the build validation run until it reaches a terminal status (`succeeded`, `failed`, `partiallySucceeded`, `canceled` on ADO; completed conclusion on GitHub).
@@ -154,7 +154,7 @@ Once the user approves with `/proceed`:
      3. Update the investigation artifact and implementation plan with the new run findings.
      4. Implement the corrective code or test fix.
      5. Run local verification commands to ensure tests/build pass locally.
-     6. Stage, commit, and push the fix (or prompt re-queue if flake/external).
+     6. Stage, commit, and push the fix (or re-queue the red Build policy's evaluation if flake).
      7. Resolve the newly triggered run and resume non-blocking monitoring (back to step 3).
      8. Repeat until all required checks are verified passed.
    - **External blocker exception:** If blocked by external factors requiring human intervention (e.g. pipeline service outage, agent pool offline, missing credentials/tokens, manual security approval gates):
@@ -216,7 +216,7 @@ Before handing over:
 
 After `/proceed` and the fix:
 - [ ] Run the plan's local verification commands.
-- [ ] Stage, commit, and push the fix (or confirm the run was re-queued).
+- [ ] Stage, commit, and push the fix (or re-queue the red Build policy's evaluation and confirm a new `buildId`).
 - [ ] Resolve the triggered pipeline run id and policy evaluation.
 - [ ] Watch the build validation run until completion.
 - [ ] If any check failed, looped autonomously through re-diagnosis, local fix, commit/push, and re-monitoring.

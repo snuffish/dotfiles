@@ -64,6 +64,7 @@ If the item is a plan artifact with a `Status` line, set it to `Approved`.
 - Apply the project's References and Profiles for the code being touched (`core` › *Precedence*).
 - When the next step belongs to another Command (`/plan`, `implement-feature`), invoke it and let it run under this authorization.
 - Honour an active `[worktree-context]` and `core` › *Worktree opt-in*.
+- Before the first edit, resolve the base profile's **Implementation mode** (`git-worktrees` › *Modes*); `workspace` → edit in a workspace worktree, not the main checkout.
 
 ### Step 4: Verify
 
