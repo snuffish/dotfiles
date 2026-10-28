@@ -337,6 +337,115 @@ function gb() {
   git checkout "$target_branch"
 }
 
+# gw rows, one per live worktree: "<label>\t<badges>\t<dir>\t<raw lock>\t<branch>". Prunable (deleted) worktrees are skipped
+function _gw_list() {
+  local stale
+  stale=$(date -v-3d +%F 2>/dev/null || date -d '3 days ago' +%F)
+  git worktree list --porcelain | awk -v cur="$1" -v stale="$stale" '
+  function flush() {
+    if (dir != "" && !prunable) {
+      n++
+      w_label[n] = (branch != "" ? branch : "(detached " substr(head, 1, 7) ")")
+      w_dir[n] = dir; w_lock[n] = lock; w_branch[n] = branch
+      if (length(w_label[n]) > width) width = length(w_label[n])
+    }
+    dir = ""; head = ""; branch = ""; lock = ""; prunable = 0
+  }
+  # "✎<changes> ↑<ahead>↓<behind>" from one status call; the plain twin (same width, ASCII only) sizes the column
+  function status(d,    cmd, line, dirty, ahead, behind, trk, out) {
+    cmd = "git --no-optional-locks -C \"" d "\" status --porcelain -b 2>/dev/null"
+    while ((cmd | getline line) > 0) {
+      if (line ~ /^## /) {
+        if (match(line, /ahead [0-9]+/)) ahead = substr(line, RSTART + 6, RLENGTH - 6)
+        if (match(line, /behind [0-9]+/)) behind = substr(line, RSTART + 7, RLENGTH - 7)
+      } else dirty++
+    }
+    close(cmd)
+    trk = (ahead > 0 ? "↑" ahead : "") (behind > 0 ? "↓" behind : "")
+    out = (dirty > 0 ? "\033[31m✎" dirty "\033[0m" : "")
+    plain = (dirty > 0 ? "x" dirty : "")
+    if (trk != "") {
+      out = out (out != "" ? " " : "") "\033[33m" trk "\033[0m"
+      gsub(/[↑↓]/, "x", trk); plain = plain (plain != "" ? " " : "") trk
+    }
+    return out
+  }
+  # Agent locks ("claude-skill:<name> ticket:<id> started:<date> …") shrink to "🔒 <name> #<id> <date>"; dates older than 3 days turn red
+  function badge(l,    parts, i, k, skill, ticket, started, out) {
+    if (l == "") return ""
+    if (l !~ /^claude-skill:/) return "\033[33m🔒 " (length(l) > 40 ? substr(l, 1, 39) "…" : l) "\033[0m"
+    k = split(l, parts, " ")
+    for (i = 1; i <= k; i++) {
+      if (parts[i] ~ /^claude-skill:/) skill = substr(parts[i], 14)
+      else if (parts[i] ~ /^ticket:/) ticket = substr(parts[i], 8)
+      else if (parts[i] ~ /^started:/) started = substr(parts[i], 9)
+    }
+    out = "\033[33m🔒 " skill (ticket != "" ? " #" ticket : "") "\033[0m"
+    return out (started != "" ? " \033[" (started < stale ? "31" : "90") "m" started "\033[0m" : "")
+  }
+  /^worktree / { flush(); dir = substr($0, 10); next }
+  /^HEAD /     { head = substr($0, 6); next }
+  /^branch /   { branch = substr($0, 8); sub(/^refs\/heads\//, "", branch); next }
+  /^locked/    { lock = substr($0, 8); if (lock == "") lock = "locked"; next }
+  /^prunable/  { prunable = 1; next }
+  END {
+    flush()
+    for (i = 1; i <= n; i++) {
+      w_status[i] = status(w_dir[i]); w_plain[i] = length(plain)
+      if (w_plain[i] > s_width) s_width = w_plain[i]
+    }
+    for (i = 1; i <= n; i++) {
+      marker = (w_dir[i] == cur ? "\033[32m●\033[0m " : "  ")
+      label = marker "\033[35m" sprintf("%-" width "s", w_label[i]) "\033[0m"
+      badges = w_status[i]
+      if (w_lock[i] != "") badges = badges sprintf("%" (s_width - w_plain[i] + (s_width > 0 ? 2 : 0)) "s", "") badge(w_lock[i])
+      printf "%s\t%s\t%s\t%s\t%s\n", label, badges, w_dir[i], w_lock[i], w_branch[i]
+    }
+  }
+  '
+}
+
+# gw Ctrl-X: remove a worktree after confirmation, then offer to delete its branch (merged only);
+# refuses the current and locked ones, asks again before discarding changes
+function _gw_delete() {
+  local dir="$1" lock="$2" cur="$3" branch="$4" reply
+  if [[ "$dir" == "$cur" ]]; then
+    echo "gw: can't delete the worktree you're in"
+  elif [[ -n "$lock" ]]; then
+    [[ "$lock" == claude-skill:* ]] && echo "gw: an agent is working in this worktree"
+    echo "gw: worktree is locked — unlock first: git worktree unlock $dir"
+  else
+    local -a force=()
+    if [[ -n "$(git -C "$dir" status --porcelain 2>/dev/null)" ]]; then
+      git -C "$dir" -c color.status=always status -s
+      printf '\nUncommitted changes will be lost. Force-delete %s? [y/N] ' "$dir"
+      force=(--force)
+    else
+      printf 'Delete worktree %s? [y/N] ' "$dir"
+    fi
+    read -r reply </dev/tty
+    [[ "$reply" == [yY] ]] || return 0
+    if git worktree remove "${force[@]}" -- "$dir"; then
+      [[ -n "$branch" ]] || return 0
+      printf 'Also delete branch %s? [y/N] ' "$branch"
+      read -r reply </dev/tty
+      [[ "$reply" == [yY] ]] || return 0
+      git branch -d -- "$branch" && return 0
+    fi
+  fi
+  printf 'Press any key…'
+  read -rsn1 </dev/tty
+}
+
+# gw Ctrl-R: drop admin entries of worktrees whose folders are gone; only pauses when something was pruned
+function _gw_prune() {
+  local out
+  out=$(git worktree prune -v 2>&1)
+  [[ -n "$out" ]] || return 0
+  printf '%s\nPress any key…' "$out"
+  read -rsn1 </dev/tty
+}
+
 # Switch to another worktree of the current repo (agent-locked ones are flagged)
 unalias gw 2>/dev/null
 function gw() {
@@ -348,25 +457,11 @@ function gw() {
   local current_root
   current_root=$(git rev-parse --show-toplevel) || return $?
 
-  # One row per live worktree: "<label>\t<dir>". Prunable (deleted) worktrees are skipped
+  # Status badges and previews read other worktrees, agent ones included; never take their index.lock
+  local -x GIT_OPTIONAL_LOCKS=0
+
   local rows
-  rows=$(git worktree list --porcelain | awk -v cur="$current_root" '
-    function flush() {
-      if (dir != "" && !prunable) {
-        label = (branch != "" ? branch : "(detached " substr(head, 1, 7) ")")
-        if (dir == cur) label = "● " label
-        if (lock != "") label = label "  🔒 " lock
-        printf "%s\t%s\n", label, dir
-      }
-      dir = ""; head = ""; branch = ""; lock = ""; prunable = 0
-    }
-    /^worktree / { flush(); dir = substr($0, 10); next }
-    /^HEAD /     { head = substr($0, 6); next }
-    /^branch /   { branch = substr($0, 8); sub(/^refs\/heads\//, "", branch); next }
-    /^locked/    { lock = substr($0, 8); if (lock == "") lock = "locked"; next }
-    /^prunable/  { prunable = 1; next }
-    END          { flush() }
-  ') || return $?
+  rows=$(_gw_list "$current_root") || return $?
 
   if [[ $(printf '%s\n' "$rows" | grep -c .) -le 1 ]]; then
     echo "gw: no other worktrees in $current_root"
@@ -376,41 +471,54 @@ function gw() {
   # Pre-select the current worktree's row; skipped with a query, where positions refer to the filtered list
   local -a pos_bind
   local cur_pos
-  cur_pos=$(printf '%s\n' "$rows" | awk -F '\t' -v cur="$current_root" '$2 == cur { print NR; exit }')
+  cur_pos=$(printf '%s\n' "$rows" | awk -F '\t' -v cur="$current_root" '$3 == cur { print NR; exit }')
   [[ -z "$*" && -n "$cur_pos" ]] && pos_bind=(--bind "load:pos($cur_pos)")
 
   # Two preview modes: status + per-file change stat + log, or the full diff (untracked files included)
-  local preview_status='git -C {2} -c color.status=always status -sb; echo;'
-  preview_status+=' git -C {2} diff HEAD --quiet 2>/dev/null || { git -C {2} diff HEAD --stat --color=always; echo; };'
-  preview_status+=' git -C {2} log --oneline --color=always -n 20'
-  local preview_diff='cd {2} || exit;'
+  # The path is hidden from the list, so both modes open with it dimmed
+  local preview_path='printf "\033[90m%s\033[0m\n\n" {3};'
+  local preview_status="$preview_path"' git -C {3} -c color.status=always status -sb; echo;'
+  preview_status+=' git -C {3} diff HEAD --quiet 2>/dev/null || { git -C {3} diff HEAD --stat --color=always; echo; };'
+  preview_status+=' git -C {3} log --oneline --color=always -n 20'
+  local preview_diff="$preview_path"' cd {3} || exit;'
   preview_diff+=' if git diff HEAD --quiet 2>/dev/null && [ -z "$(git ls-files --others --exclude-standard)" ]; then echo "No changes"; exit; fi;'
   preview_diff+=' git diff HEAD --color=always;'
   preview_diff+=' git ls-files -z --others --exclude-standard | xargs -0 -n1 git diff --no-index --color=always -- /dev/null 2>/dev/null; true'
+
+  # Ctrl-X / Ctrl-R run in a bash subshell (helpers use bash syntax), then reload the list
+  local self="$HOME/.terminal/git.bash" q_root
+  q_root=$(printf %q "$current_root")
+  local delete_cmd="bash -c 'source \"$self\" && _gw_delete \"\$@\"' _ {3} {4} $q_root {5}"
+  local prune_cmd="bash -c 'source \"$self\" && _gw_prune'"
+  local reload_cmd="bash -c 'source \"$self\" && _gw_list \"\$1\"' _ $q_root"
 
   local cols="${COLUMNS:-$(tput cols 2>/dev/null || echo 100)}"
   local max_len=$(( cols * 50 / 100 - 4 ))
   [[ $max_len -lt 35 ]] && max_len=35
   local header
-  header=$(_git_fzf_wrap_header "$max_len" '[Enter] Switch · [Ctrl-D] Diff · [Ctrl-S] Status · [Shift-↑/↓] Scroll preview')
+  header=$(_git_fzf_wrap_header "$max_len" '[Enter] Switch · [Ctrl-D] Diff · [Ctrl-S] Status · [Ctrl-O] Open in Antigravity · [Ctrl-Y] Copy path · [Ctrl-X] Delete · [Ctrl-R] Prune · [Shift-↑/↓] Scroll preview')
 
-  # Match the query against the label only; the shared parent path would fuzzy-match everything
+  # Show label + badges; match the query against the label only (the shared parent path would fuzzy-match everything)
   local wt_line
-  wt_line=$(printf '%s\n' "$rows" | fzf --border --border-label ' Switch worktree ' \
+  wt_line=$(printf '%s\n' "$rows" | fzf --ansi --border --border-label ' Switch worktree ' \
     --header "$header" \
-    --delimiter '\t' --nth 1 --tiebreak=index \
+    --delimiter '\t' --with-nth 1,2 --nth 1 --tabstop=2 --tiebreak=index \
     --query "$*" --select-1 --exit-0 "${pos_bind[@]}" \
     --preview "$preview_status" --preview-label ' status ' \
     --bind "ctrl-d:change-preview-label( diff )+change-preview:$preview_diff" \
     --bind "ctrl-s:change-preview-label( status )+change-preview:$preview_status" \
+    --bind "ctrl-x:execute($delete_cmd)+reload($reload_cmd)" \
+    --bind "ctrl-r:execute($prune_cmd)+reload($reload_cmd)" \
+    --bind "ctrl-o:execute-silent(antigravity-ide {3})+abort" \
+    --bind "ctrl-y:execute-silent(printf %s {3} | (wl-copy 2>/dev/null || xclip -selection clipboard 2>/dev/null || pbcopy 2>/dev/null))+abort" \
     --height 50% --layout reverse)
   [[ -n "$wt_line" ]] || return 0
 
   local wt_dir
-  wt_dir=$(printf '%s\n' "$wt_line" | cut -f2)
+  wt_dir=$(printf '%s\n' "$wt_line" | cut -f3)
   cd -- "$wt_dir" || return $?
 
-  if [[ "$wt_line" == *"🔒 claude-skill:"* ]]; then
+  if [[ "$(printf '%s\n' "$wt_line" | cut -f4)" == claude-skill:* ]]; then
     echo "gw: warning — an agent is working in this worktree; avoid checkout/stash/edits here" >&2
   fi
 }
