@@ -88,7 +88,8 @@ python3 -I <registry>/sync-skills/sync_skills.py --apply    # fixes ~/.claude/sk
 - `--apply` refuses to run from any worktree checkout (`.claude/worktrees/`, `.agents/worktrees/`, `.gemini/worktrees/`), which would point links into the worktree. Pass `--registry <main checkout>/skills` to override.
 - `Projects/<Project>/.workspaces` lists the workspaces that use the project, one path per line (`~` allowed). For each one present on this machine the check reports project skills that are neither linked nor shipped in a repo's host skills dirs, and problems in its `.agents/skills.json`. A workspace missing on this machine is skipped.
 - `.flat-links` and `.workspaces` take one entry per line; blank lines and `#` comments are ignored.
-- Exit status 1 when the lint finds errors or a link change fails.
+- Exit status 1 when the lint finds errors or a link change fails. `--exit-pending` (used by the shell wrapper, which then skips its prompt when nothing is pending) exits 10 when check mode finds link changes to apply.
+- Output is coloured on a terminal only; piped output, or `NO_COLOR` set, is plain text.
 
 ---
 

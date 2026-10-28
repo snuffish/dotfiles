@@ -27,9 +27,12 @@ that exists on this machine, the script reports project skills that are
 neither linked nor shipped in a repo's host skills/ folder, and problems in the
 workspace's .agents/skills.json.
 
-Exit status: 1 when the lint finds errors, else 0.
+Output is coloured on a terminal; piped or with NO_COLOR it is plain text.
+
+Exit status: 1 when the lint finds errors or a link change fails; with
+--exit-pending, 10 when check mode finds link changes to apply; else 0.
 """
-import argparse, json, os, re, sys
+import argparse, json, os, re, shutil, sys, textwrap
 
 MODULE_REF = re.compile(r'^- `([^`]*_modules/[^`]+\.md)`', re.M)
 LINK_REF = re.compile(r'\]\(((?:\.\./)*[\w./-]*(?:SKILL\.md|_modules/[\w-]+\.md|references/[\w./-]+))(?:#[^)]*)?\)')
@@ -59,6 +62,29 @@ WORKTREE_DIRS = (
     os.path.join('.agents', 'worktrees'),
     os.path.join('.gemini', 'worktrees'),
 )
+
+
+class Style:
+    """ANSI styling on a terminal; plain text when piped or NO_COLOR is set."""
+    def __init__(self, enabled):
+        self.enabled = enabled
+
+    def _wrap(self, code, text):
+        return f'\033[{code}m{text}\033[0m' if self.enabled else str(text)
+
+    def bold(self, t): return self._wrap('1', t)
+    def dim(self, t): return self._wrap('2', t)
+    def red(self, t): return self._wrap('31', t)
+    def green(self, t): return self._wrap('32', t)
+    def yellow(self, t): return self._wrap('33', t)
+    def cyan(self, t): return self._wrap('36', t)
+
+
+HOME = os.path.expanduser('~')
+
+
+def tilde(text):
+    return text.replace(HOME + os.sep, '~' + os.sep)
 
 
 def is_worktree_path(path):
@@ -319,8 +345,9 @@ def check_workspaces(root, skills):
                 lines.append(f'{project} @ {ws}: not on this machine, skipped')
                 continue
             missing = [n for n in held if n not in shipped_skills(path)]
-            for n in missing:
-                warnings.append(f'{project} @ {ws}: {n} is neither linked nor shipped in a repo skill loader (.claude/skills, .agents/skills, or .gemini/skills), so hosts cannot load it there (add it to Projects/{project}/.flat-links, or retire it)')
+            if missing:
+                warnings.append(f'{project} @ {ws}: {len(missing)} held-out skills neither linked nor shipped in a repo loader (.claude, .agents or .gemini skills/)\n'
+                                f'{", ".join(missing)}\n→ add to Projects/{project}/.flat-links, or retire')
             cfg = os.path.join(path, '.agents', 'skills.json')
             if not os.path.isfile(cfg):
                 lines.append(f'{project} @ {ws}: no .agents/skills.json (Antigravity not configured)')
@@ -334,12 +361,12 @@ def check_workspaces(root, skills):
                 if not os.path.isdir(e):
                     warnings.append(f'{cfg}: entry {e} does not exist')
             if root not in entries:
-                warnings.append(f'{cfg}: general skills not listed, add {{"path": "{root}"}}')
+                warnings.append(f'{cfg}: general skills not listed\n→ add {{"path": "{root}"}}')
             covered = os.path.join(projects_dir, project) in entries or any(
                 os.path.basename(e) == 'skills' and os.path.basename(os.path.dirname(e)) in ('.claude', '.agents', '.gemini') for e in entries)
             if not covered:
                 warnings.append(f'{cfg}: no entry loads the {project} skills (the registry folder or a repo skills dir)')
-            lines.append(f'{project} @ {ws}: host loaders {len(held) - len(missing)}/{len(held)} held-out skills shipped by the repo · .agents/skills.json {len(entries)} entries')
+            lines.append(f'{project} @ {ws}: {len(held) - len(missing)}/{len(held)} held-out skills shipped by the repo · .agents/skills.json {len(entries)} entries')
     return lines, warnings
 
 
@@ -365,7 +392,7 @@ def check_global_antigravity(agents_dir, targets=None):
             warnings.append(f'{cfg}: entry {os.path.realpath(agents_dir)} is redundant (antigravity loader ~/.gemini/config/skills already links ~/.agents/skills)')
     else:
         if os.path.isdir(agents_dir) and os.path.realpath(agents_dir) not in resolved:
-            warnings.append(f'{cfg}: ~/.agents/skills not listed, add {{"path": "{os.path.realpath(agents_dir)}"}}')
+            warnings.append(f'{cfg}: ~/.agents/skills not listed\n→ add {{"path": "{os.path.realpath(agents_dir)}"}}')
     return warnings
 
 
@@ -416,6 +443,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
     parser.add_argument('--apply', action='store_true', help='fix the loader links (default: report only)')
     parser.add_argument('--registry', help='registry root (default: the folder above this script)')
+    parser.add_argument('--exit-pending', action='store_true', help='exit 10 when check mode finds link changes to apply (for the shell wrapper)')
     parser.add_argument('--targets', help='comma-separated loader targets to sync (default: claude,antigravity,gemini)')
     args = parser.parse_args()
 
@@ -471,54 +499,71 @@ def main():
     ws_lines, ws_warnings = check_workspaces(root, skills)
     warnings += ws_warnings + check_global_antigravity(agents_dir, targets)
 
+    st = Style(sys.stdout.isatty() and not os.environ.get('NO_COLOR'))
     general = sum(m['project'] is None for m in skills.values())
-    plugin_info = f' · plugins: {len(plugin_skills)} linked, {len(plugin_shadowed)} shadowed' if plugin_skills or plugin_shadowed else ''
-    print(f'registry: {root}')
-    print(f'skills: {len(skills)} (general {general}, project {len(skills) - general}) · ~/.agents/skills: {len(agents_skills)} linked, {len(agents_shadowed)} shadowed{plugin_info} · {len(errors)} errors · {len(warnings)} warnings')
     held = sorted(n for n, m in skills.items() if not m['link'])
-    print(f'held out (project skills not in .flat-links): {len(held)}')
-    if agents_shadowed:
-        print(f'shadowed in ~/.agents/skills (registry wins): {len(agents_shadowed)}  {", ".join(agents_shadowed)}')
-    if plugin_shadowed:
-        print(f'shadowed in plugins (registry/agents win): {len(plugin_shadowed)}  {", ".join(sorted(set(plugin_shadowed)))}')
+    print(f"{st.bold('sync-skills')}  {st.dim(tilde(root))}")
+    print(f'  {len(skills)} skills ({general} general, {len(skills) - general} project) · {len(held)} held out')
+    for label, linked, shadowed in [('~/.agents/skills', agents_skills, agents_shadowed),
+                                    ('plugins', plugin_skills, sorted(set(plugin_shadowed)))]:
+        if linked or shadowed:
+            names = f": {st.dim(', '.join(shadowed))}" if shadowed else ''
+            print(f'  {label:<17} {len(linked)} linked · {len(shadowed)} shadowed{names}')
 
-    rules_status = "applied" if args.apply else "check only (--apply to change)"
-    print(f'rules (global AGENTS.md -> CLAUDE.md / GEMINI.md): {rules_status}')
-    for action in ('create', 'repoint', 'convert'):
-        names = [f'{host} ({link_path.replace(os.path.expanduser("~"), "~")})' for a, host, link_path, _ in rule_actions if a == action]
-        if names:
-            print(f'  {action}: {len(names)}  {", ".join(names)}')
-    if not rule_actions:
-        print('  up to date')
-    if rule_failed:
-        print(f'  FAILED: {len(rule_failed)}')
-        for i in rule_failed:
-            print(f'    - {i}')
-
+    mode = 'applied' if args.apply else 'check only (--apply to change)'
+    print(f"\n{st.bold('Loaders')}  {st.dim(mode)}")
+    rows = [('rules', 'AGENTS.md → CLAUDE.md / GEMINI.md',
+             [(a, [f'{h} ({tilde(lp)})' for x, h, lp, _ in rule_actions if x == a]) for a in ('create', 'repoint', 'convert')],
+             [], rule_failed, False)]
     for target_name, target_path in targets.items():
-        rel_target = target_path.replace(os.path.expanduser('~'), '~')
-        status_suffix = "applied" if args.apply else "check only (--apply to change)"
-        if not args.apply and is_monolithic_symlink(target_path, root):
-            status_suffix += " (monolithic symlink -> registry root, --apply to convert)"
-        print(f'{target_name} ({rel_target}): {status_suffix}')
-        for action in ('create', 'repoint', 'prune', 'unlink'):
-            names = [n for a, n, _ in target_actions[target_name] if a == action]
-            print(f'  {action}: {len(names)}' + (f'  {", ".join(names)}' if names else ''))
-        for label, items in [('left alone', target_foreign[target_name]), ('FAILED', target_failed[target_name])]:
+        monolithic = not args.apply and is_monolithic_symlink(target_path, root)
+        rows.append((target_name, tilde(target_path),
+                     [(a, [n for x, n, _ in target_actions[target_name] if x == a]) for a in ('create', 'repoint', 'prune', 'unlink')],
+                     target_foreign[target_name], target_failed[target_name], monolithic))
+    width = max(len(r[0]) for r in rows)
+    pwidth = max(len(r[1]) for r in rows)
+    for name, path, actions, foreign, failed, monolithic in rows:
+        changes = [(a, ns) for a, ns in actions if ns]
+        if failed:
+            glyph, colour = '✗', st.red
+        elif changes or monolithic:
+            glyph, colour = '●', st.yellow
+        else:
+            glyph, colour = '✓', st.green
+        summary = ' · '.join(f'{a} {len(ns)}' for a, ns in changes)
+        if monolithic:
+            summary = ' · '.join(filter(None, ['monolithic symlink → registry root', summary]))
+        if not summary:
+            summary = 'applied' if args.apply and not failed else 'up to date'
+        print(f'  {colour(glyph)} {name:<{width}}  {st.dim(f"{path:<{pwidth}}")}  {colour(summary)}')
+        for a, ns in changes:
+            for line in textwrap.wrap(', '.join(ns), shutil.get_terminal_size().columns - 8,
+                                      initial_indent=f'{a}: ', subsequent_indent=' ' * (len(a) + 2), break_on_hyphens=False):
+                print(f'      {st.dim(line)}')
+        for label, items, paint in [('left alone', foreign, st.yellow), ('FAILED', failed, st.red)]:
             if items:
-                print(f'  {label}: {len(items)}')
+                print(f'      {paint(f"{label} {len(items)}")}')
                 for i in items:
-                    print(f'    - {i}')
+                    print(f'        {st.dim("-")} {tilde(i)}')
 
-    print('workspaces:')
-    for line in ws_lines:
-        print(f'  {line}')
-    for label, items in [('ERRORS', errors), ('warnings', warnings)]:
-        print(f'{label}: {len(items)}')
+    if ws_lines:
+        print(f"\n{st.bold('Workspaces')}")
+        for line in ws_lines:
+            print(f'  {tilde(line)}')
+
+    err = st.red(f'✗ {len(errors)} errors') if errors else st.green('✓ 0 errors')
+    warn = st.yellow(f'⚠ {len(warnings)} warnings') if warnings else st.green('✓ 0 warnings')
+    print(f'\n{err}  {warn}')
+    for glyph, paint, items in [('✗', st.red, errors), ('⚠', st.yellow, warnings)]:
         for i in items:
-            print(f'  - {i.replace(root + os.sep, "")}')
+            head, *detail = i.replace(root + os.sep, '').split('\n')
+            print(f'  {paint(glyph)} {tilde(head)}')
+            for d in detail:
+                print(f'      {st.dim(d)}')
     any_failed = any(target_failed.values()) or bool(rule_failed)
-    sys.exit(1 if errors or any_failed else 0)
+    pending = not args.apply and (bool(rule_actions) or any(target_actions.values())
+                                  or any(is_monolithic_symlink(p, root) for p in targets.values()))
+    sys.exit(1 if errors or any_failed else 10 if args.exit_pending and pending else 0)
 
 
 if __name__ == '__main__':
