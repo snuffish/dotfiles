@@ -71,6 +71,13 @@ Read these before step 1:
 
 ## 2. Core Protocol & Workflow
 
+**Azure DevOps route.** Use the `az` commands below, except in two cases, where you use the `azure-devops` MCP server's *MCP route* line in each step instead:
+
+- the project Profile's *PR tooling* prefers that server;
+- an `az` call fails with `The requested resource requires user authentication`.
+
+An authentication error is not a denial (invariant 4). If the permission system blocks an MCP write, that is a denial. Once picked, keep one route for the whole run. MCP tools take `project` + `repositoryId` (name or GUID) + `pullRequestId`. Their trimmed output omits `isDeleted`, `commentType` and `parentCommentId`, so pass `fullResponse: true` whenever a step needs those fields.
+
 ### Step 1 — Resolve what to post
 
 1. **Source.** The artifact named by the user, else the most recent matching review artifact for this PR at the workspace root written by **this model** (`claude-<model>-…`). Another model's artifact is posted only when the user points at it.
@@ -102,6 +109,8 @@ az devops invoke --org <org-url> --area git --resource pullRequestIterations \
 gh pr view <n> --json headRefOid,headRefName
 ```
 
+*MCP route:* `repo_pull_request` `get` with `includeChangedFiles: true`. The head is `lastMergeSourceCommit.commitId` and the latest iteration is `changedFilesSummary.secondComparingIteration`.
+
 - **Same commit as the artifact's reviewed head** → anchors carry over as cited.
 - **Head moved** → for each anchored file run `git -C <repo> diff <reviewed>..<head> -- <path>`. Unchanged region: shift the lines. Code at the anchor changed: stop and ask whether to re-anchor, skip, or re-review — a thread pointing at code that no longer says what it claims erodes trust.
 
@@ -123,6 +132,7 @@ git -C <repo> show <head>:<path> | awk 'NR>=<start> && NR<=<end> {print NR": "le
     --route-parameters project=<p> repositoryId=<r> pullRequestId=<id> iterationId=<it> --api-version 7.1 \
     --query 'changeEntries[].{ct:changeTrackingId,path:item.path}' -o tsv
   ```
+  *MCP route:* the same `get` call's `changedFilesSummary.changeEntries[]` (`changeTrackingId`, `item.path`). Page through it by passing `nextSkip`/`nextTop` back as `skip`/`top` until `nextSkip` is 0.
   A file not in the PR's changes cannot carry an inline thread → post it as a general comment that names `path:line`.
 - **GitHub** accepts `line`/`start_line` only inside a diff hunk on the `RIGHT` side; outside a hunk, use `"subject_type": "file"` or a general comment naming `path:line`.
 
@@ -173,15 +183,18 @@ The artifact's *🟢 Minor Findings* list becomes **one general comment per PR**
    gh api repos/<owner>/<repo>/pulls/<n>/comments --paginate --jq '.[].body'    # inline threads
    gh api repos/<owner>/<repo>/issues/<n>/comments --paginate --jq '.[].body'   # general comments, incl. the minor-findings one
    ```
+   *MCP route:* `repo_pull_request_thread` `list` with `fullResponse: true` (page with `skip`/`top`). It has the same fields, with `commentType` 3 for system comments.
    On Azure DevOps, deleted threads stay in the list with `isDeleted: true` (or with every comment deleted). CI bots (e.g. coverage checks) post their own threads. Neither counts as "already posted". The artifact's *Posted to PR* row is a hint, not the truth: the user may have deleted those threads. Trust the live list.
-2. **Spec + dry run.** Copy [`templates/spec.json`](templates/spec.json) to `<scratchpad>/pr<id>/spec.json`, keep only the items you are posting and replace every `<placeholder>` (field rules in the docstring of [`scripts/post_pr_comments.py`](scripts/post_pr_comments.py)). Never run the script against the template itself. Run it in place from this skill's real folder: `python3 -I <skill-dir>/scripts/post_pr_comments.py <scratchpad>/pr<id>/spec.json`. Set `"resolve": true` on each reply that passes *Which replied threads to resolve*. A placeholder left in the spec stops the dry run and names the `key.field` it sits in. The script writes one payload file per item beside `spec.json` and prints each anchor, with `, then resolve` after the replies it will resolve; check them before posting. **In draft mode, stop posting here:** give the *Draft preview* (see *Output Format*) and ask (see *After a draft*).
+2. **Spec + dry run.** Copy [`templates/spec.json`](templates/spec.json) to `<scratchpad>/pr<id>/spec.json`, keep only the items you are posting and replace every `<placeholder>` (field rules in the docstring of [`scripts/post_pr_comments.py`](scripts/post_pr_comments.py)). Never run the script against the template itself. Run it in place from this skill's real folder: `python3 -I <skill-dir>/scripts/post_pr_comments.py <scratchpad>/pr<id>/spec.json`. Set `"resolve": true` on each reply that passes *Which replied threads to resolve*. A placeholder left in the spec stops the dry run and names the `key.field` it sits in. The script writes one payload file per item beside `spec.json` and prints each anchor, with `, then resolve` after the replies it will resolve; check them before posting. *MCP route:* add `--via mcp`. The script also writes `mcp-<key>.json` per item, plus `mcp-<key>-resolve.json` for each resolved reply. Each file holds `tool` and `arguments`, built from the same payload: `create` for threads and general comments, `reply`, and `update_status` `Fixed`. **In draft mode, stop posting here:** give the *Draft preview* (see *Output Format*) and ask (see *After a draft*).
 3. **Post one, verify.** The same command with `--post --only <first-key>`, then fetch that thread and confirm the anchor landed on the intended lines. For a multi-repo batch, verify the first thread **per PR**. A general comment has no anchor: confirm `threadContext` is null, the status is active, and the first line is the title.
    ```bash
    az devops invoke … --resource pullRequestThreads --route-parameters … threadId=<id> --api-version 7.1 --query threadContext
    gh api repos/<owner>/<repo>/pulls/comments/<id> --jq '{path,line,start_line}'
    ```
    For a resolved reply, also confirm the thread's status: `--query status` should print `fixed` (GitHub: the thread's `isResolved` is `true`). Resolve one thread and check it before resolving the rest.
-4. **Post the rest.** `--post --only <remaining-keys>`. On a failure the script stops and says whether the reply posted and only the resolve failed. Report what posted, what was resolved, and what was not.
+
+   *MCP route:* call `tool` with `arguments` from `mcp-<first-key>.json`, unchanged, then its `-resolve` file if there is one. Then read the thread back with `repo_pull_request_thread` `list` and `fullResponse: true`, and check `threadContext` and `status`. For a reply, use `list_comments` on its `threadId`. An MCP reply takes no `parentCommentId`, so it lands with `0`, not the script's `1`. It still sits in the same thread, so this is expected.
+4. **Post the rest.** `--post --only <remaining-keys>`. On a failure the script stops and says whether the reply posted and only the resolve failed. *MCP route:* post the remaining `mcp-*.json` files in key order and stop at the first error. Report what posted, what was resolved, and what was not.
 
 ### Step 6 — When the post is denied
 
@@ -191,7 +204,7 @@ Stop. Say plainly that posting was blocked and nothing (or which subset) was pos
 python3 -I /<skill-dir>/scripts/post_pr_comments.py /<scratchpad>/pr<id>/spec.json --post
 ```
 
-and mention that a permission rule for `az devops invoke` / `gh api` lets the agent post next time. Ask the user to paste the printed thread ids so the artifact can be updated.
+and mention that a permission rule for `az devops invoke` / `gh api` lets the agent post next time. On the MCP route, give the `mcp-*.json` paths too. The `az` command needs `az devops login` first (`pr-host` › *When a fetch fails*), and the permission rule to mention is for `mcp__azure-devops__repo_pull_request_thread_write`. Ask the user to paste the printed thread ids so the artifact can be updated.
 
 ### Step 7 — Record what was posted
 
@@ -245,6 +258,7 @@ End the preview with the payload directory's absolute path, so the user can open
 ## 4. Verification & Validation
 
 - The first posted thread's anchor was fetched back and matched the intended lines before the rest were posted.
+- On the MCP route, every write used an `mcp-<key>.json` from the `--via mcp` dry run, with its arguments unchanged. No content was hand-typed into an MCP call.
 - Every posted item has an id recorded in the artifact's *Posted to PR* row.
 - Re-listing threads shows no duplicate titles among live threads, on every PR in the batch.
 - Each PR's minor-findings comment holds only that PR's items, and every item from the artifact's list (the "+N more" tail included) appears in exactly one of them.
