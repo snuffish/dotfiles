@@ -173,4 +173,3 @@ ivo-proxy() {
   proxy-menu "$@"
 }
 
-alias ivo-proxy="proxy-menu"

@@ -27,8 +27,7 @@ init_start_ms=$init_clock_ms
 
 # Unlock the ssh-keychain for no password-prompts on new sessions
 if command -v keychain >/dev/null 2>&1; then
-  eval "keychain --eval ssh ~/.ssh/id_ed25519" 2>/dev/null || true
-  eval "keychain --eval ssh ~/.ssh/id_rsa" 2>/dev/null || true
+  eval "$(keychain --eval --quiet ~/.ssh/id_ed25519 ~/.ssh/id_rsa)"
 fi
 
 alias sudo="sudo "
