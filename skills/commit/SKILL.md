@@ -44,7 +44,7 @@ Read these before step 1:
 1. **Repo root:** the `repo-root` of a handed-in `[worktree-context]` block, else `git rev-parse --show-toplevel` from the directory the change lives in. In a multi-repo workspace (`git-worktrees` › *Repo Resolution*), take every repo that holds part of the change and handle each one separately, one commit per repo. If a locked `claude-skill:` worktree exists for the current branch, follow the *Repo root* rule in `git-worktrees` and ask which tree is meant.
 2. **Stop and say why** when:
    - **Detached HEAD:** `git -C <repo-root> symbolic-ref -q HEAD` fails.
-   - **An operation is in progress:** `.git/MERGE_HEAD`, `REBASE_HEAD`, `CHERRY_PICK_HEAD` or a `rebase-merge/` / `rebase-apply/` directory exists under `git rev-parse --git-dir`. That is `/resolve-conflicts`.
+   - **An operation is in progress:** `MERGE_HEAD`, `CHERRY_PICK_HEAD`, `REVERT_HEAD` or a `rebase-merge/` / `rebase-apply/` directory exists at `git rev-parse --git-path <name>`, the same signals `git status` uses. That is `/resolve-conflicts`. A lone `REBASE_HEAD` is not one: git can leave it behind after a rebase ends, so ignore it unless a rebase directory exists too.
    - **The branch is the default or a protected branch:** `main`, `master`, `develop`, `release/*`, or the remote's `origin/HEAD` — unless the repo is a trunk-only personal repo (e.g. `~/.terminal` or `~/.terminal/memory`, where `git branch -r` has only `origin/main` and recent commits land directly on `main`). Otherwise, propose a branch name in the repo's convention (from its workflow rulebook, else the shape of recent branches in `git branch -r`), and create it only when the user agrees.
    - **Nothing to commit and nothing to push:** say so in one line and stop.
 

@@ -412,7 +412,6 @@ def plan_rule_links(root):
 
     actions = []
     for host, link_path, target in targets:
-        os.makedirs(os.path.dirname(link_path), exist_ok=True)
         if not os.path.lexists(link_path):
             actions.append(('create', host, link_path, target))
         elif os.path.islink(link_path):
@@ -430,6 +429,7 @@ def apply_rule_links(rule_actions):
     failed = []
     for action, host, link_path, target in rule_actions:
         try:
+            os.makedirs(os.path.dirname(link_path), exist_ok=True)
             if os.path.lexists(link_path):
                 os.unlink(link_path)
             os.symlink(target, link_path)
