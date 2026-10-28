@@ -38,7 +38,7 @@ function claude-resume() {
     run_agent_session_picker \
       --driver "$sessions" \
       --title "Resume Claude session" \
-      --header 'enter resume · ctrl-o fork · ctrl-t this dir / all · ctrl-g titles / text · ctrl-s copy id' \
+      --header $'[Enter] Resume · [Ctrl-O] Fork · [Ctrl-S] Copy ID\n[Ctrl-T] This dir/All · [Ctrl-G] Titles/Text' \
       --scope "$scope" \
       --prompt "$prompt"
   )" || return
@@ -74,9 +74,9 @@ function claude-mem-search() {
   # Fields: age, type, ref, label (shown), then ref, Claude session id
   out="$(
     bash "$mem" list memories "$scope" | fzf --ansi \
-      --header $'enter print · ctrl-o resume · ctrl-y copy ref · ctrl-r reveal\nctrl-s memories / summaries / prompts · ctrl-t scope · ctrl-g text' \
+      --header $'[Enter] Print · [Ctrl-O] Resume · [Ctrl-Y] Copy Ref · [Ctrl-R] Reveal\n[Ctrl-S] Memories/Summaries/Prompts · [Ctrl-T] Scope · [Ctrl-G] Text' \
       --border rounded --border-label " Search claude-mem${project:+ · $project} " --preview-border rounded \
-      --color 'border:8,label:6:bold,preview-border:8,preview-label:6:bold,header:8:italic,info:8,separator:8,scrollbar:8' \
+      --color 'border:8,label:6:bold,preview-border:8,preview-label:6:bold,info:8,separator:8,scrollbar:8' \
       --color 'prompt:6:bold,pointer:5,marker:5,hl:3:bold,hl+:3:bold,fg+:-1:bold,query:-1:bold' \
       --prompt "$prompt" --delimiter='\t' --with-nth=1,2,3,4 --tabstop=1 --no-sort --expect=ctrl-o \
       --bind='focus:transform-preview-label:printf " %s " {5}' \

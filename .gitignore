@@ -21,6 +21,9 @@ __pycache__/
 /skills/claude-*.md
 /skills/antigravity-*.md
 
+# Flat link staging/cache
+/skills/flat-links/
+
 # Skill gap log (core › Skill gaps); quotes paths and output from other repos
 /skill-gaps/
 
