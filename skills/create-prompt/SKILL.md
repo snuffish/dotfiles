@@ -10,12 +10,21 @@ Transforms draft instructions, rough concepts, or prior prompts into a curated p
 
 ---
 
+## ⛔ Execution Gate — Never Run the Prompt
+
+> [!CAUTION]
+> 1. **The Command ends at the printed prompt.** Never invoke the target skill, spawn agents, or run any step a variant describes. Read-only grounding commands (Step 2) are the only commands it runs.
+> 2. **Only a literal `/proceed` runs a prompt**: a user message that *starts with* `/proceed` (`/proceed`, `/proceed variant 2`, …). A `/proceed` mentioned mid-sentence ("ok, /proceed later") does not count. This is stricter than `core` › *The `/proceed` gate*: a plain "go ahead", picking a variant, answering the unresolved questions or "use your recommendations" does **not** open it.
+> 3. **Follow-up input refines, never runs.** Apply answers, picks or corrections to the prompt, reprint the final variant as one paste-ready block, and end with the waiting step (*Step 4* › *Closing line*).
+
+---
+
 ## Modules
 
 Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
 
 Read these before step 1:
-- `../_modules/core.md`: read-only until `/proceed`
+- `../_modules/core.md`: read-only until `/proceed`, and only a literal `/proceed` opens the gate (*Execution Gate*)
 - `../_modules/artifact-protocol.md`: writes no artifact by default; prints paste-ready blocks in chat. If the user passes `--file` or requests a saved prompt, writes `<prefix>-prompt-<suffix>.md` at workspace root
 
 ---
@@ -105,6 +114,9 @@ Always synthesize **3 distinct prompt variants**, each tailored for a specific o
 
 Present the results in chat with clear visual separation. Do not dump commentary inside the code blocks.
 
+- Mark exactly one variant **(Recommended)** in its heading. A bare `/proceed` runs that one.
+- A reprint after follow-up input shows only the final variant, which becomes the one `/proceed` runs.
+
 ```markdown
 ### 1. Surgical / Fast (Lean Token Footprint)
 *Best for quick, focused execution with minimal context overhead.*
@@ -137,6 +149,14 @@ Present the results in chat with clear visual separation. Do not dump commentary
 - **Scope bounded to:** `refs/heads/...` or `merge-base..HEAD` (no whole-repo hallucination).
 - **Enforced standards:** [e.g. `/codebase-design` vocabulary, `_modules/core.md` read-only gate].
 - **Expected deliverable:** [e.g. HTML report in `$TMPDIR` / workspace artifact].
+```
+
+#### Closing line
+
+End every response, including a reprint after follow-up answers, with exactly one line naming the waiting step and nothing after it:
+
+```markdown
+Next: paste a variant yourself, or `/proceed [variant N]` to run it here (default: the recommended variant).
 ```
 
 ---

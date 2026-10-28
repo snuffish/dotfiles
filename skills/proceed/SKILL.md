@@ -38,6 +38,7 @@ Look back through this session for the most recent gated handoff that has not ye
 | `what-am-I-missing` | One blind spot with an *Immediate Fix* | Apply that fix |
 | `verify-assumptions` | *Proposed edits (after /proceed)* | Apply exactly those edits to the plan, ADR or doc |
 | `explain`, `manual-testing` | An explanation or a test plan | Only the follow-up step their output named, if any; otherwise *Nothing pending* |
+| `create-prompt` | Paste-ready prompt variants | Run the variant the arguments pick (default: the recommended one) by invoking its target skill; that skill's own gates still apply. Opens **only** on a literal `/proceed`, never on a plain "go ahead" (`create-prompt` › *Execution Gate*) |
 | `plan-review` | A plan or proposal with a verdict | Implement the reviewed plan, applying its 🔴 findings first |
 | `pr-fix-pipeline` | An investigation and an `implementation_plan` | Implement the fix plan, run local verification, push/re-queue, and iterate until the pipeline is verified passed by the agent |
 | `implement-feature` | The plan gate | Resume `implement-feature` at its implementation phase |
