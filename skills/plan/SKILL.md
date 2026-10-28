@@ -49,11 +49,21 @@ A short note may follow the value (`Approved — phase 2 of 3 done`). Readers ma
 ## 3. Proposed Changes           <!-- per phase or per repo: [NEW|MODIFY|DELETE] <path> — what and why -->
 ## 4. Verification Plan          <!-- exact commands, plus manual steps -->
 ## 5. Risks                      <!-- table: risk · mitigation -->
-## 6. Open Questions             <!-- each with a recommendation -->
-## 7. Task Checklist             <!-- the live checklist: [ ] / [/] / [x] -->
+## 6. Task Checklist             <!-- the live checklist: [ ] / [/] / [x] -->
+## 7. Open Questions             <!-- always last; each with a recommendation -->
 ```
 
-A Command may add sections it needs (`/implement-feature` adds *User Review Required*, *Blind-spot Pass* and *Cross-repo order*). It keeps these seven, in this order, so `/plan`, `/plan-review` and `/proceed` can find them.
+A Command may add sections it needs (`/implement-feature` adds *User Review Required*, *Blind-spot Pass* and *Cross-repo order*). It keeps these seven, in this order, so `/plan`, `/plan-review` and `/proceed` can find them. *Open Questions* is always the last section; an added section goes before it.
+
+### Style
+
+The user's rule (`~/.claude/CLAUDE.md` › *Plans*): plans are extremely concise, grammar sacrificed for concision, with the unresolved questions at the end. Every plan writer applies it to the whole file:
+
+- Fragments, not prose: no paragraphs, no full-sentence explanations.
+- About 15 words per bullet at most; split a longer one into sub-bullets.
+- *Decisions* and *Risks* as tables.
+- Every open question carries **Rec:** with the recommended answer.
+- Nothing after *Open Questions*.
 
 ### Link block
 
@@ -102,7 +112,7 @@ Every chat response that presents a plan starts with this block. Take the line n
    - **New plan:** draft it in a session-private path, then publish it with *Claim* (`artifact-protocol` › rule 4). If the base name is taken, Claim writes `…-2.md`; use the path it printed and say so in chat.
    - **Existing plan:** update it only if its owner marker names this session, or if the user named that file and asked for it to be updated (`artifact-protocol` › rule 3). Otherwise write a new revision through *Claim*, and link the one it supersedes in **Inputs**.
    - Set `Status` to `Awaiting User Review` when it is complete.
-4. **Present the plan:** the link block, then the key decisions and open questions in a few lines. Wait for the user to open the gate (`core` › *The `/proceed` gate*) before any code change.
+4. **Present the plan:** the link block, the key decisions in a few lines, then the open questions last, each with its recommendation (*§2 Style*). Wait for the user to open the gate (`core` › *The `/proceed` gate*) before any code change.
 
 ### Case C: Preview Command (`/plan preview [target]`)
 

@@ -69,6 +69,7 @@ Examine the proposal across five core evaluation dimensions:
 - Does every new endpoint, query, component, form and test follow the project's pattern skills for its layer, and the rulebook's language idioms (e.g. `modern-csharp`)?
 - Are new abstractions justified (an interface for real I/O or a library boundary, not for every class)?
 - Does it touch a cross-repo contract (the profile's *Contract touchpoints*), and does it update both sides of it?
+- For an `implementation_plan` artifact: does it follow [`/plan`](../plan/SKILL.md) › *§2 Style*? *Open Questions* missing from the end, or a question without a recommendation, is 🟡. Prose instead of fragments is 🟢.
 
 #### 3. Security, Authorization & Access Rules
 - Does every new endpoint or write path carry the project's authorization mechanism, and is data scoped to the caller (tenant, owner, role)?
