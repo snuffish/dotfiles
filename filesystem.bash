@@ -38,6 +38,12 @@ elif command -v batcat >/dev/null 2>&1; then
   alias cat="batcat"
 fi
 
+# catc <file>... -> copy the raw file contents to the clipboard
+unalias catc 2>/dev/null
+function catc() {
+  command cat "$@" | pbcopy
+}
+
 # ==============================================================================
 # Interactive Fuzzy File Finder (find / ff)
 # ==============================================================================
