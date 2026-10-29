@@ -1070,5 +1070,6 @@
     "*.md": "default",
     "*.html": "default"
   },
-  "python.languageServer": "Default"
+  "python.languageServer": "Default",
+  "security.promptForLocalFileProtocolHandling": false
 }
