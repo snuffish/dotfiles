@@ -115,3 +115,5 @@ alias cms="claude-mem-search"
 
 alias omp='ollama launch omp'
 alias omp-new='omp session start'
+
+alias cc="claude"
