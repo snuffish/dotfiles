@@ -15,7 +15,9 @@ If no `.codegraph/` directory exists there or in any parent, skip CodeGraph enti
 ## Plan Mode
 
 - Make the plan extremely concise. Sacrifice grammar for the sake of concision.
-- At the end of each plan, give me a list of unresolved questions to answer, if any.
+- End every plan with these two blocks, in this order, so they are the last thing visible in the terminal:
+  1. **Steps:** a numbered list of concrete steps.
+  2. **Unresolved questions:** what I must decide, each with your recommendation. Leave this block out when there are none.
 
 ## Agent skills
 
@@ -26,10 +28,6 @@ Issues are tracked as GitHub Issues on snuffish/dotfiles via the `gh` CLI. See `
 ### Triage labels
 
 The five canonical triage labels are used as-is: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
-
-### Domain docs
-
-Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
 
 ### Skills registry
 
