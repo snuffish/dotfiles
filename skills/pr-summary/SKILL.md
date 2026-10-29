@@ -1,6 +1,6 @@
 ---
 name: pr-summary
-description: "Writes a pull request description from the branch's actual diff, following the repo's PR template and conventions, with the work-item reference. Preview by default: prints a paste-ready block and changes nothing. `update` first commits and pushes the branch's pending work, then replaces the live PR's description on Azure DevOps or GitHub and adds the labels the project profile requires. Use for /pr-summary, \"write the PR description\", \"summarize this branch for the PR\", \"update the PR description\"."
+description: "Writes a pull request description from the branch's actual diff, following the repo's PR template and conventions, with the work-item reference. Preview by default: prints a paste-ready block and changes nothing. `update` first commits and pushes the branch's pending work, then replaces the live PR's description on Azure DevOps or GitHub, retitles the PR when its title no longer fits the diff, and adds the labels the project profile requires. Use for /pr-summary, \"write the PR description\", \"summarize this branch for the PR\", \"update the PR description\", \"fix the PR title\"."
 argument-hint: "[update] [branch | base]"
 ---
 
@@ -11,6 +11,8 @@ Use this skill whenever the user requests a pull request (PR) summary, PR descri
 > **Never** produce an implementation plan. Go straight to gathering context and writing the summary.
 
 > **Always compose from scratch.** Derive the summary **only** from the current diff (Steps 1–3). Treat any existing PR description as **stale by default** — never read it to seed, anchor, echo, or partially reuse the new summary, and never let its structure, wording, or omissions shape yours. Compose as if the PR had no description yet. In update mode this is a **full replacement**, not an edit of the old text.
+
+> **The title is the one exception.** Compose a title from the diff too (Step 3 › *PR title*), then read the current title only to decide whether it still fits. Keep it when it does; replace it when it does not. Never retitle for wording alone.
 
 ---
 
@@ -171,6 +173,19 @@ Use the structure below. If the repo supplies its own PR template, honour that s
   3. merge overlapping Key-impacts bullets,
   4. only as a last resort shorten the Bug description — never cut mid-sentence and never drop the footer trailer lines.
 
+### PR title
+
+Azure DevOps makes the title the default merge commit subject (`Merged PR <id>: <title>`), so a stale title lands in the target branch's history. Compose one from the same diff as the body.
+
+First locate the PR with 5.1 in **both** modes (the lookup is read-only, and it sets `ORG`, `PROJECT`, `REPO` and the PR id used below; Step 5 reuses the result). In preview mode, when 5.1 finds no PR or several, skip the keep-or-replace check and print `Title: <title>` alone (Step 4), without asking or offering to create one.
+
+- **Convention**: match the repo's title format. Take it from recent completed PRs into the same target (`az repos pr list --org "$ORG" --project <PROJECT> --repository <REPO> --target-branch <target> --status completed --top 10 --query "[].title" -o tsv`; GitHub: `gh pr list --base <target> --state merged --limit 10 --json title -q '.[].title'`), else from the commit convention (Step 0). Example: `#<work-item-id>: <short English imperative>`.
+- **Content**: name the PR's main change, i.e. the change the *PR Summary* leads with. Cover a second change only when it is as significant as the first, and keep the title about one line (~80 characters). No trailing period, and no `WIP`, branch names or file names.
+- **Keep or replace** (update mode, and the preview's `Title:` line): read the current title (ADO `--query title`; GitHub `--json title -q .title`). Keep it when it still names the main change and follows the convention. Replace it when:
+  - it describes only part of the diff and leaves out a change as significant as the one it names (e.g. a dependency upgrade added after the PR was opened), or
+  - it names something the diff no longer does, or
+  - it breaks the convention (missing work-item prefix, placeholder, `WIP`, branch name).
+
 ---
 
 ## Step 4 — Output
@@ -183,7 +198,7 @@ Wrap the final PR body in a fenced markdown block so the user can copy-paste it 
 ```
 ````
 
-Do **not** add extra commentary around the block unless the user asks a question. The output should be immediately paste-ready. When the profile defines *PR labels*, add one line after the block naming the labels the rule picks for this diff, e.g. `Labels: Backend, Frontend` (preview mode only lists them; Step 5.4 sets them). **In update mode**, still show this block (so the user sees what was pushed), then continue to Step 5 to write it to the live PR.
+Do **not** add extra commentary around the block unless the user asks a question. The output should be immediately paste-ready. Put one line before the block with the title: `Title: <title> (unchanged)` when the current title is kept, or `Title: <new title> (will replace: <current title>)` when it is to be replaced. Update mode reports the outcome after the write (5.2 step 4). Without a PR, write `Title: <title>` alone. When the profile defines *PR labels*, add one line after the block naming the labels the rule picks for this diff, e.g. `Labels: Backend, Frontend` (preview mode only lists them; Step 5.4 sets them). **In update mode**, still show this block (so the user sees what was pushed), then continue to Step 5 to write it to the live PR.
 
 **Before printing, verify the length budget**: measure the composed body (e.g. write it to a temp file and `wc -m`) and confirm it is **≤ 4000 characters**. If it exceeds the budget, condense per the Step 3 length rules and re-measure — do not print an over-budget body.
 
@@ -196,6 +211,8 @@ Run this step **only** when the invocation is in update mode (see *Invocation mo
 Compose the body first (Steps 1–3). Then push it to the live PR — **never fabricate a PR that doesn't exist**.
 
 ### 5.1 — Detect the platform and locate the PR
+
+Step 3 › *PR title* runs this lookup in both modes; in update mode, reuse its result here instead of looking the PR up again.
 
 Derive the host from the git remote (`git remote -v`), then find the open PR whose **source branch** is the target branch (default: the current branch, `git branch --show-current`):
 
@@ -222,16 +239,18 @@ Handle these edge cases explicitly — do **not** guess:
 
 ### 5.2 — Show what will be replaced, then update
 
-1. Fetch and show the **current** description first, purely as a transparency read-back so the overwrite is visible:
-   - ADO: `az repos pr show --id <id> --org "$ORG" --query description -o tsv`
-   - GitHub: `gh pr view <id> --json body -q .body`
+1. Fetch and show the **current** title and description first, purely as a transparency read-back so the overwrite is visible:
+   - ADO: `az repos pr show --id <id> --org "$ORG" --query "{title:title,description:description}" -o json`
+   - GitHub: `gh pr view <id> --json title,body`
 
    Treat it as **stale** and replace it in full — it is shown for the record, never used as input for the new summary (see the *Always compose from scratch* principle above). Do not pause to reconcile with, preserve, or merge in the old text; the `update` keyword is the authorization to overwrite.
 2. Write the composed body to a **temp file** — never inline it in the shell command. PR bodies contain backticks and `!`, which the shell tries to expand (command substitution / history expansion) and corrupts the text; a file avoids all escaping. Prefer writing the file with the editor tool rather than `echo`/heredoc.
 3. Apply the update from the file:
    - ADO: `az repos pr update --id <id> --org "$ORG" --description "$(cat /tmp/pr-<id>.md)"` — ADO caps the description at **4000 characters**. The Step 3 length budget should already guarantee this; if the update is still rejected for length, condense per the Step 3 rules and retry rather than truncating mid-sentence or splitting across fields.
    - GitHub: `gh pr edit <id> --body-file /tmp/pr-<id>.md`
-4. **Verify**: re-fetch the description and confirm the first lines match, then report the PR URL. Only claim success after the read-back confirms it.
+
+   When Step 3 › *PR title* decided to replace the title, set it in the same call: write it to its own temp file (`/tmp/pr-<id>-title.txt`) and add `--title "$(cat /tmp/pr-<id>-title.txt)"` to either command. A kept title is not sent.
+4. **Verify**: re-fetch the description (and the title, when it was sent) and confirm they match, then report the PR URL and whether the title was kept or replaced. Only claim success after the read-back confirms it.
 
 ### 5.3 — Cross-repo relation links
 
@@ -250,8 +269,8 @@ A rule that picks no label (for example a change outside every area folder) adds
 
 ### Scope & authorization
 
-- Update the **description/body**, and add the profile's **missing labels** (5.4). Leave the PR **title** unchanged unless the user explicitly asks (title updates use `--title` on the same commands). Never remove a label, change the draft state, vote or touch reviewers.
-- Update mode writes to a real, outward-facing artifact. The `update` keyword **is** the user's authorization to write — but still show the current description first (5.2) so the overwrite stays transparent.
+- Update the **description/body**, the **title** when Step 3 › *PR title* says it no longer fits, and add the profile's **missing labels** (5.4). Never remove a label, change the draft state, vote or touch reviewers.
+- Update mode writes to a real, outward-facing artifact. The `update` keyword **is** the user's authorization to write the description and the title — but still show the current ones first (5.2) so the overwrite stays transparent.
 
 ---
 
