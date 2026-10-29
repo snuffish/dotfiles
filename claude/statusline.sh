@@ -9,8 +9,9 @@ session=$(echo "$input" | /usr/bin/jq -r '.session_id // .conversation_id // emp
 git_wt=$(echo "$input" | /usr/bin/jq -r '.workspace.git_worktree // empty')
 product=$(echo "$input" | /usr/bin/jq -r '.product // empty')
 # One per line: a tab-joined read would collapse empty fields
-{ read -r cost; read -r limit_5h; read -r limit_7d; } < <(echo "$input" | /usr/bin/jq -r \
-  '(.cost.total_cost_usd // .cost.total_usd), .rate_limits.five_hour.used_percentage, .rate_limits.seven_day.used_percentage | . // ""')
+{ read -r cost; read -r limit_5h; read -r limit_7d; read -r model_id; read -r ctx_size; } < <(echo "$input" | /usr/bin/jq -r \
+  '(.cost.total_cost_usd // .cost.total_usd), .rate_limits.five_hour.used_percentage, .rate_limits.seven_day.used_percentage,
+   .model.id, .context_window.context_window_size | . // ""')
 
 # Empty text prints nothing, so join drops it without leaving a stray separator
 color() { [ -n "$2" ] && printf '\033[%sm%s\033[0m' "$1" "$2"; }
@@ -20,9 +21,10 @@ join() {
   for p in "$@"; do [ -n "$p" ] && out="${out:+$out$sep}$p"; done
   printf '%s' "$out"
 }
-# Color for a percentage that warms up towards a hard limit (auto-compact, rate limits)
+# Color for a percentage that warms up towards a hard limit (auto-compact, rate limits); $3, if given, colors 50-69
 heat() {
-  if [ "$1" -ge 85 ]; then printf 31; elif [ "$1" -ge 70 ]; then printf '38;5;208'; else printf '%s' "$2"; fi
+  if [ "$1" -ge 85 ]; then printf 31; elif [ "$1" -ge 70 ]; then printf '38;5;208'
+  elif [ "$1" -ge 50 ] && [ -n "$3" ]; then printf '%s' "$3"; else printf '%s' "$2"; fi
 }
 
 title=$(echo "$input" | /usr/bin/jq -r '.session_name // .conversation_title // empty')
@@ -163,11 +165,18 @@ if [ -n "$dir" ]; then
 fi
 
 # ctx and skills share a segment: both describe what is in the context window
-used_txt=""; ctx_color=33
+used_txt=""; ctx_color=32
 if [ -n "$used" ]; then
   pct=$(printf '%.0f' "$used")
   used_txt="ctx $pct%"
-  ctx_color=$(heat "$pct" 33)
+  # used_percentage is of the model's window; color by progress towards autoCompactWindow, which compacts earlier.
+  # A per-model value replaces the top-level one; "auto" or none means the model's window
+  compact=$(/usr/bin/jq -r --arg m "${model_id%\[1m\]}" \
+    '(.modelSettings[$m].autoCompactWindow // .autoCompactWindow) | numbers' ~/.claude/settings.json 2>/dev/null)
+  near=$pct
+  [[ "$compact" =~ ^[0-9]+$ ]] && [[ "$ctx_size" =~ ^[0-9]+$ ]] && [ "$compact" -gt 0 ] &&
+    near=$(awk -v u="$used" -v s="$ctx_size" -v c="$compact" 'BEGIN { printf "%.0f", u * s / c }')
+  ctx_color=$(heat "$near" 32 33)
 fi
 ctx=$(join ' · ' "$(color "$ctx_color" "$used_txt")" "$(color '38;5;208' "${skills:+skills:$skills}")")
 
