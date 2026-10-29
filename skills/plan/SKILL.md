@@ -1,6 +1,6 @@
 ---
 name: plan
-description: "Opens, inspects, creates, updates, or previews the active implementation plan (<prefix>-implementation_plan-<suffix>.md). Bare /plan returns links; /plan <instructions> drafts or updates; /plan preview reopens in the host preview panel."
+description: "Opens, inspects, creates, updates, or previews the active implementation plan (<prefix>-implementation_plan-<suffix>.md). Bare /plan returns links; /plan <instructions> drafts or updates, then self-reviews with /plan-review before presenting; /plan preview reopens in the host preview panel."
 ---
 
 # Skill: `/plan` — Implementation Plan Manager
@@ -44,6 +44,7 @@ A short note may follow the value (`Approved — phase 2 of 3 done`). Readers ma
 **Status:** Awaiting User Review
 **Suffix:** `<suffix>`
 **Inputs:** <investigation / review / ticket links, or "none">
+**Review:** <`/plan-review` verdict after folding> · <n> findings folded   <!-- Case B step 4 -->
 
 ## 1. Context & Goal
 ## 2. Decisions                  <!-- table: decision · why -->
@@ -118,7 +119,20 @@ Every chat response that presents a plan starts with this block. Take the line n
    - **New plan:** draft it in a session-private path, then publish it with *Claim* (`artifact-protocol` › rule 4). If the base name is taken, Claim writes `…-2.md`; use the path it printed and say so in chat.
    - **Existing plan:** update it only if its owner marker names this session, or if the user named that file and asked for it to be updated (`artifact-protocol` › rule 3). Otherwise write a new revision through *Claim*, and link the one it supersedes in **Inputs**.
    - Set `Status` to `Awaiting User Review` when it is complete.
-4. **Present the plan:** the link block, the key decisions as at most ~5 fragment bullets, then the open questions last, each with its **Rec:** (*§2 Style* applies to this chat text too: no paragraphs, no full sentences). Wait for the user to open the gate (`core` › *The `/proceed` gate*) before any code change.
+4. **Self-review before presenting:** run [`/plan-review`](../plan-review/SKILL.md) › *Step 1–2* on the plan just written, in the main context. Use its pillars and severities. Do not print its report or its gate: this is part of drafting, and the user reviews the folded plan.
+   - Fold every finding into the plan before presenting:
+
+     | Finding | Goes into |
+     | --- | --- |
+     | 🔴 / 🟡, verified (`path:line` re-opened) | **Proposed Changes**, **Task Checklist**, and a **Verification Plan** check that fails without the fix |
+     | 🔴 / 🟡 needing a user decision | **Open Questions**, with **Rec:** |
+     | 🟢 | Apply if one line; else drop |
+     | Rejected finding | **Risks**, one row with the reason |
+
+   - Re-read the plan once for anything a fix contradicts (an earlier step, a test, a decision row), and fix it.
+   - Run the review **once**. Fill the **Review:** header line with the verdict the folded plan would get.
+   - Run it on every new plan, and on every update that changes *Proposed Changes* or *Verification Plan*. Skip it for an update that only ticks the checklist or changes `Status`.
+5. **Present the plan:** the link block, the review verdict and the findings that changed the design (one bullet each), the key decisions as at most ~5 fragment bullets, then the open questions last, each with its **Rec:** (*§2 Style* applies to this chat text too: no paragraphs, no full sentences). Wait for the user to open the gate (`core` › *The `/proceed` gate*) before any code change.
 
 ### Case C: Preview Command (`/plan preview [target]`)
 
