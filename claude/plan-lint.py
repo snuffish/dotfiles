@@ -22,7 +22,8 @@ SKIP_PREFIXES = ("#", "|", ">", "<!--", "**Status", "**Suffix", "**Inputs")
 def candidate_paths(event):
     tool_input = event.get("tool_input") or {}
     if event.get("tool_name") in ("Write", "Edit", "MultiEdit"):
-        return [tool_input.get("file_path") or ""]
+        path = tool_input.get("file_path") or ""
+        return [path] if PLAN_PATH.fullmatch(os.path.basename(path)) else []
     response = event.get("tool_response")
     output = "\n".join(str(response.get(key) or "") for key in ("stdout", "stderr")) if isinstance(response, dict) else ""
     found = PLAN_PATH.findall(str(tool_input.get("command") or "") + "\n" + output)
