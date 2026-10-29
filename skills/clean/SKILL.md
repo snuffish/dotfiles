@@ -1,6 +1,6 @@
 ---
 name: clean
-description: "\"Removes dead weight from a target file without changing behaviour: unused exports (after proving zero consumers across the workspace), dead variables and constants, obsolete comments, leftover debug statements and redundant code, plus nested ternaries it meets in that file. Preserves public contracts and architectural documentation. Use for /clean, \\\"clean this file\\\", \\\"tidy up this file\\\", \\\"remove unused code in X\\\", \\\"strip dead code / console logs from X\\\"..\"."
+description: "Removes dead weight from a target file without changing behaviour: unused exports (after proving zero consumers across the workspace), dead variables and constants, obsolete comments, leftover debug statements and redundant code, plus nested ternaries it meets in that file. Preserves public contracts and architectural documentation. Use for /clean, \"clean this file\", \"tidy up this file\", \"remove unused code in X\", \"strip dead code / console logs from X\"."
 ---
 
 # Skill: `/clean` — File Sanitation & Dead Code Pruning
