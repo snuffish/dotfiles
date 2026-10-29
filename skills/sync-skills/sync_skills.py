@@ -170,6 +170,8 @@ def lint(root):
             errors.append(f'{d}: name {name!r} != folder {folder!r}')
         if not desc or desc in ('>', '>-', '|', '|-'):
             errors.append(f'{d}: description missing or multi-line')
+        elif desc.startswith(('"', "'")):
+            errors.append(f'{d}: description is quoted twice (starts with a literal quote)')
         elif len(desc) > 1024:
             errors.append(f'{d}: description {len(desc)} chars > 1024')
         elif len(desc) > 700:
