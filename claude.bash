@@ -13,6 +13,11 @@ function sync-skills() {
   fi
 }
 
+# Commit and push the pending changes with Claude's /commit skill; args are passed to it (e.g. no-push, intent)
+function gcai() {
+  claude -p "/commit $*"
+}
+
 # The pid of a running claude that has session $1 open (Claude Code keeps ~/.claude/sessions/<pid>.json for each);
 # fails when none has. A second claude on a session that is still open gets suspended as it starts
 function _claude_open_pid() {

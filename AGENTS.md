@@ -12,7 +12,7 @@ Use grep for what the graph doesn't connect: DI/startup wiring, implicit pipelin
 If no `.codegraph/` directory exists there or in any parent, skip CodeGraph entirely — indexing is the user's decision.
 <!-- CODEGRAPH_END -->
 
-## Plans
+## Plan Mode
 
 - Make the plan extremely concise. Sacrifice grammar for the sake of concision.
 - At the end of each plan, give me a list of unresolved questions to answer, if any.
