@@ -1,6 +1,6 @@
 ---
 name: suggestion
-description: "\"Answers an open \\\"how should I do X?\\\" with ranked, evidence-backed approaches and one clear recommendation, weighed against the project's actual code and conventions. Use when nothing is chosen yet: /suggestion, \\\"what's the best way to handle Y?\\\", \\\"which option would you pick?\\\", \\\"is there a better way to do this?\\\", \\\"give me some ideas for Z\\\". Bare /suggestion answers in chat; /suggestion deep researches cross-cutting decisions and writes `<prefix>-suggestion-<suffix>.md`. Read-only until /proceed.\"."
+description: "Answers an open \"how should I do X?\" with ranked, evidence-backed approaches and one clear recommendation, weighed against the project's actual code and conventions. Use when nothing is chosen yet: /suggestion, \"what's the best way to handle Y?\", \"which option would you pick?\", \"is there a better way to do this?\", \"give me some ideas for Z\". Bare /suggestion answers in chat; /suggestion deep researches cross-cutting decisions and writes `<prefix>-suggestion-<suffix>.md`. Read-only until /proceed."
 ---
 
 # Skill: `/suggestion` — Recommended Approaches & Suggestions

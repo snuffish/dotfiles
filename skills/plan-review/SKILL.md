@@ -1,6 +1,6 @@
 ---
 name: plan-review
-description: "\"Reviews an implementation plan or design proposal before any code is written: fit with the architecture and the project's conventions, missing edge cases, security and authorization, data and migration safety, test and verification coverage. Gives a READY / NEEDS REVISION / BLOCKED verdict with findings by severity. Use for /plan-review, \\\"review this plan\\\", \\\"does this plan make sense?\\\", \\\"poke holes in this design\\\". Read-only until /proceed.\"."
+description: "Reviews an implementation plan or design proposal before any code is written: fit with the architecture and the project's conventions, missing edge cases, security and authorization, data and migration safety, test and verification coverage. Gives a READY / NEEDS REVISION / BLOCKED verdict with findings by severity. Use for /plan-review, \"review this plan\", \"does this plan make sense?\", \"poke holes in this design\". Read-only until /proceed."
 ---
 
 # Skill: `/plan-review` — Strict Plan & Design Review
