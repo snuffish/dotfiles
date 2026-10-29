@@ -89,7 +89,19 @@ Scope: only skills whose `realpath` is under `~/.terminal/skills`. A skill that 
 - **Logged:** [<file name>](<absolute path of the gap file>)
 ```
 
-Log each gap before printing its block, so it outlives the chat. Claim `~/.terminal/skill-gaps/<prefix>-skill_gap-<skill>-<topic>.md` (`mkdir -p` the directory first) with `artifact-protocol` › *Claim*. The file holds a `# Skill gap: <skill>` heading, one `Status: open · Command: <the running Command, or none> · Repo: <repo path> @ <head SHA>` line, then the block. The directory is git-ignored and sits outside every repo, so the write is allowed under read-only Commands and from snapshots. When a later session fixes the gap, it sets that line to `Status: fixed`.
+Log each gap before printing its block, so it outlives the chat. Claim `~/.terminal/skill-gaps/<prefix>-skill_gap-<skill>-<topic>.md` (`mkdir -p` the directory first) with `artifact-protocol` › *Claim*. Below the owner marker *Claim* writes, the file reads plainly for a developer:
+
+```markdown
+# Skill gap: <skill>
+
+- **Status:** open
+- **Found:** <YYYY-MM-DD HH:MM> by <host>-<model>, session <session id>, running <the Command, or none>
+- **Where:** `<repo path>` · `<branch>` @ `<short SHA>`
+
+<the block above>
+```
+
+The directory is git-ignored and sits outside every repo, so the write is allowed under read-only Commands and from snapshots. When a later session fixes the gap, it sets **Status** to `fixed`.
 
 The edit is its own gate item (*The `/proceed` gate*, rule 1): a `/proceed` for the task does not cover it, and it is never made from a snapshot. Edit only after the user says yes to that gap.
 
