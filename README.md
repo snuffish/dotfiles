@@ -4,21 +4,21 @@ Personal dotfiles: modular Bash setup, Neovim (LazyVim), tmux, WezTerm, Ghostty 
 
 ## What's inside
 
-| Path | Description |
-| --- | --- |
-| `__init__.bash`, `*.bash` | Bash entry point and modules (aliases, git, docker, dotnet, azure, pulumi, fzf, network, iot/esp32, …) |
-| `utils/`, `installer/` | Helper scripts and tool installers |
-| `nvim/` | Neovim config based on LazyVim |
-| `tmux/` | tmux config and plugins |
-| `wezterm/` | WezTerm config |
-| `ghostty.bash` | Ghostty helpers |
-| `.ideavimrc` | IdeaVim (JetBrains) config |
-| `vscode/` | VS Code settings and keybindings |
-| `autohotkey/` | AutoHotkey scripts for Windows |
-| `skills/` | Claude Code agent skills |
-| `claude/` | Claude Code statusline |
-| `claude.bash` | `cm-sync` shell function and `cm` (opens the claude-mem dashboard at `cm-sync url`) ([snuffish/cm-sync](https://github.com/snuffish/cm-sync), cloned at `~/Projects/cm-sync`) |
-| `docs/`, `GLOSSARY.md` | ADRs and agent docs |
+| Path                      | Description                                                                                                                                                                   |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `__init__.bash`, `*.bash` | Bash entry point and modules (aliases, git, docker, dotnet, azure, pulumi, fzf, network, iot/esp32, …)                                                                        |
+| `utils/`, `installer/`    | Helper scripts and tool installers                                                                                                                                            |
+| `nvim/`                   | Neovim config based on LazyVim                                                                                                                                                |
+| `tmux/`                   | tmux config and plugins                                                                                                                                                       |
+| `wezterm/`                | WezTerm config                                                                                                                                                                |
+| `ghostty.bash`            | Ghostty helpers                                                                                                                                                               |
+| `.ideavimrc`              | IdeaVim (JetBrains) config                                                                                                                                                    |
+| `vscode/`                 | VS Code settings and keybindings                                                                                                                                              |
+| `autohotkey/`             | AutoHotkey scripts for Windows                                                                                                                                                |
+| `skills/`                 | Claude Code agent skills                                                                                                                                                      |
+| `claude/`                 | Claude Code statusline                                                                                                                                                        |
+| `claude.bash`             | `cm-sync` shell function and `cm` (opens the claude-mem dashboard at `cm-sync url`) ([snuffish/cm-sync](https://github.com/snuffish/cm-sync), cloned at `~/Projects/cm-sync`) |
+| `docs/`, `GLOSSARY.md`    | ADRs and agent docs                                                                                                                                                           |
 
 ## Setup
 
@@ -38,10 +38,9 @@ ln -sf ~/.terminal/tmux/tmux.conf ~/.tmux.conf
 # WezTerm
 mkdir -p ~/.config/wezterm && ln -sf ~/.terminal/wezterm/wezterm.lua ~/.wezterm.lua
 
-# Claude Code & Antigravity CLI statusline
-# - In ~/.claude/settings.json: "statusLine": { "type": "command", "command": "bash ~/.claude/statusline.sh" }
+# Claude Code & Antigravity config: AGENTS.md, settings.json and the statusline (see skills/sync-skills/SKILL.md › Rule 7)
 # - In ~/.gemini/antigravity-cli/settings.json: "statusLine": { "type": "command", "command": "bash ~/.claude/statusline.sh", "enabled": true, "stack_with_default": true }
-mkdir -p ~/.claude && ln -sf ~/.terminal/claude/statusline.sh ~/.claude/statusline.sh
+sync-skills --apply
 ```
 
 ## claude-mem sync

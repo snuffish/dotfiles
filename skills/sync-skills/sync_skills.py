@@ -2,7 +2,7 @@
 """Lint the skills registry and reconcile the skill loaders with it.
 
     python3 -I sync_skills.py            # check: lint and report drift across loaders, change nothing
-    python3 -I sync_skills.py --apply    # also fix links in ~/.claude/skills, ~/.gemini/config/skills, ~/.gemini/skills
+    python3 -I sync_skills.py --apply    # also fix links in ~/.claude/skills, ~/.gemini/config/skills, ~/.gemini/skills and the config links
 
 The registry is the folder above this script's real location, so the script
 works before any skill is linked. --registry points it at another clone.
@@ -20,6 +20,15 @@ Loader rules:
   unless the registry already defines <name> (registry wins on name clash);
 - monolithic symlinks to registry root are converted to directories of leaf links on --apply;
 - only dead links into the registry or ~/.agents/skills are pruned; other links are reported.
+
+Config links (CONFIG_LINKS), source in the repo above the registry:
+- .claude/AGENTS.md ← AGENTS.md, CLAUDE.md (relative), ~/.claude/CLAUDE.md, ~/.gemini/GEMINI.md;
+- .claude/settings.json ← ~/.claude/settings.json;
+- claude/statusline.sh ← ~/.claude/statusline.sh;
+- a missing source adopts its legacy regular file (copied in, removed once linked);
+- a regular file with the source's bytes is replaced by the link;
+- a regular file that differs is a conflict: reported, left alone, not pending;
+- every link is swapped in with os.replace, so the path never goes missing.
 
 Workspace checks, read-only: Projects/<Project>/.workspaces lists the
 workspaces that use the project (one path per line, ~ allowed). For each one
@@ -417,45 +426,97 @@ def check_global_antigravity(agents_dir, targets=None):
     return warnings
 
 
-def plan_rule_links(root):
-    """Ensure global rules / instruction files point to AGENTS.md."""
-    source_agents = os.path.realpath(os.path.join(root, '..', 'AGENTS.md'))
-    if not os.path.isfile(source_agents):
-        source_agents = os.path.expanduser(os.path.join('~', '.terminal', 'AGENTS.md'))
-    if not os.path.isfile(source_agents):
-        return []
-
-    targets = [
-        ('terminal', os.path.join(os.path.dirname(source_agents), 'CLAUDE.md'), 'AGENTS.md'),
-        ('claude', os.path.expanduser(os.path.join('~', '.claude', 'CLAUDE.md')), source_agents),
-        ('antigravity', os.path.expanduser(os.path.join('~', '.gemini', 'GEMINI.md')), source_agents),
-    ]
-
-    actions = []
-    for host, link_path, target in targets:
-        if not os.path.lexists(link_path):
-            actions.append(('create', host, link_path, target))
-        elif os.path.islink(link_path):
-            curr_target = os.readlink(link_path)
-            curr_full = os.path.realpath(os.path.normpath(os.path.join(os.path.dirname(link_path), curr_target)))
-            target_full = os.path.realpath(os.path.normpath(os.path.join(os.path.dirname(link_path), target)))
-            if curr_full != target_full:
-                actions.append(('repoint', host, link_path, target))
-        else:
-            actions.append(('convert', host, link_path, target))
-    return actions
+# (label, source, link paths, legacy): paths are repo-relative or '~/…'.
+# Repo links are written relative, home links absolute.
+CONFIG_LINKS = (
+    ('rules', '.claude/AGENTS.md', ('AGENTS.md', 'CLAUDE.md', '~/.claude/CLAUDE.md', '~/.gemini/GEMINI.md'), 'AGENTS.md'),
+    ('settings', '.claude/settings.json', ('~/.claude/settings.json',), '~/.claude/settings.json'),
+    ('statusline', 'claude/statusline.sh', ('~/.claude/statusline.sh',), None),
+)
 
 
-def apply_rule_links(rule_actions):
-    failed = []
-    for action, host, link_path, target in rule_actions:
+def config_path(repo, path):
+    return os.path.expanduser(path) if path.startswith('~') else os.path.join(repo, path)
+
+
+def read_bytes(path):
+    with open(path, 'rb') as f:
+        return f.read()
+
+
+def plan_config_links(repo):
+    """Return (actions, conflicts, errors); actions are (action, label, path, target)."""
+    actions, conflicts, errors = [], [], []
+    for label, source, links, legacy in CONFIG_LINKS:
+        source = config_path(repo, source)
+        legacy = legacy and config_path(repo, legacy)
+        content = source
+        if not os.path.isfile(source):
+            if not (legacy and os.path.isfile(legacy) and not os.path.islink(legacy)):
+                errors.append(f'config {label}: {tilde(source)} missing and nothing to adopt')
+                continue
+            actions.append(('adopt', label, legacy, source))
+            content = legacy
+        for link in links:
+            in_repo = not link.startswith('~')
+            link = config_path(repo, link)
+            target = os.path.relpath(source, os.path.dirname(link)) if in_repo else source
+            if not os.path.lexists(link):
+                actions.append(('create', label, link, target))
+            elif os.path.islink(link):
+                if os.path.normpath(os.path.join(os.path.dirname(link), os.readlink(link))) != source:
+                    actions.append(('repoint', label, link, target))
+            elif os.path.isfile(link) and read_bytes(link) == read_bytes(content):
+                actions.append(('same', label, link, target))
+            else:
+                conflicts.append(f'{link}: differs from {source}')
+    return actions, conflicts, errors
+
+
+def replace_with_link(target, link):
+    """Swap the link into place in one rename, so readers never see the path missing."""
+    tmp = f'{link}.tmp.{os.getpid()}'
+    os.makedirs(os.path.dirname(link), exist_ok=True)
+    try:
+        os.symlink(target, tmp)
+        os.replace(tmp, link)
+    finally:
+        if os.path.lexists(tmp):
+            os.unlink(tmp)
+
+
+def apply_config_links(actions):
+    """Adopt legacy files into the repo first, then link; a legacy file is removed only once its links are in place."""
+    failed, broken, adopted = [], set(), []
+    for action, label, legacy, source in actions:
+        if action != 'adopt':
+            continue
+        tmp = f'{source}.tmp.{os.getpid()}'
         try:
-            os.makedirs(os.path.dirname(link_path), exist_ok=True)
-            if os.path.lexists(link_path):
-                os.unlink(link_path)
-            os.symlink(target, link_path)
+            os.makedirs(os.path.dirname(source), exist_ok=True)
+            shutil.copy2(legacy, tmp)
+            os.replace(tmp, source)
+            adopted.append(legacy)
         except OSError as e:
-            failed.append(f'{action} {link_path}: {e}')
+            broken.add(label)
+            failed.append(f'adopt {legacy}: {e}')
+        finally:
+            if os.path.lexists(tmp):
+                os.unlink(tmp)
+    for action, label, link, target in actions:
+        if action == 'adopt' or label in broken:
+            continue
+        try:
+            replace_with_link(target, link)
+        except OSError as e:
+            broken.add(label)
+            failed.append(f'{action} {link}: {e}')
+    for action, label, legacy, _ in actions:
+        if action == 'adopt' and label not in broken and legacy in adopted and not os.path.islink(legacy):
+            try:
+                os.unlink(legacy)
+            except OSError as e:
+                failed.append(f'remove {legacy}: {e}')
     return failed
 
 
@@ -517,8 +578,9 @@ def main():
         else:
             target_failed[target_name] = []
 
-    rule_actions = plan_rule_links(root)
-    rule_failed = apply_rule_links(rule_actions) if args.apply else []
+    config_actions, config_conflicts, config_errors = plan_config_links(os.path.dirname(root))
+    errors += config_errors
+    config_failed = apply_config_links(config_actions) if args.apply else []
 
     ws_lines, ws_warnings = check_workspaces(root, skills)
     warnings += ws_warnings + check_global_antigravity(agents_dir, targets)
@@ -536,9 +598,9 @@ def main():
 
     mode = 'applied' if args.apply else 'check only (--apply to change)'
     print(f"\n{st.bold('Loaders')}  {st.dim(mode)}")
-    rows = [('rules', 'AGENTS.md → CLAUDE.md / GEMINI.md',
-             [(a, [f'{h} ({tilde(lp)})' for x, h, lp, _ in rule_actions if x == a]) for a in ('create', 'repoint', 'convert')],
-             [], rule_failed, False)]
+    rows = [('config', 'repo → ~/.claude, ~/.gemini',
+             [(a, [f'{label} ({tilde(p)})' for x, label, p, _ in config_actions if x == a]) for a in ('adopt', 'create', 'repoint', 'same')],
+             config_conflicts, config_failed, False)]
     for target_name, target_path in targets.items():
         monolithic = not args.apply and is_monolithic_symlink(target_path, root)
         rows.append((target_name, tilde(target_path),
@@ -584,8 +646,8 @@ def main():
             print(f'  {paint(glyph)} {tilde(head)}')
             for d in detail:
                 print(f'      {st.dim(d)}')
-    any_failed = any(target_failed.values()) or bool(rule_failed)
-    pending = not args.apply and (bool(rule_actions) or any(target_actions.values())
+    any_failed = any(target_failed.values()) or bool(config_failed)
+    pending = not args.apply and (bool(config_actions) or any(target_actions.values())
                                   or any(is_monolithic_symlink(p, root) for p in targets.values()))
     sys.exit(1 if errors or any_failed else 10 if args.exit_pending and pending else 0)
 
