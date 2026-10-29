@@ -17,6 +17,7 @@ Checks that every skill in the local registry (`<registry>`) is well-formed, the
 Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
 
 Read these before step 1:
+
 - `../_modules/core.md`
 - `../_modules/artifact-protocol.md`: writes `<prefix>-skills_sync_report-<suffix>.md` only when requested or for a major registry audit (e.g. `-full-audit`, `-broken-links`). A regular sync answers in chat.
 
@@ -26,11 +27,19 @@ Read these before step 1:
 
 1. **The registry is the source of truth; loaders follow it.** General skills and Profiles each get one symlink in each loader target (`~/.claude/skills/<name>`, `~/.gemini/config/skills/<name>`, `~/.gemini/skills/<name>`) pointing at their folder in `<registry>`. Skills in `~/.agents/skills/<name>` also get one symlink in each loader target unless `<registry>` defines `<name>` (the registry wins on name clash). Skills in active Claude Code plugins (`~/.claude/plugins/installed_plugins.json`) are symlinked into non-Claude loaders (`~/.gemini/config/skills`, `~/.gemini/skills`) unless already provided by the registry or `~/.agents/skills`.
 2. **Monolithic loader symlinks are converted to flat link directories.** If a target directory (such as `~/.gemini/config/skills`) is a top-level symlink pointing to `<registry>`, `--apply` replaces it with a real directory containing individual leaf symlinks, leaving the registry contents untouched.
-3. **Project References stay out of flat loaders unless allow-listed.** Claude Code and Antigravity resolve a name clash as *personal over project*, so a global link to `Projects/<Project>/<name>` silently overrides the copy the project's own repo ships in `.claude/skills/` or `.agents/skills/`. A project skill is linked only when its name is listed in `Projects/<Project>/.flat-links` (one name per line). Profiles (`*-profile`) are always linked, because no repo ships them.
+3. **Project References stay out of flat loaders unless allow-listed.** Claude Code and Antigravity resolve a name clash as _personal over project_, so a global link to `Projects/<Project>/<name>` silently overrides the copy the project's own repo ships in `.claude/skills/` or `.agents/skills/`. A project skill is linked only when its name is listed in `Projects/<Project>/.flat-links` (one name per line). Profiles (`*-profile`) are always linked, because no repo ships them.
 4. **Modules are never skills.** `<registry>/_modules/` holds Modules (plain markdown, no frontmatter; ADR-0001, ADR-0002). Nothing in it is linked or counted, and a `SKILL.md` there is an error.
 5. **Prune only what this registry, `~/.agents/skills`, or installed plugins own.** A dead link is removed only when it points into `<registry>/`, `~/.agents/skills/`, or an installed Claude plugin directory (`~/.claude/plugins/`). Links into other places are reported, never touched.
 6. **Lint, don't rewrite.** The run edits loader links, audits `.agents/skills.json` and updates the README inventory. It never changes the instructions inside a `SKILL.md`; it reports problems for the user to fix.
-7. **Global instruction rules follow `AGENTS.md`.** `AGENTS.md` at registry parent (`~/.terminal/AGENTS.md`) is the canonical source of truth for global agent instructions. It is reconciled as a symlink to `~/.terminal/CLAUDE.md`, `~/.claude/CLAUDE.md`, and `~/.gemini/GEMINI.md`.
+7. **Config files follow `.claude/`.** The repo above `<registry>` (`~/.terminal`) holds the canonical config files; every live path is a symlink to them (`CONFIG_LINKS` in the script):
+
+   | Source                  | Linked from                                                                       |
+   | ----------------------- | --------------------------------------------------------------------------------- |
+   | `.claude/AGENTS.md`     | `AGENTS.md`, `CLAUDE.md` (relative), `~/.claude/CLAUDE.md`, `~/.gemini/GEMINI.md` |
+   | `.claude/settings.json` | `~/.claude/settings.json`                                                         |
+   | `claude/statusline.sh`  | `~/.claude/statusline.sh`                                                         |
+
+   A missing source adopts its legacy regular file (root `AGENTS.md`, `~/.claude/settings.json`): copied into the repo, removed only once its link is in place. A regular file with the source's bytes is replaced by the link. A regular file that differs is a **conflict**: reported under "left alone", never deleted and never pending, so merge it by hand. A missing source with nothing to adopt is an error. Links are swapped in with `os.replace`, so a running session never sees the path missing. `.claude/settings.json` is in a public repo: review its diff before every commit.
 
 ---
 
@@ -38,7 +47,7 @@ Read these before step 1:
 
 ### Step 1: Discover and lint
 
-Run the script in *Sync script* below in check mode. It walks `<registry>` (skipping `_modules/`) and checks every `SKILL.md`:
+Run the script in _Sync script_ below in check mode. It walks `<registry>` (skipping `_modules/`) and checks every `SKILL.md`:
 
 - **Frontmatter attributes**: all declared fields match known Claude Code / Agent Skills keys. Boolean fields (`user-invocable`, `disable-model-invocation`, `background`) have valid boolean values.
 - **Profile gating**: every Profile (`*-profile`) has `user-invocable: false` and does not set `disable-model-invocation: true`.
@@ -48,7 +57,7 @@ Run the script in *Sync script* below in check mode. It walks `<registry>` (skip
 - **Modules**: every `## Modules` path is relative, resolves from the skill's real folder to a file in `_modules/` (ADR-0002), and the section has the stop sentence.
 - **Links**: every relative link to another skill (`…/SKILL.md`), a Module (`_modules/…`) or a `references/` file resolves. Template placeholders (`<…>`, `…`) are skipped.
 - **Retired names**: no link to the retired `core` skill (it is a Module now), and no Module section referred to by number.
-- **Fences**: an odd number of ```` ``` ```` fence lines means an unclosed code block.
+- **Fences**: an odd number of ` ``` ` fence lines means an unclosed code block.
 
 ### Step 2: Reconcile Loaders (Claude Code, Antigravity, Gemini CLI)
 
@@ -67,7 +76,7 @@ The script also audits `~/.gemini/config/skills.json`. Because `~/.gemini/config
 
 ### Step 4: Update the README inventory
 
-In `<registry>/README.md`, recount the skills by group and kind, and update the summary line and the inventory table (alphabetical). Update the *Current live state* paragraph if the linking rules changed.
+In `<registry>/README.md`, recount the skills by group and kind, and update the summary line and the inventory table (alphabetical). Update the _Current live state_ paragraph if the linking rules changed.
 
 ### Step 5: Git status
 
@@ -102,6 +111,7 @@ Answer in chat, in this shape:
 
 **Registry:** <N> skills (<general> general, <project> project) · <errors> errors · <warnings> warnings
 **Targets:**
+
 - **claude (~/.claude/skills):** created <…> · repointed <…> · pruned <…> · unlinked <…>
 - **antigravity (~/.gemini/config/skills):** created <…> · repointed <…> · pruned <…> · unlinked <…>
 - **gemini (~/.gemini/skills):** created <…> · repointed <…> · pruned <…> · unlinked <…>

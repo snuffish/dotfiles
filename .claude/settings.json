@@ -1,0 +1,149 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(az repos *)",
+      "mcp__codegraph__*"
+    ],
+    "defaultMode": "auto"
+  },
+  "model": "opus",
+  "skillOverrides": {
+    "find-skills": "off",
+    "problem": "off",
+    "refine": "off",
+    "clean": "off",
+    "modern-csharp": "off",
+    "cs-backend-review": "off",
+    "cs-frontend-review": "off",
+    "cs-fullstack-review": "off",
+    "cs-engineer-grill": "off",
+    "code-documentation": "off",
+    "create-ticket": "off",
+    "e2e-testing-playwright-review": "off",
+    "enhance-prompt": "off",
+    "organize": "off",
+    "squash-code-review": "off",
+    "squash-ef-core-migrations": "off",
+    "writing-skills": "off",
+    "create-skill": "off",
+    "crypto-com-app": "off",
+    "no-worktrees": "off"
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | xargs npx prettier --write"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"'"
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline.sh"
+  },
+  "enabledPlugins": {
+    "csharp-lsp@claude-plugins-official": true,
+    "engineering-advanced-skills@claude-code-skills": false,
+    "engineering-skills@claude-code-skills": false,
+    "tanstack-ai@tanstack-ai": false,
+    "mattpocock-skills@claude-plugins-official": true,
+    "claude-mem@thedotmack": true
+  },
+  "extraKnownMarketplaces": {
+    "claude-code-skills": {
+      "source": {
+        "source": "github",
+        "repo": "alirezarezvani/claude-skills"
+      }
+    },
+    "tanstack-ai": {
+      "source": {
+        "source": "github",
+        "repo": "TanStack/ai"
+      }
+    },
+    "thedotmack": {
+      "source": {
+        "source": "github",
+        "repo": "thedotmack/claude-mem"
+      }
+    }
+  },
+  "effortLevel": "high",
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "high",
+      "autoCompactWindow": 400000
+    },
+    "claude-fable-5-1": {
+      "effortLevel": "high"
+    }
+  },
+  "voice": {
+    "enabled": false,
+    "mode": "hold"
+  },
+  "autoMemoryDirectory": "~/.claude-memory",
+  "skipWorkflowUsageWarning": true,
+  "autoCompactEnabled": true,
+  "switchModelsOnFlag": true,
+  "voiceEnabled": false,
+  "autoMode": {
+    "environment": [
+      "### Org-wide",
+      "**Organization**: grutbildning (Azure DevOps org `https://dev.azure.com/grutbildning`, project `PRIIS`, repo `GR.PRIIS`)",
+      "**Cloud provider(s)**: None configured",
+      "**Repository visibility**: Not queryable via gh (remote is an SSH `vs-ssh.visualstudio.com` URL, not a plain owner/repo host) — assume private (Azure DevOps project repos default private; no evidence of public visibility)",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: None configured",
+      "**Default / protected branches**: `main` (default); release branches `release/X.Y.Z` for hotfixes — branch protection/rulesets not queryable here (gh unavailable for this remote)",
+      "**CI/CD deploy targets**: Azure Pipelines under `devops/` (`devops/ci-backend.yml` and likely a frontend counterpart) — no deploy target hosts specified in gathered docs",
+      "**Network posture**: None configured",
+      "**Host containment**: None configured — assume Claude Code runs on an ordinary developer machine with open internet",
+      "**Source control**: The trusted repo (GR.PRIIS monorepo) and its Azure DevOps remote only — `vs-ssh.visualstudio.com:v3/grutbildning/PRIIS/GR.PRIIS` and `grutbildning.visualstudio.com` / `dev.azure.com/grutbildning`",
+      "**Trusted internal domains**: grutbildning.visualstudio.com, dev.azure.com (seen contacted in this project's transcripts)",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: Azure DevOps (`dev.azure.com/grutbildning`, project PRIIS, repo GR.PRIIS) via the `azure-devops` MCP server; `az` CLI as fallback",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: frontend/source/priis-web/.env, .env.development, .env.devintegration, .env.production, .env.staging, .env.utbildning — environment/secrets files, share only with audiences cleared at the [named+specifics] bar",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment (e.g. `.env.production`, a `release/X.Y.Z` branch cut for a production hotfix, k8s namespace segments matching `prod`/`production`)",
+      "**Protected deployment namespaces / environments**: k8s namespaces observed in this project: e2e, backend, docs, frontend, playwright — none match prod/production by name; fall back to the Sensitive remote targets heuristic for any namespace containing prod/production",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development (GR.PRIIS monorepo: .NET 10 backend + React 18/Vite frontend)",
+      "**Trusted repo**: /home/snuffish/Projects/GR/GR.PRIIS (GR.PRIIS monorepo, remote `vs-ssh.visualstudio.com:v3/grutbildning/PRIIS/GR.PRIIS`), default branch `main`",
+      "**Org-specific CLIs**: `az` (Azure DevOps fallback CLI), `dotnet`, `npm`/`npx` (frontend), `codegraph` (repo indexing), `pwsh` (backend format script)",
+      "routine under backend/ and frontend/source/priis-web/ prefixes: build/test/lint/format commands documented in CLAUDE.md are routine project workflow"
+    ],
+    "allow": [
+      "$defaults",
+      "Bash(dotnet build backend/GR.PRIIS.Backend.slnx:*)",
+      "Bash(dotnet test backend/GR.PRIIS.Backend.slnx:*)",
+      "Bash(dotnet format backend/GR.PRIIS.Backend.slnx:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run organize-imports:*)"
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Bash(az repos pr update:*)",
+      "Bash(az devops invoke:* --http-method POST*)"
+    ]
+  }
+}
