@@ -16,7 +16,7 @@ PLAN_PATH = re.compile(r"[^\s'\"`()<>]*implementation_plan-[^\s'\"`()<>]*")
 FRESH_SECONDS = 120
 MAX_BULLET_WORDS = 25
 MAX_PROSE_WORDS = 15
-SKIP_PREFIXES = ("#", "|", ">", "<!--", "**Status", "**Suffix", "**Inputs")
+SKIP_PREFIXES = ("#", "|", ">", "<!--", "**Status", "**Suffix", "**Inputs", "**Review")
 
 
 def candidate_paths(event):
