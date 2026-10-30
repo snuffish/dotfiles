@@ -13,10 +13,13 @@ function sync-skills() {
   fi
 }
 
-# claude -p with live progress: each tool call goes to stderr as it starts, the final answer to stdout; args go to claude
+# claude -p with live progress: the session id and each tool call go to stderr as they start, the final answer to
+# stdout; args go to claude
 function claude-p() {
   claude -p --output-format stream-json --verbose "$@" | jq --unbuffered -rj '
-    if .type == "assistant" then
+    if .type == "system" and .subtype == "init" then
+      "\u001b[2msession \(.session_id)\u001b[0m\n" | stderr | empty
+    elif .type == "assistant" then
       .message.content[] | select(.type == "tool_use")
       | (.input | .description // .command // .file_path // .pattern // .skill // "" | tostring | gsub("\n"; " ") | .[0:80]) as $arg
       | "\u001b[2m→ \(.name) \($arg)\u001b[0m\n" | stderr | empty
