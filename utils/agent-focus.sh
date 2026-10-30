@@ -11,9 +11,14 @@ focus_pid() {
 
   tty=$(ps -o tty= -p "$pid" 2>/dev/null | tr -d ' ')
   if [[ -n "$tty" && -n "$TMUX" ]]; then
-    pane=$(tmux list-panes -a -F '#{pane_id} #{pane_tty}' 2>/dev/null | awk -v t="$tty" '$2 ~ t {print $1; exit}')
+    # Exact tty match: pts/1 must not pick the pane on pts/10
+    pane=$(tmux list-panes -a -F '#{pane_id} #{pane_tty}' 2>/dev/null | awk -v t="/dev/$tty" '$2 == t {print $1; exit}')
     if [[ -n "$pane" ]]; then
-      tmux select-pane -t "$pane" 2>/dev/null
+      # A pane target switches session, window and pane at once; select-pane alone stays in the current window
+      tmux switch-client -t "$pane" 2>/dev/null
+      # A suspended process isn't what the pane shows
+      [[ "$(ps -o stat= -p "$pid" 2>/dev/null)" == *T* ]] &&
+        echo "Process $pid is suspended in pane $pane, behind what is shown there; fg in that shell brings it back." >&2
     fi
   fi
 
