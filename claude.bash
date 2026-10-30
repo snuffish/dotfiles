@@ -137,3 +137,4 @@ alias omp='ollama launch omp'
 alias omp-new='omp session start'
 
 alias cc="claude"
+alias ccp="claude-p"
