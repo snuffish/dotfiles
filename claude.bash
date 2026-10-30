@@ -85,6 +85,42 @@ function _claude_open_pid() {
   return 1
 }
 
+# Type a message into a running Claude Code session's tmux pane and submit it, as if typed there (a busy session takes
+# it mid-turn). $1 is the session's id, id prefix or name; the message is the remaining args, else stdin
+function claude-send() {
+  local target=$1 msg f pid stat tty pane matches=()
+  [[ $# -ge 1 ]] && shift
+  msg=${*:-$(cat)}
+  [[ -n "$target" && -n "$msg" ]] || { echo "usage: claude-send <session id|prefix|name> <message>" >&2; return 2; }
+
+  for f in "$HOME"/.claude/sessions/*.json; do
+    pid=${f##*/}; pid=${pid%.json}
+    kill -0 "$pid" 2>/dev/null || continue
+    jq -e --arg t "$target" '(.sessionId | startswith($t)) or .name == $t' "$f" >/dev/null && matches+=("$pid")
+  done
+  case ${#matches[@]} in
+    0) echo "claude-send: no running session matches '$target'" >&2; return 1 ;;
+    1) pid=${matches[*]} ;;
+    *) echo "claude-send: '$target' matches several running sessions (pids ${matches[*]}); use more of the id" >&2; return 1 ;;
+  esac
+
+  # A pane can hold suspended claudes behind the one in front; only the foreground process (+) gets the keys
+  read -r stat tty < <(ps -o stat=,tty= -p "$pid")
+  [[ "$stat" == *+* ]] || {
+    echo "claude-send: session '$target' (pid $pid) isn't in the foreground of its terminal ($tty, state $stat)" >&2
+    return 1
+  }
+  pane=$(tmux list-panes -a -F '#{pane_id} #{pane_tty}' 2>/dev/null | awk -v t="/dev/$tty" '$2 == t { print $1; exit }')
+  [[ -n "$pane" ]] || { echo "claude-send: session '$target' (pid $pid) isn't in a tmux pane" >&2; return 1; }
+
+  # Bracketed paste keeps a multi-line message as one prompt; Enter then submits it
+  printf %s "$msg" | tmux load-buffer -b claude-send - &&
+    tmux paste-buffer -p -d -b claude-send -t "$pane" &&
+    sleep 0.3 &&
+    tmux send-keys -t "$pane" Enter &&
+    echo "Sent to pane $pane (pid $pid)" >&2
+}
+
 # Pick a Claude Code session with fzf and resume it in its own directory; extra args go to claude
 function claude-resume() {
   local picker="$HOME/.terminal/utils/agent-session-picker.sh"
@@ -175,3 +211,4 @@ alias omp-new='omp session start'
 alias cc="claude"
 alias ccp="claude-p"
 alias ctail="claude-tail"
+alias csend="claude-send"
