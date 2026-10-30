@@ -36,7 +36,7 @@ skills/
 
 ## Inventory
 
-65 skills total — 38 general + 27 under `Projects/GR.PRIIS/` — plus 6 Modules.
+42 skills total — 38 general + 4 under `Projects/GR.PRIIS/` — plus 6 Modules.
 
 | Group | Kind | Count | Entries |
 | --- | --- | :---: | --- |
