@@ -43,7 +43,7 @@ There is no intermediate mode: a request for a written-up comparison or a docume
 | Understanding how existing code works, not choosing what to do                | [`/explain`](../explain/SKILL.md)                                                     |
 | Finding the single hidden risk in an approach already chosen                  | [`/what-am-I-missing`](../what-am-I-missing/SKILL.md)                                 |
 | Something is already broken and needs a diagnosis                             | [`/problem`](../problem/SKILL.md)                                                     |
-| Judging a drafted plan or a diff                                              | [`/plan-review`](../plan-review/SKILL.md) · [`/code-review`](../code-review/SKILL.md) |
+| Judging a drafted plan or a diff                                              | [`/plan --review`](../plan/SKILL.md) · [`/code-review`](../code-review/SKILL.md) |
 | Turning the chosen suggestion into an implementation plan                     | [`/plan`](../plan/SKILL.md)                                                           |
 
 ---

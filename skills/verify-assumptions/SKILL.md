@@ -37,7 +37,7 @@ Read these before step 1:
 |---|---|
 | Establishing ground truth before there is a design | [`/investigate`](../investigate/SKILL.md) |
 | Finding the assumption nobody has stated yet | [`/what-am-I-missing`](../what-am-I-missing/SKILL.md) |
-| Auditing a plan's design quality, not its facts | [`/plan-review`](../plan-review/SKILL.md) |
+| Auditing a plan's design quality, not its facts | [`/plan --review`](../plan/SKILL.md) |
 | Checking an implementation against its ticket | [`/spec-verification`](../spec-verification/SKILL.md) |
 | One quick factual question mid-task | Built-in `/btw` (answers from context, no tools) |
 

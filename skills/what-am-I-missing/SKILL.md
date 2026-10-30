@@ -27,7 +27,7 @@ Read these before step 1:
 | Situation                                               | Use instead                                             |
 | ------------------------------------------------------- | ------------------------------------------------------- |
 | Full ground-truth research with options and a plan seed | [`/investigate`](../investigate/SKILL.md)               |
-| Auditing a drafted implementation plan                  | [`/plan-review`](../plan-review/SKILL.md)               |
+| Auditing a drafted implementation plan                  | [`/plan --review`](../plan/SKILL.md)               |
 | Reviewing a diff                                        | [`/code-review`](../code-review/SKILL.md)               |
 | Something is already failing                            | [`/problem`](../problem/SKILL.md)                       |
 | Nothing is chosen yet; comparing approaches             | [`/suggestion`](../suggestion/SKILL.md)                 |
