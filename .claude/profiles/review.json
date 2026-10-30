@@ -1,0 +1,8 @@
+{
+  "enabledPlugins": {
+    "claude-mem@thedotmack": false,
+    "mattpocock-skills@claude-plugins-official": false
+  },
+  "autoMemoryEnabled": false,
+  "claudeMdExcludes": ["/home/snuffish/.claude-mem/**"]
+}

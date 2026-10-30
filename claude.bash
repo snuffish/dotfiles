@@ -18,6 +18,14 @@ function gcai() {
   claude -p "/commit $*"
 }
 
+# Claude Code for reviews: no claude-mem, auto-memory, MY-RULES or mattpocock-skills; args go to claude.
+# Resume such a session with claude-review --resume <id> (claude-resume starts plain claude, which loads them again)
+function claude-review() {
+  claude --settings "$HOME/.terminal/.claude/profiles/review.json" \
+    --append-system-prompt "claude-mem and auto-memory are disabled in this session; skip instructions to save or search memory." \
+    "$@"
+}
+
 # The pid of a running claude that has session $1 open (Claude Code keeps ~/.claude/sessions/<pid>.json for each);
 # fails when none has. A second claude on a session that is still open gets suspended as it starts
 function _claude_open_pid() {
