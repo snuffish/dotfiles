@@ -37,6 +37,10 @@
           {
             "type": "command",
             "command": "jq -r '.tool_input.file_path' | xargs npx prettier --write"
+          },
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); [ -f \"$f\" ] || exit 0; if m=$(grep -nE '^(<{7}( |$)|={7}$|>{7}( |$)|\\|{7}( |$))' \"$f\"); then printf 'Merge-conflict markers left in %s:\\n%s\\n' \"$f\" \"$m\" >&2; exit 2; fi"
           }
         ]
       }
