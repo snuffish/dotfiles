@@ -4,16 +4,16 @@
 
 Sections in this order, and **nothing after In Plain Terms**:
 
-1. `## Review Context` — a small table: PR(s) and work item(s) per repo, **Counterpart** (the `pr-counterpart` › *Classification*: `<repo> !<id>` reviewed / found, not reviewed / expected but missing / single-repo change), base, **Head reviewed** per repo as `` `<source-ref>` @ `<short-sha>` `` (*Step 1b-a*) — e.g. `` Backend `origin/feature/31085_permit-…` @ `65c726bb` `` — never a bare SHA, **Reviewed from** (`` snapshot of `<source-ref>` @ `<short-sha>` (removed) `` / `… (kept at <path>)` / `` live checkout of `<branch>` ``), **Local checkout** per repo (its branch and `same commit` / `local ahead N / behind M` / `on <other-branch> — PR branch not checked out`; for a repo without a counterpart, where its contract side was read: `contract read at <default> @ <short-sha>`, plus the branch its checkout is on when that differs), **Untracked, not in snapshot** (`working`/`staged` only: file list or "none"), Spec source (or "none available"), Standards sources loaded, **Profile** (the profiles loaded, each upstream checklist and catalog as `<repo> origin/<default> @ <short-sha>` or "registry copy (upstream missing)", and any pointed-to heading not found; "none" without a profile), mode (standard/deep, plus `feedback`). With `feedback`: a **PR feedback** row linking the `pr_feedback_review` artifact(s), and giving the human thread count, how many threads attach to findings, and how many findings were added from threads. If *Step 6b* was skipped, the row says why.
-2. `## Feature in Brief` — what the feature is and what it is meant to achieve, before any code is mentioned (see *Feature in Brief* below).
+1. `## Review Context` — a small table: PR(s) and work item(s) per repo, **Counterpart** (the `pr-counterpart` › _Classification_: `<repo> !<id>` reviewed / found, not reviewed / expected but missing / single-repo change), base, **Head reviewed** per repo as `` `<source-ref>` @ `<short-sha>` `` (_Step 1b-a_) — e.g. `` Backend `origin/feature/31085_permit-…` @ `65c726bb` `` — never a bare SHA, **Reviewed from** (``snapshot of `<source-ref>` @ `<short-sha>` (removed)`` / `… (kept at <path>)` / `` live checkout of `<branch>` ``), **Local checkout** per repo (its branch and `same commit` / `local ahead N / behind M` / `on <other-branch> — PR branch not checked out`; for a repo without a counterpart, where its contract side was read: `contract read at <default> @ <short-sha>`, plus the branch its checkout is on when that differs), **Untracked, not in snapshot** (`working`/`staged` only: file list or "none"), Spec source (or "none available"), Standards sources loaded, **Profile** (the profiles loaded, each upstream checklist and catalog as `<repo> origin/<default> @ <short-sha>` or "registry copy (upstream missing)", and any pointed-to heading not found; "none" without a profile), mode (standard/deep, plus `feedback`), **Blind-spot pass** (_Step 6c_: `finding N` / `covered by finding N` / `refuted: <evidence>`). With `feedback`: a **PR feedback** row linking the `pr_feedback_review` artifact(s), and giving the human thread count, how many threads attach to findings, and how many findings were added from threads. If _Step 6b_ was skipped, the row says why.
+2. `## Feature in Brief` — what the feature is and what it is meant to achieve, before any code is mentioned (see _Feature in Brief_ below).
 3. `## Summary of Changes` — 1–3 sentences on what the changes accomplish and their architectural intent.
-4. `## Findings Summary` — the summary table. With `feedback`, the table gains a **Thread** column (`[#110776](#thread-110776)` with its host link, or `—`), and a `### PR Feedback Cross-Check` table follows it: one row per human thread with its *Thread*, *State at head* and *Disposition* (`covers finding N` / `added as finding N` / `decided — finding N lowered` / `refuted: <evidence>` / `no code defect`). The table accounts for every thread.
-5. `## Detailed Review Findings` — 🔴/🟡 findings with their fix inline, then `### 🟢 Minor Findings`, then any subsections the profile's *Report additions* name (in the order it lists), then `### 💙 Praise`. A profile adds subsections here only, never top-level sections.
+4. `## Findings Summary` — the summary table. With `feedback`, the table gains a **Thread** column (`[#110776](#thread-110776)` with its host link, or `—`), and a `### PR Feedback Cross-Check` table follows it: one row per human thread with its _Thread_, _State at head_ and _Disposition_ (`covers finding N` / `added as finding N` / `decided — finding N lowered` / `refuted: <evidence>` / `no code defect`). The table accounts for every thread.
+5. `## Detailed Review Findings` — 🔴/🟡 findings with their fix inline, then `### 🟢 Minor Findings`, then any subsections the profile's _Report additions_ name (in the order it lists), then `### 💙 Praise`. A profile adds subsections here only, never top-level sections.
 6. `## In Plain Terms` — only when there is at least one 🔴/🟡.
 
 ### Feature in Brief
 
-*Summary of Changes* says **how** the code changed. This section says **what** is being built and **why**, so a reader can judge every finding against the goal. It is not a restatement of the diff.
+_Summary of Changes_ says **how** the code changed. This section says **what** is being built and **why**, so a reader can judge every finding against the goal. It is not a restatement of the diff.
 
 Write 3–5 short sentences, or a few bullets, covering:
 
@@ -24,22 +24,23 @@ Write 3–5 short sentences, or a few bullets, covering:
 
 Rules:
 
-- Draw it from the Step 2 spec source. The parent story usually carries the *why* when the child task is bare. Follow the work-item `Parent` link (Step 1) rather than stopping at a task with no description.
+- Draw it from the Step 2 spec source. The parent story usually carries the _why_ when the child task is bare. Follow the work-item `Parent` link (Step 1) rather than stopping at a task with no description.
 - Use domain words, not type, file or endpoint names. Keep the product's own terms (e.g. Swedish UI labels) and gloss each one in English the first time it appears.
-- When no spec source exists, infer the purpose from the diff and say so: "*Inferred from the diff — no description or work item available.*" Never present a guess as the stated intent.
+- When no spec source exists, infer the purpose from the diff and say so: "_Inferred from the diff — no description or work item available._" Never present a guess as the stated intent.
 - Keep it neutral. Whether the code actually achieves the goal belongs in the Spec findings, not here.
 
 ### Findings Summary Table
 
-| # | Severity | Axis | File | Issue |
-|---|---|---|---|---|
-| [1](#finding-1) · [plain](#finding-1-plain) | 🔴 | Correctness | `foo.ts` | Missing null check on `userId` |
-| [2](#finding-2) · [plain](#finding-2-plain) | 🟡 | Spec | `bar.tsx` | AC "per category" not implemented |
-| [3](#finding-3) · [plain](#finding-3-plain) | 🟡 | Standards | `Baz.cs` | Read query tracks entities (backend rulebook: reads use `AsNoTracking`) |
-| 4–7 | 🟢 | various | various | Polish — see [Minor Findings](#minor-findings) |
+| #                                           | Severity | Axis        | File      | Issue                                                                   |
+| ------------------------------------------- | -------- | ----------- | --------- | ----------------------------------------------------------------------- |
+| [1](#finding-1) · [plain](#finding-1-plain) | 🔴       | Correctness | `foo.ts`  | Missing null check on `userId`                                          |
+| [2](#finding-2) · [plain](#finding-2-plain) | 🟡       | Spec        | `bar.tsx` | AC "per category" not implemented                                       |
+| [3](#finding-3) · [plain](#finding-3-plain) | 🟡       | Standards   | `Baz.cs`  | Read query tracks entities (backend rulebook: reads use `AsNoTracking`) |
+| 4–7                                         | 🟢       | various     | various   | Polish — see [Minor Findings](#minor-findings)                          |
 
 **Intra-document anchor rules:**
 Place explicit HTML anchor tags `<a id="..."></a>` before each section and finding so the table links work in Markdown Preview and when reading the document:
+
 - Precede each detailed finding with `<a id="finding-N"></a>` (e.g. `<a id="finding-1"></a>\n\n### 🔴 1 — ... · Verified`)
 - Precede each plain-terms explanation with `<a id="finding-N-plain"></a>` (e.g. `<a id="finding-1-plain"></a>\n\n### 1. ...`)
 - Precede minor findings with `<a id="minor-findings"></a>\n\n### 🟢 Minor Findings`
@@ -73,15 +74,15 @@ decide whether this blocks a release read only it.
 
 Write each one as four beats, in this order:
 
-1. **What the code is trying to do** — one sentence, in domain nouns (*contract
-   template*, *subarea*, *case handler*), never type names (`ContractTemplate`,
+1. **What the code is trying to do** — one sentence, in domain nouns (_contract
+   template_, _subarea_, _case handler_), never type names (`ContractTemplate`,
    `SubareaContract`). When the product's working language is not English, keep its own
    word for a thing so the team recognises it, but gloss it in English the first time it
-   appears — "*avtalsmall* (the master contract that subareas hang off)" — then use the
+   appears — "_avtalsmall_ (the master contract that subareas hang off)" — then use the
    term unglossed.
 2. **What actually happens** — the failure as a numbered sequence of events with real
    actors, not as a conditional rule. "1. A handler pauses a contract. 2. They close the
-   subarea — the guard only looks for *active* contracts, finds none, allows it. 3. …"
+   subarea — the guard only looks for _active_ contracts, finds none, allows it. 3. …"
    Sequences are concrete; rules are not. For a Spec finding: what the user was promised
    versus what they actually get.
 3. **Why it's a defect and not a matter of taste** — name the contradiction: another code
@@ -115,4 +116,3 @@ Rules:
   writing "nothing to explain".
 
 ---
-
