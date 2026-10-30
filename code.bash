@@ -159,9 +159,10 @@ agent-resume() {
     run_agent_session_picker \
       --driver "$driver" \
       --title "Resume Agent session (Claude / Antigravity)" \
-      --header $'[Enter] Resume · [Ctrl-F] Fork · [Ctrl-X] Cross-fork · [Ctrl-S] Copy ID\n[Ctrl-T] This dir/All · [Ctrl-G] Titles/Text · [Ctrl-A] All/Claude/Agy' \
+      --header $'[Enter] Resume · [Ctrl-F] Fork · [Ctrl-X] Cross-fork · [Ctrl-L] Tail · [Ctrl-S] Copy ID\n[Ctrl-T] This dir/All · [Ctrl-G] Titles/Text · [Ctrl-A] All/Claude/Agy' \
       --scope "$scope" \
       --prompt "$prompt" \
+      --expect ctrl-l \
       --bind "ctrl-a:transform:bash $driver key agent"
   )" || return
 
@@ -173,6 +174,10 @@ agent-resume() {
   [[ -n "$id" ]] || return 0
 
   case "$key" in
+    ctrl-l)
+      # Follow the transcript live (claude-tail reads both agents' formats); ctrl-c stops it
+      claude-tail "$(cut -f6 <<< "$pick")"
+      ;;
     ctrl-x)
       if [[ "$agent" == "claude" ]]; then
         echo "Forking Claude session ${id:0:8} -> Antigravity..." >&2
