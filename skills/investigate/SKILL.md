@@ -1,13 +1,14 @@
 ---
 name: investigate
-description: 'Deep read-only research before designing a change: traces symbols, maps call flows and blast radius, uncovers prior art and conventions, surfaces cross-layer constraints, weighs options, audits critical blind spots (integrating /what-am-I-missing), and writes an evidence-backed `<prefix>-investigation-<suffix>.md` that /plan builds on. Use for /investigate, "research this", "how does X work before we change it?", "what would it take to add Y?", "scope this out", "is this feasible?".'
+description: 'Read-only research before designing a change: traces symbols, maps call flows and blast radius, uncovers prior art and conventions, surfaces cross-layer constraints, weighs options and answers in chat with an evidence-backed confidence ledger. It includes the /what-am-I-missing blind-spot audit unless `--no-blindspot`, `--file` writes `<prefix>-investigation-<suffix>.md` for /plan, `--deep` runs the full protocol with the file; `--from <PR|work item>` frames it from a ticket, `--scope <path>` bounds it. Use for /investigate, "research this", "how does X work before we change it?", "what would it take to add Y?", "scope this out", "is this feasible?".'
+argument-hint: "[--deep] [--no-blindspot] [--file] [--from <PR|work item>] [--scope <path>…] [/worktrees] <topic>"
 ---
 
 # Skill: `/investigate` — Pre-Plan Research & Discovery
 
 The dedicated reconnaissance pass executed **before** `/plan`. It replaces speculation with verifiable evidence, answering: _"What is actually true in this codebase today, what are our viable options, and what critical traps are we missing?"_
 
-A plan built on assumptions breaks down during implementation. This skill guarantees that every assertion is anchored to real code or explicitly quarantined as an unverified inference, performs an adversarial blind-spot audit (incorporating the `/what-am-I-missing` flow), and hands `/plan` a battle-tested evidence foundation instead of a blank page.
+A plan built on assumptions breaks down during implementation. This skill guarantees that every assertion is anchored to real code or explicitly quarantined as an unverified inference, performs an adversarial blind-spot audit on request (incorporating the `/what-am-I-missing` flow), and hands `/plan` an evidence foundation instead of a blank page. Plain runs answer in chat; the flags in §2 add the audit and the artifact.
 
 ---
 
@@ -18,7 +19,12 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 
 - `../_modules/core.md`: read-only until `/proceed`
-- `../_modules/artifact-protocol.md`: writes `<prefix>-investigation-<suffix>.md` at the **workspace root** (suffix e.g. `-draft-close-dialog`, `-municipality-sync`)
+- `../_modules/artifact-protocol.md`: writes `<prefix>-investigation-<suffix>.md` at the **workspace root** only under `--file` or `--deep` (suffix e.g. `-draft-close-dialog`, `-municipality-sync`); a plain run writes nothing
+
+Read these only when their flag is given:
+
+- `../_modules/pr-host.md` (`--from`): read-only, to resolve the PR or work item and its acceptance criteria
+- `../_modules/git-worktrees.md` (`/worktrees`): snapshot mode, per `core` › _Worktree opt-in_
 
 ---
 
@@ -27,7 +33,7 @@ Read these before step 1:
 > [!CAUTION]
 > **ZERO-TOLERANCE RULES — READ-ONLY DISCIPLINE:**
 >
-> 1. **STRICTLY READ-ONLY**: Never edit source code, scaffold files, stage git changes, run database migrations, or execute mutating commands. The only file this skill creates or modifies is its own workspace artifact: `<prefix>-investigation-<suffix>.md`.
+> 1. **STRICTLY READ-ONLY**: Never edit source code, scaffold files, stage git changes, run database migrations, or execute mutating commands. The only file this skill creates or modifies is its own workspace artifact, `<prefix>-investigation-<suffix>.md`, and only under `--file` or `--deep`.
 > 2. **DO NOT WRITE THE PLAN**: Deliver current-state findings, architectural options, trade-offs, and a seed outline. Never draft task phases, step-by-step checklists, or `<prefix>-implementation_plan-<suffix>.md`. Solution architecture belongs to `/plan`.
 > 3. **NO UNCITED CLAIMS**: Every factual claim about codebase behavior, interfaces, or types must carry a precise `path:line` citation. Deductions must be explicitly marked **Inferred** or **Unknown**.
 > 4. **NO AUTO-PROCEED**: Never roll directly from research into planning or implementation without explicit user authorization. Present findings and hand off control.
@@ -40,13 +46,13 @@ Read these before step 1:
 
 | Objective / Context                                                                               | Correct Skill                                                                                          |
 | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Deep-dive research, ground truth, options, and critical blind spots **before** designing a change | **`/investigate`** (this skill — includes the `/what-am-I-missing` audit)                              |
+| Deep-dive research, ground truth, options, and critical blind spots **before** designing a change | **`/investigate`** (this skill; includes the `/what-am-I-missing` audit unless `--no-blindspot`)       |
 | Synthesizing gathered evidence into a phased task plan                                            | [`/plan`](../plan/SKILL.md)                                                                            |
 | Explaining an isolated symbol, expression, error, or PR comment                                   | [`/explain`](../explain/SKILL.md)                                                                      |
 | Diagnosing an active regression, failing test, or runtime crash                                   | [`/problem`](../problem/SKILL.md)                                                                      |
 | Auditing an existing plan or pull request diff                                                    | [`/plan-review`](../plan-review/SKILL.md) (plans) or [`/code-review`](../code-review/SKILL.md) (diffs) |
 | Standalone blind-spot audit of an already-chosen approach, plan, or diff                          | [`/what-am-I-missing`](../what-am-I-missing/SKILL.md)                                                  |
-| Another visual angle on a finished investigation (a different diagram, a diff, an HTML view)      | `/show-me` (user-invoked only; see §4 _Visuals_)                                                       |
+| Another visual angle on a finished investigation (a different diagram, a diff, an HTML view)      | `/show-me` (`~/.agents/skills/show-me/`, user-invoked only; see §4 _Visuals_)                          |
 
 ---
 
@@ -58,7 +64,9 @@ When the user runs `/investigate` without instructions:
 
 1. **Locate Existing Investigation**:
    - Check for `<prefix>-investigation-*.md` at the **workspace root**.
+   - **Several found**: pick the one whose suffix carries the work-item ID from the current branch name (e.g. `feature/22470_…` → `-22470-`); otherwise the most recently modified. List the other two most recent ones below the link so the user can switch.
 2. **If Found**:
+   - Read the real anchor lines first (`grep -n '^#\{1,3\} ' <file>`); never reuse the example line numbers below.
    - Immediately output a direct clickable IDE link and key section anchors (`#L<line>`):
      ```markdown
      Here is the active investigation:
@@ -84,8 +92,21 @@ When the user runs `/investigate` without instructions:
 
 ### Case B: Command With Instructions (`/investigate <topic>`)
 
-When the user supplies a topic or goal (e.g. `/investigate multi-tenant webhook dispatching`):
-Execute the complete **Investigation Protocol** below.
+When the user supplies a topic or goal (e.g. `/investigate multi-tenant webhook dispatching`), or `--from` alone, execute the **Investigation Protocol** below with the flags given.
+
+### Flags
+
+| Flag                     | Effect                                                                                                                                                                                                 |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| _(none)_                 | Steps 0–7, blind-spot audit included; answer in chat per §5 _Chat-only response_. No file                                                                                                              |
+| `--no-blindspot`         | Skips Step 6, the blind-spot audit                                                                                                                                                                     |
+| `--file`                 | Writes the §4 artifact and answers per §5 _Artifact response_                                                                                                                                          |
+| `--deep`                 | The full protocol: `--file` with the audit. With `--no-blindspot` it contradicts itself, so ask which applies                                                                                          |
+| `--from <PR\|work item>` | Frames Step 0 from a PR or work item (URL, id, `#30342`). The topic becomes optional                                                                                                                   |
+| `--scope <path>…`        | Bounds Steps 2–4 to these paths (repo, directory or package); see Step 0                                                                                                                               |
+| `/worktrees`             | Reads a pinned snapshot instead of the live checkout (`git-worktrees` › _Snapshot Lifecycle_). With `--from <PR>`, the snapshot is the PR head, so the findings describe the PR, not your working tree |
+
+Flags combine and their order does not matter. An unknown `--flag` is a question, not a guess.
 
 ---
 
@@ -99,24 +120,29 @@ flowchart TD
     S3 --> S4["Step 4: Surface Contracts, Constraints & Blast Radius"]
     S4 --> S5["Step 5: Frame Architectural Options & Trade-offs"]
     S5 --> S6["Step 6: Audit Blind Spots (What Am I Missing?)"]
-    S6 --> S7["Step 7: Assemble Confidence Ledger"]
-    S7 --> Art["Write & Deliver <prefix>-investigation-<suffix>.md"]
+    S5 -->|"--no-blindspot"| S7["Step 7: Assemble Confidence Ledger"]
+    S6 --> S7
+    S7 -->|"--file / --deep"| Art["Write <prefix>-investigation-<suffix>.md"]
+    S7 --> Chat["Answer in chat (§5)"]
+    Art --> Chat
 ```
 
 ### Step 0 — Frame the Scope & Questions
 
 Before reading code, establish strict research boundaries to avoid sprawling:
 
+0. **Intake (`--from` only)**: Resolve the PR or work item per `pr-host` › _Parse a PR or work-item URL_ and _Fetch the PR, its work items and acceptance criteria_ (a work item without a PR is fine; read the item and its parent). Derive the goal and questions from its title, description and acceptance criteria, and cite them. The description states intent; the code states truth. A failed fetch follows `pr-host` › _When a fetch fails_; do not invent the ticket's content.
 1. **Goal**: Restate the inquiry in one concise, unambiguous sentence.
 2. **Core Questions**: Define 3–7 precise questions that must be resolved before a plan can be drafted.
 3. **Done Condition**: Specify the clear boundary where investigation ends (e.g., "Identified exact database schema, call flow from controller to worker, and existing test patterns").
+4. **Scope Boundary (`--scope` only)**: Steps 2–4 search and trace only under the given paths. A caller, consumer or contract outside them is listed in Blast Radius as _outside scope_ with its `path:line`, not traced further. Rulebooks (Step 1) are still read for the whole workspace.
 
 ### Step 1 — Orient & Recover Context
 
-1. **Workspace Rulebooks**: Check `CLAUDE.md`, `GEMINI.md`, and `.agents/rules/` for global architectural patterns, forbidden libraries, or repository constraints.
+1. **Workspace Rulebooks**: Check `CLAUDE.md` (and `AGENTS.md` where present; `GEMINI.md` on Antigravity) at the workspace root and in each repo it touches, plus the rulebooks they link to, for global architectural patterns, forbidden libraries, or repository constraints.
 2. **Project-Scoped Skills**: Identify and load relevant domain skills per `core` › _Precedence_ (e.g. `Projects/GR.PRIIS/priis-backend-fastendpoints`, `priis-frontend-rtk-query`).
 3. **Repository Topology**: Determine if the change crosses repository or package boundaries (e.g., Backend API, Frontend SPA, Shared Contracts, Shared Worker).
-4. **Historical Decisions**: Inspect recent commits (`git log -n 5 -p`) and search past conversational transcripts (`<appDataDir>/brain/` or `~/.claude/projects/`) to honor established decisions and avoid relitigating resolved debates.
+4. **Historical Decisions**: Inspect commits scoped to the topic (`git log --oneline -n 20 -- <paths>`, or `git log -S <symbol>`; open a diff only for the commits that matter), search claude-mem when its search tools are available, and fall back to past transcripts (`<appDataDir>/brain/` or `~/.claude/projects/`). Honor established decisions and avoid relitigating resolved debates. Memory is compressed and can lag: use it to find a decision, then cite the code or commit that proves it.
 
 ### Step 2 — Locate Prior Art & Reference Patterns
 
@@ -129,6 +155,8 @@ Codebases thrive on consistency. The most reliable pattern is usually the one al
 ### Step 3 — Trace Real Code Cross-Layer (No Guesswork)
 
 Inspect actual source code definitions rather than making assumptions based on file or variable names:
+
+- **Navigation**: Use the code index where one exists (a `.codegraph/` directory in the workspace or a parent): map with its lean commands, walk callers and callees level by level, then read only the line ranges you cite. Grep what the index does not connect: DI and startup wiring, implicit pipeline steps, enum-member usages and config files, plus any gaps the workspace `CLAUDE.md` lists. A trace is finished only when every node has a `path:line`.
 
 - **Enclosing Scope**: Inspect full class definitions, lifecycles, and middlewares—not just isolated snippets.
 - **Cross-Layer Mapping**:
@@ -155,17 +183,11 @@ Present 2–3 viable, contrasting implementation approaches:
 - **Prior Art Reference**: Which existing pattern or file each option resembles.
 - **Recommendation & Rationale**: Explicitly designate the recommended option and justify why it wins.
 
-### Step 6 — Audit Blind Spots & Critical Omissions (What Am I Missing?)
+### Step 6 — Audit Blind Spots & Critical Omissions (skipped under `--no-blindspot`)
 
-Audit the leading/recommended option against the **7 Universal Blindspot Vectors**:
+Under `--no-blindspot` the artifact's §8 says _Not run_ and the handoff offers a re-run without the flag or `/what-am-I-missing`.
 
-1. **💾 Persistence, Transactions & Data Integrity**: Engine invariants, partial failure atomicity, schema locks, migration backfill.
-2. **⚡ Concurrency, State Drift & Lifecycles**: Race conditions, cache invalidation, terminal/archived lifecycle states.
-3. **🌐 Boundaries, Contracts & Blast Radius**: Downstream breaking changes, polymorphic coverage, third-party timeouts/fallbacks.
-4. **🔒 Security, Authorization & Tenancy**: Tenant isolation/IDOR, permission revocation, token/secret leakage.
-5. **🚀 Operational Realities & Performance**: Scale traps ($O(N)$ / N+1), resource leaks, observability/debuggability.
-6. **🧪 Testing Realities & False Confidence**: Mocks that lie, negative/asymmetric paths, idempotency under retry.
-7. **🧩 Leaky Abstractions & Design Consistency**: Developer traps, single source of domain truth.
+Read `../what-am-I-missing/SKILL.md` › _Universal Investigation Protocol_ (stop and report the path if it cannot be read) and audit the leading/recommended option against its **7 Universal Blindspot Vectors**. That skill owns the vectors; do not keep a copy here.
 
 Identify and record:
 
@@ -186,10 +208,18 @@ Classify every key finding into one of three strict categories:
 
 ## 4. Workspace Artifact Specification
 
-Save the investigation artifact directly to the **workspace root** using the host and model prefix:
+Only under `--file` or `--deep`. Save the investigation artifact directly to the **workspace root** using the host and model prefix:
 
 - **Antigravity IDE**: `<workspace-root>/antigravity-<model>-investigation-<suffix>.md`
 - **Claude Code**: `<workspace-root>/claude-<model>-investigation-<suffix>.md`
+
+### Length Budget
+
+Aim for **at most ~250 lines and ~30 KB**. Past investigations that served `/plan` well ran 70–270 lines; the one that ran 1,500 lines (430 KB) did so through per-item inventories.
+
+- **No per-item inventories.** For a list of many similar items (tests, endpoints, call sites, files), give the count, a table of the few that decide the options, and the command that regenerates the full list (e.g. `grep -rln '<pattern>' <dir> | wc -l`).
+- **Cite, don't paste.** A `path:line` replaces a code excerpt; quote at most a few lines, only where the exact text is the finding.
+- Over budget after trimming? Say so in the chat response, with the reason, instead of shipping it silently.
 
 ### Artifact Template
 
@@ -197,7 +227,8 @@ Save the investigation artifact directly to the **workspace root** using the hos
 # Investigation: <Topic Name>
 
 **Goal:** <One-sentence restatement of user goal>  
-**Scope:** <Repositories, microservices, domains, or directories touched>  
+**Scope:** <Repositories, microservices, domains, or directories touched; `--scope` paths when given>  
+**Source:** <`--from` PR / work item link, or "topic"> · **Read from:** <live checkout | snapshot `<ref>@<short-sha>`> · **Flags:** <as invoked>  
 **Status:** Complete | Blocked on open questions  
 **Date:** <YYYY-MM-DD>
 
@@ -279,6 +310,8 @@ Save the investigation artifact directly to the **workspace root** using the hos
 
 ## 8. Blind Spots & Critical Omission Analysis (What Am I Missing?)
 
+<Under `--no-blindspot`: the single line "_Not run (`--no-blindspot`). Re-run without it, or `/what-am-I-missing` on the recommended option._" and nothing else in this section. The heading stays so section numbers and anchors are stable.>
+
 ### 🎯 The #1 Most Important Thing You Are Missing
 
 > **[One bold, unambiguous sentence identifying the primary blind spot or hidden invariant]**
@@ -331,7 +364,7 @@ Save the investigation artifact directly to the **workspace root** using the hos
 
 ### Visuals
 
-Apply the `/show-me` view rules (`~/.agents/skills/show-me/SKILL.md`) inside the artifact. That skill sets `disable-model-invocation: true`, so this skill cannot load it; only the user can run it, which the handoff offers.
+The rules below are the binding ones for this artifact. They adapt the `/show-me` view rules; `/show-me` (`~/.agents/skills/show-me/SKILL.md`) sets `disable-model-invocation: true`, so only the user can run it, which the handoff offers.
 
 Pick the smallest view that makes each point clear, at most three per artifact:
 
@@ -351,7 +384,27 @@ Pick the smallest view that makes each point clear, at most three per artifact:
 
 ## 5. Chat Response Protocol
 
-Per `core` › _Golden invariants_ (3), chat output must remain concise and high-signal, pointing directly to the artifact:
+Per `core` › _Golden invariants_ (3), chat output must remain concise and high-signal. Every claim carries its `path:line` in both formats.
+
+### Chat-only response (neither `--file` nor `--deep`)
+
+The chat is the deliverable, so it carries the findings the artifact would have, trimmed to what decides the options:
+
+1. **Headline**: 1–2 sentences with the most critical finding and the primary direction, then one visual per §4 _Visuals_ when it earns its place.
+2. **Questions Answered**: the Step 0 questions, one line each with its citation.
+3. **Code Map**: a compact table (component, `path:line`, role). With `--scope`, list _outside scope_ dependencies on one line.
+4. **Options**: numbered, recommended first, one line each with its precedent; then the recommendation and why.
+5. **#1 Blind Spot** (unless `--no-blindspot`): the bold sentence, trigger and fix.
+6. **Confidence Ledger**: the 🟡 Inferred and ❓ Unknown rows only (with how to verify / owner); state the count of ✅ Verified findings.
+7. **Open Questions**: blocking user decisions.
+8. **Handoff Line**:
+   ```markdown
+   **Next Step:** `/plan <suffix>` drafts a plan from these findings in this session; re-run with `--file` (or `--deep`) to keep them for a new session.
+   ```
+
+### Artifact response (`--file` or `--deep`)
+
+Point directly to the artifact:
 
 1. **Headline**: 1–2 sentences summarizing the most critical finding and primary direction. Below it, repeat the single artifact visual that best carries the headline (usually the §3 diagram). Show only that one; the rest stay in the artifact.
 2. **Clickable Artifact Link**:
@@ -363,7 +416,7 @@ Per `core` › _Golden invariants_ (3), chat output must remain concise and high
    - `[Blind Spots & Critical Omissions]`
    - `[Confidence Ledger]`
    - `[Plan Seed]`
-4. **Primary Recommendation & #1 Blind Spot**: State the winning approach and highlight the bold #1 blind spot directly in chat.
+4. **Primary Recommendation & #1 Blind Spot**: State the winning approach and highlight the bold #1 blind spot directly in chat. Under `--no-blindspot`, say the audit was not run.
 5. **Open Questions**: Surface blocking user decisions directly in chat.
 6. **Standard Handoff Line**:
    ```markdown
@@ -379,10 +432,11 @@ Confirm every item before finalizing the response:
 - [ ] Strictly read-only: zero modifications to application source code or repository configuration.
 - [ ] No implementation plan was written: options and architecture seeds provided, no task phases.
 - [ ] Every factual statement contains a workspace-relative `path:line` citation.
-- [ ] Blind-spot audit across the 7 universal vectors completed and documented in Section 8.
-- [ ] Inferred assertions and unknown dependencies are documented in the Confidence Ledger.
-- [ ] Visuals follow §4 _Visuals_: at most three, every node is a cited symbol, one repeated in chat.
+- [ ] Flags honored: Step 6 ran unless `--no-blindspot` (then §8 says _Not run_), a file was written only under `--file` / `--deep`, `--scope` bounded Steps 2–4, `--from` content is cited from the fetched PR or work item.
+- [ ] Unless `--no-blindspot`: the audit across the 7 vectors read from `what-am-I-missing` is documented in Section 8.
+- [ ] Inferred assertions and unknown dependencies are documented in the Confidence Ledger; every 🟡 Inferred row names how to verify it, and every ❓ Unknown row names its owner and whether it blocks planning.
+- [ ] With a file: it is within the §4 _Length Budget_ (`wc -lc <file>`), or the chat response says why not.
+- [ ] Visuals follow §4 _Visuals_: at most three, every node is a cited symbol, at most one in chat.
 - [ ] Rulebooks (`CLAUDE.md`/`GEMINI.md`) and project-scoped skills were verified.
-- [ ] Target artifact was written directly to the workspace root using the correct host prefix.
-- [ ] Chat links and section anchors (`#L<line>`) were verified via grep.
+- [ ] With a file: written directly to the workspace root using the correct host prefix, and chat links and section anchors (`#L<line>`) were verified via grep. Without one: nothing was written to disk.
 - [ ] Explicit handoff presented without auto-proceeding.
