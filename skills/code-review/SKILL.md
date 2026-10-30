@@ -56,7 +56,7 @@ Read these before step 1:
 
 | Situation                                         | Use instead                                                                                                                     |
 | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| Auditing an implementation plan, not code         | [`/plan-review`](../plan-review/SKILL.md)                                                                                       |
+| Auditing an implementation plan, not code         | [`/plan --review`](../plan/SKILL.md)                                                                                       |
 | Reviewer comments, threads and votes on the PR    | [`/pr-feedback-review`](../pr-feedback-review/SKILL.md), or `/code-review feedback` for a review and a thread triage in one run |
 | The PR's pipeline is red                          | [`/pr-fix-pipeline`](../pr-fix-pipeline/SKILL.md)                                                                               |
 | How to try the change by hand                     | [`/manual-testing`](../manual-testing/SKILL.md)                                                                                 |

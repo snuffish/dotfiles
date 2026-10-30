@@ -50,7 +50,7 @@ Read these only when their flag is given:
 | Synthesizing gathered evidence into a phased task plan                                            | [`/plan`](../plan/SKILL.md)                                                                            |
 | Explaining an isolated symbol, expression, error, or PR comment                                   | [`/explain`](../explain/SKILL.md)                                                                      |
 | Diagnosing an active regression, failing test, or runtime crash                                   | [`/problem`](../problem/SKILL.md)                                                                      |
-| Auditing an existing plan or pull request diff                                                    | [`/plan-review`](../plan-review/SKILL.md) (plans) or [`/code-review`](../code-review/SKILL.md) (diffs) |
+| Auditing an existing plan or pull request diff                                                    | [`/plan --review`](../plan/SKILL.md) (plans) or [`/code-review`](../code-review/SKILL.md) (diffs) |
 | Standalone blind-spot audit of an already-chosen approach, plan, or diff                          | [`/what-am-I-missing`](../what-am-I-missing/SKILL.md)                                                  |
 | Another visual angle on a finished investigation (a different diagram, a diff, an HTML view)      | `/show-me` (`~/.agents/skills/show-me/`, user-invoked only; see §4 _Visuals_)                          |
 
