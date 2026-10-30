@@ -2,7 +2,7 @@
 # Shared fzf session picker for Claude Code, Antigravity, and Unified Agent sessions
 
 run_agent_session_picker() {
-  local driver="" title="" header="" scope="here" prompt="" extra_binds=()
+  local driver="" title="" header="" scope="here" prompt="" extra_binds=() expect="ctrl-o,ctrl-f,ctrl-x"
   local out key pick id cwd
 
   while [[ $# -gt 0 ]]; do
@@ -13,6 +13,8 @@ run_agent_session_picker() {
       --scope) scope="$2"; shift 2 ;;
       --prompt) prompt="$2"; shift 2 ;;
       --bind) extra_binds+=("--bind=$2"); shift 2 ;;
+      # Keys beyond the defaults that end the picker and come back as line 1, for the caller to act on
+      --expect) expect+=",$2"; shift 2 ;;
       *) shift ;;
     esac
   done
@@ -61,7 +63,7 @@ print("\n".join(out_lines))
       --border rounded --border-label " $title " --preview-border rounded \
       --color 'border:8,label:6:bold,preview-border:8,preview-label:6:bold,info:8,separator:8,scrollbar:8' \
       --color 'prompt:6:bold,pointer:5,marker:5,hl:3:bold,hl+:3:bold,fg+:-1:bold,query:-1:bold' \
-      --prompt "$prompt" --delimiter='\t' --with-nth=1,2,3,4 --no-sort --expect=ctrl-o,ctrl-f,ctrl-x \
+      --prompt "$prompt" --delimiter='\t' --with-nth=1,2,3,4 --no-sort --expect="$expect" \
       --bind='focus:transform-preview-label:printf " %s " {4}' \
       --bind="ctrl-t:transform:bash $driver key scope" \
       --bind="ctrl-g:transform:bash $driver key mode" \

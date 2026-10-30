@@ -25,6 +25,39 @@ function claude-p() {
   return "${PIPESTATUS[0]:-${pipestatus[1]}}"
 }
 
+# Follow a Claude Code session's transcript live: prompts and answers, plus each tool call dimmed. With no arg the
+# newest session in this directory; $1 is a transcript path or a session id (or its prefix) from any directory.
+# Also reads Antigravity transcripts (ar's ctrl-l passes those as a path)
+function claude-tail() {
+  local f
+  if [[ -f "$1" ]]; then f=$1
+  elif [[ -n "$1" ]]; then f=$({ command ls -t "$HOME"/.claude/projects/*/"$1"*.jsonl; } 2>/dev/null | head -n 1)
+  else f=$({ command ls -t "$HOME/.claude/projects/${PWD//[^[:alnum:]]/-}"/*.jsonl; } 2>/dev/null | head -n 1)
+  fi
+  [[ -n "$f" ]] || { echo "claude-tail: no session transcript found" >&2; return 1; }
+  echo "$f" >&2
+  tail -n 50 -f "$f" | jq --unbuffered -rj '
+    def tool($name; $arg): ($arg // "" | tostring | gsub("\n"; " ") | .[0:80]) as $a
+      | "\u001b[2m  → \($name) \($a)\u001b[0m\n";
+    if has("step_index") then
+      # Antigravity: the prompt sits in <USER_REQUEST>, tool args are JSON-encoded strings
+      if .type == "USER_INPUT" then
+        "[user] \(.content // "" | sub("^[\\s\\S]*<USER_REQUEST>\\s*"; "") | sub("\\s*</USER_REQUEST>[\\s\\S]*$"; ""))\n"
+      elif .type == "PLANNER_RESPONSE" then
+        (if (.content // "") != "" then "[assistant] \(.content)\n" else empty end),
+        (.tool_calls[]? | tool(.name; .args | .toolSummary // .CommandLine // .Path // .Prompt | try fromjson catch .))
+      else empty end
+    elif .type == "user" or .type == "assistant" then
+      .type as $t | .message.content
+      | if type == "string" then "[\($t)] \(.)\n"
+        else .[]
+          | if .type == "text" then "[\($t)] \(.text)\n"
+            elif .type == "tool_use" then tool(.name; .input | .description // .command // .file_path // .pattern // .skill)
+            else empty end
+        end
+    else empty end'
+}
+
 # Commit and push the pending changes with Claude's /commit skill; args are passed to it (e.g. no-push, intent)
 function gcai() {
   claude-p "/commit $*"
@@ -138,3 +171,4 @@ alias omp-new='omp session start'
 
 alias cc="claude"
 alias ccp="claude-p"
+alias ctail="claude-tail"
