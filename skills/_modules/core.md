@@ -101,7 +101,7 @@ Log each gap before printing its block, so it outlives the chat. Claim `~/.termi
 <the block above>
 ```
 
-The directory is git-ignored and sits outside every repo, so the write is allowed under read-only Commands and from snapshots. When a later session fixes the gap, it sets **Status** to `fixed`.
+The directory is git-ignored and sits outside every repo, so the write is allowed under read-only Commands and from snapshots. When a later session fixes the gap, it sets **Status** to `fixed`; a gap that turns out not to apply gets `not a gap: <reason>`. To come back to logged gaps, use the [`skill-gap`](../skill-gap/SKILL.md) Command.
 
 The edit is its own gate item (*The `/proceed` gate*, rule 1): a `/proceed` for the task does not cover it, and it is never made from a snapshot. Edit only after the user says yes to that gap.
 
