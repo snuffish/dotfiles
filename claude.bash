@@ -13,9 +13,21 @@ function sync-skills() {
   fi
 }
 
+# claude -p with live progress: each tool call goes to stderr as it starts, the final answer to stdout; args go to claude
+function claude-p() {
+  claude -p --output-format stream-json --verbose "$@" | jq --unbuffered -rj '
+    if .type == "assistant" then
+      .message.content[] | select(.type == "tool_use")
+      | (.input | .description // .command // .file_path // .pattern // .skill // "" | tostring | gsub("\n"; " ") | .[0:80]) as $arg
+      | "\u001b[2m→ \(.name) \($arg)\u001b[0m\n" | stderr | empty
+    elif .type == "result" then .result + "\n"
+    else empty end'
+  return "${PIPESTATUS[0]:-${pipestatus[1]}}"
+}
+
 # Commit and push the pending changes with Claude's /commit skill; args are passed to it (e.g. no-push, intent)
 function gcai() {
-  claude -p "/commit $*"
+  claude-p "/commit $*"
 }
 
 # Claude Code for reviews: no claude-mem, auto-memory, MY-RULES or mattpocock-skills; args go to claude.
