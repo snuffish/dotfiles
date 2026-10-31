@@ -1,9 +1,6 @@
 {
   "permissions": {
-    "allow": [
-      "Bash(az repos *)",
-      "mcp__codegraph__*"
-    ],
+    "allow": ["Bash(az repos *)", "mcp__codegraph__*"],
     "defaultMode": "auto"
   },
   "skillOverrides": {
@@ -49,6 +46,18 @@
     "CLAUDE_MEM_DISABLE_FILE_CONTEXT": "1"
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I \"$HOME/.terminal/claude/conflict-check.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Bash",
