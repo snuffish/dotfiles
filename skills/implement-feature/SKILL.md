@@ -82,12 +82,12 @@ The orchestrator (you) owns the ticket, the gates, the plan and every edit. Sub-
 **Brief rules** (same shape as `code-review` *Deep Mode*):
 
 1. Resolve everything shared **before** spawning — implementing ID, the ticket text (pasted, not a link), the `[worktree-context]` block per repo (so the repo path a sub-agent reads is the worktree, never the main checkout), the sibling feature to read, the sibling chain from the profile. Sub-agents never re-fetch tickets, call the tracker, or create, remove, lock or unlock worktrees.
-2. Each prompt states: *read-only — no edits, checkouts, installs, builds, tests or posting; work only under `repo-root`, never touch `main-checkout`*; the exact paths to start from; what to return (`path:line` per claim, reported as `workspace-path` + relative path, ~500 words max).
+2. Each prompt states: *read-only — no edits, checkouts, installs, builds, tests or posting; work only under `repo-root`, never touch `main-checkout`*; the exact paths to start from; what to return (`path:line` per claim, reported as `workspace-path` + relative path; return only the findings, one entry each).
 3. On return, re-open every `path:line` the plan will rely on. A claim you did not re-check goes under *Open Questions*, not *Proposed Changes*.
 
 Research brief template (per repo):
 
-> Read-only. `<pasted [worktree-context] block>` — work only under `repo-root`, never touch `main-checkout`, report paths as `workspace-path` + relative path. Ticket `#<id>`: `<pasted title + acceptance criteria>`. Trace the nearest sibling feature `<name>` through every layer — `<sibling chain for this repo from the profile>`. Report: the files the change will touch with `path:line`, the pattern each one follows (and which of two competing patterns is newer), contract touchpoints (`<profile's contract list>`), and anything in the acceptance criteria the code cannot support yet. Under 500 words.
+> Read-only. `<pasted [worktree-context] block>` — work only under `repo-root`, never touch `main-checkout`, report paths as `workspace-path` + relative path. Ticket `#<id>`: `<pasted title + acceptance criteria>`. Trace the nearest sibling feature `<name>` through every layer — `<sibling chain for this repo from the profile>`. Report: the files the change will touch with `path:line`, the pattern each one follows (and which of two competing patterns is newer), contract touchpoints (`<profile's contract list>`), and anything in the acceptance criteria the code cannot support yet. Return only the findings, one entry each.
 
 ---
 

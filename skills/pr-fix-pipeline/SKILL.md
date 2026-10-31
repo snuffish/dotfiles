@@ -26,7 +26,7 @@ Read these before step 1:
 > 2. **Outward-facing actions only after `/proceed`, and only these.** Before `/proceed`, never commit, push, re-queue or retry a run. After `/proceed`, the gate authorizes committing and pushing the fix and re-queuing the evaluation a red Build policy points at (`az repos pr policy queue --id <prId> --evaluation-id <evaluationId>`); this is the Command's gate authorization that `core` › *The `/proceed` gate* rule 2 reads. Never cancel a run, post PR comments, change policies, or edit pipeline definitions in the service: recommend them in the plan; the user triggers them.
 > 3. **Cite the log.** Every failure claim carries the run id, step name and the exact error line(s) — plus `path:line` once traced into code.
 > 4. **Flake is a conclusion, not a default.** Mark a failure as a flake only with evidence (passes on re-run history, passes locally on the same commit, failure unrelated to the diff).
-> 5. **Never complete until verified passed by the agent.** After the fix is pushed or the run is re-queued, the skill does not complete until the agent has actively verified that every required pipeline check and build policy succeeds (all green). It never hands back or terminates on an intermediate failure. If a triggered run fails or remains red/flaky, the agent must immediately loop: re-diagnose the remaining failure from new logs, apply the fix, locally verify, push, and monitor the new run until it passes. Only an external blocker that fundamentally requires human action (infrastructure down, missing credentials/permissions) may pause execution, and the skill remains incomplete until the pass is verified.
+> 5. **Never complete until verified passed by the agent.** After the fix is pushed or the run is re-queued, the skill does not complete until the agent has actively verified that every required pipeline check and build policy succeeds (all green). If a triggered run fails or stays red or flaky, loop: re-diagnose the remaining failure from new logs, apply the fix, locally verify, push, and monitor the new run until it passes. Only an external blocker that fundamentally requires human action (infrastructure down, missing credentials/permissions) may pause execution, and the skill remains incomplete until the pass is verified.
 
 ---
 
@@ -148,7 +148,7 @@ Once the user approves with `/proceed`:
    - On GitHub: poll `gh pr checks <prId>` or `gh run view <runId>`.
 5. **Remediation loop — never complete until verified passed:**
    - **All green (`succeeded` / `approved`):** Actively verify that every required PR build policy and status check succeeds. This is the **only condition** where the skill completes. Close out and report the verified passing run.
-   - **Still red, failing, or flaky (`failed` / `rejected` / `canceled`):** **DO NOT STOP. DO NOT HAND BACK AS COMPLETED.** The skill is incomplete. Immediately loop:
+   - **Still red, failing, or flaky (`failed` / `rejected` / `canceled`):** the run is not done. Loop:
      1. Pull failing step logs (`az devops invoke --area build --resource logs` / `gh run view <runId> --log-failed`).
      2. Classify the new or remaining failure (regression, test defect, cascade error, flake).
      3. Update the investigation artifact and implementation plan with the new run findings.

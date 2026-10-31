@@ -28,8 +28,6 @@ Read these before step 1:
 ## ⛔ Golden Invariants
 
 > [!CAUTION]
-> **ABSOLUTE RULES — ZERO TOLERANCE FOR UNVERIFIED REMOVALS:**
->
 > 1. **WORKSPACE CONSUMER VERIFICATION BEFORE UN-EXPORTING.**
 >    Never demote or delete an exported/public symbol based on in-file usage. Search the **whole workspace root** — every repo in it, including tests and e2e — and follow re-exports and aliases (§3, Step 2). A test or e2e consumer is a consumer.
 > 2. **PROTECT IMPLICIT & CONTRACT-BEARING CODE.**

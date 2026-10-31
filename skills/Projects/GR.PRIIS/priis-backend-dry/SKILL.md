@@ -1,11 +1,11 @@
 ---
 name: priis-backend-dry
-description: "[Project: GR.PRIIS.Backend] DRY (Don't Repeat Yourself) patterns for GR.PRIIS.Backend — identifying and eliminating duplication across endpoints, domain methods, validators, queries, and tests. Load when refactoring, scaffolding new features, or reviewing code for repeated logic. Load ONLY when working on the GR.PRIIS.Backend project or in the GR repository."
+description: "[Project: GR.PRIIS] DRY (Don't Repeat Yourself) patterns for the GR.PRIIS backend (`backend/`) — identifying and eliminating duplication across endpoints, domain methods, validators, queries, and tests. Load when refactoring, scaffolding new features, or reviewing code for repeated logic. Load ONLY when working on GR.PRIIS or in the GR repository."
 ---
 
 # DRY Patterns — Project Conventions
 
-This skill describes how to avoid repeating yourself in GR.PRIIS.Backend across the API, Library, and test layers. **Every pattern here maps to code that already exists in this repo.** When in doubt, grep for the referenced symbols before writing new code.
+This skill describes how to avoid repeating yourself in the GR.PRIIS backend (`backend/`) across the API, Library, and test layers. **Every pattern here maps to code that already exists in this repo.** When in doubt, grep for the referenced symbols before writing new code.
 
 ---
 
@@ -17,7 +17,7 @@ Writing a domain mutation?           → put logic in entity method / Library st
 Returning the same shape?            → extract a static Expression<Func<T,TDto>> or shared query method
 Projecting an entity hierarchy?      → use .HierarchySelect() + .IfTypeThenSelect<TDerived>()
 Translating an enum?                 → add / use ToSwedish() extension on the enum type
-Building an Excel sheet?             → use sheet.FormatAsTable() + shared *FormatX()* helpers
+Building an Excel sheet?             → use WriteTitle() / WriteMetadataRow() + ClosedXML InsertTable() + FormatTable()
 Joining ChangedBy user to a list?    → use .LeftJoin(dbContext.Users) — NOT a HashSet loop
 Collecting ChangedBy users (export)? → use the shared AddChangedByIds + temporal fallback pattern
 Writing a test?                      → use ApiWebFactory factory methods; extract private arrange helpers
@@ -53,6 +53,6 @@ Consult the dedicated reference catalogs behind context pointers:
 - **2. Shared Library Factory / Domain Methods**: Domain logic encapsulation in Library entities.
 - **6. Shared Test Factory Methods**: Common builder methods for integration and unit test setups.
 - **7. Shared Enum-to-String Translation — `ToSwedish()`**: Swedish UI display values for enums.
-- **8. Shared Excel Worksheet Helpers — `WorksheetExtensions.FormatAsTable()`**: Standard table export formatting.
+- **8. Shared Excel Worksheet Helpers — `WorksheetExtensions` (`WriteTitle`, `WriteMetadataRow`, `FormatTable`)**: Standard report header and table formatting.
 - **15. Mixed Existing/New Entity Collections — `ExistingOrNewEntities<T>`**: Syncing relation collections.
 - **16. Anti-Patterns Checklist**: Key pitfalls to avoid in backend code.

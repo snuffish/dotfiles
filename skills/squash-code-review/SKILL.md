@@ -150,7 +150,7 @@ Open with the artifact links exactly as `/code-review` › *Artifact Links* spec
 
 1. Do Steps 1–4 yourself. Sub-agents never resolve PRs, fetch threads or touch worktrees.
 2. Spawn one read-only sub-agent per **contested** cluster (single-source, conflicting or severity split), batched in one message. Agreed clusters stay with the aggregator. Merge small clusters so there are at most about 8 agents. Each prompt carries: the cluster's source excerpts verbatim, the attached thread text, the pinned SHA and the read commands (`git -C <repo> show <sha>:<path>`, or the snapshot's `[worktree-context]` block), and this brief:
-   > "Settle this cluster at `<sha>`. For each factual claim: true or false, with the `path:line` or command output that proves it. Then try to refute the finding outright. Propose severity per the attached definitions and the better of the proposed fixes, or a third. Read-only: no edits, no checkouts, no builds or tests. Under 400 words."
+   > "Settle this cluster at `<sha>`. For each factual claim: true or false, with the `path:line` or command output that proves it. Then try to refute the finding outright. Propose severity per the attached definitions and the better of the proposed fixes, or a third. Read-only: no edits, no checkouts, no builds or tests. Report one verdict per claim with its proof, nothing else."
 3. Aggregate: re-open every `path:line` a sub-agent cites before accepting its verdict, then write the artifact as in standard mode.
 
 ---

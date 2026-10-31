@@ -132,25 +132,28 @@ private static string GetStatusInSwedish(MatchingTicketStatus status) => status 
 
 ---
 
-## 8. Shared Excel Worksheet Helpers — `WorksheetExtensions.FormatAsTable()`
+## 8. Shared Excel Worksheet Helpers — `WorksheetExtensions`
 
-**Rule:** Use `worksheet.FormatAsTable(lastRow, lastColumn, headerRow)` from `GR.PRIIS.API.Extensions.WorksheetExtensions` instead of manually styling cells or creating table ranges.
+**Rule:** Use the `IXLWorksheet` extensions in `GR.PRIIS.API.Extensions.WorksheetExtensions` (`backend/source/GR.PRIIS.API/Extensions/WorksheetExtensions.cs`) instead of styling cells by hand: `WriteTitle(title, fontSize = 14)` for the bold title in A1, `WriteMetadataRow(row, label, value, col = 1)` for each bold-label/value row, and `FormatTable(table, adjustToContents = false)` on the table ClosedXML's `InsertTable` returns.
 
 ```csharp
-// ✅ DRY — used in every export endpoint after writing all rows
-var lastColumn = sheet.LastColumnUsed()?.ColumnNumber() ?? 0;
-sheet.FormatAsTable(row, lastColumn);                  // default headerRow = 1
-worksheet.FormatAsTable(row - 1, 20, headerRow: 2);   // with explicit header row
+// ✅ DRY — the report export endpoints (e.g. ExportControlTicketsEndpoint)
+worksheet.WriteTitle("Rapport: Kontrollärenden");
+worksheet.WriteMetadataRow(2, "Skapad:", ReportGeneratedAt.ToSwedishDateTimeString());
+worksheet.WriteMetadataRow(3, "Period:", $"{req.StartDate:yyyy-MM-dd} - {req.EndDate:yyyy-MM-dd}");
+var table = worksheet.Cell(headerRow, 1).InsertTable(data);
+worksheet.FormatTable(table);                              // or adjustToContents: true
 
-// ❌ Wet — manual bold + table setup
-sheet.Cell(headerRow, 1).Style.Font.Bold = true;
-sheet.Cell(headerRow, 2).Style.Font.Bold = true;
-// ... repeated for every column
-var range = sheet.Range(1, 1, lastRow, lastColumn);
-range.CreateTable();
+// ❌ Wet — hand-styled title, labels and table in each endpoint
+sheet.Cell(1, 1).Value = "Rapport: …";
+sheet.Cell(1, 1).Style.Font.Bold = true;
+sheet.Cell(2, 1).Style.Font.Bold = true;
+// ... repeated for every metadata row
+table.Theme = XLTableTheme.TableStyleMedium2;
+table.ShowAutoFilter = true;
 ```
 
-`FormatAsTable` sets `TableStyleMedium2`, shows header row, enables auto-filter, and optionally auto-fits columns (`adjustToContents: true`).
+`FormatTable` sets `TableStyleMedium2`, shows the header row, enables auto-filter, and optionally auto-fits columns (`adjustToContents: true`).
 
 ---
 
@@ -187,7 +190,7 @@ The following are definitively banned in this codebase. If you see one, it is a 
 
 ```text
 ❌ private static GetXxxInSwedish() inside an endpoint — add a public ToSwedish() extension to the enum
-❌ Inline worksheet header/bold/table styling — use WorksheetExtensions.FormatAsTable()
+❌ Inline worksheet title/bold/table styling — use WorksheetExtensions.WriteTitle() / WriteMetadataRow() / FormatTable()
 ❌ Duplicating ChangedBy user lookup across export endpoints — extract the pattern once
 ❌ Re-declaring the same .Select() projection shape in multiple endpoints — use a static expression
 ❌ Repeating IsActive / ContactsFilter / OperationManagerFilter lambdas inline — use the static expression members

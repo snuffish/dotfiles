@@ -68,15 +68,12 @@ A Command may add sections it needs (`/implement-feature` adds _User Review Requ
 
 ### Style
 
-The user's rule (`AGENTS.md` / `~/.claude/CLAUDE.md` › _Plans_), verbatim:
-
-> - Make the plan extremely concise. Sacrifice grammar for the sake of concision.
-> - At the end of each plan, give me a list of unresolved questions to answer, if any.
+The user's rule (`~/.claude/CLAUDE.md` › _Plan Mode_) applies: extremely concise, grammar sacrificed; end with **Steps**, then **Unresolved questions** (each with a recommendation, omitted when none).
 
 Every plan writer applies it to the whole file **and to the chat response that presents the plan**:
 
 - Fragments, not prose: no paragraphs, no full-sentence explanations.
-- About 15 words per bullet at most; split a longer one into sub-bullets.
+- One idea per bullet; split a longer one into sub-bullets.
 - _Decisions_ and _Risks_ as tables.
 - Every open question carries **Rec:** with the recommended answer.
 - Nothing after _Open Questions_. If there are no unresolved questions, note "None" (or omit).
@@ -151,7 +148,7 @@ Pick the case from the arguments, first match wins:
    - Re-read the plan once for anything a fix contradicts (an earlier step, a test, a decision row), and fix it.
    - Run the review **once**. Fill the **Review:** header line with the verdict the folded plan would get.
    - Run it on every new plan, and on every update that changes _Proposed Changes_ or _Verification Plan_. Skip it for an update that only ticks the checklist or changes `Status`.
-5. **Present the plan:** the link block, the review verdict and the findings that changed the design (one bullet each), the key decisions as at most ~5 fragment bullets, then the open questions last, each with its **Rec:** (_§2 Style_ applies to this chat text too: no paragraphs, no full sentences). Wait for the user to open the gate (`core` › _The `/proceed` gate_) before any code change.
+5. **Present the plan:** the link block, the review verdict and the findings that changed the design (one bullet each), the key decisions as fragment bullets, then the open questions last, each with its **Rec:** (_§2 Style_ applies to this chat text too: no paragraphs, no full sentences). Wait for the user to open the gate (`core` › _The `/proceed` gate_) before any code change.
 
 ### Case C: Preview Command (`/plan preview [target]`)
 

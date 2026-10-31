@@ -28,15 +28,12 @@ Read these only when their flag is given:
 
 ---
 
-## ⛔ Golden Operational Invariants
+## Invariants
 
-> [!CAUTION]
-> **ZERO-TOLERANCE RULES — READ-ONLY DISCIPLINE:**
->
-> 1. **STRICTLY READ-ONLY**: Never edit source code, scaffold files, stage git changes, run database migrations, or execute mutating commands. The only file this skill creates or modifies is its own workspace artifact, `<prefix>-investigation-<suffix>.md`, and only under `--file` or `--deep`.
-> 2. **DO NOT WRITE THE PLAN**: Deliver current-state findings, architectural options, trade-offs, and a seed outline. Never draft task phases, step-by-step checklists, or `<prefix>-implementation_plan-<suffix>.md`. Solution architecture belongs to `/plan`.
-> 3. **NO UNCITED CLAIMS**: Every factual claim about codebase behavior, interfaces, or types must carry a precise `path:line` citation. Deductions must be explicitly marked **Inferred** or **Unknown**.
-> 4. **NO AUTO-PROCEED**: Never roll directly from research into planning or implementation without explicit user authorization. Present findings and hand off control.
+1. **Read-only:** never edit source code, scaffold files, stage git changes, run database migrations, or execute mutating commands. The only file this skill creates or modifies is its own workspace artifact, `<prefix>-investigation-<suffix>.md`, and only under `--file` or `--deep`.
+2. **No plan:** deliver current-state findings, architectural options, trade-offs, and a seed outline. Never draft task phases, step-by-step checklists, or `<prefix>-implementation_plan-<suffix>.md`. Solution architecture belongs to `/plan`.
+3. **Cite every claim:** every factual claim about codebase behavior, interfaces, or types carries a precise `path:line` citation. Mark deductions explicitly as **Inferred** or **Unknown**.
+4. **No auto-proceed:** never roll directly from research into planning or implementation without explicit user authorization. Present findings and hand off control.
 
 ---
 
@@ -213,13 +210,12 @@ Only under `--file` or `--deep`. Save the investigation artifact directly to the
 - **Antigravity IDE**: `<workspace-root>/antigravity-<model>-investigation-<suffix>.md`
 - **Claude Code**: `<workspace-root>/claude-<model>-investigation-<suffix>.md`
 
-### Length Budget
+### Length
 
-Aim for **at most ~250 lines and ~30 KB**. Past investigations that served `/plan` well ran 70–270 lines; the one that ran 1,500 lines (430 KB) did so through per-item inventories.
+Keep the artifact to what decides the options.
 
 - **No per-item inventories.** For a list of many similar items (tests, endpoints, call sites, files), give the count, a table of the few that decide the options, and the command that regenerates the full list (e.g. `grep -rln '<pattern>' <dir> | wc -l`).
 - **Cite, don't paste.** A `path:line` replaces a code excerpt; quote at most a few lines, only where the exact text is the finding.
-- Over budget after trimming? Say so in the chat response, with the reason, instead of shipping it silently.
 
 ### Artifact Template
 
@@ -435,7 +431,7 @@ Confirm every item before finalizing the response:
 - [ ] Flags honored: Step 6 ran unless `--no-blindspot` (then §8 says _Not run_), a file was written only under `--file` / `--deep`, `--scope` bounded Steps 2–4, `--from` content is cited from the fetched PR or work item.
 - [ ] Unless `--no-blindspot`: the audit across the 7 vectors read from `what-am-I-missing` is documented in Section 8.
 - [ ] Inferred assertions and unknown dependencies are documented in the Confidence Ledger; every 🟡 Inferred row names how to verify it, and every ❓ Unknown row names its owner and whether it blocks planning.
-- [ ] With a file: it is within the §4 _Length Budget_ (`wc -lc <file>`), or the chat response says why not.
+- [ ] With a file: no per-item inventories; citations, not pasted code.
 - [ ] Visuals follow §4 _Visuals_: at most three, every node is a cited symbol, at most one in chat.
 - [ ] Rulebooks (`CLAUDE.md`/`GEMINI.md`) and project-scoped skills were verified.
 - [ ] With a file: written directly to the workspace root using the correct host prefix, and chat links and section anchors (`#L<line>`) were verified via grep. Without one: nothing was written to disk.
