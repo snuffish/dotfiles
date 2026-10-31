@@ -18,7 +18,7 @@ Read these before step 1:
 - `../_modules/artifact-protocol.md`: writes `<prefix>-expressive-<suffix>.md` when requested or providing an in-depth review (suffix from the target component or refactoring topic, e.g. `-ticket-category`, `-review-ratings`)
 - `../_modules/git-worktrees.md`
 
-- When asked directly on specific code lines (e.g. *"make lines 168–174 more expressive"*), propose and apply the clean refactoring directly to the file while explaining the transformation.
+- When invoked on specific code lines, a file, or a PR/branch sweep, invoking `/expressive` authorizes the readability refactoring directly (like `/clean` — no plan artifact unless requested); when an in-depth review artifact is requested, write `<prefix>-expressive-<suffix>.md` and wait at `core` › _The `/proceed` gate_.
 
 ---
 
@@ -38,8 +38,8 @@ Consult [Transformation Catalog](references/transformation-catalog.md) when refa
 - **Pattern 1:** Declarative Lookup Tables over Nested Ternary Ladders
 - **Pattern 2:** Domain Predicates & Semantic Variables over Raw Booleans
 - **Pattern 3:** Guard Clauses over the "Pyramid of Doom"
-- **Pattern 4:** Strategy & Dispatch Maps over Giant `switch`/`if-else` Chains
-- **Pattern 5:** Declarative Pipelines (`filter`/`map`/`reduce`) over Imperative Loops
+- **Pattern 4:** Strategy Maps & Pattern Matching over Giant `switch` Blocks
+- **Pattern 5:** Declarative Pipelines over Mutable Loops
 - **Pattern 6:** Early-Return Subcomponents over Mutually Exclusive Sibling `&&` Markup
 - **Pattern 7:** Prefer `type` over `interface` for shapes and domain models
 

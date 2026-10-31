@@ -5,7 +5,7 @@ function sync-skills() {
   local script="$HOME/.terminal/skills/sync-skills/sync_skills.py" answer rc
   [[ " $* " == *" --apply "* ]] && { python3 -I "$script" "$@"; return; }
   python3 -I "$script" --exit-pending "$@"; rc=$?
-  (( rc == 10 || rc == 1 )) || return 0
+  (( rc == 10 )) || return "$rc"
   printf '\n\033[1mApply link changes?\033[0m \033[2m(Claude, Antigravity, Gemini)\033[0m [y/N] '
   read -r answer
   if [[ "$answer" == [yY]* ]]; then

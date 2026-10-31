@@ -7,8 +7,6 @@ description: 'Finds the single most important blind spot in an approach that is 
 
 Identifies the single most important blind spot, hidden invariant, or architectural risk in the user's current situation. Answers: _"What is the most important thing I'm missing here?"_ with technical depth, contextual awareness, and zero fluff.
 
-Applicable to **any software project, language, framework, or technology stack**.
-
 ---
 
 ## Modules
@@ -18,7 +16,11 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 
 - `../_modules/core.md`: read-only until `/proceed`
-- `../_modules/artifact-protocol.md`: answers in chat by default. With `deep`, or when another Command calls it (e.g. `/implement-feature` Phase 2b), writes `<prefix>-what_am_i_missing-<suffix>.md` at the **workspace root** (suffix derived from the evaluated topic, PR, or branch, e.g. `-municipality-sync`, `-matching-inactivity`)
+- `../_modules/artifact-protocol.md`: answers in chat by default; writes `<prefix>-what_am_i_missing-<suffix>.md` at the **workspace root** only under `deep` or when called from `/implement-feature` Phase 2b (calls from `/code-review` Step 6c stay in chat mode and write no file)
+
+On-demand references (`references/`):
+- [`references/vectors.md`](references/vectors.md) — the 7 Universal Blindspot Vectors (including sibling-plan & library-source checks)
+- [`references/artifact-template.md`](references/artifact-template.md) — structure for `<prefix>-what_am_i_missing-<suffix>.md` and embedded blind-spot sections
 
 ---
 
@@ -37,112 +39,19 @@ Read these before step 1:
 
 ## 2. Universal Investigation Protocol
 
-When evaluating the user's current task, active file, recent diff, or conversation context, audit the situation across these **7 Universal Blindspot Vectors**:
-
-### 1. 💾 Persistence, Transactions & Data Integrity
-
-- **Database Engine Invariants:** Are there constraints or engine rules (e.g. foreign keys, unique indexes, cascading delete restrictions, table locks, trigger side-effects, temporal/versioned tables) that differ from in-memory behavior?
-- **Atomicity & Partial Failures:** If step 2 of an operation fails, does step 1 leave orphaned, corrupted, or inconsistent data? Are transactions or compensating operations required?
-- **Schema & Migration Safety:** Does this change break existing records, require backward-compatible data backfills, or introduce schema migration locks?
-
-### 2. ⚡ Concurrency, State Drift & Lifecycles
-
-- **Race Conditions & Lost Updates:** What happens if two requests modify the same resource concurrently? Are optimistic concurrency tokens, row locks, or atomic operations needed?
-- **Cache Synchronization:** If this data is mutated, are in-memory caches, distributed caches (Redis), or query caches properly invalidated?
-- **Lifecycle & Invariant States:** What happens if the target entity is already archived, cancelled, soft-deleted, suspended, or completed? Are state transitions guarded at all entry points?
-
-### 3. 🌐 Boundaries, Contracts & Blast Radius
-
-- **Upstream & Downstream Consumers:** Who else calls or consumes this? Will modifying a DTO, model, event, or route break background jobs, CLI tools, webhooks, or frontends?
-- **Polymorphism & Variant Coverage:** If working with an abstract class, interface, or union/discriminated type, does the logic hold true for **all** concrete variants, or only the one actively being tested?
-- **Third-Party Failures:** What happens if an external API, network call, or service times out, rate-limits, or returns an unexpected error payload?
-
-### 4. 🔒 Security, Authorization & Tenancy
-
-- **Tenant & Row Isolation:** Is data scoped to the current user, tenant, or organization? Is there an IDOR (Insecure Direct Object Reference) risk where a caller can pass an arbitrary ID?
-- **Privilege & Permission Revocation:** Are permissions checked at the data-access level or only in the UI? Can a lower-privileged role trigger this path?
-- **Sensitive Data & Auditability:** Are secrets, PII, or tokens logged or leaked in error responses? Is the mutation traceable to an actor in audit history?
-
-### 5. 🚀 Operational Realities & Performance
-
-- **Hidden Scale Traps:** Is there an accidental $O(N)$ database query (N+1), unbounded collection load, or unindexed search that works with 5 test records but chokes in production?
-- **Resource Leaks:** Are connections, file handles, cancellation tokens, streams, or timers properly disposed of?
-- **Observability:** If this fails in production at 3 AM, will logs, metrics, or traces contain sufficient correlation context to diagnose the problem quickly?
-
-### 6. 🧪 Testing Realities & False Confidence
-
-- **Mocks That Lie:** Do tests pass only because an in-memory mock or stub ignores a strict database/network constraint that exists in real environments?
-- **Negative & Asymmetric Paths:** Are failure paths, validation rejections, unauthorized attempts, and conflict states tested with the same rigor as the happy path?
-- **Idempotency:** What happens if a webhook, message queue consumer, or client retries the exact same request twice?
-
-### 7. 🧩 Leaky Abstractions & Design Consistency
-
-- **Developer Traps:** Does this solution require future developers to remember a subtle convention (e.g. manually preloading a relationship, calling a specific setup method) or is it enforced automatically by the architecture/type system?
-- **Single Source of Truth:** Is domain logic duplicated across controllers, handlers, validators, and client code, risking divergence over time?
+Read [`references/vectors.md`](references/vectors.md) and audit the user's current task, active file, recent diff, plan, or conversation context across all **7 Universal Blindspot Vectors** (Persistence/Outliving State, Concurrency/State Drift, Boundaries/Contracts, Security/Tenancy, Operational Realities/Performance, Testing Realities/Library Source, Leaky Abstractions/Profile Checks).
 
 ---
 
 ## 3. Output Format & Artifact Deliverable
 
-| Invocation                                                                                         | Output                                                                                                                                                                                                                    |
-| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/what-am-I-missing [target]`, or a casual "what am I missing?"                                    | **Chat only.** The structure below, compressed: the bold #1 sentence, then _Trigger · Impact · Why it went unnoticed_ in three lines, up to two secondary blind spots in one line each, and the _Immediate Fix_. No file. |
-| A call from `/code-review` _Step 6c_                                                               | **Chat mode, no file.** Return the #1 and up to two secondary blind spots _outside_ the findings the review passed in. The review verifies them and carries the result in its own artifact.                               |
-| `/what-am-I-missing deep [target]`, or a call from another Command (`/implement-feature` Phase 2b) | **Artifact.** The full structure below in `<prefix>-what_am_i_missing-<suffix>.md`, plus the chat summary in step 2. The caller links the file, so it has to exist.                                                       |
+| Invocation                                                                         | Output                                                                                                                                                                                                                    |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/what-am-I-missing [target]`, or a casual "what am I missing?"                    | **Chat only.** Compressed: the bold #1 sentence, _Trigger · Impact · Why it went unnoticed_ in three lines, up to two secondary blind spots in one line each, and the _Immediate Fix_. No file.                           |
+| A call from `/code-review` _Step 6c_                                               | **Chat mode, no file.** Return the #1 and up to two secondary blind spots _outside_ the findings the review passed in. The review verifies them and carries the result in its own artifact.                               |
+| `/what-am-I-missing deep [target]`, or a call from `/implement-feature` Phase 2b   | **Artifact.** Write `<prefix>-what_am_i_missing-<suffix>.md` at the **workspace root** using [`references/artifact-template.md`](references/artifact-template.md), plus the chat summary below.                           |
 
-A quick question deserves a quick answer. The artifact is for when the finding has to outlive the conversation: a plan that cites it, a review that closes it.
-
-1. **The structure** (an artifact is written at the **workspace root**, which is what makes the link clickable; do not put it elsewhere):
-
-```markdown
-# 🎯 The #1 Most Important Thing You Are Missing
-
-> **[One bold, unambiguous sentence identifying the primary blind spot]**
-
-[Direct technical explanation: What is the unstated assumption or hidden invariant, why does it exist, and why is it easy to overlook?]
-
----
-
-## 💥 The Blast Radius / Failure Scenario
-
-- **Trigger:** [The exact condition, user action, edge case, or production event that triggers the failure]
-- **Impact:** [The precise exception, data corruption, security vulnerability, or performance cliff that occurs]
-- **Why it went unnoticed:** [Why existing tests, mocks, or local development didn't catch it]
-
----
-
-## 🔍 Secondary Blind Spots & Nuances
-
-1. **[Secondary Risk 1]:** [Concise explanation of related implication]
-2. **[Secondary Risk 2]:** [Concise explanation of related implication]
-
----
-
-## 🛠️ Actionable Recommendation
-
-1. **Immediate Fix:** [Concrete step to eliminate the #1 blind spot]
-2. **Structural Prevention:** [How to make this impossible to get wrong in the future via types, architecture, or automated tests]
-
----
-
-## 📄 Relevant References
-
-- 📄 [Active Plan / Relevant File](path/to/relevant/file.ts#L10)
-```
-
-2. **Report Back in Chat** (artifact mode):
-   - In the conversation response, provide:
-     - The bold **#1 Most Important Thing You Are Missing** takeaway sentence.
-     - A clickable link to open the artifact in the IDE, formatted for your host (or dual format):
-       - **Antigravity IDE**: `📄 [antigravity-<model>-what_am_i_missing-<suffix>.md](file://<workspace-root>/antigravity-<model>-what_am_i_missing-<suffix>.md)`
-       - **Claude Code**: `📄 [claude-<model>-what_am_i_missing-<suffix>.md](claude-<model>-what_am_i_missing-<suffix>.md)`
-     - Anchor links to key sections, as line numbers from `grep -n` (placeholders here):
-       - **Antigravity IDE**:
-         - 💥 [Blast Radius / Failure Scenario](file://<workspace-root>/antigravity-<model>-what_am_i_missing-<suffix>.md#L18)
-         - 🔍 [Secondary Blind Spots & Nuances](file://<workspace-root>/antigravity-<model>-what_am_i_missing-<suffix>.md#L26)
-         - 🛠️ [Actionable Recommendation](file://<workspace-root>/antigravity-<model>-what_am_i_missing-<suffix>.md#L33)
-       - **Claude Code**:
-         - 💥 [Blast Radius / Failure Scenario](claude-<model>-what_am_i_missing-<suffix>.md#L18)
-         - 🔍 [Secondary Blind Spots & Nuances](claude-<model>-what_am_i_missing-<suffix>.md#L26)
-         - 🛠️ [Actionable Recommendation](claude-<model>-what_am_i_missing-<suffix>.md#L33)
-     - A concise overview of the core failure scenario and actionable fix.
+**Report Back in Chat** (artifact mode):
+- The bold **#1 Most Important Thing You Are Missing** takeaway sentence.
+- The `artifact-protocol` › _Chat link block_ linking the artifact and its `Blast Radius / Failure Scenario`, `Secondary Blind Spots & Nuances`, and `Actionable Recommendation` sections (real line numbers from `grep -n`).
+- A concise overview of the core failure scenario and actionable fix.

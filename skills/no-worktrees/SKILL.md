@@ -1,7 +1,6 @@
 ---
 name: no-worktrees
-description: "Directs commands to run directly in the working checkout without worktree or snapshot isolation."
-disable-model-invocation: true
+description: "Directs commands to run directly in the working checkout without worktree or snapshot isolation. Use for /no-worktrees, \"run this in place\", \"without a worktree\", \"in my current checkout\"."
 ---
 
 # Skill: `/no-worktrees` — Run a Request in Place
@@ -19,19 +18,16 @@ Read these before step 1:
 - `../_modules/artifact-protocol.md`: writes no artifact — a Command it routes to writes its own
 - `../_modules/git-worktrees.md`: for the opt-out token only; this skill creates no worktree
 
-- **The token belongs to whoever was invoked.** When the prompt starts with another Command (`/code-review 123 /no-worktrees`), that Command handles the token under `core` › *Worktree opt-in*. This skill is not involved.
 - **This skill adds no gates and lifts none.** The request keeps the gates it would have in a worktree: a plan before a non-trivial change (`core` › *Planning mode first*), and the routed Command's own gates. Pushing, creating or completing a PR, and posting to a host happen only when the user asks for them explicitly.
 - **The user's checkout is theirs.** Before switching branches, merging, rebasing or resetting there, check `git status --porcelain`. With uncommitted changes, or on a branch the request does not name, ask first. Never stash, discard or overwrite their changes to make room.
 
 ---
 
-## 1. When to Use
+## 1. When *not* to use
 
-### When *not* to use
-
-- The prompt starts with another Command. That Command handles the token.
-- The work already lives in a kept worktree. It stays there; resume it with [`/continue`](../continue/SKILL.md).
-- The user wants the request isolated. That is [`/worktrees`](../worktrees/SKILL.md).
+- **The prompt starts with another Command** (`/code-review 123 /no-worktrees`): that Command handles the token under `core` › *Worktree opt-in*; this skill is not involved.
+- **The work already lives in a kept worktree**: resume it there with [`/continue`](../continue/SKILL.md).
+- **The user wants the request isolated**: use [`/worktrees`](../worktrees/SKILL.md).
 
 ---
 

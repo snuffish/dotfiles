@@ -1,0 +1,80 @@
+# PR Discussion Threads & Dual-Navigation Links
+
+On-demand reference for [pr-host.md](../pr-host.md) › *Fetch discussion threads* and [artifact-protocol.md](../artifact-protocol.md).
+
+---
+
+## Fetch discussion threads
+
+**Azure DevOps** has no `az repos pr thread` command; use `az devops invoke` (or the Azure DevOps MCP thread tool when available). A thread's position is `threadContext.rightFileStart`, an object `{line, offset}`, not a number:
+
+```bash
+az devops invoke --org <org-url> --area git --resource pullRequestThreads \
+  --route-parameters project=<project> repositoryId=<repo> pullRequestId=<prId> \
+  --api-version 7.1 -o json > threads.json
+
+python3 - threads.json <<'PY'
+import json, sys
+for t in json.load(open(sys.argv[1])).get('value', []):
+    if t.get('isDeleted'):
+        continue
+    ctx = t.get('threadContext') or {}
+    line = (ctx.get('rightFileStart') or {}).get('line')
+    human = [c for c in t.get('comments', [])
+             if not c.get('isDeleted') and c.get('commentType') != 'system'
+             and c.get('author', {}).get('displayName') != 'Azure Pipelines Test Service']
+    if human:
+        print(f"=== Thread {t['id']} | {t.get('status')} | {ctx.get('filePath')}:{line} ===")
+        for c in human:
+            print(f"[{c['author']['displayName']}] ({c.get('publishedDate')}):\n{c.get('content')}\n")
+PY
+```
+
+Deleted threads stay in the list with `isDeleted: true`, or with every comment deleted. CI bots post their own threads. Neither counts as a reviewer's thread. Each thread's `pullRequestThreadContext.iterationContext` says which iteration it was written against, and so how far the code may have moved since.
+
+**GitHub** splits a PR's comments in two, and REST pages at 30 items by default:
+
+```bash
+gh api --paginate repos/{owner}/{repo}/pulls/{n}/comments    # inline review comments on the diff
+gh api --paginate repos/{owner}/{repo}/issues/{n}/comments   # general conversation comments (a PR is an issue)
+```
+
+REST review comments carry no resolved or outdated state. Get it per thread from GraphQL, and join on `comments.nodes[0].databaseId`, the REST `id` of each thread's first comment:
+
+```bash
+gh api graphql --paginate -F owner='{owner}' -F repo='{repo}' -F pr={n} -f query='
+  query($owner: String!, $repo: String!, $pr: Int!, $endCursor: String) {
+    repository(owner: $owner, name: $repo) {
+      pullRequest(number: $pr) {
+        reviewThreads(first: 100, after: $endCursor) {
+          pageInfo { hasNextPage endCursor }
+          nodes { isResolved isOutdated path line
+                  comments(first: 1) { nodes { databaseId } } }
+        }
+      }
+    }
+  }'
+```
+
+---
+
+## PR Discussion Thread Links (Dual Navigation)
+
+When artifacts reference discussion threads or comments from a pull request (`pr_feedback_review`, `code_review`, `squash_code_review`), every thread reference must provide **dual navigation**:
+
+1. **Intra-Document Navigation**: Navigates locally within the markdown file to the thread's detailed analysis section: `[#<id>](#thread-<id>)`.
+2. **Direct Remote Link**: Opens the specific discussion thread in the remote host:
+   - **Azure DevOps**: `<prWebUrl>?discussionId=<threadId>`  
+     *(e.g. `https://dev.azure.com/{org}/{project}/_git/{repo}/pullrequest/{prId}?discussionId=106813`)*
+   - **GitHub**: `<prWebUrl>#discussion_r<commentId>` or `<prWebUrl>#issuecomment-<id>`
+
+### Formatting Standards
+
+- **In Tables & Triage Matrices**: Keep the internal anchor and append the remote link in parentheses:
+  ```markdown
+  | [#106813](#thread-106813) ([devops](https://dev.azure.com/.../pullrequest/18176?discussionId=106813)) | `File.cs:42` | ...
+  ```
+- **In Section Headings**: Include the direct remote link on the thread number, wrapped in the intra-document anchor:
+  ```markdown
+  ### <a id="thread-106813"></a>Thread [#106813](https://dev.azure.com/.../pullrequest/18176?discussionId=106813): Revoke permissions when terminated
+  ```

@@ -7,46 +7,18 @@
 The registry is the folder above this script's real location, so the script
 works before any skill is linked. --registry points it at another clone.
 
-Loader targets (see SKILL.md › Rules):
-- claude: ~/.claude/skills
-- antigravity: ~/.gemini/config/skills
-- gemini: ~/.gemini/skills
-
-Loader rules:
-- every general skill and every Profile (*-profile) gets one symlink
-  in each target pointing at its registry folder;
-- a project skill is linked only when Projects/<Project>/.flat-links lists it;
-- every skill in ~/.agents/skills/<name> gets one symlink in each target
-  unless the registry already defines <name> (registry wins on name clash);
-- monolithic symlinks to registry root are converted to directories of leaf links on --apply;
-- only dead links into the registry or ~/.agents/skills are pruned; other links are reported.
-
-Config links (CONFIG_LINKS), source in the repo above the registry:
-- .claude/AGENTS.md ← AGENTS.md, CLAUDE.md (relative), ~/.claude/CLAUDE.md, ~/.gemini/GEMINI.md;
-- .claude/settings.json ← ~/.claude/settings.json;
-- claude/statusline.sh ← ~/.claude/statusline.sh;
-- a missing source adopts its legacy regular file (copied in, removed once linked);
-- a regular file with the source's bytes is replaced by the link;
-- a regular file that differs is a conflict: reported, left alone, not pending;
-- every link is swapped in with os.replace, so the path never goes missing.
-
-Workspace checks, read-only: Projects/<Project>/.workspaces lists the
-workspaces that use the project (one path per line, ~ allowed). For each one
-that exists on this machine, the script reports project skills that are
-neither linked nor shipped in a repo's host skills/ folder, and problems in the
-workspace's .agents/skills.json.
-
+Rules: SKILL.md › Rules.
 Output is coloured on a terminal; piped or with NO_COLOR it is plain text.
-
 Exit status: 1 when the lint finds errors or a link change fails; with
 --exit-pending, 10 when check mode finds link changes to apply; else 0.
 """
 import argparse, json, os, re, shutil, sys, textwrap
 
 MODULE_REF = re.compile(r'^- `([^`]*_modules/[^`]+\.md)`', re.M)
-LINK_REF = re.compile(r'\]\(((?:\.\./)*[\w./-]*(?:SKILL\.md|_modules/[\w-]+\.md|references/[\w./-]+))(?:#[^)]*)?\)')
+LINK_REF = re.compile(r'\]\(((?:\.\./)*[\w./-]*(?:SKILL\.md|_modules/[\w/-]+\.md|references/[\w./-]+))(?:#[^)]*)?\)')
+MD_LINK_REF = re.compile(r'\]\(((?:\.\./)*[\w./-]+\.md)(?:#[^)]*)?\)')
 GUARD = 'If any Module cannot be read, stop and report the path.'
-RETIRED = re.compile(r'(?<![\w-])core/SKILL\.md|(?<![\w-])(?:core|git-worktrees|artifact-protocol)`? §')
+RETIRED = re.compile(r'(?<![\w-])core/SKILL\.md|(?<![\w-])(?:core|git-worktrees|artifact-protocol|pr-counterpart|pr-host|project-profile|fan-out|outward-writes)`? §')
 
 KNOWN_FM_KEYS = {
     'name', 'description', 'when_to_use', 'argument-hint', 'arguments',
@@ -126,6 +98,17 @@ def read_list(path):
     return [line for line in lines if line]
 
 
+def _check_md_links(base_dir, label, text, errors, full_md=False):
+    refs = set(LINK_REF.findall(text))
+    if full_md:
+        refs.update(MD_LINK_REF.findall(text))
+    for link in sorted(refs):
+        if '<' in link or '…' in link or os.path.basename(link).startswith(('claude-', 'antigravity-')):
+            continue
+        if not os.path.exists(os.path.realpath(os.path.join(base_dir, link))):
+            errors.append(f'{label}: dead link {link}')
+
+
 def lint(root):
     """Walk the registry; return (skills, errors, warnings)."""
     modules = os.path.join(root, '_modules')
@@ -135,6 +118,30 @@ def lint(root):
         if d == modules or d.startswith(modules + os.sep):
             if 'SKILL.md' in files:
                 errors.append(f'{d}: SKILL.md inside _modules/')
+            for f in sorted(files):
+                if not f.endswith('.md') or f == 'SKILL.md':
+                    continue
+                mp = os.path.join(d, f)
+                mtext = open(mp, encoding='utf-8').read()
+                if mtext.startswith('---\n'):
+                    errors.append(f'{mp}: frontmatter inside _modules/')
+                _check_md_links(d, mp, mtext, errors, full_md=True)
+                if RETIRED.search(mtext):
+                    errors.append(f'{mp}: retired core link or numbered Module section')
+                if sum(1 for line in mtext.splitlines() if line.lstrip().startswith('`' * 3)) % 2:
+                    errors.append(f'{mp}: odd number of code fences (unclosed block)')
+            continue
+        if os.path.basename(d) == 'references' and os.path.isfile(os.path.join(os.path.dirname(d), 'SKILL.md')):
+            for f in sorted(files):
+                if not f.endswith('.md'):
+                    continue
+                rp = os.path.join(d, f)
+                rtext = open(rp, encoding='utf-8').read()
+                _check_md_links(d, rp, rtext, errors, full_md=True)
+                if RETIRED.search(rtext):
+                    errors.append(f'{rp}: retired core link or numbered Module section')
+                if sum(1 for line in rtext.splitlines() if line.lstrip().startswith('`' * 3)) % 2:
+                    warnings.append(f'{rp}: odd number of code fences (unclosed block)')
             continue
         if 'SKILL.md' not in files:
             continue
@@ -194,19 +201,43 @@ def lint(root):
                 errors.append(f'{d}: Module path {mod!r} does not resolve into _modules/')
         if mods and GUARD not in text:
             errors.append(f'{d}: ## Modules has no stop sentence')
-        for link in LINK_REF.findall(text):
-            if '<' in link or '…' in link:
-                continue
-            if not os.path.exists(os.path.realpath(os.path.join(d, link))):
-                errors.append(f'{d}: dead link {link}')
+        _check_md_links(d, d, text, errors, full_md=False)
         if RETIRED.search(text):
             errors.append(f'{d}: retired core link or numbered Module section')
         if sum(1 for line in text.splitlines() if line.lstrip().startswith('`' * 3)) % 2:
             warnings.append(f'{d}: odd number of code fences (unclosed block)')
         if name == folder:
-            project_dir = os.path.dirname(d)
-            link = (not project) or folder.endswith('-profile') or folder in read_list(os.path.join(project_dir, '.flat-links'))
-            skills[folder] = {'path': d, 'project': rel[1] if project else None, 'link': link}
+            if folder in skills:
+                errors.append(f'{d}: duplicate skill name {folder!r} (already at {skills[folder]["path"]})')
+            else:
+                project_dir = os.path.dirname(d)
+                link = (not project) or folder.endswith('-profile') or folder in read_list(os.path.join(project_dir, '.flat-links'))
+                skills[folder] = {'path': d, 'project': rel[1] if project else None, 'link': link}
+
+    readme = os.path.join(root, 'README.md')
+    if os.path.isfile(readme):
+        rtext = open(readme, encoding='utf-8').read()
+        actual_total = len(skills)
+        actual_general = sum(m['project'] is None for m in skills.values())
+        actual_proj = actual_total - actual_general
+        actual_mods = sum(1 for f in os.listdir(modules) if f.endswith('.md') and os.path.isfile(os.path.join(modules, f))) if os.path.isdir(modules) else 0
+        sm = re.search(r'(\d+)\s+skills total\s+—\s+(\d+)\s+general\s+\+\s+(\d+)\s+under\s+`Projects/[^`]+`\s+—\s+plus\s+(\d+)\s+Modules', rtext)
+        if sm and (int(sm.group(1)), int(sm.group(2)), int(sm.group(3)), int(sm.group(4))) != (actual_total, actual_general, actual_proj, actual_mods):
+            warnings.append(f'{readme}: inventory summary counts ({sm.group(1)} total, {sm.group(2)} general, {sm.group(3)} project, {sm.group(4)} modules) '
+                            f'!= actual ({actual_total} total, {actual_general} general, {actual_proj} project, {actual_mods} modules)')
+        row_skill_sum = 0
+        for grp, kind, cnt_s, entries_col in re.findall(r'^\|\s*([^|]+?)\s*\|\s*(Command|Reference|Profile|Module)\s*\|\s*(\d+)\s*\|\s*([^|]+)\|', rtext, re.M):
+            cnt = int(cnt_s)
+            listed = len(re.findall(r'`[^`]+`', re.sub(r'\([^)]*\)', '', entries_col)))
+            if cnt != listed:
+                warnings.append(f'{readme}: inventory row {grp} ({kind}) says {cnt} but lists {listed}')
+            if kind == 'Module':
+                if cnt != actual_mods:
+                    warnings.append(f'{readme}: inventory Module count {cnt} != actual {actual_mods}')
+            else:
+                row_skill_sum += cnt
+        if row_skill_sum and row_skill_sum != actual_total:
+            warnings.append(f'{readme}: inventory table skill rows sum to {row_skill_sum} != actual {actual_total}')
     return skills, errors, warnings
 
 
@@ -383,17 +414,31 @@ def check_workspaces(root, skills):
                 lines.append(f'{project} @ {ws}: no .agents/skills.json (Antigravity not configured)')
                 continue
             try:
-                entries = [os.path.realpath(os.path.expanduser(e['path'])) for e in json.load(open(cfg, encoding='utf-8')).get('entries', [])]
+                raw_entries = json.load(open(cfg, encoding='utf-8')).get('entries', [])
+                entries = [os.path.realpath(os.path.expanduser(e['path'])) for e in raw_entries]
             except (ValueError, KeyError, TypeError, AttributeError) as e:
                 warnings.append(f'{cfg}: unreadable ({e})')
                 continue
             for e in entries:
                 if not os.path.isdir(e):
                     warnings.append(f'{cfg}: entry {e} does not exist')
-            if root not in entries:
+            default_root = os.path.realpath(os.path.expanduser(os.path.join('~', '.terminal', 'skills')))
+            if root not in entries and not (is_worktree_path(root) and default_root in entries):
                 warnings.append(f'{cfg}: general skills not listed\n→ add {{"path": "{root}"}}')
-            covered = os.path.join(projects_dir, project) in entries or any(
-                os.path.basename(e) == 'skills' and os.path.basename(os.path.dirname(e)) in ('.claude', '.agents', '.gemini') for e in entries)
+            proj_skills = sorted(n for n, m in skills.items() if m['project'] == project)
+            shipped = shipped_skills(path)
+            proj_dirs = {os.path.join(projects_dir, project), os.path.join(default_root, 'Projects', project)}
+            covered = False
+            for raw_e, epath in zip(raw_entries, entries):
+                is_proj_dir = epath in proj_dirs or (os.path.basename(epath) == project and os.path.basename(os.path.dirname(epath)) == 'Projects')
+                is_repo_skills = os.path.basename(epath) == 'skills' and os.path.basename(os.path.dirname(epath)) in ('.claude', '.agents', '.gemini')
+                if is_proj_dir or is_repo_skills:
+                    covered = True
+                inc = raw_e.get('include_only')
+                if is_proj_dir and isinstance(inc, list):
+                    excluded = [n for n in proj_skills if not any(re.search(pat, n) for pat in inc) and n not in shipped]
+                    if excluded:
+                        warnings.append(f'{cfg}: include_only on {tilde(epath)} excludes {", ".join(excluded)}')
             if not covered:
                 warnings.append(f'{cfg}: no entry loads the {project} skills (the registry folder or a repo skills dir)')
             lines.append(f'{project} @ {ws}: {len(held) - len(missing)}/{len(held)} held-out skills shipped by the repo · .agents/skills.json {len(entries)} entries')

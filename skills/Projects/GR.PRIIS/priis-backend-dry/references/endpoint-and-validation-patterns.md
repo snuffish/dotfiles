@@ -108,9 +108,7 @@ var result = await validator.ValidateAsync(data, opts => opts.IncludeDefaultAndD
 
 ---
 
----
-
-## 4. `ExtendedEndpoint` Hierarchy — No Raw FastEndpoints Types
+## 2. `ExtendedEndpoint` Hierarchy — No Raw FastEndpoints Types
 
 **Rule:** All endpoints must derive from `ExtendedEndpoint<TReq, TRes>` (or its siblings). Never derive from `Endpoint<TReq, TRes>` directly — doing so re-introduces duplicated response dispatch, policy binding, and error handling.
 
@@ -142,7 +140,7 @@ public sealed class UpdateFooEndpoint(PriisDbContext dbContext, ICurrentUser cur
 // ExtendedEndpointWithoutRequest         — no body, 204 on success
 ```
 
-### 4a. Typed-Response Save Pattern — `Send.ResponseAndSaveChangesAsync()`
+### 2a. Typed-Response Save Pattern — `Send.ResponseAndSaveChangesAsync()`
 
 When an endpoint returns a typed body (not 204) **and** needs to save changes, use the `ResponseSender` extension instead of `SendAndSaveChangesAsync`:
 
@@ -164,7 +162,7 @@ if (!saveOk.IsSuccess) { await SendErrorsAsync(saveOk.ValidationFailures, ct); r
 await Send.OkAsync(result.Result, cancellation: ct);
 ```
 
-### 4b. Multi-Action Policies — `PolicyType.All`
+### 2b. Multi-Action Policies — `PolicyType.All`
 
 ```csharp
 // ✅ Require ALL listed actions (default is AtLeastOne)
@@ -176,9 +174,7 @@ Policy(SystemAction.ReadFoo, SystemAction.ReadBar);
 
 ---
 
----
-
-## 5. `SystemResult` Chaining — `.Then()` / `.ThenAsync()`
+## 3. `SystemResult` Chaining — `.Then()` / `.ThenAsync()`
 
 **Rule:** Chain domain steps instead of repeating `if (!result.IsSuccess)` guards after each step.
 
@@ -212,9 +208,7 @@ Full chaining API (all members on `SystemResultExtensions`):
 
 ---
 
----
-
-## 11. Shared Access Rule Filtering — `ApplyAccessRules()`
+## 4. Shared Access Rule Filtering — `ApplyAccessRules()`
 
 **Rule:** All export / list queries that are scoped by the current user's role must use `ApplyAccessRules()` from `GR.PRIIS.Library.DataAccess.QueryableExtensions.AccessRulesExtensions` — never write manual access predicate logic inline in an endpoint.
 

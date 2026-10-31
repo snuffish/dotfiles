@@ -15,10 +15,10 @@ spec.json:
     "iteration": "<IterationPath>",                    # ADO, optional
     "tags": ["Backend"],                               # ADO System.Tags / GitHub labels, optional
     "parent": 31172,                                   # ADO, optional
-    "fields": {"Microsoft.VSTS.Common.Priority": 2},   # ADO, optional extra fields
-    "description_file": "description.html",           # ADO System.Description
+    "fields": {"Custom.Component": "Matching"},        # ADO, optional extra fields (never Priority unless asked)
+    "description_file": "description.html",           # ADO System.Description (non-Bug)
     "acceptance_file": "acceptance.html",              # ADO Microsoft.VSTS.Common.AcceptanceCriteria
-    "repro_file": "repro.html",                        # ADO Bug: Microsoft.VSTS.TCM.ReproSteps
+    "repro_file": "repro.html",                        # ADO Bug: Microsoft.VSTS.TCM.ReproSteps (instead of description_file)
     "body_file": "body.md"                             # GitHub issue body
   }
 
@@ -59,6 +59,8 @@ def validate(spec):
             sys.exit("ado.org must be https://dev.azure.com/<org> or https://<org>.visualstudio.com (pr-host › Organization URL)")
         if spec["type"] == "Task" and not spec.get("parent"):
             print("warning: a Task without a parent; most boards expect tasks under a story")
+        if spec["type"] == "Bug" and spec.get("description_file"):
+            sys.exit("Bug work items use repro_file (Microsoft.VSTS.TCM.ReproSteps) instead of description_file")
     if host == "github" and not spec.get("body_file"):
         sys.exit("body_file is required for github")
     return host

@@ -1,4 +1,4 @@
-#### Step 2.1: README Generation
+# README Generation Template
 
 Every project needs a README. Follow this structure:
 

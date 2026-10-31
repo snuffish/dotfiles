@@ -1,4 +1,4 @@
-#### Step 2.4: Inline Code Documentation
+# Inline Code Documentation Patterns
 
 Generate language-appropriate inline documentation:
 

@@ -5,12 +5,9 @@ description: "Explains code, PR review comments, complex expressions, architectu
 
 # Skill: `/explain` — Code, Architecture & Intent Explanation
 
-Explains code, methods, PR/code review comments, architectural design choices, or system behaviors. Operates in two distinct modes based on the user's invocation:
-
-1. **`/explain` (Default — Simple & Fast)**: Direct, clear, and concise in-chat explanation. Zero artifact overhead, minimal latency.
-2. **`/explain deep` (In-Depth, parallel)**: Comprehensive deep-dive backed by a dedicated workspace-root artifact. The three explanation axes — *Mechanism*, *Rationale*, *Context* — are each researched by an isolated parallel sub-agent and then aggregated, so the "how", the "why" and the "who depends on it" cannot blur into one another.
-
-There is no intermediate mode. A request for "explain in detail/depth" or an exhaustive breakdown is `/explain deep`.
+Explains code, methods, PR/code review comments, architectural design choices, or system behaviors in two modes (no intermediate mode; "explain in detail/depth" is `/explain deep`):
+1. **`/explain` (Default — Simple & Fast)**: Focused in-chat explanation of the immediate enclosing scope and direct symbols; writes no artifact.
+2. **`/explain deep` (In-Depth, parallel)**: Researches *Mechanism*, *Rationale*, and *Context* in three isolated parallel sub-agents and aggregates into `<prefix>-explanation-<suffix>.md`.
 
 ---
 
@@ -22,27 +19,21 @@ Read these before step 1:
 - `../_modules/core.md`: read-only until `/proceed`
 - `../_modules/artifact-protocol.md`: writes `<prefix>-explanation-<suffix>.md` in `/explain deep` only (suffix derived from the target symbol, question, or topic); bare `/explain` writes no artifact
 - `../_modules/pr-counterpart.md`
+- `../_modules/fan-out.md` (`deep` mode)
+
+On-demand references (`references/`):
+- [`references/deep-axes.md`](references/deep-axes.md) — sub-agent axis briefs and artifact structure for `/explain deep`
 
 ---
 
-## 1. Invocation Modes & Gating
+## 1. Axes & Neighbor Routing
 
-| Command | Output Location | Research Scope | Target Latency |
-| :--- | :--- | :--- | :--- |
-| **`/explain`** (bare or with code target) | Direct in-chat response (no artifact written) | Focused: immediate enclosing function/type & direct symbols | **Fast** (minimal tool calls, immediate response) |
-| **`/explain deep`** (or "explain in depth/detail") | Workspace-root artifact (`<prefix>-explanation-<suffix>.md`) + chat summary; header names the mode and head SHA | Comprehensive: three parallel sub-agents, one per axis (see *Mode 2*) | **Thorough** (multi-step investigation, parallelised) |
+The three axes every `deep` explanation covers, one sub-agent each:
+- **Mechanism** — what the code does: call and data flow at head, step by step with `path:line`, state machines, transactions, filters, and failure paths.
+- **Rationale** — why it is the way it is: git history, PR descriptions/threads, work items, ADRs, comments stating constraints, and rejected alternatives.
+- **Context** — who depends on it: callers and consumers across layers/repos, contracts (*Contract touchpoints*), pinning tests, and what would break if it changed.
 
-The three axes every deep explanation covers, one sub-agent each:
-
-- **Mechanism** — what the code does: the call and data flow at head, step by step, with `path:line` for every hop; state machines, transactions, filters, and the failure paths.
-- **Rationale** — why it is the way it is: git history of the touched files, PR descriptions and review threads, work items, ADRs, comments that explain a constraint, alternatives that were rejected and why.
-- **Context** — who depends on it: callers and consumers across layers and repos, contracts it participates in (cross-repo enums, OpenAPI shape, hub URLs), the tests that pin it, and what would break if it changed.
-
-Suggest `deep` in the chat response (do not switch silently) when a bare `/explain` target turns out to span both repos or more than ~5 files, or when the question is a "why" whose answer lives in history rather than in the code.
-
----
-
-### When *not* to use — pick the right neighbor
+Suggest `deep` in chat (never switch silently) when a bare `/explain` target spans both repos or >5 files, or when the question is a "why" answered in history.
 
 | Situation | Use instead |
 |---|---|
@@ -55,56 +46,14 @@ Suggest `deep` in the chat response (do not switch silently) when a bare `/expla
 
 ## 2. Mode 1: `/explain` — Simple & Fast (Default)
 
-Use when the user runs `/explain` (without `deep`), asks "explain this", or asks for a quick breakdown.
-
-### Operating Standards:
-- **No Artifact Created**: Do **NOT** write an explanation file to disk. Keep execution fast and lightweight.
-- **Fast Focused Investigation**:
-  - Read only the immediate target lines and enclosing scope.
-  - Avoid heavy multi-step searches, git blame/log commands, or full cross-layer audits unless an unknown symbol prevents basic comprehension.
-- **In-Chat Response Structure**:
-  - **What it is**: 1–2 sentences explaining the symbol, prop, or expression in plain English.
-  - **What it does / Why it is here**: 2–4 concise bullet points explaining the mechanism and purpose in the component.
-  - Use clickable file and symbol links in the host's format (`artifact-protocol` › *Host-Specific Link Formats*): `[Symbol](file://<abs-path>/file.tsx#L123)` under Antigravity, `[Symbol](src/file.tsx#L123)` (workspace-relative) in the Claude Code IDE extension, `[Symbol](antigravity-ide://file/<abs-path>/file.tsx:123)` in the Claude Code terminal CLI.
-  - Keep the whole answer readable in 30 seconds.
+- **No artifact written**: read only the immediate target lines and enclosing scope; avoid multi-step searches or git history unless an unknown symbol blocks comprehension.
+- **In-chat structure** (readable in ~30 seconds): **What it is** (1–2 plain-English sentences) + **What it does / Why it is here** (2–4 concise bullets), with clickable file/symbol links (`artifact-protocol` › *Host-Specific Link Formats*).
 
 ---
 
 ## 3. Mode 2: `/explain deep` — In-Depth, Parallel Axes
 
-Use when the user specifies `/explain deep`, asks to "explain in detail/depth", or asks for an exhaustive architectural breakdown.
-
-### Operating Standards:
-- **Target Artifact**: `<prefix>-explanation-<suffix>.md` at the **workspace root** (see *Modules*).
-- **Read-only**: no edits, no checkouts, no installs, builds or tests — for you and for every sub-agent.
-
-### Orchestration
-
-1. **Resolve the target yourself first**: the exact symbols, files and line ranges, the repo(s) involved, the head SHA (`git rev-parse --short HEAD`, and whether the tree is clean), and any PR / work item / earlier workspace-root artifact that already discusses the topic. When a PR is involved, also resolve its counterpart in a sibling repo (`pr-counterpart` › *Counterpart discovery*): the reason a backend shape is the way it is often lives in the frontend PR's threads, and vice versa. Sub-agents must not re-discover the target.
-2. **Spawn the three sub-agents in parallel** (one message, three calls). Each prompt includes: the repo path(s), the resolved target (`path:line` ranges), the head SHA, the list of related artifacts at the workspace root, and its axis brief.
-   - **Mechanism** — "Trace what this code does at head, hop by hop: entry points, the call and data flow across layers, state transitions, transactions and query filters it runs under, and every failure path. Read whole files where needed. Cite `path:line` for each hop. Produce (a) a numbered walkthrough and (b) a Mermaid sequence or flow diagram source. Say what you could not confirm by reading. Report only what the aggregation needs: one entry per hop with its citation, nothing else."
-   - **Rationale** — "Explain why it is the way it is. Use `git log --follow -p` on the touched files, PR descriptions and review threads if a CLI is authenticated (`az repos pr list --source-branch`, `gh pr view`), linked work items, ADRs/docs, and comments that state constraints. Report: the decisions that shaped it, the alternatives that were considered or rejected and why, and any constraint that is no longer true. Quote the source (commit, thread id, doc) for each. Never infer intent from a branch name. Report only what the aggregation needs: one entry per decision with its citation, nothing else."
-   - **Context** — "Report who depends on it: callers and consumers across layers and repos (grep for the symbols, follow DI registrations), the contracts it participates in (shared enum values, an API snapshot or generated client, realtime hub or event names, user-facing text and its locale; the project's Profile lists them as *Contract touchpoints*), the tests that pin its behaviour, and what would break if its signature or semantics changed. Flag anything in the workspace-root `CLAUDE.md` contracts list it touches. Report only what the aggregation needs: one entry per dependent with its citation, nothing else."
-3. **Aggregate** into the single artifact (structure below). **Re-open every `path:line` the sub-agents cite** before it goes into the artifact — sub-agent output is evidence, not a verdict — and drop or mark as unconfirmed anything you cannot see yourself. Where two axes disagree (Rationale says a constraint exists, Mechanism shows the code no longer honours it), say so explicitly: that gap is usually the most useful sentence in the explanation.
-
-### Artifact Structure
-
-Write `<prefix>-explanation-<suffix>.md` at the **workspace root** containing, in this order:
-
-- **Header**: target, repo(s), head SHA, mode (`deep`), related artifacts.
-- **Executive Summary / Core Concept**.
-- **Technical Call Flow & Architecture** (from *Mechanism*; Mermaid diagram where useful).
-- **Step-by-Step Technical Walkthrough** (from *Mechanism*) with clickable links to source files and line ranges.
-- **Design Rationale & Tradeoffs** (from *Rationale*: performance, security, UX, failure modes; each decision with its source).
-- **Consumers & Contracts** (from *Context*: callers, cross-repo contracts, pinning tests, what breaks if it changes).
-- **Edge Cases & Reviewer Insights** (from all three; include every axis disagreement found in aggregation).
-
-### Report Back in Chat
-
-- Provide a 1–2 sentence **TL;DR**.
-- Provide a clickable link to open the artifact in the IDE:
-  - Antigravity IDE: `📄 [antigravity-<model>-explanation-<suffix>.md](file://<workspace-root>/antigravity-<model>-explanation-<suffix>.md)`
-  - Claude Code: `📄 [claude-<model>-explanation-<suffix>.md](claude-<model>-explanation-<suffix>.md)`
-- Provide clickable anchor links to key sections in the artifact.
-- Name the mode (`deep`) and the head SHA.
-- Highlight 2–3 critical takeaways without duplicating the full document.
+1. **Resolve the target first** (`fan-out` › *Brief contract*): exact symbols, files and line ranges, repo(s), head SHA (`git rev-parse --short HEAD` + dirty check), related workspace-root artifacts, and any PR counterpart (`pr-counterpart` › *Counterpart discovery*).
+2. **Spawn the three axis sub-agents in parallel** per `fan-out` and [`references/deep-axes.md`](references/deep-axes.md).
+3. **Verify & aggregate** (`fan-out` › *Aggregation*): write `<prefix>-explanation-<suffix>.md` at the **workspace root** using the structure in [`references/deep-axes.md`](references/deep-axes.md). Highlight any disagreement between axes (e.g. Rationale cites a constraint that Mechanism shows the code no longer honours).
+4. **Report in chat**: a 1–2 sentence **TL;DR**, the `artifact-protocol` › _Chat link block_ with real section line numbers (`grep -n`), the mode (`deep`) and head SHA, and 2–3 takeaways without duplicating the document.

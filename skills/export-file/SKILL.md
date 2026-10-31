@@ -9,7 +9,7 @@ argument-hint: "[/markdown|/html|/txt] [directory or file path] [what to export]
 
 Turns something already said in the conversation into a standalone file the user can keep, share or open in an editor. It writes one file and changes nothing else.
 
-The name is `export-file` because Claude Code's built-in `/export` (the raw transcript) would shadow a skill called `export`. Typing `export /markdown` as a plain prompt still reaches this skill through its description.
+The name is `export-file` because Claude Code's built-in `/export` (the raw transcript) would shadow a skill called `export`.
 
 ---
 
@@ -86,22 +86,8 @@ The host's file-writing tool overwrites silently, so never write the target with
    - `<prefix>` follows `artifact-protocol` › *Artifact Location, Host & Model Prefix Resolution & Mandatory Contextual Suffix*.
    - `<suffix>` is the content kind followed by that section's suffix (ID + slug, else the branch, else a topic), e.g. `claude-opus-5.5-export-code-review-18815-local-env-scripts.md`.
    - The base name is always `export`, never a catalog name such as `code_review`. Commands that read those families expect their own structure.
-3. **Publish** with an exclusive create.
-   - **Generated name:** let the counter pick the next free name.
-
-     ```bash
-     # $1 = draft file, $2 = target path without extension, $3 = extension; prints the path written
-     publish_new_export() {
-       local p="$2.$3" n=1
-       [ -d "$(dirname "$2")" ] && [ -w "$(dirname "$2")" ] || return 1
-       until ( set -C; cat "$1" > "$p" ) 2>/dev/null; do
-         n=$((n + 1)); [ "$n" -gt 99 ] && return 1
-         p="$2-$n.$3"
-       done
-       printf '%s\n' "$p"
-     }
-     ```
-
+3. **Publish** with an exclusive create (`artifact-protocol` › *Claim*):
+   - **Generated name:** call `publish_new_artifact "$draft" "<dir>/<prefix>-export-<suffix>" "<ext>"` (`artifact-protocol` › *Claim*; its third argument sets the extension, defaulting to `md`).
    - **User-given name:** make one attempt with `( set -C; cat "$draft" > "$target" )`. If the file exists, show its first lines and ask whether to overwrite it or choose another name. Overwrite only on an explicit yes.
    - **Failure:** if publishing fails (missing or read-only directory), report the path and the reason. Don't fall back to another location unasked.
 

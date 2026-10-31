@@ -5,7 +5,7 @@ description: "Diagnoses failing CI/CD pull request validation pipelines across A
 
 # Skill: `/pr-fix-pipeline` — PR Pipeline Failure Diagnosis & Fix Plan
 
-Finds out **why** a pull request's pipeline is failing, separates real regressions from noise, hands over an evidence-backed fix plan, executes approved fixes, and iterates until the pipeline is verified passed by the agent. It chains the [`/investigate`](../investigate/SKILL.md) protocol (ground truth from the run logs and code) into [`/plan`](../plan/SKILL.md) (the fix), with a review pass in between.
+Diagnoses why a pull request's validation pipeline is failing, separates regressions from noise in `<prefix>-investigation-<suffix>.md`, drafts a targeted fix plan in `<prefix>-implementation_plan-<suffix>.md`, and — once approved — iterates through local verification, push/re-queue, and run monitoring until every required check passes.
 
 ---
 
@@ -15,18 +15,18 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 
 Read these before step 1:
 - `../_modules/core.md`: read-only until `/proceed`
-- `../_modules/artifact-protocol.md`: writes `<prefix>-investigation-<suffix>.md` (the diagnosis, format owned by `/investigate`) and `<prefix>-implementation_plan-<suffix>.md` (the fix, format owned by `/plan`); suffix `<prId>-pipeline-<slug>` (e.g. `-18542-pipeline-statistics-granularity`) — for a multi-repo fix, use the lead PR id and list every PR in the artifact header
+- `../_modules/artifact-protocol.md`: writes `<prefix>-investigation-<suffix>.md` and `<prefix>-implementation_plan-<suffix>.md` (suffix `<prId>-pipeline-<slug>`)
 - `../_modules/git-worktrees.md`
 - `../_modules/pr-counterpart.md`
 - `../_modules/pr-host.md`
 
 > [!CAUTION]
 > **Golden invariants**
-> 1. **Read-only until `/proceed`.** No source edits, commits, pushes or branch switches. Local reproduction (build/lint/test of the failing step) is allowed — it does not change source.
-> 2. **Outward-facing actions only after `/proceed`, and only these.** Before `/proceed`, never commit, push, re-queue or retry a run. After `/proceed`, the gate authorizes committing and pushing the fix and re-queuing the evaluation a red Build policy points at (`az repos pr policy queue --id <prId> --evaluation-id <evaluationId>`); this is the Command's gate authorization that `core` › *The `/proceed` gate* rule 2 reads. Never cancel a run, post PR comments, change policies, or edit pipeline definitions in the service: recommend them in the plan; the user triggers them.
-> 3. **Cite the log.** Every failure claim carries the run id, step name and the exact error line(s) — plus `path:line` once traced into code.
-> 4. **Flake is a conclusion, not a default.** Mark a failure as a flake only with evidence (passes on re-run history, passes locally on the same commit, failure unrelated to the diff).
-> 5. **Never complete until verified passed by the agent.** After the fix is pushed or the run is re-queued, the skill does not complete until the agent has actively verified that every required pipeline check and build policy succeeds (all green). If a triggered run fails or stays red or flaky, loop: re-diagnose the remaining failure from new logs, apply the fix, locally verify, push, and monitor the new run until it passes. Only an external blocker that fundamentally requires human action (infrastructure down, missing credentials/permissions) may pause execution, and the skill remains incomplete until the pass is verified.
+> 1. **Read-only until `/proceed`**: no source edits, commits, pushes, or branch switches before the gate opens. Local read-only reproduction (build/lint/test of the failing step) is allowed.
+> 2. **Gate-authorized outward actions**: once the user opens the gate (`core` › *The `/proceed` gate*), this skill is authorized to commit and push the approved fix ([`/commit`](../commit/SKILL.md)) and re-queue the red Build policy evaluation (`az repos pr policy queue --id <prId> --evaluation-id <evaluationId> --org <org-url>`). Never cancel runs, post PR comments, change branch policies, or edit service-side pipeline definitions.
+> 3. **Cite the log**: every failure claim cites the run ID, step name, exact error line(s), and `path:line` in code/YAML.
+> 4. **Flake requires proof**: classify a failure as a flake only with evidence (re-run history, local pass on the same commit, unrelated to the diff).
+> 5. **Never complete until verified passed by the agent**: after `/proceed`, keep monitoring and looping until every required PR check succeeds (`succeeded` / `approved`), pausing only on an external human-owned blocker.
 
 ---
 
@@ -44,181 +44,63 @@ Read these before step 1:
 
 ### Step 1: Resolve the Targets (PRs × Repos)
 
-1. **Find every repo in scope.** If the workspace root is not itself a git repo, enumerate child repos (`find . -maxdepth 2 -name .git`). Run the rest of this skill **per repo** — a frontend PR can be red because of the backend (and vice versa).
-2. **Detect the CI host** from `git remote get-url origin`: `dev.azure.com` / `visualstudio.com` → Azure DevOps; `github.com` → GitHub Actions.
-3. **Resolve the PR**: use the argument if given; otherwise resolve it from the current branch per **`pr-host`** › *Resolve the PR from a branch*. On GitHub, add `statusCheckRollup` to the `gh pr view --json` fields for the check states.
-   Report repos with no PR — that is a finding, not a skip.
-   **Then the counterpart:** run the lookup in `pr-counterpart` › *Counterpart discovery* for every resolved PR, even when only one PR was given. Pull the counterpart's pipeline status too. A paired change merges only when both halves are green, and a red half often comes from a contract the other half changed (classify it as cross-repo contract drift). A counterpart whose pipeline is green is listed as such, not skipped silently.
-4. **Read the PR description and linked work items** so the plan knows the change's intent (`pr-host` › *Fetch the PR, its work items and acceptance criteria*).
+1. **Find every repo in scope** (`git-worktrees` › *Repo Resolution*) and detect the CI host from `git remote get-url origin`.
+2. **Resolve the PR** from the argument or current branch per `pr-host` › *Resolve the PR from a branch* (on GitHub include `statusCheckRollup`). Report repos with no PR.
+3. **Counterpart lookup**: run `pr-counterpart` › *Counterpart discovery* for every resolved PR and check the counterpart's pipeline status too (a red half is often caused by cross-repo contract drift).
+4. **Read the PR description and linked work items** (`pr-host` › *Fetch the PR, its work items and acceptance criteria*).
 
 ### Step 2: Collect the Evidence
 
-**Azure DevOps**
-```bash
-# Required checks on the PR — which policy is red, and which build it points at
-az repos pr policy list --id <prId> --detect true \
-  --query "[].{policy:configuration.type.displayName,status:status,build:context.buildId,eval:evaluationId,blocking:configuration.isBlocking}" -o table
-
-# Run history only — a re-queued build can be missing here; the current run is the Build policy's context.buildId (above)
-az pipelines runs list --branch "refs/pull/<prId>/merge" --top 10 --detect true \
-  --query "[].{id:id,def:definition.name,result:result,commit:sourceVersion,finished:finishTime}" -o json
-
-# Failed records in the run's timeline → step names, log ids, issue messages
-az devops invoke --area build --resource timeline \
-  --route-parameters project=<project> buildId=<runId> --org <orgUrl> --api-version 7.1 \
-  --query "records[?result=='failed'].{type:type,name:name,log:log.id,issues:issues[].message}" -o json
-
-# One step's log as plain lines (the API returns {value:[...]} — `-o tsv` unwraps it)
-az devops invoke --area build --resource logs \
-  --route-parameters project=<project> buildId=<runId> logId=<logId> --org <orgUrl> --api-version 7.1 \
-  --query "value" -o tsv | grep -nE '##\[error\]|error [A-Z]+[0-9]+|\[Test Failure\]|failed|FAIL'
-```
-Gotchas: `--org` without `--project` errors on `az repos`/`az pipelines` — pass both, or use `--detect true` from inside the repo. Use the organization URL form the workspace already uses (`pr-host` › *Organization URL*); both forms work. In zsh, don't stash flags in one variable (`$FLAGS` is not word-split) — inline them. The run to diagnose and watch is the Build policy's `context.buildId`, never the newest row of `runs list`.
-
-**GitHub Actions**
-```bash
-gh pr checks <n>
-gh run list --branch <headRef> --limit 10 --json databaseId,name,conclusion,headSha
-gh run view <runId> --log-failed
-```
-
-**Always also gather:**
-- **History of the same check**: recent runs of that definition on the target branch (`--branch refs/heads/main`) and on other PRs. Red everywhere → base/infra problem; red only here → this diff.
-- **Whether the run is stale — on both sides**: the PR merge commit's parents are `<target> <source>` (`git log -1 --format=%p <mergeCommit>`). Source parent ≠ PR head → the branch has moved since. Target parent behind `origin/<target>` → check whether `main` already fixed it (`git log <targetParent>..origin/<target>`, then `git merge-base --is-ancestor <fix> <mergeCommit>`); if so, the fix is a re-queue, not a code change — **but** ADO recomputes the merge commit lazily, so first confirm the live ref includes the fix (`git ls-remote origin refs/pull/<id>/merge`). If it is still the old merge, a re-queue rebuilds the same failing commit: tell the user to open the PR in the web UI to refresh it, or merge `<target>` into the branch. The Build policy `context` shows the same thing (`isExpired`, `buildIsNotCurrent`, `lastMergeTargetCommitId`). A green run whose policy is still `queued` has usually just expired.
-- **The pipeline YAML** the run executed (path from the definition; read it at the PR's commit with `git show <sha>:<path>`), plus any templates it includes.
-- **Warnings that are about to become errors** (deprecated tasks, agent image migrations, runtime EOL) — note them separately; they are not the cause unless proven.
+Read [evidence-commands.md](references/evidence-commands.md) and collect the failing policy evaluation, build timeline, failing step logs, target-branch run history, merge-commit staleness check, and pipeline YAML.
 
 ### Step 3: Classify Each Failure
 
 | Class | Signature | Typical fix owner |
 |---|---|---|
 | **Code regression** | Compile/type/lint error or assertion in code the PR touched | This PR |
-| **Test defect** | Test asserts the wrong thing, or depends on wall-clock, ordering, culture/time zone, random data | This PR or test owner |
-| **Time/data-dependent** | Fails only on certain dates/times (period boundaries, DST, month/quarter start), passes otherwise | Test/code — make the clock injectable |
-| **Flake** | Intermittent, unrelated to the diff, passes on re-run history (timeouts, container startup, port races) | Re-run now; stabilize separately |
-| **Environment / agent** | Missing SDK/tool, image change, feed/auth failure, disk/timeout, service outage | Pipeline YAML or infra |
-| **Pipeline config** | YAML error, wrong path/working dir, missing variable/secret, condition logic, policy misconfig | Pipeline YAML |
-| **Generated-artifact drift** | "uncommitted changes", snapshot/codegen/format verify steps | This PR — regenerate and commit |
-| **Cross-repo contract drift** | One repo's PR depends on an unmerged change in another (API shape, shared enum, OpenAPI snapshot, container image) | Coordinate both PRs / merge order |
+| **Test defect** | Test asserts the wrong thing, or depends on wall-clock, ordering, locale/time zone, random data | This PR or test owner |
+| **Time/data-dependent** | Fails only on boundary dates/times (DST, month/quarter start) | Test/code — make clock injectable |
+| **Flake** | Intermittent, unrelated to the diff, passes on re-run history | Re-queue now; stabilize separately |
+| **Environment / agent** | Missing SDK/tool, image change, feed/auth failure, disk/timeout, outage | Pipeline YAML or infra |
+| **Pipeline config** | YAML error, wrong path/working dir, missing variable/secret, policy misconfig | Pipeline YAML |
+| **Generated-artifact drift** | Uncommitted codegen/snapshot/format verify failure | This PR — regenerate and commit |
+| **Cross-repo contract drift** | Depends on an unmerged change in a sibling repo | Coordinate both PRs / merge order |
 
-For each failure: identify the **first** error (later errors often cascade), trace it to `path:line` in the PR's code or YAML, and check whether the PR's diff (`git diff <target>...<source>`) touches it.
+Identify the **first** error in each failing step, trace it to `path:line`, and check whether `git diff <target>...<source>` touches it.
 
 ### Step 4: Reproduce (when cheap)
 
-Reproduce the failing step locally **on the run's commit** using the repo's documented commands (its `CLAUDE.md`/README/CI YAML), scoped to the failing project/test. Check which code you are about to run first. The main checkout is often on another branch or carries local edits, and a reproduction on the wrong tree proves nothing:
+Reproduce the failing step locally **on the run's commit** when cheap. First confirm `git -C <repo> rev-parse HEAD` equals the run's source commit and `git -C <repo> status --porcelain --untracked-files=no` is empty; if not, reproduce inside a `git-worktrees` snapshot (*Snapshot Lifecycle*) — never switch the main checkout. Ask before restoring dependencies (`npm ci`, `dotnet restore`), starting Docker, or running a slow full suite.
 
-```bash
-git -C <repo> rev-parse HEAD                       # must equal the run's source commit
-git -C <repo> status --porcelain --untracked-files=no   # must be empty
-```
+### Step 5: Write the Investigation (`<prefix>-investigation-<suffix>.md`)
 
-If either check fails, never switch the main checkout (invariant 1). Reproduce in a `git-worktrees` snapshot of the run's commit instead (*Snapshot Lifecycle*). Restoring dependencies there (`npm ci`, `dotnet restore`) takes time and disk, so **ask first**. Record the command, the commit it ran on and the outcome. If reproduction needs Docker, secrets or a long full-suite run, **ask first** too, and otherwise record "not reproduced". A local pass + CI fail points at environment, ordering or time-dependence.
+Follow [`/investigate`](../investigate/SKILL.md) to publish the diagnosis artifact, adding:
+- **Run table** in *Current-State*: `repo · PR · pipeline · run id · commit · stale? · result · failing step`.
+- **One entry per failure**: class, quoted first error line, `path:line`, related to diff?, local reproduction command + result.
+- **Pipeline review notes**: non-blocking pipeline smells (missing cache, deprecated tasks, image warnings) separated from blocking failures.
 
-### Step 5: Review & Write the Investigation
+### Step 6: Plan the Fix (`<prefix>-implementation_plan-<suffix>.md`)
 
-Write `<prefix>-investigation-<suffix>.md` following the `/investigate` template, with these additions:
-- **Run table** in *Current-State*: repo · PR · pipeline · run id · commit · stale? · result · failing step.
-- **One entry per failure**: class, first error line (quoted), trace `path:line`, related to diff? (yes/no + evidence), reproduced? (command + result).
-- **Review section**: problems in the pipeline itself found along the way (missing caching, no test-result publishing on failure, deprecated tasks, agent image warnings) — clearly separated from the blocking failures.
-- *Confidence Ledger* marks each root cause ✅ Verified / ⚠️ Inferred / ❓ Unknown.
-
-### Step 6: Plan the Fix
-
-Then follow `/plan` Case B, building on the investigation, to write `<prefix>-implementation_plan-<suffix>.md`:
-- Order phases **unblock-first**: the fix that turns the required check green comes before hardening.
-- Per fix: repo, file(s), change, and the **local command that proves it** before pushing.
-- Multi-repo fixes: one phase per repo with explicit merge order.
-- Flakes: "re-queue policy evaluation `<evaluationId>` after `/proceed`" plus an optional stabilization task — never just "retry".
-- List the user-owned actions (policy changes, infra tickets) in a **Handover** section.
-
-Stop. Do not implement until the user types `/proceed`.
+Follow [`/plan`](../plan/SKILL.md) Case B to publish the fix plan:
+- Order phases **unblock-first**; name per fix the repo, files, change, and **local verification command**.
+- For flakes, specify `re-queue policy evaluation <evaluationId> after /proceed` plus any stabilization task.
+- Put user-owned actions (policy edits, infra tickets) under **Handover**.
+- Stop and wait for the `/proceed` gate (`core` › *The `/proceed` gate*).
 
 ### Step 7: Post-Fix Execution & Autonomous Remediation Loop (after `/proceed`)
 
-Once the user approves with `/proceed`:
-1. **Implement and verify locally:** Apply the fix and run the plan's local verification commands first.
-2. **Commit and push:** Stage the changed files, run pre-commit gates, and push (or, when no code changes were needed, re-queue the red Build policy's evaluation: `az repos pr policy queue --id <prId> --evaluation-id <evaluationId>`).
-3. **Resolve the triggered run:**
-   - **Azure DevOps:** Query `az repos pr policy list --id <prId> --query "[?configuration.type.displayName=='Build']"` to resolve the new `buildId` and evaluation status. After a re-queue, confirm `context.buildId` differs from the failed run's id; if it is unchanged on the next poll, re-list the policies, and if still unchanged, pause as an external blocker instead of watching the old run.
-   - **GitHub Actions:** Query `gh pr checks <prId>` or `gh run list --branch <headRef>`.
-4. **Watch run progress (no early exit):**
-   - Continuously monitor the build validation run until it reaches a terminal status (`succeeded`, `failed`, `partiallySucceeded`, `canceled` on ADO; completed conclusion on GitHub).
-   - Use non-blocking schedule timers / reactive notifications (e.g. 2–3 minute intervals); never use blocking shell `sleep` loops or abandon the task while the run is in-flight.
-   - On ADO: poll `az pipelines build show --id <buildId> --query "{status:status, result:result}"` and inspect running timeline tasks.
-   - On GitHub: poll `gh pr checks <prId>` or `gh run view <runId>`.
-5. **Remediation loop — never complete until verified passed:**
-   - **All green (`succeeded` / `approved`):** Actively verify that every required PR build policy and status check succeeds. This is the **only condition** where the skill completes. Close out and report the verified passing run.
-   - **Still red, failing, or flaky (`failed` / `rejected` / `canceled`):** the run is not done. Loop:
-     1. Pull failing step logs (`az devops invoke --area build --resource logs` / `gh run view <runId> --log-failed`).
-     2. Classify the new or remaining failure (regression, test defect, cascade error, flake).
-     3. Update the investigation artifact and implementation plan with the new run findings.
-     4. Implement the corrective code or test fix.
-     5. Run local verification commands to ensure tests/build pass locally.
-     6. Stage, commit, and push the fix (or re-queue the red Build policy's evaluation if flake).
-     7. Resolve the newly triggered run and resume non-blocking monitoring (back to step 3).
-     8. Repeat until all required checks are verified passed.
-   - **External blocker exception:** If blocked by external factors requiring human intervention (e.g. pipeline service outage, agent pool offline, missing credentials/tokens, manual security approval gates):
-     - Clearly notify the user that the skill is **paused (incomplete)** awaiting external resolution.
-     - Cite the exact log line or platform error requiring human action.
-     - Once unblocked by the user, resume the loop until the pipeline is verified passed.
+Once the gate opens, follow [remediation-loop.md](references/remediation-loop.md) to implement, verify locally, commit/push via [`/commit`](../commit/SKILL.md) (or re-queue), monitor the triggered run with non-blocking timers, and loop until every required check is verified green.
 
 ---
 
 ## 3. Output Format & Deliverables
 
-Chat response, short. It opens with the two artifacts, each as its full file name (`.md` included) followed by anchors to its main sections, the way every other Command links its artifact:
-
-```markdown
-📄 [<prefix>-investigation-<suffix>.md](<link>)
-· [TL;DR](<link>#L<n>) · [Run table](<link>#L<n>) · [Confidence Ledger](<link>#L<n>)
-
-📄 [<prefix>-implementation_plan-<suffix>.md](<link>)
-· [Proposed Changes](<link>#L<n>) · [Verification Plan](<link>#L<n>) · [Handover](<link>#L<n>)
-
-**<repo> PR !<id>** — <pipeline> run <runId> ❌ <failing step>
-- Cause: <one line> · class: <class> · ✅/⚠️/❓
-**<repo> PR !<id>** — ✅ green / no PR
-
-Next: <the single unblocking action>. Type `/proceed` to implement.
-```
-
-Links follow the host link format in the **`artifact-protocol`** protocol. Read the anchor line numbers from the written files (`grep -n '^#\{1,3\} '`), never from the drafts.
-
-### Post-Validation Completion (after `/proceed`)
-
-Once verified green:
-```markdown
-✅ **Pipeline verified passed by agent** — **<repo> PR !<id>**
-- Pipeline run: <pipeline> run <runId> (commit `<sha>`)
-- Required checks: all green (`approved` / `succeeded`)
-- Total iterations: <n>
-```
-
-If paused on an external blocker:
-```markdown
-⚠️ **Paused on external blocker (Skill incomplete)** — **<repo> PR !<id>**
-- Pipeline run: <pipeline> run <runId>
-- Blocker: <reason requiring human action>
-- Waiting for: <unblocking action> before resuming verification loop.
-```
+- **Before `/proceed`**: emit the `artifact-protocol` › *Chat link block* for both `<prefix>-investigation-<suffix>.md` and `<prefix>-implementation_plan-<suffix>.md`, followed by one status line per repo/PR (`❌ <failing step>` with root cause class + evidence grade, or `✅ green`), and the closing gate line (`core` › *The `/proceed` gate*).
+- **After `/proceed`**: emit the completion or external-blocker block from [remediation-loop.md](references/remediation-loop.md).
 
 ---
 
 ## 4. Verification & Validation
 
-Before handing over:
-- [ ] Every repo in scope was checked, including ones with green or no PRs.
-- [ ] Every failing required check has a classified root cause with the run id and quoted log line.
-- [ ] Stale-run check done (run commit vs PR head).
-- [ ] Each "flake" verdict has evidence; each "regression" verdict is tied to the diff.
-- [ ] Each plan step names the local command that verifies it.
-- [ ] No outward-facing action was taken; no source was modified.
-
-After `/proceed` and the fix:
-- [ ] Run the plan's local verification commands.
-- [ ] Stage, commit, and push the fix (or re-queue the red Build policy's evaluation and confirm a new `buildId`).
-- [ ] Resolve the triggered pipeline run id and policy evaluation.
-- [ ] Watch the build validation run until completion.
-- [ ] If any check failed, looped autonomously through re-diagnosis, local fix, commit/push, and re-monitoring.
-- [ ] The pipeline was verified passed (`succeeded` / `approved` across all required PR checks) by the agent before marking the skill complete.
-- [ ] Never marked complete while checks remained failing, rejected, or unverified.
+- **Before `/proceed`**: every repo in scope checked; every failing check classified with run ID, quoted log line, and staleness check; every plan step has a local verify command; no source modified or outward action taken.
+- **After `/proceed`**: local verification passed before push; new `buildId`/check run confirmed and monitored to completion; skill marked complete only after all required PR checks succeeded.
