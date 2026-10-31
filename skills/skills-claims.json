@@ -4492,7 +4492,7 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "(top level) | Command | 38 | `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-skill`, `create",
+      "quote": "| General (top level) | Command | 39 | `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-skill",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
@@ -4507,7 +4507,7 @@
       },
       "kind": "skill_ref",
       "value": "clean",
-      "quote": "Command | 38 | `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-skill`, `create-ticket`, `ex",
+      "quote": "| General (top level) | Command | 39 | `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-skil",
       "verify": {
         "method": "skill_exists",
         "name": "clean",
@@ -4522,7 +4522,7 @@
       },
       "kind": "skill_ref",
       "value": "code-documentation",
-      "quote": "| 38 | `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-skill`, `create-ticket`, `explain`, `",
+      "quote": "| General (top level) | Command | 39 | `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-skill",
       "verify": {
         "method": "skill_exists",
         "name": "code-documentation",
@@ -4627,7 +4627,7 @@
       },
       "kind": "skill_ref",
       "value": "expressive",
-      "quote": "`, `explain`, `export-file`, `expressive`, `implement-feature`, `investigate`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `pr-feedback-revi",
+      "quote": "-prompt`, `create-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `implement-feature`, `investigate`, `manual-testing`, `no-worktrees",
       "verify": {
         "method": "skill_exists",
         "name": "expressive",
@@ -4646,7 +4646,7 @@
       },
       "kind": "skill_ref",
       "value": "implement-feature",
-      "quote": "`export-file`, `expressive`, `implement-feature`, `investigate`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `pr-feedback-review`, `pr-fix-p",
+      "quote": "skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `implement-feature`, `investigate`, `manual-testing`, `no-worktrees`, `organize`, `pl",
       "verify": {
         "method": "skill_exists",
         "name": "implement-feature",
@@ -4661,7 +4661,7 @@
       },
       "kind": "skill_ref",
       "value": "investigate",
-      "quote": "ssive`, `implement-feature`, `investigate`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-co",
+      "quote": "cket`, `explain`, `export-file`, `expressive`, `implement-feature`, `investigate`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `pr-desc`, `p",
       "verify": {
         "method": "skill_exists",
         "name": "investigate",
@@ -4676,7 +4676,7 @@
       },
       "kind": "skill_ref",
       "value": "manual-testing",
-      "quote": "ent-feature`, `investigate`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-su",
+      "quote": ", `export-file`, `expressive`, `implement-feature`, `investigate`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `pr-desc`, `pr-feedback-revie",
       "verify": {
         "method": "skill_exists",
         "name": "manual-testing",
@@ -4691,7 +4691,7 @@
       },
       "kind": "skill_ref",
       "value": "no-worktrees",
-      "quote": "estigate`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`,",
+      "quote": "`expressive`, `implement-feature`, `investigate`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipel",
       "verify": {
         "method": "skill_exists",
         "name": "no-worktrees",
@@ -4706,7 +4706,7 @@
       },
       "kind": "skill_ref",
       "value": "organize",
-      "quote": "al-testing`, `no-worktrees`, `organize`, `plan`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `ref",
+      "quote": "`implement-feature`, `investigate`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post",
       "verify": {
         "method": "skill_exists",
         "name": "organize",
@@ -4724,7 +4724,7 @@
       },
       "kind": "skill_ref",
       "value": "plan",
-      "quote": "`no-worktrees`, `organize`, `plan`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `refine`, `remem",
+      "quote": "feature`, `investigate`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`",
       "verify": {
         "method": "skill_exists",
         "name": "plan",
@@ -4742,7 +4742,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-feedback-review",
-      "quote": "ktrees`, `organize`, `plan`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `refine`, `remember-this",
+      "quote": "`manual-testing`, `no-worktrees`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`,",
       "verify": {
         "method": "skill_exists",
         "name": "pr-feedback-review",
@@ -4757,7 +4757,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-fix-pipeline",
-      "quote": "plan`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-conflicts`",
+      "quote": "-worktrees`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `refine`,",
       "verify": {
         "method": "skill_exists",
         "name": "pr-fix-pipeline",
@@ -5018,7 +5018,7 @@
       },
       "kind": "skill_ref",
       "value": "worktrees",
-      "quote": "igate`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`, `p",
+      "quote": "ggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing`, `worktrees` |",
       "verify": {
         "method": "skill_exists",
         "name": "worktrees",
@@ -20123,19 +20123,19 @@
       }
     },
     {
-      "id": "skills/README.md:39:count:39 general skills",
+      "id": "skills/README.md:39:count:40 general skills",
       "source": {
         "file": "skills/README.md",
         "line": 39
       },
       "kind": "count",
-      "value": "39 general skills",
-      "quote": "44 skills total — 39 general + 5 under `Projects/GR.PRIIS/` — plus 8 Modules.",
+      "value": "40 general skills",
+      "quote": "45 skills total — 40 general + 5 under `Projects/GR.PRIIS/` — plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/*/SKILL.md",
         "base": "repo",
-        "expected": 39,
+        "expected": 40,
         "op": "eq"
       }
     },
@@ -20147,7 +20147,7 @@
       },
       "kind": "count",
       "value": "5 GR.PRIIS project skills",
-      "quote": "44 skills total — 39 general + 5 under `Projects/GR.PRIIS/` — plus 8 Modules.",
+      "quote": "45 skills total — 40 general + 5 under `Projects/GR.PRIIS/` — plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/Projects/GR.PRIIS/*/SKILL.md",
@@ -20164,7 +20164,7 @@
       },
       "kind": "count",
       "value": "8 Modules",
-      "quote": "44 skills total — 39 general + 5 under `Projects/GR.PRIIS/` — plus 8 Modules.",
+      "quote": "45 skills total — 40 general + 5 under `Projects/GR.PRIIS/` — plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/_modules/*.md",
@@ -20253,6 +20253,37 @@
       "verify": {
         "method": "manual",
         "reason": "Claude Code skill frontmatter keys; v2.1.316 binary lists \"model\" and \"effort\" in its accepted key array (name, description, model, allowed-tools, argument-hint, ..., effort, ...)"
+      }
+    },
+    {
+      "id": "skills/README.md:43:skill_ref:pr-desc",
+      "source": {
+        "file": "skills/README.md",
+        "line": 43
+      },
+      "kind": "skill_ref",
+      "value": "pr-desc",
+      "quote": "`plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, ",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-desc",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/pr-desc/SKILL.md:66:path:scripts/wrap_generics.py",
+      "source": {
+        "file": "skills/pr-desc/SKILL.md",
+        "line": 66
+      },
+      "kind": "path",
+      "value": "scripts/wrap_generics.py",
+      "quote": "python3 <skill-dir>/scripts/wrap_generics.py <draft-file>",
+      "verify": {
+        "method": "path_exists",
+        "path": "scripts/wrap_generics.py",
+        "base": "file_dir",
+        "type": "file"
       }
     }
   ]
