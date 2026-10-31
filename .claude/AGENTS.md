@@ -20,4 +20,8 @@ If no `.codegraph/` directory exists there or in any parent, skip CodeGraph enti
   1. **Steps:** a numbered list of concrete steps.
   2. **Unresolved questions:** what I must decide, each with your recommendation. Leave this block out when there are none.
 
+## Vague requests
+
+When my request has no clear action, scope or done-state ("clean this up", "fix the tests", "make it better"), invoke the `create-prompt` skill before doing any work, instead of guessing.
+
 @~/.claude-mem/MY-RULES.md

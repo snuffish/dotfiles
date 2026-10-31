@@ -1,21 +1,12 @@
 ---
 name: create-prompt
-description: "Transforms draft, raw, or prior prompts into 3 distinct, hardened prompt variations (Surgical, Deep, Interactive) grounded in live workspace context. Inspects git state, referenced skills, domain docs, and execution gates. Use for /create-prompt, 'create a prompt', 'craft a prompt', 'enhance this prompt', 'turn this into a prompt', 'refine prompt', 'write a prompt for this'. Not for UI Stitch generation (use /enhance-prompt) or issue tickets (use /create-ticket)."
-disable-model-invocation: true
+description: "Turns a one-line intent ('DRY and simplify this PR before commit') into one short, paste-ready prompt that invokes the best-fitting skill with its real arguments, scoped to the live branch or diff and ending at a verify-and-stop step; `--variants` adds 2–3 alternatives (other skill, depth or plan-first). Prints and stops; never runs it. Use for /create-prompt, 'write a prompt for', 'make this a better prompt', 'turn this into a prompt', 'improve my prompt'. Also use it on your own when the user's request is vague (no clear action, scope or done-state, e.g. 'clean this up', 'fix the tests', 'make it better') before doing any work. Not for clear, specific requests (just do them), nor for Google Stitch UI prompts (use /enhance-prompt), tickets (use /create-ticket) or implementation plans (use /plan)."
+argument-hint: "<what you intend to do> [--variants] [--file]"
 ---
 
-# Skill: `/create-prompt` — Context-Grounded Prompt Architect
+# Skill: `/create-prompt` — Intent → One Prompt
 
-Transforms draft instructions, rough concepts, or prior prompts into a curated palette of 3 distinct, battle-tested prompt variants (Surgical, Deep, Interactive) grounded in the live repository state and target skills.
-
----
-
-## ⛔ Execution Gate — Never Run the Prompt
-
-> [!CAUTION]
-> 1. **The Command ends at the printed prompt.** Never invoke the target skill, spawn agents, or run any step a variant describes. Read-only grounding commands (Step 2) are the only commands it runs.
-> 2. **Only a literal `/proceed` runs a prompt**: a user message that *starts with* `/proceed` (`/proceed`, `/proceed variant 2`, …). A `/proceed` mentioned mid-sentence ("ok, /proceed later") does not count. This is stricter than `core` › *The `/proceed` gate*: a plain "go ahead", picking a variant, answering the unresolved questions or "use your recommendations" does **not** open it.
-> 3. **Follow-up input refines, never runs.** Apply answers, picks or corrections to the prompt, reprint the final variant as one paste-ready block, and end with the waiting step (*Step 4* › *Closing line*).
+Takes what the user intends to do and returns the one prompt that gets it done best: the right skill, its exact syntax, the real scope, and a clear stop point. Short enough to read in five seconds.
 
 ---
 
@@ -24,141 +15,146 @@ Transforms draft instructions, rough concepts, or prior prompts into a curated p
 Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
 
 Read these before step 1:
-- `../_modules/core.md`: read-only until `/proceed`, and only a literal `/proceed` opens the gate (*Execution Gate*)
-- `../_modules/artifact-protocol.md`: writes no artifact by default; prints paste-ready blocks in chat. If the user passes `--file` or requests a saved prompt, writes `<prefix>-prompt-<suffix>.md` at workspace root
+
+- `../_modules/core.md`: read-only until `/proceed`, and only a literal `/proceed` opens the gate (_Gate_ below)
+- `../_modules/artifact-protocol.md`: writes no artifact by default; with `--file`, writes `<prefix>-prompt-<suffix>.md` at the workspace root
 
 ---
 
-## 1. When to Use
+## Gate — print, never run
 
-### Use when:
-- You have a rough prompt or instruction (e.g. `Scope: This PR`, "review these changes", "refactor the auth flow") and want clean, high-signal prompt options.
-- You want to target a specific workflow skill (e.g. `/code-review`, `/improve-codebase-architecture`, `/tdd`, `/implement-feature`) with verified parameters and correct invariants.
-- You need to choose between different execution styles (minimal token footprint vs deep edge-case verification vs phased human-in-the-loop).
+The deliverable is the prompt. Running it is a separate decision the user makes after reading it.
 
-### When *not* to use — pick the right neighbor:
-
-| Situation | Use instead |
-|---|---|
-| Enhancing UI generation prompts for Google Stitch | `/enhance-prompt` |
-| Creating an issue tracker ticket | [`/create-ticket`](../create-ticket/SKILL.md) |
-| Drafting an implementation plan directly | [`/plan`](../plan/SKILL.md) |
-| Identifying hidden traps or blind spots in an existing plan | [`/what-am-I-missing`](../what-am-I-missing/SKILL.md) |
+1. Stop at the printed prompt. Don't invoke the target skill, spawn agents or edit files. The read-only lookups in steps 2–3 are the only commands this skill runs.
+2. Only a user message that **starts with** `/proceed` runs the prompt (`/proceed N` picks variant N; a bare `/proceed` runs the recommended one). "Go ahead", "looks good", answering the open questions or "use your recommendations" all mean _refine_, not _run_.
+3. Follow-up input refines: apply it, reprint the one prompt block (the chosen or recommended variant) and the `Next:` line, nothing else.
 
 ---
 
-## Planning & Prompt Framing
+## Workflow
 
-- Keep generated prompts **concise, directional, and open to discovery**: outline intent, scope boundaries, reference exemplars, and invariants without prescribing file-by-file targets, section numbers, or low-level mechanics upfront.
-- **Ground boundaries, never findings**: resolve the concrete anchors the user pointed at (workspace/directory path, branch/diff ref, reference repo/pattern, target skill, verification command), but never pre-solve the audit during Step 2 or bake a pre-picked list of candidate files into the prompt. Leave room for the downstream agent and its explorer sub-agents to uncover things not yet known.
-- Sacrifice grammar for extreme brevity.
-- If genuine architectural forks or domain ambiguities exist, end with a concise bullet list of unresolved questions; omit if none.
+### 1. Read the intent
 
----
+Pull out four things from the arguments: the **action** (simplify, review, fix, test, document, ship…), the **scope** (this PR, branch, uncommitted changes, a path), the **stop point** ("before commit" means stop before committing) and any **constraint** the user stated.
 
-## 2. Step-by-Step Workflow
+Scope is almost always resolvable from git, so don't ask about it. Ask one multiple-choice question only when the action itself is unclear ("fix it", "make it better" with nothing to anchor on).
 
-### Step 1: Parse Input & Ambiguity Check
+**Started on your own** (the user sent a vague request, not `/create-prompt`): their message is the intent. Don't do the requested work and don't ask first; the sharper prompt *is* the clarifying question. Open the output with one line saying why (`Your request can be read several ways; here is a sharper version.`), put the real forks under **Open questions**, and stop at the gate like any other run.
 
-1. **Extract Core Target**:
-   - What is the user trying to accomplish? (Refactoring, architecture survey, code review, test creation, bug fix).
-   - Did the user name a target skill (e.g. `/code-review`, `/plan`, `/refine`) or a reference exemplar (`@[...]` directory/file)?
-2. **Ambiguity Gate**:
-   - If the input is clear enough to infer the intent and scope, proceed directly to Step 2.
-   - If the input is fundamentally vague (e.g. only "fix it" or "make it better" with no files or context indicated), stop and ask **1–2 focused multiple-choice questions** using the question tool before generating variants.
+### 2. Pick the skill
 
----
+This decides whether the run succeeds, so spend the effort here rather than on wording.
 
-### Step 2: Live Workspace & Skill Grounding
+1. **Candidates** are the skills in your available-skills listing; that is the set the user's session will have (a skill turned off in settings is missing on purpose, even if another skill's text points to it). Shortlist the 2–3 whose descriptions best match the action.
+2. **Read each shortlisted `SKILL.md`**: frontmatter, headings, options or flags section. Descriptions summarise; the body tells you what it actually does, what it writes, and its real flags. Built-in skills with no readable file go on their description, or on their name when the listing shows none; say so in the `Skill:` line (with `--variants`, in that variant's header).
+3. **Choose by these rules**, in order:
+   - A skill's own "Not for X (use /y)" line is authoritative. If it redirects your action elsewhere, follow it.
+   - The action is the skill's main job, not something it does on the side.
+   - In a project with its own skills, prefer the most specific one that covers the action. If a general Command has a `<command>-<project>-profile`, invoke the Command; it loads the profile itself.
+   - Reference skills (conventions, patterns, no workflow) are never the command. Name them in the prompt as rules to apply.
+   - Outward actions (commit, push, PR, comments, tracker writes) appear only when the intent asks for them. Otherwise the prompt ends before them.
+   - If no skill genuinely fits, write a plain prompt. A forced skill is worse than none.
+4. **Use its exact syntax**: argument-hint, modifiers (`deep`, `live`, `--file`), scope phrasing it documents. Never invent a flag.
 
-**Never emit abstract placeholders (`<branch>`, `<pr-url>`, `<paths>`) for the scope or exemplar when live values exist — but keep grounding lightweight and boundary-focused.**
+### 3. Ground the scope (read-only, cheap)
 
-1. **Resolve Scope & Exemplar Anchors**:
-   - Resolve any `@[...]` paths, active branch (`git branch --show-current`), or uncommitted state (`git status -s`).
-   - When the task targets a branch diff or PR ("This PR", "my changes", "active branch"), resolve the merge-base range (`git merge-base origin/main HEAD 2>/dev/null || git merge-base main HEAD`).
-   - When the task targets a broader directory, subsystem, or cross-project pattern, record the root path and the reference exemplar path/structure — **do not** inventory every file or section inside the target to paste into the prompt.
-2. **Inspect Referenced Skills & Rulebooks**:
-   - If a specific slash command or skill is named (e.g. `/plan`, `/code-review`, `/refine`), locate and read its `SKILL.md` to extract:
-     - Exact argument formats and supported flags (e.g. `Scope: This PR`, `deep`, `live`).
-     - Required domain vocabulary and verification commands.
-     - Mandated deliverable formats and non-destructive execution gates (`core` read-only invariant, `/proceed` gate).
-3. **Inspect Domain Language & ADRs**:
-   - Check `GLOSSARY.md` and `docs/adr/` if relevant so the prompt names the right domain concepts and ADR boundaries without restating their contents inline.
+- `git branch --show-current` and `git status -s`. For PR or branch scope, `git merge-base origin/main HEAD` and `git diff --stat <base>...HEAD` to see which top-level areas changed.
+- Put real values in the prompt (branch name, base, changed areas). Use a placeholder only when the value can't be known.
+- When the user names an area ("the audit endpoint tests"), resolve it by name across the repo (`git ls-files`, `find`), not just the first folder that matches: such files are often spread over several folders.
+- When the intent is to change code, find the verify step the project documents (its CLAUDE.md, or a verify skill) and name it. When the intent stops before a fix (review, diagnosis, research), `Done when` is that deliverable (report, root cause, findings), not a verify step.
+- Ground boundaries, not findings. Don't pre-audit the diff or list candidate files; the run discovers those.
 
----
+### 4. Write the prompt
 
-### Step 3: Multi-Variant Synthesis (The 3 Archetypes)
+Aim for at most 6 lines and about 60 words:
 
-Always synthesize **3 distinct, concise prompt variants**. State *what to look for* and *which rules hold*, not a pre-baked inventory of files to touch:
-
-#### Variant 1: Surgical / Fast
-- **Focus**: Minimal context tokens, tight scope, direct to point, zero ceremony.
-- **Best for**: Small changes, single-file audits, quick sanity checks, or a fast pass with minimal overhead.
-- **Structure**: Concrete command + bounded scope & reference exemplar + 1–2 core constraints + verification/stop condition. (List specific files only when the user's request is already about those exact files or a small diff).
-
-#### Variant 2: Deep / Rigorous
-- **Focus**: Edge-case verification, architectural invariants, and cross-layer contract checks, each constraint stated with its reason.
-- **Best for**: Complex PRs, security/persistence logic, core architectural modifications, or thorough system-wide audits.
-- **Structure**: Target command & scope + reference pattern/ADRs + invariants to enforce (and why) + verification gate.
-
-#### Variant 3: Interactive / Guarded
-- **Focus**: Plan-first, open-ended explorer discovery before execution, strict human-in-the-loop checkpoints.
-- **Best for**: Broad refactorings, unfamiliar areas, or tasks where explorer sub-agents should uncover opportunities we are not yet aware of before any files change.
-- **Structure**: Target command (e.g. `/plan`) + open-ended discovery goals for parallel explorer sub-agents + mandated planning artifact + explicit stop gate (`Stop and wait for /proceed before editing any files`) + post-approval verification.
-
----
-
-### Step 4: Output Presentation
-
-Present the results in chat with clear visual separation. Do not dump commentary inside the code blocks.
-
-- Mark exactly one variant **(Recommended)** in its heading. A bare `/proceed` runs that one.
-- A reprint after follow-up input shows only the final variant, which becomes the one `/proceed` runs.
-
-```markdown
-### 1. Surgical / Fast (Lean Token Footprint)
-*Best for quick, focused execution with minimal context overhead.*
-
-```markdown
-[Paste-ready prompt with concrete git branch/paths pre-filled]
+```text
+/<skill> <args>
+Scope: <concrete range or paths>
+Goal: <the outcome, one line>
+Rules: <1–3 constraints; a reason only where it isn't obvious>
+Done when: <verify step>; then stop — <what not to do yet>
 ```
 
----
+Drop a line that has nothing to say. Then cut every phrase that doesn't change what the run does:
 
-### 2. Deep / Rigorous (Comprehensive & Defensive)
-*Best for thorough review, strict adherence to architectural vocabulary, and edge-case prevention.*
+- what the target skill already instructs (it loads its own SKILL.md),
+- what the repo's CLAUDE.md already says (the run loads it),
+- generic advice ("be thorough", "write clean code", "follow best practices"),
+- politeness and preamble.
 
-```markdown
-[Paste-ready prompt with full constraints, vocabulary rules, and verification criteria]
+### 5. Output
+
+Exactly this, nothing before or after (except the one opening line when started on your own):
+
+````markdown
+**Skill:** `/<skill>` — <why, ≤15 words; name the runner-up if it was close>
+
+```text
+<the prompt>
 ```
 
----
+**Open questions** <only if a real fork exists; omit the heading otherwise>
 
-### 3. Interactive / Guarded (Plan-First with Stop Gates)
-*Best for high-leverage decisions where you want to review the approach before any code changes.*
+- <question> — recommend: <answer>
 
-```markdown
-[Paste-ready prompt with phased checkpoints and explicit confirmation gates]
-```
-
----
-
-### Key Injected Guardrails
-- **Scope bounded to:** `refs/heads/...` or `merge-base..HEAD` (no whole-repo hallucination).
-- **Enforced standards:** [e.g. `/codebase-design` vocabulary, `_modules/core.md` read-only gate].
-- **Expected deliverable:** [e.g. HTML report in `$TMPDIR` / workspace artifact].
-```
-
-#### Closing line
-
-End every response, including a reprint after follow-up answers, with exactly one line naming the waiting step and nothing after it:
-
-```markdown
-Next: paste a variant yourself, or `/proceed [variant N]` to run it here (default: the recommended variant).
-```
+Next: paste it, or `/proceed` to run it here.
+````
 
 ---
 
-## 3. Options & Flags
+## Options
 
-- `--file`: In addition to printing the variants in chat, write the full output to `<prefix>-prompt-<suffix>.md` at the workspace root.
+### `--variants`
+
+Print 2–3 prompts instead of one, for when the user wants to choose the approach. Each variant must differ in **what the run does**, along one of these axes:
+
+- **Skill**: the runner-up from step 2, when it was close (e.g. `/simplify` vs `/expressive`).
+- **Depth**: a quick pass vs the skill's thorough mode (`deep`, a wider scope, more lenses).
+- **Plan-first**: discover and plan, then stop for approval before any edit.
+
+Two variants may share an axis (two candidate skills). Variants that differ only in wording or emphasis are one variant; print fewer rather than pad. Every variant keeps the step 4 shape and line budget. Mark exactly one **(Recommended)**.
+
+Output, replacing step 5's single block:
+
+````markdown
+**1. <approach, 2–4 words> (Recommended)**: `/<skill>` — <when to pick it, ≤12 words>
+
+```text
+<prompt>
+```
+
+**2. <approach, 2–4 words>**: `/<skill>` — <when to pick it>
+
+```text
+<prompt>
+```
+
+**Open questions** <only if any>
+
+Next: paste one, or `/proceed N` to run it here (bare `/proceed` runs 1).
+````
+
+### `--file`
+
+Also write the same content to `<prefix>-prompt-<suffix>.md` and add its link above the `Next:` line.
+
+---
+
+## Example
+
+`/create-prompt I want to DRY and simplify this PR before commit`, on branch `feature/22470_audit-log` in a repo with a backend DRY reference skill and a verify skill, uncommitted backend changes:
+
+````markdown
+**Skill:** `/simplify` — its job is reuse and simplification of changed code; `/expressive` only reshapes conditionals.
+
+```text
+/simplify
+Scope: feature/22470_audit-log vs merge-base origin/main, plus uncommitted changes (backend/ only).
+Goal: remove duplication and needless complexity; behaviour unchanged.
+Rules: apply priis-backend-dry patterns.
+Done when: priis-verify passes; then stop — don't commit.
+```
+
+Next: paste it, or `/proceed` to run it here.
+````
