@@ -15,37 +15,30 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 
 Read these before step 1:
 - `../_modules/core.md`
-- `../_modules/artifact-protocol.md`: writes `<prefix>-clean_report-<suffix>.md` for a directory / multi-file target only (suffix derived from the target, e.g. `-audit-endpoint`)
+- `../_modules/artifact-protocol.md`: writes `<prefix>-clean_report-<suffix>.md` for a directory / multi-file target only (suffix derived from the target, e.g. `-audit-endpoint`); single-file runs apply edits directly and report in chat
 - `../_modules/git-worktrees.md`
 
-- **Single-file target (default)**: `/clean` is itself the authorization to edit the target file — apply edits directly, no implementation plan or `/proceed` gate. Report with the chat summary in §5.
-- **Directory / multi-file target**: write `<prefix>-clean_report-<suffix>.md` at the **workspace root** (prefix and suffix resolved per the `artifact-protocol` protocol, suffix derived from the target, e.g. `-audit-endpoint`), list the per-file findings, and clean the files one at a time with verification between each.
-- **Blast radius**: edits stay inside the target file. The only permitted edits elsewhere are mechanical consequences of a verified removal (a barrel re-export line, an `__all__` entry, a stale JSDoc/XML-doc reference) — each one listed in the summary. Anything else found outside the target goes under *Suggestions*, not into the diff.
-- **Worktree**: the target path is resolved under the `repo-root`, and `git diff --stat` and `git checkout -- <file>` in §3 run as `git -C <repo-root>`, never against the user's main checkout (`git-worktrees` › *Golden Invariants*).
+On-demand references (`references/`):
+- [`references/summary-template.md`](references/summary-template.md) — chat and report summary structure
+
+- **Single-file target (default)**: invoking `/clean` authorizes editing the target file directly (no plan or `/proceed` gate).
+- **Blast radius**: edits stay inside the target file except mechanical consequences of a verified removal (a barrel re-export line, an `__all__` entry, a stale JSDoc/XML-doc reference), each listed in the summary. Anything else outside the target goes under *Suggestions*.
 
 ---
 
 ## ⛔ Golden Invariants
 
 > [!CAUTION]
-> 1. **WORKSPACE CONSUMER VERIFICATION BEFORE UN-EXPORTING.**
->    Never demote or delete an exported/public symbol based on in-file usage. Search the **whole workspace root** — every repo in it, including tests and e2e — and follow re-exports and aliases (§3, Step 2). A test or e2e consumer is a consumer.
-> 2. **PROTECT IMPLICIT & CONTRACT-BEARING CODE.**
->    Grep cannot see reflection, assembly scanning, serialization, or persistence. Never remove or demote framework entry points, serialized DTO members, persisted or integer-shared enum members, EF-mapped properties, or config-bound options — even with zero textual hits (§2, *What to Protect*).
-> 3. **PRESERVE INTENT, NOT NOISE.**
->    Keep comments that explain *why* — business rules, workarounds, invariants, suppressions with rationale. Prune only commented-out code, completed TODOs, and comments that restate the code.
-> 4. **ZERO RUNTIME BEHAVIOR DRIFT.**
->    Cleanup is non-functional. No changes to algorithms, API contracts, return types, evaluation order, or laziness unless the user explicitly asks.
-> 5. **WHEN IN DOUBT, KEEP IT.**
->    Ambiguous usage (dynamic imports, string-built names, reflection-adjacent code) is retained and listed under *Retained — needs decision*. A missed removal costs nothing; a wrong one breaks production.
-> 6. **MANDATORY POST-CLEAN VERIFICATION.**
->    Finish with the repo's own lint/type-check/build gates (§3, Step 5). Never leave the file broken or unformatted.
+> 1. **WORKSPACE CONSUMER VERIFICATION BEFORE UN-EXPORTING.** Search the **whole workspace root** — every repo in it, including tests, e2e, barrels, and aliases (§3 Step 2) — before demoting or deleting an exported/public symbol.
+> 2. **PROTECT IMPLICIT & CONTRACT-BEARING CODE.** Never remove or demote framework entry points, serialized DTO members, persisted or integer-shared enum members, EF-mapped properties, or config-bound options — even with zero textual hits (§2 *What to Protect*).
+> 3. **PRESERVE INTENT, NOT NOISE.** Keep comments that explain *why* (business rules, workarounds, invariants, suppressions with rationale). Prune only commented-out code, completed TODOs, and comments that restate the code.
+> 4. **ZERO RUNTIME BEHAVIOR DRIFT.** No changes to algorithms, API contracts, return types, evaluation order, or laziness unless the user explicitly asks.
+> 5. **WHEN IN DOUBT, KEEP IT.** Retain ambiguous usage (dynamic imports, string-built names, reflection-adjacent code) under *Retained — needs decision*.
+> 6. **MANDATORY POST-CLEAN VERIFICATION.** Finish with the repo's lint/type-check/build gates (`core` › *Post-edit verification*).
 
 ---
 
-## 1. When to Use
-
-### When *not* to use — pick the right neighbor
+## 1. When *not* to use — pick the right neighbor
 
 | Situation | Correct skill |
 | --- | --- |
@@ -54,9 +47,6 @@ Read these before step 1:
 | Removing duplication across files | `priis-backend-dry` (backend) or [`/refine`](../refine/SKILL.md) |
 | Compiler, build, or test failures | [`/problem`](../problem/SKILL.md) |
 | Reviewing a branch diff against acceptance criteria | [`/code-review`](../code-review/SKILL.md) |
-
-> [!NOTE]
-> `/clean` borrows only the nested-ternary patterns from [`/expressive`](../expressive/SKILL.md). Anything broader — decomposing long functions, introducing strategy maps across a module — belongs in `/expressive`.
 
 ---
 
@@ -73,7 +63,7 @@ Read these before step 1:
 | **Narrative Comments** | Comments addressed to a reader rather than describing code — defending a decision, listing rejected alternatives, referencing "the user asked". Condense to one technical clause; delete only if nothing technical remains. |
 | **Debug Remnants** | Stray `console.log`/`console.debug`, `debugger;`, temporary `Console.WriteLine`/`Debug.WriteLine`, debugging `print()`, leftover test spies or `.only`. |
 | **Redundant Constructs** | `if (!!x)` → `if (x)`; `x ? true : false` → `Boolean(x)` (or `x` if already boolean); empty lifecycle hooks, empty default constructors, empty `else {}`; casts to the type the value already has. |
-| **Nested Ternaries** | Ternary ladders (`a ? (b ? c : d) : e`) that obscure a decision. Refactor per Step 3.5 — but only when the result is clearer and behavior-identical. |
+| **Nested Ternaries** | Ternary ladders (`a ? (b ? c : d) : e`) that obscure a decision. Refactor per Step 3.5 — only when clearer and behavior-identical. |
 
 ### 🛡️ What to Protect (NEVER Remove)
 
@@ -82,177 +72,68 @@ Read these before step 1:
 | **Architectural Rationale** | *Why* comments: workarounds for third-party bugs, domain invariants, race conditions, edge cases, links to work items. |
 | **Docstrings & XML Docs** | JSDoc/TSDoc and `/// <summary>`. Update them when a removal makes them wrong (e.g. a deleted `@param`); never delete them wholesale. |
 | **Framework Entry Points** | TanStack Router `export const Route = createFileRoute(...)`, lazy-route default exports, FastEndpoints endpoint classes, `IEntityTypeConfiguration<T>` picked up by `ApplyConfigurationsFromAssembly`, DI/assembly-scanned handlers, validators, Next.js page exports. |
-| **Serialized Contracts** | Public properties on request/response DTOs, SignalR client methods, OpenAPI-emitted types. Zero C# references does not mean unused — the JSON consumer is in another repo. |
-| **Persisted & Shared Enums** | Enum members stored in the database or shared by integer value across repos (e.g. PRIIS `SystemAction`). Deleting one breaks data or the other side of the contract. |
-| **Persistence Mappings** | Entity properties mapped by EF Core. Removing one silently produces a schema change on the next migration. |
+| **Serialized Contracts** | Public properties on request/response DTOs, SignalR client methods, OpenAPI-emitted types. |
+| **Persisted & Shared Enums** | Enum members stored in the database or shared by integer value across repos (e.g. PRIIS `SystemAction`). |
+| **Persistence Mappings** | Entity properties mapped by EF Core. |
 | **Config Binding** | Properties on options classes bound from `appsettings*.json` / environment. |
 | **Required Signatures** | Parameters required by an interface or callback shape — prefix with `_` per convention instead of removing. |
-| **Active Suppressions** | `eslint-disable-*`, `@ts-expect-error`, `#pragma warning disable`, `[SuppressMessage]` that still suppress something. Remove only if the suppressed diagnostic no longer fires (verify by removing and linting). |
-| **Intentional Output** | `console.error`/`console.warn` in error paths, `ILogger` calls, and `Console.WriteLine`/`print()` in CLI tools and scripts — that is the program's output, not debug noise. |
+| **Active Suppressions** | `eslint-disable-*`, `@ts-expect-error`, `#pragma warning disable`, `[SuppressMessage]` that still suppress something. |
+| **Intentional Output** | `console.error`/`console.warn` in error paths, `ILogger` calls, and `Console.WriteLine`/`print()` in CLI tools and scripts. |
 
 ---
 
 ## 3. Step-by-Step Workflow
 
-```
-1. RESOLVE TARGET  →  2. CROSS-CHECK USAGE  →  3. AUDIT  →  4. APPLY  →  5. VERIFY
-   path / IDE file      workspace-wide search    smells      edits       repo gates
-```
-
 ### Step 1: Target Resolution
 
-1. Use the path the user gave (e.g. `/clean src/components/button.tsx`).
-2. Otherwise use the file open or selected in the IDE (Claude Code: `ide_opened_file` / `ide_selection` context; Antigravity: active document metadata).
-3. Still ambiguous → ask which file. Never guess.
-4. Read the file **in full** (`Read` / `view_file`). Note which repo it belongs to — that decides the verification gates in Step 5.
-5. Check `git status` for the file's repo. If the target already has uncommitted changes, mention it so the user can tell your edits apart from theirs.
+1. Resolve the path from arguments or the file open/selected in the IDE (ask if still ambiguous).
+2. Read the file **in full** and check `git status` for its repo (mention if the file already has uncommitted changes).
 
 ### Step 2: Global Usage Cross-Check
 
 Before touching any `export`, `public`, or `internal` symbol:
-
-1. **Catalog** every exported/public symbol: functions, constants, types, enums, classes, and — for C# — public members.
-2. **Search the workspace root, not just the repo.** Multi-repo workspaces (e.g. a root holding a backend and a frontend repo) need both searched. Use word boundaries and exclude build output:
-
+1. **Catalog** every exported/public symbol (functions, constants, types, enums, classes, C# public members).
+2. **Search the workspace root** with word boundaries, excluding build output and worktree copies:
    ```bash
    rg -n -w 'SymbolName' <workspace-root> \
      -g '!**/node_modules/**' -g '!**/bin/**' -g '!**/obj/**' -g '!**/dist/**' \
      -g '!**/.claude/worktrees/**'
    ```
-
-   The last glob keeps active `git-worktrees` worktrees (`<repo>/.claude/worktrees/<slug>`) from counting as consumers — their copy of every symbol would make each export look used. `rg` already skips the hidden `.claude/` directory and honours the `.git/info/exclude` entry the worktree skill writes; the glob protects `--hidden` runs, `grep -r` / `find` fallbacks, and repos where that entry is missing.
-
-3. **Follow the indirections grep misses on a plain name search:**
-   - Barrels: `export * from './file'` and `export { Foo } from './file'` — then search consumers of the barrel path/alias.
-   - Renames: `export { Foo as Bar }`, `import { Foo as Bar }` — search the alias too.
-   - Dynamic and string references: `import('./file')`, `lazy(() => import(...))`, `nameof(Foo)`, string keys in JSON/config, `.cshtml`/`.razor` views.
-   - Generated code that references the symbol (route trees, OpenAPI clients) — a generated consumer is a consumer.
-4. **Classify each symbol:**
-
-   | Finding | Action |
-   | --- | --- |
-   | External consumers exist (including tests, e2e, generated code) | Keep untouched |
-   | No external consumers, used locally | Demote (drop `export` / narrow access modifier) |
-   | No consumers anywhere | Delete |
-   | Framework-mandated or contract-bearing (§2 *Protect*) | Keep, regardless of hits |
-   | Ambiguous (dynamic / reflection-adjacent) | Keep; list under *Retained — needs decision* |
+3. **Follow indirections**: barrels (`export *`, `export { Foo }`), renames (`as Bar`), dynamic/string references (`import(...)`, `nameof(Foo)`, JSON/config keys, `.cshtml`/`.razor`), and generated code (route trees, OpenAPI clients).
+4. **Classify**: external consumers → keep; local only → demote; zero consumers → delete; framework/contract (§2) → keep; ambiguous → keep and list under *Retained — needs decision*.
 
 ### Step 3: Code Smell & Dead Code Audit
 
-1. **Unused imports** — trace every identifier against the body. Delete the whole statement if all specifiers are unused; otherwise prune specifiers. Keep side-effect-only imports.
-2. **Dead bindings** — before removing an unused variable, inspect its right-hand side. `const x = performAction()` with unused `x` becomes `performAction()` if it has side effects (calls, awaits, mutations, getters that throw); only a pure expression may be deleted outright. In C#, use `_ = PerformAction();` where the repo convention requires it.
-3. **Comments and debug output** — classify each per §2. Distinguish commented-out code (code syntax) from prose. A TODO is removed only when the code proves the work is done; TODOs with a work-item ID or an open question stay.
-4. **Redundant code** — redundant casts and assertions, double negation, empty blocks, duplicate class names/styles. Removing a type assertion can change an inferred type — re-check with the type-checker.
-5. **Nested ternaries** — refactor using the [`/expressive`](../expressive/SKILL.md) catalog, choosing by shape:
-
-   | Shape | Construct |
-   | --- | --- |
-   | Discrete keys/variants → values | Lookup map / `Record` (Pattern 1) |
-   | Depends on several locals, props, or state | **Internal closure** with guard clauses inside the consuming function — avoids parameter drilling |
-   | Pure and independent of enclosing scope, or shared | Module-scope pure helper (Pattern 3) |
-   | Compound domain condition | Named predicate / semantic variable (Pattern 2) |
-   | C# | `switch` expression or pattern matching |
-
-   **Behavior traps — check before converting:**
-   - **Eager vs. lazy**: a ternary evaluates only the chosen branch; an object literal evaluates every value up front. If a branch throws, has side effects, or is expensive (`obj.a.b` on a possibly-null `obj`, a function call), store thunks or use a closure with guards instead of a plain map.
-   - **Fallback semantics**: keep `??` vs `||` exactly as written — `0`, `''`, and `false` behave differently.
-   - **Exhaustiveness**: a typed `Record<Union, T>` must still cover every member; don't introduce a silent `undefined`.
-   - A single-level `a ? b : c`, or a two-branch JSX conditional render, is fine as is — don't refactor it.
+1. **Unused imports**: delete unused statements or specifiers; keep side-effect-only imports.
+2. **Dead bindings**: inspect the right-hand side before removing. Keep side-effecting expressions (`performAction()`, or `_ = PerformAction();` in C#); delete only pure expressions.
+3. **Comments and debug output**: classify per §2. Remove a TODO only when the code proves the work is done; keep TODOs with a work-item ID or open question.
+4. **Redundant code**: redundant casts/assertions, double negation, empty blocks, duplicate class names. Re-check inferred types after removing assertions.
+5. **Nested ternaries**: refactor using [`../expressive/references/transformation-catalog.md`](../expressive/references/transformation-catalog.md) (Pattern 1 lookup map, internal closure with guards when capturing local scope, Pattern 3 pure helper, Pattern 2 named predicate, or C# `switch` expression), checking Pattern 1's behavior traps (eager vs. lazy evaluation, `??` vs `||`, exhaustiveness, and leaving single-level ternaries alone).
 
 ### Step 4: Surgical Application
 
-**Step 4 Exit Bound:** Verify that no syntax errors, dangling commas, or orphaned blocks remain before opening Step 5. The edited file must compile/lint cleanly without warnings introduced by the cleanup.
-
-1. Apply targeted edits (`Edit` / `replace_file_content`). Never rewrite the whole file to remove a few lines.
-2. Remove orphaned blank lines, dangling commas, and now-empty blocks left by removals.
-3. Place extracted helpers as an **internal closure** when they capture local scope; at module scope only when genuinely pure or shared.
-4. No renames, reformatting of untouched code, reordering, or style changes beyond what the removal requires.
+1. Apply targeted edits without rewriting the whole file; remove orphaned blank lines, dangling commas, and empty blocks.
+2. Place extracted helpers as an **internal closure** when they capture local scope; at module scope only when pure or shared.
+3. No renames, reformatting of untouched code, or reordering beyond what the removal requires.
 
 ### Step 5: Verification & Quality Gate
 
-Use the gates named in the repo's rulebook (`CLAUDE.md` / `GEMINI.md` / copilot-instructions) — they override the defaults below. **Scope formatters to the touched files**: repo-wide import sorters and formatters rewrite unrelated files and pollute the diff.
-
-| Stack | Default gates |
-| --- | --- |
-| TypeScript / React | `npx eslint <file>` then the repo's `lint` + `build` scripts (or `npx tsc --noEmit`) |
-| C# / .NET | `dotnet format --include <file>` then `dotnet build` |
-| Python | `ruff check <file>` (or the repo's linter) and its type-checker |
-
-Then:
-
-1. If a test suite covers the target, run it (Playwright specs for UI, the relevant integration-test class for backend).
-2. Run `git diff --stat` in the repo. Any file outside the target that is not a listed mechanical consequence → revert it (`git checkout -- <file>`).
-3. A failing gate is fixed or the offending removal reverted — never reported as done.
+Run `core` › *Post-edit verification*, scoping formatters to touched files only:
+- **TypeScript / React**: `npx eslint <file>` then repo `lint` + `build` / `npx tsc --noEmit`.
+- **C# / .NET**: `dotnet format --include <file>` then `dotnet build`.
+- **Python**: `ruff check <file>` and type-checker.
+- Run covering tests, check `git diff --stat`, and revert any unintended file changes outside the target (`git checkout -- <file>`).
 
 ---
 
 ## 4. Language-Specific Guidelines
 
-### TypeScript / React
-
-- **Unused props**: removing a prop from a component's type breaks every caller still passing it — grep the JSX call sites and include them in Step 2.
-- **Unused state**: remove `useState` only when neither the value nor the setter is used. A setter used without reading the value may still trigger needed re-renders — keep it and flag it.
-- **Unused effects/memos**: an effect with side effects is not dead just because nothing reads its output.
-- **`import React`**: remove only when `tsconfig` uses the automatic runtime (`"jsx": "react-jsx"`) and the file doesn't use `React.*` APIs.
-- **`type` vs `interface`**: prefer `type` over `interface` for props, state, payloads and domain shapes (see [`expressive` Pattern 7](../expressive/references/transformation-catalog.md#pattern-7-prefer-type-over-interface-typescript)). Converting existing interfaces is out of `/clean`'s scope unless the user asks.
-
-### C# / .NET
-
-- **Usings**: let `dotnet format --include <file>` prune them.
-- **Access modifiers**: demote a member to `private` only when it is a method or field with no outside callers. Never demote public **properties** on DTOs, entities, or options classes — serialization, EF, and configuration binding use them reflectively.
-- **`sealed`**: add only when the repo convention requires it (e.g. PRIIS Backend) and nothing derives from the class.
-- **Discards**: `_ = Expression();` or `_` parameters where a signature demands them.
-- **Nested ternaries**: `switch` expressions or pattern matching.
-
-### Python
-
-- Remove unused imports and locals; keep imports that exist for re-export or side effects.
-- When removing an export from `__init__.py`, update `__all__`.
-- Remove debugging `print()` — but not output in CLI entry points and scripts.
+- **TypeScript / React**: include JSX call sites when checking unused component props; keep `useState` setters that trigger needed re-renders; keep side-effecting `useEffect`; remove `import React` only under `"jsx": "react-jsx"` with no `React.*` usage; prefer `type` over `interface` for new shapes ([`expressive` Pattern 7](../expressive/references/transformation-catalog.md#pattern-7-prefer-type-over-interface-typescript)).
+- **C# / .NET**: let `dotnet format --include <file>` prune `using`s; never demote public properties on DTOs, entities, or options classes; add `sealed` when repo convention requires it and nothing derives from the class.
+- **Python**: keep re-export/side-effect imports; update `__all__` when removing exports from `__init__.py`; keep `print()` in CLI scripts.
 
 ---
 
-## 5. Output Format
+## 5. Output Format & Verification
 
-Keep the summary concise and high-signal. Link the file using the **active host's** link format from the `artifact-protocol` protocol (workspace-relative in Claude Code, `file://` in Antigravity). Omit empty sections.
-
-```markdown
-### 🧹 Clean Summary: [button.tsx](src/components/button.tsx)
-
-#### Removed & Pruned
-- **Exports**: `helperUtil` demoted to module-private (no external consumers); `UNUSED_CONST` deleted (unused everywhere).
-- **Imports**: `useCallback`, `useMemo` from `'react'`; type `UserRole` from `'~/types'`.
-- **Comments & debug**: 3 commented-out JSX blocks; 2 `console.log()` calls.
-- **Redundant logic**: `!!isValid` → `isValid` in `if` condition.
-
-#### Expressive Refactorings
-- Nested ternary `choices ? (typeof choices === 'function' ? choices(settle) : choices) : defaultChoices` → internal `resolveChoices` closure with guard clauses.
-
-#### Outside the Target (mechanical)
-- `src/components/index.ts`: dropped re-export of deleted `UNUSED_CONST`.
-
-#### Retained
-- `export const Route`: router entry point.
-- Comment at L42–45: explains a cache-invalidation race.
-- **Needs decision**: `legacyFormatter` — no static references, but `formatters/[name]` is resolved dynamically.
-
-#### Suggestions (not applied)
-- `useFoo` in `hooks/use-foo.ts` duplicates `useBar` — candidate for `/refine`.
-
-#### Verification
-- Lint: ✅ · Build/type-check: ✅ · Diff: target file + 1 listed barrel only
-```
-
----
-
-## 6. Verification Checklist
-
-Before reporting completion, confirm:
-
-- [ ] Every demoted/removed symbol was searched across the whole workspace root, including barrels, aliases, dynamic references, tests, and generated code.
-- [ ] Nothing in §2 *What to Protect* was removed or demoted, regardless of grep results.
-- [ ] Every nested ternary was refactored, or left as is with a stated reason; no conversion changed evaluation laziness or `??`/`||` semantics.
-- [ ] No side-effecting expression was deleted along with an unused binding.
-- [ ] Docs and suppressions are intact and still accurate after removals.
-- [ ] The diff touches only the target file plus listed mechanical consequences.
-- [ ] The repo's lint and build/type-check gates pass.
+Report using [`references/summary-template.md`](references/summary-template.md) (or write `<prefix>-clean_report-<suffix>.md` for directory targets and render its `artifact-protocol` › _Chat link block_). Confirm all Golden Invariants and repo lint/build gates pass before reporting.

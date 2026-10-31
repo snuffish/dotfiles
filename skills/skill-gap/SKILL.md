@@ -6,7 +6,7 @@ argument-hint: "[skill name — defaults to every gap]"
 
 # Skill: `/skill-gap` — From Logged Gaps to Fixed Skills
 
-A skill gap is a fact or instruction in a registry skill that proved wrong, logged as one file in `~/.terminal/skill-gaps/`. `core` › _Skill gaps_ is the only home of the rules: what counts, the file format and the **Status** values. This skill finds the gaps still worth acting on and takes them to a fix or an explicit "log it for later"; it adds no rule of its own.
+A skill gap is a fact or instruction in a registry skill that proved wrong, logged as one file in `~/.terminal/skill-gaps/`. `core` › _Skill gaps_ (and its template in [`../_modules/references/skill-gaps.md`](../_modules/references/skill-gaps.md)) is the only home of the rules: what counts, the file format and the **Status** values. This skill finds the gaps still worth acting on and takes them to a fix or an explicit "log it for later"; it adds no rule of its own.
 
 ---
 
@@ -36,7 +36,7 @@ python3 -I <registry>/skill-gap/scripts/list_gaps.py          # table
 python3 -I <registry>/skill-gap/scripts/list_gaps.py --json   # every parsed field, for grouping
 ```
 
-The script reads `skill-gaps/` next to the registry, understands both the template's `- **Status:**` line and the older `Status: <value> · Command: …` line, and never writes. It compares against the working tree and its git history, since fixes are often uncommitted. `--dir <folder>` reads another folder. Exit 2 means the folder can't be read. With an argument, keep only that skill's gaps.
+Reads `skill-gaps/` next to the registry (both `- **Status:**` and legacy `Status:` lines), compares against the working tree and git history without writing (`--dir <folder>` overrides path; exit 2 if unreadable). With an argument, keep only that skill's gaps.
 
 | Class          | The script found                                                                                                                            | Next    |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
@@ -78,7 +78,7 @@ With several groups, put one question per group in the same AskUserQuestion call
 Once per group, in the registry checkout (never a snapshot, `core` › _The `/proceed` gate_ rule 5):
 
 1. Re-check each fact against the code or tool it names, then make the Proposed edit (restated against today's text when step 2 found the quote stale).
-2. Run the gap's **Check**, then lint the registry: `python3 -I <registry>/sync-skills/sync_skills.py` (report only; it applies nothing without `--apply`). Zero new errors.
+2. Update `skills/skills-claims.json` for any changed or newly added verifiable fact ([`/skill-drift`](../skill-drift/SKILL.md) › *3. Re-extract claims after editing a skill*), run the gap's **Check**, and lint the registry: `python3 -I <registry>/sync-skills/sync_skills.py` (report only; it applies nothing without `--apply`). Zero new errors.
 3. Set **Status** to `fixed` in each gap file of the group. Change nothing else in the file.
 
 Then apply the step 2 Status updates the user accepted, the same way. End with the files edited and offer `/commit`; don't run it.

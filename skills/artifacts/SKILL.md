@@ -23,48 +23,36 @@ Read these before step 1:
 ## Discovery Protocol
 
 ### Step 1: Scan Workspace-Root Artifacts
-`/artifacts` is the one skill that reads **across** hosts, models, and suffixes to show the user everything:
+`/artifacts` reads **across** hosts, models, and suffixes at the workspace root (`*.md`, plus `*-export-*.html` and `*-export-*.txt`):
 ```bash
-ls -lt *.md
+ls -lt *.md *-export-*.html *-export-*.txt 2>/dev/null
 ```
-Parse filenames into:
-- **Host**: `claude`, `antigravity`, or `(standalone)`
-- **AI Model**: e.g. `gemini-3.8-flash`, `opus-5.5`, `sonnet-5.5`
-- **Base Type**: `implementation_plan`, `code_review`, `pr_feedback_review`, `investigation`, etc.
-- **Suffix / Topic**: The trailing identifier (e.g. `category-demand-statistics`, `18176-verksamhetsobjekt`, `begar-prefix`)
-
-### Step 2: Scan Legacy Conversation Artifacts (Antigravity Only)
-1. Check active conversation: `<appDataDir>/brain/<current-conversation-id>/` (excluding hidden `.system_generated/` and `scratch/`).
-2. Check past conversations from `<conversation_history>` (top 5–10) in `<appDataDir>/brain/<past-id>/`.
+1. Parse each filename into **Host** (`claude`, `antigravity`, or `(standalone)`), **AI Model**, **Base Type** (see `_modules/references/artifact-catalog.md`), and **Suffix / Topic**.
+2. Group revisions (`<name>.md`, `<name>-2.md`, …) into families per `artifact-protocol` › _Claim_ › _Readers & family selection_, and order by the `created` timestamp in each file's `<!-- artifact-owner: … -->` marker (falling back to mtime when absent).
 
 ---
 
 ## Presenting & Selecting Artifacts
 
-Present discovered artifacts in a structured table:
+Present discovered artifact families in a structured table, formatting every `[view]` link for the **current host** per `artifact-protocol` › *Host-Specific Link Formats* (`file://<workspace-root>/<file>` in Antigravity, `<file>` in the Claude Code IDE extension, `antigravity-ide://file/<workspace-root>/<file>` in the Claude Code terminal CLI):
 
 ```markdown
 # 📂 Recent Artifacts
 
-| # | Artifact | Host · Model | Topic / Suffix | Summary / Goal | Link |
+| # | Artifact (latest revision) | Host · Model | Topic / Suffix | Summary / Goal | Link |
 |---|---|---|---|---|---|
-| 1 | `antigravity-gemini-3.8-flash-code_review-category-demand-statistics.md` | Antigravity · Gemini 3.8 Flash | `category-demand-statistics` | Category demand statistics code review | [view](file://<workspace-root>/antigravity-gemini-3.8-flash-code_review-category-demand-statistics.md) |
-| 2 | `claude-opus-5.5-code_review-18176-verksamhetsobjekt.md` | Claude Code · Opus 5.5 | `18176-verksamhetsobjekt` | PR #18176 code review | [view](claude-opus-5.5-code_review-18176-verksamhetsobjekt.md) |
-| 3 | `antigravity-gemini-3.8-flash-implementation_plan-begar-prefix.md` | Antigravity · Gemini 3.8 Flash | `begar-prefix` | Begär-prefix refactor plan | [view](file://<workspace-root>/antigravity-gemini-3.8-flash-implementation_plan-begar-prefix.md) |
-| 4 | `claude-opus-5.5-walkthrough-29982-verksamhetsobjekt.md` | Claude Code · Opus 5.5 | `29982-verksamhetsobjekt` | Verification results | [view](claude-opus-5.5-walkthrough-29982-verksamhetsobjekt.md) |
+| 1 | `<prefix>-code_review-<suffix>.md` | <Host · Model> | `<suffix>` | <Summary> | [view](<host-link>) |
 ```
 
-### Interactive Targeting
-- If multiple options exist, let the user pick one: under Antigravity with `ask_question`, under Claude Code with `AskUserQuestion`, otherwise with a numbered list.
+If multiple options exist, let the user pick one (`ask_question` in Antigravity, `AskUserQuestion` in Claude Code, or a numbered list).
 
 ---
 
 ## Actions on Targeted Artifact
 
 Once an artifact is selected:
-1. **Summarize**: Concise status, open questions, and proposed changes.
+1. **Summarize**: concise status, open questions, and proposed changes or findings, plus its `artifact-protocol` › _Chat link block_.
 2. **Next Steps**:
    - **Review**: *"Run `/plan --review <suffix>` to conduct a strict read-only audit of this plan."*
    - **Proceed**: *"Type `/proceed` to begin implementing this plan."*
-   - **Refine / Edit**: *"Tell me what modifications you'd like to make to the plan."*
-   - **View Details**: Provide a clickable direct link to open the file in the IDE.
+   - **Refine / Edit**: *"Tell me what modifications you'd like to make"* (if the artifact belongs to another session, the user naming it authorizes updating it per `artifact-protocol` › *Ownership* rule 3; otherwise `/plan` writes a new revision via *Claim*).

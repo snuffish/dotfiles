@@ -1,6 +1,6 @@
 ---
 name: priis-prod-diagnose
-description: "[Project: GR.PRIIS] Answers \"what did production do?\" (missing notification, closed ticket, who got what) without prod access: traces the code, writes one read-only T-SQL round to paste into SSMS over remote desktop, reads the results the user pastes back and drafts the reply. Use for /priis-prod-diagnose, \"verify this in prod\", \"query for production\". Not for the local stack (priis-local-stack). Load ONLY when working on GR.PRIIS or in the GR repository."
+description: "[Project: GR.PRIIS] Answers \"what did production do?\" (missing notification, closed ticket, who got what) without prod access: traces the code, writes one read-only T-SQL round to paste into SSMS over remote desktop, reads the results the user pastes back and drafts the reply. Use for /priis-prod-diagnose, \"verify this in prod\", \"query for production\". Not for the local stack (priis-local-stack). Load ONLY when working in the GR.PRIIS repository or the GR folder that holds it."
 ---
 
 # Skill: `/priis-prod-diagnose` — Production diagnosis over remote desktop
@@ -42,7 +42,7 @@ Read these before step 1:
 
 1. Restate the question as one checkable claim: _"<persona/role> did not get <notification> for <records> between <dates>."_ Pull record ids from the thread: a ticket's UI number is `<municipality code>-<6-digit number>` (`1482-010280`).
 2. Map people to roles. Personas name roles, not people: the table is in `backend/.github/copilot-instructions.md` › _Cross-half contracts_ (Samir = PlacementManager, Lena = CaseworkerGuided, Ines = LocalPurchaseCoordinator, Ewa = LocalContractManager). Business terms are in `GLOSSARY.md`.
-3. Load the team skills for the area from the `priis-profile` skill › _Pattern skills_. For notifications and jobs that is `priis-backend-notifications` and `priis-backend-ef-core`. The workspace `CLAUDE.md` › _CodeGraph gaps_ says what to grep instead of graph.
+3. Load the team skills for the area from the `priis-profile` skill › _References per layer_. For notifications and jobs that is `priis-backend-notifications` and `priis-backend-ef-core`. The workspace `CLAUDE.md` › _CodeGraph gaps_ says what to grep instead of graph.
 
 ### Step 2: Trace what the code says should happen
 
@@ -61,7 +61,7 @@ Read these before step 1:
 
 ### Step 3: Write round one
 
-Build one script from [`references/sql-recipes.md`](references/sql-recipes.md) that settles the main hypothesis **and** its alternatives in one run, following its _House rules_: paste-safe (ASCII only, no comments, no CTEs or variables, every statement standalone, lines of 100 characters or fewer), labelled result sets, about six columns, enums decoded, no sensitive columns. Save it in the scratchpad as `round<N>.sql`.
+Build one script from [`references/sql-recipes.md`](references/sql-recipes.md) that settles the main hypothesis **and** its alternatives in one run, following [`references/sql-recipes.md`](references/sql-recipes.md) › _House rules_. Save it in the scratchpad as `round<N>.sql`.
 
 - Look up every table and column you add beyond the recipes:
   ```bash

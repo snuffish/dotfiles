@@ -52,7 +52,7 @@ What it decides, so you do not re-derive it:
 - **Grouping** (`yesterday[]`): one entry per work item (`#NNNNN:` subject or `feature|bugfix/NNNNN_` branch), else per `repo:branch` chore, else per reviewed PR (`review:<id>`) (`scripts/collect.py:200`). Azure's `Merged PR N:` squash commits fold into PR N (`scripts/collect.py:423`). Each entry has `commits`, `prs[].events` (`opened` / `completed` / `abandoned`), my `states` transitions, `pipelines`, my review `comments` and `votes`; entries are sorted by `weight` (`scripts/collect.py:481`).
 - **Summary** (`yesterday[].summary`): one sentence per entry, taken from the PR description (the paragraph under a `Summary` heading, else the first prose paragraph), else a session whose request names the entry's `#id` or `!id`, else the first commit subject; `summary_source` says which (`scripts/collect.py:210`, `scripts/collect.py:468-480`).
 - **Reviews**: PRs where I am a reviewer and not the author (`scripts/collect.py:242`); my comments and vote updates come from at most 10 thread calls per run (`scripts/collect.py:27`, `scripts/collect.py:574`), votes already translated (`scripts/collect.py:28`).
-- **Today** (`today`): open PRs with approvals and change requests, unmerged branches touched in the window that have no PR, my assigned items not in a done state, the last branch I committed on, unpushed commits and dirty trees (`scripts/collect.py:485-497`, `scripts/collect.py:31`).
+- **Today** (`today`): open PRs with approvals and change requests, unmerged branches touched in the window that have no PR, my assigned items in progress (`Active` / `In Progress` / `Committed`, `scripts/collect.py:31`, `scripts/collect.py:301`), the last branch I committed on, unpushed commits and dirty trees (`scripts/collect.py:485-497`).
 - **Blockers** (`blockers[]`): the latest run of a pipeline failed on an open PR, an open PR with no approving or rejecting vote yet, an item in state `Blocked` (`scripts/collect.py:502-510`).
 - **Sessions** (`sessions[]`): claude-mem session summaries, read-only; transcripts are the fallback (`scripts/collect.py:353-356`, `scripts/collect.py:368`).
 - **Notes** (`notes[]`): one line per source that was skipped (missing CLI, failed auth, timeout) (`scripts/collect.py:62`), and `nothing recorded …` for an empty window (`scripts/collect.py:586`).
@@ -99,7 +99,4 @@ With `--file`, also write the same content to `<prefix>-standup_recap-<window.st
 
 ## 4. Verification & Validation
 
-- The collector's JSON parsed and `meta.elapsed_s` is reported if it exceeded 30.
-- Every bullet traces to an entry, a `today` field, a blocker or a session in the JSON.
-- `notes[]` lines are shown, not swallowed.
-- No commit, push, comment or tracker write happened.
+- The collector's JSON parsed (`meta.elapsed_s` reported if > 30), every bullet traces to the JSON, and `notes[]` lines are shown.

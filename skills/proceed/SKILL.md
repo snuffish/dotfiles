@@ -21,7 +21,7 @@ Read these before step 1:
 - `../_modules/artifact-protocol.md`: writes no artifact — updates the `Status` of the plan it executes
 - `../_modules/git-worktrees.md`
 
-The rules of the gate are `core` › _The `/proceed` gate_: one item only, no outward-facing actions by implication, `Status` follows reality, verify, never edit a snapshot. They apply whether the user typed `/proceed` or a plain "go ahead". This Command adds the explicit resolution and reporting steps below. `disable-model-invocation` keeps the model from calling it.
+Follow `core` › _The `/proceed` gate_ for all gate invariants; `disable-model-invocation` keeps the model from calling this Command itself.
 
 ---
 
@@ -56,27 +56,12 @@ Then:
 
 Re-read the plan artifact from disk before acting; the user may have edited it after the gate closed.
 
-### Step 2: Mark it approved
+### Step 2: Execute & Verify
 
-If the item is a plan artifact with a `Status` line, set it to `Approved`.
-
-### Step 3: Execute
-
-- Follow the plan's phases in order. Stay inside its scope; anything the plan did not foresee that changes scope is a question, not a decision.
-- Apply the project's References and Profiles for the code being touched (`core` › _Precedence_).
-- When the next step belongs to another Command (`/plan`, `implement-feature`), invoke it and let it run under this authorization.
-- Honour an active `[worktree-context]` and `core` › _Worktree opt-in_.
-- Before the first edit, resolve the base profile's **Implementation mode** (`git-worktrees` › _Modes_); `workspace` → edit in a workspace worktree, not the main checkout.
-
-### Step 4: Verify
-
-Run `core` › _Post-edit verification_: the plan's own verification commands first, then the targeted build, type-check and tests for what changed. Fix failures before reporting; if one cannot be fixed within scope, stop and report it with its output.
-
-### Step 5: Close out
-
-Set the plan's `Status` to `Completed` when every phase in scope is done and verified; leave it `Approved` and note what remains when only part of the scope ran.
-
-When the item came from a review artifact (`pr_feedback_review`, `code_review`), recording the work there means updating every **status field** that artifact's Command declares (`artifact-protocol` rule 7), not only its checklist. A fix that is not yet pushed is 🕓 Fixed, not pushed (`<sha>`); a fix becomes ✅ only once it is at the PR head. Before reporting, `grep` the artifact for the old markers (`⏸`, `Not addressed`, `uncommitted`) and resolve every stale hit.
+1. **Mark approved**: set the plan's `Status` to `Approved` (`core` › _The `/proceed` gate_).
+2. **Execute**: follow the plan's phases in order, staying inside its scope and applying the project's References and Profiles (`core` › _Precedence*). Honour an active `[worktree-context]`, `core` › _Worktree opt-in_, and the base profile's **Implementation mode** (`git-worktrees` › _Modes_).
+3. **Verify**: run `core` › _Post-edit verification_ (the plan's own verification commands first, then targeted build, type-check, and tests).
+4. **Close out**: update the plan's `Status` (`Completed` or `Approved` with remaining items per `core` › _The `/proceed` gate_) and every declared status field in any source review/plan artifact (`artifact-protocol` › rule 7; `grep` for stale `⏸`, `Not addressed`, or `uncommitted` markers).
 
 ---
 
@@ -98,8 +83,6 @@ Next: <the single next action, usually a commit/push or ship command for the use
 ## 4. Verification & Validation
 
 - [ ] The pending item was resolved from this session, not guessed; ambiguity was asked about.
-- [ ] Only the authorized scope was changed; no commit, push, PR or tracker write happened without its own request.
-- [ ] No edit landed in a snapshot worktree.
+- [ ] Only the authorized scope was changed; no commit, push, PR or tracker write happened without its own request, and no edit landed in a snapshot worktree.
 - [ ] Verification commands ran and their results are reported faithfully.
-- [ ] The plan's `Status` reflects what actually ran.
-- [ ] A review artifact the work came from shows the same state in every status field: the header, the matrix, the per-item lines and the checklist.
+- [ ] The plan's `Status` and every status field in any source review artifact match reality (`artifact-protocol` › rule 7).

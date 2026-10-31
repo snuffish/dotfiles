@@ -79,24 +79,30 @@ public sealed class CreateFooEndpoint : Endpoint<CreateFooRequest, CreateFooResp
 
 ---
 
-## 3. Records
+## 3. Records (`required` + `init`)
 
-Records provide value equality and immutable DTOs.
+Records provide value equality and immutable DTOs. Use `required` + `init` on nominal record/DTO properties that must be set at creation and stay immutable afterwards:
 
 ```csharp
 // Positional records — for request DTOs (compact, works with FastEndpoints binding)
 public sealed record CreateFooRequest(Guid ParentId, string Name, string? Description = null);
 
-// Nominal records with required init — for response DTOs
+// Nominal records with required init — for response DTOs and EF Select projections
 public sealed record FooDto
 {
     public required Guid Id { get; init; }
     public required string Name { get; init; }
-    public string? Description { get; init; }
+    public string? Description { get; init; }    // optional — no required
 }
 
-// Nominal with required init — for EF Select projections
 var dto = new FooDto { Id = f.Id, Name = f.Name };
+
+// Entity properties that shouldn't be reassigned externally
+public sealed class OperationNote : AuditableEntity
+{
+    public Guid Id { get; init; } = Guid.NewGuid();   // set once at creation
+    public string Content { get; private set; } = "";  // mutable via command method
+}
 ```
 
 **Do NOT use records for:**
@@ -227,35 +233,9 @@ public static string Describe(object obj) => obj switch
 
 ---
 
-## 8. `required` + `init`
-
-For DTO/record properties that must be set at object creation but should not change:
-
-```csharp
-// ✅ required + init — must be set in object initializer, immutable after
-public sealed record OperationDto
-{
-    public required Guid Id { get; init; }
-    public required string Name { get; init; }
-    public string? Description { get; init; }    // optional — no required
-}
-
-// EF projection
-var dto = new OperationDto { Id = o.Id, Name = o.Name };
-
-// ✅ Entity properties that shouldn't be reassigned externally
-public sealed class OperationNote : AuditableEntity
-{
-    public Guid Id { get; init; } = Guid.NewGuid();   // set once at creation
-    public string Content { get; private set; } = "";  // mutable via command method
-}
-```
-
----
-
 ## 9. Nullable Reference Types
 
-The project is NRT-enabled (`<Nullable>enable</Nullable>`). Treat compiler warnings as errors.
+When nullable reference types are enabled (`<Nullable>enable</Nullable>`), treat compiler warnings as errors.
 
 ```csharp
 // ✅ Correct NRT usage
@@ -291,15 +271,17 @@ private static partial Regex PhonePattern();
 // Used in validation:
 RuleFor(x => x.Phone)
     .Must(p => PhonePattern().IsMatch(p))
-    .WithMessage("Ogiltigt telefonnummer.");
+    .WithMessage("Invalid phone number.");
 
 // ❌ Instance-constructed regex (avoid for static patterns)
 private static readonly Regex PhonePattern = new(@"^\+?[0-9\s\-\(\)]{7,20}$");
 ```
 
+---
+
 ## 11. Local Functions over Anonymous Lambdas (IDE0039)
 
-When defining a delegate variable (e.g., for passing to an assertion in testing or for scoped helper execution), use a C# local function instead of assigning an anonymous lambda to a variable.
+When defining a delegate variable (e.g., for passing to a test assertion or for scoped helper execution), use a C# local function instead of assigning an anonymous lambda to a variable.
 
 **PascalCase Naming Rule**: Local functions are treated as methods and **MUST** start with an uppercase letter (PascalCase), not camelCase.
 
@@ -309,7 +291,7 @@ async Task Act()
 {
     await service.ExecuteAsync();
 }
-var ex = await Assert.That(Act).Throws<Exception>();
+await AssertThrowsAsync(Act);
 
 // ❌ Forbidden (Anonymous Lambda or camelCase Local Function)
 var act = async () => await service.ExecuteAsync();
@@ -356,10 +338,5 @@ Write a comment only to state something the code cannot show on its own — a no
 | `this._field = param` in constructor | Primary constructor capture |
 | A new `public static … (this Foo foo)` extension method | An `extension(Foo foo) { … }` block in the same static class (existing `this` methods can stay) |
 | `new Regex(pattern)` static field | `[GeneratedRegex] partial` method |
-| `throw new ArgumentException(...)` for expected failures | Return the project's result type (e.g. `Result.Failure(...)`) |
 | `var act = async () => ...` | `async Task Act() { ... }` (PascalCase local function) |
-| `// mirrors X / same as the Y export` (cross-ref archaeology) | State what *this* type does |
-| `// fixed CI / changed in PR #n` (history in a comment) | Leave history to git/PR; document current behavior |
-| Multi-paragraph `<remarks>` arguing why an approach was chosen | One clause naming the constraint; the rest goes in the PR |
-| Doc written as a message to the reader/reviewer | Doc written about the code, for the next reader |
-| Stale doc left behind after behavior changed | Update or delete it in the same edit |
+| Cross-ref archaeology, PR/CI history, or multi-paragraph `<remarks>` arguing a choice | Present-tense responsibility and one clause naming any non-obvious constraint; update/delete stale docs in the same edit |

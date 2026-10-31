@@ -1,4 +1,4 @@
-#### Step 2.2: API Reference Generation
+# API Reference Generation Template
 
 For each public API surface, document:
 

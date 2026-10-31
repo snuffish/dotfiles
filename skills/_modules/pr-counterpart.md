@@ -5,16 +5,14 @@ Dual-repo PR counterpart discovery: finds the other half of a change that ships 
 ## Modules
 
 Read these before using this one:
-- [git-worktrees.md](git-worktrees.md) (same folder as this file): only its *Repo Resolution* section, to list the repos in the workspace
-- [pr-host.md](pr-host.md): *Organization URL* (`<org-url>`) and *Fetch the PR, its work items and acceptance criteria*, for the counterpart's metadata
+- [git-worktrees.md](git-worktrees.md) (same folder as this file): *Repo Resolution*, to list the repos in the workspace
+- [pr-host.md](pr-host.md): *Organization URL* (`<org-url>`) and *Fetch the PR, its work items and acceptance criteria*
 
 ---
 
 ## Counterpart discovery
 
-A change that spans repos ships as **one PR per repo**: backend and frontend, service and client, library and consumer. The halves usually carry different work-item ids and branch names. Any skill that resolves a PR, whether from a URL, an id, a branch or a work item, runs this lookup **every time**, including when the user pasted exactly one PR link. Handling one half alone misses the other half's defects and every contract mismatch between them.
-
-Run it when the workspace holds more than one repo (`git-worktrees` › *Repo Resolution*), or when the resolved PR touches a cross-repo contract that the workspace rulebook names. Check every signal. They are cheap, and each one catches cases the others miss:
+A change that spans repos ships as **one PR per repo** (e.g. backend + frontend, service + client), often under different work-item IDs and branch names. Every PR-resolving Command runs this lookup when the workspace holds more than one repo (`git-worktrees` › *Repo Resolution*) or when the diff touches a cross-repo contract named by the rulebook — even when the user pasted a single PR URL:
 
 | # | Signal | How to check (Azure DevOps; GitHub equivalents in brackets) |
 |---|---|---|

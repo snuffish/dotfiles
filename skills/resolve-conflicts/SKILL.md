@@ -5,7 +5,7 @@ description: "Resolves git merge, rebase, cherry-pick, and stash conflicts. Reco
 
 # Skill: `/resolve-conflicts` — Git Conflict Resolution
 
-Finishes the half of a merge, rebase, cherry-pick, revert or stash pop that git could not do on its own. For every conflict it works out what each side meant, writes a resolution that keeps both, checks that the merged result still builds and passes its tests, and then concludes the operation: it commits the merge or continues the rebase, cherry-pick or revert.
+Resolves in-progress git merges, rebases, cherry-picks, reverts, or stash pops by reconstructing both sides' intent from the merge base, combining non-conflicting changes, regenerating lockfiles/codegen, verifying build and tests, and concluding the operation.
 
 ---
 
@@ -15,35 +15,32 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 
 Read these before step 1:
 - `../_modules/core.md`
-- `../_modules/artifact-protocol.md`: writes no artifact by default — the deliverable is the resolved, staged tree and a per-file summary in chat. When at least one conflict needed a user decision, or the operation spans more than ~10 conflicted files or several rebase stops, also writes `<prefix>-conflict_resolution-<suffix>.md` (suffix = the branch pair, e.g. `-settings-screen-into-main`, `-rebase-onto-main`)
+- `../_modules/artifact-protocol.md`: writes no artifact by default; writes `<prefix>-conflict_resolution-<suffix>.md` when at least one conflict needed a user decision or the operation spans >10 conflicted files or multiple rebase stops
 - `../_modules/git-worktrees.md`
 
-- **Authorization**: invoking the skill authorizes editing the conflicted files, regenerating lockfiles and generated files, staging the resolved paths, and concluding the operation once Step 6's gate holds (the merge commit, `rebase --continue`, `cherry-pick --continue`, `revert --continue`). `no-commit`, `stage-only` or "don't commit" in the invocation withdraws the concluding step. It never authorizes `push` or dropping a stash.
-- **Isolation**: a conflict lives in the checkout where the operation is in progress, so resolve it there. Under `git-worktrees` › *Golden Invariants* the main checkout is read-only while a skill worktree is active for the repo. If the conflict is in the main checkout at that point, stop and ask, and name the commit or `--continue` in the question: a yes covers resolving and concluding there. When the invocation contains the token `/worktrees` and has to *start* the operation (e.g. "update my branch with main"), run it in a workspace worktree per `git-worktrees` › *Workspace Lifecycle*.
+- **Authorization**: invoking `/resolve-conflicts` authorizes editing conflicted files, regenerating lockfiles/codegen, staging resolved paths, and concluding the operation once Step 6's gates hold (unless `no-commit` / `stage-only` was passed). Never push or `stash drop`.
+- **Isolation**: resolve in the tree where the conflict lives (`repo-root`). If a skill worktree is active for the repo and the conflict is in the main checkout, ask first (`git-worktrees` › *Golden Invariants*). If `/worktrees` is passed to *start* a merge/rebase, run in a workspace worktree (`git-worktrees` › *Workspace Lifecycle*).
 
 ---
 
-## ⛔ Golden Invariants
+## Golden Invariants
 
-> [!CAUTION]
-> 1. **NEVER ABORT OR DISCARD.** No `merge --abort`, `rebase --abort`, `reset --hard`, `checkout -- .`, `restore .`, `clean`, `stash drop` or `rebase --skip` unless the user explicitly asks. Each of these throws away the user's work or a whole commit.
-> 2. **NO BLANKET SIDE-PICKING.** No `-X ours`/`-X theirs`, no `checkout --ours/--theirs .`, no `--strategy=ours`. A side is taken per file or per hunk, with a stated reason.
-> 3. **RESOLVE, DON'T REWRITE.** The result contains only what one side or the other already had, combined. Don't refactor, rename or "improve" code while resolving. Keep both sides' comments.
-> 4. **STAGE ONLY RESOLVED PATHS.** `git add <path>` per file. Never `git add -A`, `git add .` or `commit -a`, because untracked files (artifacts, scratch files, `.env`s) would go into the merge commit.
-> 5. **ASK WHEN THE SIDES TRULY COMPETE.** If the two sides want different values for the same thing and nothing in the code, tests or commit messages decides it, ask the user with both options. Never pick one silently.
-> 6. **NON-INTERACTIVE GIT ONLY.** No `mergetool`, no `-i`, no editor. Use `GIT_EDITOR=true` for `--continue`.
+1. **Never abort or discard** (`merge --abort`, `rebase --abort`, `reset --hard`, `checkout -- .`, `restore .`, `clean`, `stash drop`, `rebase --skip`) unless explicitly instructed.
+2. **No blanket side-picking** (`-X ours`/`-X theirs`, `checkout --ours/--theirs .`). Pick a side only per file/hunk with a stated reason.
+3. **Resolve, don't rewrite**: combine only what the two sides had; preserve both sides' comments and do not refactor unrelated code.
+4. **Stage only resolved paths** (`git -C "$R" add <path>` per file; never `git add -A` or `git add .`).
+5. **Ask when sides truly compete** on values/behavior that code, tests, and commit messages do not settle.
+6. **Non-interactive git only**: use `GIT_EDITOR=true` for `--continue`.
 
 ---
 
-## 1. When to Use
-
-### When *not* to use — pick the right neighbor
+## 1. When *not* to use
 
 | Situation | Use instead |
 |---|---|
-| The merge went through but the build or tests fail afterwards, and no conflict is left | [`/problem`](../problem/SKILL.md) |
+| Clean merge whose build/tests fail afterwards with no conflict left | [`/problem`](../problem/SKILL.md) |
 | Squashing or rewriting EF Core migrations that conflict across branches | [`/squash-ef-core-migrations`](../squash-ef-core-migrations/SKILL.md) |
-| Reviewing a resolved merge someone else made | [`/code-review`](../code-review/SKILL.md) on the merge commit (`git show --remerge-diff <sha>`) |
+| Reviewing a resolved merge someone else made | [`/code-review`](../code-review/SKILL.md) (`git show --remerge-diff <sha>`) |
 
 ---
 
@@ -51,7 +48,7 @@ Read these before step 1:
 
 ### Step 0 — Detect the Operation, the Sides and the Repo
 
-Resolve the repo root first (`[worktree-context]` → `repo-root`, else `git rev-parse --show-toplevel`). Then find out which operation is in progress. Use `git rev-parse --git-path` so it also works inside linked worktrees, where `.git` is a file. A rebase is in progress only when `rebase-merge` or `rebase-apply` exists, as `git status` judges it; a lone `REBASE_HEAD` can be left over from a finished rebase, so it only names the commit being replayed once a rebase directory confirms one:
+Use `git rev-parse --git-path` so detection works inside linked worktrees (a lone `REBASE_HEAD` without `rebase-merge` / `rebase-apply` is ignored as a leftover):
 
 ```bash
 R=<repo-root>
@@ -62,111 +59,50 @@ git -C "$R" status --porcelain=v2 --branch
 git -C "$R" diff --name-only --diff-filter=U
 ```
 
-No head file but unmerged paths, with the stash still listed in `git stash list`, means a conflicted **stash pop/apply**.
+Unmerged paths with no head file and a stash in `git stash list` indicate a conflicted **stash pop/apply**.
 
-Name the two sides by **branch**, not by "ours/theirs". Which side is which depends on the operation:
+Always name sides by **branch name**, never `"ours"`/`"theirs"` (in a rebase, `--ours` / `:2:` is the upstream branch being rebased **onto** and `--theirs` / `:3:` is **your commit being replayed**):
 
-| Operation | `--ours` / stage `:2:` | `--theirs` / stage `:3:` | Where to read the "theirs" intent |
+| Operation | `--ours` / `:2:` | `--theirs` / `:3:` | Where to read intent |
 |---|---|---|---|
 | `merge X` | current branch (`HEAD`) | `X` (`MERGE_HEAD`) | `git log --oneline --merge`, `git name-rev MERGE_HEAD` |
-| `rebase onto U` | **`U` + the already-replayed commits** | **your commit being replayed** | `git show REBASE_HEAD`; `rebase-merge/head-name`, `onto`, `done`, `git-rebase-todo` |
-| `cherry-pick C` / `revert C` | current branch | `C` (or its inverse) | `git show CHERRY_PICK_HEAD` / `REVERT_HEAD` |
+| `rebase onto U` | `U` + already-replayed commits | commit being replayed (`REBASE_HEAD`) | `git show REBASE_HEAD`; `rebase-merge/head-name`, `onto`, `done` |
+| `cherry-pick C` / `revert C` | current branch | `C` | `git show CHERRY_PICK_HEAD` / `REVERT_HEAD` |
 | `stash pop/apply` | current branch | the stash | `git stash show -p stash@{0}` |
 
-> [!WARNING]
-> In a rebase, "ours" is the branch you are rebasing **onto** and "theirs" is **your own work**. Saying "kept ours" in a rebase usually means you threw away your own commit. Always report sides by branch name.
-
-Check whether `rerere` already applied a recorded resolution (`git -C "$R" rerere status`, `git -C "$R" rerere diff`). A replayed resolution was right for a different context once, so verify it like any other resolution rather than trusting it.
+Also check `git -C "$R" rerere status` and `rerere diff` to verify any auto-replayed resolution.
 
 #### Step 0b — No Operation in Progress
 
-- **Preview** a merge without touching the tree (git ≥ 2.38). Show the user the conflicted paths it lists:
-  ```bash
-  git -C "$R" fetch origin
-  git -C "$R" merge-tree --write-tree --name-only HEAD origin/<target>   # exit 1 = conflicts; lists them
-  ```
-- If the user asked to update the branch, start the operation the repo uses (merge by default; rebase only if the user or the repo's workflow rules say so, and never on a branch other people have pulled). The working tree must be clean of tracked changes first. If it isn't, stop and ask; don't stash on the user's behalf.
-- If nothing is in progress and nothing was asked, report that there is nothing to resolve.
+Preview conflicts without touching the tree (`git -C "$R" merge-tree --write-tree --name-only HEAD origin/<target>`). If the user asked to update the branch and the working tree is clean of tracked edits, start the repo's standard operation (merge by default; rebase only when requested or required by repo rules).
 
 ### Step 1 — Inventory and Classify Every Conflicted Path
 
-List each unmerged path with its porcelain code. Then classify it **before** editing anything:
-
 | Kind | Signal | Resolution route |
 |---|---|---|
-| **Content** (`UU`) | Conflict markers in a text file | Hunk-by-hunk (Step 3) |
-| **Add/add** (`AA`) | Both sides created the same path | Combine if both are the same kind of file; ask if they are unrelated |
-| **Modify/delete** (`UD`/`DU`) | One side deleted or moved the file, the other edited it | Find where the code went (`git log --follow --diff-filter=R`, `git log -S'<symbol>'`). Port the edit there and `git rm` the old path, or keep the file if the deletion was wrong. Ask if unclear |
-| **Lockfile** | `package-lock.json`, `pnpm-lock.yaml`, `yarn.lock`, `bun.lock`, `Cargo.lock`, `poetry.lock`, `uv.lock`, `Gemfile.lock`, `composer.lock`, `packages.lock.json`, `go.sum` | Never hand-merge. Resolve the manifest first, then regenerate (Step 3c) |
-| **Generated** | `*.gen.*`, ORM model snapshots, OpenAPI/swagger snapshots, test snapshots, compiled assets, `dist/` | Regenerate from the source of truth with the project's generator. Never hand-merge |
-| **Binary** | `git diff` shows "Binary files differ" | Take one side explicitly (`git checkout --ours/--theirs -- <path>`) only after asking the user |
-| **Submodule** | Mode `160000` | Choose the commit the user wants (usually the newer one that includes both sides). Ask |
+| **Content** (`UU`) | Conflict markers in text file | Hunk-by-hunk (Step 3) |
+| **Add/add** (`AA`) | Both sides created the path | Combine if same purpose; ask if unrelated |
+| **Modify/delete** (`UD`/`DU`) | Deleted/moved on one side, edited on the other | Trace move (`git log --follow --diff-filter=R`, `git log -S'<symbol>'`), port edit and `git rm` old path, or ask |
+| **Lockfile** | `package-lock.json`, `pnpm-lock.yaml`, `yarn.lock`, `Cargo.lock`, `uv.lock`, `poetry.lock`, `packages.lock.json`, `go.sum` | Never hand-merge; resolve manifest first, then regenerate (Step 3c) |
+| **Generated** | `*.gen.*`, ORM/OpenAPI/test snapshots, `dist/` | Regenerate from merged sources |
+| **Binary / Submodule** | Binary diff or mode `160000` | Ask the user which side/commit to take |
 
-Also note the files git **merged cleanly** that both sides touched (`git -C "$R" diff --name-only <merge-base> HEAD` ∩ the other side's changes). These are where semantic conflicts hide (Step 4).
+Also record files git **merged cleanly** that both sides touched (`git diff --name-only <merge-base> HEAD` ∩ other side) for Step 4.
 
 ### Step 2 — Extract Both Sides' Intent
 
-**Step 2 Exit Bound:** Before editing any hunk: (1) Run `git log --oneline <base>..HEAD` and `git log --oneline <base>..MERGE_HEAD`, (2) quote the commit message for the conflicting lines on both sides, (3) write down each side's intent in one sentence. Do not edit conflicted markers until both intents are stated.
-
-For each conflicted file, look at three versions and the history behind each side:
-
-```bash
-git -C "$R" show :1:<path>    # merge base
-git -C "$R" show :2:<path>    # ours  (see the table in Step 0 for which branch that is)
-git -C "$R" show :3:<path>    # theirs
-git -C "$R" log --oneline --left-right --merge -- <path>      # merge: the commits on each side that touched it
-git -C "$R" diff <merge-base> <side> -- <path>                # what one side changed, in isolation
-```
-
-To see the base inside the markers, re-render a file with `zdiff3` markers. **This discards any edits already made to that file**, so do it before editing, never after:
-
-```bash
-git -C "$R" checkout --conflict=zdiff3 -- <path>
-```
-
-Read the commit messages, PR descriptions and any linked ticket for each side. Write down each side's intent in one sentence ("main: replaced the shader resend with `edit_scene_code`"; "branch: added a Settings section"). The resolution has to satisfy both sentences.
+**Step 2 Exit Bound:** Before editing any hunk, inspect `:1:<path>` (base), `:2:<path>`, `:3:<path>`, and `git -C "$R" log --oneline --left-right --merge -- <path>`, quote the commit messages for both sides, and state each side's intent in one sentence. (Optionally run `git -C "$R" checkout --conflict=zdiff3 -- <path>` **before** making any edits to view the base inside markers.)
 
 ### Step 3 — Resolve Hunk by Hunk
 
-#### 3a. Pick the pattern for each hunk
-
-| Pattern | Example | Resolution |
-|---|---|---|
-| **Independent additions** | Both sides added a changelog section, an import, a route, an enum member, a list entry | Keep both, ordered by the file's convention (newest-first changelog, sorted imports, registration order) |
-| **Identical change** | Both sides made the same fix | Keep one copy |
-| **Shape change vs content change** | One side extracted, renamed or moved code; the other edited the old code | Apply the content edit to the **new** shape |
-| **Overlapping edits that compose** | One side added a parameter, the other changed the body | Apply both edits |
-| **Competing values** | Different constants, defaults, copy or behaviour for the same thing | Decided by tests, a later commit or the ticket → take that. Otherwise **ask** (AskUserQuestion with both versions as options, the side named by branch) |
-| **Formatting-only on one side** | One side reformatted, the other changed logic | Take the logic, then run the repo's formatter on the file |
-
-Each resolution must keep the file valid on its own: imports used, no duplicate definitions or keys, braces and JSX balanced, every symbol it references still existing after the merge.
-
-#### 3b. Edit precisely
-
-Use exact-string edits on the marked region. For a mechanical "keep both" across a whole file, a scripted marker strip is fine, but only when **every** conflict in the file is that same pattern. Re-read the result afterwards.
-
-#### 3c. Lockfiles and generated files
-
-1. Resolve the **manifest** (`package.json`, `Cargo.toml`, `pyproject.toml`, `*.csproj`, …) as a normal content conflict.
-2. Start the lockfile from the side whose dependency tree should be the base, normally the target or upstream branch (`git checkout --theirs` in a merge from `main`; `--ours` in a rebase onto `main`). Then regenerate it with the project's package manager in lockfile-only mode where one exists (`npm install --package-lock-only`, `pnpm install --lockfile-only`, `yarn install --mode update-lockfile`, `cargo update -w`, `uv lock`, `poetry lock`, `dotnet restore --force-evaluate`).
-3. Generated files: rerun the generator (router codegen, OpenAPI export, snapshot update, ORM snapshot) with the merged sources. Then check that the output contains both sides' additions.
-
-#### 3d. Mark each resolved path
-
-```bash
-git -C "$R" add <path>        # resolved content
-git -C "$R" rm <path>         # resolved as deleted
-```
+1. **Pick the pattern per hunk**: **Independent additions** (keep both, ordered by file convention), **Identical change** (keep one), **Shape vs. content change** (apply content edit to new shape), **Composing edits** (apply both), **Competing values** (ask the user if tests/commits/ticket don't settle it), **Formatting vs. logic** (keep logic, run formatter).
+2. **Edit precisely** and re-read the file to confirm valid syntax, balanced braces/JSX, and used imports.
+3. **Lockfiles & generated files**: reset lockfile to the base tree (`--theirs` on merge, `--ours` on rebase) and regenerate in lockfile-only mode (`npm install --package-lock-only`, `pnpm install --lockfile-only`, `yarn install --mode update-lockfile`, `cargo update -w`, `uv lock`, `dotnet restore --force-evaluate`); rerun code/snapshot generators.
+4. **Stage per path**: `git -C "$R" add <path>` (or `git -C "$R" rm <path>`).
 
 ### Step 4 — Hunt for Semantic Conflicts
 
-A clean textual merge is not necessarily a correct one. Before verifying, check:
-
-- **Removed or renamed symbols** on one side that the other side **started using**: diff the identifiers each side removed against the identifiers the other side added (`git diff <base> <side> | grep '^-'` for the names, then `git grep` for them in the merged tree).
-- **Signature changes**: one side changed a function's parameters or return type, the other added call sites with the old ones.
-- **Duplicates**: both sides added the same helper, migration number, route, config key, test name or i18n key in different places.
-- **Ordering and registration**: both sides appended to an ordered registry where order matters (migrations, middleware, plugin lists).
-- **Docs and changelog**: both sides' entries present, and none describing behaviour the other side removed.
+Across both conflicted and cleanly-merged files, check for: symbols removed/renamed on one side that the other side added callers for, function signature changes vs. new call sites, duplicate helpers/routes/migration numbers/keys, and ordered registrations.
 
 ### Step 5 — Verify the Merged Tree
 
@@ -176,62 +112,33 @@ git -C "$R" diff --name-only --diff-filter=U   # must be empty
 git -C "$R" status --short                     # only intended paths staged; untracked files untouched
 ```
 
-Don't treat a plain `grep '======='` hit as a marker: Markdown setext headings and RST use it. Trust `git diff --check` for markers. Then run the repo's own gates, found in its rulebooks, `package.json` scripts, `Makefile`, project verify skills or CI config: type-check/build, unit tests, and lint if fast. Run them in full when either side touched shared code, and scoped when the conflicts were docs-only. Report any gate you skipped (e2e, integration needing services) by name. A failure the merge introduced is yours to fix before reporting. A failure that already exists on one side alone (check by running the same gate on that side) is reported, not fixed.
+Run the repo's build/type-check, unit tests, and fast lint gates. Fix any failure introduced by the merge; report pre-existing single-side failures.
 
 ### Step 6 — Conclude
 
-Conclude the operation as soon as all of these hold. If any fails, stop with everything staged, say which one failed, and give the user the exact concluding command:
-
-- `no-commit`, `stage-only` or "don't commit" is not in the invocation or the user's instructions.
-- `git diff --name-only --diff-filter=U` is empty and `git diff --check` is clean.
-- Every gate from Step 5 passed, or each failure is shown to already exist on one side alone. A failure the merge introduced and you could not fix blocks the commit.
-- No question to the user is still open, and the main checkout is not read-only for this run (`git-worktrees` › *Golden Invariants*) unless the user said yes to resolving there.
+When `no-commit` / `stage-only` was not passed, `diff --check` and `--diff-filter=U` are clean, Step 5 gates pass, and no question is open:
 
 | Operation | Conclude with | Then |
 |---|---|---|
-| merge | `git -C "$R" commit --no-edit --cleanup=strip` plus `--trailer "<attribution>"` when the host asks for an attribution line on commits. Keeps git's merge message; `--cleanup=strip` drops the `# Conflicts:` comment lines that a plain `--no-edit` would commit | `git -C "$R" show --remerge-diff HEAD` to review the resolution as committed |
-| rebase | `GIT_EDITOR=true git -C "$R" rebase --continue`. The replayed commit is the user's own: keep its message, add no trailer | If it stops again, repeat Steps 0–5 for that commit. Run the type-check at each stop and the full gates at the end |
-| cherry-pick / revert | `GIT_EDITOR=true git -C "$R" cherry-pick --continue` / `revert --continue` | Repeat per stop for a range |
-| stash pop/apply | nothing to continue — the resolved changes stay in the working tree (`git restore --staged <paths>` unstages them if the user wants them unstaged) | The stash is **kept** by git after a conflicted pop. Tell the user; never `stash drop` it yourself |
+| `merge` | `git -C "$R" commit --no-edit --cleanup=strip` (plus trailer per [`/commit`](../commit/SKILL.md) › *Step 4: Write the message and commit*; `--cleanup=strip` drops `# Conflicts:` comment lines) | `git -C "$R" show --remerge-diff HEAD` |
+| `rebase` | `GIT_EDITOR=true git -C "$R" rebase --continue` (keep user's commit message, add no trailer) | Repeat Steps 0–5 per stop; full gates at end |
+| `cherry-pick` / `revert` | `GIT_EDITOR=true git -C "$R" cherry-pick --continue` / `revert --continue` | Repeat per stop |
+| `stash pop/apply` | Leave resolved changes in tree; never `stash drop` | Report that stash entry is kept |
 
-After concluding, check that the operation is over (`git -C "$R" rev-parse -q --verify MERGE_HEAD` and the other files from Step 0's loop are gone), that `git -C "$R" log -1 --format=%B` carries no `# Conflicts:` lines, and report the new short SHA.
-
-Never push. If the branch was rebased, any push needs `--force-with-lease`, and that decision belongs to the user.
+Confirm the operation state files from Step 0 are gone and report the new short SHA. Never push.
 
 ---
 
 ## 3. Output Format & Deliverables
 
-Chat, concise:
-
-1. **Operation**: what was in progress and the two sides by branch name (e.g. "merge of `main` into `feature/settings-screen`").
-2. **Per file**: one line each. The path, what each side did, how it was resolved and why ("`CHANGELOG.md` — both added an Unreleased section; kept both, branch first"). Group trivially identical cases.
-3. **Decisions**: any conflict resolved by the user's choice, and any assumption made.
-4. **Semantic checks**: what Step 4 found, or "none found".
-5. **Verification**: each gate run and its result, and each gate skipped.
-6. **State and next step**: what was concluded and its short SHA (e.g. "merge committed as `a1b2c3d`, not pushed"), or, when Step 6 held back, which condition failed and the exact concluding command.
-
-When the artifact threshold is met, `<prefix>-conflict_resolution-<suffix>.md` holds:
-- `## Operation & Sides`
-- `## Per-File Resolutions`: a table of path | kind | pattern | resolution | evidence (commit SHAs on each side)
-- `## Decisions` (asked and answered)
-- `## Semantic Checks`
-- `## Verification`
-- `## Next Step`
-
-Link it per the `artifact-protocol` protocol with `#L<line>` anchors.
+In chat, report: (1) **Operation & sides by branch name**, (2) **Per-file resolution summary**, (3) **Decisions**, (4) **Semantic checks**, (5) **Verification gates run/skipped**, and (6) **Concluded SHA** (or blocking condition + exact concluding command). When the artifact threshold is met, publish `<prefix>-conflict_resolution-<suffix>.md` with the same 6 sections and emit the `artifact-protocol` › *Chat link block*.
 
 ---
 
 ## 4. Verification & Validation
 
-- `git diff --name-only --diff-filter=U` is empty and `git diff --check` is clean.
-- Every resolved hunk can be traced to content from the base, ours or theirs. Nothing new was invented.
-- The repo's type-check/build and unit tests pass on the merged tree, or each failure is shown to already exist on one side.
-- Only the conflicted paths, plus regenerated lockfiles or generated files, are newly staged. Untracked files are untouched.
-- The operation is concluded only when every Step 6 condition held. Otherwise the user has the reason and the exact concluding command.
-- After a commit: `git show --remerge-diff HEAD` shows exactly the resolutions reported in chat, and the message has no `# Conflicts:` lines.
-- Nothing was pushed.
+- `git diff --name-only --diff-filter=U` is empty, `git diff --check` is clean, and build/test gates pass.
+- Only resolved paths and regenerated lockfiles/codegen were staged; after a merge commit, `git show --remerge-diff HEAD` matches the reported resolutions and has no `# Conflicts:` lines; nothing was pushed.
 
 ---
 
@@ -239,18 +146,7 @@ Link it per the `artifact-protocol` protocol with `#L<line>` anchors.
 
 | Pitfall | Guard |
 |---|---|
-| Swapping ours/theirs during a rebase | Name sides by branch (Step 0 table) and read `REBASE_HEAD` for your own commit |
-| `checkout --conflict=zdiff3` after editing | It discards your edits to the file. Re-render only before touching it |
-| Hand-merging a lockfile | Regenerate from the resolved manifest (Step 3c) |
-| `git add -A` sweeping untracked artifacts into the merge commit | Stage per path (Golden Invariant 4) |
-| Clean textual merge that no longer compiles | Step 4 + Step 5 gates on every run, not only when conflicts touched code |
-| `=======` mistaken for a marker in Markdown | Use `git diff --check` |
-| zsh treating a bare `=======` word as `=cmd` expansion (`echo =======` fails with "not found") | Quote it: `'======='` |
-| `git commit --no-edit` on a conflicted merge | It commits git's `# Conflicts:` comment lines into the message. Add `--cleanup=strip` |
-| `stash drop` after a conflicted pop | Leave the stash. The user drops it once satisfied |
-| Same conflicts on every stop of a long rebase | Suggest `git config rerere.enabled true`, but verify replayed resolutions (Step 0) |
+| Swapping ours/theirs during a rebase | Name sides by branch (Step 0 table) and read `REBASE_HEAD` for the replayed commit |
+| `checkout --conflict=zdiff3` after editing | Run only before editing; it overwrites working-tree edits on that file |
+| `git commit --no-edit` leaving `# Conflicts:` in commit message | Always pass `--cleanup=strip` |
 | `.git` treated as a directory inside a linked worktree | Always use `git rev-parse --git-path <name>` |
-
-## Worked Example
-
-`main` was merged into `feature/settings-screen`. Only `CHANGELOG.md` conflicted (`UU`). The branch had added an `## Unreleased — settings` section and `main` had added `## Unreleased — assistant token use` at the same spot under the title. Pattern: independent additions. Resolution: kept both, branch section first, and stripped the three markers with a scripted edit, which was safe because it was the file's only conflict. Twenty files had merged cleanly, but both sides had touched the assistant code (`src/assistant/*`, `server/system-prompt.ts`), so Step 5 ran `npm run typecheck` (clean) and `vitest run` (241/241 passing). e2e was reported as not run. `CHANGELOG.md` was staged alone (the untracked `claude-*.md` artifacts in the root stayed untracked), and the merge was committed with `git commit --no-edit --cleanup=strip --trailer "Co-Authored-By: …"`. `git show --remerge-diff HEAD` showed only the `CHANGELOG.md` resolution, and the branch was left unpushed.

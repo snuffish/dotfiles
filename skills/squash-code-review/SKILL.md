@@ -5,18 +5,17 @@ description: "Squashes and reconciles multiple code review artifacts for the sam
 
 # Skill: `/squash-code-review` — Squash Code Reviews
 
-Takes two or more code reviews of the same change and produces one new review that holds only what survives a re-check against the code. Disagreements between the sources are settled in code and recorded, and the PR's own discussion threads are folded in so the result does not repeat what reviewers already said or decided.
+Reconciles two or more code reviews of the same change into one verified review (`<prefix>-squashed_code_review-<suffix>.md`), settling disagreements against the code at the pinned head and folding in PR discussion threads.
 
 ---
 
-## ⛔ Mandatory Invariants
+## Invariants
 
-> [!CAUTION]
-> 1. **MANDATORY ARTIFACT:** Every run writes or updates `<prefix>-squashed_code_review-<suffix>.md` **at the workspace root** and opens the chat response with links to it, built as `/code-review` › *Artifact Links* specifies.
-> 2. **NEVER EDIT A SOURCE REVIEW.** The source artifacts, including one written by the running model, stay byte-for-byte intact. The squash is a new file.
-> 3. **SOURCES ARE EVIDENCE, NOT VERDICTS.** No 🔴/🟡 enters the squash because a source said so. Each one passes `/code-review` › *Step 6 — Verify Every 🔴 and 🟡* at the head this run pins, whether one source raised it or all of them did.
-> 4. **CONSERVATION.** Every finding of every source ends up in exactly one place: a squashed finding, a minor finding, or a *Refuted / dropped* row with the reason. Nothing disappears silently.
-> 5. **READ-ONLY.** No code edits, checkouts, stashes, commits, posting, voting or thread resolution. The only git writes are the ones `git-worktrees` snapshot mode allows.
+1. **Mandatory artifact:** writes `<prefix>-squashed_code_review-<suffix>.md` at the workspace root and opens chat with the `artifact-protocol` › *Chat link block*.
+2. **Never edit a source review:** source artifacts stay byte-for-byte intact.
+3. **Sources are evidence, not verdicts:** every 🔴/🟡 passes [`/code-review`](../code-review/SKILL.md) › *Step 6 — Verify Every 🔴 and 🟡* at the pinned head.
+4. **Conservation:** every source finding is accounted for in a squashed finding, a minor finding, or a *Refuted / dropped* row.
+5. **Read-only:** no code edits, commits, posting, voting, or thread resolution (`core` › *The `/proceed` gate*, `git-worktrees` › *Snapshot Lifecycle*).
 
 ---
 
@@ -26,14 +25,14 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 
 Read these before step 1:
 - `../_modules/core.md`: read-only until `/proceed`
-- `../_modules/artifact-protocol.md`: writes `<prefix>-squashed_code_review-<suffix>.md` (suffix: the sources' shared suffix, e.g. `-18715-18716-rtk-api-domains`)
+- `../_modules/artifact-protocol.md`: writes `<prefix>-squashed_code_review-<suffix>.md` (suffix: the sources' shared suffix)
 - `../_modules/git-worktrees.md`: snapshot by default
 - `../_modules/pr-counterpart.md`
 - `../_modules/pr-host.md`
+- `../_modules/fan-out.md`
 
-- Also read [`code-review`](../code-review/SKILL.md). Severity, axes, verification, artifact structure, *In Plain Terms* and the link format all come from there. This skill adds only what is specific to squashing.
-- Read [`pr-feedback-review`](../pr-feedback-review/SKILL.md) › *2.2 — Discussion Threads & Comments* for the thread fetch, and its *State at head* vocabulary.
-- `/code-review` normally forbids reading another model's review. Here the user has asked for exactly that comparison, so reading every source is the job.
+- Also read [`code-review`](../code-review/SKILL.md) and its [review-artifact-template.md](../code-review/references/review-artifact-template.md) for axes, severities, verification, and section order.
+- Reading multiple models' reviews is the purpose of this Command (`artifact-protocol` › *Claim* › *Independence rule* exception).
 
 ---
 
@@ -42,19 +41,17 @@ Read these before step 1:
 | Invocation | Mode | What happens |
 |---|---|---|
 | `/squash-code-review [sources]` | **Standard** | One pass: match, verify, reconcile, fold in threads |
-| `/squash-code-review deep [sources]` | **Deep** | Contested clusters are verified by parallel read-only sub-agents (see *Deep Mode*); the aggregator re-checks each verdict |
-| `/squash-code-review feedback [sources]` | Standard or deep, **full thread triage** | Runs `/pr-feedback-review` first, which writes its own artifact, and then squashes against that |
-| `… live …` | **No snapshot** | Reads the main checkout instead of a pinned head, as in `/code-review` › *Modes* |
-
-Modifiers combine: `/squash-code-review deep feedback @a.md @b.md`.
+| `/squash-code-review deep [sources]` | **Deep** | Contested clusters are verified by parallel read-only sub-agents (*Deep Mode*), then aggregated |
+| `/squash-code-review feedback [sources]` | Standard or deep, **full thread triage** | Runs [`/pr-feedback-review`](../pr-feedback-review/SKILL.md) first, then squashes against its triage matrix |
+| `… live …` | **No snapshot** | Reads the main checkout instead of a pinned snapshot |
 
 ### When *not* to use
 
 | Situation | Use instead |
 |---|---|
-| Only one review exists, or you want a fresh review | `/code-review` |
-| You want to triage what human reviewers wrote on the PR | `/pr-feedback-review` |
-| The squashed findings are ready to go on the PR | `/pr-post-comments` (point it at the squashed artifact) |
+| Only one review exists, or you want a fresh review | [`/code-review`](../code-review/SKILL.md) |
+| You want to triage what human reviewers wrote on the PR | [`/pr-feedback-review`](../pr-feedback-review/SKILL.md) |
+| The squashed findings are ready to go on the PR | [`/pr-post-comments`](../pr-post-comments/SKILL.md) |
 
 ---
 
@@ -66,102 +63,64 @@ Modifiers combine: `/squash-code-review deep feedback @a.md @b.md`.
 |---|---|
 | Two or more `@file` paths | Those files |
 | A PR id, PR URL or suffix | Every `*code_review-<suffix>*.md` at the workspace root for that PR, across hosts and models |
-| Nothing | The current branch's PR (`/code-review` › *No URL given — resolve the PR from the branch*), then as above |
+| Nothing | The current branch's PR (`pr-host` › *Resolve the PR from a branch*), then as above |
 
-- Fewer than two sources is a stop: say which one was found and suggest `/code-review`.
-- Include an earlier `squashed_code_review` for the same suffix only when the user names it. It is never a source by default. This run updates it only if this session owns it (`artifact-protocol` › *Ownership*); otherwise the squash goes to the next counter (`artifact-protocol` › *Claim*).
-- Give each source a one-letter key in discovery order (`A`, `B`, …) and record for each: file, host and model (from the prefix), mode, date, and the **head it reviewed** (its *Review Context*). A source with no recorded head is still usable, but every finding from it counts as single-source until verified.
-- Sources about different PRs or different changes are a stop. Say what each one reviewed.
+- Fewer than two sources, or sources for different PRs/changes → stop and report what was found.
+- Exclude earlier `squashed_code_review` files as inputs unless explicitly named by the user.
+- Assign each source a letter key in discovery order (`A`, `B`, …) and record file, host/model, mode, date, and **head reviewed**.
 
 ### Step 2 — Pin the head and measure drift
 
-- Resolve the PR(s) and counterpart(s) the sources reviewed (`pr-host` › *Resolve the PR from a branch* and *Fetch the PR, its work items and acceptance criteria*, `pr-counterpart` › *Counterpart discovery*). Fetch and pin the **current** head per repo (`/code-review` › *Step 1b — Review Snapshot*).
-- For each source, compare its head with the pinned head: `git -C <repo> diff --stat <source-head> <pinned-head>`. Record `same head` or `N commits since`, and list the files that changed under any finding the source cites. Those findings must be re-located before they are judged.
-- Targeted re-checks may read the pinned tree straight from the object store (`git -C <repo> show <sha>:<path>`, `git -C <repo> grep <pattern> <sha> -- <path>`). Create a snapshot worktree only when whole files must be navigated. Either way, record which one you used in *Review Context*.
+- Resolve the PR(s) and counterpart(s) (`pr-host` › *Resolve the PR from a branch* and *Fetch the PR, its work items and acceptance criteria*, `pr-counterpart` › *Counterpart discovery*). Pin the current head per repo (`git-worktrees` › *Snapshot Lifecycle*, or object-store reads `git -C <repo> show <sha>:<path>` when only targeted lines are checked).
+- Compare each source's head to the pinned head (`git -C <repo> diff --stat <source-head> <pinned-head>`): record `same head` or `N commits since`, and re-locate findings in changed files.
 
 ### Step 3 — Fold in the PR discussion
 
-1. Look for `*pr_feedback_review-<suffix>*.md` at the workspace root. If one exists and its *Head reviewed* equals the pinned head, read its triage matrix and use it.
-2. Otherwise fetch the threads read-only, as in `pr-feedback-review` › *2.2 — Discussion Threads & Comments*, for every PR in scope. Keep the dump in the scratchpad and drop bots, system comments and deleted threads. Do not write a `pr_feedback_review` artifact unless the run is `feedback`.
-3. Read each source's *Posted to PR* row as well. A thread that `/pr-post-comments` created from a source finding belongs to that finding.
-4. Record, per thread: id, file and line, author, status, and *State at head*. Use the `pr-feedback-review` vocabulary: ✅ Fixed · ◐ Partial · ⏸ Not addressed · ↩ Superseded · ⚪ n/a.
-
-If the fetch fails (auth, CLI missing), continue without threads, and say so in *Review Context* and in chat. Never guess what a thread said.
+1. If a `*pr_feedback_review-<suffix>*.md` at the workspace root matches the pinned head, reuse its triage matrix.
+2. Otherwise fetch threads read-only per `pr-host` › *Fetch discussion threads* ([pr-host-threads.md](../_modules/references/pr-host-threads.md)) for every PR in scope.
+3. Also read each source's *Posted to PR* row to map posted thread IDs back to their source findings.
+4. Record per thread: ID, `file:line`, author, status, and *State at head* (`✅ Fixed` · `◐ Partial` · `⏸ Not addressed` · `↩ Superseded` · `⚪ n/a`). If fetching fails, continue without threads and say so.
 
 ### Step 4 — Match findings into clusters
 
-Put every finding from every source (🔴, 🟡, 🟢 and the Refuted lines a source may already carry) into **clusters by root cause**:
-
-- **Same cluster:** the same defect at the same place, even when worded or titled differently, or rated differently. A finding that is half of another (one source calls it a stale comment, the other calls it the behaviour change that made the comment stale) joins that cluster and is merged.
-- **Different clusters:** the same file or line but a different claim. Two claims about the same code that contradict each other form one *conflicting* cluster.
-- Attach every PR thread that discusses the same root cause to its cluster. A thread that matches no cluster becomes its own cluster, sourced `T#<id>`, but only when it raises a code defect still open at head.
-
-Classify each cluster: **agreed** (every source that looked at the area raised it), **single-source**, **conflicting** (claims or facts contradict each other), or **severity split** (same claim, different ratings).
+Group every source finding (🔴, 🟡, 🟢, and Refuted rows) into **clusters by root cause**:
+- **Same cluster**: same defect at the same place (even if worded or rated differently).
+- **Conflicting cluster**: contradictory claims about the same code.
+- Attach matching PR threads; an open defect-raising thread that matches no source finding becomes cluster `T#<id>`.
+- Classify each cluster: **agreed**, **single-source**, **conflicting**, or **severity split**.
 
 ### Step 5 — Settle every cluster in code
 
-For each cluster, at the pinned head:
-
-1. **Re-open the cited code** and re-locate it if the file moved since the source's head.
-2. **Settle facts, not opinions.** When sources state different facts (a symbol exists or doesn't, a count is 87 or 88, a call happens or doesn't), check the fact itself: `git show`, `git grep`, the backend or the counterpart repo. The answer goes in the reconciliation table with what proves it.
-3. **Try to refute the strongest version.** For a single-source finding, look for the guard, caller or config the other sources may have seen. For an agreed finding, still run the refutation step. Two reviews can share one wrong assumption.
-4. **Set severity on the merits**, as `/code-review` › *Severity* defines it. Never take the maximum, the minimum or an average. When the squash changes a source's rating, the reconciliation row says why: which premise the source got wrong, or what new evidence decided it.
-5. **Pick the fix.** When sources propose different fixes, keep the one that holds up against the code and the repo's own rules. Drop options that only work by gaming a check, such as a name chosen to pass a lint rule. Name the dropped option in the reconciliation row.
-6. **Apply the thread state:**
-   - ✅ Fixed at head → the finding is resolved. It goes to *Refuted / dropped* as "fixed at head (thread #id, commit)", not into the findings.
-   - A recorded decision from the author or a reviewer ("intentional", "follow-up story #123") → apply `/code-review` › *Step 6b* exactly: quote the decision, and keep the severity only if the code contradicts it or it leaves a defect in place; otherwise the finding stays, lowered to 🟢 "decided in thread #id". It is not dropped, so the same input gives the same output whichever skill ran.
-   - ⏸ / ◐ → keep the finding, and link the thread in its *Where* line so `/pr-post-comments` replies there instead of opening a duplicate.
-7. **Classify the outcome:** Verified · Plausible (say what would confirm it) · Refuted (moves to *Refuted / dropped*).
+Apply [`/code-review`](../code-review/SKILL.md) › *Step 6 — Verify Every 🔴 and 🟡* and *Step 6b — Fold In PR Feedback* at the pinned head:
+1. Re-open the cited code at the pinned head and settle factual disagreements via `git show` / `git grep` across both repos.
+2. Try to refute even unanimously agreed findings; set severity on the merits (`/code-review` › *Severity*), never by averaging or taking max/min.
+3. Pick the fix that holds up against the code and repo conventions; record dropped fixes and changed ratings in the Reconciliation table.
+4. Apply thread state: `✅ Fixed` moves to *Refuted / dropped* as `fixed at head (thread #id, commit)`; recorded team decisions lower to 🟢 (`decided in thread #id`); open `⏸`/`◐` threads attach via dual links ([pr-host-threads.md](../_modules/references/pr-host-threads.md)).
 
 ---
 
 ## 3. Output Format & Deliverables
 
-### Artifact
+Write `<prefix>-squashed_code_review-<suffix>.md` at the workspace root following [review-artifact-template.md](../code-review/references/review-artifact-template.md), with these additions:
+1. **Review Context** adds **Sources squashed** (`A` · file link · host/model · mode · head reviewed · `same head` / `N commits since`), **PR threads** (source, human thread count, attached count), and **Read from** (snapshot / object reads at `<sha>` / live checkout).
+2. **Findings Summary** adds a **Sources** column (`A B`, `B`, `A T#110776`), followed by:
+   - **Reconciliation**: one row per non-unanimous cluster (*Point* · per-source claim/rating · *Verdict* with proof).
+   - **Refuted / dropped**: one bullet per dropped source finding (`A3`: reason and proof).
+3. **Detailed Review Findings**: numbered from 1; *Where* lists source keys and dual thread links; write prose fresh from the verified code.
+4. **Posted to PR**: carry over every source's *Posted to PR* entries tagged by source key and mapped to squashed finding numbers.
 
-`<prefix>-squashed_code_review-<suffix>.md` at the workspace root. Its structure is `/code-review` › *Artifact Structure*, in the same section order, with these additions:
-
-1. **Review Context** gains:
-   - **Sources squashed**: one row per source, as `A` · file link · host/model · mode · head reviewed · `same head` / `N commits since`.
-   - **PR threads**: the source (`pr_feedback_review` artifact / live fetch / unavailable), the count of human threads, and the count attached to findings.
-   - **Read from**: snapshot / object reads at `<sha>` / live checkout.
-2. **Findings Summary** gains a **Sources** column on the main table, e.g. `A B`, `B`, `A T#110776`. It is followed by:
-   - **Reconciliation**: one row per cluster that was not unanimous on both claim and severity. Columns: *Point* · one column per source (its claim and rating, or "not raised") · *Verdict* (outcome, and the fact or line that settled it).
-   - **Refuted / dropped**: one line per source finding that did not survive. Give its source key and number, why it was dropped (refuted with evidence, fixed at head, or duplicate of N; a thread decision lowers a finding to 🟢 instead of dropping it), and where its substance went, if anywhere.
-3. **Detailed Review Findings** follow `/code-review` › *Detailed Findings*. Each heading ends with `· Verified|Plausible`. The *Where* line names its sources and any linked thread with the dual link from `artifact-protocol` › *PR Discussion Thread Links*. Write the text fresh from the verified code. Do not paste a source's paragraph; quote it only when its wording is the point.
-4. **Minor Findings** keep the cap of 8 and carry source keys.
-5. **Posted to PR**: carry over every source's *Posted to PR* entries verbatim, each tagged with its source key, and map each thread id to its squashed finding number. This lets `/pr-post-comments` skip what is already posted.
-6. **In Plain Terms**: as `/code-review` specifies, for every squashed 🔴/🟡.
-
-Numbering restarts at 1 in the squash. A source's own numbers appear only as `A3`, `B1`, … in the Sources column, the Reconciliation table and the Refuted list.
-
-### Chat response
-
-Open with the artifact links exactly as `/code-review` › *Artifact Links* specifies, with the `squashed_code_review` file name. Then give:
-- Counts: clusters agreed / single-source / conflicting / severity split, and source findings refuted or dropped.
-- The worst finding per axis, one line each, or "clean".
-- What the sources got wrong, one line per settled fact or changed severity, naming the source.
-- The threads folded in, or why they weren't (fetch failed, no PR).
-- Which head was pinned, and whether a snapshot was removed or object reads were used.
+Open the chat response with the `artifact-protocol` › *Chat link block*, followed by cluster counts, worst finding per axis, settled disagreements, thread summary, pinned head/snapshot cleanup status, and the closing gate line (`core` › *The `/proceed` gate*).
 
 ---
 
 ## Deep Mode
 
-1. Do Steps 1–4 yourself. Sub-agents never resolve PRs, fetch threads or touch worktrees.
-2. Spawn one read-only sub-agent per **contested** cluster (single-source, conflicting or severity split), batched in one message. Agreed clusters stay with the aggregator. Merge small clusters so there are at most about 8 agents. Each prompt carries: the cluster's source excerpts verbatim, the attached thread text, the pinned SHA and the read commands (`git -C <repo> show <sha>:<path>`, or the snapshot's `[worktree-context]` block), and this brief:
-   > "Settle this cluster at `<sha>`. For each factual claim: true or false, with the `path:line` or command output that proves it. Then try to refute the finding outright. Propose severity per the attached definitions and the better of the proposed fixes, or a third. Read-only: no edits, no checkouts, no builds or tests. Report one verdict per claim with its proof, nothing else."
-3. Aggregate: re-open every `path:line` a sub-agent cites before accepting its verdict, then write the artifact as in standard mode.
+Follow `fan-out` › *Brief contract* and *Aggregation*: complete Steps 1–4 in the lead agent, spawn up to 5 read-only sub-agents across contested clusters (single-source, conflicting, severity split) with the pinned SHA / `[worktree-context]` block and source excerpts, then re-open every cited `path:line` yourself before writing the artifact.
 
 ---
 
 ## 4. Verification & Validation
 
-Before emitting the chat response, check:
-
-- **Conservation:** count source findings (🔴 + 🟡 + 🟢 per source). Every one is accounted for in a squashed finding's Sources column, a minor finding, or the *Refuted / dropped* list.
-- **Every 🔴/🟡** carries `Verified` or `Plausible`, and was re-opened at the pinned head in this run.
-- **Every rating change** against a source has a Reconciliation row that says why.
-- **No source file was modified:** `git status` / `ls -l` timestamps on the source artifacts are unchanged. No `<scratchpad>` path appears in the artifact.
-- **Anchors:** every `[N](#finding-N)` and `[plain](#finding-N-plain)` in the table resolves, and the chat links use line numbers read from the written file (`grep -n '^#\{1,3\} '`).
-- **Threads:** every attached thread id links both inside the document and to the PR host.
+- **Conservation**: every source finding (🔴 + 🟡 + 🟢) appears in the Sources column, Minor Findings, or *Refuted / dropped*.
+- **Verified**: every surviving 🔴/🟡 was re-opened at the pinned head and every rating change has a Reconciliation row.
+- **Intact sources & clean links**: source artifacts are untouched; no `<scratchpad>` path appears; intra-document `<a id>` anchors and dual thread links resolve.

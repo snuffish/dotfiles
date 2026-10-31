@@ -1,0 +1,12 @@
+# Code Review Deep Mode — Axis Briefs & Aggregation
+
+On-demand reference for [SKILL.md](../SKILL.md) › *Deep Mode*. Follow [fan-out.md](../../_modules/fan-out.md) for the brief contract and aggregation rules.
+
+---
+
+1. **Complete Steps 1–3 in the lead agent first** — base resolved, non-empty diff confirmed, snapshot(s) created (*Step 1b*), Spec source fetched, Standards sources listed (and profile checklists/catalogs read from `origin/<default>`).
+2. **Spawn the three axis sub-agents in parallel** (`fan-out` › *Brief contract*). Each brief includes `git -C <snapshot> diff <base>...HEAD`, the commit list, the snapshot's `[worktree-context]` block per repo, and its axis prompt:
+   - **Correctness**: *"Find bugs, edge cases, race conditions, security, and performance issues in this diff. Read whole files where the diff lacks context. For each: `path:line`, the failing path as a concrete sequence, proposed severity (🔴/🟡/🟢). Return only the findings, one entry each; no restated diff."*
+   - **Standards**: include the Step 3 Standards source files, any profile checklist sections mapped to Standards, and the [smell-baseline.md](smell-baseline.md) table pasted in full. *"Report every place the diff violates a documented standard — cite the source file and rule — and any baseline smell you spot, labelled as a judgement call. A documented repo standard overrides the baseline. Check the listed cross-repo contracts on both sides. Skip anything tooling enforces. Return only the findings, one entry each; no restated diff."*
+   - **Spec**: include the fetched spec/AC text (plus any profile checklist sections mapped to Spec). *"Report: (a) requirements missing or partial; (b) behaviour in the diff that wasn't asked for; (c) requirements that look implemented but where the implementation looks wrong. Quote the spec line for each. Return only the findings, one entry each; no restated diff."* Skip this sub-agent when there is no Spec source, and say so.
+3. **Aggregate** (`fan-out` › *Aggregation*): deduplicate findings across axes (keep the axis that owns the root cause), assign final severities within each axis, confirm no citation points into a snapshot directory, then run **Step 6 — Verify** on every 🔴/🟡 yourself before writing. Run *Step 6b* (`feedback`) and *Step 6c* (blind-spot pass) in the lead agent after aggregation, write *Feature in Brief* yourself, emit the artifact and chat link block, and remove the snapshot(s).

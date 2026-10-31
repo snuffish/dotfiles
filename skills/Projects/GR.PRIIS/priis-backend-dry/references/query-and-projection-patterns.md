@@ -1,6 +1,6 @@
 # Query & Projection DRY Patterns
 
-## 3. Shared Read Projections — Static `Expression<Func<T,TDto>>`
+## 5. Shared Read Projections — Static `Expression<Func<T,TDto>>`
 
 **Rule:** When the same projection shape is used by more than one call site (endpoint, export, notification handler), extract it as a `static` expression member **on the entity or in a shared queries class**.
 
@@ -35,9 +35,7 @@ dbContext.Users.Where(u => u.LockoutEnd != DateTimeOffset.MaxValue && u.Roles.Co
 
 ---
 
----
-
-## 9. Joining ChangedBy User to List Queries — `UserExtensions.LeftJoin()`
+## 6. Joining ChangedBy User to List Queries — `UserExtensions.LeftJoin()`
 
 **Rule:** When a list endpoint needs to display who last changed each row, use `query.LeftJoin(dbContext.Users)` from `GR.PRIIS.Library.DataAccess.QueryableExtensions.UserExtensions`. This produces a single SQL left-join and handles deleted users gracefully (returns `null` for the `User` property).
 
@@ -64,11 +62,11 @@ dbContext.FeedbackTickets
     .Select(x => new FeedbackTicketListItem { ... })
 ```
 
-> **For export endpoints** that need the full name + temporal fallback (deleted users), see the `AddChangedByIds` pattern in Section 9a below — the `LeftJoin` approach only covers live users.
+> **For export endpoints** that need the full name + temporal fallback (deleted users), see the `AddChangedByIds` exemplar in Section 6a below — the `LeftJoin` approach only covers live users.
 
-### 9a. ChangedBy Lookup with Temporal Fallback — Export Endpoints Only
+### 6a. ChangedBy Lookup with Temporal Fallback — Export Endpoints Exemplar
 
-Only necessary when you need deleted-user names in an Excel export. Use the `AddChangedByIds` + temporal-query approach:
+Only necessary when you need deleted-user names in an Excel export. Follow the exemplar in `backend/source/GR.PRIIS.API/Features/Reports/Register/ExportRegisterEndpoint.cs:413` (`AddChangedByIds` is currently a `private static` helper there; if a second export endpoint needs it, extract it to a shared static class in `backend/source/GR.PRIIS.API/Features/Reports/`):
 
 ```csharp
 // Step 1 — accumulate all ChangedBy GUIDs from all lists
@@ -118,9 +116,7 @@ private static void AddChangedByIds<T>(
 
 ---
 
----
-
-## 10. Shared Static Expression Properties on Entities
+## 7. Shared Static Expression Properties on Entities
 
 **Rule:** Reusable EF filter and projection expressions belong as `static` members on the entity class itself — not re-declared inline at each call site.
 
@@ -146,9 +142,7 @@ dbContext.Users.Where(u => u.LockoutEnd != DateTimeOffset.MaxValue && u.Roles.Co
 
 ---
 
----
-
-## 12. Shared Pagination — `ToPaginatedListAsync()`
+## 8. Shared Pagination — `ToPaginatedListAsync()`
 
 **Rule:** All paginated list endpoints use `ToPaginatedListAsync<T, TOrderByEnum>(request, extraOrderBy?)` from `PaginatedListQueryableExtensions`. Never manually compute `Skip()` / `Take()` or total count.
 
@@ -168,9 +162,7 @@ return new PaginatedList<FooListItem, FooOrderBy>(items, req.Page, req.PageSize,
 
 ---
 
----
-
-## 13. Tokenized Full-Text Search — `BuildTokenizedPredicate()`
+## 9. Tokenized Full-Text Search — `BuildTokenizedPredicate()`
 
 **Rule:** All text-search functionality uses `SearchExtensions.BuildTokenizedPredicate<T>()` from `GR.PRIIS.Library.Common.Extensions`. Never write inline `Contains()` clauses or split search text manually.
 
@@ -201,9 +193,7 @@ var results = dbContext.Operations.Where(o =>
 
 ---
 
----
-
-## 14. Hierarchy Projections — `HierarchySelect()` + `IfTypeThenSelect()`
+## 10. Hierarchy Projections — `HierarchySelect()` + `IfTypeThenSelect()`
 
 **Rule:** When querying an entity inheritance hierarchy (e.g., `BaseContract`, `ExternalSupplier`) and projecting into a single DTO type with derived-type-specific fields, use `HierarchySelect()` + `IfTypeThenSelect<TDerived>()`. Never use `is` pattern-matching or multiple queries for the same entity hierarchy.
 

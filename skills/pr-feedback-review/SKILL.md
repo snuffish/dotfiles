@@ -5,16 +5,14 @@ description: "Triages the discussion on a pull request: every reviewer thread, c
 
 # PR Feedback Review Skill
 
-Use this skill whenever the user asks to review pull request feedback, triage review comments, assess reviewer objections or suggestions, or plan responses/actions for PR comments.
+Triages pull request reviewer comments, threads, and votes against the code at the PR head, evaluates technical merit and downstream impact, and drafts actionable fix paths and replies.
 
 ---
 
 ## Invariants
 
-1. **Artifact and summary:** every `/pr-feedback-review` response writes or updates the complete feedback review report as `<prefix>-pr_feedback_review-<suffix>.md` **at the workspace root**, and begins with a clickable link to it plus clickable section anchors, built as *Artifact Links* below specifies. The user frequently needs to click and open it in the IDE.
-2. **Read-only:** never edit code files, stage commits, run migrations, check out branches, `git stash push`/`pop`, or execute modifying commands during or immediately after a `/pr-feedback-review`. The **only** git writes allowed are `git fetch` and the ones `git-worktrees` snapshot mode performs (*Step 2.3*): `git worktree add --detach` / `remove` / `prune` on a snapshot directory **outside** the repo.
-3. **No auto-proceed:** never begin implementing fixes or refactorings automatically. Present clear decision paths, code diffs, and draft replies, then wait for explicit user instruction.
-4. **No implementation plan instead:** do not substitute `<prefix>-implementation_plan-<suffix>.md` for the feedback review document. The feedback review document *is* `<prefix>-pr_feedback_review-<suffix>.md`.
+1. **Artifact and summary:** every `/pr-feedback-review` writes `<prefix>-pr_feedback_review-<suffix>.md` at the workspace root and opens its chat response with the `artifact-protocol` › *Chat link block*. Never substitute `<prefix>-implementation_plan-<suffix>.md` for the feedback review artifact.
+2. **Read-only:** never edit code, stage commits, run migrations, post replies, or modify the main checkout (`core` › *The `/proceed` gate*, `git-worktrees` › *Snapshot Lifecycle*).
 
 ---
 
@@ -24,27 +22,25 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 
 Read these before step 1:
 - `../_modules/core.md`: read-only until `/proceed`
-- `../_modules/artifact-protocol.md`: writes `<prefix>-pr_feedback_review-<suffix>.md` (suffix e.g. `-18176-backend`, `-18176-18177-verksamhetsobjekt`)
+- `../_modules/artifact-protocol.md`: writes `<prefix>-pr_feedback_review-<suffix>.md`
 - `../_modules/git-worktrees.md`: snapshot by default
 - `../_modules/pr-counterpart.md`
 - `../_modules/pr-host.md`
-- `../_modules/project-profile.md`: base profile only (no Command profile); reads *Tracker*, *PR tooling*, *Pattern skills per layer*, *Contract touchpoints*, *Report language* and *Known drift*
+- `../_modules/project-profile.md`: base profile only (`<project>-profile`); reads *Tracker*, *PR tooling*, *References per layer*, *Contract touchpoints*, *Report language*, and *Known drift*
+- `../_modules/fan-out.md`
 
-- Without a handed-in `[worktree-context]` block, the repo root is the snapshot this skill creates in *Step 2.3*.
+- Without an incoming `[worktree-context]` block, `repo-root` is the snapshot created in *Step 2.3*.
 
 ---
 
 ## Project profile
 
-Before Step 1, load the project's base profile `<project>-profile` with the Skill tool when the workspace matches its `[Project: …]` gate (`project-profile` › *Discovery*; e.g. `priis-profile` in the GR workspace). There is no `pr-feedback-review-<project>-profile`. Resolve the fields named in *Modules* per `project-profile` › *Resolution order*:
+Load `<project>-profile` before Step 1 when the workspace matches its gate (`project-profile` › *Discovery*) and resolve the fields listed in *Modules*:
+- **Tracker** and **PR tooling** select `<org-url>`, repo IDs, and the thread-fetch tool.
+- **References per layer**, **Contract touchpoints**, and **Known drift** guide Step 3 technical evaluation.
+- **Report language** sets the language of the artifact and drafted replies.
 
-- **Tracker** and **PR tooling** pick the org URL, repository ids and the thread-fetch tool for Steps 1–2, ahead of `pr-host`'s generic order.
-- **Pattern skills per layer** names the skills to load for the layer a thread is about (Step 3).
-- **Contract touchpoints** is the list Step 3 and the *Impact* axis check a suggested change against.
-- **Report language** sets the language of the artifact and the drafted replies (*Heuristics* › *Match the language*).
-- **Known drift** tells which rulebook or skill claims to distrust when a thread cites them.
-
-A profile adds facts; it never relaxes this skill's invariants (read-only, snapshot, no posting). Name the loaded profile in the artifact header's **Profile** line, or write "none" when no profile matches.
+Record the loaded profile (or `none`) in the artifact header's **Profile** line.
 
 ---
 
@@ -52,21 +48,16 @@ A profile adds facts; it never relaxes this skill's invariants (read-only, snaps
 
 | Invocation | Mode | How the axes run |
 |---|---|---|
-| `/pr-feedback-review [target]` | **Standard** (default) | One pass; the reviewer covers all three axes itself (Steps 3–5) |
-| `/pr-feedback-review deep [target]` | **Deep** | Verification, Merit and Impact each run in an isolated parallel sub-agent (see *Deep Mode*), then aggregate |
-| `/pr-feedback-review live [target]` | Standard or deep, **no snapshot** | Reads the main checkout directly instead of the snapshot from *Step 2.3*. Only when no snapshot is possible, or the user wants threads checked against unpushed local commits |
+| `/pr-feedback-review [target]` | **Standard** (default) | Single pass covering Verification, Merit, and Impact (Steps 3–5) |
+| `/pr-feedback-review deep [target]` | **Deep** | Verification, Merit, and Impact run in parallel sub-agents ([deep-mode.md](references/deep-mode.md)), then aggregate |
+| `/pr-feedback-review live [target]` | Standard or deep, **no snapshot** | Reads the main checkout directly (same as `/no-worktrees`) |
 
-`live` is a modifier, not a mode: `/pr-feedback-review deep live <target>` is valid. The token `/worktrees` in the arguments is accepted and changes nothing, because the snapshot is already the default. The token `/no-worktrees` means `live`.
+Every thread is assessed on three axes:
+- **Verification**: what does the code at *head* do about this thread (addressed, partial, not addressed, superseded; commit, `path:line`, and test)?
+- **Merit**: is the reviewer right, and is their proposed fix sound against the code and framework semantics?
+- **Impact**: what else does acting on it touch (stacked branches, linked work items, cross-repo contracts, other callers, competing threads, prior decisions)?
 
-The three axes every thread is assessed on:
-
-- **Verification** — what does the code at *head* do about this thread? Addressed, partially, not at all, or superseded; the commit and `path:line` that prove it; whether a test pins it.
-- **Merit** — is the reviewer right, and is the proposed fix the right fix? Evaluated independently against the code and framework semantics, trying to refute both the reviewer and the current implementation.
-- **Impact** — what else does acting on it touch? Stacked branches, linked work items, cross-repo contracts, other callers, conflicts between threads, decisions already taken in earlier artifacts.
-
-Suggest `deep` in the chat response (do not switch silently) when there are more than ~10 active threads, when threads are anchored to an iteration older than head (the code has moved since they were written), or when reviewers propose concrete alternative implementations whose correctness needs checking rather than just adopting.
-
----
+Suggest `deep` (`fan-out` › *Bare vs deep*) when there are >10 active threads, threads anchored to older iterations, or complex alternative implementations proposed by reviewers.
 
 ### When *not* to use — pick the right neighbor
 
@@ -74,277 +65,106 @@ Suggest `deep` in the chat response (do not switch silently) when there are more
 |---|---|
 | Reviewing the PR's code yourself | [`/code-review`](../code-review/SKILL.md) |
 | The PR's build validation is red | [`/pr-fix-pipeline`](../pr-fix-pipeline/SKILL.md) |
-| Writing or refreshing the PR description | [`pr-summary`](../pr-summary/SKILL.md) |
+| Writing or refreshing the PR description | [`/pr-summary`](../pr-summary/SKILL.md) |
 | How to try the change by hand | [`/manual-testing`](../manual-testing/SKILL.md) |
 
 ---
 
-## Step 1 — Determine the Target PR
+## Step 1 — Determine the Target PR & Counterpart
 
-Parse the arguments or current workspace context to identify the target PR:
-
-| Input | Resolution |
-| --- | --- |
-| Full PR URL | Parse `{org}`, `{project}`, `{repo}`, `{prId}` directly |
-| Bare PR ID (e.g. `18170`, `#18170`) | Use current repo remote to infer host/org/project |
-| No argument | Detect open PR for current git branch |
-
-Parsing a URL, resolving a bare id or the current branch to a PR, and choosing the organization URL are **`pr-host`** › *Parse a PR or work-item URL*, *Resolve the PR from a branch* and *Organization URL*.
-
-### Counterpart PRs — every resolved PR, every time
-
-After the target PR is resolved, run the counterpart lookup in **`pr-counterpart` › *Counterpart discovery***. That section owns the signals, the commands and the classification. One pasted link is one half of a change that may span repos. What the result means here:
-
-- **Found** → the counterpart joins the scope without asking. Steps 2–5 run for **every PR in scope**: its metadata and votes, its thread dump (kept per PR: `threads-<repo>.json`), its own snapshot (*2.3*, one per PR), and its rows in the triage matrix. A thread on one PR whose fix lands in the other repo, or must land in both (an API shape, a shared enum, a generated client snapshot), is assessed against **both** snapshots. Its *Concrete Code Solution* names both files, and its reply says the counterpart PR carries the other half.
-- **Found, excluded** (the user named one PR "only") → triage only that PR. Still name the counterpart, its head and its open-thread count in the header, and flag any thread whose fix would change the shared contract.
-- **Expected but missing** → an action-checklist item: the fix a thread asks for needs a change in a repo that has no PR.
-- **None** → say "single-repo change" in the header.
+1. **Resolve the target PR** from a URL, bare ID, or current branch per `pr-host` › *Parse a PR or work-item URL*, *Organization URL*, and *Resolve the PR from a branch*.
+2. **Counterpart lookup**: run `pr-counterpart` › *Counterpart discovery* for every resolved PR:
+   - **Found** → joins the scope automatically; Steps 2–5 run for every PR in scope, and cross-repo threads are assessed against both snapshots.
+   - **Found, excluded** → triage only the named PR; record the counterpart, its head, and open-thread count in the header, and flag contract-touching threads.
+   - **Expected but missing** → add an action-checklist item noting the missing repo PR.
+   - **None** → record `single-repo change` in the header.
 
 ---
 
 ## Step 2 — Fetch PR Metadata, Reviewers & Discussion Threads
 
-Gather complete PR information including status, reviewers, vote states, and discussion comments.
+### 2.1 — PR Details, Reviewer Votes & Threads
+1. Fetch PR metadata, linked work items, reviewer votes (`10` Approved, `5` Approved w/ suggestions, `0` No vote, `-5` Waiting, `-10` Rejected), and discussion threads per `pr-host` › *Fetch the PR, its work items and acceptance criteria* and *Fetch discussion threads* ([pr-host-threads.md](../_modules/references/pr-host-threads.md)).
+2. **Save the dump**: write the raw JSON and filtered human threads to `<scratchpad>` (`threads.json`, `threads-human.txt`), recording each thread's status, `file:line`, and `iterationContext`.
+3. **Capture the selected code**: quote the lines the reviewer selected at the iteration commit per [selected-code.md](references/selected-code.md).
 
-### 2.1 — PR Details & Reviewer Votes
+### 2.3 — Pin the Head in a Snapshot
 
-```bash
-# Azure DevOps — Details & Reviewers
-az repos pr show --id <prId> --org <org-url> -o json   # <org-url>: pr-host › Organization URL
-```
-
-Key reviewer vote values in Azure DevOps:
-
-- `10`: Approved
-- `5`: Approved with suggestions
-- `0`: No vote / reset
-- `-5`: Waiting for the author / Changes requested
-- `-10`: Rejected
+Follow `git-worktrees` › *Snapshot Lifecycle* ([git-worktrees-snapshot.md](../_modules/references/git-worktrees-snapshot.md), `<skill>=pr-feedback-review`) to snapshot the remote PR head per repo:
 
 ```bash
-# GitHub — Details & Reviewers
-gh pr view <prId> --json title,body,state,headRefName,baseRefName,reviewDecision,reviews
+git -C <repo> fetch origin <sourceBranch> <targetBranch>
+HEAD_SHA=$(git -C <repo> rev-parse origin/<sourceBranch>)    # source ref: origin/<sourceBranch>
+git -C <repo> rev-parse --abbrev-ref HEAD                      # main checkout's branch
+git -C <repo> rev-list --left-right --count "$HEAD_SHA"...HEAD # "<behind> <ahead>"
 ```
 
-### 2.2 — Discussion Threads & Comments
-
-Fetch every thread per **`pr-host`** › *Fetch discussion threads*: the Azure DevOps `az devops invoke` dump with human comments filtered from bots and system notices, or GitHub's inline and general comments (paginated) plus each thread's resolved/outdated state from GraphQL. Run it for every PR in scope.
-
-#### Keep the dump
-
-Save the raw JSON and the filtered human-readable dump to the scratchpad (e.g. `threads.json`, `threads-human.txt`) rather than only printing them. The dump is the single source for Steps 3–5, and in deep mode the sub-agents read it from there instead of re-fetching. Record for each thread its **status**, **file/line**, and the **iteration** it was written against (`pullRequestThreadContext.iterationContext`) — the iteration tells you how far the code may have moved since.
-
-#### Capture the selected code
-
-An inline thread is anchored to the lines the reviewer selected. Quote that selection in the artifact (*6.3* › **Selected code**), so the reader sees what the comment is about without opening the PR. Take it from the commit the reviewer saw, not from head: head shows what the code is *now*, which is the job of *State at head*.
-
-- **Azure DevOps:** the selection is `threadContext.rightFileStart.line` … `rightFileEnd.line` (new side). When only `leftFileStart`/`leftFileEnd` are set, the reviewer selected removed lines on the base side. The commit is the iteration's: map `iterationContext.secondComparingIteration` to that iteration's `sourceRefCommit.commitId` (left side: `commonRefCommit.commitId`). Fetch the iterations once per PR:
-
-  ```bash
-  az devops invoke --org <org-url> --area git --resource pullRequestIterations \
-    --route-parameters project=<project> repositoryId=<repo> pullRequestId=<prId> --api-version 7.1 -o json > iterations.json
-  # filePath starts with '/': strip it
-  git -C <repo> show <iteration-commit>:<filePath-without-leading-slash> | sed -n '<start>,<end>p'
-  ```
-
-- **GitHub:** a review comment carries `path`, `original_commit_id`, `original_start_line` (null for a one-line selection) and `original_line`, plus `side` (`LEFT` = removed lines). Read `git -C <repo> show <original_commit_id>:<path> | sed -n '<start>,<end>p'`. When the commit cannot be read, use the tail of the comment's `diff_hunk`.
-- **Commit unreachable** (the branch was force-pushed and `git fetch origin <sha>` fails): quote the same range at head, and label it `(at head — iteration commit no longer reachable)`.
-- Keep the snippet next to the thread in the dump, so deep-mode sub-agents get it too. Quote up to 20 lines. A longer selection shows its first 20 lines and then `// … <n> more lines`. General threads (no file) have no snippet: omit the field.
-
-### 2.3 — Pin the head in a snapshot
-
-Threads are assessed against the PR's **remote head** — what reviewers see — never against the iteration they were written on, and never against whatever happens to be checked out locally. That head is materialised in a **detached `git worktree` outside the repo** and everything in Steps 3–5 reads from there, so the user can keep editing the main checkout the whole run. `/pr-feedback-review live …` skips the snapshot and reads the main checkout as-is.
-
-The lifecycle — create, read, map paths back, remove, fallback — is **`git-worktrees` › *Snapshot Lifecycle* (snapshot mode)** with `<skill>=pr-feedback-review`; follow it for the mechanics. What is specific here:
-
-- **Repo:** the workspace repo whose `origin` matches the PR's `{repo}` (*Repo Resolution*; in a multi-repo workspace, e.g. the `Shop.Api` checkout for a `_git/Shop.Api/pullrequest/…` URL). One snapshot per PR in scope.
-- **Head and source ref** (*Snapshot Lifecycle* a, *PR whose branch is not checked out* row — used even when it is checked out, since local commits are not what reviewers see):
-
-  `<sourceBranch>` / `<targetBranch>` are the PR's `sourceRefName` / `targetRefName` from Step 2.1 with `refs/heads/` stripped (GitHub: `headRefName` / `baseRefName`, already bare):
-
-  ```bash
-  git -C <repo> fetch origin <sourceBranch> <targetBranch>
-  HEAD_SHA=$(git -C <repo> rev-parse origin/<sourceBranch>)    # source ref: origin/<sourceBranch>
-  git -C <repo> rev-parse --abbrev-ref HEAD                      # main checkout's branch
-  git -C <repo> rev-list --left-right --count "$HEAD_SHA"...HEAD # "<behind> <ahead>" when that branch is the PR branch
-  ```
-
-  Also compare `HEAD_SHA` with the PR's `lastMergeSourceCommit` from Step 2.1; a mismatch means the PR moved during the fetch — re-fetch.
-- **Create** (*Snapshot Lifecycle* b): `SNAP_DIR=<scratchpad>/pr-feedback-review/<repo-dirname>/<ref-slug>@<short-sha>`, then `git -C <repo> worktree add --detach "$SNAP_DIR" "$HEAD_SHA"`.
-- **Read** (*Snapshot Lifecycle* c): inside the snapshot `HEAD` **is** the PR head and remote refs are shared, so
-
-  ```bash
-  git -C "$SNAP_DIR" log --oneline origin/<targetBranch>..HEAD
-  git -C "$SNAP_DIR" diff origin/<targetBranch>...HEAD
-  ```
-
-  CodeGraph indexes the main checkout: navigate with it, open the same file under `$SNAP_DIR` for the citation (exact only when the main checkout's `HEAD` equals the snapshot head and is clean — say which case applied).
-- **No `<scratchpad>` path reaches the artifact or the chat** (*Snapshot Lifecycle* d): map every `path:line` to `<repo-dirname>/…` first.
-- **Remove** (*Snapshot Lifecycle* e) after the artifact is written and its links emitted — in deep mode, after every sub-agent has returned — and say in chat that the snapshot of `origin/<sourceBranch> @ <short-sha>` was removed, or why it was kept.
-- **Fallback** (*Snapshot Lifecycle* f): when `worktree add` fails, read live, record `live checkout` in the artifact header, and warn that edits during the run invalidate line numbers.
+Compare `HEAD_SHA` with the PR's `lastMergeSourceCommit` from Step 2.1; if they differ, the PR moved during the fetch — re-fetch.
 
 ---
 
 ## Step 3 — Investigate Codebase Context & Related PRs
 
-Do not analyze comments in a vacuum. Cross-reference each comment with the actual codebase. In standard mode you cover all three axes (*Verification*, *Merit*, *Impact*) yourself here and in Step 4; in deep mode this step is what the sub-agents do, and you aggregate (see *Deep Mode*).
-
-1. **Inspect Targeted Code**:
-   - Use `view_file` or `grep_search` to view the specific lines, classes, queries, or configs mentioned in the feedback — under the snapshot (`$SNAP_DIR`), not the main checkout.
-2. **Check Downstream & Stacked Dependencies**:
-   - Check if other PRs or branches branch off this PR (e.g. feature branch stacking).
-   - Check linked work items (`az repos pr work-item list --id <prId>` or `az boards work-item show --id <id>`).
-   - Check the counterpart PR (*Counterpart PRs*, Step 1): does the thread's suggestion change something the other repo consumes, and is the other half already there, or contradicted, at the counterpart's head?
-3. **Assess Technical & Architectural Constraints**:
-   - **Database & Migrations**: Temporal tables, data preservation (`sp_rename` vs drop/create), indexes, foreign keys.
-   - **Framework & Conventions**: the project's pattern skills for the layer the thread is about (the Profile's *Pattern skills per layer*): endpoint, data access, UI, forms, validation.
-   - **Security & Authorization**: the project's access rules, global query filters and role permissions.
-   - **API Contracts & Breaking Changes**: Does the suggestion alter client/frontend request/response contracts?
+1. **Inspect targeted code**: use the host's file-reading and search tools (`Read`/`Grep` or `codegraph`) to inspect the cited files, classes, queries, and callers inside `$SNAP_DIR`, not the main checkout.
+2. **Check downstream & stacked dependencies**:
+   - Check for stacked branches branching off this PR.
+   - Check linked work items (`az repos pr work-item list --id <prId> --org <org-url>` and `az boards work-item show --id <id> --org <org-url>`).
+   - Check the counterpart PR snapshot when a thread touches a shared contract.
+3. **Assess technical & architectural constraints**: database/migration safety, layer conventions (*References per layer*), authorization/query filters, and API contract compatibility (*Contract touchpoints*).
 
 ---
 
 ## Step 4 — Triage & Technical Assessment
 
-Put each thread in one triage category. These are **not** `/code-review` severities, so they use their own markers. `/code-review` *Step 6b* and `/squash-code-review` read this matrix next to their own 🔴/🟡/🟢, and shared emoji would read as the same scale:
+Assign each thread one triage category (distinct from `/code-review` 🔴/🟡/🟢 severities):
+- ⛔ **Blocking**: a real defect (data integrity, race condition, security gap, broken requirement) that blocks merge on its merits.
+- 💡 **Proposal**: an alternative pattern, simplification, refactoring, or design question requiring trade-off evaluation.
+- ✏️ **Polish**: naming, style, docstring, or a small test addition.
+- ⚪ **Info**: rationale questions, converged discussions, or automated notices.
 
-- ⛔ **Blocking**: a defect the thread points out (data integrity, race condition, security leak, broken requirement) that would block the merge on its merits.
-- 💡 **Proposal**: an alternative pattern, simplification, refactoring or question of intent. Needs deliberate evaluation of the trade-offs (effort, blast radius, downstream impact).
-- ✏️ **Polish**: naming, code style, a docstring, or a test to add.
-- ⚪ **Info**: questions about rationale, discussions already converged, automated notices.
-
-Judge the category from what the thread says, checked against the code. A reviewer's vote (`-5` waiting for author, `-10` rejected) is recorded in the matrix's **Vote** column, not used as the category. A `-5` on a naming nit is still ✏️ Polish, and the vote column shows why the PR is held.
+Record the reviewer's vote (`-5`, `-10`, etc.) in the **Vote** column rather than inflating the category (a `-5` on a naming nit stays ✏️ Polish).
 
 ---
 
 ## Step 5 — Formulate Actionable Paths & Draft Replies
 
 For every non-trivial thread:
-
-1. **State the Underlying Motivation**: What is the reviewer actually concerned about? (e.g. avoiding unnecessary join tables, preventing N+1 queries, making code cleaner, ensuring temporal data is safe).
-2. **Evaluate Tradeoffs**:
-   - **Pros**: Cleaner API, less boilerplate, better performance.
-   - **Cons / Risks**: Migration risks, rebase conflicts with stacked PRs, breaking public contracts, temporal table complications.
-3. **Provide Concrete Decision Options**:
-   - **Path A (Direct Fix / Refactor Now)**: Exact steps and code diffs required if adopting the feedback immediately.
-   - **Path B (Clarify / Defer to Follow-up)**: Rationale for keeping current scope (e.g. minimal blast radius, prerequisite rename for stacked PR) and handling in a dedicated follow-up task.
-4. **Draft Ready-to-Send Responses**:
-   - Provide a clear, respectful, well-reasoned comment draft (in the language of the PR conversation) that the author can copy and paste directly into the PR thread.
+1. **State the underlying motivation** (what risk or smell the reviewer is targeting).
+2. **Evaluate trade-offs** (pros vs. migration/rebase/contract risks).
+3. **Provide concrete decision options**:
+   - **Path A (Direct Fix / Refactor Now)**: exact steps and `diff` block.
+   - **Path B (Clarify / Defer to Follow-up)**: rationale for keeping current code or deferring to a follow-up work item.
+4. **Draft a ready-to-send reply** in the PR conversation's language (unless overridden by the profile's *Report language* field).
 
 ---
 
 ## Step 6 — Artifact Management & Output Format
 
-### 6.1 — Write the Markdown Artifact
-
-Always write the complete PR feedback review report to `<prefix>-pr_feedback_review-<suffix>.md` **at the workspace root** (never inside the snapshot) before returning the response, then remove the snapshot (*Step 2.3*).
-- **Name**: `<prefix>` and the rules for it are `artifact-protocol`'s. Derive `<suffix>` from PR ID and topic (e.g. `-18176-backend`, `-18176-18177-verksamhetsobjekt`).
-- **Ownership**: a new artifact is published through *Claim*, with its owner marker. "Update" means updating an artifact **this session** created (`artifact-protocol` › rule 3); a re-run in a new session writes `…-2.md` and links the earlier one, never overwriting another session's file.
-
-### 6.2 — Artifact Links
-
-Format all chat links and section anchors according to the **`artifact-protocol`** protocol (`file://` absolute for Antigravity IDE, workspace-relative in the Claude Code IDE extension, an `antigravity-ide://` editor URL in the Claude Code terminal CLI).
-
-Always start your response with a clickable link to `<prefix>-pr_feedback_review-<suffix>.md` and direct anchors to its main sections.
-
-### 6.3 — Structure of `<prefix>-pr_feedback_review-<suffix>.md`
-
-```markdown
-# PR Feedback Review: <PR Title>
-
-> **PR:** [<Title>](<url>) (`<source>` → `<target>`)  
-> **Counterpart:** [<repo> !<id>](<url>) @ `<short-sha>` — triaged / found, not triaged / expected but missing / single-repo change (`pr-counterpart` › *Classification*)  
-> **Head reviewed:** `origin/<source>` @ `<short-sha>` (iteration <n>)  
-> **Read from:** snapshot of `origin/<source>` @ `<short-sha>` (removed) / (kept at <path>) / live checkout of `<branch>`  
-> **Local checkout:** on `<branch>` — same commit / local ahead <n> / behind <n> / PR branch not checked out  
-> **Mode:** standard / deep  
-> **Profile:** `<project>-profile` / none (*Project profile*)  
-> **Status:** Active / Needs Attention — <votes>, <n> threads active, <n> resolved  
-> **Reviewers:**  
-> - **<Reviewer Name>:** `<Vote / Status>`
-
----
-
-## Executive Summary & Triage Matrix
-
-| Thread | PR | File | Reviewer | Vote | Category | State at head | Recommendation |
-|---|---|---|---|---|---|---|---|
-| [#106735](#thread-106735) ([devops](https://dev.azure.com/<org>/<project>/_git/<repo>/pullrequest/<prId>?discussionId=106735)) | Backend !18707 | PriisDbContext.cs | Nebojsa | 0 | 💡 Proposal: optimization | ⏸ Not addressed | Refactor cascade loop to Queue worklist |
-| [#106740](#thread-106740) ([devops](…)) | Frontend !18708 | Foo.tsx | Daniel | −5 | ⛔ Blocking: bug | ✅ Fixed (`abc1234`) | Reply, resolve |
-
-*State at head* is one of ✅ Fixed (commit) · ◐ Partial · ⏸ Not addressed · ↩ Superseded · ⚪ n/a, plus 🕓 Fixed, not pushed (`<sha>`) for a fix that exists only locally (e.g. under `/proceed`). ✅ means the fix is at the PR head. With a single PR in scope, drop the *PR* column.
-
----
-
-## Detailed Thread Analysis & Actionable Solutions
-
-### <a id="thread-<ThreadId>"></a>Thread [#<ThreadId>](https://dev.azure.com/<org>/<project>/_git/<repo>/pullrequest/<prId>?discussionId=<ThreadId>): <File / Topic Summary>
-- **Author:** <Name> (<Timestamp>)
-- **Status:** Active / Resolved (<date>, reply <comment id>) / Closed
-- **Location:** `[<file>:<line>]`
-- **Selected code** (`<file>:<start>-<end>` @ `<short-sha>`, iteration <n>; omit for general threads):
-  ```<lang>
-  <the lines the reviewer selected, from Step 2.2 › Capture the selected code>
-  ```
-- **Reviewer Comment:**
-  > <Quote of reviewer's comment>
-
-#### Technical Analysis
-- **Core Concern:** <What the reviewer is pointing out>
-- **State at head (iteration <n>):** <Addressed / partial / not — commit and `path:line` at head; the test that pins it>
-- **Architectural Assessment:** <Is the reviewer right? Is the proposed fix right? How this fits the codebase, EF Core / API conventions, constraints>
-- **Tradeoffs & Risks:** <Pros/cons of changing vs keeping as-is, downstream impact>
-
-#### Concrete Code Solution
-```diff
-- old code
-+ new code
-```
-
-#### Ready-to-Send Reply (in the PR's language)
-> <Draft reply ready to copy-paste directly into the PR thread>
-
----
-
-## Action Checklist & Next Steps
-- [ ] Task 1
-- [ ] Task 2
-```
+1. Publish `<prefix>-pr_feedback_review-<suffix>.md` at the workspace root via `artifact-protocol` › *Claim*, following the template in [artifact-template.md](references/artifact-template.md), then remove the snapshot(s).
+2. Begin the chat response with the `artifact-protocol` › *Chat link block*, followed by a concise summary of reviewer votes, blocking/open thread counts, and the closing gate line (`core` › *The `/proceed` gate*).
 
 ### 6.4 — Status fields
 
-The artifact states each thread's progress in five places. These are its **status fields** (`artifact-protocol` rule 3 › *Status fields*):
+The artifact tracks thread progress across five **status fields** (`artifact-protocol` › *Rules* › rule 3 & rule 7):
+1. Header **Status:** line (votes, active/resolved counts);
+2. **Executive Summary** opening claim;
+3. Triage matrix **State at head** column (`✅ Fixed (<sha>)` · `🕓 Fixed, not pushed (<sha>)` · `◐ Partial` · `⏸ Not addressed` · `↩ Superseded` · `⚪ n/a`);
+4. Each thread's **Status:** line;
+5. **Action Checklist** items.
 
-1. the header **Status:** line (votes, active and resolved thread counts, conflicts);
-2. the **Executive Summary** paragraph's opening claim about what is addressed;
-3. the triage matrix's **State at head** column;
-4. each thread's **Status:** line;
-5. the **Action Checklist**, including any *Applied* note above it.
-
-Every later step that changes a thread's state updates all five together (`artifact-protocol` rule 7): `/proceed` applying fixes (🕓 Fixed, not pushed), a push that puts the fix at the PR head (✅ Fixed (`<sha>`)), `/pr-post-comments` posting and resolving a reply (thread **Status:** Resolved, header counts). Leave *Recommendation* and *Technical Analysis* as written; when they no longer describe the code, add a dated `Update <date>:` line under the thread's *State at head (iteration <n>)* bullet instead of rewriting them. That bullet carries its iteration so a later reader, and the stale-marker `grep`, can tell history from current state: a hit inside a bullet labelled with an older iteration and followed by an *Update* line is history, not stale. A step run by another session may change only these fields (`artifact-protocol` rule 3).
+Update all five together whenever a later step (`/proceed`, push, `/pr-post-comments`) changes thread state. Preserve historical *Technical Analysis* by appending a dated `Update <date>:` line under *State at head (iteration <n>)*.
 
 ---
 
 ## Deep Mode
 
-`/pr-feedback-review deep` runs each axis in its own sub-agent so one axis's context cannot mask another: a thread can be "fixed" at head while the reviewer's underlying claim was wrong, or the reviewer's proposed fix can be the one that introduces a defect, or a fix that satisfies one thread can undo another.
-
-1. **Do Steps 1–2 yourself first** — PR resolved, votes and threads fetched, the dump saved to the scratchpad, snapshot created and compared with the local tree. Sub-agents must not re-fetch the PR or the threads, or create, remove, lock or unlock worktrees (`git-worktrees` invariant 5).
-2. **Spawn the three sub-agents in parallel** (one message, three calls). Each prompt includes: the snapshot's **`[worktree-context]` block** (`repo-root` = the snapshot path, **never the main checkout**; `workspace-path` = what every cited path maps back to; `source-ref` = `origin/<source>`), the exact diff command (`git -C <snapshot> diff origin/<target>...HEAD`), the commit list, the path to the thread dump, and its axis brief. Each report is **per thread**, keyed by thread id, so the aggregator can join them.
-   - **Verification** — "For every thread in the dump: what does the code at head do about it? Classify as fixed / partial / not addressed / superseded. Cite the commit and `path:line` at head (line numbers in the thread are from an older iteration — re-find the code), and name the test that pins it, or say there is none. Where the reviewer asked for something specific (a test, a doc line, an overload), check that exact thing exists. Report only what the aggregation needs: one entry per thread with its citation, nothing else."
-   - **Merit** — "For every thread: is the reviewer's claim correct, and is their proposed fix the right fix? Judge independently against the code and the framework's real semantics (EF Core change tracker, transactions, FastEndpoints, etc.). Try to refute both the reviewer and the current implementation. Flag proposals that would introduce a defect, claims the code already handles, and things the comment implies but does not say (a reviewer who names four endpoints may be describing six statements). Report only what the aggregation needs: one entry per thread with its citation, nothing else."
-   - **Impact** — include the list of workspace-root artifacts for this PR (earlier reviews, plans, description drafts). "For every thread that proposes a change: what else does it touch? Stacked branches off this PR, linked work items, cross-repo contracts (list them), other callers of the changed members, conflicts between threads (one thread's fix undoing another's), and decisions already recorded in the listed artifacts. Also compare the live PR description with the threads and the diff and flag stale claims. Report only what the aggregation needs: one entry per thread, plus the stale description claims, each with its citation, nothing else."
-   - All sub-agents are **read-only**: no edits, no checkouts, no worktree commands, no installs, builds or tests, no posting. They read only under `repo-root` and report `path:line` already mapped to `workspace-path`.
-3. **Aggregate** into the single artifact, then remove the snapshot: re-check that no citation points into the snapshot directory, join the three reports per thread, assign the Step 4 category, set *State at head* from Verification **only after re-opening the cited `path:line` yourself** — sub-agent output is evidence, not a verdict — decide Path A/B using Merit and Impact, and draft the reply. Any thread Merit marks as "reviewer is wrong" or "proposed fix introduces a defect" gets its reply written as a respectful explanation with the concrete failing sequence, never a bare refusal.
-4. **Name the mode** in the artifact header and in the chat response.
+For `/pr-feedback-review deep`, read [deep-mode.md](references/deep-mode.md) before spawning sub-agents.
 
 ---
 
 ## Heuristics & Common Pitfalls
 
-- **Do not ignore reviewer votes**: A `-5` or `-10` vote blocks PR completion in most CI/CD branch policies. Highlight blocking feedback prominently.
-- **Map every thread to head, not to its iteration**: thread anchors (`file:line`, iteration) point at the code the reviewer saw. Re-find the code at head before deciding anything; a thread can be fixed, moved, or made moot by later commits, and a "fixed" reply that cites the wrong line erodes trust.
-- **Verify "addressed" by reading, not by commit message**: a commit titled after the thread is not proof. Open the code, and check that the *specific* ask (a test, a doc line, an overload, an exception type) exists.
-- **Check the reviewer's fix, not only the reviewer's claim**: a correct diagnosis can come with a fix that breaks something else. When the branch chose a different mechanism than the one proposed, the reply must say why the proposed one was not taken.
-- **Check for stacked branches**: If another active feature branch branches off this PR, major refactoring in this PR will require rebasing the downstream branch. Mention this tradeoff explicitly.
-- **Differentiate opinion vs defect**: A suggestion to use implicit relationships or rename a variable is an architectural preference or cleanup; a missing authorization filter or data loss migration is a defect. Make the distinction crisp.
-- **Match the language of the PR conversation**: draft replies in the language the reviewers write in, with an English technical summary when that language is not English. The project Profile's *Report language* field overrides this when it says otherwise.
+- **Map every thread to head, not its iteration**: re-find moved code at head before judging whether a thread is addressed.
+- **Verify "addressed" in code, not commit messages**: confirm the exact requested test, overload, or guard exists.
+- **Evaluate the reviewer's proposed fix independently**: if the branch solved the concern differently or the reviewer's snippet introduces a bug, explain the concrete sequence in the draft reply.
+- **Flag stacked-branch rebase impact** whenever a thread asks for a broad rename or refactor.

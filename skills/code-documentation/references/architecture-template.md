@@ -1,4 +1,4 @@
-#### Step 2.3: Architecture Documentation
+# Architecture Documentation Template
 
 For medium-to-large projects, include architecture documentation:
 

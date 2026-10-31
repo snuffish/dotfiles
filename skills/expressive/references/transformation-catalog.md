@@ -1,7 +1,5 @@
 # Core Transformation Catalog
 
-## 2. Core Transformation Catalog
-
 Apply these battle-tested patterns to transform code from mechanical execution to domain expression:
 
 ### Pattern 1: Declarative Lookup Tables over Nested Ternary Ladders
@@ -37,6 +35,12 @@ const selectionMode = allowMultiple ? 'multiple' : 'single';
 const helperText = customText ?? DEFAULT_HELPER_TEXT[fileType][selectionMode];
 ```
 *Why it is better*: Separates text/configuration from execution logic, eliminates nesting, is easily extensible, and can be inspected at a glance.
+
+**Behavior traps — check before converting:**
+- **Eager vs. lazy**: a ternary evaluates only the chosen branch; an object literal evaluates every value up front. If a branch throws, has side effects, or is expensive (`obj.a.b` on a possibly-null `obj`, a function call), store thunks or use an internal closure with guard clauses instead of a plain map.
+- **Fallback semantics**: keep `??` vs `||` exactly as written — `0`, `''`, and `false` behave differently.
+- **Exhaustiveness**: a typed `Record<Union, T>` must still cover every member; don't introduce a silent `undefined`.
+- **Single-level ternaries**: a single-level `a ? b : c`, or a two-branch JSX conditional render, is fine as is — don't refactor it.
 
 ---
 

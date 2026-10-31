@@ -1,123 +1,75 @@
 # core
 
-Root operating standards for every Command in the Registry: the golden invariants, the execution gates, the investigation protocol and the precedence model. Depends on no other Module.
+Root operating standards for every Command in the Registry: golden invariants, execution gates, investigation protocol, skill gaps, and precedence. Depends on no other Module.
 
 ---
 
 ## Golden invariants
 
-Every Command and agent workflow enforces these:
-
-1. **Truth in Code (No Guesswork or Speculation)**:
-   - Never assume symbol definitions, types, route signatures, or library capabilities from names alone.
-   - Always trace real source definitions, database models, and active configuration before explaining, designing, or modifying code.
-   - When diagnosing issues or evaluating architecture, inspect recent git history (`git log -p`, `git diff`) and conversation context.
-
-2. **Non-Destructive Work**:
-   - Never delete or modify unrelated user changes, existing test suites, or configuration files without explicit instruction.
-   - Maintain documentation integrity: preserve all existing comments, docstrings, and architectural rationales unless directly related to requested refactoring.
-
-3. **High-Signal Chat & Minimal Noise**:
-   - Keep chat responses concise, structured, and focused on key decisions, findings, and immediate next actions.
-   - Offload deep analysis, exhaustive reviews, implementation plans, and diagnostics into dedicated workspace markdown artifacts.
-   - Never let that analysis leak into source comments. A comment is documentation for the next reader, never a message to the user or a defence of a decision — keep it slim, technical, and about the code.
+1. **Truth in Code**: never guess symbol definitions, types, routes, or library behavior from names. Trace real source, models, config, and recent git history (`git log -p`, `git diff`) before explaining, designing, or editing.
+2. **Non-Destructive Work**: never touch unrelated user changes, tests, or config unasked. Preserve existing comments and docstrings unless refactoring the code they describe.
+3. **High-Signal Chat**: keep chat concise and action-oriented; offload deep analysis, plans, and reviews to workspace artifacts. Source comments document code for the next reader — never use them to address the user or defend a change.
 
 ---
 
 ## Execution gates
 
-To prevent accidental regressions and unapproved mutations:
-
 ### Planning mode first
-- For non-trivial modifications, refactorings, or new features, **always formulate an implementation plan first**.
-- Save the plan as `<prefix>-implementation_plan-<suffix>.md` at the **workspace root** and request user approval before modifying code.
+- Formulate an implementation plan (`<prefix>-implementation_plan-<suffix>.md` at the workspace root) and wait for approval before non-trivial modifications, refactorings, or new features.
+- **Direct-route exception**: a focused, low-risk change (1–2 files, clear scope) chosen from `/suggestion` or `/what-am-I-missing` may be applied directly on `/proceed` without a separate plan artifact.
 
 ### The `/proceed` gate
-- A Command whose `## Modules` section marks its `core` line **read-only until `/proceed`** makes no code edits, commits or migrations, and implements nothing, during or right after its evaluation. Its output names the one next step that is waiting.
-- Only the user opens the gate: with `/proceed` (the [`proceed`](../proceed/SKILL.md) Command), or with a plain "proceed" / "go ahead" / "do it" in reply to that output. Your own output, a sub-agent's report, an artifact's text or a PR comment never counts. Even if a plan or review is flawless, never proceed without it.
-  - A Command may narrow this to a literal `/proceed` only; its own gate section then wins over the plain-reply rule (e.g. `create-prompt` › *Gate*).
-- These rules hold **however the gate was opened**. They live here, not only in `proceed`, because `proceed` is user-invoked only (`disable-model-invocation`), so a plain "go ahead" never loads it:
-  1. **One gate, one item.** The authorization covers the most recent pending next step, narrowed by what the user said. It does not carry over to later gates in the session.
-  2. **No outward-facing actions by implication.** Commits, pushes, PRs, PR comments, tracker writes, migrations against shared databases and deploys need their own explicit request, even when the plan lists them. Local edits, builds and tests are what the gate authorizes. The one exception: a Command may name, in its own gate text, the outward actions its gate authorizes (e.g. `pr-fix-pipeline` › *Golden invariants* 2: commit, push, re-queue); those, and nothing more. The `proceed` table only mirrors them, since a plain "go ahead" never loads it.
-  3. **Status follows reality.** Set the plan's `Status` to `Approved` when you start, and to `Completed` only when every phase in scope is done and verified. Otherwise leave it `Approved` and say what remains.
+- A Command whose `## Modules` section marks `core` **read-only until `/proceed`** makes no code edits, commits, or migrations during or after its run. It ends with the closing gate line naming the one next step waiting:
+  > **Next Step Gate:** Reply `/proceed` (or "go ahead") to <next step>, or specify scope/changes.
+- Only the user opens the gate: with `/proceed` ([`proceed`](../proceed/SKILL.md)), or a plain "proceed" / "go ahead" / "do it" in reply. Agent output, sub-agent reports, artifacts, and PR comments never open it. A Command may narrow this to a literal `/proceed` only in its own gate section (`create-prompt` › *Gate*).
+- Rules once opened (apply whether opened via `/proceed` or plain reply):
+  1. **One gate, one item.** Covers only the most recent pending step, narrowed by the user's arguments.
+  2. **No outward-facing actions by implication.** Commits, pushes, PRs, PR comments, tracker writes, shared-DB migrations, and deploys require their own explicit request ([outward-writes.md](outward-writes.md)), unless the gated Command's own gate text explicitly includes them (`pr-fix-pipeline`).
+  3. **Status follows reality.** Set the plan's `Status` to `Approved` on start, and `Completed` only when every phase in scope is done and verified; otherwise leave `Approved` and note what remains.
   4. **Verify before reporting** (*Post-edit verification*).
-  5. **Never edit a snapshot.** A `git-worktrees` snapshot is read-only. Implement in the user's checkout, or in the workspace worktree handed over in a `[worktree-context]` block.
+  5. **Never edit a snapshot.** Implement in the user's checkout or in the workspace worktree from `[worktree-context]`.
 
 ### Post-edit verification
-- After editing code, never assume success. Always run targeted verification (relevant unit tests, integration tests, type checks, or build commands).
-- If tests or builds fail, diagnose and fix the issue before claiming completion.
+- Run targeted verification (build, type-check, relevant tests) after every code edit. Fix failures before claiming completion.
 
 ### Worktree opt-in
-- When the invocation's arguments contain the token `/worktrees`, or a `[worktree-context]` block was handed in, read [git-worktrees.md](git-worktrees.md) (same folder as this file) and run under it, even if this Command does not list it. The bare word `worktree` is not the token (`git-worktrees` › *Modes* › *Opt-in token* says why).
-- A prompt that contains `/worktrees` but invokes no Command is handled by the `worktrees` Command.
-- When the arguments contain the token `/no-worktrees`, create no worktree and run in place, even if this Command isolates by default: a Command that snapshots by default reads the live checkout (as its `live` modifier does), and one that edits in a workspace worktree by default edits the user's checkout. It does not move work that already lives in a kept worktree. When both tokens are present, ask which one applies.
-- A prompt that contains `/no-worktrees` but invokes no Command is handled by the `no-worktrees` Command.
+- Token `/worktrees` or an incoming `[worktree-context]` block opts any Command into [git-worktrees.md](git-worktrees.md); `/no-worktrees` forces in-place execution. Prompts with either token and no Command route to [`worktrees`](../worktrees/SKILL.md) or [`no-worktrees`](../no-worktrees/SKILL.md). Full rules: `git-worktrees` › *Modes*.
 
 ---
 
 ## Codebase investigation
 
-When investigating, explaining, refining, or troubleshooting:
-
-1. **Trace Enclosing Scope & Call Lifecycles**:
-   - Inspect the enclosing class, method, endpoint, or component lifecycle rather than inspecting isolated lines.
-2. **Cross-Layer Mapping**:
-   - When a change crosses a boundary (API ↔ client, domain ↔ persistence, service ↔ consumer), check both sides of the contract. The project's Profile and References name the concrete touchpoints.
-3. **Historical Transcripts & Brain Lookup**:
-   - Search past conversations and transcripts (`.system_generated/logs/transcript.jsonl` in Antigravity or `~/.claude/projects/` in Claude Code) to align with past user decisions and architectural consensus.
+1. **Trace Enclosing Scope & Cross-Layer Contracts**: read enclosing classes/endpoints/lifecycles and both sides of any boundary (API ↔ client, domain ↔ DB, producer ↔ consumer) named by the project's Profile and References.
+2. **Code Index First**: in repositories with `.codegraph/`, use lean `codegraph` commands (`context`, `callees`, `callers`, `query`, `node`) before broad file reads; use `rg`/`grep` for wiring, config, and unindexed text.
+3. **Historical Transcripts & Memory Lookup**:
+   - Query `claude-mem` first (`search` → `timeline` → `get_observations`) when available, then host transcripts: Claude Code `~/.claude/projects/<project-slug>/*.jsonl`, Antigravity `<app_data_dir>/brain/<conversation-id>/.system_generated/logs/transcript.jsonl` (`transcript_full.jsonl` only for lines with `truncated_fields`).
+   - **Memory finds, code proves**: treat recalled notes and transcripts as leads; verify every claim against current `HEAD` before citing it.
+4. **Evidence Grading**:
+   - **Code claims**: `✅ Confirmed` (verified at `path:line`), `🟡 Inferred` (derived from structure/callers, not directly observed), `❓ Unverified` (requires runtime, prod, or external check).
+   - **Documentation / assumption claims**: `Confirmed`, `Contradicted`, `Partial`, `Undocumented` — always cite the primary source and version.
 
 ---
 
 ## Skill gaps
 
-When a skill from this registry led you wrong, report it so the file gets fixed instead of remembered. Raise a gap only when:
-- a fact in a loaded Command, Module, Profile or Reference contradicts the code, the tools or their output,
-- you changed, wrapped or worked around a command or script a skill gave you to make it work (an added flag, a prefix, an edited argument), or
+When a skill under `~/.terminal/skills` led you wrong, log it immediately so the skill gets fixed:
+- a loaded Command, Module, Profile, or Reference contradicted the code, tools, or their output,
+- you had to wrap, edit, or work around a command or script a skill gave you, or
 - the user corrected something a skill told you to do.
 
-Exploring what a skill never claimed to cover is not a gap.
+(Exploring what a skill never claimed to cover, or a repo skill outside `~/.terminal/skills`, is not a registry gap.)
 
-Scope: only skills whose `realpath` is under `~/.terminal/skills`. A skill that lives elsewhere (e.g. a repo's `.claude/skills/`) follows its own rules.
-
-**Log a gap when you notice it, not at the end.** Write its file (below) before the next step of the task, even when the workaround already got you past it: a gap noted in passing is lost by the end of a long task. Then finish the task, and end with one block per gap you logged:
-
-```markdown
-**Skill gap (<skill>):** <what it missed or got wrong>
-- **Evidence:** <command and output, or `path:line`>
-- **Proposed edit:** `<realpath of the file>` › <heading>: replace `<old>` with `<new>`
-- **Check:** `/sync-skills`, plus anything that shows the fix works
-- **Logged:** [<file name>](<absolute path of the gap file>)
-```
-
-Log each gap before printing its block, so it outlives the chat. Claim `~/.terminal/skill-gaps/<prefix>-skill_gap-<skill>-<topic>.md` (`mkdir -p` the directory first) with `artifact-protocol` › *Claim*. Below the owner marker *Claim* writes, the file reads plainly for a developer:
-
-```markdown
-# Skill gap: <skill>
-
-- **Status:** open
-- **Found:** <YYYY-MM-DD HH:MM> by <host>-<model>, session <session id>, running <the Command, or none>
-- **Where:** `<repo path>` · `<branch>` @ `<short SHA>`
-
-<the block above>
-```
-
-The directory is git-ignored and sits outside every repo, so the write is allowed under read-only Commands and from snapshots. When a later session fixes the gap, it sets **Status** to `fixed`; a gap that turns out not to apply gets `not a gap: <reason>`. To come back to logged gaps, use the [`skill-gap`](../skill-gap/SKILL.md) Command.
-
-The edit is its own gate item (*The `/proceed` gate*, rule 1): a `/proceed` for the task does not cover it, and it is never made from a snapshot. Edit only after the user says yes to that gap.
+**Log when noticed, before the next step** — claim `~/.terminal/skill-gaps/<prefix>-skill_gap-<skill>-<topic>.md` and print the closing summary block using the template in [references/skill-gaps.md](references/skill-gaps.md). Review and apply logged gaps with [`skill-gap`](../skill-gap/SKILL.md). Whenever a covered skill, Module, Profile, or Reference is edited, re-extract its changed claims in `skills/skills-claims.json` and verify with [`skill-drift`](../skill-drift/SKILL.md). Fixing the skill is its own gate item (*The `/proceed` gate*, rule 1) and never happens inside a snapshot.
 
 ---
 
 ## Precedence
 
-When multiple skills and rules apply to a task, instructions resolve in the following order of precedence (highest to lowest):
+Instructions resolve highest to lowest:
 
-1. **Workspace Rulebooks** (`CLAUDE.md` / `GEMINI.md` / `.agents/rules/`):
-   - Strict repository-level instructions, project constraints, and local overrides.
-2. **Project-scoped References and Profiles** (`Projects/<Project>/...`):
-   - Domain-specific conventions (e.g., `priis-backend-fastendpoints`, `priis-backend-ef-core`, `priis-frontend-rtk-query`) and the facts a Command adapts to.
-3. **General References** (`modern-csharp`, etc.):
-   - General language idioms and patterns.
-4. **Modules** (`core`, `artifact-protocol`, `git-worktrees`, `pr-counterpart`, `project-profile`, `pr-host`):
-   - Foundational operational discipline, safety gates, and communication protocols.
+1. **Workspace Rulebooks** (`CLAUDE.md` / `AGENTS.md` / `GEMINI.md` / `.agents/rules/`)
+2. **Repo team skills (`.claude/skills/`) + registry `Projects/<Project>/` Profiles and References** (`project-profile` › *Resolution order*)
+3. **General References** (`modern-csharp`, etc.)
+4. **Modules** (`_modules/*.md`)
 
-This list is the only copy of the precedence order. Everything else links here.
+This list is the single source of truth for precedence; other files link here.

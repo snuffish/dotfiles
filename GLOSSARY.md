@@ -17,7 +17,7 @@ A skill that carries out a workflow, whether the user invokes it by name or by a
 _Avoid_: operational skill, slash command, source command
 
 **Reference**:
-A skill holding knowledge the model loads by topic, never run as a workflow, such as `modern-csharp` or `priis-backend-ef-core`.
+A skill holding knowledge the model loads by topic, never run as a workflow, such as `modern-csharp` or `priis-backend-dry`. (Profiles list a project's References under *References per layer*.)
 _Avoid_: pattern skill, tech skill, reference skill
 
 **Module**:
@@ -26,11 +26,11 @@ _Avoid_: core utility, protocol, shared skill, lib, root skill
 
 **Profile**:
 Project-specific facts that a Command reads to adapt itself to that project. A **base profile** (`priis-profile`) holds the facts all of a project's Commands share; a **Command profile** (`implement-feature-priis-profile`, `code-review-priis-profile`) holds only what one Command needs and points to the base profile for the rest.
-_Avoid_: project config, project skill
+_Avoid_: project config
 
 **Personal Skill**:
-A skill living in the user's personal Registry (`~/.terminal/skills/`, `~/.agents/skills/`), providing personal developer workflows, engines, and project profiles.
+A skill living in the user's personal Registry (`~/.terminal/skills/`) or personal agent skills directory (`~/.agents/skills/`), providing personal developer workflows, engines, and project skills (`Projects/<Project>/`, including Profiles).
 
 **Team Skill**:
 A skill checked into a product repository (`.claude/skills/`), owned by and self-contained for the entire engineering team on that project. Personal skills read team skills across a read-only seam via Profiles, but never replace, absorb, or delete them.
-_Avoid_: local skill, project skill
+_Avoid_: local skill

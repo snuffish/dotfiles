@@ -1,6 +1,6 @@
 # Domain Helpers, Testing & Anti-Patterns
 
-## 2. Shared Library Factory / Domain Methods
+## 11. Shared Library Factory / Domain Methods
 
 **Rule:** Domain creation, update, and delete logic lives on the entity as instance/static methods in the Library project — **never inline inside `HandleAsync`**.
 
@@ -44,9 +44,7 @@ public override async Task HandleAsync(CreateOperationRequest req, CancellationT
 
 ---
 
----
-
-## 6. Shared Test Factory Methods
+## 12. Shared Test Factory Methods
 
 **Rule:** Do not repeat auth setup. Use the factory methods on `ApiWebFactory`.
 
@@ -68,7 +66,7 @@ var client = ApiWebFactory.CreateClient();
 client.DefaultRequestHeaders.Add("Cookie", "...");
 ```
 
-### 6a. Extract Repeated Arrange Logic into Private Helpers
+### 12a. Extract Repeated Arrange Logic into Private Helpers
 
 ```csharp
 // ✅ Extract a private async helper for arrange steps used by multiple tests
@@ -97,42 +95,36 @@ public async Task CreateFeedbackTicket_TerminatedOperation_ReturnsBadRequest()
 
 ---
 
----
+## 13. Shared Enum-to-String Translation — `[Display]` + `GetDisplayName()`
 
-## 7. Shared Enum-to-String Translation — `ToSwedish()` / `ToLocalizedString()`
-
-**Rule:** When an enum needs a Swedish display string, add it once as an extension method on (or near) the enum — **not** as a `private static GetXxxInSwedish()` inside each endpoint or export class.
+**Rule:** When an enum needs a Swedish display string (for Excel exports, PDF reports, or UI metadata), annotate the enum members with `[Display(Name = "…")]` once on the enum declaration and read it with `EnumMetadataCache.GetDisplayName()` (`backend/source/GR.PRIIS.Library/Common/Attributes/EnumMetadataCache.cs`) — **not** as a `private static GetXxxInSwedish()` switch inside each endpoint or export class.
 
 ```csharp
-// ✅ DRY — extension declared once, used everywhere
-public static class GenderExtensions          // in Operation.cs
+// ✅ DRY — [Display] declared once on the enum, read via GetDisplayName() everywhere
+public enum Gender
 {
-    public static string ToSwedish(this Gender gender) => gender switch
-    {
-        Gender.Male         => "Man",
-        Gender.Female       => "Kvinna",
-        Gender.Both         => "Båda",
-        Gender.BothSeparate => "Båda (separat)",
-        _                   => gender.ToString()
-    };
+    [Display(Name = "Man")]
+    Male = 1,
+    [Display(Name = "Kvinna")]
+    Female = 2,
+    [Display(Name = "Båda")]
+    Both = 3,
+    [Display(Name = "Båda (separat)")]
+    BothSeparate = 4,
 }
 
-// Consumed in ExportDataToExcelEndpoint, ExportDetailedMatchingTicketsEndpoint, ...
-sheet.Cell(row, 5).Value = supplier.Status.ToSwedish();
-sheet.Cell(row, 9).Value = operation.ReceivingGender.ToSwedish();
+// Consumed in ExportRegisterEndpoint, ExportMatchingTicketsEndpoint, ...
+sheet.Cell(row, 5).Value = supplier.Status.GetDisplayName();
+sheet.Cell(row, 9).Value = operation.ReceivingGender.GetDisplayName();
 
-// ❌ Wet — private static inside each export endpoint
+// ❌ Wet — private static switch inside each export endpoint
 private static string GetGenderInSwedish(Gender gender) => gender switch { ... };
 private static string GetStatusInSwedish(MatchingTicketStatus status) => status switch { ... };
 ```
 
-> **Existing `ToSwedish()` extensions** (do not duplicate): `RegisterStatus`, `Gender`, `MatchingTicketStatus`, `MatchingReason`, `MatchingSelectionStatus`, `MatchingIterationStatus`. Check by grepping `ToSwedish` before adding a new one.
-
 ---
 
----
-
-## 8. Shared Excel Worksheet Helpers — `WorksheetExtensions`
+## 14. Shared Excel Worksheet Helpers — `WorksheetExtensions`
 
 **Rule:** Use the `IXLWorksheet` extensions in `GR.PRIIS.API.Extensions.WorksheetExtensions` (`backend/source/GR.PRIIS.API/Extensions/WorksheetExtensions.cs`) instead of styling cells by hand: `WriteTitle(title, fontSize = 14)` for the bold title in A1, `WriteMetadataRow(row, label, value, col = 1)` for each bold-label/value row, and `FormatTable(table, adjustToContents = false)` on the table ClosedXML's `InsertTable` returns.
 
@@ -154,8 +146,6 @@ table.ShowAutoFilter = true;
 ```
 
 `FormatTable` sets `TableStyleMedium2`, shows the header row, enables auto-filter, and optionally auto-fits columns (`adjustToContents: true`).
-
----
 
 ---
 
@@ -182,16 +172,14 @@ public List<NewContactData> NewContacts { get; init; } = [];
 
 ---
 
----
-
 ## 16. Anti-Patterns Checklist
 
 The following are definitively banned in this codebase. If you see one, it is a DRY violation.
 
 ```text
-❌ private static GetXxxInSwedish() inside an endpoint — add a public ToSwedish() extension to the enum
+❌ private static GetXxxInSwedish() inside an endpoint — use [Display(Name = "…")] + .GetDisplayName()
 ❌ Inline worksheet title/bold/table styling — use WorksheetExtensions.WriteTitle() / WriteMetadataRow() / FormatTable()
-❌ Duplicating ChangedBy user lookup across export endpoints — extract the pattern once
+❌ Duplicating ChangedBy user lookup across export endpoints — follow / extract the ExportRegisterEndpoint.cs:413 helper
 ❌ Re-declaring the same .Select() projection shape in multiple endpoints — use a static expression
 ❌ Repeating IsActive / ContactsFilter / OperationManagerFilter lambdas inline — use the static expression members
 ❌ Copy-pasting SystemResult if (!result.IsSuccess) guards — use .Then() / .ThenAsync() chaining
@@ -207,6 +195,6 @@ The following are definitively banned in this codebase. If you see one, it is a 
 ❌ Parallel List<Guid> + List<TNew> for mixed existing/new entities — use ExistingOrNewEntities<T>
 ❌ Separate queries per derived type in an inheritance hierarchy — use HierarchySelect()
 ✅ One place to change means one place to fix — if the same logic appears twice, extract it now
-✅ Name extractions by what they do (ToSwedish, FormatAddress, FormatContactPersons, FormatChangedBy)
-✅ Before adding a new ToSwedish() or static expression, grep first — it may already exist
+✅ Name extractions by what they do (GetDisplayName, FormatAddress, FormatContactPersons, FormatChangedBy)
+✅ Before adding a new extension or static expression, grep first — it may already exist
 ```

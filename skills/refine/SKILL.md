@@ -5,9 +5,7 @@ description: "Audits existing, working code for odd behaviour, code smells and m
 
 # Skill: `/refine` — Code Refinement & Historical Alignment
 
-This skill provides a systematic workflow for auditing code, finding odd behaviors, identifying design/performance improvements, and aligning changes with the historical context of previous conversations in this repository.
-
-Instead of defining standalone guidelines, this skill **composes and delegates to existing project-specific skills** to ensure consistent rules are applied.
+Systematic workflow for auditing working code, finding odd behaviors or design/performance improvements, and checking every finding against past conversations and project skills before proposing a refinement plan.
 
 ---
 
@@ -16,16 +14,13 @@ Instead of defining standalone guidelines, this skill **composes and delegates t
 Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
 
 Read these before step 1:
-- `../_modules/core.md`
+- `../_modules/core.md`: read-only until `/proceed`
 - `../_modules/artifact-protocol.md`: writes `<prefix>-implementation_plan-<suffix>.md` (suffix from the target feature, file, or topic)
 - `../_modules/git-worktrees.md`
 
 ---
-## 1. Purpose
 
-Audits code that already works, for what looks odd or could be better, and checks every finding against the decisions recorded in past conversations, so the proposal does not undo a choice the user already made.
-
-### When *not* to use — pick the right neighbor
+## 1. When *not* to use — pick the right neighbor
 
 | Situation | Use instead |
 |---|---|
@@ -40,71 +35,14 @@ Audits code that already works, for what looks odd or could be better, and check
 
 ## 2. Phase 1: Context & Conversation History Lookup
 
-Before proposing a refinement, search past conversation transcripts for the files, patterns or errors involved, so the proposal does not undo a choice the user already made.
-
-### Step-by-Step Search Protocol
-
-1. **Identify the Session**: **Transcript location depends on the host IDE:**
-
-| Host | Transcripts |
-|---|---|
-| Claude Code | `~/.claude/projects/<workspace-slug>/<session-id>.jsonl` — one file per session, slug is the workspace path with `/` replaced by `-` (e.g. `-Users-snuffish-Projects-GR`) |
-| Antigravity | `<app_data_dir>/brain/<conversation-id>/.system_generated/logs/transcript.jsonl` |
-
-Check which exists before searching; do not assume.
-2. **Scan the Transcripts**: Run recursive `grep` commands over that directory to search for references to the target code being refined:
-   - The names of files, classes, methods, or components you are currently auditing/refining.
-   - Specific keywords, APIs, or error messages related to the code.
-   - Generic search command (replace `<target_name_or_keyword>` with your active file or search term):
-
-     ```bash
-     # Claude Code
-     grep -rnwi "<target_name_or_keyword>" ~/.claude/projects/<workspace-slug>/
-
-     # Antigravity
-     grep -rnwi "<target_name_or_keyword>" <app_data_dir>/brain/ --exclude-dir=node_modules
-     ```
-
-3. **Analyze Past Transcripts**:
-   - Locate the relevant past conversations.
-   - Use `grep -C 5` or `head`/`tail` to examine them. Under Antigravity, the steps are `USER_INPUT` / `PLANNER_RESPONSE` entries in `transcript.jsonl` or `transcript_full.jsonl`. Under Claude Code, each session file holds one JSON object per line, with `"type":"user"` / `"type":"assistant"` messages.
-   - Identify:
-     - What was the problem?
-     - Why did the user prefer a specific approach? (e.g., did they ask to "skip format", avoid a certain package, or enforce a specific naming convention?)
-     - What was the final accepted fix?
-
----
+Before proposing a refinement, check commit history, claude-mem, and past conversation transcripts for the target files, symbols, or patterns per `core` › *Codebase investigation* › *Historical decisions* so the proposal does not undo a choice the user already made (e.g. a deliberate workaround, naming convention, or rejected package).
 
 ## 3. Phase 2: Delegating to Existing Skills (Guideline Reuse)
 
-Take the audit criteria from the registry skills that match the project, language and frameworks you are refining, rather than inventing new ones:
+Take audit criteria from the project's rulebooks, Profiles, and References (`core` › *Precedence*) rather than inventing standalone rules:
+- **Review axes & severities**: Reuse [`/code-review`](../code-review/SKILL.md) axes (**Correctness**, **Standards**, **Spec**) and severities (🔴 Critical, 🟡 Important, 🟢 Minor), plus its smell baseline (`../code-review/references/smell-baseline.md`).
+- **Project & tech References**: Load the active References for the languages, frameworks, and layers touched (from the project profile's *References per layer*, repo `.claude/skills/`, and registry skills under `../` or `../Projects/`).
 
-### General & Review Guidelines
+## 4. Phase 3: Formulating & Presenting the Refinement Plan (`/plan` Case B)
 
-- **Code Review Standards**: Load and read [code-review](../code-review/SKILL.md) to reuse the diff-gathering strategy, key review dimensions (Correctness, Security, Readability), and severity definitions (🔴 Critical, 🟡 Important, 🟢 Minor).
-
-### Project & Tech-Specific Guidelines
-
-- Identify the languages, frameworks, and architecture used by the target files (e.g. C#/.NET, TypeScript/React, SQL, Python, etc.).
-- Scan the registered active skills (including project-scoped skills under `Projects/` directories in the registry) and load the ones relevant to the target files (e.g. data access, forms, styling, endpoint conventions, and unit tests).
-- Apply the loaded standards to detect patterns, code smells or deviations.
-
----
-
-## 4. Phase 3: Formulating the Refinement Plan
-
-After completing the analysis and cross-referencing with both the history and existing skills, present your findings to the user:
-
-1. **Problem/Odd Behavior**: What is weird, inefficient, or buggy.
-2. **Historical Context / Skill Link**: Cite the conversation ID or specific referenced skill that informs this finding.
-3. **Why it Matters**: The impact (e.g., memory allocations, database locks, test failure).
-4. **Refined Solution**: A clean, proposed code diff showing how to fix it.
-
-## 5. Plan-First Workflow
-
-Write the plan before changing any source file:
-
-1. **Create the Implementation Plan**: Document your findings, historical context, and proposed modifications in `<prefix>-implementation_plan-<suffix>.md` at the **workspace root**, providing a clickable chat link and section anchors formatted according to the **`artifact-protocol`** protocol.
-2. **Request Feedback**: under Antigravity, set `UserFacing = true` and `RequestFeedback = true` in the plan's `ArtifactMetadata`, so the plan opens for review. Under Claude Code, link the plan and its sections in the chat response and ask for approval there.
-3. **Halt for Approval**: Stop and wait for the user's explicit approval/feedback on the proposed changes. Do not modify any code files in the workspace until the plan is approved.
-4. **Execute**: Once the user approves, proceed to edit the files and implement the refinements.
+For each finding, record: **Problem / Odd Behavior**, **Historical Context / Skill Citation**, **Why it Matters**, and **Refined Solution**. Write `<prefix>-implementation_plan-<suffix>.md` at the workspace root via [`/plan`](../plan/SKILL.md) › *Case B* (using its skeleton, `Status` values, self-review, and link block). Wait at `core` › _The `/proceed` gate_ before modifying any workspace files.

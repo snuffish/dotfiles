@@ -5,18 +5,16 @@ description: "Drafts and files tracker work items (Azure DevOps user stories, ta
 
 # Skill: `/create-ticket` — File a Tracker Ticket from Agreed Context
 
-Turns a follow-up, decision or defect that is already written down into one well-formed ticket in the team's tracker, placed and worded the way the team's own tickets are, without duplicates, and with the new id recorded where the follow-up came from.
+Turns an agreed follow-up, decision, or defect into one well-formed ticket in the team's tracker, matching the project's conventions, checking for duplicates, and recording the new ID back in the source artifact.
 
 ---
 
-## ⛔ Mandatory Invariants
+## Invariants
 
-> [!CAUTION]
-> 1. **CREATE ONLY ON AN EXPLICIT REQUEST IN THE CURRENT MESSAGE.** "Create a ticket for this", "file it" or `/create-ticket` is that request. `/create-ticket draft` is not, and neither is a standing instruction (memory, `CLAUDE.md`) that says tickets are drafted for the user to file. In those cases stop at the *Draft preview*. Approval of one draft does not carry over to another.
-> 2. **FILE ONLY WHAT THE SOURCE SAYS.** Restructure for the tracker, translate into the tracker's language, and add nothing of substance. No new requirements, estimates or claims. When a draft was shown, file it byte for byte, or show the changed version again.
-> 3. **NO SIDE EFFECTS BEYOND THE ONE TICKET.** Never assign, set a sprint, change state, set priority, link to a PR or commit, or comment on other items unless that exact action is asked for. A parent link is set only when the request or the source names the parent. Linking a ticket to a PR changes the PR.
-> 4. **A DENIED WRITE IS FINAL FOR THIS TURN.** If the permission system blocks the create, do not route around it (another CLI, the MCP server instead of the CLI or the reverse, a raw REST call, a script run through a test runner). Leave the spec and content files in place, hand over the exact command (*Step 7*), and ask for the new id.
-> 5. **DO NOT MODIFY CODE OR THE WORKING TREE.** The only local writes are the files in the scratchpad and the one line in the source artifact that records the id.
+1. **Outward write discipline**: follow `outward-writes` (*Explicit request & draft mode*, *Denied write is final*, *Auth error vs denial*, *Read back*). `/create-ticket draft` (or a standing draft-only rule) stops at the *Draft preview*.
+2. **File only what the source says**: restructure and translate into the tracker's language without adding unverified claims or estimates.
+3. **No side effects beyond the one ticket**: never assign, set a sprint, change state, set priority, or link to a PR/commit unless explicitly asked. Set a parent link only when the request/source names the parent or the type (`Task`) requires one.
+4. **Do not modify the working tree**: write payload files to `<scratchpad>/ticket-<slug>/` and update at most the one ID record line in the source artifact (*Step 8*).
 
 ---
 
@@ -26,11 +24,9 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 
 Read these before step 1:
 - `../_modules/core.md`
-- `../_modules/artifact-protocol.md`: writes no artifact — updates at most one line in the source artifact
-- `../_modules/pr-host.md`: *Organization URL* for `<org-url>`
-
-- **No artifact of its own.** It consumes an existing source (an artifact section, a selection, a thread, the conversation) and updates at most one line in the source artifact (*Step 8*).
-- **Content files** (`spec.json`, `description.html`, `acceptance.html`, `repro.html` or `body.md`) live in the host's scratchpad, `<scratchpad>/ticket-<slug>/`, never in the repo or at the workspace root.
+- `../_modules/artifact-protocol.md`: writes no artifact — updates at most one record line in the source artifact (rule 3)
+- `../_modules/pr-host.md`
+- `../_modules/outward-writes.md`
 
 ---
 
@@ -39,8 +35,8 @@ Read these before step 1:
 | Situation | Use instead |
 |---|---|
 | Commenting on an existing PR or thread | [`/pr-post-comments`](../pr-post-comments/SKILL.md) |
-| Writing or refreshing a PR description | [`pr-summary`](../pr-summary/SKILL.md) |
-| The follow-up still needs research before anyone can write it down | [`/investigate`](../investigate/SKILL.md) first |
+| Writing or refreshing a PR description | [`/pr-summary`](../pr-summary/SKILL.md) |
+| The follow-up still needs research before filing | [`/investigate`](../investigate/SKILL.md) |
 | Implementing the ticket | [`/implement-feature`](../implement-feature/SKILL.md) |
 
 ---
@@ -49,150 +45,101 @@ Read these before step 1:
 
 ### Step 1 — Resolve the source and the scope
 
-1. **Source.** In this order: the lines the user selected or referenced (`@file#L185-225`, an IDE selection), the artifact section the request names, the PR thread or decision quoted, and the latest relevant part of the conversation. Read the whole section, not only the selected lines: the scope often sits in the paragraph above (a "Decision:" line, the threads it depends on).
-2. **One ticket per request.** If the source holds several independent follow-ups, ask once which ones, and whether they become separate tickets or one story with tasks.
-3. **Extract**, without inventing:
-   - **why:** the problem, or the decision that created the follow-up, and where it was taken (PR !id, thread #id, date);
-   - **what:** the proposed solution, sketch or options;
-   - **prerequisites:** what must land first, such as blocking threads or other tickets;
-   - **open questions or spike:** what is unverified;
-   - **risks:** security, cost and the like, when the source names them;
-   - **acceptance criteria:** the source's own "done when" points; otherwise derive testable bullets from the *what*, one per observable outcome.
+1. **Source**: in order — user selection/reference (`@file#L185-225`), named artifact section, quoted PR thread/decision, or latest conversation context. Read the enclosing section for context.
+2. **One ticket per request**: if the source holds multiple independent follow-ups, ask once which to file.
+3. **Extract without inventing**: *why* (problem + decision origin PR `!id` / thread `#id` / date), *what* (proposed solution/sketch), *prerequisites*, *open questions / spike*, *risks*, and testable *acceptance criteria*.
 
-### Step 2 — Resolve the tracker
+### Step 2 — Resolve the tracker & tool
 
-- **Azure DevOps:** the repo's `origin` (`dev.azure.com/<org>/<project>/_git/<repo>`, or the legacy `<org>.visualstudio.com`), or the tracker the workspace rulebook names. Always pass `--org <org-url>`, in the form the workspace already uses (`pr-host` › *Organization URL*); both forms work.
-- **GitHub:** `gh repo view --json nameWithOwner`, or the repo the request names.
-- In a multi-repo workspace the ticket goes to the project that owns the work. A ticket spanning repos is one ticket in the shared project, not one per repo, unless the team files per repo (*Step 3* shows which).
-- A project profile or workflow skill (for example `implement-feature-<project>-profile`, `<project>-workflow`) can state ticket rules, such as implementing-ID rules or "tasks are English, stories Swedish". Those rules win over what *Step 3* infers.
-- **Tool.** When the project profile names an MCP server for the tracker (for example `azure-devops`) and it is connected in this session, use it for the reads (*Steps 3–4*), the create and the read-back (*Step 7*). The `az` / `gh` commands and `scripts/create_ticket.py` are the CLI path for when no such server is named or connected. An authentication failure of one path (`az` → "requires user authentication") is not a permission denial, so switch to the other. A denied write is (*Invariant 4*).
+- Resolve the tracker (`<org-url>` and `<project>` on Azure DevOps; `<owner>/<name>` on GitHub) and choose the MCP vs. CLI route per `pr-host` › *Organization URL* and *Tool: MCP vs CLI*.
+- When using the `azure-devops` MCP server, follow [azure-devops-mcp.md](references/azure-devops-mcp.md) for Steps 3, 4, and 7.
+- Apply any project profile or workflow skill rules (e.g. `implement-feature-<project>-profile` language/type conventions) ahead of inferred defaults.
 
 ### Step 3 — Copy the tracker's conventions
 
-Read before writing. Tickets that look like the team's own get triaged; foreign-looking ones get rewritten or ignored.
+Inspect the last ~25 items and 1–2 close relatives before drafting:
 
 ```bash
-# Azure DevOps: the last ~25 items touched in the project
+# Azure DevOps
 az boards query --org <org-url> --project <project> --wiql "
   SELECT [System.Id],[System.WorkItemType],[System.Title],[System.State],[System.AreaPath],[System.IterationPath],[System.Tags]
   FROM WorkItems WHERE [System.TeamProject]='<project>' AND [System.ChangedDate] >= @Today-60
   ORDER BY [System.ChangedDate] DESC" \
   --query '[].{id:id,t:fields."System.WorkItemType",title:fields."System.Title",s:fields."System.State",a:fields."System.AreaPath",i:fields."System.IterationPath",tags:fields."System.Tags"}' -o table
-# Then one or two close relatives in full (description and acceptance-criteria format, parent):
-az boards work-item show --org … --id <id> --expand relations -o json
+az boards work-item show --org <org-url> --id <id> --expand relations -o json
 
 # GitHub
 gh issue list --repo <owner>/<name> --state all --limit 25 --json number,title,labels,state
 gh label list --repo <owner>/<name>
 ```
 
-With the `azure-devops` MCP server: `wit_query` `action: "wiql"` with the same WIQL (`project`, `top: 25`). It returns ids only, so read the columns with `wit_work_item` `action: "get_batch"` (`ids`, `fields` = the WIQL's columns). Then `wit_work_item` `action: "get"` per relative (`expand: "Relations"` and `fields` are mutually exclusive, so it takes two calls to get the relations as well as selected fields).
-
-Derive:
-
-| Decide | From |
-|---|---|
-| **Type** | New capability, or follow-up work a team picks up → the type the project uses for that (often *User Story*). Defect → *Bug*. An implementation slice of an existing story → *Task* under that story, which needs a parent. Epics and features only when asked |
-| **Title** | The language and pattern of recent items of that type: Swedish or English, persona phrasing ("Ludvig som Faisal …"), side prefixes on tasks ("Backend: …"), tags like `[SEC]` |
-| **Area** | The area most recent items use, unless the work clearly belongs to another one |
-| **Iteration** | Unscheduled follow-ups go where the project keeps its backlog: the iteration *root or backlog node* recent `New` items sit in, never the current sprint. A sprint is set only when asked |
-| **Tags or labels** | Only tags the project already uses, matching the work (`Backend`/`Frontend` on tasks, security tags on security items). None is a valid answer |
-| **Description format** | A close relative's section headings and language. When relatives have none (empty descriptions are common), use the default sections in *Step 5* |
-| **Parent** | Only when the request or source names it, or the type requires one (a task). In the second case ask which, never guess |
-
-Name the close relative you mirrored in the preview, for example "placed like #31103, a tooling story in the backlog".
+Derive from recent relatives: **Type** (*User Story*, *Bug*, or *Task* under a parent story), **Title** pattern and language, **Area**, **Iteration** (always the backlog root/node, never the active sprint unless asked), **Tags/labels** (existing project tags only), **Description format**, and **Parent** (ask when a Task has no named parent). Name the mirrored relative in the preview (`Placed like #31103`).
 
 ### Step 4 — Search for duplicates
 
 ```bash
-az boards query --org … --project <project> --wiql "
+az boards query --org <org-url> --project <project> --wiql "
   SELECT [System.Id],[System.Title],[System.State] FROM WorkItems
   WHERE [System.TeamProject]='<project>' AND [System.State] NOT IN ('Closed','Removed','Done')
     AND ([System.Title] CONTAINS '<key term 1>' OR [System.Title] CONTAINS '<key term 2>')" -o table
 gh issue list --repo <owner>/<name> --state open --search "<key terms>"
 ```
 
-With the MCP server: the same WIQL through `wit_query` `action: "wiql"`, then `get_batch` for the titles and states (*Step 3*).
-
-Use two or three distinctive terms from the title, not generic words. If an open item covers the same work, stop and show it. The user chooses between "create anyway" and "add to #id instead", and the second is out of this skill's scope unless asked.
+If an open item already covers the work, stop and show it.
 
 ### Step 5 — Write the content
 
-- **Language:** the tracker's (*Step 3*), even when the source artifact is in another language. Keep code, paths, commands and identifiers verbatim.
-- **Azure DevOps fields are HTML:** `System.Description` and `Microsoft.VSTS.Common.AcceptanceCriteria`; for a *Bug*, `Microsoft.VSTS.TCM.ReproSteps` (numbered steps, expected vs actual) instead of the description. Use `<h3>`, `<p>`, `<ul><li>`, `<code>`, and `<pre>` for code blocks. Escape `<`, `>` and `&` inside `<pre>`. **GitHub** issues are Markdown in one body: description sections, then `## Acceptance criteria` as a task list (`- [ ]`).
-- **Default sections** (translated to the tracker's language), each only when the source has content for it:
-  1. **Background:** why, and the decision with its place and date (PR !id, thread #id).
-  2. **Proposal:** the solution or sketch; keep a source code sketch as a code block.
-  3. **Prerequisites:** what must land first, by tracker id.
-  4. **Spike first / open questions:** what is unverified.
-  5. **Risks:** security, cost or rollout, when named.
-- **Acceptance criteria:** testable, one observable outcome per bullet, no implementation steps disguised as criteria. Five to ten bullets is typical.
-- **References:** tracker ids (`!18722`, `#110956`, `#31103`) and full tracker URLs only. Never local paths, scratchpad paths, links to local artifacts, or the agent's internal labels (finding numbers, "Path B").
+- **Language**: match the tracker's language (*Step 3*), keeping code, paths, commands, and identifiers verbatim.
+- **Format**:
+  - **Azure DevOps (HTML)**: `description.html` (`System.Description`) and `acceptance.html` (`Microsoft.VSTS.Common.AcceptanceCriteria`); for a **Bug**, write `repro.html` (`Microsoft.VSTS.TCM.ReproSteps`) instead of `description_file` (`scripts/create_ticket.py` rejects `description_file` on Bugs). Use `<h3>`, `<p>`, `<ul><li>`, `<code>`, and `<pre>` (escaping `<`, `>`, `&` inside `<pre>`).
+  - **GitHub (Markdown)**: `body.md` with description sections followed by `## Acceptance criteria` (`- [ ]` checkboxes).
+- **Default sections** (include only those with content): **Background**, **Proposal**, **Prerequisites**, **Spike first / open questions**, **Risks**.
+- **References**: tracker IDs (`!18722`, `#110956`) and remote URLs only — never local paths, scratchpad paths, or internal finding numbers.
 
 ### Step 6 — Spec, dry run, preview
 
-1. Write the content files and `spec.json` in `<scratchpad>/ticket-<slug>/` (format in the docstring of [`scripts/create_ticket.py`](scripts/create_ticket.py)).
-2. Run the script in place from this skill's real folder: `python3 -I <skill-dir>/scripts/create_ticket.py <scratchpad>/ticket-<slug>/spec.json`. It validates the spec, prints every field it will set, and runs nothing.
-3. **Draft mode, or a standing draft-only instruction:** stop here and give the *Draft preview*.
+1. Write the content files and `spec.json` in `<scratchpad>/ticket-<slug>/` (see [`scripts/create_ticket.py`](scripts/create_ticket.py) docstring).
+2. Run the dry-run validator: `python3 -I <skill-dir>/scripts/create_ticket.py <scratchpad>/ticket-<slug>/spec.json`.
+3. In draft mode (or under a standing draft-only rule), stop here and print the *Draft preview*.
 
 ### Step 7 — Create, verify, or hand over
 
-1. **Create:** the same command with `--create`. It creates the item, adds the parent link when the spec has one, and prints the id and URL.
-   **With the MCP server** (*Step 2* › Tool): `wit_work_item_write` `action: "create"` with `project`, `workItemType` = the spec's `type`, and `fields` taken from the spec the dry run validated: `System.Title`, `System.AreaPath`, `System.IterationPath`, `System.Tags` (the tags joined with `; `), each extra field in the spec's `fields`, and the content files verbatim as `System.Description`, `Microsoft.VSTS.Common.AcceptanceCriteria` or `Microsoft.VSTS.TCM.ReproSteps`, each with `format: "Html"`. Set only the fields in the spec. When the spec has a parent, add it next with `wit_work_item_link_write` `action: "link"`, `updates: [{id: <new id>, linkToId: <parent>, type: "parent"}]`.
-2. **Verify** by reading it back: type, title, state, area, iteration, tags, that the description and acceptance criteria are non-empty, and the parent relation.
-   ```bash
-   az boards work-item show --org … --id <id> --expand relations \
-     --query '{t:fields."System.WorkItemType",title:fields."System.Title",s:fields."System.State",a:fields."System.AreaPath",i:fields."System.IterationPath",tags:fields."System.Tags",d:length(fields."System.Description"),ac:length(fields."Microsoft.VSTS.Common.AcceptanceCriteria"),parent:relations[?rel==`System.LinkTypes.Hierarchy-Reverse`].url}'
-   gh issue view <n> --repo <owner>/<name> --json number,title,labels,url
-   ```
-   With the MCP server: `wit_work_item` `action: "get"` twice, once with `fields` for the values above and once with `expand: "Relations"` for the `System.LinkTypes.Hierarchy-Reverse` parent.
-3. **Denied** (the auto-mode classifier or a permission rule blocks the external write, through the CLI or the MCP server): say plainly that nothing was created and do not retry through the other path. Hand over the command with absolute paths, with `<skill-dir>` expanded to this skill's real folder:
-   ```bash
-   python3 -I /<skill-dir>/scripts/create_ticket.py /<scratchpad>/ticket-<slug>/spec.json --create
-   ```
-   Mention that a permission rule for `az boards work-item create` / `gh issue create` (or the MCP `wit_work_item_write` tool) lets the agent file next time, and ask the user to paste the printed id.
+1. **Create**: run `python3 -I <skill-dir>/scripts/create_ticket.py <scratchpad>/ticket-<slug>/spec.json --create` (or the MCP route in [azure-devops-mcp.md](references/azure-devops-mcp.md)).
+2. **Verify (`outward-writes` › *Read back*)**: read back the created item (`az boards work-item show --org <org-url> --id <id> --expand relations` / `gh issue view <n>`) to confirm type, title, state, area, iteration, tags, non-empty description/AC/repro, and parent relation.
+3. **If denied or blocked**: follow `outward-writes` › *Denied write is final* and *Auth error vs denial*, hand over `python3 -I /<skill-dir>/scripts/create_ticket.py /<scratchpad>/ticket-<slug>/spec.json --create`, and ask for the created ID.
 
 ### Step 8 — Record the id
 
-When the source is a workspace-root artifact, update the one line the ticket came from (the checklist item or the "follow-up story" sentence) with the id, the URL and the date, for example `- [x] Follow-up story created: #31201 (2026-10-19)`. When the ticket was only drafted or the write was denied, mark the line "drafted, not yet created". Never write scratchpad paths into the artifact. If artifact links were emitted earlier in the conversation and lines shifted, emit them again.
+When the source is a workspace-root artifact, update the single checklist/follow-up line with the created ID, URL, and date (`- [x] Follow-up story created: #31201 (2026-10-19)`, or `drafted, not yet created`), and re-emit the `artifact-protocol` › *Chat link block* if line numbers shifted.
 
 ---
 
 ## 3. Output Format & Deliverables
 
-Chat response, nothing else.
-
-### Draft preview (draft mode, standing draft-only rule, or before a denied create)
-
+### Draft preview
 ````markdown
 **Draft — nothing created yet.** Reply "create" to file it, or tell me what to change.
 
 **<Type>** · **<Title>**
 Area `<area>` · Iteration `<iteration>` · Tags <tags or none> · Parent <#id or none>
-Placed like #<relative> (<why that one>). Duplicate search: <no open match | #id "<title>" (state)>.
+Placed like #<relative> (<why>). Duplicate search: <no open match | #id "<title>" (state)>.
 
-**Description**
-<readable rendering of the description: headings, bullets, code blocks>
+**Description / Repro Steps**
+<rendered content>
 
 **Acceptance criteria**
 - …
 
-Content files: `/<scratchpad>/ticket-<slug>/` (`description.html`, `acceptance.html`, `spec.json`)
+Content files: `/<scratchpad>/ticket-<slug>/`
 ````
 
 ### After creating
-
-One line with the id and URL, the verified placement (type, area, iteration, parent), what was deliberately left unset (assignee, sprint, priority), and the artifact line that now records the id. After a denied create: the hand-over command from *Step 7*, plus the preview so the user knows what it will file.
+One line with the created ID and URL, verified placement (type, area, iteration, parent), fields left unset (assignee, sprint, priority), and the updated source artifact line.
 
 ---
 
 ## 4. Verification & Validation
 
-- The conventions came from the tracker's own recent items, and the preview names the relative that was mirrored.
-- The duplicate search ran with distinctive terms, and its result is in the preview.
-- Every claim in the ticket traces to the source. Nothing was added, and code or identifiers are verbatim.
-- No local or scratchpad path, artifact link or internal label appears in the ticket.
-- Created: the read-back matches the spec (type, title, area, iteration, tags, parent), and the description and acceptance criteria are non-empty.
-- No assignee, sprint, state, priority or PR link was set unless asked.
-- Draft mode: no `--create` run and no tracker write in that turn.
-- The source artifact's line records the id, or "drafted, not yet created".
+- Conventions mirrored a named recent relative, and duplicate search ran with distinctive terms.
+- No local/scratchpad paths or internal labels appear in the ticket; no priority, sprint, or assignee was set unasked.
+- Created item was read back and verified, and the source artifact line records the ID.
