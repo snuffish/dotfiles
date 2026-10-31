@@ -49,7 +49,8 @@ Read these before step 1:
 
 ## Planning & Prompt Framing
 
-- Keep plans, proposals, and generated prompts lean and directional: outline intent, constraints, and boundaries without prescribing low-level code mechanics or file-level implementations upfront.
+- Keep generated prompts **concise, directional, and open to discovery**: outline intent, scope boundaries, reference exemplars, and invariants without prescribing file-by-file targets, section numbers, or low-level mechanics upfront.
+- **Ground boundaries, never findings**: resolve the concrete anchors the user pointed at (workspace/directory path, branch/diff ref, reference repo/pattern, target skill, verification command), but never pre-solve the audit during Step 2 or bake a pre-picked list of candidate files into the prompt. Leave room for the downstream agent and its explorer sub-agents to uncover things not yet known.
 - Sacrifice grammar for extreme brevity.
 - If genuine architectural forks or domain ambiguities exist, end with a concise bullet list of unresolved questions; omit if none.
 
@@ -61,7 +62,7 @@ Read these before step 1:
 
 1. **Extract Core Target**:
    - What is the user trying to accomplish? (Refactoring, architecture survey, code review, test creation, bug fix).
-   - Did the user name a target skill (e.g. `/code-review`, `/improve-codebase-architecture`, `/refine`)?
+   - Did the user name a target skill (e.g. `/code-review`, `/plan`, `/refine`) or a reference exemplar (`@[...]` directory/file)?
 2. **Ambiguity Gate**:
    - If the input is clear enough to infer the intent and scope, proceed directly to Step 2.
    - If the input is fundamentally vague (e.g. only "fix it" or "make it better" with no files or context indicated), stop and ask **1–2 focused multiple-choice questions** using the question tool before generating variants.
@@ -70,43 +71,40 @@ Read these before step 1:
 
 ### Step 2: Live Workspace & Skill Grounding
 
-**Never emit abstract placeholders (`<branch>`, `<pr-url>`, `<paths>`) when live values exist.**
+**Never emit abstract placeholders (`<branch>`, `<pr-url>`, `<paths>`) for the scope or exemplar when live values exist — but keep grounding lightweight and boundary-focused.**
 
-1. **Inspect Live Git State**:
-   - Run `git branch --show-current` to get the active branch.
-   - Run `git status -s` to inspect dirty/uncommitted files.
-   - Identify the merge base: `git merge-base origin/main HEAD 2>/dev/null || git merge-base main HEAD` to define the exact branch diff range.
-   - If the user referenced "This PR", "my changes", or "active branch", resolve the real diff range:
-     `git diff $(git merge-base origin/main HEAD)..HEAD --name-only`
+1. **Resolve Scope & Exemplar Anchors**:
+   - Resolve any `@[...]` paths, active branch (`git branch --show-current`), or uncommitted state (`git status -s`).
+   - When the task targets a branch diff or PR ("This PR", "my changes", "active branch"), resolve the merge-base range (`git merge-base origin/main HEAD 2>/dev/null || git merge-base main HEAD`).
+   - When the task targets a broader directory, subsystem, or cross-project pattern, record the root path and the reference exemplar path/structure — **do not** inventory every file or section inside the target to paste into the prompt.
 2. **Inspect Referenced Skills & Rulebooks**:
-   - If a specific slash command or skill is named (e.g. `/improve-codebase-architecture`, `/code-review`), locate and read its `SKILL.md` to extract:
+   - If a specific slash command or skill is named (e.g. `/plan`, `/code-review`, `/refine`), locate and read its `SKILL.md` to extract:
      - Exact argument formats and supported flags (e.g. `Scope: This PR`, `deep`, `live`).
-     - Required domain vocabulary (e.g. `/codebase-design` terms: `module`, `interface`, `depth`, `seam`, `adapter`, `leverage`, `locality`, deletion test).
-     - Mandated deliverable formats (e.g. self-contained HTML report in `$TMPDIR`, workspace markdown artifact).
-     - Non-destructive execution gates (`core` read-only invariant, no unapproved edits).
+     - Required domain vocabulary and verification commands.
+     - Mandated deliverable formats and non-destructive execution gates (`core` read-only invariant, `/proceed` gate).
 3. **Inspect Domain Language & ADRs**:
-   - Check `GLOSSARY.md` and `docs/adr/` if relevant to incorporate proper entity names and respect locked architectural decisions.
+   - Check `GLOSSARY.md` and `docs/adr/` if relevant so the prompt names the right domain concepts and ADR boundaries without restating their contents inline.
 
 ---
 
 ### Step 3: Multi-Variant Synthesis (The 3 Archetypes)
 
-Always synthesize **3 distinct prompt variants**, each tailored for a specific operational balance:
+Always synthesize **3 distinct, concise prompt variants**. State *what to look for* and *which rules hold*, not a pre-baked inventory of files to touch:
 
 #### Variant 1: Surgical / Fast
-- **Focus**: Minimal context tokens, tight diff scope, direct to point, zero ceremony.
-- **Best for**: Small changes, single-file audits, quick sanity checks, preserving context window budget.
-- **Structure**: Concrete command + exact target files/hashes + 1–2 bullet constraints + stop condition.
+- **Focus**: Minimal context tokens, tight scope, direct to point, zero ceremony.
+- **Best for**: Small changes, single-file audits, quick sanity checks, or a fast pass with minimal overhead.
+- **Structure**: Concrete command + bounded scope & reference exemplar + 1–2 core constraints + verification/stop condition. (List specific files only when the user's request is already about those exact files or a small diff).
 
 #### Variant 2: Deep / Rigorous
-- **Focus**: Edge-case verification and cross-layer contract checks, each constraint stated with its reason.
-- **Best for**: Complex PRs, security/persistence logic, core architectural modifications, deep module deepening.
-- **Structure**: Full context preamble + exact scope + mandated vocabulary/standards + acceptance checklist + the failure modes to verify.
+- **Focus**: Edge-case verification, architectural invariants, and cross-layer contract checks, each constraint stated with its reason.
+- **Best for**: Complex PRs, security/persistence logic, core architectural modifications, or thorough system-wide audits.
+- **Structure**: Target command & scope + reference pattern/ADRs + invariants to enforce (and why) + verification gate.
 
 #### Variant 3: Interactive / Guarded
-- **Focus**: Plan-first, discovery before execution, strict human-in-the-loop checkpoints.
-- **Best for**: Unfamiliar code, high-risk refactorings, or tasks requiring alignment before any files change.
-- **Structure**: Multi-step phases + mandated planning artifact + explicit instruction: *"Stop and ask for approval before modifying code."*
+- **Focus**: Plan-first, open-ended explorer discovery before execution, strict human-in-the-loop checkpoints.
+- **Best for**: Broad refactorings, unfamiliar areas, or tasks where explorer sub-agents should uncover opportunities we are not yet aware of before any files change.
+- **Structure**: Target command (e.g. `/plan`) + open-ended discovery goals for parallel explorer sub-agents + mandated planning artifact + explicit stop gate (`Stop and wait for /proceed before editing any files`) + post-approval verification.
 
 ---
 
