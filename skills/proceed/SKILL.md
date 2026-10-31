@@ -3,6 +3,8 @@ name: proceed
 description: "Authorizes and executes the next step of a gated read-only command."
 disable-model-invocation: true
 argument-hint: "[option | phase | step | extra instructions]"
+model: sonnet
+effort: medium
 ---
 
 # Skill: `/proceed` — Open the Execution Gate
@@ -18,8 +20,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 
 - `../_modules/core.md`
-- `../_modules/artifact-protocol.md`: writes no artifact — updates the `Status` of the plan it executes
-- `../_modules/git-worktrees.md`
+- `../_modules/git-worktrees.md`: only when `/worktrees`, a `[worktree-context]` block, `/implement-feature`, or a base profile with `Implementation mode: workspace` applies (`core` › _Worktree opt-in_)
 
 Follow `core` › _The `/proceed` gate_ for all gate invariants; `disable-model-invocation` keeps the model from calling this Command itself.
 
@@ -31,21 +32,21 @@ Follow `core` › _The `/proceed` gate_ for all gate invariants; `disable-model-
 
 Look back through this session for the most recent gated handoff that has not yet been executed. **Any** Command whose `## Modules` section marks `core` read-only until `/proceed` leaves one: the next step its output named. The table lists the common ones as examples; for a Command not listed, do exactly the next step it named.
 
-| Gated by                            | What it left waiting                                 | Next step `/proceed` authorizes                                                                                                                                                                                                              |
-| ----------------------------------- | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `code-review`, `squash-code-review` | A verified review                                    | Fix the findings the user picks (all 🔴 by default): through `/plan` when non-trivial, otherwise directly. Posting them to the PR is `/pr-post-comments`, a separate request                                                                 |
-| `pr-feedback-review`                | A thread triage with resolutions and draft replies   | Apply the agreed code resolutions. Sending replies is `/pr-post-comments`, a separate request                                                                                                                                                |
-| `spec-verification`                 | A traceability ledger with gaps                      | Close the _missing_ / _partial_ requirements the user picks                                                                                                                                                                                  |
-| `what-am-I-missing`                 | One blind spot with an _Immediate Fix_               | Apply that fix                                                                                                                                                                                                                               |
-| `verify-assumptions`                | _Proposed edits (after /proceed)_                    | Apply exactly those edits to the plan, ADR or doc                                                                                                                                                                                            |
-| `explain`, `manual-testing`         | An explanation or a test plan                        | Only the follow-up step their output named, if any; otherwise _Nothing pending_                                                                                                                                                              |
-| `create-prompt` | Paste-ready prompt | Run the printed prompt (with `--variants`: the one the arguments pick, default the recommended) by invoking its target skill; that skill's own gates still apply. Opens **only** on a literal `/proceed`, never on a plain "go ahead" (`create-prompt` › _Gate_) |
-| `plan --review`                     | A plan or proposal with a verdict                    | Implement the reviewed plan, applying its 🔴 findings first                                                                                                                                                                                  |
-| `pr-fix-pipeline`                   | An investigation and an `implementation_plan`        | Implement the fix plan, run local verification, push/re-queue, and iterate until the pipeline is verified passed by the agent                                                                                                                |
-| `implement-feature`                 | The plan gate                                        | Resume `implement-feature` at its implementation phase                                                                                                                                                                                       |
-| `suggestion`                        | Numbered approaches with a recommendation (option 1) | Act on option 1, or the option a bare number in the arguments picks (`/proceed 2`): through `/plan` when the change is non-trivial, otherwise directly                                                                                       |
-| `investigate`                       | Findings with a handoff                              | Draft the plan with `/plan`; implementing it needs a further `/proceed`                                                                                                                                                                      |
-| `plan`                              | A plan in `Awaiting User Review`                     | Implement the plan                                                                                                                                                                                                                           |
+| Gated by                            | What it left waiting                                 | Next step `/proceed` authorizes                                                                                                                                                                                                                                  |
+| ----------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `code-review`, `squash-code-review` | A verified review                                    | Fix the findings the user picks (all 🔴 by default): through `/plan` when non-trivial, otherwise directly. Posting them to the PR is `/pr-post-comments`, a separate request                                                                                     |
+| `pr-feedback-review`                | A thread triage with resolutions and draft replies   | Apply the agreed code resolutions. Sending replies is `/pr-post-comments`, a separate request                                                                                                                                                                    |
+| `spec-verification`                 | A traceability ledger with gaps                      | Close the _missing_ / _partial_ requirements the user picks                                                                                                                                                                                                      |
+| `what-am-I-missing`                 | One blind spot with an _Immediate Fix_               | Apply that fix                                                                                                                                                                                                                                                   |
+| `verify-assumptions`                | _Proposed edits (after /proceed)_                    | Apply exactly those edits to the plan, ADR or doc                                                                                                                                                                                                                |
+| `explain`, `manual-testing`         | An explanation or a test plan                        | Only the follow-up step their output named, if any; otherwise _Nothing pending_                                                                                                                                                                                  |
+| `create-prompt`                     | Paste-ready prompt                                   | Run the printed prompt (with `--variants`: the one the arguments pick, default the recommended) by invoking its target skill; that skill's own gates still apply. Opens **only** on a literal `/proceed`, never on a plain "go ahead" (`create-prompt` › _Gate_) |
+| `plan --review`                     | A plan or proposal with a verdict                    | Implement the reviewed plan, applying its 🔴 findings first                                                                                                                                                                                                      |
+| `pr-fix-pipeline`                   | An investigation and an `implementation_plan`        | Implement the fix plan, run local verification, push/re-queue, and iterate until the pipeline is verified passed by the agent                                                                                                                                    |
+| `implement-feature`                 | The plan gate                                        | Resume `implement-feature` at its implementation phase                                                                                                                                                                                                           |
+| `suggestion`                        | Numbered approaches with a recommendation (option 1) | Act on option 1, or the option a bare number in the arguments picks (`/proceed 2`): through `/plan` when the change is non-trivial, otherwise directly                                                                                                           |
+| `investigate`                       | Findings with a handoff                              | Draft the plan with `/plan`; implementing it needs a further `/proceed`                                                                                                                                                                                          |
+| `plan`                              | A plan in `Awaiting User Review`                     | Implement the plan                                                                                                                                                                                                                                               |
 
 Then:
 
@@ -61,7 +62,7 @@ Re-read the plan artifact from disk before acting; the user may have edited it a
 1. **Mark approved**: set the plan's `Status` to `Approved` (`core` › _The `/proceed` gate_).
 2. **Execute**: follow the plan's phases in order, staying inside its scope and applying the project's References and Profiles (`core` › _Precedence*). Honour an active `[worktree-context]`, `core` › _Worktree opt-in_, and the base profile's **Implementation mode** (`git-worktrees` › _Modes_).
 3. **Verify**: run `core` › _Post-edit verification_ (the plan's own verification commands first, then targeted build, type-check, and tests).
-4. **Close out**: update the plan's `Status` (`Completed` or `Approved` with remaining items per `core` › _The `/proceed` gate_) and every declared status field in any source review/plan artifact (`artifact-protocol` › rule 7; `grep` for stale `⏸`, `Not addressed`, or `uncommitted` markers).
+4. **Close out**: update the plan's `Status` (`Completed` or `Approved` with remaining items per `core` › _The `/proceed` gate_) and, in the same edit, every status field the source artifact's Command declares (header `Status:`, summary matrix, per-item status, checklist); then `grep` for `⏸`, `Not addressed`, `uncommitted` and resolve every hit.
 
 ---
 
@@ -85,4 +86,4 @@ Next: <the single next action, usually a commit/push or ship command for the use
 - [ ] The pending item was resolved from this session, not guessed; ambiguity was asked about.
 - [ ] Only the authorized scope was changed; no commit, push, PR or tracker write happened without its own request, and no edit landed in a snapshot worktree.
 - [ ] Verification commands ran and their results are reported faithfully.
-- [ ] The plan's `Status` and every status field in any source review artifact match reality (`artifact-protocol` › rule 7).
+- [ ] The plan's `Status` and every status field in any source review artifact match reality (Step 2.4).

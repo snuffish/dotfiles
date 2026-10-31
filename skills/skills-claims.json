@@ -15984,22 +15984,6 @@
       }
     },
     {
-      "id": "skills/proceed/SKILL.md:21:path:../_modules/artifact-protocol.md",
-      "source": {
-        "file": "skills/proceed/SKILL.md",
-        "line": 21
-      },
-      "kind": "path",
-      "value": "../_modules/artifact-protocol.md",
-      "quote": "- `../_modules/artifact-protocol.md`: writes no artifact — updates the `Status` of the plan it executes",
-      "verify": {
-        "method": "path_exists",
-        "path": "../_modules/artifact-protocol.md",
-        "base": "file_dir",
-        "type": "file"
-      }
-    },
-    {
       "id": "skills/proceed/SKILL.md:22:path:../_modules/git-worktrees.md",
       "source": {
         "file": "skills/proceed/SKILL.md",
@@ -20217,6 +20201,58 @@
         "path": ".claude/AGENTS.md",
         "base": "repo",
         "type": "file"
+      }
+    },
+    {
+      "id": "skills/proceed/SKILL.md:23:doc_link:core › Worktree opt-in",
+      "source": {
+        "file": "skills/proceed/SKILL.md",
+        "line": 23
+      },
+      "kind": "doc_link",
+      "value": "core › Worktree opt-in",
+      "quote": "`core` › _Worktree opt-in_",
+      "verify": {
+        "method": "heading_pointer",
+        "target": "core",
+        "heading": "Worktree opt-in",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/proceed/SKILL.md:23:other:git-worktrees Implementation mode workspace",
+      "source": {
+        "file": "skills/proceed/SKILL.md",
+        "line": 23
+      },
+      "kind": "other",
+      "value": "git-worktrees loads under /worktrees, [worktree-context], /implement-feature or Implementation mode: workspace",
+      "quote": "- `../_modules/git-worktrees.md`: only when `/worktrees`, a `[worktree-context]` block, `/implement-feature`, or a base profile with `Implementation mode: workspace` applies (`core` › _Worktree opt-in_)",
+      "verify": {
+        "method": "grep",
+        "pattern": "`/worktrees`.*`\\[worktree-context\\]`.*`/implement-feature`.*`Implementation mode: workspace`",
+        "paths": [
+          "skills/_modules/git-worktrees.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/proceed/SKILL.md:6:config_key:model",
+      "source": {
+        "file": "skills/proceed/SKILL.md",
+        "line": 6,
+        "also_lines": [
+          7
+        ]
+      },
+      "kind": "config_key",
+      "value": "skill frontmatter model / effort",
+      "quote": "model: sonnet",
+      "verify": {
+        "method": "manual",
+        "reason": "Claude Code skill frontmatter keys; v2.1.316 binary lists \"model\" and \"effort\" in its accepted key array (name, description, model, allowed-tools, argument-hint, ..., effort, ...)"
       }
     }
   ]
