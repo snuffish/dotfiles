@@ -6,7 +6,6 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "opus",
   "skillOverrides": {
     "find-skills": "off",
     "problem": "off",
@@ -27,9 +26,41 @@
     "writing-skills": "off",
     "create-skill": "off",
     "crypto-com-app": "off",
-    "no-worktrees": "off"
+    "no-worktrees": "off",
+    "keybindings-help": "user-invocable-only",
+    "fewer-permission-prompts": "user-invocable-only",
+    "init": "user-invocable-only",
+    "security-review": "user-invocable-only",
+    "plugin-authoring": "user-invocable-only",
+    "dataviz": "name-only",
+    "claude-api": "name-only",
+    "claude-in-chrome": "name-only",
+    "artifact-capabilities": "name-only",
+    "artifact-design": "name-only",
+    "artifact-diagramming": "name-only",
+    "update-config": "name-only",
+    "schedule": "name-only",
+    "loop": "name-only",
+    "run": "name-only",
+    "simplify": "name-only",
+    "workflow-authoring": "name-only"
+  },
+  "env": {
+    "CLAUDE_MEM_DISABLE_FILE_CONTEXT": "1"
   },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I \"$HOME/.terminal/claude/quiet-guard.py\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write",
@@ -97,6 +128,9 @@
     },
     "claude-fable-5-1": {
       "effortLevel": "high"
+    },
+    "qwen/qwen3.5-9b": {
+      "effortLevel": "high"
     }
   },
   "voice": {
@@ -107,8 +141,20 @@
   "skipWorkflowUsageWarning": true,
   "autoCompactEnabled": true,
   "switchModelsOnFlag": true,
-  "voiceEnabled": false,
   "autoMode": {
+    "allow": [
+      "$defaults",
+      "Bash(dotnet build backend/GR.PRIIS.Backend.slnx:*)",
+      "Bash(dotnet test backend/GR.PRIIS.Backend.slnx:*)",
+      "Bash(dotnet format backend/GR.PRIIS.Backend.slnx:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run organize-imports:*)"
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Bash(az repos pr update:*)",
+      "Bash(az devops invoke:* --http-method POST*)"
+    ],
     "environment": [
       "### Org-wide",
       "**Organization**: grutbildning (Azure DevOps org `https://dev.azure.com/grutbildning`, project `PRIIS`, repo `GR.PRIIS`)",
@@ -135,19 +181,8 @@
       "**Trusted repo**: /home/snuffish/Projects/GR/GR.PRIIS (GR.PRIIS monorepo, remote `vs-ssh.visualstudio.com:v3/grutbildning/PRIIS/GR.PRIIS`), default branch `main`",
       "**Org-specific CLIs**: `az` (Azure DevOps fallback CLI), `dotnet`, `npm`/`npx` (frontend), `codegraph` (repo indexing), `pwsh` (backend format script)",
       "routine under backend/ and frontend/source/priis-web/ prefixes: build/test/lint/format commands documented in CLAUDE.md are routine project workflow"
-    ],
-    "allow": [
-      "$defaults",
-      "Bash(dotnet build backend/GR.PRIIS.Backend.slnx:*)",
-      "Bash(dotnet test backend/GR.PRIIS.Backend.slnx:*)",
-      "Bash(dotnet format backend/GR.PRIIS.Backend.slnx:*)",
-      "Bash(npm run lint:*)",
-      "Bash(npm run organize-imports:*)"
-    ],
-    "soft_deny": [
-      "$defaults",
-      "Bash(az repos pr update:*)",
-      "Bash(az devops invoke:* --http-method POST*)"
     ]
-  }
+  },
+  "voiceEnabled": false,
+  "model": "opus"
 }

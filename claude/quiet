@@ -1,0 +1,95 @@
+#!/usr/bin/env python3
+"""quiet CMD [ARGS...]: run CMD, keep its full output in a log file, print a short summary.
+
+Summary: the log path and exit code, error lines with one line of context, warning counts
+by code, and the last 25 lines. Output of 80 lines or fewer is printed as is.
+Exits with CMD's exit code. Built so Claude Code sessions keep build and test noise
+out of context; quiet-guard.py (a PreToolUse hook) points noisy commands here.
+"""
+import collections
+import os
+import re
+import subprocess
+import sys
+import tempfile
+import time
+
+SHORT = 80
+TAIL = 25
+MAX_ERROR_LINES = 60
+ANSI = re.compile(r"\x1b\[[0-9;?]*[A-Za-z]")
+ERROR = re.compile(
+    r"\berror\b|\bfail(ed|ure|ing)?\b|exception|npm ERR!|✘|✗|×|^\s*\d+\) ",
+    re.IGNORECASE,
+)
+NOT_ERROR = re.compile(r"\b0 (error|failed)|\bfailed: 0\b|errors?: 0\b", re.IGNORECASE)
+WARNING_CODE = re.compile(r"\bwarning ([A-Z]+[0-9]+)")
+
+
+def summarize(lines, log, rc):
+    out = [f"[quiet] exit {rc} · {len(lines):,} lines · full log: {log}"]
+    if len(lines) <= SHORT:
+        return out + lines
+
+    # The tail skips warning lines (they are counted below) and is printed in full,
+    # so the error scan leaves those lines out.
+    tail = [i for i, line in enumerate(lines) if not WARNING_CODE.search(line)][-TAIL:]
+    in_tail = set(tail)
+
+    shown, seen, last = [], set(), -2
+    for i, line in enumerate(lines):
+        if i <= last or i in in_tail:
+            continue
+        if not ERROR.search(line) or NOT_ERROR.search(line) or WARNING_CODE.search(line):
+            continue
+        key = line.strip()
+        if key in seen:
+            continue
+        seen.add(key)
+        if i > last + 1 and shown:
+            shown.append("  …")
+        shown.append(line)
+        last = i
+        if i + 1 < len(lines) and i + 1 not in in_tail and lines[i + 1].strip():
+            shown.append(lines[i + 1])
+            seen.add(lines[i + 1].strip())
+            last = i + 1
+        if len(shown) >= MAX_ERROR_LINES:
+            shown.append(f"  … more in {log}")
+            break
+    if shown:
+        out += ["-- errors and failures --", *shown]
+
+    codes = collections.Counter(m.group(1) for line in lines for m in WARNING_CODE.finditer(line))
+    if codes:
+        top = ", ".join(f"{code}×{n}" for code, n in codes.most_common(8))
+        out.append(f"-- warnings: {sum(codes.values()):,} ({top}) --")
+
+    out += [f"-- last {len(tail)} lines (warnings left out) --", *(lines[i] for i in tail)]
+    return out
+
+
+def main(argv):
+    if not argv or argv[0] in ("-h", "--help"):
+        print(__doc__.strip())
+        return 0 if argv else 2
+    log_dir = os.path.join(tempfile.gettempdir(), "quiet-logs")
+    os.makedirs(log_dir, exist_ok=True)
+    name = re.sub(r"[^A-Za-z0-9]+", "-", " ".join(argv[:3]))[:40].strip("-")
+    log = os.path.join(log_dir, f"{time.strftime('%Y%m%d-%H%M%S')}-{name}-{os.getpid()}.log")
+    with open(log, "wb") as f:
+        try:
+            rc = subprocess.run(argv, stdout=f, stderr=subprocess.STDOUT).returncode
+        except FileNotFoundError:
+            print(f"[quiet] command not found: {argv[0]}", file=sys.stderr)
+            return 127
+        except KeyboardInterrupt:
+            rc = 130
+    with open(log, encoding="utf-8", errors="replace") as f:
+        lines = [ANSI.sub("", line.rstrip("\n")) for line in f]
+    print("\n".join(summarize(lines, log, rc)))
+    return rc
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
