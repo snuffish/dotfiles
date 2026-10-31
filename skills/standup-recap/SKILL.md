@@ -62,8 +62,8 @@ What it decides, so you do not re-derive it:
 Turn the JSON into the format below. Rules:
 
 - Two lines per entry. Line 1 leads with `#<id> <title>` for work items, `!<id> <title>` for a review, the branch name for a chore, then the facts joined by ` · `: `N commits`, `!PR opened` / `!PR completed`, `→ <state>`, `🟢` (all pipelines `succeeded`) or `🔴`, `reviewed: <vote>`.
-- Line 2, indented: `summary` shortened to at most 12 words, in your own words but adding nothing it does not say. No `summary` → line 1 only.
-- At most 5 bullets per section, in the collector's order. Fold the rest into one line: `+N minor: <short names>`.
+- Line 2, indented: `summary` restated as one short phrase a listener takes in at a glance, in your own words but adding nothing it does not say. No `summary` → line 1 only.
+- Keep each section to the entries worth saying aloud, in the collector's order; fold the rest into one line: `+N minor: <short names>`.
 - Sessions are supporting evidence: use them to phrase _what_ an entry was about. Work that appears only in sessions gets its own bullet tagged `(investigation)`.
 - Omit an empty section. Never invent work the JSON does not hold.
 - When `window.today_is_live` is true, _Today_ and _Blockers_ show the live state, not the state on that date; say so in one line.

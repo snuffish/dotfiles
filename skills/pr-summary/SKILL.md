@@ -1,6 +1,6 @@
 ---
 name: pr-summary
-description: "Writes a pull request description from the branch's actual diff, following the repo's PR template and conventions, with the work-item reference. Preview by default: prints a paste-ready block and changes nothing. `update` first commits and pushes the branch's pending work, then replaces the live PR's description on Azure DevOps or GitHub, retitles the PR when its title no longer fits the diff, and adds the labels the project profile requires. Use for /pr-summary, \"write the PR description\", \"summarize this branch for the PR\", \"update the PR description\", \"fix the PR title\"."
+description: "Writes a pull request description from the branch's actual diff, following the repo's PR template and conventions, with the work-item reference. Preview by default: prints a paste-ready block and changes nothing. `update` offers to commit and push the branch's pending work first, then replaces the live PR's description on Azure DevOps or GitHub, retitles the PR when its title no longer fits the diff, and adds the labels the project profile requires. Use for /pr-summary, \"write the PR description\", \"summarize this branch for the PR\", \"update the PR description\", \"fix the PR title\"."
 argument-hint: "[update] [branch | base]"
 ---
 
@@ -48,7 +48,7 @@ A profile adds facts; it never widens what update mode may write (*Scope & autho
 Parse the arguments **before** doing anything else:
 
 - **Preview mode (default)** — `/pr-summary`, `/pr-summary <branch>`, or `/pr-summary <base>`. Compose the summary and print it as a paste-ready block (Step 4). Nothing is written to any PR.
-- **Update mode** — the arguments contain the token `update` (e.g. `/pr-summary update`, or `/pr-summary update <branch>`). First commit and push any pending work (Step 0). Then compose the summary exactly as in preview mode and push it to the **real, open PR** for the branch on the hosting platform (Step 5).
+- **Update mode** — the arguments contain the token `update` (e.g. `/pr-summary update`, or `/pr-summary update <branch>`). First offer to commit and push any pending work (Step 0). Then compose the summary exactly as in preview mode and push it to the **real, open PR** for the branch on the hosting platform (Step 5).
 
 Any argument that is not the `update` keyword is still treated as the branch/base, exactly as before. If in doubt whether a token is a branch, treat it as the branch name.
 
@@ -56,12 +56,14 @@ Any argument that is not the `update` keyword is still treated as the branch/bas
 
 ## Step 0 — Sync the branch before composing
 
-A PR description has to describe the code the PR actually contains. If the work exists only in the working tree, or only in local commits, the summary would describe code reviewers cannot see. So **commit and push first, then compose**. Run this per `[worktree-context]` block when blocks were handed in, else per repo in the workspace that has a branch to summarise — always against `<repo-root>`, never the current directory.
+A PR description has to describe the code the PR actually contains. If the work exists only in the working tree, or only in local commits, the summary would describe code reviewers cannot see. So **sync first, then compose**, and **ask the user before any commit or push** (the user's rule: no commits unless told). Run this per `[worktree-context]` block when blocks were handed in, else per repo in the workspace that has a branch to summarise — always against `<repo-root>`, never the current directory.
 
 ```bash
 git -C <repo-root> status --short                                   # uncommitted work?
 git -C <repo-root> rev-list --count @{u}..HEAD 2>/dev/null          # local commits not pushed? (errors when no upstream)
 ```
+
+Before items 1 and 2, list what would be committed (files and proposed subject) and pushed, per repo, and ask once. Commit and push only on a yes. On a no, commit and push nothing, say which changes the summary covers that reviewers cannot see yet, and ask whether to stop or still update the PR.
 
 1. **Uncommitted changes** — commit them before Step 1.
    - Stage **selectively**: only the files that belong to this branch's change, never `git add -A` / `git add .`. Leave stray files out and name them in chat: generated output, local config, editor settings, scratch artifacts.
@@ -141,7 +143,7 @@ Use the structure below. If the repo supplies its own PR template, honour that s
 
 - `<change or behaviour>`: What the change does and why it matters
 - `<change or behaviour>`: What the change does and why it matters
-<!-- 2–5 bullets. Label each by the change/behaviour it introduces — a concept, NOT a filename. Group edits across files under one conceptual bullet. Do not pad. Match the number to the actual scope of the change. -->
+<!-- 2–5 bullets. Label each by the change/behaviour it introduces; a file name only when that file is itself one cohesive change. Group edits across files under one conceptual bullet. Do not pad. Match the number to the actual scope of the change. -->
 
 #### Bug description
 
@@ -162,7 +164,7 @@ Use the structure below. If the repo supplies its own PR template, honour that s
 
   Decision rule: if the change only adds, removes, or renames options/values within an existing feature, classify it as **New content** (optionally combined with **Validation change**), *not* **New feature**. Reserve **New feature** for new capability.
 - **PR Summary**: 2–3 sentences maximum; state *what*, *why*, and *impact*. Avoid filler. Do **not** mention a paired/coordinated PR here (e.g. "Paired with the coordinated frontend PR on `branch`") — the platform's relation link in the footer (`This PR relates to: !xxxx`) already conveys that. Only spell out coordination in prose if there is no relation link to carry it.
-- **Key impacts**: organise bullets by **change or behaviour, not by file**. Give each a short backtick-wrapped label naming *what the change does* — a concept — then explain the change and why it matters (e.g. `` `Closure under expired template` ``, `` `Support for MatchAchieved state` ``, `` `Demo seed data` ``), **not** a filename label like `` `SomeService.cs` ``. Group related edits that serve one behaviour into a single bullet even when they span several files; conversely, split one file into multiple bullets if it carries distinct behaviours. Name specific symbols/values (enum members, methods, seed identifiers) inside the prose where they make the change concrete. 2–5 bullets is the normal range — do not pad. Every bullet must describe a **concrete change in this PR's diff** — do not add meta/coordination bullets (e.g. a "Cross-repo contract" note that values must stay in sync with another repo); a paired PR is conveyed by the footer relation link (`This PR relates to: !xxxx`), not by a bullet or a summary sentence. **Organise by file when that genuinely makes sense** — when a file maps cleanly to one cohesive change, or file boundaries are the clearest mental model for the reviewer, a file-named label is fine, and the two styles may even be mixed in one list. Behaviour-first is the default; pick whichever grouping makes the PR easiest to understand. Whenever a bullet would otherwise pack several discrete items into one line (an inline em-dash or comma-separated run-on list of any kind), break them out as **nested sub-bullets** — one item per line, indented under the parent. This is a general readability rule that applies to any enumeration; nested bullets are far more scannable than a run-on inline list.
+- **Key impacts**: 2–5 bullets, each a concrete change in this diff, labelled with a short backticked name for the behaviour it introduces (e.g. `` `Closure under expired template` ``). Group edits that serve one behaviour across files; use a file name as the label only when that file is itself one cohesive change. Name the specific symbols or values in the prose, and put any list of several items in nested sub-bullets. A paired PR is conveyed by the footer relation link, not a bullet.
 - **Bug description**: include this section whenever the PR **actually fixes a bug** — i.e. whenever the classification includes **Bug fix** or **Hotfix** — *regardless of the branch prefix*. A `bugfix/`/`hotfix/` branch always qualifies, but so does a `feature/` (or any other) branch that corrects incorrect behaviour as part of its change (e.g. a feature PR that also repairs a pre-existing defect, or a cross-repo alignment fix). Explain what the bug was, why it happened, and how it was resolved, scoped to the bug-fixing part of the diff. **Omit the section entirely** when the PR corrects nothing — pure new feature, new content, refactoring, performance, validation, docs, or cleanup work.
 - **Language**: write in English unless the project clearly uses another language for PR descriptions.
 - **Tone**: clear, professional, concise — written for a reviewer who knows the codebase but not the exact intent of this change.
@@ -239,14 +241,14 @@ Handle these edge cases explicitly — do **not** guess:
 
 ### 5.2 — Show what will be replaced, then update
 
-1. Fetch and show the **current** title and description first, purely as a transparency read-back so the overwrite is visible:
-   - ADO: `az repos pr show --id <id> --org "$ORG" --query "{title:title,description:description}" -o json`
+1. Fetch and show the **current** title and description first (and, on ADO, note `isDraft` for step 3), purely as a transparency read-back so the overwrite is visible:
+   - ADO: `az repos pr show --id <id> --org "$ORG" --query "{title:title,description:description,isDraft:isDraft}" -o json`
    - GitHub: `gh pr view <id> --json title,body`
 
    Treat it as **stale** and replace it in full — it is shown for the record, never used as input for the new summary (see the *Always compose from scratch* principle above). Do not pause to reconcile with, preserve, or merge in the old text; the `update` keyword is the authorization to overwrite.
 2. Write the composed body to a **temp file** — never inline it in the shell command. PR bodies contain backticks and `!`, which the shell tries to expand (command substitution / history expansion) and corrupts the text; a file avoids all escaping. Prefer writing the file with the editor tool rather than `echo`/heredoc.
 3. Apply the update from the file:
-   - ADO: `az repos pr update --id <id> --org "$ORG" --description "$(cat /tmp/pr-<id>.md)"` — ADO caps the description at **4000 characters**. The Step 3 length budget should already guarantee this; if the update is still rejected for length, condense per the Step 3 rules and retry rather than truncating mid-sentence or splitting across fields.
+   - ADO: `az repos pr update --id <id> --org "$ORG" --description "$(cat /tmp/pr-<id>.md)" --draft <isDraft from the read-back>` — without `--draft` the update publishes a draft PR. ADO caps the description at **4000 characters**. The Step 3 length budget should already guarantee this; if the update is still rejected for length, condense per the Step 3 rules and retry rather than truncating mid-sentence or splitting across fields.
    - GitHub: `gh pr edit <id> --body-file /tmp/pr-<id>.md`
 
    When Step 3 › *PR title* decided to replace the title, set it in the same call: write it to its own temp file (`/tmp/pr-<id>-title.txt`) and add `--title "$(cat /tmp/pr-<id>-title.txt)"` to either command. A kept title is not sent.
@@ -270,7 +272,7 @@ A rule that picks no label (for example a change outside every area folder) adds
 ### Scope & authorization
 
 - Update the **description/body**, the **title** when Step 3 › *PR title* says it no longer fits, and add the profile's **missing labels** (5.4). Never remove a label, change the draft state, vote or touch reviewers.
-- Update mode writes to a real, outward-facing artifact. The `update` keyword **is** the user's authorization to write the description and the title — but still show the current ones first (5.2) so the overwrite stays transparent.
+- Update mode writes to a real, outward-facing artifact. The `update` keyword **is** the user's authorization to write the description and the title, not to commit or push (Step 0 asks) — but still show the current ones first (5.2) so the overwrite stays transparent.
 
 ---
 
@@ -281,4 +283,3 @@ A rule that picks no label (for example a change outside every area folder) adds
 - **If the diff is ambiguous**, inspect the changed files directly rather than guessing from filenames alone.
 - **Match the project's terminology**: if the codebase uses specific domain terms (e.g. "ticket", "suggestion", "matching"), use them in the summary rather than generic synonyms.
 - **Describe the diff, not the architecture.** Keep every bullet anchored to something that actually changed in this diff. Resist adding explanatory bullets about invariants, contracts, or cross-repo coupling that aren't themselves a change in this PR.
-- **Group by behaviour first, by file when it's clearer.** A reviewer reads Key impacts to learn *what the PR does*, not to see a file list — so one behaviour spread across three files is usually one bullet labelled by the behaviour. But when a file maps cleanly to a single cohesive change, or file boundaries are the clearest way to convey the diff, organising by file is perfectly fine. Optimise for reviewer understanding, not for a rigid rule.

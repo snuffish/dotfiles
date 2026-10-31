@@ -20,7 +20,6 @@ Read these before step 1:
 - `../_modules/pr-host.md`
 
 > [!CAUTION]
-> **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
 > 1. **MANDATORY .MD ARTIFACT & SUMMARY:** every `/spec-verification` response writes or updates the artifact and begins with a clickable link to it plus section anchors (see *Output*).
 > 2. **READ-ONLY:** never edit code, check out, stash, pull, install, build or run tests. When the PR head has moved past the local tree, read the new head from the remote ref (`git show origin/<branch>:<path>`); never `git checkout` or `git pull` on the user's behalf.
 > 3. **NO GRADE WITHOUT EVIDENCE:** every ✅/◐/❌/⚠ row cites a `path:line` you re-opened at the reviewed head. A sub-agent's or an earlier review's claim is evidence to check, not a verdict.
@@ -134,7 +133,7 @@ Collect every ❔, every ◐ whose completion depends on a product choice, and e
 
 ### Deep mode (`/spec-verification deep`)
 
-For long specs (> ~40 lines) or two-repo features, run Steps 3–5 in parallel sub-agents — one per spec section (behaviour / field group A / field group B / beyond-spec) — each given the decomposed rows for its section, the repo paths, the head SHAs and the read-only rule, and each returning rows with proposed grades and `path:line`. Then **re-open every cited line yourself** before writing the grade. Sub-agent output is evidence, not a verdict; the first-pass agent in the originating run misread two enum labels and over-graded a "make room for" line as ❌.
+For long specs (> ~40 lines) or two-repo features, run Steps 3–5 in parallel sub-agents — one per spec section (behaviour / field group A / field group B / beyond-spec) — each given the decomposed rows for its section, the repo paths, the head SHAs and the read-only rule, and each returning rows with proposed grades and `path:line`. Then **re-open every cited line yourself** before writing the grade. Sub-agent output is evidence, not a verdict.
 
 ---
 
@@ -192,7 +191,7 @@ Then, in prose: the verdict and totals in one or two sentences; the ❌/◐/❔ 
 
 Before sending:
 
-1. **Recount the totals** from the table (count rows per grade with a script, not by eye); the originating run shipped a wrong total once.
+1. **Recount the totals** from the table (count rows per grade with a script, not by eye).
 2. **Re-open every cited `path:line`** at the stated head. If the head moved since you read a file (`git rev-parse origin/<branch>` differs from the header), re-point the lines using `git show "origin/<branch>:<path>" | grep -n …` and state the new head in *Context* — never check out to do it.
 3. **Every ❌ names what was searched** (request record, filter bar, DTO) so a reader can confirm the absence.
 4. **Every ↗ names the owning item id**; a deferred row with no owner is a ❌.

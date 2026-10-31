@@ -23,8 +23,6 @@ Read these before step 1:
 ## ⛔ Golden Invariants
 
 > [!CAUTION]
-> **ABSOLUTE RULES — ZERO TOLERANCE FOR DEVIATION:**
->
 > 1. **PROPOSAL & PLAN FIRST.** Before moving, renaming or modifying files, write `<prefix>-organize_plan-<suffix>.md` at the workspace root and present the before/after structure. A reorganization touches every importer of every moved file, so the user needs to see the blast radius before it happens. The one exception: when the user names the exact moves themselves (`a/x.ts → b/x.ts`, …), those moves are the plan. List them in chat and skip the artifact.
 > 2. **THE APPROVAL GATE (`/proceed`).** Do not mutate files until the user authorizes the plan, including the exact-moves case above.
 > 3. **PRESERVE GIT HISTORY WITH `git mv`.** Never use plain `rm`/`cp`/`mv` or filesystem-only writes that break git file identity, blame, and history tracking.

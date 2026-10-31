@@ -99,9 +99,9 @@ Always synthesize **3 distinct prompt variants**, each tailored for a specific o
 - **Structure**: Concrete command + exact target files/hashes + 1–2 bullet constraints + stop condition.
 
 #### Variant 2: Deep / Rigorous
-- **Focus**: Exhaustive edge-case verification, comprehensive negative constraints, cross-layer contract checks.
+- **Focus**: Edge-case verification and cross-layer contract checks, each constraint stated with its reason.
 - **Best for**: Complex PRs, security/persistence logic, core architectural modifications, deep module deepening.
-- **Structure**: Full context preamble + exact scope + mandated vocabulary/standards + strict acceptance checklist + failure mode guards.
+- **Structure**: Full context preamble + exact scope + mandated vocabulary/standards + acceptance checklist + the failure modes to verify.
 
 #### Variant 3: Interactive / Guarded
 - **Focus**: Plan-first, discovery before execution, strict human-in-the-loop checkpoints.

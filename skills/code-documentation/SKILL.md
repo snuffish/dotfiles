@@ -17,29 +17,12 @@ Read these before step 1:
 
 ---
 
-## Overview
-
-This skill generates professional, comprehensive documentation for software projects, codebases, libraries, and APIs. It follows industry best practices from projects like React, Django, Stripe, and Kubernetes to produce documentation that is accurate, well-structured, and useful for both new contributors and experienced developers.
-
-The output ranges from single-file READMEs to multi-document developer guides, always matched to the project's complexity and the user's needs.
-
-## Core Capabilities
-
-- Generate comprehensive README.md files with badges, installation, usage, and API reference
-- Create API reference documentation from source code analysis
-- Produce architecture and design documentation with diagrams
-- Write developer onboarding and contribution guides
-- Generate changelogs from commit history or release notes
-- Create inline code documentation following language-specific conventions
-- Support JSDoc, docstrings, GoDoc, Javadoc, and Rustdoc formats
-- Adapt documentation style to the project's language and ecosystem
-
 ## Documentation Workflow
 
 ### Phase 1: Codebase Analysis
 
 Establish a concrete structural inventory before generating documentation:
-- **Phase 1 Exit Bound:** Record: (1) primary language & framework manifests, (2) all exported entry points/routes via grep/AST, (3) existing doc files. Do not proceed to Phase 2 until this 3-point inventory is populated.
+- **Phase 1 Exit Bound:** Record: (1) primary language & framework manifests, (2) all exported entry points/routes via grep/AST, (3) existing doc files.
 
 #### Step 1.1: Project Discovery
 

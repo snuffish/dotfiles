@@ -53,7 +53,7 @@ Before going back in history, establish what is currently modified or committed 
 
 ## Step 3 — Historical Context Lookup (Transcripts & Brain)
 
-**Step 3 Exit Bound:** Locate the exact commit or conversation turn that introduced the failing code (`git log -S'<symbol>'` or transcript search). Extract the original design requirements before drafting the fix plan in Step 4.
+When the failure traces to an earlier change, find the commit or conversation turn that introduced it (`git log -S'<symbol>'` or transcript search) and the intent behind it before planning the fix in Step 4.
 
 Inspect the conversation history and commit log to reconstruct the original intent:
 
@@ -108,7 +108,7 @@ Consolidate your findings into a structured Diagnostic report:
 
 When preparing to apply the fix:
 
-1. **Enter Planning Mode**: You **MUST** document the changes in `<prefix>-implementation_plan-<suffix>.md` first.
+1. **Plan first**: document the changes in `<prefix>-implementation_plan-<suffix>.md`.
 2. **Request User Feedback**: under Antigravity, set `UserFacing = true` and `RequestFeedback = true` in the plan's `ArtifactMetadata`, so the plan opens for review. Under Claude Code, link the plan and its sections in the chat response (`artifact-protocol`) and ask for approval there.
 3. **Halt for Approval**: Do not edit any files in the workspace until the user explicitly approves.
 4. **Verify**: Run tests and build checks after editing to ensure the problem is fully resolved.

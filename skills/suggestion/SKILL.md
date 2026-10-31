@@ -80,7 +80,7 @@ There is no intermediate mode: a request for a written-up comparison or a docume
 
 ### Step 4 (deep mode only): Parallel candidate evaluation
 
-When `deep` is requested and the candidates are independent, spawn **one read-only sub-agent per approach** (one message, parallel calls). Each prompt includes: the repo path(s), the framed question and constraints from Step 1, the precedent found in Step 2, the head SHA, and its candidate. Ask each to report: files it would touch, closest existing pattern, required contract or migration changes, the tests that would need to change, risks, and an effort estimate in T-shirt size — under 500 words, every claim with `path:line`.
+When `deep` is requested and the candidates are independent, spawn **one read-only sub-agent per approach** (one message, parallel calls). Each prompt includes: the repo path(s), the framed question and constraints from Step 1, the precedent found in Step 2, the head SHA, and its candidate. Ask each to report: files it would touch, closest existing pattern, required contract or migration changes, the tests that would need to change, risks, and an effort estimate in T-shirt size, every claim with `path:line`. Return only the findings, one entry each.
 
 Aggregate yourself. **Re-open every `path:line` a sub-agent cites** before it enters the artifact; drop or mark as unconfirmed anything you cannot see. Sub-agent output is evidence, not a verdict.
 

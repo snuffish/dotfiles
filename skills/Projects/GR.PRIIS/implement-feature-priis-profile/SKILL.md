@@ -21,12 +21,12 @@ The shared PRIIS fields — the workspace, Layout, Tracker, PR tooling, Pattern 
 | **Scaffold skills** | `priis-backend-scaffold`, `priis-frontend-scaffold` |
 | **Verify** | `priis-backend-verify` (incl. its architecture-tests phase), `priis-frontend-verify` (+ `npm run e2e`, which the verify skill lacks). |
 | **Ship** | `priis-ship` (backend, frontend or both), `priis-backend-workflow`, `priis-frontend-workflow`, `pr-summary`. Conventions in *Phase 6*. |
-| **Worktree branch** | `feature/<id>_<english-kebab-slug>` (`bugfix/`, `hotfix/`) — the same convention as *Phase 6*; never `worktree-<name>`. Base: freshly fetched `origin/main` in both repos. |
+| **Worktree branch** | `feature/<id>_<english-kebab-slug>` (`bugfix/`, `hotfix/`) — the same convention as *Phase 6*; never `worktree-<name>`. Base: freshly fetched `origin/main`. |
 
 ### Precedence overrides for delegated PRIIS skills
 
 - `priis-ship` handles a User Story by its own work-item intake rules, pushes and creates the PR right after its file prompt, passes the PR body inline, and moves the work item to `Pull Request` unconditionally. Under the orchestrator: a story without a tagged child task ships under its own ID; push and PR creation wait for the ship gate; the PR body goes through a temp file (`pr-summary` §5.2); the state transition is a tracker write.
-- `priis-ship`, `priis-backend-verify` and `priis-frontend-verify` resolve the repo from the current working directory (`rev-parse --show-toplevel`, `cd source/priis-web`) when no `[worktree-context]` is handed in. Under the orchestrator they always receive the block and run against `repo-root`; the ship skill confirms the worktree's existing branch instead of `checkout -b`.
+- `priis-ship`, `priis-backend-verify` and `priis-frontend-verify` resolve the repo from the current working directory (`rev-parse --show-toplevel`, `cd frontend/source/priis-web`) when no `[worktree-context]` is handed in. Under the orchestrator they always receive the block and run against `repo-root`; the ship skill confirms the worktree's existing branch instead of `checkout -b`.
 
 ---
 
@@ -69,16 +69,16 @@ Order: **backend → swagger snapshot → frontend**.
 
 ### Backend (verified 2026-10-14)
 
-- Endpoint bases in `source/GR.PRIIS.API/Features/ExtendedEndpoint.cs`: `ExtendedEndpoint<TReq,TRes>`, `ExtendedEndpoint<TReq>` (no content), `ExtendedEndpointWithoutRequest[<TRes>]`, and `ExtendedCreateEndpoint<TReq,TRes,TResourceEndpoint>` for a 201 with a Location header. `Policy(...)` has single, `params`, `PolicyType` and delegatable overloads.
+- Endpoint bases in `backend/source/GR.PRIIS.API/Features/ExtendedEndpoint.cs`: `ExtendedEndpoint<TReq,TRes>`, `ExtendedEndpoint<TReq>` (no content), `ExtendedEndpointWithoutRequest[<TRes>]`, and `ExtendedCreateEndpoint<TReq,TRes,TResourceEndpoint>` for a 201 with a Location header. `Policy(...)` has single, `params`, `PolicyType` and delegatable overloads.
 - Domain failures return `SystemResult.Failure(...)` / `ValidationFailures` — never throw. Error messages in Swedish.
-- Raw `ExecuteUpdate[Async]` is banned (`source/BannedSymbols.txt`). Use the `ExecuteUpdateAsync(setters, currentUser, ct)` overload (stamps `ChangedBy`) or `ExecuteUnauditedUpdateAsync` for non-auditable entities.
+- Raw `ExecuteUpdate[Async]` is banned (`backend/source/BannedSymbols.txt`). Use the `ExecuteUpdateAsync(setters, currentUser, ct)` overload (stamps `ChangedBy`) or `ExecuteUnauditedUpdateAsync` for non-auditable entities.
 - **New `SystemAction`** (backend half): add the member in the correct numeric range with `[Display(Name = "…")]`, then add it to every role's `AllowedActions` that needs it and only those. `SystemActionTexts.cs` only maps numeric ranges to category names.
-- **Migration** (from the backend repo root; `dotnet-ef` is a local tool): `dotnet ef migrations add <Name> -p source/GR.PRIIS.Library -s source/GR.PRIIS.API`. Review the generated file. Several migrations on the branch → `squash-ef-core-migrations` before shipping.
-- **Tests** go in `tests/GR.PRIIS.API.IntegrationTests` (TUnit on MTP). Minimum per endpoint: unauthenticated (`ApiWebFactory.CreateClient()`) → 401, `CreateClientAsNoAccessUserAsync(SystemAction.X)` → 403, and one happy path under `[Test, AutoRollback]`.
+- **Migration** (from the repo root; `dotnet-ef` is a local tool): `dotnet ef migrations add <Name> -p backend/source/GR.PRIIS.Library -s backend/source/GR.PRIIS.API`. The tool manifest is `backend/.config/dotnet-tools.json`; if `dotnet ef` is not found at the root, run the same command from `backend/` without the `backend/` prefix. Review the generated file. Several migrations on the branch → `squash-ef-core-migrations` before shipping.
+- **Tests** go in `backend/tests/GR.PRIIS.API.IntegrationTests` (TUnit on MTP). Minimum per endpoint: unauthenticated (`ApiWebFactory.CreateClient()`) → 401, `CreateClientAsNoAccessUserAsync(SystemAction.X)` → 403, and one happy path under `[Test, AutoRollback]`.
 
 ### Contract sync (only when the API surface changed)
 
-The frontend never talks to the backend at build time; it reads the committed `source/priis-web/openapi/swagger.json`.
+The frontend never talks to the backend at build time; it reads the committed `frontend/source/priis-web/openapi/swagger.json`.
 
 - Small change (a few schema properties or enum members): patch `openapi/swagger.json` by hand, then `npm run codegen`. A full `codegen:refresh` on this machine rewrites ~500 unrelated lines because the local ASP.NET runtime emits a different OpenAPI shape.
 - Large change or new enum: `npm run codegen:refresh` with the API on `http://127.0.0.1:5033` (or `SWAGGER_URL`), then revert toolchain-only churn in the snapshot before committing.
@@ -100,21 +100,21 @@ The frontend never talks to the backend at build time; it reads the committed `s
 
 **Backend** (`priis-backend-verify`, including its architecture-tests phase):
 
-- Scope a run with `dotnet test --project tests/GR.PRIIS.API.IntegrationTests --configuration Release --treenode-filter "/*/*/<Class>/*"` — `--project` is required on .NET 10; never `--filter`. Targeted first, full suite before shipping.
+- Scope a run with `dotnet test --project backend/tests/GR.PRIIS.API.IntegrationTests --configuration Release --treenode-filter "/*/*/<Class>/*"` — `--project` is required on .NET 10; never `--filter`. Targeted first, full suite before shipping.
 - A full local run drops 25–45 unrelated integration tests to TestContainers load. Re-run those groups alone with `--no-build`; only failures that persist alone are yours.
-- **Migration check**: integration tests build the schema with `EnsureCreatedAsync`, so they never execute a migration. Apply it to the local database from `source/GR.PRIIS.CLI` with `dotnet run -- migrations -s -d` and confirm it runs clean.
+- **Migration check**: integration tests build the schema with `EnsureCreatedAsync`, so they never execute a migration. Apply it to the local database with `dotnet run --project backend/source/GR.PRIIS.CLI -- migrations -s -d` and confirm it runs clean. **Destructive:** `-d` deletes the local database before migrating and seeding (`backend/CLAUDE.md`) — ask the user before running it.
 
-**Frontend** (`priis-frontend-verify`; from `source/priis-web/`): `npm run organize-imports` (changed files only; never `:all`), `npm run lint`, `npm run build`, and `npm run e2e` for UI changes. The default e2e leg needs no backend; the `setup` project only joins when `PW_API_BASE_URL` is set, and that leg must not use `--no-deps`.
+**Frontend** (`priis-frontend-verify`; from `frontend/source/priis-web/`): `npm run organize-imports` (changed files only; never `:all`), `npm run lint`, `npm run build`, and `npm run e2e` for UI changes. The default e2e leg needs no backend; the `setup` project only joins when `PW_API_BASE_URL` is set, and that leg must not use `--no-deps`.
 
-**Cross-repo contract check**: the `SystemAction` integer and the enum metadata match on both sides, the backend `SwaggerContractTests` pass, and the frontend snapshot contains exactly the intended contract change.
+**Backend↔frontend contract check**: the `SystemAction` integer and the enum metadata match on both sides, the backend `SwaggerContractTests` pass, and the frontend snapshot contains exactly the intended contract change.
 
 ---
 
 ## Phase 6 — Ship
 
 - Branch: `feature/<id>_<english-kebab-slug>` (`bugfix/`, `hotfix/` per the workflow skill). Note the underscore after the ID.
-- Commit subject and PR title, both repos: `#<id>: <short English imperative description>`. Single line. **No AI-attribution trailers** (`Co-Authored-By`, `🤖 Generated with …`) in commits or PR bodies — this overrides the harness default.
-- PR body: invoke `/pr-summary` in preview mode per repo (it reads `docs/pull_request_template.md`), then follow the orchestrator's Phase 6a. Draft PR. For a paired change, open the backend PR first; the `This PR relates to: !<other-pr-id>` footer is filled once both IDs exist.
+- Commit subject and PR title: `#<id>: <short English imperative description>`. Single line. **No AI-attribution trailers** (`Co-Authored-By`, `🤖 Generated with …`) in commits or PR bodies — this overrides the harness default.
+- PR body: invoke `/pr-summary` in preview mode (it reads `docs/pull_request_template.md`), then follow the orchestrator's Phase 6a. Draft PR; a change that spans both halves is one branch and one PR (`priis-profile` › *Layout*).
 - Work-item state after the PR exists: `Pull Request` — propose it, run it on a yes.
 
 ---
@@ -128,13 +128,13 @@ The frontend never talks to the backend at build time; it reads the committed `s
 | SystemAction label | `[Display(Name = "…")]` on the enum member | a texts file |
 | SystemAction grants | `AccessRules/Roles/<Role>AccessRules.cs` → `AllowedActions` | a static array in `UserRoleAccessRules.cs` |
 | Frontend SystemAction enum | regenerated by codegen | hand-edited `systemAction.ts` |
-| Migration | `dotnet ef migrations add <Name> -p source/GR.PRIIS.Library -s source/GR.PRIIS.API` | a `--migrate` flag |
-| Migration verified by | applying it via `GR.PRIIS.CLI` `migrations -s -d` | the integration tests (they use `EnsureCreated`) |
+| Migration | `dotnet ef migrations add <Name> -p backend/source/GR.PRIIS.Library -s backend/source/GR.PRIIS.API` (repo root) | a `--migrate` flag |
+| Migration verified by | applying it via `backend/source/GR.PRIIS.CLI` `migrations -s -d` (destructive: `-d` deletes the local database; ask first) | the integration tests (they use `EnsureCreated`) |
 | 401 / 403 test clients | `ApiWebFactory.CreateClient()` / `CreateClientAsNoAccessUserAsync(SystemAction.X)` | `CreateClientAndLoginAsNoAccessUserAsync` |
-| Single test project | `dotnet test --project tests/… --treenode-filter "/*/*/Class/*"` | positional directory, `--filter` |
+| Single test project | `dotnet test --project backend/tests/… --treenode-filter "/*/*/Class/*"` | positional directory, `--filter` |
 | Zod / resolver | `from 'zod'` / `@hookform/resolvers/zod` | `'zod/v4'` / `zod-v4-resolver` |
 | Codegen plugin | `src/codegen/openapi-metadata/` | `enum-metadata-plugin.ts` |
 | Swagger snapshot | hand-patch for small changes, then `npm run codegen` | blanket `codegen:refresh` |
 | Import tidy-up | `npm run organize-imports` (changed files only) | `organize-imports:all` |
-| PR body | `/pr-summary` preview → temp file → cross-link after both PRs exist | hand-written body, inline `--description "…"` |
+| PR body | `/pr-summary` preview → temp file | hand-written body, inline `--description "…"` |
 | Commit subject | `#<id>: English imperative` | Swedish title, attribution trailers |

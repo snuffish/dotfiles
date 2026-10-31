@@ -40,7 +40,7 @@ Audits code that already works, for what looks odd or could be better, and check
 
 ## 2. Phase 1: Context & Conversation History Lookup
 
-Before proposing any refinement, you **MUST** investigate past conversation transcripts to see if the files, patterns, or errors have been discussed previously.
+Before proposing a refinement, search past conversation transcripts for the files, patterns or errors involved, so the proposal does not undo a choice the user already made.
 
 ### Step-by-Step Search Protocol
 
@@ -77,7 +77,7 @@ Check which exists before searching; do not assume.
 
 ## 3. Phase 2: Delegating to Existing Skills (Guideline Reuse)
 
-For auditing criteria and guidelines, **DO NOT** reinvent the rules. Instead, dynamically load and consult the active skills in the local registry that match the project, language, and frameworks you are currently refining:
+Take the audit criteria from the registry skills that match the project, language and frameworks you are refining, rather than inventing new ones:
 
 ### General & Review Guidelines
 
@@ -87,7 +87,7 @@ For auditing criteria and guidelines, **DO NOT** reinvent the rules. Instead, dy
 
 - Identify the languages, frameworks, and architecture used by the target files (e.g. C#/.NET, TypeScript/React, SQL, Python, etc.).
 - Scan the registered active skills (including project-scoped skills under `Projects/` directories in the registry) and load the ones relevant to the target files (e.g. data access, forms, styling, endpoint conventions, and unit tests).
-- Follow the loaded standards exactly to detect patterns, code smells, or deviations.
+- Apply the loaded standards to detect patterns, code smells or deviations.
 
 ---
 
@@ -100,9 +100,9 @@ After completing the analysis and cross-referencing with both the history and ex
 3. **Why it Matters**: The impact (e.g., memory allocations, database locks, test failure).
 4. **Refined Solution**: A clean, proposed code diff showing how to fix it.
 
-## 5. Mandatory Planning Mode Workflow
+## 5. Plan-First Workflow
 
-When proposing or implementing refinements, you **MUST ALWAYS** enter `Planning Mode` before modifying any source code files. Follow this sequence:
+Write the plan before changing any source file:
 
 1. **Create the Implementation Plan**: Document your findings, historical context, and proposed modifications in `<prefix>-implementation_plan-<suffix>.md` at the **workspace root**, providing a clickable chat link and section anchors formatted according to the **`artifact-protocol`** protocol.
 2. **Request Feedback**: under Antigravity, set `UserFacing = true` and `RequestFeedback = true` in the plan's `ArtifactMetadata`, so the plan opens for review. Under Claude Code, link the plan and its sections in the chat response and ask for approval there.

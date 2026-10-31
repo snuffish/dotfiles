@@ -77,7 +77,7 @@ When the docs are silent, the source code is the next authority. Note the gap: "
 
 - Claims answerable from local files or one command are checked **inline**.
 - Group the rest by source and give each group one **background, read-only sub-agent**, all spawned in the same message. Reuse an agent that already researched the same docs this session (e.g. `SendMessage` in Claude Code) instead of starting cold.
-- Each brief is self-contained: the claims verbatim and numbered, the pinned version, the sources to use, and this contract — *"Read-only. For each claim answer Confirmed / Contradicted / Partial / Undocumented with a short verbatim quote and URL#section (or path:line). Say explicitly when the docs are silent versus when they say the opposite. Cover the whole relevant page, not just its first screen. At most ~400 words."*
+- Each brief is self-contained: the claims verbatim and numbered, the pinned version, the sources to use, and this contract — *"Read-only. For each claim answer Confirmed / Contradicted / Partial / Undocumented with a short verbatim quote and URL#section (or path:line). Say explicitly when the docs are silent versus when they say the opposite. Cover the whole relevant page, not just its first screen. Report only what the aggregation needs: one entry per claim with its citation, nothing else."*
 - Never predict a verdict while a sub-agent is still running.
 
 ### Step 5: Cross-check

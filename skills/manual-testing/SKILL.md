@@ -23,15 +23,14 @@ Read these before step 1:
 - `../_modules/pr-counterpart.md`
 - `../_modules/pr-host.md`
 
-> [!CAUTION]
-> **ABSOLUTE RULES**
->
-> 1. **Artifact first.** Every run writes a new artifact through _Claim_ and never overwrites another session's plan. The chat reply begins with its link and section anchors (§4).
-> 2. **Read-only.** Inspect with `git`, `cat`, `grep`, `ls` and read-only tracker CLIs. Never install, build, migrate, seed or start the app unless the user explicitly asks, because a half-run setup is worse than none. `--seed-data` is that ask for Step 8's local test records only. It never covers a build, migration, start, reseed or a database that is not local. Never enter planning mode or produce an implementation plan.
-> 3. **Never invent** a URL, port, username, password, route or record. Quote the real value with a file link. When you cannot find it, write `not found — checked <where>`.
-> 4. **Never fix** a defect you find while writing the plan. It goes in the regression watchlist.
-> 5. **Label destructive setup** in the same sentence that recommends it ("recreate the database — **destructive**, wipes local data"). The user decides.
-> 6. **Secrets:** development-only values (seeded demo users, local container passwords, `.env.example`) may be quoted. For anything that looks production-grade, point at its location and do not print it.
+**Rules**
+
+1. **Artifact first.** Every run writes a new artifact through _Claim_ and never overwrites another session's plan. The chat reply begins with its link and section anchors (§4).
+2. **Read-only.** Inspect with `git`, `cat`, `grep`, `ls` and read-only tracker CLIs. Never install, build, migrate, seed or start the app unless the user explicitly asks, because a half-run setup is worse than none. `--seed-data` is that ask for Step 8's local test records only. It never covers a build, migration, start, reseed or a database that is not local. Never enter planning mode or produce an implementation plan.
+3. **Never invent** a URL, port, username, password, route or record. Quote the real value with a file link. When you cannot find it, write `not found — checked <where>`.
+4. **Never fix** a defect you find while writing the plan. It goes in the regression watchlist.
+5. **Label destructive setup** in the same sentence that recommends it ("recreate the database — **destructive**, wipes local data"). The user decides.
+6. **Secrets:** development-only values (seeded demo users, local container passwords, `.env.example`) may be quoted. For anything that looks production-grade, point at its location and do not print it.
 
 ---
 
@@ -347,7 +346,7 @@ Key Sections:
 - 📄 [Regression watchlist](…#L<n>) · [Not manually testable](…#L<n>)
 ```
 
-Then, in at most five lines of prose: the blocker (if any), the one start command, the recommended login, and the top watchlist items. With `--seed-data`, one of those lines counts the records created and changed, and names any that were not run and why. Nothing else: the artifact carries the rest. If _Claim_ added a counter, say so ("`…-2.md`: the base name is owned by another session").
+Then a short prose summary: the blocker (if any), the one start command, the recommended login, and the top watchlist items. With `--seed-data`, the summary also counts the records created and changed, and names any that were not run and why. Nothing else: the artifact carries the rest. If _Claim_ added a counter, say so ("`…-2.md`: the base name is owned by another session").
 
 ---
 
@@ -377,4 +376,4 @@ A finished plan passes all of these:
 | Take the PR description as the spec and skip the diff.                                                | Description = intent, diff = truth; test the gap between them.                                                                                |
 | Ignore a PR URL, or guess its contents from the branch name.                                          | Resolve it via code-review Step 1, or say the fetch failed and how to fix it.                                                                 |
 | Under `--seed-data`, reseed, recreate the database or edit records nobody named to get a clean state. | Create new records through the project's guarded tooling; ask before changing an existing record, and separately before anything destructive. |
-| Put the plan in chat.                                                                                 | Write the artifact; the chat carries the link and the five-line summary.                                                                      |
+| Put the plan in chat.                                                                                 | Write the artifact; the chat carries the link and a short summary.                                                                            |
