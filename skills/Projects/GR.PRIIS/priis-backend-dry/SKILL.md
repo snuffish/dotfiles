@@ -41,7 +41,7 @@ Consult the dedicated reference catalogs behind context pointers:
 
 ### 2. [Query & Projection Patterns](references/query-and-projection-patterns.md)
 - **5. Shared Read Projections — Static `Expression<Func<T,TDto>>`**: Avoid duplicating `.Select()` projections.
-- **6. Joining ChangedBy User to List Queries — `UserExtensions.LeftJoin()`**: Standard audit user joining (plus `6a` temporal fallback exemplar in `backend/source/GR.PRIIS.API/Features/Reports/ExportRegisterEndpoint.cs:413`).
+- **6. Joining ChangedBy User to List Queries — `UserExtensions.LeftJoin()`**: Standard audit user joining (plus `6a` temporal fallback exemplar in `backend/source/GR.PRIIS.API/Features/Reports/Register/ExportRegisterEndpoint.cs:413`).
 - **7. Shared Static Expression Properties on Entities**: Reusable query filters on entities.
 - **8. Shared Pagination — `ToPaginatedListAsync()`**: Centralized page calculation and count queries.
 - **9. Tokenized Full-Text Search — `BuildTokenizedPredicate()`**: Multi-term search queries.
@@ -50,7 +50,7 @@ Consult the dedicated reference catalogs behind context pointers:
 ### 3. [Domain Helpers, Testing & Anti-Patterns](references/domain-helpers-and-testing.md)
 - **11. Shared Library Factory / Domain Methods**: Domain logic encapsulation in Library entities.
 - **12. Shared Test Factory Methods**: Common builder methods for integration and unit test setups.
-- **13. Shared Enum-to-String Translation — `[Display]` + `GetDisplayName()`**: Swedish UI/export display values for enums via `EnumExtensions.GetDisplayName()`.
+- **13. Shared Enum-to-String Translation — `[Display]` + `GetDisplayName()`**: Swedish UI/export display values for enums via `EnumMetadataCache.GetDisplayName()`.
 - **14. Shared Excel Worksheet Helpers — `WorksheetExtensions` (`WriteTitle`, `WriteMetadataRow`, `FormatTable`)**: Standard report header and table formatting.
 - **15. Mixed Existing/New Entity Collections — `ExistingOrNewEntities<T>`**: Syncing relation collections.
 - **16. Anti-Patterns Checklist**: Key pitfalls to avoid in backend code.

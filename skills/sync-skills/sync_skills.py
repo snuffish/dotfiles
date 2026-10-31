@@ -12,7 +12,7 @@ Output is coloured on a terminal; piped or with NO_COLOR it is plain text.
 Exit status: 1 when the lint finds errors or a link change fails; with
 --exit-pending, 10 when check mode finds link changes to apply; else 0.
 """
-import argparse, json, os, re, shutil, sys, textwrap
+import argparse, json, os, re, shutil, subprocess, sys, textwrap
 
 MODULE_REF = re.compile(r'^- `([^`]*_modules/[^`]+\.md)`', re.M)
 LINK_REF = re.compile(r'\]\(((?:\.\./)*[\w./-]*(?:SKILL\.md|_modules/[\w/-]+\.md|references/[\w./-]+))(?:#[^)]*)?\)')
@@ -238,6 +238,18 @@ def lint(root):
                 row_skill_sum += cnt
         if row_skill_sum and row_skill_sum != actual_total:
             warnings.append(f'{readme}: inventory table skill rows sum to {row_skill_sum} != actual {actual_total}')
+    drift_script = os.path.join(root, 'skill-drift', 'scripts', 'check_skill_drift.py')
+    claims_file = os.path.join(root, 'skills-claims.json')
+    if os.path.isfile(drift_script) and os.path.isfile(claims_file):
+        proc = subprocess.run([sys.executable, '-I', drift_script, '--claims', claims_file, '--json'],
+                              capture_output=True, text=True, encoding='utf-8')
+        try:
+            drift_data = json.loads(proc.stdout)
+            for r in drift_data.get('results', []):
+                if r.get('status') in ('fail', 'stale'):
+                    errors.append(f"{r['file']}:{r['line']}: skill-drift {r['status'].upper()} ({r['kind']}) {r['value']}: {r['detail']}")
+        except ValueError:
+            errors.append(f'{drift_script}: failed to parse JSON output ({proc.stderr.strip() or proc.returncode})')
     return skills, errors, warnings
 
 

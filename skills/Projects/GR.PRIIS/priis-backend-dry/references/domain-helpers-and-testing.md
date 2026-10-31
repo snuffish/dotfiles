@@ -97,7 +97,7 @@ public async Task CreateFeedbackTicket_TerminatedOperation_ReturnsBadRequest()
 
 ## 13. Shared Enum-to-String Translation — `[Display]` + `GetDisplayName()`
 
-**Rule:** When an enum needs a Swedish display string (for Excel exports, PDF reports, or UI metadata), annotate the enum members with `[Display(Name = "…")]` once on the enum declaration and read it with `EnumExtensions.GetDisplayName()` (`backend/source/GR.PRIIS.Library/Common/Extensions/EnumExtensions.cs`) — **not** as a `private static GetXxxInSwedish()` switch inside each endpoint or export class.
+**Rule:** When an enum needs a Swedish display string (for Excel exports, PDF reports, or UI metadata), annotate the enum members with `[Display(Name = "…")]` once on the enum declaration and read it with `EnumMetadataCache.GetDisplayName()` (`backend/source/GR.PRIIS.Library/Common/Attributes/EnumMetadataCache.cs`) — **not** as a `private static GetXxxInSwedish()` switch inside each endpoint or export class.
 
 ```csharp
 // ✅ DRY — [Display] declared once on the enum, read via GetDisplayName() everywhere

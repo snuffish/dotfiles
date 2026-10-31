@@ -78,7 +78,7 @@ With several groups, put one question per group in the same AskUserQuestion call
 Once per group, in the registry checkout (never a snapshot, `core` › _The `/proceed` gate_ rule 5):
 
 1. Re-check each fact against the code or tool it names, then make the Proposed edit (restated against today's text when step 2 found the quote stale).
-2. Run the gap's **Check**, then lint the registry: `python3 -I <registry>/sync-skills/sync_skills.py` (report only; it applies nothing without `--apply`). Zero new errors.
+2. Update `skills/skills-claims.json` for any changed or newly added verifiable fact ([`/skill-drift`](../skill-drift/SKILL.md) › *3. Re-extract claims after editing a skill*), run the gap's **Check**, and lint the registry: `python3 -I <registry>/sync-skills/sync_skills.py` (report only; it applies nothing without `--apply`). Zero new errors.
 3. Set **Status** to `fixed` in each gap file of the group. Change nothing else in the file.
 
 Then apply the step 2 Status updates the user accepted, the same way. End with the files edited and offer `/commit`; don't run it.

@@ -59,7 +59,7 @@ When a skill under `~/.terminal/skills` led you wrong, log it immediately so the
 
 (Exploring what a skill never claimed to cover, or a repo skill outside `~/.terminal/skills`, is not a registry gap.)
 
-**Log when noticed, before the next step** — claim `~/.terminal/skill-gaps/<prefix>-skill_gap-<skill>-<topic>.md` and print the closing summary block using the template in [references/skill-gaps.md](references/skill-gaps.md). Review and apply logged gaps with [`skill-gap`](../skill-gap/SKILL.md). Fixing the skill is its own gate item (*The `/proceed` gate*, rule 1) and never happens inside a snapshot.
+**Log when noticed, before the next step** — claim `~/.terminal/skill-gaps/<prefix>-skill_gap-<skill>-<topic>.md` and print the closing summary block using the template in [references/skill-gaps.md](references/skill-gaps.md). Review and apply logged gaps with [`skill-gap`](../skill-gap/SKILL.md). Whenever a covered skill, Module, Profile, or Reference is edited, re-extract its changed claims in `skills/skills-claims.json` and verify with [`skill-drift`](../skill-drift/SKILL.md). Fixing the skill is its own gate item (*The `/proceed` gate*, rule 1) and never happens inside a snapshot.
 
 ---
 

@@ -54,6 +54,7 @@ Run the script in _Sync script_ below in check mode. It walks `<registry>` (skip
 - **Modules**: every `## Modules` path is relative, resolves from the skill's real folder to a file in `_modules/` (ADR-0002), and the section has the stop sentence.
 - **Links, retired names & fences** (checked across `SKILL.md`, `<skill>/references/*.md`, and `_modules/**/*.md`): every relative link to another skill (`…/SKILL.md`), a Module (`_modules/…`), or a `references/` file resolves; no link to the retired `core` skill; no Module section (`core`, `artifact-protocol`, `git-worktrees`, `pr-counterpart`, `pr-host`, `project-profile`, `fan-out`, `outward-writes`) is referred to by `§` number; and ` ``` ` fence lines are balanced.
 - **README inventory & workspace `include_only`**: warns if `<registry>/README.md` inventory counts drift from the discovered counts, or if a workspace `.agents/skills.json` `include_only` filter omits a skill from that entry.
+- **Factual skill-drift check**: runs [`../skill-drift/scripts/check_skill_drift.py`](../skill-drift/scripts/check_skill_drift.py) against `<registry>/skills-claims.json` (plus auto-scanned `#anchor` slugs and `` `<target>` › *Heading* `` pointers) and folds any `FAIL` or `STALE` claims into the lint error count (see [`/skill-drift`](../skill-drift/SKILL.md)).
 
 ### Step 2: Reconcile Loaders (Claude Code, Antigravity, Gemini CLI)
 

@@ -77,4 +77,5 @@ Draft `SKILL.md` from [`references/command-template.md`](references/command-temp
 ### Step 4 — Registry Inventory, Lint & Sync
 
 1. Update [`skills/README.md`](../README.md) (summary counts, Inventory table row, and `Projects/<Project>/` tree when project-scoped).
-2. Run [`/sync-skills`](../sync-skills/SKILL.md) (`python3 -I <registry>/sync-skills/sync_skills.py` to lint `SKILL.md`, `references/*.md`, `_modules/**/*.md`, and `README.md` counts; add `--apply` when requested to link the skill into `~/.claude/skills`, `~/.gemini/config/skills`, `~/.gemini/skills`, and `skills/Projects/<Project>/.flat-links/`).
+2. Extract verifiable claims for the new skill into `skills/skills-claims.json` and run `python3 -I <registry>/skill-drift/scripts/check_skill_drift.py --file 'skills/<name>/*'` ([`/skill-drift`](../skill-drift/SKILL.md)).
+3. Run [`/sync-skills`](../sync-skills/SKILL.md) (`python3 -I <registry>/sync-skills/sync_skills.py` to lint `SKILL.md`, `references/*.md`, `_modules/**/*.md`, `skills-claims.json`, and `README.md` counts; add `--apply` when requested to link the skill into `~/.claude/skills`, `~/.gemini/config/skills`, `~/.gemini/skills`, and `skills/Projects/<Project>/.flat-links/`).

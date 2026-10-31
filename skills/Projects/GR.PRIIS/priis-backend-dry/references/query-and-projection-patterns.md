@@ -66,7 +66,7 @@ dbContext.FeedbackTickets
 
 ### 6a. ChangedBy Lookup with Temporal Fallback — Export Endpoints Exemplar
 
-Only necessary when you need deleted-user names in an Excel export. Follow the exemplar in `backend/source/GR.PRIIS.API/Features/Reports/ExportRegisterEndpoint.cs:413` (`AddChangedByIds` is currently a `private static` helper there; if a second export endpoint needs it, extract it to a shared static class in `backend/source/GR.PRIIS.API/Features/Reports/`):
+Only necessary when you need deleted-user names in an Excel export. Follow the exemplar in `backend/source/GR.PRIIS.API/Features/Reports/Register/ExportRegisterEndpoint.cs:413` (`AddChangedByIds` is currently a `private static` helper there; if a second export endpoint needs it, extract it to a shared static class in `backend/source/GR.PRIIS.API/Features/Reports/`):
 
 ```csharp
 // Step 1 — accumulate all ChangedBy GUIDs from all lists
