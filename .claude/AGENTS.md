@@ -24,4 +24,9 @@ If no `.codegraph/` directory exists there or in any parent, skip CodeGraph enti
 
 When my request has no clear action, scope or done-state ("clean this up", "fix the tests", "make it better"), invoke the `create-prompt` skill before doing any work, instead of guessing.
 
+## Git & Branch Isolation
+
+- For multi-file bug investigations, flaky test repairs, or new features, prefer isolated git worktrees (`/worktrees`) to keep the primary checkout clean.
+- Before formulating a fix plan for a reported defect, check recent commits on active PR branches (`git log -n 5 --oneline origin/main..HEAD`) to verify the defect is not already resolved upstream.
+
 @~/.claude-mem/MY-RULES.md
