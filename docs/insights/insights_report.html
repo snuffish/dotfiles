@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>AI Developer Insights &amp; Workflow Report</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f8fafc; color: #334155; line-height: 1.65; padding: 48px 24px; }
+    .container { max-width: 840px; margin: 0 auto; }
+    h1 { font-size: 32px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
+    h2 { font-size: 20px; font-weight: 600; color: #0f172a; margin-top: 48px; margin-bottom: 16px; }
+    .subtitle { color: #64748b; font-size: 15px; margin-bottom: 32px; }
+    .nav-toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 32px 0; padding: 16px; background: white; border-radius: 8px; border: 1px solid #e2e8f0; }
+    .nav-toc a { font-size: 12px; color: #64748b; text-decoration: none; padding: 6px 12px; border-radius: 6px; background: #f1f5f9; transition: all 0.15s; }
+    .nav-toc a:hover { background: #e2e8f0; color: #334155; }
+    .stats-row { display: flex; gap: 24px; margin-bottom: 40px; padding: 20px 0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; }
+    .stat { text-align: center; }
+    .stat-value { font-size: 24px; font-weight: 700; color: #0f172a; }
+    .stat-label { font-size: 11px; color: #64748b; text-transform: uppercase; }
+    .at-a-glance { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 1px solid #f59e0b; border-radius: 12px; padding: 20px 24px; margin-bottom: 32px; }
+    .glance-title { font-size: 16px; font-weight: 700; color: #92400e; margin-bottom: 16px; }
+    .glance-sections { display: flex; flex-direction: column; gap: 12px; }
+    .glance-section { font-size: 14px; color: #78350f; line-height: 1.6; }
+    .glance-section strong { color: #92400e; }
+    .see-more { color: #b45309; text-decoration: none; font-size: 13px; white-space: nowrap; }
+    .see-more:hover { text-decoration: underline; }
+    .project-areas { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+    .project-area { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; }
+    .area-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .area-name { font-weight: 600; font-size: 15px; color: #0f172a; }
+    .area-count { font-size: 12px; color: #64748b; background: #f1f5f9; padding: 2px 8px; border-radius: 4px; }
+    .area-desc { font-size: 14px; color: #475569; line-height: 1.5; }
+    .narrative { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 24px; }
+    .narrative p { margin-bottom: 12px; font-size: 14px; color: #475569; line-height: 1.7; }
+    .key-insight { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 16px; margin-top: 12px; font-size: 14px; color: #166534; }
+    .section-intro { font-size: 14px; color: #64748b; margin-bottom: 16px; }
+    .big-wins { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+    .big-win { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; }
+    .big-win-title { font-weight: 600; font-size: 15px; color: #166534; margin-bottom: 8px; }
+    .big-win-desc { font-size: 14px; color: #15803d; line-height: 1.5; }
+    .friction-categories { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+    .friction-category { background: #fef2f2; border: 1px solid #fca5a5; border-radius: 8px; padding: 16px; }
+    .friction-title { font-weight: 600; font-size: 15px; color: #991b1b; margin-bottom: 6px; }
+    .friction-desc { font-size: 13px; color: #7f1d1d; margin-bottom: 10px; }
+    .friction-examples { margin: 0 0 0 20px; font-size: 13px; color: #334155; }
+    .friction-examples li { margin-bottom: 4px; }
+    .rules-section { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 16px; margin-bottom: 20px; }
+    .rules-section h3 { font-size: 14px; font-weight: 600; color: #1e40af; margin: 0 0 12px 0; }
+    .rules-actions { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #dbeafe; }
+    .copy-all-btn { background: #2563eb; color: white; border: none; border-radius: 4px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: 500; transition: all 0.2s; }
+    .copy-all-btn:hover { background: #1d4ed8; }
+    .copy-all-btn.copied { background: #16a34a; }
+    .rules-item { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px; padding: 10px 0; border-bottom: 1px solid #dbeafe; }
+    .rules-item:last-child { border-bottom: none; }
+    .cmd-checkbox { margin-top: 2px; }
+    .cmd-code { background: white; padding: 8px 12px; border-radius: 4px; font-size: 12px; color: #1e40af; border: 1px solid #bfdbfe; font-family: monospace; display: block; white-space: pre-wrap; word-break: break-word; flex: 1; }
+    .cmd-why { font-size: 12px; color: #64748b; width: 100%; padding-left: 24px; margin-top: 4px; }
+    .features-section, .patterns-section { display: flex; flex-direction: column; gap: 12px; margin: 16px 0; }
+    .feature-card { background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 16px; }
+    .pattern-card { background: #f0f9ff; border: 1px solid #7dd3fc; border-radius: 8px; padding: 16px; }
+    .feature-title, .pattern-title { font-weight: 600; font-size: 15px; color: #0f172a; margin-bottom: 6px; }
+    .feature-oneliner, .pattern-summary { font-size: 14px; color: #475569; margin-bottom: 8px; }
+    .feature-why, .pattern-detail { font-size: 13px; color: #334155; line-height: 1.5; }
+    .copyable-prompt-section { margin-top: 12px; padding-top: 12px; border-top: 1px solid #e2e8f0; }
+    .copyable-prompt-row { display: flex; align-items: flex-start; gap: 8px; }
+    .copyable-prompt { flex: 1; background: #f8fafc; padding: 10px 12px; border-radius: 4px; font-family: monospace; font-size: 12px; color: #334155; border: 1px solid #e2e8f0; white-space: pre-wrap; line-height: 1.5; }
+    .prompt-label { font-size: 11px; font-weight: 600; text-transform: uppercase; color: #64748b; margin-bottom: 6px; }
+    .copy-btn { background: #e2e8f0; border: none; border-radius: 4px; padding: 4px 8px; font-size: 11px; cursor: pointer; color: #475569; flex-shrink: 0; }
+    .copy-btn:hover { background: #cbd5e1; }
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 24px 0; }
+    .chart-card { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; }
+    .chart-title { font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 12px; }
+    .bar-row { display: flex; align-items: center; margin-bottom: 6px; }
+    .bar-label { width: 110px; font-size: 11px; color: #475569; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bar-track { flex: 1; height: 6px; background: #f1f5f9; border-radius: 3px; margin: 0 8px; }
+    .bar-fill { height: 100%; border-radius: 3px; }
+    .bar-value { width: 36px; font-size: 11px; font-weight: 500; color: #64748b; text-align: right; }
+    .horizon-section { display: flex; flex-direction: column; gap: 16px; }
+    .horizon-card { background: linear-gradient(135deg, #faf5ff 0%, #f5f3ff 100%); border: 1px solid #c4b5fd; border-radius: 8px; padding: 16px; }
+    .horizon-title { font-weight: 600; font-size: 15px; color: #5b21b6; margin-bottom: 8px; }
+    .horizon-possible { font-size: 14px; color: #334155; margin-bottom: 10px; line-height: 1.5; }
+    .horizon-tip { font-size: 13px; color: #6b21a8; background: rgba(255,255,255,0.6); padding: 8px 12px; border-radius: 4px; }
+    .fun-ending { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 1px solid #fbbf24; border-radius: 12px; padding: 24px; margin-top: 40px; text-align: center; }
+    .fun-headline { font-size: 18px; font-weight: 600; color: #78350f; margin-bottom: 8px; }
+    .fun-detail { font-size: 14px; color: #92400e; }
+    @media (max-width: 640px) { .charts-row { grid-template-columns: 1fr; } .stats-row { justify-content: center; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Antigravity Insights</h1>
+    <p class="subtitle">231 messages across 50 recent sessions (3,853 tool calls) | 2026-10-26 to 2026-11-01</p>
+
+    <div class="at-a-glance">
+      <div class="glance-title">At a Glance</div>
+      <div class="glance-sections">
+        <div class="glance-section"><strong>What's working:</strong> You operate Antigravity as an automated software-engineering command center. You strictly enforce prompt clarity using <code>/create-prompt</code>, diagnose bugs through evidence collection with <code>/problem</code> and <code>/investigate</code>, and let agents run long autonomous background workflows with <code>manage_task</code>. Your <code>GR.PRIIS</code> E2E flaky test diagnoses and audit-log fixes show disciplined, high-velocity engineering. <a href="#section-wins" class="see-more">Impressive Things You Did &rarr;</a></div>
+        <div class="glance-section"><strong>What's hindering you:</strong> Speculative searches burn excessive tool turns (over 180 non-zero shell command exits like speculative <code>git grep</code> or root-level <code>find /</code>). In addition, agents sometimes start diagnosing issues that were already fixed in sibling PRs (e.g. PR !18898), or default to monolithic commits instead of atomic staged chunks unless manually prompted. <a href="#section-friction" class="see-more">Where Things Go Wrong &rarr;</a></div>
+        <div class="glance-section"><strong>Quick wins to try:</strong> Add explicit chunker commit rules to <code>~/.claude-mem/MY-RULES.md</code>, enforce pre-checking active PR branches before test investigations, and constrain filesystem searches to known project roots rather than root directory scans. <a href="#section-features" class="see-more">Rules to Adopt &rarr;</a></div>
+        <div class="glance-section"><strong>Ambitious workflows:</strong> Connect AGY background tasks to automated PR lifecycle pipelines: an autonomous watcher that monitors open PRs, pulls CI logs for failed Playwright tests, isolates fixes into dedicated worktrees, verifies with narrow test runs, and commits in clean logical stages without human micromanagement. <a href="#section-horizon" class="see-more">On the Horizon &rarr;</a></div>
+      </div>
+    </div>
+
+    <nav class="nav-toc">
+      <a href="#section-work">What You Work On</a>
+      <a href="#section-usage">How You Use Antigravity</a>
+      <a href="#section-wins">Impressive Things</a>
+      <a href="#section-friction">Where Things Go Wrong</a>
+      <a href="#section-features">Recommended Rules</a>
+      <a href="#section-patterns">New Usage Patterns</a>
+      <a href="#section-horizon">On the Horizon</a>
+    </nav>
+
+    <div class="stats-row">
+      <div class="stat"><div class="stat-value">231</div><div class="stat-label">User Prompts</div></div>
+      <div class="stat"><div class="stat-value">3,853</div><div class="stat-label">Tool Calls</div></div>
+      <div class="stat"><div class="stat-value">547</div><div class="stat-label">Files Touched</div></div>
+      <div class="stat"><div class="stat-value">7</div><div class="stat-label">Days Span</div></div>
+      <div class="stat"><div class="stat-value">33.0</div><div class="stat-label">Prompts/Day</div></div>
+    </div>
+
+    <h2 id="section-work">What You Work On</h2>
+    <div class="project-areas">
+      <div class="project-area">
+        <div class="area-header">
+          <span class="area-name">PRIIS E2E &amp; Flaky Test Stabilization</span>
+          <span class="area-count">~18 sessions</span>
+        </div>
+        <div class="area-desc">Investigation and remediation of flaky Playwright end-to-end tests in <code>frontend/source/priis-web/e2e/</code>. Focus areas included DialogOverlay click interception in filter-presets, county map selectors, and timing dependencies. AGY diagnosed root causes, scoped fixes, and integrated them into Azure DevOps PRs (such as !18898).</div>
+      </div>
+
+      <div class="project-area">
+        <div class="area-header">
+          <span class="area-name">Skill Engineering &amp; Agent Configuration</span>
+          <span class="area-count">~15 sessions</span>
+        </div>
+        <div class="area-desc">Designing, maintaining, and testing the agent skills ecosystem across <code>.gemini/skills</code> and <code>.claude/skills</code>. Includes skill drift audits, <code>/create-prompt</code> standardization, custom command profiles, and multi-variant prompt generation.</div>
+      </div>
+
+      <div class="project-area">
+        <div class="area-header">
+          <span class="area-name">Git Worktree Management &amp; Atomic PR Delivery</span>
+          <span class="area-count">~10 sessions</span>
+        </div>
+        <div class="area-desc">Parallel feature and bugfix isolation using Git worktrees. Managing branch checkouts, resolving merge artifacts, staging commits into logical semantic chunks, and keeping PR descriptions synchronized with branch diffs.</div>
+      </div>
+
+      <div class="project-area">
+        <div class="area-header">
+          <span class="area-name">Backend Architecture &amp; Database Migrations</span>
+          <span class="area-count">~7 sessions</span>
+        </div>
+        <div class="area-desc">Entity Framework Core migration auditing, backend service refactoring, memory injection optimizations, and automated database sync workflows.</div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-title">What You Wanted (Intent / Commands)</div>
+                <div class="bar-row">
+          <div class="bar-label">Direct Prompt</div>
+          <div class="bar-track"><div class="bar-fill" style="width:100.0%;background:#2563eb"></div></div>
+          <div class="bar-value">134</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">/commit</div>
+          <div class="bar-track"><div class="bar-fill" style="width:12.7%;background:#2563eb"></div></div>
+          <div class="bar-value">17</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">/proceed</div>
+          <div class="bar-track"><div class="bar-fill" style="width:11.9%;background:#2563eb"></div></div>
+          <div class="bar-value">16</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">/create-prompt</div>
+          <div class="bar-track"><div class="bar-fill" style="width:9.7%;background:#2563eb"></div></div>
+          <div class="bar-value">13</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">/plan</div>
+          <div class="bar-track"><div class="bar-fill" style="width:6.7%;background:#2563eb"></div></div>
+          <div class="bar-value">9</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">/investigate</div>
+          <div class="bar-track"><div class="bar-fill" style="width:3.7%;background:#2563eb"></div></div>
+          <div class="bar-value">5</div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">Top Tools Used</div>
+                <div class="bar-row">
+          <div class="bar-label">run_command</div>
+          <div class="bar-track"><div class="bar-fill" style="width:100.0%;background:#0891b2"></div></div>
+          <div class="bar-value">1,983</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">read_file</div>
+          <div class="bar-track"><div class="bar-fill" style="width:52.4%;background:#0891b2"></div></div>
+          <div class="bar-value">1,040</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">edit_file</div>
+          <div class="bar-track"><div class="bar-fill" style="width:17.4%;background:#0891b2"></div></div>
+          <div class="bar-value">345</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">manage_task</div>
+          <div class="bar-track"><div class="bar-fill" style="width:11.6%;background:#0891b2"></div></div>
+          <div class="bar-value">231</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">write_file</div>
+          <div class="bar-track"><div class="bar-fill" style="width:9.2%;background:#0891b2"></div></div>
+          <div class="bar-value">182</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">schedule</div>
+          <div class="bar-track"><div class="bar-fill" style="width:1.9%;background:#0891b2"></div></div>
+          <div class="bar-value">38</div>
+        </div>
+      </div>
+    </div>
+
+    <h2 id="section-usage">How You Use Antigravity</h2>
+    <div class="narrative">
+      <p>You interact with Antigravity not through casual conversation, but as a <strong>disciplined execution engine</strong> driven by high-leverage slash commands and skills. You enforce strict scope definition: when a problem is open-ended or ambiguous, you systematically run <code>/create-prompt</code> rather than letting the agent guess. Once a plan or diagnostic proposal is created, you trigger execution with <code>/proceed</code> and give the agent substantial autonomy to run deep shell commands and inspect file ranges.</p>
+      <p>You make extensive use of <strong>background execution via <code>manage_task</code></strong>, allowing the assistant to run build suites, test runs, and multi-file validations without blocking your interaction. You step in primarily at key architectural boundaries: reminding the agent about existing PR work, enforcing worktree isolation, or insisting that commits be staged into logical, atomic chunks rather than a single dump.</p>
+      <div class="key-insight"><strong>Key pattern:</strong> Prompt-first discipline (<code>/create-prompt</code>) paired with autonomous background task execution, where human input serves as an architectural steering wheel rather than turn-by-turn micromanagement.</div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-title">Tool Reliability &amp; Outgrowths</div>
+                <div class="bar-row">
+          <div class="bar-label">Command Zero-Exit</div>
+          <div class="bar-track"><div class="bar-fill" style="width:100.0%;background:#16a34a"></div></div>
+          <div class="bar-value">1,804</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Command Non-Zero</div>
+          <div class="bar-track"><div class="bar-fill" style="width:9.9%;background:#16a34a"></div></div>
+          <div class="bar-value">179</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">edit_file Clean</div>
+          <div class="bar-track"><div class="bar-fill" style="width:19.0%;background:#16a34a"></div></div>
+          <div class="bar-value">342</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">edit_file Mismatch</div>
+          <div class="bar-track"><div class="bar-fill" style="width:0.2%;background:#16a34a"></div></div>
+          <div class="bar-value">3</div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">Primary Friction Types</div>
+                <div class="bar-row">
+          <div class="bar-label">Speculative Searches</div>
+          <div class="bar-track"><div class="bar-fill" style="width:100.0%;background:#dc2626"></div></div>
+          <div class="bar-value">134</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">PR State Desync</div>
+          <div class="bar-track"><div class="bar-fill" style="width:19.4%;background:#dc2626"></div></div>
+          <div class="bar-value">26</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Commit Granularity</div>
+          <div class="bar-track"><div class="bar-fill" style="width:14.9%;background:#dc2626"></div></div>
+          <div class="bar-value">20</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Diagram Syntax Error</div>
+          <div class="bar-track"><div class="bar-fill" style="width:6.0%;background:#dc2626"></div></div>
+          <div class="bar-value">8</div>
+        </div>
+      </div>
+    </div>
+
+    <h2 id="section-wins">Impressive Things You Did</h2>
+    <div class="big-wins">
+      <div class="big-win">
+        <div class="big-win-title">Deep E2E Root-Cause Diagnostics</div>
+        <div class="big-win-desc">Rather than treating flaky tests as noise or arbitrarily bumping timeouts, you systematically isolated the Radix UI <code>DialogOverlay</code> click interception in the filter-presets suite, verifying CSS pointer-events and modal lifecycles across multiple test runs.</div>
+      </div>
+
+      <div class="big-win">
+        <div class="big-win-title">Continuous Prompt &amp; Skill Tooling Improvement</div>
+        <div class="big-win-desc">You treat your agent infrastructure as code. By integrating <code>/create-prompt</code> whenever tasks are unconstrained and maintaining project-specific rule profiles (e.g. <code>priis-profile</code>), you systematically eliminate hallucinations and drift across sessions.</div>
+      </div>
+
+      <div class="big-win">
+        <div class="big-win-title">Parallel Worktree Isolation</div>
+        <div class="big-win-desc">You routinely spin up isolated Git worktrees for non-trivial fixes (e.g. <code>chore/prompt-audit-skill-fixes</code>), ensuring that in-progress work never contaminates the main repository state or blocks ongoing investigations.</div>
+      </div>
+    </div>
+
+    <h2 id="section-friction">Where Things Go Wrong</h2>
+    <p class="section-intro">Most friction stems from exploratory tool thrashing when navigating code, state desync with sibling PRs, and the agent defaulting to monolithic commits.</p>
+    <div class="friction-categories">
+      <div class="friction-category">
+        <div class="friction-title">Speculative Filesystem &amp; Shell Search Thrashing</div>
+        <div class="friction-desc">Agents frequently fall back to wide <code>git grep</code> or speculative <code>find /</code> commands looking for symbols or files across unindexed paths, burning tool invocations on non-zero exit codes.</div>
+        <ul class="friction-examples">
+          <li>Running broad <code>find / -name "*PRIIS*"</code> or sweeping <code>node_modules</code> directories for CSS styles.</li>
+          <li>Multiple consecutive failed greps in frontend subdirectories before finding the correct component path.</li>
+        </ul>
+      </div>
+
+      <div class="friction-category">
+        <div class="friction-title">State Desync with Active Remote PRs</div>
+        <div class="friction-desc">Agents frequently start diagnostic flows from scratch without checking whether a sibling PR or remote branch has already solved part of the defect.</div>
+        <ul class="friction-examples">
+          <li>Re-diagnosing a flaky test suite when the fix had already landed in Azure DevOps PR !18898.</li>
+          <li>User had to explicitly intervene: <em>"1: Is already fixed... One fix is already resolved at PR !18898"</em>.</li>
+        </ul>
+      </div>
+
+      <div class="friction-category">
+        <div class="friction-title">Monolithic Staging vs. Chunked Commits</div>
+        <div class="friction-desc">When told to commit, agents default to a single git commit containing all edits rather than grouping them into logical, reviewable units.</div>
+        <ul class="friction-examples">
+          <li>User had to re-prompt: <em>"/commit this in stages/chunks and not in one single commit."</em></li>
+        </ul>
+      </div>
+    </div>
+
+    <h2 id="section-features">Recommended Rules for Your Project</h2>
+    <div class="rules-section">
+      <h3>Suggested Rulebook Additions</h3>
+      <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">Select and copy these directly into your rule files.</p>
+      <div class="rules-actions">
+        <button class="copy-all-btn" onclick="copyAllCheckedRules()">Copy All Checked</button>
+      </div>
+
+      <div class="rules-item">
+        <input type="checkbox" id="rule-0" class="cmd-checkbox" checked data-text="## Commit Staging
+When commits are requested, always stage and commit in logical, atomic chunks (e.g., test fixtures, core logic, documentation/skills) rather than a single monolithic commit. Verify with git status between stages.">
+        <label for="rule-0" style="display:flex;align-items:flex-start;gap:8px;flex:1;">
+          <code class="cmd-code">## Commit Staging
+When commits are requested, always stage and commit in logical, atomic chunks (e.g., test fixtures, core logic, documentation/skills) rather than a single monolithic commit. Verify with git status between stages.</code>
+          <button class="copy-btn" onclick="copyRuleItem(0)">Copy</button>
+        </label>
+        <div class="cmd-why">Prevents having to repeatedly steer agents to break commits into reviewable units.</div>
+      </div>
+
+      <div class="rules-item">
+        <input type="checkbox" id="rule-1" class="cmd-checkbox" checked data-text="## Pre-flight Active PR Audit
+Before investigating reported test failures or bugs, check open PRs on Azure DevOps / GitHub (or branch tracking) to avoid re-diagnosing issues already resolved in open PRs.">
+        <label for="rule-1" style="display:flex;align-items:flex-start;gap:8px;flex:1;">
+          <code class="cmd-code">## Pre-flight Active PR Audit
+Before investigating reported test failures or bugs, check open PRs on Azure DevOps / GitHub (or branch tracking) to avoid re-diagnosing issues already resolved in open PRs.</code>
+          <button class="copy-btn" onclick="copyRuleItem(1)">Copy</button>
+        </label>
+        <div class="cmd-why">Eliminated duplicate investigations for items already resolved on PR !18898.</div>
+      </div>
+
+      <div class="rules-item">
+        <input type="checkbox" id="rule-2" class="cmd-checkbox" checked data-text="## Search Navigation Discipline
+Never run speculative sweeps across root directories (`find /`) or unindexed paths. In indexed repositories, query CodeGraph first or use scoped pathspecs relative to known project boundaries.">
+        <label for="rule-2" style="display:flex;align-items:flex-start;gap:8px;flex:1;">
+          <code class="cmd-code">## Search Navigation Discipline
+Never run speculative sweeps across root directories (`find /`) or unindexed paths. In indexed repositories, query CodeGraph first or use scoped pathspecs relative to known project boundaries.</code>
+          <button class="copy-btn" onclick="copyRuleItem(2)">Copy</button>
+        </label>
+        <div class="cmd-why">Cuts down on 180+ non-zero exploratory search command exits.</div>
+      </div>
+    </div>
+
+    <h2 id="section-patterns">New Ways to Use Antigravity</h2>
+    <div class="patterns-section">
+      <div class="pattern-card">
+        <div class="pattern-title">Pre-Flight Investigation Pattern</div>
+        <div class="pattern-summary">Scope checks and PR audit before touching any source files.</div>
+        <div class="pattern-detail">Ensure the agent cross-references active PRs and uses CodeGraph entry points before editing files or running test runners.</div>
+        <div class="copyable-prompt-section">
+          <div class="prompt-label">Paste into Antigravity:</div>
+          <div class="copyable-prompt-row">
+            <code class="copyable-prompt">Before diagnosing this bug: (1) check active PRs and recent branch commits to verify it isn't already resolved; (2) map relevant symbol entry points using CodeGraph; (3) confirm the scope in 3 bullets before modifying code.</code>
+            <button class="copy-btn" onclick="copyText(this)">Copy</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-title">Chunker Commit Workflow</div>
+        <div class="pattern-summary">Enforce atomic staging during implementation completion.</div>
+        <div class="pattern-detail">Instruct the agent to break down modifications into logical commit increments with descriptive Conventional Commit messages.</div>
+        <div class="copyable-prompt-section">
+          <div class="prompt-label">Paste into Antigravity:</div>
+          <div class="copyable-prompt-row">
+            <code class="copyable-prompt">Stage and commit these changes in logical chunks: first test additions/fixes, second core implementation, third docs/config. Verify each stage with git diff --staged before committing.</code>
+            <button class="copy-btn" onclick="copyText(this)">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2 id="section-horizon">On the Horizon</h2>
+    <div class="horizon-section">
+      <div class="horizon-card">
+        <div class="horizon-title">Autonomous Flaky Test Watcher &amp; Healer</div>
+        <div class="horizon-possible">Antigravity can run scheduled background tasks (via <code>schedule</code> and <code>manage_task</code>) that listen to Azure DevOps pipeline events, automatically fetch Playwright failure trace artifacts, spin up a dedicated worktree, reproduce the flake, and submit a targeted hotfix PR.</div>
+        <div class="horizon-tip"><strong>Getting started:</strong> Combine your <code>/e2e-testing-playwright-review</code> and <code>/worktrees</code> skills with headless CLI invocations.</div>
+      </div>
+    </div>
+
+    <div class="fun-ending">
+      <div class="fun-headline">"A DialogOverlay click-interception flake was diagnosed down to CSS pointer-events lifecycles."</div>
+      <div class="fun-detail">Antigravity tracked down subtle Radix UI modal transitions in PRIIS filter-presets that were intermittently intercepting clicks during Playwright automated runs.</div>
+    </div>
+  </div>
+
+  <script>
+    function copyText(btn) {
+      const code = btn.previousElementSibling;
+      navigator.clipboard.writeText(code.textContent).then(() => {
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+      });
+    }
+    function copyRuleItem(idx) {
+      const checkbox = document.getElementById('rule-' + idx);
+      if (checkbox) {
+        navigator.clipboard.writeText(checkbox.dataset.text).then(() => {
+          const btn = checkbox.nextElementSibling.querySelector('.copy-btn');
+          if (btn) { btn.textContent = 'Copied!'; setTimeout(() => { btn.textContent = 'Copy'; }, 2000); }
+        });
+      }
+    }
+    function copyAllCheckedRules() {
+      const checkboxes = document.querySelectorAll('.cmd-checkbox:checked');
+      const texts = [];
+      checkboxes.forEach(cb => { if (cb.dataset.text) texts.push(cb.dataset.text); });
+      const combined = texts.join('\n\n');
+      const btn = document.querySelector('.copy-all-btn');
+      if (btn) {
+        navigator.clipboard.writeText(combined).then(() => {
+          btn.textContent = 'Copied ' + texts.length + ' rules!';
+          btn.classList.add('copied');
+          setTimeout(() => { btn.textContent = 'Copy All Checked'; btn.classList.remove('copied'); }, 2000);
+        });
+      }
+    }
+  </script>
+</body>
+</html>
