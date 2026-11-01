@@ -212,7 +212,7 @@ def lint(root):
             else:
                 project_dir = os.path.dirname(d)
                 link = (not project) or folder.endswith('-profile') or folder in read_list(os.path.join(project_dir, '.flat-links'))
-                skills[folder] = {'path': d, 'project': rel[1] if project else None, 'link': link}
+                skills[folder] = {'path': d, 'project': rel[1] if project else None, 'link': link, 'compatibility': fm_keys.get('compatibility')}
 
     readme = os.path.join(root, 'README.md')
     if os.path.isfile(readme):
@@ -327,6 +327,19 @@ def enabled_plugin_skill_names(plugins_file, settings_file):
     return names
 
 
+def should_link(meta, is_claude):
+    if not meta.get('link'):
+        return False
+    compat = meta.get('compatibility')
+    if compat:
+        compat_lower = compat.lower().strip("\"'")
+        if is_claude and 'claude' not in compat_lower:
+            return False
+        if not is_claude and not any(k in compat_lower for k in ('antigravity', 'gemini', 'agy', 'all')):
+            return False
+    return True
+
+
 def plan_links(root, flat, skills, agents_dir=None, agents_skills=None, plugin_skills=None, plugins_base=None, is_claude=False):
     """Return the link changes needed, as (action, name, target) tuples, plus untouched foreign dead links."""
     actions, foreign_dead = [], []
@@ -339,7 +352,7 @@ def plan_links(root, flat, skills, agents_dir=None, agents_skills=None, plugin_s
 
     if is_monolithic_symlink(flat, root):
         for name, meta in sorted(combined.items()):
-            if meta['link']:
+            if should_link(meta, is_claude):
                 actions.append(('create', name, meta['path']))
         return actions, foreign_dead
 
@@ -354,10 +367,12 @@ def plan_links(root, flat, skills, agents_dir=None, agents_skills=None, plugin_s
                     actions.append(('prune', item, target))
                 else:
                     foreign_dead.append(f'{item} -> {target}')
+            elif target.startswith(root + os.sep) and item in combined and not should_link(combined[item], is_claude):
+                actions.append(('unlink', item, target))
             elif target.startswith(os.path.join(root, 'Projects') + os.sep) and item in skills and not skills[item]['link']:
                 actions.append(('unlink', item, target))
     for name, meta in sorted(combined.items()):
-        if not meta['link']:
+        if not should_link(meta, is_claude):
             continue
         p = os.path.join(flat, name)
         if not os.path.lexists(p):

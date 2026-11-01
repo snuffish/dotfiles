@@ -1,6 +1,7 @@
 ---
 name: insights
 description: Audits recent AI session transcripts for developer habits, tool usage, friction points, and recurring steering, generating an interactive HTML dashboard and project rule improvements.
+compatibility: antigravity
 ---
 
 # Skill: `/insights` — AI Workflow & Session Analytics

@@ -4492,7 +4492,7 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "| General (top level) | Command | 40 | `artifacts`, `clean`, `code-documentation`, `code",
+      "quote": "| General (top level) | Command | 41 | `artifacts`, `clean`, `code-documentation`, `code",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
@@ -4507,7 +4507,7 @@
       },
       "kind": "skill_ref",
       "value": "clean",
-      "quote": "op level) | Command | 40 | `artifacts`, `clean`, `code-documentation`, `code-review`,",
+      "quote": "op level) | Command | 41 | `artifacts`, `clean`, `code-documentation`, `code-review`,",
       "verify": {
         "method": "skill_exists",
         "name": "clean",
@@ -4522,7 +4522,7 @@
       },
       "kind": "skill_ref",
       "value": "code-documentation",
-      "quote": " | Command | 40 | `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`,",
+      "quote": " | Command | 41 | `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`,",
       "verify": {
         "method": "skill_exists",
         "name": "code-documentation",
@@ -4865,7 +4865,7 @@
       },
       "kind": "skill_ref",
       "value": "resolve-conflicts",
-      "quote": ", `proceed`, `refine`, `remember-this`, `resolve-conflicts`, `skill-drift`, `skill-gap`, `spec-ve",
+      "quote": ", `proceed`, `refine`, `remember-this`, `resolve-conflicts`, `skill-drift`, `skill-gap`, `simplif",
       "verify": {
         "method": "skill_exists",
         "name": "resolve-conflicts",
@@ -4880,7 +4880,7 @@
       },
       "kind": "skill_ref",
       "value": "skill-drift",
-      "quote": ", `remember-this`, `resolve-conflicts`, `skill-drift`, `skill-gap`, `spec-verification`, `s",
+      "quote": ", `remember-this`, `resolve-conflicts`, `skill-drift`, `skill-gap`, `simplify`, `spec-verif",
       "verify": {
         "method": "skill_exists",
         "name": "skill-drift",
@@ -4895,7 +4895,7 @@
       },
       "kind": "skill_ref",
       "value": "skill-gap",
-      "quote": "s`, `resolve-conflicts`, `skill-drift`, `skill-gap`, `spec-verification`, `squash-code-re",
+      "quote": "s`, `resolve-conflicts`, `skill-drift`, `skill-gap`, `simplify`, `spec-verification`, `sq",
       "verify": {
         "method": "skill_exists",
         "name": "skill-gap",
@@ -4910,7 +4910,7 @@
       },
       "kind": "skill_ref",
       "value": "spec-verification",
-      "quote": "conflicts`, `skill-drift`, `skill-gap`, `spec-verification`, `squash-code-review`, `squash-ef-cor",
+      "quote": "`skill-drift`, `skill-gap`, `simplify`, `spec-verification`, `squash-code-review`, `squash-ef-cor",
       "verify": {
         "method": "skill_exists",
         "name": "spec-verification",
@@ -4925,7 +4925,7 @@
       },
       "kind": "skill_ref",
       "value": "squash-code-review",
-      "quote": "ift`, `skill-gap`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `standu",
+      "quote": "-gap`, `simplify`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `standu",
       "verify": {
         "method": "skill_exists",
         "name": "squash-code-review",
@@ -20123,19 +20123,19 @@
       }
     },
     {
-      "id": "skills/README.md:39:count:41 general skills",
+      "id": "skills/README.md:39:count:42 general skills",
       "source": {
         "file": "skills/README.md",
         "line": 39
       },
       "kind": "count",
-      "value": "41",
-      "quote": "46 skills total \u2014 41 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "value": "42",
+      "quote": "47 skills total \u2014 42 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/*/SKILL.md",
         "base": "repo",
-        "expected": 41,
+        "expected": 42,
         "op": "eq"
       }
     },
@@ -20147,7 +20147,7 @@
       },
       "kind": "count",
       "value": "5 GR.PRIIS project skills",
-      "quote": "46 skills total \u2014 41 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "47 skills total \u2014 42 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/Projects/GR.PRIIS/*/SKILL.md",
@@ -20164,7 +20164,7 @@
       },
       "kind": "count",
       "value": "8 Modules",
-      "quote": "46 skills total \u2014 41 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "47 skills total \u2014 42 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/_modules/*.md",
@@ -20362,6 +20362,190 @@
         "method": "heading_pointer",
         "target": "core",
         "heading": "The /proceed gate",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/README.md:43:skill_ref:simplify",
+      "source": {
+        "file": "skills/README.md",
+        "line": 43
+      },
+      "kind": "skill_ref",
+      "value": "simplify",
+      "quote": "conflicts`, `skill-drift`, `skill-gap`, `simplify`, `spec-verification`, `squash-code-re",
+      "verify": {
+        "method": "skill_exists",
+        "name": "simplify",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/simplify/SKILL.md:10:skill_ref:code-review",
+      "source": {
+        "file": "skills/simplify/SKILL.md",
+        "line": 10
+      },
+      "kind": "skill_ref",
+      "value": "code-review",
+      "quote": "(that is what [`/code-review`](../code-review/SKILL.md) is for).",
+      "verify": {
+        "method": "skill_exists",
+        "name": "code-review",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/simplify/SKILL.md:19:path:../_modules/core.md",
+      "source": {
+        "file": "skills/simplify/SKILL.md",
+        "line": 19
+      },
+      "kind": "path",
+      "value": "../_modules/core.md",
+      "quote": "- `../_modules/core.md`",
+      "verify": {
+        "method": "path_exists",
+        "path": "../_modules/core.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/simplify/SKILL.md:20:path:../_modules/fan-out.md",
+      "source": {
+        "file": "skills/simplify/SKILL.md",
+        "line": 20
+      },
+      "kind": "path",
+      "value": "../_modules/fan-out.md",
+      "quote": "- `../_modules/fan-out.md`",
+      "verify": {
+        "method": "path_exists",
+        "path": "../_modules/fan-out.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/simplify/SKILL.md:21:path:../_modules/git-worktrees.md",
+      "source": {
+        "file": "skills/simplify/SKILL.md",
+        "line": 21
+      },
+      "kind": "path",
+      "value": "../_modules/git-worktrees.md",
+      "quote": "- `../_modules/git-worktrees.md`",
+      "verify": {
+        "method": "path_exists",
+        "path": "../_modules/git-worktrees.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/simplify/SKILL.md:32:doc_link:core \u203a Post-edit verification",
+      "source": {
+        "file": "skills/simplify/SKILL.md",
+        "line": 32
+      },
+      "kind": "doc_link",
+      "value": "core \u203a Post-edit verification",
+      "quote": "(`core` \u203a *Post-edit verification*).",
+      "verify": {
+        "method": "heading_pointer",
+        "target": "core",
+        "heading": "Post-edit verification",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/simplify/SKILL.md:40:skill_ref:code-review",
+      "source": {
+        "file": "skills/simplify/SKILL.md",
+        "line": 40
+      },
+      "kind": "skill_ref",
+      "value": "code-review",
+      "quote": "| [`/code-review`](../code-review/SKILL.md) |",
+      "verify": {
+        "method": "skill_exists",
+        "name": "code-review",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/simplify/SKILL.md:41:skill_ref:clean",
+      "source": {
+        "file": "skills/simplify/SKILL.md",
+        "line": 41
+      },
+      "kind": "skill_ref",
+      "value": "clean",
+      "quote": "| [`/clean`](../clean/SKILL.md) |",
+      "verify": {
+        "method": "skill_exists",
+        "name": "clean",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/simplify/SKILL.md:42:skill_ref:expressive",
+      "source": {
+        "file": "skills/simplify/SKILL.md",
+        "line": 42
+      },
+      "kind": "skill_ref",
+      "value": "expressive",
+      "quote": "| [`/expressive`](../expressive/SKILL.md) |",
+      "verify": {
+        "method": "skill_exists",
+        "name": "expressive",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/simplify/SKILL.md:43:skill_ref:organize",
+      "source": {
+        "file": "skills/simplify/SKILL.md",
+        "line": 43
+      },
+      "kind": "skill_ref",
+      "value": "organize",
+      "quote": "| [`/organize`](../organize/SKILL.md) |",
+      "verify": {
+        "method": "skill_exists",
+        "name": "organize",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/simplify/SKILL.md:44:skill_ref:refine",
+      "source": {
+        "file": "skills/simplify/SKILL.md",
+        "line": 44
+      },
+      "kind": "skill_ref",
+      "value": "refine",
+      "quote": "| [`/refine`](../refine/SKILL.md) |",
+      "verify": {
+        "method": "skill_exists",
+        "name": "refine",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/simplify/SKILL.md:45:skill_ref:priis-backend-dry",
+      "source": {
+        "file": "skills/simplify/SKILL.md",
+        "line": 45
+      },
+      "kind": "skill_ref",
+      "value": "priis-backend-dry",
+      "quote": "| `priis-backend-dry` |",
+      "verify": {
+        "method": "skill_exists",
+        "name": "priis-backend-dry",
         "base": "repo"
       }
     }

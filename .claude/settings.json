@@ -1,8 +1,15 @@
 {
+  "env": {
+    "CLAUDE_MEM_DISABLE_FILE_CONTEXT": "1"
+  },
   "permissions": {
-    "allow": ["Bash(az repos *)", "mcp__codegraph__*"],
+    "allow": [
+      "Bash(az repos *)",
+      "mcp__codegraph__*"
+    ],
     "defaultMode": "auto"
   },
+  "model": "opus",
   "skillOverrides": {
     "find-skills": "off",
     "problem": "off",
@@ -41,9 +48,6 @@
     "run": "name-only",
     "simplify": "name-only",
     "workflow-authoring": "name-only"
-  },
-  "env": {
-    "CLAUDE_MEM_DISABLE_FILE_CONTEXT": "1"
   },
   "hooks": {
     "SessionStart": [
@@ -137,7 +141,7 @@
   "effortLevel": "high",
   "modelSettings": {
     "claude-opus-5-5": {
-      "effortLevel": "high",
+      "effortLevel": "medium",
       "autoCompactWindow": 400000
     },
     "claude-fable-5-1": {
@@ -197,6 +201,5 @@
       "routine under backend/ and frontend/source/priis-web/ prefixes: build/test/lint/format commands documented in CLAUDE.md are routine project workflow"
     ]
   },
-  "voiceEnabled": false,
-  "model": "opus"
+  "voiceEnabled": false
 }
