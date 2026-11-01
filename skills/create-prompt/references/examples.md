@@ -41,7 +41,7 @@ Goal: remove dead symbols and unused imports; preserve runtime behavior
 Done when: ruff check passes; then stop — don't commit
 ```
 
-**Open questions**
+**Unresolved questions:**
 
 - Target files — recommend: run on the currently edited file first
 

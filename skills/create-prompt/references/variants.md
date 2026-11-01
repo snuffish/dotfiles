@@ -33,7 +33,7 @@ Replace the single-prompt output block with:
 <prompt>
 ```
 
-**Open questions** <only if a real fork exists; omit otherwise>
+**Unresolved questions:** <what I must decide, each with your recommendation. Leave this block out when there are none.>
 
 - <question> — recommend: <answer>
 

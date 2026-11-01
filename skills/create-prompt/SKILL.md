@@ -31,7 +31,7 @@ On-demand references (`references/`):
 The deliverable is the prompt. Running it is a separate decision the user makes after reading it.
 
 1. Stop at the printed prompt. Don't invoke the target skill, spawn agents or edit files. The read-only lookups in steps 2–3 are the only commands this skill runs.
-2. Only a user message that **starts with** `/proceed` runs the prompt (`/proceed N` picks variant N; a bare `/proceed` runs the recommended one). "Go ahead", "looks good", answering the open questions or "use your recommendations" all mean _refine_, not _run_.
+2. Only a user message that **starts with** `/proceed` runs the prompt (`/proceed N` picks variant N; a bare `/proceed` runs the recommended one). "Go ahead", "looks good", answering the unresolved questions or "use your recommendations" all mean _refine_, not _run_.
 3. Follow-up input refines: apply it, reprint the one prompt block (the chosen or recommended variant) and the `Next:` line, nothing else.
 
 ---
@@ -43,7 +43,7 @@ The deliverable is the prompt. Running it is a separate decision the user makes 
 Extract four components from the intent: the **action** (simplify, review, fix, test, document, ship…), **scope** (PR, branch, uncommitted diff, specific path), **stop point** ("before commit" stops before committing), and any explicit **constraints**.
 
 - Scope is almost always resolvable from git; do not ask about it. Ask one multiple-choice question only when the action itself is unclear ("fix it", "make it better" with no context).
-- **Started on your own** (user sent a vague request): their message is the intent. Do not perform the work or ask first; the sharper prompt *is* the clarifying question. Open with one line explaining why (`Your request can be read several ways; here is a sharper version.`), put real forks under **Open questions**, and stop at the gate.
+- **Started on your own** (user sent a vague request): their message is the intent. Do not perform the work or ask first; the sharper prompt *is* the clarifying question. Open with one line explaining why (`Your request can be read several ways; here is a sharper version.`), put real forks under **Unresolved questions:**, and stop at the gate.
 
 ### 2. Pick the skill
 
@@ -86,7 +86,7 @@ Output only this structure (plus opening rationale if triggered autonomously):
 <the prompt>
 ```
 
-**Open questions** <only if a real fork exists; omit the heading otherwise>
+**Unresolved questions:** <what I must decide, each with your recommendation. Leave this block out when there are none.>
 
 - <question> — recommend: <answer>
 
