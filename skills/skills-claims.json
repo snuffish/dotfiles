@@ -9542,10 +9542,10 @@
       }
     },
     {
-      "id": "skills/create-prompt/SKILL.md:112:skill_ref:expressive",
+      "id": "skills/create-prompt/references/variants.md:11:skill_ref:expressive",
       "source": {
-        "file": "skills/create-prompt/SKILL.md",
-        "line": 112
+        "file": "skills/create-prompt/references/variants.md",
+        "line": 11
       },
       "kind": "skill_ref",
       "value": "expressive",
