@@ -1071,5 +1071,6 @@
     "*.html": "default"
   },
   "python.languageServer": "Default",
-  "security.promptForLocalFileProtocolHandling": false
+  "security.promptForLocalFileProtocolHandling": false,
+  "security.workspace.trust.untrustedFiles": "newWindow"
 }
