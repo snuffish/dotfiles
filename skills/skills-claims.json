@@ -20656,6 +20656,60 @@
         "name": "proceed",
         "base": "repo"
       }
+    },
+    {
+      "id": "skills/sync-skills/SKILL.md:39:path:claude/agents",
+      "source": {
+        "file": "skills/sync-skills/SKILL.md",
+        "line": 39
+      },
+      "kind": "path",
+      "value": "claude/agents",
+      "quote": "| `claude/agents/`        | `~/.claude/agents` (personal subagents)",
+      "verify": {
+        "method": "path_exists",
+        "path": "claude/agents",
+        "base": "repo",
+        "type": "dir"
+      }
+    },
+    {
+      "id": "skills/sync-skills/SKILL.md:39:config_key:CONFIG_LINKS.agents",
+      "source": {
+        "file": "skills/sync-skills/SKILL.md",
+        "line": 39
+      },
+      "kind": "config_key",
+      "value": "CONFIG_LINKS agents entry",
+      "quote": "| `claude/agents/`        | `~/.claude/agents` (personal subagents)",
+      "verify": {
+        "method": "grep",
+        "pattern": "\\('agents', 'claude/agents', \\('~/\\.claude/agents',\\), '~/\\.claude/agents'\\)",
+        "paths": [
+          "skills/sync-skills/sync_skills.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/sync-skills/SKILL.md:26:symbol:installed_plugin_skill_names",
+      "source": {
+        "file": "skills/sync-skills/SKILL.md",
+        "line": 26
+      },
+      "kind": "symbol",
+      "value": "installed_plugin_skill_names",
+      "quote": "or an installed Claude Code plugin ships a skill of that name (even one switched off in `enabledPlugins`) and the target is `~/.claude/skills`",
+      "verify": {
+        "method": "grep",
+        "pattern": "def installed_plugin_skill_names\\(plugins_file\\):\\n(?:.*\\n){0,8}?\\s+for entries in plugins\\.values\\(\\):",
+        "paths": [
+          "skills/sync-skills/sync_skills.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
     }
   ]
 }
