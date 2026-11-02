@@ -20694,6 +20694,82 @@
         "base": "repo",
         "expect": "present"
       }
+    },
+    {
+      "id": "skills/sync-skills/SKILL.md:96:flag:config-only",
+      "source": {
+        "file": "skills/sync-skills/SKILL.md",
+        "line": 96
+      },
+      "kind": "symbol",
+      "value": "--config-only",
+      "quote": "- `--config-only` reconciles only the config links and touches no loader target",
+      "verify": {
+        "method": "grep",
+        "pattern": "add_argument\\('--config-only'",
+        "paths": [
+          "skills/sync-skills/sync_skills.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/sync-skills/SKILL.md:41:symbol:json_covers",
+      "source": {
+        "file": "skills/sync-skills/SKILL.md",
+        "line": 41
+      },
+      "kind": "symbol",
+      "value": "json_covers",
+      "quote": "a `.json` link whose every leaf is already in the source prints `source covers it`",
+      "verify": {
+        "method": "grep",
+        "pattern": "def json_covers\\(link, source\\)",
+        "paths": [
+          "skills/sync-skills/sync_skills.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/skill-drift/references/claims-schema.md:5:format-row",
+      "source": {
+        "file": "skills/skill-drift/references/claims-schema.md",
+        "line": 5
+      },
+      "kind": "symbol",
+      "value": "format",
+      "quote": "the checker fails with a `format` row when it is not",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"kind\": \"format\"",
+        "paths": [
+          "skills/skill-drift/scripts/check_skill_drift.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/skill-drift/references/claims-schema.md:64:multiline-only",
+      "source": {
+        "file": "skills/skill-drift/references/claims-schema.md",
+        "line": 64
+      },
+      "kind": "symbol",
+      "value": "re.MULTILINE",
+      "quote": "compiled with `re.MULTILINE` only, no DOTALL",
+      "verify": {
+        "method": "grep",
+        "pattern": "re\\.compile\\(v\\[\"pattern\"\\], re\\.MULTILINE\\)",
+        "paths": [
+          "skills/skill-drift/scripts/check_skill_drift.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
     }
   ]
 }
