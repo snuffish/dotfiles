@@ -1,6 +1,6 @@
 # Blind-Spot Artifact Template (`<prefix>-what_am_i_missing-<suffix>.md`)
 
-Used by `/what-am-I-missing deep`, `/implement-feature` Phase 2b, and `/investigate` §8 (embedded under `## 8. Blind Spots & Critical Omission Analysis (What Am I Missing?)`).
+Used by `/what-am-I-missing --deep`, `/implement-feature` Phase 2b, and `/investigate` §8 (embedded under `## 8. Blind Spots & Critical Omission Analysis (What Am I Missing?)`).
 
 ```markdown
 <!-- artifact-owner: … -->

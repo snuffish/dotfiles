@@ -100,7 +100,7 @@ Check **every layer that enforces the claim** at the reviewed head:
 - Follow the `artifact-protocol` › *Claim* › *Independence rule* (do not read other models' reviews unless asked). If a `<prefix>-code_review-<suffix>.md` from your own model exists, link its `#finding-N` anchors (`→ [finding 9](<prefix>-code_review-<suffix>.md#finding-9)`) and verify anchor numbers after any review refresh.
 - If PR threads exist (`pr-host` › *Fetch discussion threads*), tag covered rows with the thread ID.
 
-### Deep mode (`/spec-verification deep`)
+### Deep mode (`/spec-verification --deep`)
 
 For long specs (> ~40 lines) or dual-repo features, fan out Steps 3–5 across parallel read-only sub-agents per spec section (`fan-out` › *Brief contract*), then re-open every cited `path:line` yourself (`fan-out` › *Aggregation*).
 

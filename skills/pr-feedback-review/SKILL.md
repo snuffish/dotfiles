@@ -1,6 +1,6 @@
 ---
 name: pr-feedback-review
-description: "Triages the discussion on a pull request: every reviewer thread, comment and vote, checked against the code at the PR head, with a triage category, its state at head, a recommendation and a ready-to-send reply per thread, in `<prefix>-pr_feedback_review-<suffix>.md`. Also triages the counterpart PR in a sibling repo, where a comment's fix often lands. `deep` runs Verification, Merit and Impact as parallel sub-agents; reads from a detached snapshot (`live` opts out). Use for /pr-feedback-review, \"triage the PR comments\", \"what did the reviewers say?\", \"draft replies to the threads\"."
+description: "Triages the discussion on a pull request: every reviewer thread, comment and vote, checked against the code at the PR head, with a triage category, its state at head, a recommendation and a ready-to-send reply per thread, in `<prefix>-pr_feedback_review-<suffix>.md`. Also triages the counterpart PR in a sibling repo, where a comment's fix often lands. `--deep` runs Verification, Merit and Impact as parallel sub-agents; reads from a detached snapshot (`live` opts out). Use for /pr-feedback-review, \"triage the PR comments\", \"what did the reviewers say?\", \"draft replies to the threads\"."
 ---
 
 # PR Feedback Review Skill
@@ -49,7 +49,7 @@ Record the loaded profile (or `none`) in the artifact header's **Profile** line.
 | Invocation | Mode | How the axes run |
 |---|---|---|
 | `/pr-feedback-review [target]` | **Standard** (default) | Single pass covering Verification, Merit, and Impact (Steps 3–5) |
-| `/pr-feedback-review deep [target]` | **Deep** | Verification, Merit, and Impact run in parallel sub-agents ([deep-mode.md](references/deep-mode.md)), then aggregate |
+| `/pr-feedback-review --deep [target]` | **Deep** | Verification, Merit, and Impact run in parallel sub-agents ([deep-mode.md](references/deep-mode.md)), then aggregate |
 | `/pr-feedback-review live [target]` | Standard or deep, **no snapshot** | Reads the main checkout directly (same as `/no-worktrees`) |
 
 Every thread is assessed on three axes:
@@ -57,7 +57,7 @@ Every thread is assessed on three axes:
 - **Merit**: is the reviewer right, and is their proposed fix sound against the code and framework semantics?
 - **Impact**: what else does acting on it touch (stacked branches, linked work items, cross-repo contracts, other callers, competing threads, prior decisions)?
 
-Suggest `deep` (`fan-out` › *Bare vs deep*) when there are >10 active threads, threads anchored to older iterations, or complex alternative implementations proposed by reviewers.
+Suggest `--deep` (`fan-out` › *Bare vs deep*) when there are >10 active threads, threads anchored to older iterations, or complex alternative implementations proposed by reviewers.
 
 ### When *not* to use — pick the right neighbor
 
@@ -158,7 +158,7 @@ Update all five together whenever a later step (`/proceed`, push, `/pr-post-comm
 
 ## Deep Mode
 
-For `/pr-feedback-review deep`, read [deep-mode.md](references/deep-mode.md) before spawning sub-agents.
+For `/pr-feedback-review --deep`, read [deep-mode.md](references/deep-mode.md) before spawning sub-agents.
 
 ---
 

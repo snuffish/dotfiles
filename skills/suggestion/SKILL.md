@@ -1,6 +1,6 @@
 ---
 name: suggestion
-description: 'Answers an open "how should I do X?" with ranked, evidence-backed approaches and one clear recommendation, weighed against the project''s actual code and conventions. Use when nothing is chosen yet: /suggestion, "what''s the best way to handle Y?", "which option would you pick?", "is there a better way to do this?", "give me some ideas for Z". Bare /suggestion answers in chat; /suggestion deep researches cross-cutting decisions and writes `<prefix>-suggestion-<suffix>.md`. Read-only until /proceed.'
+description: 'Answers an open "how should I do X?" with ranked, evidence-backed approaches and one clear recommendation, weighed against the project''s actual code and conventions. Use when nothing is chosen yet: /suggestion, "what''s the best way to handle Y?", "which option would you pick?", "is there a better way to do this?", "give me some ideas for Z". Bare /suggestion answers in chat; /suggestion --deep researches cross-cutting decisions and writes `<prefix>-suggestion-<suffix>.md`. Read-only until /proceed.'
 ---
 
 # Skill: `/suggestion` — Recommended Approaches & Suggestions
@@ -16,22 +16,22 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 
 - `../_modules/core.md`: read-only until `/proceed`
-- `../_modules/artifact-protocol.md`: writes `<prefix>-suggestion-<suffix>.md` at the **workspace root** in `/suggestion deep` only (suffix derived from the question, e.g. `-cache-invalidation-strategy`, `-pdf-export-library`); bare `/suggestion` writes no artifact
-- `../_modules/fan-out.md` (`deep` mode)
+- `../_modules/artifact-protocol.md`: writes `<prefix>-suggestion-<suffix>.md` at the **workspace root** in `/suggestion --deep` only (suffix derived from the question, e.g. `-cache-invalidation-strategy`, `-pdf-export-library`); bare `/suggestion` writes no artifact
+- `../_modules/fan-out.md` (`--deep` mode)
 
 On-demand references (`references/`):
-- [`references/deep-artifact.md`](references/deep-artifact.md) — artifact structure for `/suggestion deep`
+- [`references/deep-artifact.md`](references/deep-artifact.md) — artifact structure for `/suggestion --deep`
 
 ---
 
 ## 1. When to Use
 
-| Command                                                           | Output                                        | Research scope                                                                                                  | Latency      |
-| :---------------------------------------------------------------- | :-------------------------------------------- | :-------------------------------------------------------------------------------------------------------------- | :----------- |
-| **`/suggestion <question>`** (default — Simple & Fast)            | Direct in-chat answer (no artifact written)   | Focused: the files, symbols and conventions the question touches (handful of reads)                             | **Fast**     |
-| **`/suggestion deep <question>`** (or "compare these thoroughly") | Workspace-root artifact + linked chat summary | Comprehensive: wider prior-art sweep, every affected layer, optional parallel sub-agents per candidate approach | **Thorough** |
+| Command                                                             | Output                                        | Research scope                                                                                                  | Latency      |
+| :------------------------------------------------------------------ | :-------------------------------------------- | :-------------------------------------------------------------------------------------------------------------- | :----------- |
+| **`/suggestion <question>`** (default — Simple & Fast)              | Direct in-chat answer (no artifact written)   | Focused: the files, symbols and conventions the question touches (handful of reads)                             | **Fast**     |
+| **`/suggestion --deep <question>`** (or "compare these thoroughly") | Workspace-root artifact + linked chat summary | Comprehensive: wider prior-art sweep, every affected layer, optional parallel sub-agents per candidate approach | **Thorough** |
 
-Suggest `deep` in chat (never switch silently) when a bare `/suggestion` spans several repos or layers, needs a contract or migration decision, or requires more than a handful of reads.
+Suggest `--deep` in chat (never switch silently) when a bare `/suggestion` spans several repos or layers, needs a contract or migration decision, or requires more than a handful of reads.
 
 ### When _not_ to use — pick the right neighbor
 
@@ -63,7 +63,7 @@ Suggest `deep` in chat (never switch silently) when a bare `/suggestion` spans s
 - **Prior art first** (`core` › *Codebase investigation* › *Navigation*): an existing pattern beats a theoretically better one unless demonstrably broken; cite the precedent with `path:line`.
 - **Conventions second**: read governing rulebook sections and project-scoped skills (`core` › *Precedence*). Flag and justify any departure.
 - **Blast radius & prior decisions**: note touched contracts/migrations/enums/tests, and check recent git history, open PRs, workspace-root artifacts and memory (`core` › *Codebase investigation* › *Historical decisions*).
-- **External research**: only in `deep` mode or when a version/API fact must be verified.
+- **External research**: only in `--deep` mode or when a version/API fact must be verified.
 
 ### Step 3: Enumerate and rank
 
@@ -73,9 +73,9 @@ Suggest `deep` in chat (never switch silently) when a bare `/suggestion` spans s
 4. **Number them in ranked order**, the pick as **1**. Keep numbers stable for the rest of the session (dropped approaches leave a gap; nothing else in the answer uses numbers).
 5. **Pick one** and say why in a sentence (or state the single deciding fact if two are tied). Separate verified facts (`path:line`) from inferences.
 
-### Step 4 (deep mode only): Parallel candidate evaluation
+### Step 4 (--deep mode only): Parallel candidate evaluation
 
-When `deep` is requested and candidates are independent, spawn one read-only sub-agent per approach per `fan-out` (passing repo path(s), Step 1 framing/constraints, Step 2 precedent, head SHA, and candidate; returning touched files, closest pattern, contract/migration/test changes, risks, and T-shirt effort with `path:line`). Aggregate and re-open every cited `path:line` yourself (`fan-out` › *Aggregation*).
+When `--deep` is requested and candidates are independent, spawn one read-only sub-agent per approach per `fan-out` (passing repo path(s), Step 1 framing/constraints, Step 2 precedent, head SHA, and candidate; returning touched files, closest pattern, contract/migration/test changes, risks, and T-shirt effort with `path:line`). Aggregate and re-open every cited `path:line` yourself (`fan-out` › *Aggregation*).
 
 ---
 
@@ -103,7 +103,7 @@ Choose the closing **Next step** line per `core` › *Golden invariants* › *Pl
 | **Direct**     | ≤7 reversible steps, single repo, no contract/schema/migration change, verification named                             | `**Next step:** /proceed to run option 1's steps directly, /proceed <n> to act on option <n> instead, or /plan <suffix> if you want a written plan first.`      |
 | **Plan first** | >7 steps, cross-repo, contract/migration changes, or an open question the steps depend on                             | `**Next step:** /plan <suffix> to turn option 1 into an implementation plan (/proceed does the same: it drafts the plan first; /proceed <n> picks option <n>).` |
 
-### `/suggestion deep` — artifact & chat response
+### `/suggestion --deep` — artifact & chat response
 
 Write `<prefix>-suggestion-<suffix>.md` at the **workspace root** using [`references/deep-artifact.md`](references/deep-artifact.md). In chat, render the `artifact-protocol` › _Chat link block_ linking `Recommendation`, `Approaches`, `Decision & Rationale`, and `What /proceed will do` (with a one-line summary on each), followed by the mode and head SHA, the 2–3 deciding facts, and the _Next step_ line.
 
@@ -113,4 +113,4 @@ Write `<prefix>-suggestion-<suffix>.md` at the **workspace root** using [`refere
 
 - Every approach cites real `path:line` precedent or justifies its absence; approaches are numbered with the pick as 1 (stable across the session) and steps use letters (`a.`–`g.`).
 - The _Proceed plan_ names its verification, stop condition, and excluded outward-facing actions, and the _Next step_ line matches the _Direct_ vs _Plan first_ criteria.
-- `git status` is unchanged (apart from `<prefix>-suggestion-<suffix>.md` in `deep` mode).
+- `git status` is unchanged (apart from `<prefix>-suggestion-<suffix>.md` in `--deep` mode).

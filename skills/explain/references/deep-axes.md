@@ -1,4 +1,4 @@
-# `/explain deep` — Sub-Agent Briefs & Artifact Structure
+# `/explain --deep` — Sub-Agent Briefs & Artifact Structure
 
 ## Parallel Sub-Agent Briefs
 

@@ -1,4 +1,4 @@
-# `/suggestion deep` — Artifact Structure (`<prefix>-suggestion-<suffix>.md`)
+# `/suggestion --deep` — Artifact Structure (`<prefix>-suggestion-<suffix>.md`)
 
 Write `<prefix>-suggestion-<suffix>.md` at the **workspace root** via `artifact-protocol` › *Claim* containing, in order:
 

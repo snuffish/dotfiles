@@ -41,7 +41,7 @@ Read these before step 1:
 | Invocation | Mode | What happens |
 |---|---|---|
 | `/squash-code-review [sources]` | **Standard** | One pass: match, verify, reconcile, fold in threads |
-| `/squash-code-review deep [sources]` | **Deep** | Contested clusters are verified by parallel read-only sub-agents (*Deep Mode*), then aggregated |
+| `/squash-code-review --deep [sources]` | **Deep** | Contested clusters are verified by parallel read-only sub-agents (*Deep Mode*), then aggregated |
 | `/squash-code-review feedback [sources]` | Standard or deep, **full thread triage** | Runs [`/pr-feedback-review`](../pr-feedback-review/SKILL.md) first, then squashes against its triage matrix |
 | `… live …` | **No snapshot** | Reads the main checkout instead of a pinned snapshot |
 

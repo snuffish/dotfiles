@@ -40,11 +40,11 @@ Read these before step 1:
 | Invocation | Mode | How the axes run |
 | --- | --- | --- |
 | `/code-review [scope]` | **Standard** (default) | One pass; the reviewer covers all three axes itself |
-| `/code-review deep [scope]` | **Deep** | Correctness, Standards, and Spec each run in a parallel sub-agent ([deep-mode.md](references/deep-mode.md)), then aggregate |
+| `/code-review --deep [scope]` | **Deep** | Correctness, Standards, and Spec each run in a parallel sub-agent ([deep-mode.md](references/deep-mode.md)), then aggregate |
 | `/code-review live [scope]` | Standard or deep, **no snapshot** | Reads the main checkout directly (same as `/no-worktrees`). Only when a snapshot is impossible (e.g. uncommitted untracked files) |
 | `/code-review feedback [scope]` | Standard or deep, **full thread triage** | After Step 6 verifies findings, runs `/pr-feedback-review` and folds PR threads into the review (*Step 6b*) |
 
-`live` and `feedback` are modifiers (`/code-review deep feedback <pr>` is valid). Suggest `deep` (`fan-out` › *Bare vs deep*) when the diff exceeds ~1,500 changed lines or spans two repos with contract changes.
+`live` and `feedback` are modifiers (`/code-review --deep feedback <pr>` is valid). Suggest `--deep` (`fan-out` › *Bare vs deep*) when the diff exceeds ~1,500 changed lines or spans two repos with contract changes.
 
 ### When _not_ to use — pick the right neighbor
 
@@ -156,7 +156,7 @@ Before writing the artifact (and after sub-agent aggregation in `deep` mode):
 ### Step 6b — Fold In PR Feedback (`feedback` only)
 
 After Step 6, when a PR is in scope:
-1. Invoke [`/pr-feedback-review`](../pr-feedback-review/SKILL.md) with the same `deep`/`live` modifiers and pass this run's `[worktree-context]` block per repo.
+1. Invoke [`/pr-feedback-review`](../pr-feedback-review/SKILL.md) with the same `--deep`/`live` modifiers and pass this run's `[worktree-context]` block per repo.
 2. Match each human thread to findings by root cause:
    - **Covers finding N** (thread ⏸/◐) → attach dual thread link (`pr-host` › *Fetch discussion threads*) to finding N's *Where* line; if a team decision is recorded in the thread, quote it and lower to 🟢 unless the code contradicts the decision.
    - **Thread says ✅ Fixed, but Step 6 verified the defect at head** → keep finding N and note the thread's "fixed" state is stale.
@@ -185,7 +185,7 @@ On every review, after Step 6 (and 6b):
 
 ## Deep Mode
 
-For `/code-review deep`, read [deep-mode.md](references/deep-mode.md) before spawning sub-agents.
+For `/code-review --deep`, read [deep-mode.md](references/deep-mode.md) before spawning sub-agents.
 
 ---
 

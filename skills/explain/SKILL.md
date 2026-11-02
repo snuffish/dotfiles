@@ -1,13 +1,13 @@
 ---
 name: explain
-description: "Explains code, PR review comments, complex expressions, architecture patterns, or design intent across the codebase. Supports fast, concise in-chat explanations (/explain) and `deep`, which researches the three explanation axes (Mechanism, Rationale, Context) in parallel sub-agents and writes a workspace-root artifact (/explain deep)."
+description: "Explains code, PR review comments, complex expressions, architecture patterns, or design intent across the codebase. Supports fast, concise in-chat explanations (/explain) and `--deep`, which researches the three explanation axes (Mechanism, Rationale, Context) in parallel sub-agents and writes a workspace-root artifact (/explain --deep)."
 ---
 
 # Skill: `/explain` — Code, Architecture & Intent Explanation
 
-Explains code, methods, PR/code review comments, architectural design choices, or system behaviors in two modes (no intermediate mode; "explain in detail/depth" is `/explain deep`):
+Explains code, methods, PR/code review comments, architectural design choices, or system behaviors in two modes (no intermediate mode; "explain in detail/depth" is `/explain --deep`):
 1. **`/explain` (Default — Simple & Fast)**: Focused in-chat explanation of the immediate enclosing scope and direct symbols; writes no artifact.
-2. **`/explain deep` (In-Depth, parallel)**: Researches *Mechanism*, *Rationale*, and *Context* in three isolated parallel sub-agents and aggregates into `<prefix>-explanation-<suffix>.md`.
+2. **`/explain --deep` (In-Depth, parallel)**: Researches *Mechanism*, *Rationale*, and *Context* in three isolated parallel sub-agents and aggregates into `<prefix>-explanation-<suffix>.md`.
 
 ---
 
@@ -17,12 +17,12 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 
 Read these before step 1:
 - `../_modules/core.md`: read-only until `/proceed`
-- `../_modules/artifact-protocol.md`: writes `<prefix>-explanation-<suffix>.md` in `/explain deep` only (suffix derived from the target symbol, question, or topic); bare `/explain` writes no artifact
+- `../_modules/artifact-protocol.md`: writes `<prefix>-explanation-<suffix>.md` in `/explain --deep` only (suffix derived from the target symbol, question, or topic); bare `/explain` writes no artifact
 - `../_modules/pr-counterpart.md`
-- `../_modules/fan-out.md` (`deep` mode)
+- `../_modules/fan-out.md` (`--deep` mode)
 
 On-demand references (`references/`):
-- [`references/deep-axes.md`](references/deep-axes.md) — sub-agent axis briefs and artifact structure for `/explain deep`
+- [`references/deep-axes.md`](references/deep-axes.md) — sub-agent axis briefs and artifact structure for `/explain --deep`
 
 ---
 
@@ -33,7 +33,7 @@ The three axes every `deep` explanation covers, one sub-agent each:
 - **Rationale** — why it is the way it is: git history, PR descriptions/threads, work items, ADRs, comments stating constraints, and rejected alternatives.
 - **Context** — who depends on it: callers and consumers across layers/repos, contracts (*Contract touchpoints*), pinning tests, and what would break if it changed.
 
-Suggest `deep` in chat (never switch silently) when a bare `/explain` target spans both repos or >5 files, or when the question is a "why" answered in history.
+Suggest `--deep` in chat (never switch silently) when a bare `/explain` target spans both repos or >5 files, or when the question is a "why" answered in history.
 
 | Situation | Use instead |
 |---|---|
@@ -51,7 +51,7 @@ Suggest `deep` in chat (never switch silently) when a bare `/explain` target spa
 
 ---
 
-## 3. Mode 2: `/explain deep` — In-Depth, Parallel Axes
+## 3. Mode 2: `/explain --deep` — In-Depth, Parallel Axes
 
 1. **Resolve the target first** (`fan-out` › *Brief contract*): exact symbols, files and line ranges, repo(s), head SHA (`git rev-parse --short HEAD` + dirty check), related workspace-root artifacts, and any PR counterpart (`pr-counterpart` › *Counterpart discovery*).
 2. **Spawn the three axis sub-agents in parallel** per `fan-out` and [`references/deep-axes.md`](references/deep-axes.md).

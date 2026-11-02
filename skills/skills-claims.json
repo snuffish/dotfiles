@@ -10203,7 +10203,7 @@
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
-      "quote": "- `../_modules/artifact-protocol.md`: writes `<prefix>-explanation-<suffix>.md` in `/explain deep` only (suffix derived from the target symbol, questi",
+      "quote": "- `../_modules/artifact-protocol.md`: writes `<prefix>-explanation-<suffix>.md` in `/explain --deep` only (suffix derived from the target symbol, questi",
       "verify": {
         "method": "path_exists",
         "path": "../_modules/artifact-protocol.md",
@@ -10235,7 +10235,7 @@
       },
       "kind": "path",
       "value": "../_modules/fan-out.md",
-      "quote": "- `../_modules/fan-out.md` (`deep` mode)",
+      "quote": "- `../_modules/fan-out.md` (`--deep` mode)",
       "verify": {
         "method": "path_exists",
         "path": "../_modules/fan-out.md",
@@ -18585,7 +18585,7 @@
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
-      "quote": "- `../_modules/artifact-protocol.md`: writes `<prefix>-suggestion-<suffix>.md` at the **workspace root** in `/suggestion deep` only (suffix derived fr",
+      "quote": "- `../_modules/artifact-protocol.md`: writes `<prefix>-suggestion-<suffix>.md` at the **workspace root** in `/suggestion --deep` only (suffix derived fr",
       "verify": {
         "method": "path_exists",
         "path": "../_modules/artifact-protocol.md",
@@ -18601,7 +18601,7 @@
       },
       "kind": "path",
       "value": "../_modules/fan-out.md",
-      "quote": "- `../_modules/fan-out.md` (`deep` mode)",
+      "quote": "- `../_modules/fan-out.md` (`--deep` mode)",
       "verify": {
         "method": "path_exists",
         "path": "../_modules/fan-out.md",
@@ -19445,7 +19445,7 @@
       },
       "kind": "skill_ref",
       "value": "implement-feature",
-      "quote": "`deep` or when called from `/implement-feature` Phase 2b (calls from `/code-review` Step 6c stay in chat mode and write no file)",
+      "quote": "`--deep` or when called from `/implement-feature` Phase 2b (calls from `/code-review` Step 6c stay in chat mode and write no file)",
       "verify": {
         "method": "skill_exists",
         "name": "implement-feature",
@@ -19662,7 +19662,7 @@
       },
       "kind": "skill_ref",
       "value": "implement-feature",
-      "quote": "`/what-am-I-missing deep`, `/implement-feature` Phase 2b, and `/investigate` \u00a78 (embedded under `## 8. Blind Spots & Critical Omission Analysis (What",
+      "quote": "`/what-am-I-missing --deep`, `/implement-feature` Phase 2b, and `/investigate` \u00a78 (embedded under `## 8. Blind Spots & Critical Omission Analysis (What",
       "verify": {
         "method": "skill_exists",
         "name": "implement-feature",
