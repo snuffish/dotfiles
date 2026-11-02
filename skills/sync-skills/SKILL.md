@@ -38,7 +38,7 @@ Read these before step 1:
    | `claude/statusline.sh`  | `~/.claude/statusline.sh`                                                         |
    | `claude/agents/`        | `~/.claude/agents` (personal subagents)                                           |
 
-   A missing source adopts its legacy regular file or folder (root `AGENTS.md`, `~/.claude/settings.json`, `~/.claude/agents`): copied into the repo, removed only once its link is in place. A regular file or folder with the source's content is replaced by the link. A regular file or folder that differs is a **conflict**: reported under "left alone", never deleted and never pending, so merge it by hand. A missing source with nothing to adopt is an error. Links are swapped in with `os.replace`, so a running session never sees the path missing. `.claude/settings.json` is in a public repo: review its diff before every commit.
+   A missing source adopts its legacy regular file or folder (root `AGENTS.md`, `~/.claude/settings.json`, `~/.claude/agents`): copied into the repo, removed only once its link is in place. A regular file or folder with the source's content is replaced by the link. A regular file or folder that differs is a **conflict**: reported under "left alone", never deleted and never pending, so merge it by hand. The report says which: a `.json` link whose every leaf is already in the source prints `source covers it` with the exact `ln -sf` to run after backing it up. A missing source with nothing to adopt is an error. Links are swapped in with `os.replace`, so a running session never sees the path missing. `.claude/settings.json` is in a public repo: review its diff before every commit.
 
    Project-level local configs (`CLAUDE.local.md`, `settings.local.json`) in `<registry>/Projects/<Project>/` are symlinked into workspaces declared in `Projects/<Project>/.workspaces` (`CLAUDE.local.md`, `AGENTS.local.md -> CLAUDE.local.md`, and `.claude/settings.local.json`).
 
@@ -93,6 +93,7 @@ python3 -I <registry>/sync-skills/sync_skills.py            # check: lint, plann
 python3 -I <registry>/sync-skills/sync_skills.py --apply    # fixes ~/.claude/skills, ~/.gemini/config/skills, ~/.gemini/skills
 ```
 
+- `--config-only` reconciles only the config links and touches no loader target; it cannot be combined with `--targets`.
 - `--targets <list>` limits reconciliation to specific hosts (e.g. `--targets claude,antigravity`).
 - `--apply` refuses to run from any worktree checkout (`.claude/worktrees/`, `.agents/worktrees/`, `.gemini/worktrees/`), which would point links into the worktree. Pass `--registry <main checkout>/skills` to override.
 - `Projects/<Project>/.workspaces` lists the workspaces that use the project, one path per line (`~` allowed). For each one present on this machine the check reports project skills that are neither linked nor shipped in a repo's host skills dirs, and problems in its `.agents/skills.json`. A workspace missing on this machine is skipped.

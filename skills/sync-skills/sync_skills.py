@@ -528,6 +528,21 @@ def same_content(a, b):
     return os.path.isfile(a) and os.path.isfile(b) and read_bytes(a) == read_bytes(b)
 
 
+def json_covers(link, source):
+    """True when every leaf in the JSON file `link` is present in `source` (lists by membership)."""
+    def covers(a, b):
+        if isinstance(a, dict):
+            return isinstance(b, dict) and all(k in b and covers(v, b[k]) for k, v in a.items())
+        if isinstance(a, list):
+            return isinstance(b, list) and all(any(covers(x, y) for y in b) for x in a)
+        return a == b
+    try:
+        with open(link) as f, open(source) as g:
+            return covers(json.load(f), json.load(g))
+    except (OSError, ValueError):
+        return False
+
+
 def remove_path(path):
     if os.path.isdir(path) and not os.path.islink(path):
         shutil.rmtree(path)
@@ -559,8 +574,10 @@ def plan_config_links(repo):
                     actions.append(('repoint', label, link, target))
             elif same_content(link, content):
                 actions.append(('same', label, link, target))
+            elif link.endswith('.json') and json_covers(link, content):
+                conflicts.append(f'{link}: differs from {source}; source covers it. Back up the link, then: ln -sf {source} {link}')
             else:
-                conflicts.append(f'{link}: differs from {source}')
+                conflicts.append(f'{link}: differs from {source}; merge into the source by hand')
     return actions, conflicts, errors
 
 
@@ -681,13 +698,19 @@ def apply_config_links(actions):
 
 
 
+DONE_VERBS = {'create': 'created', 'repoint': 'repointed', 'prune': 'pruned', 'unlink': 'unlinked', 'adopt': 'adopted', 'same': 'linked'}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
     parser.add_argument('--apply', action='store_true', help='fix the loader links (default: report only)')
     parser.add_argument('--registry', help='registry root (default: the folder above this script)')
     parser.add_argument('--exit-pending', action='store_true', help='exit 10 when check mode finds link changes to apply (for the shell wrapper)')
     parser.add_argument('--targets', help='comma-separated loader targets to sync (default: claude,antigravity,gemini)')
+    parser.add_argument('--config-only', action='store_true', help='reconcile only the config links, no loader targets')
     args = parser.parse_args()
+    if args.config_only and args.targets:
+        parser.error('--config-only cannot be combined with --targets')
 
     root = os.path.realpath(args.registry or os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
     agents_dir = os.path.expanduser(os.path.join('~', '.agents', 'skills'))
@@ -698,7 +721,9 @@ def main():
     if args.apply and not args.registry and is_worktree_path(root):
         sys.exit(f'refusing --apply from a worktree ({root}): it would point every link into it. Pass --registry <main checkout>/skills.')
 
-    if args.targets:
+    if args.config_only:
+        targets = {}
+    elif args.targets:
         selected = [t.strip() for t in args.targets.split(',') if t.strip()]
         unknown = [t for t in selected if t not in LOADER_TARGETS]
         if unknown:
@@ -775,19 +800,20 @@ def main():
         changes = [(a, ns) for a, ns in actions if ns]
         if failed:
             glyph, colour = '✗', st.red
-        elif changes or monolithic:
+        elif (changes or monolithic) and not args.apply:
             glyph, colour = '●', st.yellow
         else:
             glyph, colour = '✓', st.green
-        summary = ' · '.join(f'{a} {len(ns)}' for a, ns in changes)
-        if monolithic:
+        verb = (lambda a: DONE_VERBS.get(a, a)) if args.apply else (lambda a: a)
+        summary = ' · '.join(f'{verb(a)} {len(ns)}' for a, ns in changes)
+        if monolithic and not args.apply:
             summary = ' · '.join(filter(None, ['monolithic symlink → registry root', summary]))
         if not summary:
-            summary = 'applied' if args.apply and not failed else 'up to date'
+            summary = 'up to date'
         print(f'  {colour(glyph)} {name:<{width}}  {st.dim(f"{path:<{pwidth}}")}  {colour(summary)}')
         for a, ns in changes:
             for line in textwrap.wrap(', '.join(ns), shutil.get_terminal_size().columns - 8,
-                                      initial_indent=f'{a}: ', subsequent_indent=' ' * (len(a) + 2), break_on_hyphens=False):
+                                      initial_indent=f'{verb(a)}: ', subsequent_indent=' ' * (len(verb(a)) + 2), break_on_hyphens=False):
                 print(f'      {st.dim(line)}')
         for label, items, paint in [('left alone', foreign, st.yellow), ('FAILED', failed, st.red)]:
             if items:
