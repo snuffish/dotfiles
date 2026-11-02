@@ -12,7 +12,7 @@ Output is coloured on a terminal; piped or with NO_COLOR it is plain text.
 Exit status: 1 when the lint finds errors or a link change fails; with
 --exit-pending, 10 when check mode finds link changes to apply; else 0.
 """
-import argparse, json, os, re, shutil, subprocess, sys, textwrap
+import argparse, filecmp, json, os, re, shutil, subprocess, sys, textwrap
 
 MODULE_REF = re.compile(r'^- `([^`]*_modules/[^`]+\.md)`', re.M)
 LINK_REF = re.compile(r'\]\(((?:\.\./)*[\w./-]*(?:SKILL\.md|_modules/[\w/-]+\.md|references/[\w./-]+))(?:#[^)]*)?\)')
@@ -308,16 +308,15 @@ def discover_plugin_skills(plugins_file, settings_file, existing_skills):
     return found, shadowed
 
 
-def enabled_plugin_skill_names(plugins_file, settings_file):
-    """Folder names of every SKILL.md in enabled plugins, at any depth (some plugins nest skills/<category>/<name>)."""
+def installed_plugin_skill_names(plugins_file):
+    """Folder names of every SKILL.md in installed plugins, at any depth (some plugins nest skills/<category>/<name>). Plugins switched off per user still count, so their ~/.agents copies stay unlinked."""
     try:
-        enabled = json.load(open(settings_file, encoding='utf-8')).get('enabledPlugins', {})
         plugins = json.load(open(plugins_file, encoding='utf-8')).get('plugins', {})
     except Exception:
         return set()
     names = set()
-    for plugin_id, entries in plugins.items():
-        if enabled.get(plugin_id) is False or not isinstance(entries, list):
+    for entries in plugins.values():
+        if not isinstance(entries, list):
             continue
         for entry in entries:
             skills_dir = os.path.join(entry.get('installPath') or '', 'skills')
@@ -504,6 +503,7 @@ CONFIG_LINKS = (
     ('rules', '.claude/AGENTS.md', ('AGENTS.md', 'CLAUDE.md', '~/.claude/CLAUDE.md', '~/.gemini/GEMINI.md'), 'AGENTS.md'),
     ('settings', '.claude/settings.json', ('~/.claude/settings.json',), '~/.claude/settings.json'),
     ('statusline', 'claude/statusline.sh', ('~/.claude/statusline.sh',), None),
+    ('agents', 'claude/agents', ('~/.claude/agents',), '~/.claude/agents'),
 )
 
 
@@ -516,6 +516,25 @@ def read_bytes(path):
         return f.read()
 
 
+def same_content(a, b):
+    """True when two regular files have the same bytes, or two real folders hold the same tree."""
+    if os.path.islink(a) or os.path.islink(b):
+        return False
+    if os.path.isdir(a) and os.path.isdir(b):
+        c = filecmp.dircmp(a, b)
+        if c.left_only or c.right_only or c.funny_files:
+            return False
+        return all(same_content(os.path.join(a, n), os.path.join(b, n)) for n in c.common_files + c.common_dirs)
+    return os.path.isfile(a) and os.path.isfile(b) and read_bytes(a) == read_bytes(b)
+
+
+def remove_path(path):
+    if os.path.isdir(path) and not os.path.islink(path):
+        shutil.rmtree(path)
+    elif os.path.lexists(path):
+        os.unlink(path)
+
+
 def plan_config_links(repo):
     """Return (actions, conflicts, errors); actions are (action, label, path, target)."""
     actions, conflicts, errors = [], [], []
@@ -523,8 +542,8 @@ def plan_config_links(repo):
         source = config_path(repo, source)
         legacy = legacy and config_path(repo, legacy)
         content = source
-        if not os.path.isfile(source):
-            if not (legacy and os.path.isfile(legacy) and not os.path.islink(legacy)):
+        if not os.path.exists(source):
+            if not (legacy and os.path.exists(legacy) and not os.path.islink(legacy)):
                 errors.append(f'config {label}: {tilde(source)} missing and nothing to adopt')
                 continue
             actions.append(('adopt', label, legacy, source))
@@ -538,7 +557,7 @@ def plan_config_links(repo):
             elif os.path.islink(link):
                 if os.path.normpath(os.path.join(os.path.dirname(link), os.readlink(link))) != source:
                     actions.append(('repoint', label, link, target))
-            elif os.path.isfile(link) and read_bytes(link) == read_bytes(content):
+            elif same_content(link, content):
                 actions.append(('same', label, link, target))
             else:
                 conflicts.append(f'{link}: differs from {source}')
@@ -615,6 +634,9 @@ def replace_with_link(target, link):
     os.makedirs(os.path.dirname(link), exist_ok=True)
     try:
         os.symlink(target, tmp)
+        # os.replace cannot swap over a real folder; callers only get here once its content is in the repo.
+        if os.path.isdir(link) and not os.path.islink(link):
+            shutil.rmtree(link)
         os.replace(tmp, link)
     finally:
         if os.path.lexists(tmp):
@@ -630,15 +652,17 @@ def apply_config_links(actions):
         tmp = f'{source}.tmp.{os.getpid()}'
         try:
             os.makedirs(os.path.dirname(source), exist_ok=True)
-            shutil.copy2(legacy, tmp)
+            if os.path.isdir(legacy):
+                shutil.copytree(legacy, tmp, symlinks=True)
+            else:
+                shutil.copy2(legacy, tmp)
             os.replace(tmp, source)
             adopted.append(legacy)
         except OSError as e:
             broken.add(label)
             failed.append(f'adopt {legacy}: {e}')
         finally:
-            if os.path.lexists(tmp):
-                os.unlink(tmp)
+            remove_path(tmp)
     for action, label, link, target in actions:
         if action == 'adopt' or label in broken:
             continue
@@ -650,7 +674,7 @@ def apply_config_links(actions):
     for action, label, legacy, _ in actions:
         if action == 'adopt' and label not in broken and legacy in adopted and not os.path.islink(legacy):
             try:
-                os.unlink(legacy)
+                remove_path(legacy)
             except OSError as e:
                 failed.append(f'remove {legacy}: {e}')
     return failed
@@ -687,7 +711,7 @@ def main():
     agents_skills, agents_shadowed = discover_agents_skills(agents_dir, skills)
     existing_for_plugins = set(skills.keys()) | set(agents_skills.keys())
     plugin_skills, plugin_shadowed = discover_plugin_skills(plugins_file, plugins_settings, existing_for_plugins)
-    claude_plugin_names = enabled_plugin_skill_names(plugins_file, plugins_settings)
+    claude_plugin_names = installed_plugin_skill_names(plugins_file)
 
     if args.apply:
         for target_name, target_path in targets.items():
