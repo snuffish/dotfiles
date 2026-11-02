@@ -85,7 +85,7 @@ Also a decision, from `priis-profile`: version skew between frontend and backend
 
 ## Step 3 — Standards sources
 
-Besides the above: the rulebooks per half (`backend/CLAUDE.md`, `frontend/CLAUDE.md` → the `AGENTS.md` beside each), `backend/AGENTS.md` › _Cross-half contracts_, and the References for the areas the diff touches (`priis-profile` › _References per layer_). The repo-root `.claude/skills/` are the upstream (`core` › _Precedence_); cite them first, plus the registry `modern-csharp` where it adds general C# 14 idioms.
+Besides the above: the rulebooks per half (`backend/CLAUDE.md`, `frontend/CLAUDE.md` → the `AGENTS.md` beside each), `backend/.github/copilot-instructions.md` › _Cross-half contracts_, and the References for the areas the diff touches (`priis-profile` › _References per layer_). The repo-root `.claude/skills/` are the upstream (`core` › _Precedence_); cite them first, plus the registry `modern-csharp` where it adds general C# 14 idioms.
 
 ---
 
