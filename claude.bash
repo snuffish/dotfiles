@@ -1,17 +1,5 @@
 #!/bin/bash
 
-# Lint the skills registry and check skill loaders against it, then ask y/n to fix the links when any are pending (--apply skips the prompt)
-function sync-skills() {
-  local script="$HOME/.terminal/skills/sync-skills/sync_skills.py" answer rc
-  [[ " $* " == *" --apply "* ]] && { python3 -I "$script" "$@"; return; }
-  python3 -I "$script" --exit-pending "$@"; rc=$?
-  (( rc == 10 )) || return "$rc"
-  printf '\n\033[1mApply link changes?\033[0m \033[2m(Claude, Antigravity, Gemini)\033[0m [y/N] '
-  read -r answer
-  if [[ "$answer" == [yY]* ]]; then
-    python3 -I "$script" --apply "$@"
-  fi
-}
 
 # claude -p with live progress: the session id and each tool call go to stderr as they start, the final answer to
 # stdout; args go to claude

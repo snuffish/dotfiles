@@ -545,6 +545,70 @@ def plan_config_links(repo):
     return actions, conflicts, errors
 
 
+PROJECT_CONFIG_SPECS = (
+    ('CLAUDE.local.md', 'CLAUDE.local.md'),
+    ('settings.local.json', os.path.join('.claude', 'settings.local.json')),
+)
+
+
+def plan_workspace_config_links(root):
+    """Return (actions, conflicts, errors) for project configs linked into registered workspaces."""
+    actions, conflicts, errors = [], [], []
+    projects_dir = os.path.join(root, 'Projects')
+    if not os.path.isdir(projects_dir):
+        return actions, conflicts, errors
+
+    for project in sorted(os.listdir(projects_dir)):
+        project_path = os.path.join(projects_dir, project)
+        if not os.path.isdir(project_path):
+            continue
+        workspaces = read_list(os.path.join(project_path, '.workspaces'))
+        if not workspaces:
+            continue
+
+        for ws in workspaces:
+            ws_path = os.path.realpath(os.path.expanduser(ws))
+            if not os.path.isdir(ws_path):
+                continue
+
+            claude_linked = False
+            for src_name, dest_rel in PROJECT_CONFIG_SPECS:
+                source = os.path.join(project_path, src_name)
+                if not os.path.isfile(source):
+                    continue
+                link = os.path.join(ws_path, dest_rel)
+                target = source
+                label = f'{project} {src_name}'
+                if src_name == 'CLAUDE.local.md':
+                    claude_linked = True
+
+                if not os.path.lexists(link):
+                    actions.append(('create', label, link, target))
+                elif os.path.islink(link):
+                    if os.path.realpath(link) != os.path.realpath(target):
+                        actions.append(('repoint', label, link, target))
+                elif os.path.isfile(link) and read_bytes(link) == read_bytes(source):
+                    actions.append(('same', label, link, target))
+                else:
+                    conflicts.append(f'{link}: differs from {source}')
+
+            if claude_linked:
+                agents_link = os.path.join(ws_path, 'AGENTS.local.md')
+                label = f'{project} AGENTS.local.md'
+                target = 'CLAUDE.local.md'
+                if not os.path.lexists(agents_link):
+                    actions.append(('create', label, agents_link, target))
+                elif os.path.islink(agents_link):
+                    if os.readlink(agents_link) != target and os.path.realpath(agents_link) != os.path.realpath(os.path.join(ws_path, target)):
+                        actions.append(('repoint', label, agents_link, target))
+                elif os.path.isfile(agents_link) and read_bytes(agents_link) == read_bytes(os.path.join(project_path, 'CLAUDE.local.md')):
+                    actions.append(('same', label, agents_link, target))
+                else:
+                    conflicts.append(f'{agents_link}: differs from {target}')
+
+    return actions, conflicts, errors
+
+
 def replace_with_link(target, link):
     """Swap the link into place in one rename, so readers never see the path missing."""
     tmp = f'{link}.tmp.{os.getpid()}'
@@ -651,8 +715,11 @@ def main():
             target_failed[target_name] = []
 
     config_actions, config_conflicts, config_errors = plan_config_links(os.path.dirname(root))
-    errors += config_errors
-    config_failed = apply_config_links(config_actions) if args.apply else []
+    ws_cfg_actions, ws_cfg_conflicts, ws_cfg_errors = plan_workspace_config_links(root)
+    all_config_actions = config_actions + ws_cfg_actions
+    all_config_conflicts = config_conflicts + ws_cfg_conflicts
+    errors += config_errors + ws_cfg_errors
+    config_failed = apply_config_links(all_config_actions) if args.apply else []
 
     ws_lines, ws_warnings = check_workspaces(root, skills)
     warnings += ws_warnings + check_global_antigravity(agents_dir, targets)
@@ -670,9 +737,9 @@ def main():
 
     mode = 'applied' if args.apply else 'check only (--apply to change)'
     print(f"\n{st.bold('Loaders')}  {st.dim(mode)}")
-    rows = [('config', 'repo → ~/.claude, ~/.gemini',
-             [(a, [f'{label} ({tilde(p)})' for x, label, p, _ in config_actions if x == a]) for a in ('adopt', 'create', 'repoint', 'same')],
-             config_conflicts, config_failed, False)]
+    rows = [('config', 'repo → ~/.claude, ~/.gemini, workspaces',
+             [(a, [f'{label} ({tilde(p)})' for x, label, p, _ in all_config_actions if x == a]) for a in ('adopt', 'create', 'repoint', 'same')],
+             all_config_conflicts, config_failed, False)]
     for target_name, target_path in targets.items():
         monolithic = not args.apply and is_monolithic_symlink(target_path, root)
         rows.append((target_name, tilde(target_path),
@@ -719,7 +786,7 @@ def main():
             for d in detail:
                 print(f'      {st.dim(d)}')
     any_failed = any(target_failed.values()) or bool(config_failed)
-    pending = not args.apply and (bool(config_actions) or any(target_actions.values())
+    pending = not args.apply and (bool(all_config_actions) or any(target_actions.values())
                                   or any(is_monolithic_symlink(p, root) for p in targets.values()))
     sys.exit(1 if errors or any_failed else 10 if args.exit_pending and pending else 0)
 

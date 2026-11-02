@@ -39,6 +39,8 @@ Read these before step 1:
 
    A missing source adopts its legacy regular file (root `AGENTS.md`, `~/.claude/settings.json`): copied into the repo, removed only once its link is in place. A regular file with the source's bytes is replaced by the link. A regular file that differs is a **conflict**: reported under "left alone", never deleted and never pending, so merge it by hand. A missing source with nothing to adopt is an error. Links are swapped in with `os.replace`, so a running session never sees the path missing. `.claude/settings.json` is in a public repo: review its diff before every commit.
 
+   Project-level local configs (`CLAUDE.local.md`, `settings.local.json`) in `<registry>/Projects/<Project>/` are symlinked into workspaces declared in `Projects/<Project>/.workspaces` (`CLAUDE.local.md`, `AGENTS.local.md -> CLAUDE.local.md`, and `.claude/settings.local.json`).
+
 ---
 
 ## Steps

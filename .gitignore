@@ -29,3 +29,7 @@ __pycache__/
 
 # Session handoff briefing from /claude-mem:handoff (scratch, read by /continue)
 /HANDOFF.md
+
+# Project-local configs linked into workspaces by sync-skills; hold client-internal settings
+/skills/Projects/*/CLAUDE.local.md
+/skills/Projects/*/settings.local.json
