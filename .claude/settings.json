@@ -5,7 +5,16 @@
   "permissions": {
     "allow": [
       "Bash(az repos *)",
-      "mcp__codegraph__*"
+      "mcp__codegraph__*",
+      "Bash(grep:*)",
+      "Bash(git diff:*)",
+      "Bash(git status:*)",
+      "Bash(dotnet format:*)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet test:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run build:*)",
+      "Az devops invoke"
     ],
     "defaultMode": "auto"
   },
@@ -47,7 +56,50 @@
     "loop": "name-only",
     "run": "name-only",
     "simplify": "name-only",
-    "workflow-authoring": "name-only"
+    "workflow-authoring": "name-only",
+    "source-command-backend-migrate-to-tunit": "off",
+    "source-command-backend-health-check": "off",
+    "source-command-frontend-health-check": "off",
+    "source-command-backend-release-notes": "off",
+    "skill-creator": "off",
+    "stitch-react-components": "off",
+    "stitch::react-components": "off",
+    "vercel-composition-patterns": "off",
+    "vercel-react-best-practices": "off",
+    "microsoft-foundry": "off",
+    "claude-mem:babysit": "off",
+    "claude-mem:backup-setup": "off",
+    "claude-mem:build": "off",
+    "claude-mem:build-and-release": "off",
+    "claude-mem:ccs-align": "off",
+    "claude-mem:childhood": "off",
+    "claude-mem:design-is": "off",
+    "claude-mem:do": "off",
+    "claude-mem:knowledge-agent": "off",
+    "claude-mem:make-plan": "off",
+    "claude-mem:mode-creator": "off",
+    "claude-mem:oh-my-issues": "off",
+    "claude-mem:owner-goals": "off",
+    "claude-mem:pathfinder": "off",
+    "claude-mem:release": "off",
+    "claude-mem:request-progress": "off",
+    "claude-mem:screenpipe": "off",
+    "claude-mem:smart-explore": "off",
+    "claude-mem:standup": "off",
+    "claude-mem:timeline-report": "off",
+    "claude-mem:version-bump": "off",
+    "claude-mem:weekly-digests": "off",
+    "claude-mem:what-the": "off",
+    "claude-mem:wowerpoint": "off",
+    "claude-mem-cowork:agent-cost-report": "off",
+    "claude-mem-cowork:mem-search": "off",
+    "mattpocock-skills:triage": "off",
+    "mattpocock-skills:wayfinder": "off",
+    "mattpocock-skills:wizard": "off",
+    "mattpocock-skills:to-questionnaire": "off",
+    "mattpocock-skills:wait-what": "off",
+    "mattpocock-skills:handoff": "off",
+    "claude-security:scan": "off"
   },
   "hooks": {
     "SessionStart": [
@@ -63,6 +115,25 @@
             "type": "command",
             "command": "python3 -I \"$HOME/.terminal/claude/skill-drift-warning.py\"",
             "timeout": 15
+          }
+        ]
+      },
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/session-title.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I ~/Projects/cm-sync/cm_sync.py import --quiet || true",
+            "timeout": 60
           }
         ]
       }
@@ -92,6 +163,16 @@
             "command": "f=$(jq -r '.tool_input.file_path // empty'); [ -f \"$f\" ] || exit 0; if m=$(grep -nE '^(<{7}( |$)|={7}$|>{7}( |$)|\\|{7}( |$))' \"$f\"); then printf 'Merge-conflict markers left in %s:\\n%s\\n' \"$f\" \"$m\" >&2; exit 2; fi"
           }
         ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I ~/.claude/plan-lint.py",
+            "timeout": 5
+          }
+        ]
       }
     ],
     "Notification": [
@@ -101,6 +182,27 @@
           {
             "type": "command",
             "command": "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"'"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "codegraph prompt-hook"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I ~/Projects/cm-sync/cm_sync.py sync --quiet || true",
+            "timeout": 120
           }
         ]
       }
@@ -115,8 +217,12 @@
     "engineering-advanced-skills@claude-code-skills": false,
     "engineering-skills@claude-code-skills": false,
     "tanstack-ai@tanstack-ai": false,
-    "mattpocock-skills@claude-plugins-official": true,
-    "claude-mem@thedotmack": true
+    "mattpocock-skills@claude-plugins-official": false,
+    "claude-mem@thedotmack": true,
+    "claude-mem-cowork@thedotmack": true,
+    "cc-plugin-you-should-know@builtin": true,
+    "frontend-design@claude-plugins-official": false,
+    "skill-creator@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "claude-code-skills": {
@@ -171,35 +277,40 @@
     "soft_deny": [
       "$defaults",
       "Bash(az repos pr update:*)",
-      "Bash(az devops invoke:* --http-method POST*)"
+      "Bash(az devops invoke:* --http-method POST*)",
+      "Bash(az repos pr:* --status all)",
+      "Bash(az devops invoke:* --http-method POST)"
     ],
     "environment": [
       "### Org-wide",
-      "**Organization**: ADO_ORG (Azure DevOps org `https://dev.azure.com/ADO_ORG`, project `PRIIS`, repo `GR.PRIIS`)",
+      "**Organization**: Azure DevOps org `ADO_ORG`, project `PRIIS`, repository `GR.PRIIS` (ssh.dev.azure.com:v3/ADO_ORG/PRIIS/GR.PRIIS)",
       "**Cloud provider(s)**: None configured",
-      "**Repository visibility**: Not queryable via gh (remote is an SSH `vs-ssh.visualstudio.com` URL, not a plain owner/repo host) — assume private (Azure DevOps project repos default private; no evidence of public visibility)",
+      "**Repository visibility**: Not queryable via gh (origin remote is an Azure DevOps SSH URL, not a plain owner/repo host); assume private — Azure DevOps repos default to private and nothing in the recon indicates otherwise",
       "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
       "**Secrets management**: None configured",
-      "**Default / protected branches**: `main` (default); release branches `release/X.Y.Z` for hotfixes — branch protection/rulesets not queryable here (gh unavailable for this remote)",
-      "**CI/CD deploy targets**: Azure Pipelines under `devops/` (`devops/ci-backend.yml` and likely a frontend counterpart) — no deploy target hosts specified in gathered docs",
+      "**Default / protected branches**: `main` is the default branch (Azure DevOps). Branch protection/rulesets not queryable here (gh does not cover Azure DevOps); treat `main`, `release/*` branches as protected by convention per repo workflow docs",
+      "**CI/CD deploy targets**: Azure Pipelines defined under `devops/` (CI for backend and frontend); no deploy target details gathered",
       "**Network posture**: None configured",
       "**Host containment**: None configured — assume Claude Code runs on an ordinary developer machine with open internet",
-      "**Source control**: The trusted repo (GR.PRIIS monorepo) and its Azure DevOps remote only — `vs-ssh.visualstudio.com:v3/ADO_ORG/PRIIS/GR.PRIIS` and `ADO_ORG.visualstudio.com` / `dev.azure.com/ADO_ORG`",
-      "**Trusted internal domains**: ADO_ORG.visualstudio.com, dev.azure.com (seen contacted in this project's transcripts)",
+      "**Source control**: The trusted repo and its remote — Azure DevOps `ADO_ORG/PRIIS/GR.PRIIS` (ssh.dev.azure.com:v3/ADO_ORG/PRIIS/GR.PRIIS) and `ADO_ORG.visualstudio.com` (alternate auth host for the same org) only",
+      "**Trusted internal domains**: dev.azure.com, ADO_ORG.visualstudio.com (this project's Azure DevOps org, seen repeatedly in usage)",
       "**Trusted cloud buckets**: None configured",
-      "**Key internal services**: Azure DevOps (`dev.azure.com/ADO_ORG`, project PRIIS, repo GR.PRIIS) via the `azure-devops` MCP server; `az` CLI as fallback",
+      "**Key internal services**: Azure DevOps MCP server (`@azure-devops/mcp`, org `ADO_ORG`) for work items, PRs and wiki operations on project PRIIS",
       "**Internal package registry**: None configured",
-      "**Sensitive data locations & audiences**: frontend/source/priis-web/.env, .env.development, .env.devintegration, .env.production, .env.staging, .env.utbildning — environment/secrets files, share only with audiences cleared at the [named+specifics] bar",
+      "**Sensitive data locations & audiences**: `frontend/source/priis-web/.env`, `.env.development`, `.env.devintegration`, `.env.production`, `.env.staging`, `.env.utbildning` — environment files, share only with audiences cleared for this project's deployment secrets; any file or store holding personal data, confidential business data, credentials, regulated data, or similarly sensitive material more generally",
       "**Data retention / declassification**: None configured",
-      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment (e.g. `.env.production`, a `release/X.Y.Z` branch cut for a production hotfix, k8s namespace segments matching `prod`/`production`)",
-      "**Protected deployment namespaces / environments**: k8s namespaces observed in this project: e2e, backend, docs, frontend, playwright — none match prod/production by name; fall back to the Sensitive remote targets heuristic for any namespace containing prod/production",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment (e.g. `release/*` production hotfix targets, `.env.production`)",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic (k8s namespaces seen in usage — frontend, backend, devops, e2e — carry no prod/production marker and are not elevated by this alone)",
       "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
       "### User-specific",
-      "**Primary use of Claude Code**: software development (GR.PRIIS monorepo: .NET 10 backend + React 18/Vite frontend)",
-      "**Trusted repo**: /home/snuffish/Projects/GR/GR.PRIIS (GR.PRIIS monorepo, remote `vs-ssh.visualstudio.com:v3/ADO_ORG/PRIIS/GR.PRIIS`), default branch `main`",
-      "**Org-specific CLIs**: `az` (Azure DevOps fallback CLI), `dotnet`, `npm`/`npx` (frontend), `codegraph` (repo indexing), `pwsh` (backend format script)",
-      "routine under backend/ and frontend/source/priis-web/ prefixes: build/test/lint/format commands documented in CLAUDE.md are routine project workflow"
+      "**Primary use of Claude Code**: software development — GR.PRIIS monorepo (.NET backend + React frontend) work via Claude Code skills and Azure DevOps integration",
+      "**Trusted repo**: This repo's working directory (GR.PRIIS monorepo) and its Azure DevOps remote `ssh.dev.azure.com:v3/ADO_ORG/PRIIS/GR.PRIIS`; treated as private — confidential project material is fine here, but content ported from outside this session's repo is not this repo's own work",
+      "**Org-specific CLIs**: `az` (Azure CLI, fallback for Azure DevOps MCP server operations); Azure DevOps MCP tools (`mcp__azure-devops__*`)",
+      "Routine under this repo's `.claude/` prefix: skill scripts (`.claude/scripts/check-skill-drift.py`), skill-gap files (`.claude/skill-gaps/`), and review worktrees (`.claude/worktrees/`) are routine project-local operations"
     ]
   },
-  "voiceEnabled": false
+  "voiceEnabled": false,
+  "autoCompactWindow": 400000,
+  "autoMemoryEnabled": true,
+  "theme": "dark"
 }

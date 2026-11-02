@@ -40,5 +40,8 @@
   },
   "skillOverrides": {
     "find-skills": "on"
+  },
+  "enabledPlugins": {
+    "mattpocock-skills@claude-plugins-official": true
   }
 }
