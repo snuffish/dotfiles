@@ -13,7 +13,7 @@ A project's facts live in two layers under `Projects/<Project>/`, both gated `[P
 | **Base profile** | `<project>-profile` (e.g. `priis-profile`) | The *Shared fields* below, plus any project fact more than one Command needs |
 | **Command profile** | `<command>-<project>-profile` (e.g. `code-review-priis-profile`) | Only the fields of that Command's own field table, plus its *Precedence overrides* |
 
-When the workspace matches a profile's gate, load the base profile first, then the Command profile. Optional Command-specific fields (e.g. `Plan-review checks` for `/plan --review`) may live directly in the base profile when a separate Command profile is unnecessary.
+When the workspace matches a profile's gate, load the base profile first, then the Command profile. Optional Command-specific fields (e.g. `Plan-review checks` for `/plan --review`, `Post-merge checks` for `/resolve-conflicts` › *Step 5*) may live directly in the base profile when a separate Command profile is unnecessary.
 
 ## Resolution order
 

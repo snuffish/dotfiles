@@ -16,8 +16,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 
 Read these before step 1:
 - `../_modules/core.md`
-- `../_modules/artifact-protocol.md`: writes no artifact — the deliverable is the commit and push
-- `../_modules/git-worktrees.md`: runs in place; an incoming `[worktree-context]` block names the `repo-root` to commit in
+- `../_modules/git-worktrees.md`: only with an incoming `[worktree-context]` block, which names the `repo-root` to commit in; otherwise runs in place
 - `../_modules/pr-host.md`: read-only, to name the PR the push updates
 - `../_modules/outward-writes.md`
 
@@ -45,7 +44,7 @@ Read these before step 1:
 1. **Repo root:** use `repo-root` from an incoming `[worktree-context]` block, else `git rev-parse --show-toplevel` (in a multi-repo workspace, handle each changed repo separately; check for locked `claude-skill:` worktrees per `git-worktrees` › *Using this Module from a Command*).
 2. **Stop and say why** when:
    - **Detached HEAD:** `git -C <repo-root> symbolic-ref -q HEAD` fails.
-   - **An operation is in progress:** `MERGE_HEAD`, `CHERRY_PICK_HEAD`, `REVERT_HEAD`, or a `rebase-merge/` / `rebase-apply/` directory exists (`resolve-conflicts` › *Step 0 — Detect the Operation, the Sides and the Repo*). Route to [`/resolve-conflicts`](../resolve-conflicts/SKILL.md).
+   - **An operation is in progress:** `MERGE_HEAD`, `CHERRY_PICK_HEAD`, `REVERT_HEAD`, or a `rebase-merge/` / `rebase-apply/` directory exists (`resolve-conflicts` › *Step 0 — Detect the Operation, the Sides and the Repo*). Route to [`/resolve-conflicts`](../resolve-conflicts/SKILL.md), except a **resolved merge**: `MERGE_HEAD` exists and `git diff --name-only --diff-filter=U` is empty. Conclude that one yourself with `resolve-conflicts` › *Step 6 — Conclude* (the user's `/commit` is the request to commit), then go to Step 5.
    - **Protected/default branch:** `main`, `master`, `develop`, `release/*`, or `origin/HEAD` — unless the repo is a trunk-only personal repo (e.g. `~/.terminal` or `~/.terminal/memory`). Otherwise propose a branch name in the repo's convention and create it only on approval.
    - **Nothing to commit and nothing to push:** say so in one line and stop.
 

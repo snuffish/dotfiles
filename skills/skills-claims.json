@@ -8913,30 +8913,14 @@
       }
     },
     {
-      "id": "skills/commit/SKILL.md:19:path:../_modules/artifact-protocol.md",
+      "id": "skills/commit/SKILL.md:19:path:../_modules/git-worktrees.md",
       "source": {
         "file": "skills/commit/SKILL.md",
         "line": 19
       },
       "kind": "path",
-      "value": "../_modules/artifact-protocol.md",
-      "quote": "- `../_modules/artifact-protocol.md`: writes no artifact \u2014 the deliverable is the commit and push",
-      "verify": {
-        "method": "path_exists",
-        "path": "../_modules/artifact-protocol.md",
-        "base": "file_dir",
-        "type": "file"
-      }
-    },
-    {
-      "id": "skills/commit/SKILL.md:20:path:../_modules/git-worktrees.md",
-      "source": {
-        "file": "skills/commit/SKILL.md",
-        "line": 20
-      },
-      "kind": "path",
       "value": "../_modules/git-worktrees.md",
-      "quote": "- `../_modules/git-worktrees.md`: runs in place; an incoming `[worktree-context]` block names the `repo-root` to commit in",
+      "quote": "- `../_modules/git-worktrees.md`: only with an incoming `[worktree-context]` block, which names the `repo-root` to commit in; otherwise runs in place",
       "verify": {
         "method": "path_exists",
         "path": "../_modules/git-worktrees.md",
@@ -16693,14 +16677,14 @@
       }
     },
     {
-      "id": "skills/resolve-conflicts/SKILL.md:18:path:../_modules/artifact-protocol.md",
+      "id": "skills/resolve-conflicts/SKILL.md:19:path:../_modules/artifact-protocol.md",
       "source": {
         "file": "skills/resolve-conflicts/SKILL.md",
         "line": 19
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
-      "quote": "- `../_modules/artifact-protocol.md`: writes no artifact by default; writes `<prefix>-conflict_resolution-<suffix>.md` when at least one conflict need",
+      "quote": "- `../_modules/artifact-protocol.md`: only when the artifact threshold is met (at least one conflict needed a user decision, or the operation spans >10 conflicted files or multiple rebase stops), then writes `<prefix>-conflict_resolution-<suffix>.md`",
       "verify": {
         "method": "path_exists",
         "path": "../_modules/artifact-protocol.md",
@@ -20418,17 +20402,17 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:doc_link:backend/.github/copilot-instructions.md \u203a Cross-half contracts",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:doc_link:backend/AGENTS.md \u203a Cross-half contracts",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
         "line": 88
       },
       "kind": "doc_link",
-      "value": "backend/.github/copilot-instructions.md \u203a Cross-half contracts",
-      "quote": "`backend/.github/copilot-instructions.md` \u203a _Cross-half contracts_",
+      "value": "backend/AGENTS.md \u203a Cross-half contracts",
+      "quote": "`backend/AGENTS.md` \u203a _Cross-half contracts_",
       "verify": {
         "method": "heading_pointer",
-        "target": "backend/.github/copilot-instructions.md",
+        "target": "backend/AGENTS.md",
         "heading": "Cross-half contracts",
         "base": "project:GR.PRIIS"
       }
@@ -20466,17 +20450,17 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:path:backend/.github/copilot-instructions.md",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:path:backend/AGENTS.md",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
         "line": 88
       },
       "kind": "path",
-      "value": "backend/.github/copilot-instructions.md",
-      "quote": "`backend/.github/copilot-instructions.md` \u203a _Cross-half contracts_",
+      "value": "backend/AGENTS.md",
+      "quote": "`backend/AGENTS.md` \u203a _Cross-half contracts_",
       "verify": {
         "method": "path_exists",
-        "path": "backend/.github/copilot-instructions.md",
+        "path": "backend/AGENTS.md",
         "base": "project:GR.PRIIS",
         "type": "file"
       }
@@ -20514,33 +20498,33 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md:44:doc_link:backend/.github/copilot-instructions.md \u203a Cross-half contracts",
+      "id": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md:44:doc_link:backend/AGENTS.md \u203a Cross-half contracts",
       "source": {
         "file": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md",
         "line": 44
       },
       "kind": "doc_link",
-      "value": "backend/.github/copilot-instructions.md \u203a Cross-half contracts",
-      "quote": "`backend/.github/copilot-instructions.md` \u203a _Cross-half contracts_",
+      "value": "backend/AGENTS.md \u203a Cross-half contracts",
+      "quote": "`backend/AGENTS.md` \u203a _Cross-half contracts_",
       "verify": {
         "method": "heading_pointer",
-        "target": "backend/.github/copilot-instructions.md",
+        "target": "backend/AGENTS.md",
         "heading": "Cross-half contracts",
         "base": "project:GR.PRIIS"
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md:44:path:backend/.github/copilot-instructions.md",
+      "id": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md:44:path:backend/AGENTS.md",
       "source": {
         "file": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md",
         "line": 44
       },
       "kind": "path",
-      "value": "backend/.github/copilot-instructions.md",
-      "quote": "the table is in `backend/.github/copilot-instructions.md` \u203a _Cross-half contracts_",
+      "value": "backend/AGENTS.md",
+      "quote": "the table is in `backend/AGENTS.md` \u203a _Cross-half contracts_",
       "verify": {
         "method": "path_exists",
-        "path": "backend/.github/copilot-instructions.md",
+        "path": "backend/AGENTS.md",
         "base": "project:GR.PRIIS",
         "type": "file"
       }

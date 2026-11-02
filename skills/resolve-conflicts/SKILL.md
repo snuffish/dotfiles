@@ -1,7 +1,7 @@
 ---
 name: resolve-conflicts
 description: "Resolves git merge, rebase, cherry-pick, and stash conflicts. Reconstructs intent from the merge base and both commit branches, preserves non-conflicting logic, regenerates lockfiles, runs verification builds/tests, and stages cleanly resolved hunks. Refuses destructive overwrites."
-argument-hint: "[no-commit | stage-only] [<paths…>]"
+argument-hint: "[commit | stage-only] [<paths…>]"
 ---
 
 # Skill: `/resolve-conflicts` — Git Conflict Resolution
@@ -16,10 +16,10 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 
 Read these before step 1:
 - `../_modules/core.md`
-- `../_modules/artifact-protocol.md`: writes no artifact by default; writes `<prefix>-conflict_resolution-<suffix>.md` when at least one conflict needed a user decision or the operation spans >10 conflicted files or multiple rebase stops
-- `../_modules/git-worktrees.md`
+- `../_modules/artifact-protocol.md`: only when the artifact threshold is met (at least one conflict needed a user decision, or the operation spans >10 conflicted files or multiple rebase stops), then writes `<prefix>-conflict_resolution-<suffix>.md`
+- `../_modules/git-worktrees.md`: only with `/worktrees` or an incoming `[worktree-context]` block
 
-- **Authorization**: invoking `/resolve-conflicts` authorizes editing conflicted files, regenerating lockfiles/codegen, staging resolved paths, and concluding the operation once Step 6's gates hold (unless `no-commit` / `stage-only` was passed). Never push or `stash drop`.
+- **Authorization**: invoking `/resolve-conflicts` authorizes editing conflicted files, regenerating lockfiles/codegen and staging resolved paths. It stops there (`stage-only`) by default; the `commit` argument, or a `/commit` that finds the merge resolved, concludes the operation once Step 6's gates hold. Never push or `stash drop`.
 - **Isolation**: resolve in the tree where the conflict lives (`repo-root`). If a skill worktree is active for the repo and the conflict is in the main checkout, ask first (`git-worktrees` › *Golden Invariants*). If `/worktrees` is passed to *start* a merge/rebase, run in a workspace worktree (`git-worktrees` › *Workspace Lifecycle*).
 
 ---
@@ -113,11 +113,11 @@ git -C "$R" diff --name-only --diff-filter=U   # must be empty
 git -C "$R" status --short                     # only intended paths staged; untracked files untouched
 ```
 
-Run the repo's build/type-check, unit tests, and fast lint gates. Fix any failure introduced by the merge; report pre-existing single-side failures.
+Run the repo's build/type-check, unit tests, and fast lint gates, and the project's *Post-merge checks* (`project-profile` › *Discovery*) when the base profile lists them. Fix any failure introduced by the merge; report pre-existing single-side failures.
 
 ### Step 6 — Conclude
 
-When `no-commit` / `stage-only` was not passed, `diff --check` and `--diff-filter=U` are clean, Step 5 gates pass, and no question is open:
+When `commit` was passed (or `/commit` is concluding a resolved merge), `diff --check` and `--diff-filter=U` are clean, Step 5 gates pass, and no question is open:
 
 | Operation | Conclude with | Then |
 |---|---|---|
