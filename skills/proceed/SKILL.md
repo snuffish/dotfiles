@@ -2,7 +2,7 @@
 name: proceed
 description: "Authorizes and executes the next step of a gated read-only command."
 disable-model-invocation: true
-argument-hint: "[option | phase | step | extra instructions]"
+argument-hint: "[artifact | option | phase | step | extra instructions]"
 model: sonnet
 effort: medium
 ---
@@ -47,9 +47,11 @@ Look back through this session for the most recent gated handoff that has not ye
 | `suggestion`                        | Numbered approaches with a recommendation (option 1) | Act on option 1, or the option a bare number in the arguments picks (`/proceed 2`): through `/plan` when the change is non-trivial, otherwise directly                                                                                                           |
 | `investigate`                       | Findings with a handoff                              | Draft the plan with `/plan`; implementing it needs a further `/proceed`                                                                                                                                                                                          |
 | `plan`                              | A plan in `Awaiting User Review`                     | Implement the plan                                                                                                                                                                                                                                               |
+| `handoff`                           | A handoff artifact (`<prefix>-handoff-<suffix>.md`)   | Execute the pending next steps named in the handoff                                                                                                                                                                                                              |
 
 Then:
 
+- **Named artifact in arguments**: when the user provides an artifact (e.g. `/proceed <prefix>-handoff-<suffix>.md` or `/proceed <prefix>-implementation_plan-<suffix>.md`), resolve the pending item directly from the named artifact file on disk without requiring prior in-session transcript context.
 - **Nothing pending** → say so in one line and stop. Do not invent work.
 - **More than one pending item** → list them (Command, artifact link, one line each) and ask which one. Do not guess.
 - **Verdict `NEEDS REVISION` or `BLOCKED`** → name the blocking findings in one line each and ask whether to proceed anyway, fix them first, or stop — unless the arguments already say.

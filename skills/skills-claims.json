@@ -4380,7 +4380,7 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "| General (top level) | Command | 41 | `artifacts`, `clean`, `code-documentation`, `code",
+      "quote": "| General (top level) | Command | 42 | `artifacts`, `clean`, `code-documentation`, `code",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
@@ -4395,7 +4395,7 @@
       },
       "kind": "skill_ref",
       "value": "clean",
-      "quote": "op level) | Command | 41 | `artifacts`, `clean`, `code-documentation`, `code-review`,",
+      "quote": "op level) | Command | 42 | `artifacts`, `clean`, `code-documentation`, `code-review`,",
       "verify": {
         "method": "skill_exists",
         "name": "clean",
@@ -4410,7 +4410,7 @@
       },
       "kind": "skill_ref",
       "value": "code-documentation",
-      "quote": " | Command | 41 | `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`,",
+      "quote": " | Command | 42 | `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`,",
       "verify": {
         "method": "skill_exists",
         "name": "code-documentation",
@@ -4485,7 +4485,7 @@
       },
       "kind": "skill_ref",
       "value": "explain",
-      "quote": "ompt`, `create-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `implem",
+      "quote": "ompt`, `create-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `handoff`",
       "verify": {
         "method": "skill_exists",
         "name": "explain",
@@ -4500,7 +4500,7 @@
       },
       "kind": "skill_ref",
       "value": "export-file",
-      "quote": "ate-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `implement-feature`, `",
+      "quote": "ate-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `handoff`",
       "verify": {
         "method": "skill_exists",
         "name": "export-file",
@@ -4515,10 +4515,25 @@
       },
       "kind": "skill_ref",
       "value": "expressive",
-      "quote": "eate-ticket`, `explain`, `export-file`, `expressive`, `implement-feature`, `insights`, `in",
+      "quote": "eate-ticket`, `explain`, `export-file`, `expressive`, `handoff`, `implement-feature`",
       "verify": {
         "method": "skill_exists",
         "name": "expressive",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/README.md:43:skill_ref:handoff",
+      "source": {
+        "file": "skills/README.md",
+        "line": 43
+      },
+      "kind": "skill_ref",
+      "value": "handoff",
+      "quote": "`export-file`, `expressive`, `handoff`, `implement-feature`, `insights`",
+      "verify": {
+        "method": "skill_exists",
+        "name": "handoff",
         "base": "repo"
       }
     },
@@ -4534,7 +4549,7 @@
       },
       "kind": "skill_ref",
       "value": "implement-feature",
-      "quote": "`explain`, `export-file`, `expressive`, `implement-feature`, `insights`, `investigate`, `manual-t",
+      "quote": "`export-file`, `expressive`, `handoff`, `implement-feature`, `insights`, `invest",
       "verify": {
         "method": "skill_exists",
         "name": "implement-feature",
@@ -4549,7 +4564,7 @@
       },
       "kind": "skill_ref",
       "value": "investigate",
-      "quote": "sive`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `no-worktrees`, `o",
+      "quote": "handoff`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `no-wor",
       "verify": {
         "method": "skill_exists",
         "name": "investigate",
@@ -19982,13 +19997,13 @@
         "line": 39
       },
       "kind": "count",
-      "value": "42",
-      "quote": "47 skills total \u2014 42 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "value": "43",
+      "quote": "48 skills total \u2014 43 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/*/SKILL.md",
         "base": "repo",
-        "expected": 42,
+        "expected": 43,
         "op": "eq"
       }
     },
@@ -20000,7 +20015,7 @@
       },
       "kind": "count",
       "value": "5 GR.PRIIS project skills",
-      "quote": "47 skills total \u2014 42 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "48 skills total \u2014 43 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/Projects/GR.PRIIS/*/SKILL.md",
@@ -20017,7 +20032,7 @@
       },
       "kind": "count",
       "value": "8 Modules",
-      "quote": "47 skills total \u2014 42 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "48 skills total \u2014 43 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/_modules/*.md",
@@ -20147,7 +20162,7 @@
       },
       "kind": "skill_ref",
       "value": "insights",
-      "quote": "le`, `expressive`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `no",
+      "quote": "`expressive`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-testi",
       "verify": {
         "method": "skill_exists",
         "name": "insights",

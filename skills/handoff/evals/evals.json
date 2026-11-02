@@ -1,0 +1,75 @@
+{
+  "skill_name": "handoff",
+  "evals": [
+    {
+      "id": 0,
+      "name": "standard-session-wrap-up",
+      "prompt": "I'm wrapping up this session. Run /handoff so another agent can continue where we left off.",
+      "expected_output": "A <prefix>-handoff-<suffix>.md artifact at workspace root with git status, completed items, and numbered next steps for /proceed.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "creates_handoff_artifact",
+          "text": "Creates a markdown file matching <prefix>-handoff-<suffix>.md"
+        },
+        {
+          "name": "has_ownership_marker",
+          "text": "Artifact line 1 contains <!-- artifact-owner: ... -->"
+        },
+        {
+          "name": "has_status_awaiting_proceed",
+          "text": "Artifact header contains Status: Awaiting /proceed"
+        },
+        {
+          "name": "captures_git_state",
+          "text": "Artifact includes git branch and commit information"
+        },
+        {
+          "name": "has_numbered_next_steps",
+          "text": "Artifact includes concrete numbered next steps"
+        },
+        {
+          "name": "has_proceed_gate",
+          "text": "Artifact ends with Next Step Gate instructing /proceed <artifact>"
+        },
+        {
+          "name": "includes_chat_link_block",
+          "text": "Chat response includes an artifact-protocol link block"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "focused-feature-handoff",
+      "prompt": "Run /handoff fix-auth-token-refresh to prepare the next session specifically for fixing auth token refresh edge cases.",
+      "expected_output": "A <prefix>-handoff-fix-auth-token-refresh.md artifact at workspace root tailored to auth token refresh with numbered next steps for /proceed.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "creates_handoff_artifact",
+          "text": "Creates a markdown file matching <prefix>-handoff-<suffix>.md"
+        },
+        {
+          "name": "uses_specified_suffix",
+          "text": "Artifact filename or header uses suffix fix-auth-token-refresh"
+        },
+        {
+          "name": "has_ownership_marker",
+          "text": "Artifact line 1 contains <!-- artifact-owner: ... -->"
+        },
+        {
+          "name": "has_status_awaiting_proceed",
+          "text": "Artifact header contains Status: Awaiting /proceed"
+        },
+        {
+          "name": "tailors_next_steps_to_focus",
+          "text": "Next steps specifically address auth token refresh"
+        },
+        {
+          "name": "has_proceed_gate",
+          "text": "Artifact ends with Next Step Gate instructing /proceed <artifact>"
+        }
+      ]
+    }
+  ]
+}
