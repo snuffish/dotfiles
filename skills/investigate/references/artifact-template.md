@@ -105,13 +105,7 @@ Written at the **workspace root** via `artifact-protocol` › _Claim_ only under
 
 ---
 
-## 10. Open Questions for User
-
-<Decisions that belong exclusively to the user, or genuine blockers. Leave empty if none.>
-
----
-
-## 11. Plan Seed
+## 10. Plan Seed
 
 <High-level structural outline for /plan to build upon. No phases, no task lists, no code snippets.>
 
@@ -119,4 +113,15 @@ Written at the **workspace root** via `artifact-protocol` › _Claim_ only under
 - 2. Add database schema migration with backward-compatible defaults.
 - 3. Implement business handler mirroring prior art in `SiblingFeature.cs`.
 - 4. Wire client state hook and update frontend component.
+
+---
+
+## 11. Open Questions for User
+
+<Decisions that belong exclusively to the user, or genuine blockers. Leave empty if none.>
+
+- **<Question 1>?**
+  - **Rec:** <Concise recommended choice and rationale>
+- **<Question 2>?**
+  - **Rec:** <Concise recommended choice and rationale>
 ```

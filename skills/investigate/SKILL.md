@@ -60,7 +60,7 @@ On-demand references (`references/`):
 ### Case A: Bare Command (`/investigate` with no arguments)
 
 1. **Locate Existing Investigation**: scan `<prefix>-investigation-*.md` at the **workspace root** and select the family per `artifact-protocol` › _Claim_ › _Readers & family selection_.
-2. **If Found**: read real anchor line numbers (`grep -n '^#\{1,3\} ' <file>`) and render the `artifact-protocol` › _Chat link block_ with links to `Executive Summary (TL;DR)`, `Current-State Architecture`, `Options & Trade-offs`, `Blind Spots`, `Confidence Ledger`, and `Plan Seed`, plus `**Status:** Complete | Blocked on open questions`.
+2. **If Found**: read real anchor line numbers (`grep -n '^#\{1,3\} ' <file>`) and render the `artifact-protocol` › _Chat link block_ with links to `Executive Summary (TL;DR)`, `Current-State Architecture`, `Options & Trade-offs`, `Blind Spots`, `Confidence Ledger`, `Plan Seed`, and `Open Questions for User`, plus `**Status:** Complete | Blocked on open questions`.
 3. **If Not Found**: inform the user and prompt for the topic, module, or feature to investigate.
 
 ### Case B: Command With Instructions (`/investigate <topic>`)
@@ -155,7 +155,7 @@ Per `core` › _Golden invariants_, keep chat output concise and high-signal; ev
 ### Artifact response (`--file` or `--deep`)
 
 1. **Headline**: 1–2 sentences summarizing the critical finding and primary direction, plus at most one visual from the artifact (usually §3).
-2. **Link block**: the `artifact-protocol` › _Chat link block_ with real line numbers (`grep -n '^#\{1,3\} ' <file>`) for `Executive Summary`, `Options & Trade-offs`, `Blind Spots`, `Confidence Ledger`, and `Plan Seed`.
+2. **Link block**: the `artifact-protocol` › _Chat link block_ with real line numbers (`grep -n '^#\{1,3\} ' <file>`) for `Executive Summary`, `Options & Trade-offs`, `Blind Spots`, `Confidence Ledger`, `Plan Seed`, and `Open Questions for User`.
 3. **Primary Recommendation & #1 Blind Spot** (or note `--no-blindspot`) and **Open Questions**.
 4. **Handoff Line**: `**Next Step:** Type /plan <suffix> to convert the Plan Seed into a detailed implementation plan, or /show-me <aspect> for another view of the findings.`
 
