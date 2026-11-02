@@ -493,6 +493,105 @@ def locate(repo: Repo, claim: dict) -> int | None:
     return next((n for n, text in enumerate(lines, 1) if quote in text), None)
 
 
+def extract_quote_window(line_text: str, target: str, max_len: int = 140) -> str:
+    cleaned = " ".join(line_text.split())
+    if len(cleaned) <= max_len:
+        return cleaned
+    pos = cleaned.find(target)
+    if pos == -1:
+        return cleaned[:max_len]
+    start = max(0, pos - (max_len - len(target)) // 2)
+    end = min(len(cleaned), start + max_len)
+    if end - start < max_len:
+        start = max(0, end - max_len)
+    return cleaned[start:end].strip()
+
+
+def reconcile_claim(claim: dict, repo: Repo, checker: Checker) -> bool:
+    """Attempt to reconcile a stale or drifted claim in-place. Return True if updated."""
+    src_file = claim["source"]["file"]
+    if not repo.exists(src_file, "file"):
+        return False
+    lines = repo.text(src_file).splitlines()
+    orig_line = claim["source"]["line"]
+    kind = claim.get("kind", "")
+    method = claim.get("verify", {}).get("method", "")
+    updated = False
+
+    # 1. Update count claim if count verification failed or drifted
+    if method == "count":
+        v = claim["verify"]
+        base = v.get("base", "repo")
+        target_repo, _ = checker.repos.for_base(base)
+        if target_repo is not None:
+            effective_base = "repo" if base.startswith("project:") else base
+            if "glob" in v:
+                pat = resolve(effective_base, v["glob"], src_file) or v["glob"]
+                n = len(target_repo.glob(pat))
+            else:
+                n = checker.grep_hits(target_repo, v, src_file)[1]
+            if v.get("expected") != n:
+                v["expected"] = n
+                val = str(claim.get("value", ""))
+                m = re.match(r"^\d+(.*)", val)
+                if m:
+                    claim["value"] = f"{n}{m.group(1)}"
+                else:
+                    claim["value"] = str(n)
+                updated = True
+
+    # 2. Check if quote needs re-anchoring
+    curr_line = locate(repo, claim)
+    if curr_line is not None:
+        if curr_line != orig_line:
+            claim["source"]["line"] = curr_line
+            claim["id"] = f"{src_file}:{curr_line}:{kind}:{claim.get('value', '')}"[:200]
+            updated = True
+        return updated
+
+    # Quote is stale (not found in source). Try to find target in adjacent lines (±10)
+    candidates = []
+    if kind == "skill_ref":
+        target = claim.get("verify", {}).get("name") or claim.get("value")
+        if target:
+            candidates.extend([f"`{target}`", f"/{target}", target])
+    elif kind in ("symbol", "path"):
+        val = claim.get("value")
+        if val:
+            candidates.extend([f"`{val}`", val])
+    elif kind == "count":
+        val = claim.get("value")
+        v = claim.get("verify", {})
+        candidates.extend([str(v.get("expected", "")), str(val), "skills total", "Modules"])
+
+    search_indices = sorted(
+        range(max(0, orig_line - 11), min(len(lines), orig_line + 10)),
+        key=lambda i: abs(i + 1 - orig_line)
+    )
+
+    found_idx = None
+    matched_target = ""
+    for idx in search_indices:
+        line_text = lines[idx]
+        for cand in candidates:
+            if cand and cand in line_text:
+                found_idx = idx
+                matched_target = cand
+                break
+        if found_idx is not None:
+            break
+
+    if found_idx is not None:
+        new_line = found_idx + 1
+        new_quote = extract_quote_window(lines[found_idx], matched_target)
+        claim["source"]["line"] = new_line
+        claim["quote"] = new_quote
+        claim["id"] = f"{src_file}:{new_line}:{kind}:{claim.get('value', '')}"[:200]
+        return True
+
+    return updated
+
+
 def covered_markdown_files(repo: Repo, file_globs: list[str] | None, project: str | None) -> list[str]:
     files = [
         f
@@ -637,6 +736,7 @@ def main() -> int:
     parser.add_argument("--strict", action="store_true", help="warnings fail the run too")
     parser.add_argument("--mcp", action="store_true", help="start each configured MCP server and list its tools")
     parser.add_argument("--no-auto", action="store_true", help="skip automatic link, #anchor, and › *Heading* scan")
+    parser.add_argument("--update-stale", action="store_true", help="automatically reconcile stale quotes and shifted line numbers in claims")
     args = parser.parse_args()
 
     claims_path = args.claims.resolve()
@@ -649,6 +749,20 @@ def main() -> int:
     except (OSError, ValueError, KeyError) as e:
         print(f"Cannot read {args.claims}: {e}", file=sys.stderr)
         return 2
+
+    repos = MultiRepo(repo_root)
+    checker = Checker(repos, args.mcp)
+
+    if args.update_stale:
+        reconciled = 0
+        for claim in all_claims:
+            if reconcile_claim(claim, repos.primary, checker):
+                reconciled += 1
+        if reconciled:
+            raw = json.dumps(data, indent=2) + "\n"
+            claims_path.write_text(raw, encoding="utf-8")
+            print(f"Reconciled {reconciled} stale/drifted claim(s) in {claims_path.name}")
+
     format_ok = raw == json.dumps(data, indent=2) + "\n"
 
     claims = list(all_claims)
@@ -663,8 +777,6 @@ def main() -> int:
     if args.file:
         claims = [c for c in claims if any(fnmatch.fnmatch(c["source"]["file"], g) for g in args.file)]
 
-    repos = MultiRepo(repo_root)
-    checker = Checker(repos, args.mcp)
     results = []
     for claim in claims:
         line = locate(repos.primary, claim)

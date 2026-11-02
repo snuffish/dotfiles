@@ -255,18 +255,27 @@ def lint(root):
 
 def discover_agents_skills(agents_dir, registry_skills):
     """Skills in ~/.agents/skills; registry skills take precedence on name clash."""
-    found, shadowed = {}, []
+    found, shadowed, diverged = {}, [], []
     if not os.path.isdir(agents_dir):
-        return found, shadowed
+        return found, shadowed, diverged
     for name in sorted(os.listdir(agents_dir)):
         d = os.path.join(agents_dir, name)
-        if not os.path.isfile(os.path.join(d, 'SKILL.md')):
+        agents_skill_md = os.path.join(d, 'SKILL.md')
+        if not os.path.isfile(agents_skill_md):
             continue
         if name in registry_skills:
             shadowed.append(name)
+            reg_dir = registry_skills[name]['path']
+            reg_skill_md = os.path.join(reg_dir, 'SKILL.md')
+            if os.path.isfile(reg_skill_md):
+                try:
+                    if not filecmp.cmp(agents_skill_md, reg_skill_md, shallow=False):
+                        diverged.append((name, agents_skill_md, reg_skill_md))
+                except OSError:
+                    pass
         else:
             found[name] = {'path': os.path.realpath(d), 'project': None, 'link': True}
-    return found, shadowed
+    return found, shadowed, diverged
 
 
 def discover_plugin_skills(plugins_file, settings_file, existing_skills):
@@ -733,7 +742,7 @@ def main():
         targets = dict(LOADER_TARGETS)
 
     skills, errors, warnings = lint(root)
-    agents_skills, agents_shadowed = discover_agents_skills(agents_dir, skills)
+    agents_skills, agents_shadowed, agents_diverged = discover_agents_skills(agents_dir, skills)
     existing_for_plugins = set(skills.keys()) | set(agents_skills.keys())
     plugin_skills, plugin_shadowed = discover_plugin_skills(plugins_file, plugins_settings, existing_for_plugins)
     claude_plugin_names = installed_plugin_skill_names(plugins_file)
@@ -771,7 +780,11 @@ def main():
     config_failed = apply_config_links(all_config_actions) if args.apply else []
 
     ws_lines, ws_warnings = check_workspaces(root, skills)
-    warnings += ws_warnings + check_global_antigravity(agents_dir, targets)
+    diverged_warnings = [
+        f'{tilde(a_path)}: shadowed skill differs from registry ({tilde(r_path)})'
+        for _, a_path, r_path in agents_diverged
+    ]
+    warnings += ws_warnings + check_global_antigravity(agents_dir, targets) + diverged_warnings
 
     st = Style(sys.stdout.isatty() and not os.environ.get('NO_COLOR'))
     general = sum(m['project'] is None for m in skills.values())
