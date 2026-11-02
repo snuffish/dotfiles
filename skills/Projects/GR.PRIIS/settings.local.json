@@ -1,0 +1,44 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(*db.py*--yes*)",
+      "Bash(*api.py*--yes*)",
+      "Bash(*create_ticket.py*--yes*)",
+      "Bash(*advance_ticket.py*--yes*)",
+      "Bash(*run_evals.py*)",
+      "Bash(docker exec *sqlcmd*)",
+      "PowerShell(*db.py*--yes*)",
+      "PowerShell(*api.py*--yes*)",
+      "PowerShell(*create_ticket.py*--yes*)",
+      "PowerShell(*advance_ticket.py*--yes*)",
+      "PowerShell(*run_evals.py*)",
+      "PowerShell(docker exec *sqlcmd*)",
+      "Bash(python3 -c ' *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(python3 -I .claude/scripts/check-skill-drift.py)",
+      "Bash(python3 -I .claude/scripts/check_reference_manifests.py)",
+      "Bash(git log *)",
+      "Bash(command -v az)",
+      "Bash(az account *)",
+      "Bash(az boards *)",
+      "Bash(az devops *)",
+      "Bash(az repos *)",
+      "Bash(az version *)",
+      "Bash(az extension *)",
+      "Bash(az rest *)",
+      "Bash(az repos pr update:*)",
+      "Bash(git:*)",
+      "Bash(dotnet:*)",
+      "Bash(npm:*)",
+      "Bash(az boards:*)",
+      "Bash(az repos:*)",
+      "Bash(docker info *)",
+      "Bash(curl -s -m 2 http://127.0.0.1:5033/swagger/v1/swagger.json)",
+      "mcp__plugin_claude-mem_mcp-search__mem_search"
+    ]
+  },
+  "skillOverrides": {
+    "find-skills": "on"
+  }
+}
