@@ -643,10 +643,13 @@ def main() -> int:
     repo_root = claims_path.parents[1] if claims_path.parent.name == "skills" else DEFAULT_REPO
 
     try:
-        all_claims = json.loads(claims_path.read_text(encoding="utf-8"))["claims"]
+        raw = claims_path.read_text(encoding="utf-8")
+        data = json.loads(raw)
+        all_claims = data["claims"]
     except (OSError, ValueError, KeyError) as e:
         print(f"Cannot read {args.claims}: {e}", file=sys.stderr)
         return 2
+    format_ok = raw == json.dumps(data, indent=2) + "\n"
 
     claims = list(all_claims)
     if args.project:
@@ -683,6 +686,19 @@ def main() -> int:
                 "value": claim.get("value", ""),
                 "status": status,
                 "detail": detail,
+            }
+        )
+
+    if not format_ok:
+        results.append(
+            {
+                "id": f"format:{claims_path.name}",
+                "file": claims_path.name,
+                "line": 1,
+                "kind": "format",
+                "value": "",
+                "status": "fail",
+                "detail": 'not canonical: write with json.dumps(data, indent=2) + "\\n" (ASCII-escaped, trailing newline)',
             }
         )
 

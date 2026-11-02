@@ -2,6 +2,8 @@
 
 `skills/skills-claims.json` inside `<registry>` is `{"version": 1, "root": "..", "claims": [ ... ]}`. All `source.file` paths are relative to the `~/.terminal` repo root (above `skills/`). [`scripts/check_skill_drift.py`](../scripts/check_skill_drift.py) reads it.
 
+The file is written with `json.dumps(data, indent=2) + "\n"` (ASCII-escaped, trailing newline); the checker fails with a `format` row when it is not.
+
 ## What counts as a claim
 
 Anything the text says exists or has a specific value that could become false when the registry, dotfiles, or a target project repo changes:
@@ -59,7 +61,7 @@ Skip placeholders (`<id>`, `<prefix>`, `{Domain}`), code a sample invents (`Foo`
 | `glob_exists` | `glob`, `base`, optional `min` (default 1) | the glob matches at least `min` tracked files (`**`, `*`, `?`, `{a,b}`) |
 | `link_resolves` | `href` as written, `base` (default `"file_dir"`) | the target exists and its `#anchor` matches a GitHub heading slug or `<a id="...">` |
 | `heading_pointer` | `target` (Module/skill name or path), `heading`, optional `base` | `target` resolves to a markdown file and `heading` matches a section heading or bold anchor (`**…**`) in it (or its linked `references/*.md`) |
-| `grep` | `pattern` (Python regex, multiline), `paths` (globs), `base`, `expect` (`present`/`absent`) | the regex is found (or not) in the matching files |
+| `grep` | `pattern` (Python regex, compiled with `re.MULTILINE` only, no DOTALL: use `[\s\S]` or `(?:.*\n)` to span lines), `paths` (globs), `base`, `expect` (`present`/`absent`) | the regex is found (or not) in the matching files |
 | `count` | `glob`, or `pattern` + `paths`; `base`, `expected`, optional `op` (`eq`/`gte`/`lte`) | the number of files or regex matches satisfies `op` |
 | `npm_script` | `package_dir`, `script`, optional `base` | the script is in that `package.json` |
 | `skill_exists` | `name`, optional `base` (`repo` or `project:<Project>`) | `skills/<name>/SKILL.md` (or `.claude/skills/<name>/SKILL.md` in `project:<Project>`) exists |
