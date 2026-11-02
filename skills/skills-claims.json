@@ -867,70 +867,6 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:doc_link:backend/.github/copilot-instructions.md \u203a Cross-half contracts",
-      "source": {
-        "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 88
-      },
-      "kind": "doc_link",
-      "value": "backend/.github/copilot-instructions.md \u203a Cross-half contracts",
-      "quote": "`backend/.github/copilot-instructions.md` \u203a _Cross-half contracts_",
-      "verify": {
-        "method": "heading_pointer",
-        "target": "backend/.github/copilot-instructions.md",
-        "heading": "Cross-half contracts",
-        "base": "repo"
-      }
-    },
-    {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:path:backend/CLAUDE.md",
-      "source": {
-        "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 88
-      },
-      "kind": "path",
-      "value": "backend/CLAUDE.md",
-      "quote": "ove: the rulebooks per half (`backend/CLAUDE.md`, `frontend/CLAUDE.md` \u2192 `.github/copilot-instructions.md`), `backend/.github/copilot-instructions.md`",
-      "verify": {
-        "method": "path_exists",
-        "path": "backend/CLAUDE.md",
-        "base": "project:GR.PRIIS",
-        "type": "file"
-      }
-    },
-    {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:path:frontend/CLAUDE.md",
-      "source": {
-        "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 88
-      },
-      "kind": "path",
-      "value": "frontend/CLAUDE.md",
-      "quote": "r half (`backend/CLAUDE.md`, `frontend/CLAUDE.md` \u2192 `.github/copilot-instructions.md`), `backend/.github/copilot-instructions.md` \u203a _Cross-half contra",
-      "verify": {
-        "method": "path_exists",
-        "path": "frontend/CLAUDE.md",
-        "base": "project:GR.PRIIS",
-        "type": "file"
-      }
-    },
-    {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:path:backend/.github/copilot-instructions.md",
-      "source": {
-        "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 88
-      },
-      "kind": "path",
-      "value": "backend/.github/copilot-instructions.md",
-      "quote": "b/copilot-instructions.md`), `backend/.github/copilot-instructions.md` \u203a _Cross-half contracts_, and the References for the areas the diff touches (`p",
-      "verify": {
-        "method": "path_exists",
-        "path": "backend/.github/copilot-instructions.md",
-        "base": "project:GR.PRIIS",
-        "type": "file"
-      }
-    },
-    {
       "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:114:doc_link:priis-profile \u203a Report language",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
@@ -3193,22 +3129,6 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md:44:doc_link:backend/.github/copilot-instructions.md \u203a Cross-half contracts",
-      "source": {
-        "file": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md",
-        "line": 44
-      },
-      "kind": "doc_link",
-      "value": "backend/.github/copilot-instructions.md \u203a Cross-half contracts",
-      "quote": "`backend/.github/copilot-instructions.md` \u203a _Cross-half contracts_",
-      "verify": {
-        "method": "heading_pointer",
-        "target": "backend/.github/copilot-instructions.md",
-        "heading": "Cross-half contracts",
-        "base": "repo"
-      }
-    },
-    {
       "id": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md:44:path:GLOSSARY.md",
       "source": {
         "file": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md",
@@ -3221,22 +3141,6 @@
         "method": "path_exists",
         "path": "GLOSSARY.md",
         "base": "repo",
-        "type": "file"
-      }
-    },
-    {
-      "id": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md:44:path:backend/.github/copilot-instructions.md",
-      "source": {
-        "file": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md",
-        "line": 44
-      },
-      "kind": "path",
-      "value": "backend/.github/copilot-instructions.md",
-      "quote": "not people: the table is in `backend/.github/copilot-instructions.md` \u203a _Cross-half contracts_ (Samir = PlacementManager, Lena = CaseworkerGuided, In",
-      "verify": {
-        "method": "path_exists",
-        "path": "backend/.github/copilot-instructions.md",
-        "base": "project:GR.PRIIS",
         "type": "file"
       }
     },
@@ -19449,25 +19353,6 @@
       }
     },
     {
-      "id": "skills/verify-assumptions/SKILL.md:71:doc_link:core \u203a Codebase investigation",
-      "source": {
-        "file": "skills/verify-assumptions/SKILL.md",
-        "line": 71,
-        "also_lines": [
-          98
-        ]
-      },
-      "kind": "doc_link",
-      "value": "core \u203a Codebase investigation",
-      "quote": "`core` \u203a *Codebase investigation*",
-      "verify": {
-        "method": "heading_pointer",
-        "target": "core",
-        "heading": "Codebase investigation",
-        "base": "repo"
-      }
-    },
-    {
       "id": "skills/verify-assumptions/SKILL.md:83:doc_link:fan-out \u203a Aggregation",
       "source": {
         "file": "skills/verify-assumptions/SKILL.md",
@@ -19480,22 +19365,6 @@
         "method": "heading_pointer",
         "target": "fan-out",
         "heading": "Aggregation",
-        "base": "repo"
-      }
-    },
-    {
-      "id": "skills/verify-assumptions/SKILL.md:111:doc_link:artifact-protocol \u203a Chat link block",
-      "source": {
-        "file": "skills/verify-assumptions/SKILL.md",
-        "line": 111
-      },
-      "kind": "doc_link",
-      "value": "artifact-protocol \u203a Chat link block",
-      "quote": "`artifact-protocol` \u203a _Chat link block_",
-      "verify": {
-        "method": "heading_pointer",
-        "target": "artifact-protocol",
-        "heading": "Chat link block",
         "base": "repo"
       }
     },
@@ -20530,6 +20399,246 @@
       "verify": {
         "method": "skill_exists",
         "name": "priis-backend-dry",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:doc_link:backend/AGENTS.md \u203a Cross-half contracts",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
+        "line": 88
+      },
+      "kind": "doc_link",
+      "value": "backend/AGENTS.md \u203a Cross-half contracts",
+      "quote": "`backend/AGENTS.md` \u203a _Cross-half contracts_",
+      "verify": {
+        "method": "heading_pointer",
+        "target": "backend/AGENTS.md",
+        "heading": "Cross-half contracts",
+        "base": "project:GR.PRIIS"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:path:backend/CLAUDE.md",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
+        "line": 88
+      },
+      "kind": "path",
+      "value": "backend/CLAUDE.md",
+      "quote": "the rulebooks per half (`backend/CLAUDE.md`, `frontend/CLAUDE.md` \u2192 the `AGENTS.md` beside each)",
+      "verify": {
+        "method": "path_exists",
+        "path": "backend/CLAUDE.md",
+        "base": "project:GR.PRIIS",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:path:frontend/CLAUDE.md",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
+        "line": 88
+      },
+      "kind": "path",
+      "value": "frontend/CLAUDE.md",
+      "quote": "the rulebooks per half (`backend/CLAUDE.md`, `frontend/CLAUDE.md` \u2192 the `AGENTS.md` beside each)",
+      "verify": {
+        "method": "path_exists",
+        "path": "frontend/CLAUDE.md",
+        "base": "project:GR.PRIIS",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:path:backend/AGENTS.md",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
+        "line": 88
+      },
+      "kind": "path",
+      "value": "backend/AGENTS.md",
+      "quote": "`backend/AGENTS.md` \u203a _Cross-half contracts_",
+      "verify": {
+        "method": "path_exists",
+        "path": "backend/AGENTS.md",
+        "base": "project:GR.PRIIS",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:path:frontend/AGENTS.md",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
+        "line": 88
+      },
+      "kind": "path",
+      "value": "frontend/AGENTS.md",
+      "quote": "`frontend/CLAUDE.md` \u2192 the `AGENTS.md` beside each",
+      "verify": {
+        "method": "path_exists",
+        "path": "frontend/AGENTS.md",
+        "base": "project:GR.PRIIS",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:doc_link:core \u203a Precedence",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
+        "line": 88
+      },
+      "kind": "doc_link",
+      "value": "core \u203a Precedence",
+      "quote": "`core` \u203a _Precedence_",
+      "verify": {
+        "method": "heading_pointer",
+        "target": "core",
+        "heading": "Precedence",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md:44:doc_link:backend/AGENTS.md \u203a Cross-half contracts",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md",
+        "line": 44
+      },
+      "kind": "doc_link",
+      "value": "backend/AGENTS.md \u203a Cross-half contracts",
+      "quote": "`backend/AGENTS.md` \u203a _Cross-half contracts_",
+      "verify": {
+        "method": "heading_pointer",
+        "target": "backend/AGENTS.md",
+        "heading": "Cross-half contracts",
+        "base": "project:GR.PRIIS"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md:44:path:backend/AGENTS.md",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md",
+        "line": 44
+      },
+      "kind": "path",
+      "value": "backend/AGENTS.md",
+      "quote": "the table is in `backend/AGENTS.md` \u203a _Cross-half contracts_",
+      "verify": {
+        "method": "path_exists",
+        "path": "backend/AGENTS.md",
+        "base": "project:GR.PRIIS",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/verify-assumptions/SKILL.md:66:doc_link:references/source-routing.md",
+      "source": {
+        "file": "skills/verify-assumptions/SKILL.md",
+        "line": 66
+      },
+      "kind": "doc_link",
+      "value": "references/source-routing.md",
+      "quote": "(references/source-routing.md)",
+      "verify": {
+        "method": "link_resolves",
+        "href": "references/source-routing.md",
+        "base": "file_dir"
+      }
+    },
+    {
+      "id": "skills/verify-assumptions/SKILL.md:77:doc_link:references/source-routing.md \u203a Version match",
+      "source": {
+        "file": "skills/verify-assumptions/SKILL.md",
+        "line": 77,
+        "also_lines": [
+          71
+        ]
+      },
+      "kind": "doc_link",
+      "value": "references/source-routing.md \u203a Version match",
+      "quote": "`references/source-routing.md` \u203a *Version match*",
+      "verify": {
+        "method": "heading_pointer",
+        "target": "references/source-routing.md",
+        "heading": "Version match",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/verify-assumptions/SKILL.md:91:doc_link:references/report-template.md",
+      "source": {
+        "file": "skills/verify-assumptions/SKILL.md",
+        "line": 91
+      },
+      "kind": "doc_link",
+      "value": "references/report-template.md",
+      "quote": "(references/report-template.md)",
+      "verify": {
+        "method": "link_resolves",
+        "href": "references/report-template.md",
+        "base": "file_dir"
+      }
+    },
+    {
+      "id": "skills/verify-assumptions/references/source-routing.md:10:doc_link:core \u203a Codebase investigation",
+      "source": {
+        "file": "skills/verify-assumptions/references/source-routing.md",
+        "line": 10
+      },
+      "kind": "doc_link",
+      "value": "core \u203a Codebase investigation",
+      "quote": "`core` \u203a *Codebase investigation*",
+      "verify": {
+        "method": "heading_pointer",
+        "target": "core",
+        "heading": "Codebase investigation",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/verify-assumptions/references/report-template.md:3:doc_link:core \u203a Codebase investigation",
+      "source": {
+        "file": "skills/verify-assumptions/references/report-template.md",
+        "line": 3
+      },
+      "kind": "doc_link",
+      "value": "core \u203a Codebase investigation",
+      "quote": "`core` \u203a *Codebase investigation*",
+      "verify": {
+        "method": "heading_pointer",
+        "target": "core",
+        "heading": "Codebase investigation",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/verify-assumptions/references/report-template.md:20:doc_link:artifact-protocol \u203a Chat link block",
+      "source": {
+        "file": "skills/verify-assumptions/references/report-template.md",
+        "line": 20
+      },
+      "kind": "doc_link",
+      "value": "artifact-protocol \u203a Chat link block",
+      "quote": "`artifact-protocol` \u203a _Chat link block_",
+      "verify": {
+        "method": "heading_pointer",
+        "target": "artifact-protocol",
+        "heading": "Chat link block",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/verify-assumptions/references/report-template.md:15:skill_ref:proceed",
+      "source": {
+        "file": "skills/verify-assumptions/references/report-template.md",
+        "line": 15
+      },
+      "kind": "skill_ref",
+      "value": "proceed",
+      "quote": "**Proposed edits (after /proceed):**",
+      "verify": {
+        "method": "skill_exists",
+        "name": "proceed",
         "base": "repo"
       }
     }

@@ -63,25 +63,18 @@ Docs only count for the version actually in use. Resolve it before verifying: th
 
 ### Step 3: Route each claim to its authoritative source
 
-| Domain | Authoritative source | Leads only, never evidence |
-|---|---|---|
-| Claude Code, Agent SDK, Claude API | The official docs (`code.claude.com/docs`, `docs.claude.com`); in Claude Code delegate to the `claude-code-guide` agent | Blog posts, forum answers, model memory |
-| Libraries and frameworks | The official docs at the pinned version, then the package's source or type definitions (`node_modules/…`, the NuGet package, the GitHub tag) | Stack Overflow, tutorials |
-| Platforms (Azure DevOps, GitHub, cloud services) | Official REST and CLI reference, `--help` output | Third-party wrappers |
-| The codebase | The code itself at the current head (`core` › *Codebase investigation* › *Navigation*) | Comments, READMEs that may have drifted |
-| This machine | The config files and read-only commands that show the real state (settings files, `env`, `--version`) | Assumed defaults |
-
-When the docs are silent, the source code is the next authority. Note the gap: "undocumented but the source does X" is a weaker basis than a documented guarantee.
+Read [`references/source-routing.md`](references/source-routing.md) and record each claim's authoritative source from it before verifying anything.
 
 ### Step 4: Verify in parallel
 
 - Claims answerable from local files or one command are checked **inline**.
-- Group the rest by source and spawn one **read-only sub-agent per group** (`fan-out`), reusing an existing agent on the same docs when available. Pass the numbered claims verbatim, the pinned version, the authoritative sources, and require `Confirmed / Contradicted / Partial / Undocumented` with a verbatim quote and `URL#section` or `path:line` (distinguishing silent docs from opposite statements, covering the whole relevant page).
+- Group the rest by source and spawn one **read-only sub-agent per group** (`fan-out`), reusing an existing agent on the same docs when available. Pass the numbered claims verbatim, the pinned version, the domain's `references/source-routing.md` rows plus its *Version match* rule, and require `Confirmed / Contradicted / Partial / Undocumented` with a verbatim quote and `URL#section` or `path:line` (distinguishing silent docs from opposite statements, covering the whole relevant page).
 
 ### Step 5: Cross-check
 
 - **Contradicted**: fetch the cited page yourself and confirm the quote before reporting it (`fan-out` › *Aggregation*). A wrong "contradicted" reopens a settled decision for nothing.
 - **Undocumented and load-bearing**: look for a cheap read-only way to observe the real behaviour locally. If there is none, mark it a risk and name the experiment that would settle it.
+- **Docs versus the pinned version**: apply `references/source-routing.md` › *Version match* to every cited page.
 - **Docs versus this machine**: when a documented rule depends on configuration, check the actual config and state which case applies here.
 
 ### Step 6: Map verdicts to decisions
@@ -95,20 +88,7 @@ For every claim that is not plainly confirmed, say what it does to the decision(
 
 ## 3. Output Format & Deliverables
 
-Chat (always), using the `core` › *Codebase investigation* › *Confidence Ledger* / assumption-verdict grades:
-
-```markdown
-**Verified against:** <sources, with versions>
-
-| # | Claim | Verdict | Evidence | Effect |
-|---|---|---|---|---|
-| A | <claim> | ✅ Confirmed / ❌ Contradicted / ◐ Partial / ❔ Undocumented | <short quote> — [page#section](url) or [file:line](path#Lline) | Holds / Weakened: … / **Reopen**: … |
-
-**Decisions to revisit:** <reopened decisions as questions with a recommendation, or "none">
-**Proposed edits (after /proceed):** <exact changes to the plan, ADR or doc, or "none">
-```
-
-With `deep` or `>10 claims`, write `<prefix>-assumption_check-<suffix>.md` at the workspace root (one section per claim: claim, version, sources consulted, verbatim quotes, verdict, effect), and show in chat only the contradicted, undocumented-and-load-bearing and reopened rows plus the `artifact-protocol` › _Chat link block_.
+Read [`references/report-template.md`](references/report-template.md): the chat table always, plus the artifact with `deep` or more than 10 claims.
 
 ---
 
