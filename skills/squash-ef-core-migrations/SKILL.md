@@ -1,6 +1,7 @@
 ---
 name: squash-ef-core-migrations
 description: "Collapse several EF Core migrations on a feature branch into one clean migration. Use when a PR has accumulated multiple incremental migrations and should ship a single one, or when asked to squash/combine/consolidate/tidy migrations. Covers the safety gate, preserving hand-written SQL the scaffolder cannot reproduce, and verifying the upgrade path against a real database before trusting the result."
+argument-hint: "[<squashed-migration-name>]"
 ---
 
 # Squash EF Core migrations

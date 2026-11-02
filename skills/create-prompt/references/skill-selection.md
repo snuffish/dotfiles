@@ -20,5 +20,5 @@ Rules and priority hierarchy for selecting the right target skill and grounding 
 
 ## 2. Syntax & Argument Grounding
 
-- **Exact syntax**: Use the target skill's documented `argument-hint` and valid modifiers (`deep`, `live`, `--file`). Never invent undocumented flags.
+- **Exact syntax**: Use the target skill's documented `argument-hint` and valid modifiers (`--deep`, `live`, `--file`). Never invent undocumented flags.
 - **Scope phrasing**: Mirror the exact scope formatting the target skill expects (e.g., pathspecs, branch names, work-item IDs).

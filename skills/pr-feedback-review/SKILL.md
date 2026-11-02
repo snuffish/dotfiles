@@ -1,6 +1,7 @@
 ---
 name: pr-feedback-review
 description: "Triages the discussion on a pull request: every reviewer thread, comment and vote, checked against the code at the PR head, with a triage category, its state at head, a recommendation and a ready-to-send reply per thread, in `<prefix>-pr_feedback_review-<suffix>.md`. Also triages the counterpart PR in a sibling repo, where a comment's fix often lands. `--deep` runs Verification, Merit and Impact as parallel sub-agents; reads from a detached snapshot (`live` opts out). Use for /pr-feedback-review, \"triage the PR comments\", \"what did the reviewers say?\", \"draft replies to the threads\"."
+argument-hint: "[--deep] [live] [<target>]"
 ---
 
 # PR Feedback Review Skill

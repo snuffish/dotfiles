@@ -1,6 +1,7 @@
 ---
 name: resolve-conflicts
 description: "Resolves git merge, rebase, cherry-pick, and stash conflicts. Reconstructs intent from the merge base and both commit branches, preserves non-conflicting logic, regenerates lockfiles, runs verification builds/tests, and stages cleanly resolved hunks. Refuses destructive overwrites."
+argument-hint: "[no-commit | stage-only] [<paths…>]"
 ---
 
 # Skill: `/resolve-conflicts` — Git Conflict Resolution

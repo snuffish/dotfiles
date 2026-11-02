@@ -7269,7 +7269,7 @@
       "id": "skills/clean/SKILL.md:17:path:../_modules/core.md",
       "source": {
         "file": "skills/clean/SKILL.md",
-        "line": 17
+        "line": 18
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -7285,7 +7285,7 @@
       "id": "skills/clean/SKILL.md:18:path:../_modules/artifact-protocol.md",
       "source": {
         "file": "skills/clean/SKILL.md",
-        "line": 18
+        "line": 19
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
@@ -7301,7 +7301,7 @@
       "id": "skills/clean/SKILL.md:19:path:../_modules/git-worktrees.md",
       "source": {
         "file": "skills/clean/SKILL.md",
-        "line": 19
+        "line": 20
       },
       "kind": "path",
       "value": "../_modules/git-worktrees.md",
@@ -7317,7 +7317,7 @@
       "id": "skills/clean/SKILL.md:22:doc_link:references/summary-template.md",
       "source": {
         "file": "skills/clean/SKILL.md",
-        "line": 22,
+        "line": 23,
         "also_lines": [
           139
         ]
@@ -7335,7 +7335,7 @@
       "id": "skills/clean/SKILL.md:24:skill_ref:proceed",
       "source": {
         "file": "skills/clean/SKILL.md",
-        "line": 24
+        "line": 25
       },
       "kind": "skill_ref",
       "value": "proceed",
@@ -7350,7 +7350,7 @@
       "id": "skills/clean/SKILL.md:37:doc_link:core \u203a Post-edit verification",
       "source": {
         "file": "skills/clean/SKILL.md",
-        "line": 37,
+        "line": 38,
         "also_lines": [
           121
         ]
@@ -7369,7 +7369,7 @@
       "id": "skills/clean/SKILL.md:45:doc_link:../organize/SKILL.md",
       "source": {
         "file": "skills/clean/SKILL.md",
-        "line": 45
+        "line": 46
       },
       "kind": "doc_link",
       "value": "../organize/SKILL.md",
@@ -7384,7 +7384,7 @@
       "id": "skills/clean/SKILL.md:45:skill_ref:organize",
       "source": {
         "file": "skills/clean/SKILL.md",
-        "line": 45
+        "line": 46
       },
       "kind": "skill_ref",
       "value": "organize",
@@ -7399,7 +7399,7 @@
       "id": "skills/clean/SKILL.md:46:doc_link:../expressive/SKILL.md",
       "source": {
         "file": "skills/clean/SKILL.md",
-        "line": 46
+        "line": 47
       },
       "kind": "doc_link",
       "value": "../expressive/SKILL.md",
@@ -7414,7 +7414,7 @@
       "id": "skills/clean/SKILL.md:46:skill_ref:expressive",
       "source": {
         "file": "skills/clean/SKILL.md",
-        "line": 46,
+        "line": 47,
         "also_lines": [
           131
         ]
@@ -7432,7 +7432,7 @@
       "id": "skills/clean/SKILL.md:47:doc_link:../refine/SKILL.md",
       "source": {
         "file": "skills/clean/SKILL.md",
-        "line": 47
+        "line": 48
       },
       "kind": "doc_link",
       "value": "../refine/SKILL.md",
@@ -7447,7 +7447,7 @@
       "id": "skills/clean/SKILL.md:47:skill_ref:priis-backend-dry",
       "source": {
         "file": "skills/clean/SKILL.md",
-        "line": 47
+        "line": 48
       },
       "kind": "skill_ref",
       "value": "priis-backend-dry",
@@ -7462,7 +7462,7 @@
       "id": "skills/clean/SKILL.md:47:skill_ref:refine",
       "source": {
         "file": "skills/clean/SKILL.md",
-        "line": 47
+        "line": 48
       },
       "kind": "skill_ref",
       "value": "refine",
@@ -7477,7 +7477,7 @@
       "id": "skills/clean/SKILL.md:48:doc_link:../problem/SKILL.md",
       "source": {
         "file": "skills/clean/SKILL.md",
-        "line": 48
+        "line": 49
       },
       "kind": "doc_link",
       "value": "../problem/SKILL.md",
@@ -7492,7 +7492,7 @@
       "id": "skills/clean/SKILL.md:48:skill_ref:problem",
       "source": {
         "file": "skills/clean/SKILL.md",
-        "line": 48
+        "line": 49
       },
       "kind": "skill_ref",
       "value": "problem",
@@ -7507,7 +7507,7 @@
       "id": "skills/clean/SKILL.md:49:doc_link:../code-review/SKILL.md",
       "source": {
         "file": "skills/clean/SKILL.md",
-        "line": 49
+        "line": 50
       },
       "kind": "doc_link",
       "value": "../code-review/SKILL.md",
@@ -7522,7 +7522,7 @@
       "id": "skills/clean/SKILL.md:49:skill_ref:code-review",
       "source": {
         "file": "skills/clean/SKILL.md",
-        "line": 49
+        "line": 50
       },
       "kind": "skill_ref",
       "value": "code-review",
@@ -7537,7 +7537,7 @@
       "id": "skills/clean/SKILL.md:111:doc_link:../expressive/references/transformation-catalog.md",
       "source": {
         "file": "skills/clean/SKILL.md",
-        "line": 111
+        "line": 112
       },
       "kind": "doc_link",
       "value": "../expressive/references/transformation-catalog.md",
@@ -7552,7 +7552,7 @@
       "id": "skills/clean/SKILL.md:131:doc_link:../expressive/references/transformation-catalog.md#pattern-7-prefer-type-over-interface-typescript",
       "source": {
         "file": "skills/clean/SKILL.md",
-        "line": 131
+        "line": 132
       },
       "kind": "doc_link",
       "value": "../expressive/references/transformation-catalog.md#pattern-7-prefer-type-over-interface-typescript",
@@ -7567,7 +7567,7 @@
       "id": "skills/clean/SKILL.md:139:doc_link:artifact-protocol \u203a Chat link block",
       "source": {
         "file": "skills/clean/SKILL.md",
-        "line": 139
+        "line": 140
       },
       "kind": "doc_link",
       "value": "artifact-protocol \u203a Chat link block",
@@ -7614,7 +7614,7 @@
       "id": "skills/code-documentation/SKILL.md:13:path:../_modules/core.md",
       "source": {
         "file": "skills/code-documentation/SKILL.md",
-        "line": 13
+        "line": 14
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -7630,7 +7630,7 @@
       "id": "skills/code-documentation/SKILL.md:14:path:../_modules/artifact-protocol.md",
       "source": {
         "file": "skills/code-documentation/SKILL.md",
-        "line": 14
+        "line": 15
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
@@ -7646,7 +7646,7 @@
       "id": "skills/code-documentation/SKILL.md:17:doc_link:references/readme-template.md",
       "source": {
         "file": "skills/code-documentation/SKILL.md",
-        "line": 17,
+        "line": 18,
         "also_lines": [
           57
         ]
@@ -7664,7 +7664,7 @@
       "id": "skills/code-documentation/SKILL.md:18:doc_link:references/api-reference-template.md",
       "source": {
         "file": "skills/code-documentation/SKILL.md",
-        "line": 18,
+        "line": 19,
         "also_lines": [
           58
         ]
@@ -7682,7 +7682,7 @@
       "id": "skills/code-documentation/SKILL.md:19:doc_link:references/architecture-template.md",
       "source": {
         "file": "skills/code-documentation/SKILL.md",
-        "line": 19,
+        "line": 20,
         "also_lines": [
           59
         ]
@@ -7700,7 +7700,7 @@
       "id": "skills/code-documentation/SKILL.md:20:doc_link:references/inline-code-doc-patterns.md",
       "source": {
         "file": "skills/code-documentation/SKILL.md",
-        "line": 20,
+        "line": 21,
         "also_lines": [
           60
         ]
@@ -7718,7 +7718,7 @@
       "id": "skills/code-documentation/SKILL.md:21:doc_link:references/style-guide.md",
       "source": {
         "file": "skills/code-documentation/SKILL.md",
-        "line": 21,
+        "line": 22,
         "also_lines": [
           56
         ]
@@ -7736,7 +7736,7 @@
       "id": "skills/code-documentation/SKILL.md:43:doc_link:core \u203a Codebase investigation",
       "source": {
         "file": "skills/code-documentation/SKILL.md",
-        "line": 43
+        "line": 44
       },
       "kind": "doc_link",
       "value": "core \u203a Codebase investigation",
@@ -7752,7 +7752,7 @@
       "id": "skills/code-documentation/SKILL.md:60:doc_link:../modern-csharp/SKILL.md",
       "source": {
         "file": "skills/code-documentation/SKILL.md",
-        "line": 60
+        "line": 61
       },
       "kind": "doc_link",
       "value": "../modern-csharp/SKILL.md",
@@ -7767,7 +7767,7 @@
       "id": "skills/code-documentation/SKILL.md:60:doc_link:../modern-csharp/SKILL.md \u203a 12. Comments and XML Documentation",
       "source": {
         "file": "skills/code-documentation/SKILL.md",
-        "line": 60
+        "line": 61
       },
       "kind": "doc_link",
       "value": "../modern-csharp/SKILL.md \u203a 12. Comments and XML Documentation",
@@ -7783,7 +7783,7 @@
       "id": "skills/code-documentation/SKILL.md:60:skill_ref:modern-csharp",
       "source": {
         "file": "skills/code-documentation/SKILL.md",
-        "line": 60
+        "line": 61
       },
       "kind": "skill_ref",
       "value": "modern-csharp",
@@ -7798,7 +7798,7 @@
       "id": "skills/code-documentation/SKILL.md:65:doc_link:../verify-assumptions/SKILL.md",
       "source": {
         "file": "skills/code-documentation/SKILL.md",
-        "line": 65
+        "line": 66
       },
       "kind": "doc_link",
       "value": "../verify-assumptions/SKILL.md",
@@ -7813,7 +7813,7 @@
       "id": "skills/code-documentation/SKILL.md:65:skill_ref:verify-assumptions",
       "source": {
         "file": "skills/code-documentation/SKILL.md",
-        "line": 65
+        "line": 66
       },
       "kind": "skill_ref",
       "value": "verify-assumptions",
@@ -7828,7 +7828,7 @@
       "id": "skills/code-documentation/SKILL.md:70:doc_link:artifact-protocol \u203a Host-Specific Link Formats",
       "source": {
         "file": "skills/code-documentation/SKILL.md",
-        "line": 70
+        "line": 71
       },
       "kind": "doc_link",
       "value": "artifact-protocol \u203a Host-Specific Link Formats",
@@ -7890,7 +7890,7 @@
       "id": "skills/code-review/SKILL.md:14:doc_link:artifact-protocol \u203a Chat link block",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 14,
+        "line": 15,
         "also_lines": [
           177
         ]
@@ -7909,7 +7909,7 @@
       "id": "skills/code-review/SKILL.md:15:doc_link:core \u203a The ",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 15,
+        "line": 16,
         "also_lines": [
           182
         ]
@@ -7928,7 +7928,7 @@
       "id": "skills/code-review/SKILL.md:15:doc_link:git-worktrees \u203a Snapshot Lifecycle",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 15
+        "line": 16
       },
       "kind": "doc_link",
       "value": "git-worktrees \u203a Snapshot Lifecycle",
@@ -7944,7 +7944,7 @@
       "id": "skills/code-review/SKILL.md:15:skill_ref:proceed",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 15,
+        "line": 16,
         "also_lines": [
           26,
           182
@@ -7963,7 +7963,7 @@
       "id": "skills/code-review/SKILL.md:26:path:../_modules/core.md",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 26
+        "line": 27
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -7979,7 +7979,7 @@
       "id": "skills/code-review/SKILL.md:27:path:../_modules/artifact-protocol.md",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 27
+        "line": 28
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
@@ -7995,7 +7995,7 @@
       "id": "skills/code-review/SKILL.md:28:path:../_modules/git-worktrees.md",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 28
+        "line": 29
       },
       "kind": "path",
       "value": "../_modules/git-worktrees.md",
@@ -8011,7 +8011,7 @@
       "id": "skills/code-review/SKILL.md:29:path:../_modules/pr-counterpart.md",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 29
+        "line": 30
       },
       "kind": "path",
       "value": "../_modules/pr-counterpart.md",
@@ -8027,7 +8027,7 @@
       "id": "skills/code-review/SKILL.md:30:path:../_modules/project-profile.md",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 30
+        "line": 31
       },
       "kind": "path",
       "value": "../_modules/project-profile.md",
@@ -8043,7 +8043,7 @@
       "id": "skills/code-review/SKILL.md:31:path:../_modules/pr-host.md",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 31
+        "line": 32
       },
       "kind": "path",
       "value": "../_modules/pr-host.md",
@@ -8059,7 +8059,7 @@
       "id": "skills/code-review/SKILL.md:32:path:../_modules/fan-out.md",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 32
+        "line": 33
       },
       "kind": "path",
       "value": "../_modules/fan-out.md",
@@ -8075,7 +8075,7 @@
       "id": "skills/code-review/SKILL.md:34:skill_ref:implement-feature",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 34
+        "line": 35
       },
       "kind": "skill_ref",
       "value": "implement-feature",
@@ -8090,7 +8090,7 @@
       "id": "skills/code-review/SKILL.md:43:doc_link:references/deep-mode.md",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 43,
+        "line": 44,
         "also_lines": [
           188
         ]
@@ -8108,7 +8108,7 @@
       "id": "skills/code-review/SKILL.md:44:skill_ref:no-worktrees",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 44
+        "line": 45
       },
       "kind": "skill_ref",
       "value": "no-worktrees",
@@ -8123,7 +8123,7 @@
       "id": "skills/code-review/SKILL.md:45:skill_ref:pr-feedback-review",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 45,
+        "line": 46,
         "also_lines": [
           54,
           159
@@ -8142,7 +8142,7 @@
       "id": "skills/code-review/SKILL.md:47:doc_link:fan-out \u203a Bare vs deep",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 47
+        "line": 48
       },
       "kind": "doc_link",
       "value": "fan-out \u203a Bare vs deep",
@@ -8158,7 +8158,7 @@
       "id": "skills/code-review/SKILL.md:53:doc_link:../plan/SKILL.md",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 53
+        "line": 54
       },
       "kind": "doc_link",
       "value": "../plan/SKILL.md",
@@ -8173,7 +8173,7 @@
       "id": "skills/code-review/SKILL.md:54:doc_link:../pr-feedback-review/SKILL.md",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 54,
+        "line": 55,
         "also_lines": [
           159
         ]
@@ -8191,7 +8191,7 @@
       "id": "skills/code-review/SKILL.md:55:doc_link:../pr-fix-pipeline/SKILL.md",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 55
+        "line": 56
       },
       "kind": "doc_link",
       "value": "../pr-fix-pipeline/SKILL.md",
@@ -8206,7 +8206,7 @@
       "id": "skills/code-review/SKILL.md:55:skill_ref:pr-fix-pipeline",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 55
+        "line": 56
       },
       "kind": "skill_ref",
       "value": "pr-fix-pipeline",
@@ -8221,7 +8221,7 @@
       "id": "skills/code-review/SKILL.md:56:doc_link:../manual-testing/SKILL.md",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 56
+        "line": 57
       },
       "kind": "doc_link",
       "value": "../manual-testing/SKILL.md",
@@ -8236,7 +8236,7 @@
       "id": "skills/code-review/SKILL.md:56:skill_ref:manual-testing",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 56
+        "line": 57
       },
       "kind": "skill_ref",
       "value": "manual-testing",
@@ -8251,7 +8251,7 @@
       "id": "skills/code-review/SKILL.md:57:doc_link:../refine/SKILL.md",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 57
+        "line": 58
       },
       "kind": "doc_link",
       "value": "../refine/SKILL.md",
@@ -8266,7 +8266,7 @@
       "id": "skills/code-review/SKILL.md:57:doc_link:../clean/SKILL.md",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 57
+        "line": 58
       },
       "kind": "doc_link",
       "value": "../clean/SKILL.md",
@@ -8281,7 +8281,7 @@
       "id": "skills/code-review/SKILL.md:57:skill_ref:clean",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 57,
+        "line": 58,
         "also_lines": [
           178
         ]
@@ -8299,7 +8299,7 @@
       "id": "skills/code-review/SKILL.md:57:skill_ref:refine",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 57
+        "line": 58
       },
       "kind": "skill_ref",
       "value": "refine",
@@ -8314,7 +8314,7 @@
       "id": "skills/code-review/SKILL.md:68:doc_link:pr-host \u203a Branch names & Diff base",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 68,
+        "line": 69,
         "also_lines": [
           88
         ]
@@ -8333,7 +8333,7 @@
       "id": "skills/code-review/SKILL.md:86:skill_ref:commit",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 86
+        "line": 87
       },
       "kind": "skill_ref",
       "value": "commit",
@@ -8348,7 +8348,7 @@
       "id": "skills/code-review/SKILL.md:92:doc_link:pr-counterpart \u203a Counterpart discovery",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 92
+        "line": 93
       },
       "kind": "doc_link",
       "value": "pr-counterpart \u203a Counterpart discovery",
@@ -8364,7 +8364,7 @@
       "id": "skills/code-review/SKILL.md:95:doc_link:references/snapshot-and-scope.md",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 95,
+        "line": 96,
         "also_lines": [
           196
         ]
@@ -8382,7 +8382,7 @@
       "id": "skills/code-review/SKILL.md:113:doc_link:core \u203a Precedence",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 113
+        "line": 114
       },
       "kind": "doc_link",
       "value": "core \u203a Precedence",
@@ -8398,7 +8398,7 @@
       "id": "skills/code-review/SKILL.md:114:doc_link:project-profile \u203a Upstream content",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 114
+        "line": 115
       },
       "kind": "doc_link",
       "value": "project-profile \u203a Upstream content",
@@ -8414,7 +8414,7 @@
       "id": "skills/code-review/SKILL.md:118:skill_ref:modern-csharp",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 118
+        "line": 119
       },
       "kind": "skill_ref",
       "value": "modern-csharp",
@@ -8429,7 +8429,7 @@
       "id": "skills/code-review/SKILL.md:119:doc_link:references/smell-baseline.md",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 119,
+        "line": 120,
         "also_lines": [
           138
         ]
@@ -8447,7 +8447,7 @@
       "id": "skills/code-review/SKILL.md:161:doc_link:pr-host \u203a Fetch discussion threads",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 161
+        "line": 162
       },
       "kind": "doc_link",
       "value": "pr-host \u203a Fetch discussion threads",
@@ -8463,7 +8463,7 @@
       "id": "skills/code-review/SKILL.md:169:doc_link:../what-am-I-missing/SKILL.md",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 169
+        "line": 170
       },
       "kind": "doc_link",
       "value": "../what-am-I-missing/SKILL.md",
@@ -8478,7 +8478,7 @@
       "id": "skills/code-review/SKILL.md:169:skill_ref:what-am-I-missing",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 169
+        "line": 170
       },
       "kind": "skill_ref",
       "value": "what-am-I-missing",
@@ -8493,7 +8493,7 @@
       "id": "skills/code-review/SKILL.md:176:doc_link:references/review-artifact-template.md",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 176
+        "line": 177
       },
       "kind": "doc_link",
       "value": "references/review-artifact-template.md",
@@ -8508,7 +8508,7 @@
       "id": "skills/code-review/SKILL.md:176:doc_link:artifact-protocol \u203a Claim",
       "source": {
         "file": "skills/code-review/SKILL.md",
-        "line": 176
+        "line": 177
       },
       "kind": "doc_link",
       "value": "artifact-protocol \u203a Claim",
@@ -9841,7 +9841,7 @@
       "id": "skills/create-ticket/SKILL.md:26:path:../_modules/core.md",
       "source": {
         "file": "skills/create-ticket/SKILL.md",
-        "line": 26
+        "line": 27
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -9857,7 +9857,7 @@
       "id": "skills/create-ticket/SKILL.md:27:path:../_modules/artifact-protocol.md",
       "source": {
         "file": "skills/create-ticket/SKILL.md",
-        "line": 27
+        "line": 28
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
@@ -9873,7 +9873,7 @@
       "id": "skills/create-ticket/SKILL.md:28:path:../_modules/pr-host.md",
       "source": {
         "file": "skills/create-ticket/SKILL.md",
-        "line": 28
+        "line": 29
       },
       "kind": "path",
       "value": "../_modules/pr-host.md",
@@ -9889,7 +9889,7 @@
       "id": "skills/create-ticket/SKILL.md:29:path:../_modules/outward-writes.md",
       "source": {
         "file": "skills/create-ticket/SKILL.md",
-        "line": 29
+        "line": 30
       },
       "kind": "path",
       "value": "../_modules/outward-writes.md",
@@ -9905,7 +9905,7 @@
       "id": "skills/create-ticket/SKILL.md:37:doc_link:../pr-post-comments/SKILL.md",
       "source": {
         "file": "skills/create-ticket/SKILL.md",
-        "line": 37
+        "line": 38
       },
       "kind": "doc_link",
       "value": "../pr-post-comments/SKILL.md",
@@ -9920,7 +9920,7 @@
       "id": "skills/create-ticket/SKILL.md:37:skill_ref:pr-post-comments",
       "source": {
         "file": "skills/create-ticket/SKILL.md",
-        "line": 37
+        "line": 38
       },
       "kind": "skill_ref",
       "value": "pr-post-comments",
@@ -9935,7 +9935,7 @@
       "id": "skills/create-ticket/SKILL.md:38:doc_link:../pr-summary/SKILL.md",
       "source": {
         "file": "skills/create-ticket/SKILL.md",
-        "line": 38
+        "line": 39
       },
       "kind": "doc_link",
       "value": "../pr-summary/SKILL.md",
@@ -9950,7 +9950,7 @@
       "id": "skills/create-ticket/SKILL.md:38:skill_ref:pr-summary",
       "source": {
         "file": "skills/create-ticket/SKILL.md",
-        "line": 38
+        "line": 39
       },
       "kind": "skill_ref",
       "value": "pr-summary",
@@ -9965,7 +9965,7 @@
       "id": "skills/create-ticket/SKILL.md:39:doc_link:../investigate/SKILL.md",
       "source": {
         "file": "skills/create-ticket/SKILL.md",
-        "line": 39
+        "line": 40
       },
       "kind": "doc_link",
       "value": "../investigate/SKILL.md",
@@ -9980,7 +9980,7 @@
       "id": "skills/create-ticket/SKILL.md:39:skill_ref:investigate",
       "source": {
         "file": "skills/create-ticket/SKILL.md",
-        "line": 39
+        "line": 40
       },
       "kind": "skill_ref",
       "value": "investigate",
@@ -9995,7 +9995,7 @@
       "id": "skills/create-ticket/SKILL.md:40:doc_link:../implement-feature/SKILL.md",
       "source": {
         "file": "skills/create-ticket/SKILL.md",
-        "line": 40
+        "line": 41
       },
       "kind": "doc_link",
       "value": "../implement-feature/SKILL.md",
@@ -10010,7 +10010,7 @@
       "id": "skills/create-ticket/SKILL.md:40:skill_ref:implement-feature",
       "source": {
         "file": "skills/create-ticket/SKILL.md",
-        "line": 40
+        "line": 41
       },
       "kind": "skill_ref",
       "value": "implement-feature",
@@ -10025,7 +10025,7 @@
       "id": "skills/create-ticket/SKILL.md:54:doc_link:pr-host \u203a Organization URL",
       "source": {
         "file": "skills/create-ticket/SKILL.md",
-        "line": 54
+        "line": 55
       },
       "kind": "doc_link",
       "value": "pr-host \u203a Organization URL",
@@ -10041,7 +10041,7 @@
       "id": "skills/create-ticket/SKILL.md:55:doc_link:references/azure-devops-mcp.md",
       "source": {
         "file": "skills/create-ticket/SKILL.md",
-        "line": 55,
+        "line": 56,
         "also_lines": [
           107
         ]
@@ -10059,7 +10059,7 @@
       "id": "skills/create-ticket/SKILL.md:101:doc_link:scripts/create_ticket.py",
       "source": {
         "file": "skills/create-ticket/SKILL.md",
-        "line": 101
+        "line": 102
       },
       "kind": "doc_link",
       "value": "scripts/create_ticket.py",
@@ -10074,7 +10074,7 @@
       "id": "skills/create-ticket/SKILL.md:108:doc_link:outward-writes \u203a Read back",
       "source": {
         "file": "skills/create-ticket/SKILL.md",
-        "line": 108
+        "line": 109
       },
       "kind": "doc_link",
       "value": "outward-writes \u203a Read back",
@@ -10090,7 +10090,7 @@
       "id": "skills/create-ticket/SKILL.md:109:doc_link:outward-writes \u203a Denied write is final",
       "source": {
         "file": "skills/create-ticket/SKILL.md",
-        "line": 109
+        "line": 110
       },
       "kind": "doc_link",
       "value": "outward-writes \u203a Denied write is final",
@@ -10106,7 +10106,7 @@
       "id": "skills/create-ticket/SKILL.md:113:doc_link:artifact-protocol \u203a Chat link block",
       "source": {
         "file": "skills/create-ticket/SKILL.md",
-        "line": 113
+        "line": 114
       },
       "kind": "doc_link",
       "value": "artifact-protocol \u203a Chat link block",
@@ -10168,7 +10168,7 @@
       "id": "skills/explain/SKILL.md:19:path:../_modules/core.md",
       "source": {
         "file": "skills/explain/SKILL.md",
-        "line": 19
+        "line": 20
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -10184,7 +10184,7 @@
       "id": "skills/explain/SKILL.md:19:skill_ref:proceed",
       "source": {
         "file": "skills/explain/SKILL.md",
-        "line": 19
+        "line": 20
       },
       "kind": "skill_ref",
       "value": "proceed",
@@ -10199,7 +10199,7 @@
       "id": "skills/explain/SKILL.md:20:path:../_modules/artifact-protocol.md",
       "source": {
         "file": "skills/explain/SKILL.md",
-        "line": 20
+        "line": 21
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
@@ -10215,7 +10215,7 @@
       "id": "skills/explain/SKILL.md:21:path:../_modules/pr-counterpart.md",
       "source": {
         "file": "skills/explain/SKILL.md",
-        "line": 21
+        "line": 22
       },
       "kind": "path",
       "value": "../_modules/pr-counterpart.md",
@@ -10231,7 +10231,7 @@
       "id": "skills/explain/SKILL.md:22:path:../_modules/fan-out.md",
       "source": {
         "file": "skills/explain/SKILL.md",
-        "line": 22
+        "line": 23
       },
       "kind": "path",
       "value": "../_modules/fan-out.md",
@@ -10247,7 +10247,7 @@
       "id": "skills/explain/SKILL.md:25:doc_link:references/deep-axes.md",
       "source": {
         "file": "skills/explain/SKILL.md",
-        "line": 25,
+        "line": 26,
         "also_lines": [
           57,
           58
@@ -10266,7 +10266,7 @@
       "id": "skills/explain/SKILL.md:40:doc_link:../investigate/SKILL.md",
       "source": {
         "file": "skills/explain/SKILL.md",
-        "line": 40
+        "line": 41
       },
       "kind": "doc_link",
       "value": "../investigate/SKILL.md",
@@ -10281,7 +10281,7 @@
       "id": "skills/explain/SKILL.md:40:skill_ref:investigate",
       "source": {
         "file": "skills/explain/SKILL.md",
-        "line": 40
+        "line": 41
       },
       "kind": "skill_ref",
       "value": "investigate",
@@ -10296,7 +10296,7 @@
       "id": "skills/explain/SKILL.md:41:doc_link:../code-review/SKILL.md",
       "source": {
         "file": "skills/explain/SKILL.md",
-        "line": 41
+        "line": 42
       },
       "kind": "doc_link",
       "value": "../code-review/SKILL.md",
@@ -10311,7 +10311,7 @@
       "id": "skills/explain/SKILL.md:41:skill_ref:code-review",
       "source": {
         "file": "skills/explain/SKILL.md",
-        "line": 41
+        "line": 42
       },
       "kind": "skill_ref",
       "value": "code-review",
@@ -10326,7 +10326,7 @@
       "id": "skills/explain/SKILL.md:42:doc_link:../what-am-I-missing/SKILL.md",
       "source": {
         "file": "skills/explain/SKILL.md",
-        "line": 42
+        "line": 43
       },
       "kind": "doc_link",
       "value": "../what-am-I-missing/SKILL.md",
@@ -10341,7 +10341,7 @@
       "id": "skills/explain/SKILL.md:42:skill_ref:what-am-I-missing",
       "source": {
         "file": "skills/explain/SKILL.md",
-        "line": 42
+        "line": 43
       },
       "kind": "skill_ref",
       "value": "what-am-I-missing",
@@ -10356,7 +10356,7 @@
       "id": "skills/explain/SKILL.md:43:doc_link:../code-documentation/SKILL.md",
       "source": {
         "file": "skills/explain/SKILL.md",
-        "line": 43
+        "line": 44
       },
       "kind": "doc_link",
       "value": "../code-documentation/SKILL.md",
@@ -10371,7 +10371,7 @@
       "id": "skills/explain/SKILL.md:43:skill_ref:code-documentation",
       "source": {
         "file": "skills/explain/SKILL.md",
-        "line": 43
+        "line": 44
       },
       "kind": "skill_ref",
       "value": "code-documentation",
@@ -10386,7 +10386,7 @@
       "id": "skills/explain/SKILL.md:50:doc_link:artifact-protocol \u203a Host-Specific Link Formats",
       "source": {
         "file": "skills/explain/SKILL.md",
-        "line": 50
+        "line": 51
       },
       "kind": "doc_link",
       "value": "artifact-protocol \u203a Host-Specific Link Formats",
@@ -10402,7 +10402,7 @@
       "id": "skills/explain/SKILL.md:56:doc_link:fan-out \u203a Brief contract",
       "source": {
         "file": "skills/explain/SKILL.md",
-        "line": 56
+        "line": 57
       },
       "kind": "doc_link",
       "value": "fan-out \u203a Brief contract",
@@ -10418,7 +10418,7 @@
       "id": "skills/explain/SKILL.md:56:doc_link:pr-counterpart \u203a Counterpart discovery",
       "source": {
         "file": "skills/explain/SKILL.md",
-        "line": 56
+        "line": 57
       },
       "kind": "doc_link",
       "value": "pr-counterpart \u203a Counterpart discovery",
@@ -10434,7 +10434,7 @@
       "id": "skills/explain/SKILL.md:58:doc_link:fan-out \u203a Aggregation",
       "source": {
         "file": "skills/explain/SKILL.md",
-        "line": 58
+        "line": 59
       },
       "kind": "doc_link",
       "value": "fan-out \u203a Aggregation",
@@ -10450,7 +10450,7 @@
       "id": "skills/explain/SKILL.md:59:doc_link:artifact-protocol \u203a Chat link block",
       "source": {
         "file": "skills/explain/SKILL.md",
-        "line": 59
+        "line": 60
       },
       "kind": "doc_link",
       "value": "artifact-protocol \u203a Chat link block",
@@ -10671,7 +10671,7 @@
       "id": "skills/expressive/SKILL.md:17:path:../_modules/core.md",
       "source": {
         "file": "skills/expressive/SKILL.md",
-        "line": 17
+        "line": 18
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -10687,7 +10687,7 @@
       "id": "skills/expressive/SKILL.md:18:path:../_modules/artifact-protocol.md",
       "source": {
         "file": "skills/expressive/SKILL.md",
-        "line": 18
+        "line": 19
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
@@ -10703,7 +10703,7 @@
       "id": "skills/expressive/SKILL.md:19:path:../_modules/git-worktrees.md",
       "source": {
         "file": "skills/expressive/SKILL.md",
-        "line": 19
+        "line": 20
       },
       "kind": "path",
       "value": "../_modules/git-worktrees.md",
@@ -10719,7 +10719,7 @@
       "id": "skills/expressive/SKILL.md:21:doc_link:core \u203a The ",
       "source": {
         "file": "skills/expressive/SKILL.md",
-        "line": 21
+        "line": 22
       },
       "kind": "doc_link",
       "value": "core \u203a The ",
@@ -10735,7 +10735,7 @@
       "id": "skills/expressive/SKILL.md:21:skill_ref:clean",
       "source": {
         "file": "skills/expressive/SKILL.md",
-        "line": 21,
+        "line": 22,
         "also_lines": [
           29
         ]
@@ -10753,7 +10753,7 @@
       "id": "skills/expressive/SKILL.md:21:skill_ref:proceed",
       "source": {
         "file": "skills/expressive/SKILL.md",
-        "line": 21
+        "line": 22
       },
       "kind": "skill_ref",
       "value": "proceed",
@@ -10768,7 +10768,7 @@
       "id": "skills/expressive/SKILL.md:29:doc_link:../clean/SKILL.md",
       "source": {
         "file": "skills/expressive/SKILL.md",
-        "line": 29
+        "line": 30
       },
       "kind": "doc_link",
       "value": "../clean/SKILL.md",
@@ -10783,7 +10783,7 @@
       "id": "skills/expressive/SKILL.md:30:doc_link:../organize/SKILL.md",
       "source": {
         "file": "skills/expressive/SKILL.md",
-        "line": 30
+        "line": 31
       },
       "kind": "doc_link",
       "value": "../organize/SKILL.md",
@@ -10798,7 +10798,7 @@
       "id": "skills/expressive/SKILL.md:30:skill_ref:organize",
       "source": {
         "file": "skills/expressive/SKILL.md",
-        "line": 30
+        "line": 31
       },
       "kind": "skill_ref",
       "value": "organize",
@@ -10813,7 +10813,7 @@
       "id": "skills/expressive/SKILL.md:31:doc_link:../refine/SKILL.md",
       "source": {
         "file": "skills/expressive/SKILL.md",
-        "line": 31
+        "line": 32
       },
       "kind": "doc_link",
       "value": "../refine/SKILL.md",
@@ -10828,7 +10828,7 @@
       "id": "skills/expressive/SKILL.md:31:skill_ref:priis-backend-dry",
       "source": {
         "file": "skills/expressive/SKILL.md",
-        "line": 31
+        "line": 32
       },
       "kind": "skill_ref",
       "value": "priis-backend-dry",
@@ -10843,7 +10843,7 @@
       "id": "skills/expressive/SKILL.md:31:skill_ref:refine",
       "source": {
         "file": "skills/expressive/SKILL.md",
-        "line": 31
+        "line": 32
       },
       "kind": "skill_ref",
       "value": "refine",
@@ -10858,7 +10858,7 @@
       "id": "skills/expressive/SKILL.md:37:doc_link:references/transformation-catalog.md",
       "source": {
         "file": "skills/expressive/SKILL.md",
-        "line": 37
+        "line": 38
       },
       "kind": "doc_link",
       "value": "references/transformation-catalog.md",
@@ -10873,7 +10873,7 @@
       "id": "skills/implement-feature/SKILL.md:23:path:../_modules/core.md",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 23
+        "line": 24
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -10889,7 +10889,7 @@
       "id": "skills/implement-feature/SKILL.md:24:path:../_modules/artifact-protocol.md",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 24
+        "line": 25
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
@@ -10905,7 +10905,7 @@
       "id": "skills/implement-feature/SKILL.md:25:path:../_modules/git-worktrees.md",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 25
+        "line": 26
       },
       "kind": "path",
       "value": "../_modules/git-worktrees.md",
@@ -10921,7 +10921,7 @@
       "id": "skills/implement-feature/SKILL.md:25:skill_ref:no-worktrees",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 25,
+        "line": 26,
         "also_lines": [
           117
         ]
@@ -10939,7 +10939,7 @@
       "id": "skills/implement-feature/SKILL.md:26:path:../_modules/pr-counterpart.md",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 26
+        "line": 27
       },
       "kind": "path",
       "value": "../_modules/pr-counterpart.md",
@@ -10955,7 +10955,7 @@
       "id": "skills/implement-feature/SKILL.md:27:path:../_modules/pr-host.md",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 27
+        "line": 28
       },
       "kind": "path",
       "value": "../_modules/pr-host.md",
@@ -10971,7 +10971,7 @@
       "id": "skills/implement-feature/SKILL.md:28:path:../_modules/project-profile.md",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 28
+        "line": 29
       },
       "kind": "path",
       "value": "../_modules/project-profile.md",
@@ -10987,7 +10987,7 @@
       "id": "skills/implement-feature/SKILL.md:29:path:../_modules/fan-out.md",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 29
+        "line": 30
       },
       "kind": "path",
       "value": "../_modules/fan-out.md",
@@ -11003,7 +11003,7 @@
       "id": "skills/implement-feature/SKILL.md:32:doc_link:references/framing.md",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 32,
+        "line": 33,
         "also_lines": [
           118
         ]
@@ -11021,7 +11021,7 @@
       "id": "skills/implement-feature/SKILL.md:33:doc_link:references/research-brief.md",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 33,
+        "line": 34,
         "also_lines": [
           77,
           124
@@ -11040,7 +11040,7 @@
       "id": "skills/implement-feature/SKILL.md:34:doc_link:references/pr-body.md",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 34,
+        "line": 35,
         "also_lines": [
           224,
           253
@@ -11059,7 +11059,7 @@
       "id": "skills/implement-feature/SKILL.md:34:skill_ref:pr-summary",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 34,
+        "line": 35,
         "also_lines": [
           102,
           222,
@@ -11081,7 +11081,7 @@
       "id": "skills/implement-feature/SKILL.md:41:skill_ref:proceed",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 41,
+        "line": 42,
         "also_lines": [
           46,
           251
@@ -11100,7 +11100,7 @@
       "id": "skills/implement-feature/SKILL.md:44:doc_link:git-worktrees \u203a Workspace Lifecycle",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 44,
+        "line": 45,
         "also_lines": [
           91,
           117,
@@ -11125,7 +11125,7 @@
       "id": "skills/implement-feature/SKILL.md:46:doc_link:core \u203a The ",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 46,
+        "line": 47,
         "also_lines": [
           251
         ]
@@ -11144,7 +11144,7 @@
       "id": "skills/implement-feature/SKILL.md:50:skill_ref:investigate",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 50,
+        "line": 51,
         "also_lines": [
           92
         ]
@@ -11162,7 +11162,7 @@
       "id": "skills/implement-feature/SKILL.md:52:doc_link:core \u203a Precedence",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 52
+        "line": 53
       },
       "kind": "doc_link",
       "value": "core \u203a Precedence",
@@ -11178,7 +11178,7 @@
       "id": "skills/implement-feature/SKILL.md:80:skill_ref:code-review",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 80,
+        "line": 81,
         "also_lines": [
           99,
           212
@@ -11197,7 +11197,7 @@
       "id": "skills/implement-feature/SKILL.md:80:skill_ref:spec-verification",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 80,
+        "line": 81,
         "also_lines": [
           99,
           211
@@ -11216,7 +11216,7 @@
       "id": "skills/implement-feature/SKILL.md:92:doc_link:../investigate/SKILL.md",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 92
+        "line": 93
       },
       "kind": "doc_link",
       "value": "../investigate/SKILL.md",
@@ -11231,7 +11231,7 @@
       "id": "skills/implement-feature/SKILL.md:93:doc_link:../what-am-I-missing/SKILL.md",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 93,
+        "line": 94,
         "also_lines": [
           161
         ]
@@ -11249,7 +11249,7 @@
       "id": "skills/implement-feature/SKILL.md:93:skill_ref:what-am-I-missing",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 93,
+        "line": 94,
         "also_lines": [
           161,
           252
@@ -11268,7 +11268,7 @@
       "id": "skills/implement-feature/SKILL.md:94:doc_link:../plan/SKILL.md",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 94,
+        "line": 95,
         "also_lines": [
           152
         ]
@@ -11286,7 +11286,7 @@
       "id": "skills/implement-feature/SKILL.md:94:skill_ref:plan",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 94,
+        "line": 95,
         "also_lines": [
           152
         ]
@@ -11304,7 +11304,7 @@
       "id": "skills/implement-feature/SKILL.md:95:skill_ref:modern-csharp",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 95
+        "line": 96
       },
       "kind": "skill_ref",
       "value": "modern-csharp",
@@ -11319,7 +11319,7 @@
       "id": "skills/implement-feature/SKILL.md:97:skill_ref:squash-ef-core-migrations",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 97
+        "line": 98
       },
       "kind": "skill_ref",
       "value": "squash-ef-core-migrations",
@@ -11334,7 +11334,7 @@
       "id": "skills/implement-feature/SKILL.md:99:doc_link:../code-review/SKILL.md",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 99
+        "line": 100
       },
       "kind": "doc_link",
       "value": "../code-review/SKILL.md",
@@ -11349,7 +11349,7 @@
       "id": "skills/implement-feature/SKILL.md:99:doc_link:../spec-verification/SKILL.md",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 99
+        "line": 100
       },
       "kind": "doc_link",
       "value": "../spec-verification/SKILL.md",
@@ -11364,7 +11364,7 @@
       "id": "skills/implement-feature/SKILL.md:102:doc_link:../pr-summary/SKILL.md",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 102,
+        "line": 103,
         "also_lines": [
           224
         ]
@@ -11382,7 +11382,7 @@
       "id": "skills/implement-feature/SKILL.md:103:doc_link:../manual-testing/SKILL.md",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 103
+        "line": 104
       },
       "kind": "doc_link",
       "value": "../manual-testing/SKILL.md",
@@ -11397,7 +11397,7 @@
       "id": "skills/implement-feature/SKILL.md:103:skill_ref:manual-testing",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 103,
+        "line": 104,
         "also_lines": [
           214
         ]
@@ -11415,7 +11415,7 @@
       "id": "skills/implement-feature/SKILL.md:104:doc_link:../pr-fix-pipeline/SKILL.md",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 104
+        "line": 105
       },
       "kind": "doc_link",
       "value": "../pr-fix-pipeline/SKILL.md",
@@ -11430,7 +11430,7 @@
       "id": "skills/implement-feature/SKILL.md:104:skill_ref:pr-fix-pipeline",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 104,
+        "line": 105,
         "also_lines": [
           239
         ]
@@ -11448,7 +11448,7 @@
       "id": "skills/implement-feature/SKILL.md:111:doc_link:pr-host \u203a Fetch the PR, its work items and acceptance criteria",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 111
+        "line": 112
       },
       "kind": "doc_link",
       "value": "pr-host \u203a Fetch the PR, its work items and acceptance criteria",
@@ -11464,7 +11464,7 @@
       "id": "skills/implement-feature/SKILL.md:152:doc_link:../plan/SKILL.md \u203a \u00a71 The Plan Contract",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 152
+        "line": 153
       },
       "kind": "doc_link",
       "value": "../plan/SKILL.md \u203a \u00a71 The Plan Contract",
@@ -11480,7 +11480,7 @@
       "id": "skills/implement-feature/SKILL.md:161:doc_link:../what-am-I-missing/references/vectors.md",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 161
+        "line": 162
       },
       "kind": "doc_link",
       "value": "../what-am-I-missing/references/vectors.md",
@@ -11495,7 +11495,7 @@
       "id": "skills/implement-feature/SKILL.md:177:doc_link:artifact-protocol \u203a Chat link block",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 177,
+        "line": 178,
         "also_lines": [
           242
         ]
@@ -11514,7 +11514,7 @@
       "id": "skills/implement-feature/SKILL.md:183:doc_link:git-worktrees \u203a Golden Invariants",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 183
+        "line": 184
       },
       "kind": "doc_link",
       "value": "git-worktrees \u203a Golden Invariants",
@@ -11530,7 +11530,7 @@
       "id": "skills/implement-feature/SKILL.md:212:doc_link:pr-counterpart \u203a Counterpart discovery",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
-        "line": 212
+        "line": 213
       },
       "kind": "doc_link",
       "value": "pr-counterpart \u203a Counterpart discovery",
@@ -12692,7 +12692,7 @@
       "id": "skills/organize/SKILL.md:17:path:../_modules/core.md",
       "source": {
         "file": "skills/organize/SKILL.md",
-        "line": 17
+        "line": 18
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -12708,7 +12708,7 @@
       "id": "skills/organize/SKILL.md:17:skill_ref:proceed",
       "source": {
         "file": "skills/organize/SKILL.md",
-        "line": 17,
+        "line": 18,
         "also_lines": [
           30,
           78
@@ -12727,7 +12727,7 @@
       "id": "skills/organize/SKILL.md:18:path:../_modules/artifact-protocol.md",
       "source": {
         "file": "skills/organize/SKILL.md",
-        "line": 18
+        "line": 19
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
@@ -12743,7 +12743,7 @@
       "id": "skills/organize/SKILL.md:19:path:../_modules/git-worktrees.md",
       "source": {
         "file": "skills/organize/SKILL.md",
-        "line": 19
+        "line": 20
       },
       "kind": "path",
       "value": "../_modules/git-worktrees.md",
@@ -12759,7 +12759,7 @@
       "id": "skills/organize/SKILL.md:22:doc_link:references/organize-plan-template.md",
       "source": {
         "file": "skills/organize/SKILL.md",
-        "line": 22,
+        "line": 23,
         "also_lines": [
           74
         ]
@@ -12777,7 +12777,7 @@
       "id": "skills/organize/SKILL.md:30:doc_link:core \u203a The ",
       "source": {
         "file": "skills/organize/SKILL.md",
-        "line": 30,
+        "line": 31,
         "also_lines": [
           78
         ]
@@ -12796,7 +12796,7 @@
       "id": "skills/organize/SKILL.md:33:doc_link:core \u203a Post-edit verification",
       "source": {
         "file": "skills/organize/SKILL.md",
-        "line": 33,
+        "line": 34,
         "also_lines": [
           94
         ]
@@ -12815,7 +12815,7 @@
       "id": "skills/organize/SKILL.md:41:doc_link:../investigate/SKILL.md",
       "source": {
         "file": "skills/organize/SKILL.md",
-        "line": 41
+        "line": 42
       },
       "kind": "doc_link",
       "value": "../investigate/SKILL.md",
@@ -12830,7 +12830,7 @@
       "id": "skills/organize/SKILL.md:41:skill_ref:investigate",
       "source": {
         "file": "skills/organize/SKILL.md",
-        "line": 41
+        "line": 42
       },
       "kind": "skill_ref",
       "value": "investigate",
@@ -12845,7 +12845,7 @@
       "id": "skills/organize/SKILL.md:42:doc_link:../plan/SKILL.md",
       "source": {
         "file": "skills/organize/SKILL.md",
-        "line": 42
+        "line": 43
       },
       "kind": "doc_link",
       "value": "../plan/SKILL.md",
@@ -12860,7 +12860,7 @@
       "id": "skills/organize/SKILL.md:42:skill_ref:plan",
       "source": {
         "file": "skills/organize/SKILL.md",
-        "line": 42
+        "line": 43
       },
       "kind": "skill_ref",
       "value": "plan",
@@ -12875,7 +12875,7 @@
       "id": "skills/organize/SKILL.md:44:doc_link:../code-review/SKILL.md",
       "source": {
         "file": "skills/organize/SKILL.md",
-        "line": 44
+        "line": 45
       },
       "kind": "doc_link",
       "value": "../code-review/SKILL.md",
@@ -12890,7 +12890,7 @@
       "id": "skills/organize/SKILL.md:44:skill_ref:code-review",
       "source": {
         "file": "skills/organize/SKILL.md",
-        "line": 44
+        "line": 45
       },
       "kind": "skill_ref",
       "value": "code-review",
@@ -12905,7 +12905,7 @@
       "id": "skills/organize/SKILL.md:45:doc_link:../problem/SKILL.md",
       "source": {
         "file": "skills/organize/SKILL.md",
-        "line": 45
+        "line": 46
       },
       "kind": "doc_link",
       "value": "../problem/SKILL.md",
@@ -12920,7 +12920,7 @@
       "id": "skills/organize/SKILL.md:45:skill_ref:problem",
       "source": {
         "file": "skills/organize/SKILL.md",
-        "line": 45
+        "line": 46
       },
       "kind": "skill_ref",
       "value": "problem",
@@ -12935,7 +12935,7 @@
       "id": "skills/organize/SKILL.md:74:doc_link:artifact-protocol \u203a Claim",
       "source": {
         "file": "skills/organize/SKILL.md",
-        "line": 74
+        "line": 75
       },
       "kind": "doc_link",
       "value": "artifact-protocol \u203a Claim",
@@ -12951,7 +12951,7 @@
       "id": "skills/organize/SKILL.md:78:doc_link:artifact-protocol \u203a Chat link block",
       "source": {
         "file": "skills/organize/SKILL.md",
-        "line": 78,
+        "line": 79,
         "also_lines": [
           111
         ]
@@ -12970,7 +12970,7 @@
       "id": "skills/organize/SKILL.md:104:doc_link:../squash-ef-core-migrations/SKILL.md",
       "source": {
         "file": "skills/organize/SKILL.md",
-        "line": 104
+        "line": 105
       },
       "kind": "doc_link",
       "value": "../squash-ef-core-migrations/SKILL.md",
@@ -12985,7 +12985,7 @@
       "id": "skills/organize/SKILL.md:104:skill_ref:squash-ef-core-migrations",
       "source": {
         "file": "skills/organize/SKILL.md",
-        "line": 104
+        "line": 105
       },
       "kind": "skill_ref",
       "value": "squash-ef-core-migrations",
@@ -13493,7 +13493,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:14:doc_link:artifact-protocol \u203a Chat link block",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 14,
+        "line": 15,
         "also_lines": [
           144
         ]
@@ -13512,7 +13512,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:15:doc_link:core \u203a The ",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 15,
+        "line": 16,
         "also_lines": [
           144
         ]
@@ -13531,7 +13531,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:15:doc_link:git-worktrees \u203a Snapshot Lifecycle",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 15,
+        "line": 16,
         "also_lines": [
           93
         ]
@@ -13550,7 +13550,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:15:skill_ref:proceed",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 15,
+        "line": 16,
         "also_lines": [
           24,
           144,
@@ -13570,7 +13570,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:24:path:../_modules/core.md",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 24
+        "line": 25
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -13586,7 +13586,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:25:path:../_modules/artifact-protocol.md",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 25
+        "line": 26
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
@@ -13602,7 +13602,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:26:path:../_modules/git-worktrees.md",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 26
+        "line": 27
       },
       "kind": "path",
       "value": "../_modules/git-worktrees.md",
@@ -13618,7 +13618,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:27:path:../_modules/pr-counterpart.md",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 27
+        "line": 28
       },
       "kind": "path",
       "value": "../_modules/pr-counterpart.md",
@@ -13634,7 +13634,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:28:path:../_modules/pr-host.md",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 28
+        "line": 29
       },
       "kind": "path",
       "value": "../_modules/pr-host.md",
@@ -13650,7 +13650,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:29:path:../_modules/project-profile.md",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 29
+        "line": 30
       },
       "kind": "path",
       "value": "../_modules/project-profile.md",
@@ -13666,7 +13666,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:30:path:../_modules/fan-out.md",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 30
+        "line": 31
       },
       "kind": "path",
       "value": "../_modules/fan-out.md",
@@ -13682,7 +13682,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:38:doc_link:project-profile \u203a Discovery",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 38
+        "line": 39
       },
       "kind": "doc_link",
       "value": "project-profile \u203a Discovery",
@@ -13698,7 +13698,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:52:doc_link:references/deep-mode.md",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 52,
+        "line": 53,
         "also_lines": [
           161
         ]
@@ -13716,7 +13716,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:53:skill_ref:no-worktrees",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 53
+        "line": 54
       },
       "kind": "skill_ref",
       "value": "no-worktrees",
@@ -13731,7 +13731,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:60:doc_link:fan-out \u203a Bare vs deep",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 60
+        "line": 61
       },
       "kind": "doc_link",
       "value": "fan-out \u203a Bare vs deep",
@@ -13747,7 +13747,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:66:doc_link:../code-review/SKILL.md",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 66
+        "line": 67
       },
       "kind": "doc_link",
       "value": "../code-review/SKILL.md",
@@ -13762,7 +13762,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:66:skill_ref:code-review",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 66,
+        "line": 67,
         "also_lines": [
           119
         ]
@@ -13780,7 +13780,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:67:doc_link:../pr-fix-pipeline/SKILL.md",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 67
+        "line": 68
       },
       "kind": "doc_link",
       "value": "../pr-fix-pipeline/SKILL.md",
@@ -13795,7 +13795,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:67:skill_ref:pr-fix-pipeline",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 67
+        "line": 68
       },
       "kind": "skill_ref",
       "value": "pr-fix-pipeline",
@@ -13810,7 +13810,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:68:doc_link:../pr-summary/SKILL.md",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 68
+        "line": 69
       },
       "kind": "doc_link",
       "value": "../pr-summary/SKILL.md",
@@ -13825,7 +13825,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:68:skill_ref:pr-summary",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 68
+        "line": 69
       },
       "kind": "skill_ref",
       "value": "pr-summary",
@@ -13840,7 +13840,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:69:doc_link:../manual-testing/SKILL.md",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 69
+        "line": 70
       },
       "kind": "doc_link",
       "value": "../manual-testing/SKILL.md",
@@ -13855,7 +13855,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:69:skill_ref:manual-testing",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 69
+        "line": 70
       },
       "kind": "skill_ref",
       "value": "manual-testing",
@@ -13870,7 +13870,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:75:doc_link:pr-host \u203a Parse a PR or work-item URL",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 75
+        "line": 76
       },
       "kind": "doc_link",
       "value": "pr-host \u203a Parse a PR or work-item URL",
@@ -13886,7 +13886,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:76:doc_link:pr-counterpart \u203a Counterpart discovery",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 76
+        "line": 77
       },
       "kind": "doc_link",
       "value": "pr-counterpart \u203a Counterpart discovery",
@@ -13902,7 +13902,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:87:doc_link:../_modules/references/pr-host-threads.md",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 87
+        "line": 88
       },
       "kind": "doc_link",
       "value": "../_modules/references/pr-host-threads.md",
@@ -13917,7 +13917,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:87:doc_link:pr-host \u203a Fetch the PR, its work items and acceptance criteria",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 87
+        "line": 88
       },
       "kind": "doc_link",
       "value": "pr-host \u203a Fetch the PR, its work items and acceptance criteria",
@@ -13933,7 +13933,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:89:doc_link:references/selected-code.md",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 89
+        "line": 90
       },
       "kind": "doc_link",
       "value": "references/selected-code.md",
@@ -13948,7 +13948,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:93:doc_link:../_modules/references/git-worktrees-snapshot.md",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 93
+        "line": 94
       },
       "kind": "doc_link",
       "value": "../_modules/references/git-worktrees-snapshot.md",
@@ -13963,7 +13963,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:143:doc_link:references/artifact-template.md",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 143
+        "line": 144
       },
       "kind": "doc_link",
       "value": "references/artifact-template.md",
@@ -13978,7 +13978,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:143:doc_link:artifact-protocol \u203a Claim",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 143
+        "line": 144
       },
       "kind": "doc_link",
       "value": "artifact-protocol \u203a Claim",
@@ -13994,7 +13994,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:148:doc_link:artifact-protocol \u203a Rules",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 148
+        "line": 149
       },
       "kind": "doc_link",
       "value": "artifact-protocol \u203a Rules",
@@ -14010,7 +14010,7 @@
       "id": "skills/pr-feedback-review/SKILL.md:155:skill_ref:pr-post-comments",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 155
+        "line": 156
       },
       "kind": "skill_ref",
       "value": "pr-post-comments",
@@ -14165,7 +14165,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:17:path:../_modules/core.md",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 17
+        "line": 18
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -14181,7 +14181,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:17:skill_ref:proceed",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 17,
+        "line": 18,
         "also_lines": [
           25,
           26,
@@ -14207,7 +14207,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:18:path:../_modules/artifact-protocol.md",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 18
+        "line": 19
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
@@ -14223,7 +14223,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:19:path:../_modules/git-worktrees.md",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 19
+        "line": 20
       },
       "kind": "path",
       "value": "../_modules/git-worktrees.md",
@@ -14239,7 +14239,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:20:path:../_modules/pr-counterpart.md",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 20
+        "line": 21
       },
       "kind": "path",
       "value": "../_modules/pr-counterpart.md",
@@ -14255,7 +14255,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:21:path:../_modules/pr-host.md",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 21
+        "line": 22
       },
       "kind": "path",
       "value": "../_modules/pr-host.md",
@@ -14271,7 +14271,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:26:doc_link:../commit/SKILL.md",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 26,
+        "line": 27,
         "also_lines": [
           92
         ]
@@ -14289,7 +14289,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:26:doc_link:core \u203a The ",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 26,
+        "line": 27,
         "also_lines": [
           88,
           98
@@ -14309,7 +14309,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:26:skill_ref:commit",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 26,
+        "line": 27,
         "also_lines": [
           92
         ]
@@ -14327,7 +14327,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:37:doc_link:../problem/SKILL.md",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 37
+        "line": 38
       },
       "kind": "doc_link",
       "value": "../problem/SKILL.md",
@@ -14342,7 +14342,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:37:skill_ref:problem",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 37
+        "line": 38
       },
       "kind": "skill_ref",
       "value": "problem",
@@ -14357,7 +14357,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:38:doc_link:../code-review/SKILL.md",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 38
+        "line": 39
       },
       "kind": "doc_link",
       "value": "../code-review/SKILL.md",
@@ -14372,7 +14372,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:38:skill_ref:code-review",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 38
+        "line": 39
       },
       "kind": "skill_ref",
       "value": "code-review",
@@ -14387,7 +14387,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:39:doc_link:../pr-feedback-review/SKILL.md",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 39
+        "line": 40
       },
       "kind": "doc_link",
       "value": "../pr-feedback-review/SKILL.md",
@@ -14402,7 +14402,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:39:skill_ref:pr-feedback-review",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 39
+        "line": 40
       },
       "kind": "skill_ref",
       "value": "pr-feedback-review",
@@ -14417,7 +14417,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:47:doc_link:git-worktrees \u203a Repo Resolution",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 47
+        "line": 48
       },
       "kind": "doc_link",
       "value": "git-worktrees \u203a Repo Resolution",
@@ -14433,7 +14433,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:48:doc_link:pr-host \u203a Resolve the PR from a branch",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 48
+        "line": 49
       },
       "kind": "doc_link",
       "value": "pr-host \u203a Resolve the PR from a branch",
@@ -14449,7 +14449,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:49:doc_link:pr-counterpart \u203a Counterpart discovery",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 49
+        "line": 50
       },
       "kind": "doc_link",
       "value": "pr-counterpart \u203a Counterpart discovery",
@@ -14465,7 +14465,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:50:doc_link:pr-host \u203a Fetch the PR, its work items and acceptance criteria",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 50
+        "line": 51
       },
       "kind": "doc_link",
       "value": "pr-host \u203a Fetch the PR, its work items and acceptance criteria",
@@ -14481,7 +14481,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:54:doc_link:references/evidence-commands.md",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 54
+        "line": 55
       },
       "kind": "doc_link",
       "value": "references/evidence-commands.md",
@@ -14496,7 +14496,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:77:doc_link:../investigate/SKILL.md",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 77
+        "line": 78
       },
       "kind": "doc_link",
       "value": "../investigate/SKILL.md",
@@ -14511,7 +14511,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:77:skill_ref:investigate",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 77
+        "line": 78
       },
       "kind": "skill_ref",
       "value": "investigate",
@@ -14526,7 +14526,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:84:doc_link:../plan/SKILL.md",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 84
+        "line": 85
       },
       "kind": "doc_link",
       "value": "../plan/SKILL.md",
@@ -14541,7 +14541,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:84:skill_ref:plan",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 84
+        "line": 85
       },
       "kind": "skill_ref",
       "value": "plan",
@@ -14556,7 +14556,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:92:doc_link:references/remediation-loop.md",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 92,
+        "line": 93,
         "also_lines": [
           99
         ]
@@ -14574,7 +14574,7 @@
       "id": "skills/pr-fix-pipeline/SKILL.md:98:doc_link:artifact-protocol \u203a Chat link block",
       "source": {
         "file": "skills/pr-fix-pipeline/SKILL.md",
-        "line": 98
+        "line": 99
       },
       "kind": "doc_link",
       "value": "artifact-protocol \u203a Chat link block",
@@ -14763,7 +14763,7 @@
       "id": "skills/pr-post-comments/SKILL.md:26:path:../_modules/core.md",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 26
+        "line": 27
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -14779,7 +14779,7 @@
       "id": "skills/pr-post-comments/SKILL.md:27:path:../_modules/artifact-protocol.md",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 27
+        "line": 28
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
@@ -14795,7 +14795,7 @@
       "id": "skills/pr-post-comments/SKILL.md:28:path:../_modules/pr-counterpart.md",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 28
+        "line": 29
       },
       "kind": "path",
       "value": "../_modules/pr-counterpart.md",
@@ -14811,7 +14811,7 @@
       "id": "skills/pr-post-comments/SKILL.md:29:path:../_modules/pr-host.md",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 29
+        "line": 30
       },
       "kind": "path",
       "value": "../_modules/pr-host.md",
@@ -14827,7 +14827,7 @@
       "id": "skills/pr-post-comments/SKILL.md:30:path:../_modules/outward-writes.md",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 30
+        "line": 31
       },
       "kind": "path",
       "value": "../_modules/outward-writes.md",
@@ -14843,7 +14843,7 @@
       "id": "skills/pr-post-comments/SKILL.md:39:doc_link:references/comment-formats.md",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 39,
+        "line": 40,
         "also_lines": [
           66,
           110,
@@ -14864,7 +14864,7 @@
       "id": "skills/pr-post-comments/SKILL.md:49:doc_link:../code-review/SKILL.md",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 49
+        "line": 50
       },
       "kind": "doc_link",
       "value": "../code-review/SKILL.md",
@@ -14879,7 +14879,7 @@
       "id": "skills/pr-post-comments/SKILL.md:49:doc_link:../pr-feedback-review/SKILL.md",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 49
+        "line": 50
       },
       "kind": "doc_link",
       "value": "../pr-feedback-review/SKILL.md",
@@ -14894,7 +14894,7 @@
       "id": "skills/pr-post-comments/SKILL.md:49:skill_ref:code-review",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 49,
+        "line": 50,
         "also_lines": [
           74
         ]
@@ -14912,7 +14912,7 @@
       "id": "skills/pr-post-comments/SKILL.md:49:skill_ref:pr-feedback-review",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 49,
+        "line": 50,
         "also_lines": [
           136
         ]
@@ -14930,7 +14930,7 @@
       "id": "skills/pr-post-comments/SKILL.md:50:doc_link:../pr-summary/SKILL.md",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 50
+        "line": 51
       },
       "kind": "doc_link",
       "value": "../pr-summary/SKILL.md",
@@ -14945,7 +14945,7 @@
       "id": "skills/pr-post-comments/SKILL.md:50:skill_ref:pr-summary",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 50
+        "line": 51
       },
       "kind": "skill_ref",
       "value": "pr-summary",
@@ -14960,7 +14960,7 @@
       "id": "skills/pr-post-comments/SKILL.md:51:doc_link:../pr-fix-pipeline/SKILL.md",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 51
+        "line": 52
       },
       "kind": "doc_link",
       "value": "../pr-fix-pipeline/SKILL.md",
@@ -14975,7 +14975,7 @@
       "id": "skills/pr-post-comments/SKILL.md:51:skill_ref:pr-fix-pipeline",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 51
+        "line": 52
       },
       "kind": "skill_ref",
       "value": "pr-fix-pipeline",
@@ -14990,7 +14990,7 @@
       "id": "skills/pr-post-comments/SKILL.md:57:doc_link:references/azure-devops-mcp.md",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 57,
+        "line": 58,
         "also_lines": [
           121
         ]
@@ -15008,7 +15008,7 @@
       "id": "skills/pr-post-comments/SKILL.md:57:doc_link:pr-host \u203a Tool: MCP vs CLI",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 57
+        "line": 58
       },
       "kind": "doc_link",
       "value": "pr-host \u203a Tool: MCP vs CLI",
@@ -15024,7 +15024,7 @@
       "id": "skills/pr-post-comments/SKILL.md:61:doc_link:artifact-protocol \u203a Claim",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 61
+        "line": 62
       },
       "kind": "doc_link",
       "value": "artifact-protocol \u203a Claim",
@@ -15040,7 +15040,7 @@
       "id": "skills/pr-post-comments/SKILL.md:74:skill_ref:squash-code-review",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 74
+        "line": 75
       },
       "kind": "skill_ref",
       "value": "squash-code-review",
@@ -15055,7 +15055,7 @@
       "id": "skills/pr-post-comments/SKILL.md:76:doc_link:pr-counterpart \u203a Counterpart discovery",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 76
+        "line": 77
       },
       "kind": "doc_link",
       "value": "pr-counterpart \u203a Counterpart discovery",
@@ -15071,7 +15071,7 @@
       "id": "skills/pr-post-comments/SKILL.md:116:doc_link:../_modules/references/pr-host-threads.md",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 116
+        "line": 117
       },
       "kind": "doc_link",
       "value": "../_modules/references/pr-host-threads.md",
@@ -15086,7 +15086,7 @@
       "id": "skills/pr-post-comments/SKILL.md:116:doc_link:pr-host \u203a Fetch discussion threads",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 116
+        "line": 117
       },
       "kind": "doc_link",
       "value": "pr-host \u203a Fetch discussion threads",
@@ -15102,7 +15102,7 @@
       "id": "skills/pr-post-comments/SKILL.md:117:doc_link:templates/spec.json",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 117
+        "line": 118
       },
       "kind": "doc_link",
       "value": "templates/spec.json",
@@ -15117,7 +15117,7 @@
       "id": "skills/pr-post-comments/SKILL.md:127:doc_link:outward-writes \u203a Denied write is final",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 127
+        "line": 128
       },
       "kind": "doc_link",
       "value": "outward-writes \u203a Denied write is final",
@@ -15133,7 +15133,7 @@
       "id": "skills/pr-post-comments/SKILL.md:136:doc_link:artifact-protocol \u203a Rules",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 136
+        "line": 137
       },
       "kind": "doc_link",
       "value": "artifact-protocol \u203a Rules",
@@ -15149,7 +15149,7 @@
       "id": "skills/pr-post-comments/SKILL.md:136:doc_link:/pr-feedback-review \u203a 6.4 \u2014 Status fields",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 136
+        "line": 137
       },
       "kind": "doc_link",
       "value": "/pr-feedback-review \u203a 6.4 \u2014 Status fields",
@@ -15165,7 +15165,7 @@
       "id": "skills/pr-post-comments/SKILL.md:136:doc_link:artifact-protocol \u203a Chat link block",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 136
+        "line": 137
       },
       "kind": "doc_link",
       "value": "artifact-protocol \u203a Chat link block",
@@ -15181,7 +15181,7 @@
       "id": "skills/pr-post-comments/SKILL.md:142:doc_link:references/comment-formats.md \u203a Draft Preview Format (",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
-        "line": 142
+        "line": 143
       },
       "kind": "doc_link",
       "value": "references/comment-formats.md \u203a Draft Preview Format (",
@@ -15551,7 +15551,7 @@
       "id": "skills/problem/SKILL.md:17:path:../_modules/core.md",
       "source": {
         "file": "skills/problem/SKILL.md",
-        "line": 17
+        "line": 18
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -15567,7 +15567,7 @@
       "id": "skills/problem/SKILL.md:17:skill_ref:proceed",
       "source": {
         "file": "skills/problem/SKILL.md",
-        "line": 17,
+        "line": 18,
         "also_lines": [
           53
         ]
@@ -15585,7 +15585,7 @@
       "id": "skills/problem/SKILL.md:18:path:../_modules/artifact-protocol.md",
       "source": {
         "file": "skills/problem/SKILL.md",
-        "line": 18
+        "line": 19
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
@@ -15601,7 +15601,7 @@
       "id": "skills/problem/SKILL.md:19:path:../_modules/git-worktrees.md",
       "source": {
         "file": "skills/problem/SKILL.md",
-        "line": 19
+        "line": 20
       },
       "kind": "path",
       "value": "../_modules/git-worktrees.md",
@@ -15617,7 +15617,7 @@
       "id": "skills/problem/SKILL.md:27:doc_link:../pr-fix-pipeline/SKILL.md",
       "source": {
         "file": "skills/problem/SKILL.md",
-        "line": 27
+        "line": 28
       },
       "kind": "doc_link",
       "value": "../pr-fix-pipeline/SKILL.md",
@@ -15632,7 +15632,7 @@
       "id": "skills/problem/SKILL.md:27:skill_ref:pr-fix-pipeline",
       "source": {
         "file": "skills/problem/SKILL.md",
-        "line": 27
+        "line": 28
       },
       "kind": "skill_ref",
       "value": "pr-fix-pipeline",
@@ -15647,7 +15647,7 @@
       "id": "skills/problem/SKILL.md:28:doc_link:../refine/SKILL.md",
       "source": {
         "file": "skills/problem/SKILL.md",
-        "line": 28
+        "line": 29
       },
       "kind": "doc_link",
       "value": "../refine/SKILL.md",
@@ -15662,7 +15662,7 @@
       "id": "skills/problem/SKILL.md:28:skill_ref:refine",
       "source": {
         "file": "skills/problem/SKILL.md",
-        "line": 28
+        "line": 29
       },
       "kind": "skill_ref",
       "value": "refine",
@@ -15677,7 +15677,7 @@
       "id": "skills/problem/SKILL.md:29:doc_link:../investigate/SKILL.md",
       "source": {
         "file": "skills/problem/SKILL.md",
-        "line": 29
+        "line": 30
       },
       "kind": "doc_link",
       "value": "../investigate/SKILL.md",
@@ -15692,7 +15692,7 @@
       "id": "skills/problem/SKILL.md:29:skill_ref:investigate",
       "source": {
         "file": "skills/problem/SKILL.md",
-        "line": 29
+        "line": 30
       },
       "kind": "skill_ref",
       "value": "investigate",
@@ -15707,7 +15707,7 @@
       "id": "skills/problem/SKILL.md:30:doc_link:../clean/SKILL.md",
       "source": {
         "file": "skills/problem/SKILL.md",
-        "line": 30
+        "line": 31
       },
       "kind": "doc_link",
       "value": "../clean/SKILL.md",
@@ -15722,7 +15722,7 @@
       "id": "skills/problem/SKILL.md:30:skill_ref:clean",
       "source": {
         "file": "skills/problem/SKILL.md",
-        "line": 30
+        "line": 31
       },
       "kind": "skill_ref",
       "value": "clean",
@@ -15737,7 +15737,7 @@
       "id": "skills/problem/SKILL.md:47:doc_link:core \u203a Codebase investigation",
       "source": {
         "file": "skills/problem/SKILL.md",
-        "line": 47,
+        "line": 48,
         "also_lines": [
           48,
           49
@@ -15757,7 +15757,7 @@
       "id": "skills/problem/SKILL.md:51:skill_ref:plan",
       "source": {
         "file": "skills/problem/SKILL.md",
-        "line": 51,
+        "line": 52,
         "also_lines": [
           53
         ]
@@ -15775,7 +15775,7 @@
       "id": "skills/problem/SKILL.md:53:doc_link:../plan/SKILL.md",
       "source": {
         "file": "skills/problem/SKILL.md",
-        "line": 53
+        "line": 54
       },
       "kind": "doc_link",
       "value": "../plan/SKILL.md",
@@ -15790,7 +15790,7 @@
       "id": "skills/problem/SKILL.md:53:doc_link:../plan/SKILL.md \u203a Case B",
       "source": {
         "file": "skills/problem/SKILL.md",
-        "line": 53
+        "line": 54
       },
       "kind": "doc_link",
       "value": "../plan/SKILL.md \u203a Case B",
@@ -15806,7 +15806,7 @@
       "id": "skills/problem/SKILL.md:53:doc_link:core \u203a The ",
       "source": {
         "file": "skills/problem/SKILL.md",
-        "line": 53
+        "line": 54
       },
       "kind": "doc_link",
       "value": "core \u203a The ",
@@ -15822,7 +15822,7 @@
       "id": "skills/problem/SKILL.md:53:doc_link:core \u203a Post-edit verification",
       "source": {
         "file": "skills/problem/SKILL.md",
-        "line": 53
+        "line": 54
       },
       "kind": "doc_link",
       "value": "core \u203a Post-edit verification",
@@ -15838,7 +15838,7 @@
       "id": "skills/proceed/SKILL.md:10:doc_link:core \u203a The ",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 10,
+        "line": 12,
         "also_lines": [
           24,
           61,
@@ -15859,7 +15859,7 @@
       "id": "skills/proceed/SKILL.md:20:path:../_modules/core.md",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 20
+        "line": 22
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -15875,7 +15875,7 @@
       "id": "skills/proceed/SKILL.md:22:path:../_modules/git-worktrees.md",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 22
+        "line": 23
       },
       "kind": "path",
       "value": "../_modules/git-worktrees.md",
@@ -15891,7 +15891,7 @@
       "id": "skills/proceed/SKILL.md:36:skill_ref:code-review",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 36
+        "line": 37
       },
       "kind": "skill_ref",
       "value": "code-review",
@@ -15906,7 +15906,7 @@
       "id": "skills/proceed/SKILL.md:36:skill_ref:plan",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 36,
+        "line": 37,
         "also_lines": [
           46,
           47,
@@ -15926,7 +15926,7 @@
       "id": "skills/proceed/SKILL.md:36:skill_ref:pr-post-comments",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 36,
+        "line": 37,
         "also_lines": [
           37
         ]
@@ -15944,7 +15944,7 @@
       "id": "skills/proceed/SKILL.md:36:skill_ref:squash-code-review",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 36
+        "line": 37
       },
       "kind": "skill_ref",
       "value": "squash-code-review",
@@ -15959,7 +15959,7 @@
       "id": "skills/proceed/SKILL.md:37:skill_ref:pr-feedback-review",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 37
+        "line": 38
       },
       "kind": "skill_ref",
       "value": "pr-feedback-review",
@@ -15974,7 +15974,7 @@
       "id": "skills/proceed/SKILL.md:38:skill_ref:spec-verification",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 38
+        "line": 39
       },
       "kind": "skill_ref",
       "value": "spec-verification",
@@ -15989,7 +15989,7 @@
       "id": "skills/proceed/SKILL.md:39:skill_ref:what-am-I-missing",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 39
+        "line": 40
       },
       "kind": "skill_ref",
       "value": "what-am-I-missing",
@@ -16004,7 +16004,7 @@
       "id": "skills/proceed/SKILL.md:40:skill_ref:verify-assumptions",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 40
+        "line": 41
       },
       "kind": "skill_ref",
       "value": "verify-assumptions",
@@ -16019,7 +16019,7 @@
       "id": "skills/proceed/SKILL.md:41:skill_ref:explain",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 41
+        "line": 42
       },
       "kind": "skill_ref",
       "value": "explain",
@@ -16034,7 +16034,7 @@
       "id": "skills/proceed/SKILL.md:41:skill_ref:manual-testing",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 41
+        "line": 42
       },
       "kind": "skill_ref",
       "value": "manual-testing",
@@ -16049,7 +16049,7 @@
       "id": "skills/proceed/SKILL.md:42:doc_link:create-prompt \u203a Gate",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 42
+        "line": 43
       },
       "kind": "doc_link",
       "value": "create-prompt \u203a Gate",
@@ -16065,7 +16065,7 @@
       "id": "skills/proceed/SKILL.md:42:skill_ref:create-prompt",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 42
+        "line": 43
       },
       "kind": "skill_ref",
       "value": "create-prompt",
@@ -16080,7 +16080,7 @@
       "id": "skills/proceed/SKILL.md:44:skill_ref:pr-fix-pipeline",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 44
+        "line": 45
       },
       "kind": "skill_ref",
       "value": "pr-fix-pipeline",
@@ -16095,7 +16095,7 @@
       "id": "skills/proceed/SKILL.md:45:skill_ref:implement-feature",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 45
+        "line": 46
       },
       "kind": "skill_ref",
       "value": "implement-feature",
@@ -16110,7 +16110,7 @@
       "id": "skills/proceed/SKILL.md:46:skill_ref:suggestion",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 46
+        "line": 47
       },
       "kind": "skill_ref",
       "value": "suggestion",
@@ -16125,7 +16125,7 @@
       "id": "skills/proceed/SKILL.md:47:skill_ref:investigate",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 47
+        "line": 48
       },
       "kind": "skill_ref",
       "value": "investigate",
@@ -16140,7 +16140,7 @@
       "id": "skills/proceed/SKILL.md:62:doc_link:core \u203a Precedence",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 62
+        "line": 63
       },
       "kind": "doc_link",
       "value": "core \u203a Precedence",
@@ -16156,7 +16156,7 @@
       "id": "skills/proceed/SKILL.md:62:doc_link:core \u203a Worktree opt-in",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 62
+        "line": 23
       },
       "kind": "doc_link",
       "value": "core \u203a Worktree opt-in",
@@ -16172,7 +16172,7 @@
       "id": "skills/proceed/SKILL.md:62:doc_link:git-worktrees \u203a Modes",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 62
+        "line": 63
       },
       "kind": "doc_link",
       "value": "git-worktrees \u203a Modes",
@@ -16188,7 +16188,7 @@
       "id": "skills/proceed/SKILL.md:63:doc_link:core \u203a Post-edit verification",
       "source": {
         "file": "skills/proceed/SKILL.md",
-        "line": 63
+        "line": 64
       },
       "kind": "doc_link",
       "value": "core \u203a Post-edit verification",
@@ -16204,7 +16204,7 @@
       "id": "skills/refine/SKILL.md:17:path:../_modules/core.md",
       "source": {
         "file": "skills/refine/SKILL.md",
-        "line": 17
+        "line": 18
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -16220,7 +16220,7 @@
       "id": "skills/refine/SKILL.md:17:skill_ref:proceed",
       "source": {
         "file": "skills/refine/SKILL.md",
-        "line": 17,
+        "line": 18,
         "also_lines": [
           48
         ]
@@ -16238,7 +16238,7 @@
       "id": "skills/refine/SKILL.md:18:path:../_modules/artifact-protocol.md",
       "source": {
         "file": "skills/refine/SKILL.md",
-        "line": 18
+        "line": 19
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
@@ -16254,7 +16254,7 @@
       "id": "skills/refine/SKILL.md:19:path:../_modules/git-worktrees.md",
       "source": {
         "file": "skills/refine/SKILL.md",
-        "line": 19
+        "line": 20
       },
       "kind": "path",
       "value": "../_modules/git-worktrees.md",
@@ -16270,7 +16270,7 @@
       "id": "skills/refine/SKILL.md:27:doc_link:../problem/SKILL.md",
       "source": {
         "file": "skills/refine/SKILL.md",
-        "line": 27
+        "line": 28
       },
       "kind": "doc_link",
       "value": "../problem/SKILL.md",
@@ -16285,7 +16285,7 @@
       "id": "skills/refine/SKILL.md:27:skill_ref:problem",
       "source": {
         "file": "skills/refine/SKILL.md",
-        "line": 27
+        "line": 28
       },
       "kind": "skill_ref",
       "value": "problem",
@@ -16300,7 +16300,7 @@
       "id": "skills/refine/SKILL.md:28:doc_link:../clean/SKILL.md",
       "source": {
         "file": "skills/refine/SKILL.md",
-        "line": 28
+        "line": 29
       },
       "kind": "doc_link",
       "value": "../clean/SKILL.md",
@@ -16315,7 +16315,7 @@
       "id": "skills/refine/SKILL.md:28:skill_ref:clean",
       "source": {
         "file": "skills/refine/SKILL.md",
-        "line": 28
+        "line": 29
       },
       "kind": "skill_ref",
       "value": "clean",
@@ -16330,7 +16330,7 @@
       "id": "skills/refine/SKILL.md:29:doc_link:../expressive/SKILL.md",
       "source": {
         "file": "skills/refine/SKILL.md",
-        "line": 29
+        "line": 30
       },
       "kind": "doc_link",
       "value": "../expressive/SKILL.md",
@@ -16345,7 +16345,7 @@
       "id": "skills/refine/SKILL.md:29:skill_ref:expressive",
       "source": {
         "file": "skills/refine/SKILL.md",
-        "line": 29
+        "line": 30
       },
       "kind": "skill_ref",
       "value": "expressive",
@@ -16360,7 +16360,7 @@
       "id": "skills/refine/SKILL.md:30:doc_link:../organize/SKILL.md",
       "source": {
         "file": "skills/refine/SKILL.md",
-        "line": 30
+        "line": 31
       },
       "kind": "doc_link",
       "value": "../organize/SKILL.md",
@@ -16375,7 +16375,7 @@
       "id": "skills/refine/SKILL.md:30:skill_ref:organize",
       "source": {
         "file": "skills/refine/SKILL.md",
-        "line": 30
+        "line": 31
       },
       "kind": "skill_ref",
       "value": "organize",
@@ -16390,7 +16390,7 @@
       "id": "skills/refine/SKILL.md:31:doc_link:../code-review/SKILL.md",
       "source": {
         "file": "skills/refine/SKILL.md",
-        "line": 31,
+        "line": 32,
         "also_lines": [
           43
         ]
@@ -16408,7 +16408,7 @@
       "id": "skills/refine/SKILL.md:31:skill_ref:code-review",
       "source": {
         "file": "skills/refine/SKILL.md",
-        "line": 31,
+        "line": 32,
         "also_lines": [
           43
         ]
@@ -16426,7 +16426,7 @@
       "id": "skills/refine/SKILL.md:32:skill_ref:priis-backend-dry",
       "source": {
         "file": "skills/refine/SKILL.md",
-        "line": 32
+        "line": 33
       },
       "kind": "skill_ref",
       "value": "priis-backend-dry",
@@ -16441,7 +16441,7 @@
       "id": "skills/refine/SKILL.md:38:doc_link:core \u203a Codebase investigation",
       "source": {
         "file": "skills/refine/SKILL.md",
-        "line": 38
+        "line": 39
       },
       "kind": "doc_link",
       "value": "core \u203a Codebase investigation",
@@ -16457,7 +16457,7 @@
       "id": "skills/refine/SKILL.md:42:doc_link:core \u203a Precedence",
       "source": {
         "file": "skills/refine/SKILL.md",
-        "line": 42
+        "line": 43
       },
       "kind": "doc_link",
       "value": "core \u203a Precedence",
@@ -16473,7 +16473,7 @@
       "id": "skills/refine/SKILL.md:46:skill_ref:plan",
       "source": {
         "file": "skills/refine/SKILL.md",
-        "line": 46,
+        "line": 47,
         "also_lines": [
           48
         ]
@@ -16491,7 +16491,7 @@
       "id": "skills/refine/SKILL.md:48:doc_link:../plan/SKILL.md",
       "source": {
         "file": "skills/refine/SKILL.md",
-        "line": 48
+        "line": 49
       },
       "kind": "doc_link",
       "value": "../plan/SKILL.md",
@@ -16506,7 +16506,7 @@
       "id": "skills/refine/SKILL.md:48:doc_link:../plan/SKILL.md \u203a Case B",
       "source": {
         "file": "skills/refine/SKILL.md",
-        "line": 48
+        "line": 49
       },
       "kind": "doc_link",
       "value": "../plan/SKILL.md \u203a Case B",
@@ -16522,7 +16522,7 @@
       "id": "skills/refine/SKILL.md:48:doc_link:core \u203a The ",
       "source": {
         "file": "skills/refine/SKILL.md",
-        "line": 48
+        "line": 49
       },
       "kind": "doc_link",
       "value": "core \u203a The ",
@@ -16665,7 +16665,7 @@
       "id": "skills/resolve-conflicts/SKILL.md:17:path:../_modules/core.md",
       "source": {
         "file": "skills/resolve-conflicts/SKILL.md",
-        "line": 17
+        "line": 18
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -16681,7 +16681,7 @@
       "id": "skills/resolve-conflicts/SKILL.md:18:path:../_modules/artifact-protocol.md",
       "source": {
         "file": "skills/resolve-conflicts/SKILL.md",
-        "line": 18
+        "line": 19
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
@@ -16697,7 +16697,7 @@
       "id": "skills/resolve-conflicts/SKILL.md:19:path:../_modules/git-worktrees.md",
       "source": {
         "file": "skills/resolve-conflicts/SKILL.md",
-        "line": 19
+        "line": 20
       },
       "kind": "path",
       "value": "../_modules/git-worktrees.md",
@@ -16713,7 +16713,7 @@
       "id": "skills/resolve-conflicts/SKILL.md:22:doc_link:git-worktrees \u203a Golden Invariants",
       "source": {
         "file": "skills/resolve-conflicts/SKILL.md",
-        "line": 22
+        "line": 23
       },
       "kind": "doc_link",
       "value": "git-worktrees \u203a Golden Invariants",
@@ -16729,7 +16729,7 @@
       "id": "skills/resolve-conflicts/SKILL.md:22:doc_link:git-worktrees \u203a Workspace Lifecycle",
       "source": {
         "file": "skills/resolve-conflicts/SKILL.md",
-        "line": 22
+        "line": 23
       },
       "kind": "doc_link",
       "value": "git-worktrees \u203a Workspace Lifecycle",
@@ -16745,7 +16745,7 @@
       "id": "skills/resolve-conflicts/SKILL.md:22:skill_ref:worktrees",
       "source": {
         "file": "skills/resolve-conflicts/SKILL.md",
-        "line": 22
+        "line": 23
       },
       "kind": "skill_ref",
       "value": "worktrees",
@@ -16760,7 +16760,7 @@
       "id": "skills/resolve-conflicts/SKILL.md:28:skill_ref:clean",
       "source": {
         "file": "skills/resolve-conflicts/SKILL.md",
-        "line": 28
+        "line": 29
       },
       "kind": "skill_ref",
       "value": "clean",
@@ -16775,7 +16775,7 @@
       "id": "skills/resolve-conflicts/SKILL.md:41:doc_link:../problem/SKILL.md",
       "source": {
         "file": "skills/resolve-conflicts/SKILL.md",
-        "line": 41
+        "line": 42
       },
       "kind": "doc_link",
       "value": "../problem/SKILL.md",
@@ -16790,7 +16790,7 @@
       "id": "skills/resolve-conflicts/SKILL.md:41:skill_ref:problem",
       "source": {
         "file": "skills/resolve-conflicts/SKILL.md",
-        "line": 41
+        "line": 42
       },
       "kind": "skill_ref",
       "value": "problem",
@@ -16805,7 +16805,7 @@
       "id": "skills/resolve-conflicts/SKILL.md:42:doc_link:../squash-ef-core-migrations/SKILL.md",
       "source": {
         "file": "skills/resolve-conflicts/SKILL.md",
-        "line": 42
+        "line": 43
       },
       "kind": "doc_link",
       "value": "../squash-ef-core-migrations/SKILL.md",
@@ -16820,7 +16820,7 @@
       "id": "skills/resolve-conflicts/SKILL.md:42:skill_ref:squash-ef-core-migrations",
       "source": {
         "file": "skills/resolve-conflicts/SKILL.md",
-        "line": 42
+        "line": 43
       },
       "kind": "skill_ref",
       "value": "squash-ef-core-migrations",
@@ -16835,7 +16835,7 @@
       "id": "skills/resolve-conflicts/SKILL.md:43:doc_link:../code-review/SKILL.md",
       "source": {
         "file": "skills/resolve-conflicts/SKILL.md",
-        "line": 43
+        "line": 44
       },
       "kind": "doc_link",
       "value": "../code-review/SKILL.md",
@@ -16850,7 +16850,7 @@
       "id": "skills/resolve-conflicts/SKILL.md:43:skill_ref:code-review",
       "source": {
         "file": "skills/resolve-conflicts/SKILL.md",
-        "line": 43
+        "line": 44
       },
       "kind": "skill_ref",
       "value": "code-review",
@@ -16865,7 +16865,7 @@
       "id": "skills/resolve-conflicts/SKILL.md:123:doc_link:../commit/SKILL.md",
       "source": {
         "file": "skills/resolve-conflicts/SKILL.md",
-        "line": 123
+        "line": 124
       },
       "kind": "doc_link",
       "value": "../commit/SKILL.md",
@@ -16880,7 +16880,7 @@
       "id": "skills/resolve-conflicts/SKILL.md:123:doc_link:../commit/SKILL.md \u203a Step 4: Write the message and commit",
       "source": {
         "file": "skills/resolve-conflicts/SKILL.md",
-        "line": 123
+        "line": 124
       },
       "kind": "doc_link",
       "value": "../commit/SKILL.md \u203a Step 4: Write the message and commit",
@@ -16896,7 +16896,7 @@
       "id": "skills/resolve-conflicts/SKILL.md:123:skill_ref:commit",
       "source": {
         "file": "skills/resolve-conflicts/SKILL.md",
-        "line": 123
+        "line": 124
       },
       "kind": "skill_ref",
       "value": "commit",
@@ -16911,7 +16911,7 @@
       "id": "skills/resolve-conflicts/SKILL.md:134:doc_link:artifact-protocol \u203a Chat link block",
       "source": {
         "file": "skills/resolve-conflicts/SKILL.md",
-        "line": 134
+        "line": 135
       },
       "kind": "doc_link",
       "value": "artifact-protocol \u203a Chat link block",
@@ -17534,7 +17534,7 @@
       "id": "skills/spec-verification/SKILL.md:17:path:../_modules/core.md",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 17
+        "line": 18
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -17550,7 +17550,7 @@
       "id": "skills/spec-verification/SKILL.md:17:skill_ref:proceed",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 17,
+        "line": 18,
         "also_lines": [
           25,
           112
@@ -17569,7 +17569,7 @@
       "id": "skills/spec-verification/SKILL.md:18:path:../_modules/artifact-protocol.md",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 18
+        "line": 19
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
@@ -17585,7 +17585,7 @@
       "id": "skills/spec-verification/SKILL.md:19:path:../_modules/pr-counterpart.md",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 19
+        "line": 20
       },
       "kind": "path",
       "value": "../_modules/pr-counterpart.md",
@@ -17601,7 +17601,7 @@
       "id": "skills/spec-verification/SKILL.md:20:path:../_modules/pr-host.md",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 20
+        "line": 21
       },
       "kind": "path",
       "value": "../_modules/pr-host.md",
@@ -17617,7 +17617,7 @@
       "id": "skills/spec-verification/SKILL.md:21:path:../_modules/fan-out.md",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 21
+        "line": 22
       },
       "kind": "path",
       "value": "../_modules/fan-out.md",
@@ -17633,7 +17633,7 @@
       "id": "skills/spec-verification/SKILL.md:24:doc_link:artifact-protocol \u203a Claim",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 24,
+        "line": 25,
         "also_lines": [
           100,
           111
@@ -17653,7 +17653,7 @@
       "id": "skills/spec-verification/SKILL.md:24:doc_link:artifact-protocol \u203a Chat link block",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 24,
+        "line": 25,
         "also_lines": [
           112
         ]
@@ -17672,7 +17672,7 @@
       "id": "skills/spec-verification/SKILL.md:25:doc_link:core \u203a The ",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 25,
+        "line": 26,
         "also_lines": [
           112
         ]
@@ -17691,7 +17691,7 @@
       "id": "skills/spec-verification/SKILL.md:34:doc_link:../code-review/SKILL.md",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 34
+        "line": 35
       },
       "kind": "doc_link",
       "value": "../code-review/SKILL.md",
@@ -17706,7 +17706,7 @@
       "id": "skills/spec-verification/SKILL.md:34:skill_ref:code-review",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 34
+        "line": 35
       },
       "kind": "skill_ref",
       "value": "code-review",
@@ -17721,7 +17721,7 @@
       "id": "skills/spec-verification/SKILL.md:35:doc_link:../pr-feedback-review/SKILL.md",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 35
+        "line": 36
       },
       "kind": "doc_link",
       "value": "../pr-feedback-review/SKILL.md",
@@ -17736,7 +17736,7 @@
       "id": "skills/spec-verification/SKILL.md:35:skill_ref:pr-feedback-review",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 35
+        "line": 36
       },
       "kind": "skill_ref",
       "value": "pr-feedback-review",
@@ -17751,7 +17751,7 @@
       "id": "skills/spec-verification/SKILL.md:36:doc_link:../plan/SKILL.md",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 36
+        "line": 37
       },
       "kind": "doc_link",
       "value": "../plan/SKILL.md",
@@ -17766,7 +17766,7 @@
       "id": "skills/spec-verification/SKILL.md:37:doc_link:../manual-testing/SKILL.md",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 37
+        "line": 38
       },
       "kind": "doc_link",
       "value": "../manual-testing/SKILL.md",
@@ -17781,7 +17781,7 @@
       "id": "skills/spec-verification/SKILL.md:37:skill_ref:manual-testing",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 37
+        "line": 38
       },
       "kind": "skill_ref",
       "value": "manual-testing",
@@ -17796,7 +17796,7 @@
       "id": "skills/spec-verification/SKILL.md:46:doc_link:pr-host \u203a Fetch the PR, its work items and acceptance criteria",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 46
+        "line": 47
       },
       "kind": "doc_link",
       "value": "pr-host \u203a Fetch the PR, its work items and acceptance criteria",
@@ -17812,7 +17812,7 @@
       "id": "skills/spec-verification/SKILL.md:61:doc_link:pr-counterpart \u203a Counterpart discovery",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 61
+        "line": 62
       },
       "kind": "doc_link",
       "value": "pr-counterpart \u203a Counterpart discovery",
@@ -17828,7 +17828,7 @@
       "id": "skills/spec-verification/SKILL.md:61:doc_link:pr-host \u203a Resolve the PR from a branch",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 61
+        "line": 62
       },
       "kind": "doc_link",
       "value": "pr-host \u203a Resolve the PR from a branch",
@@ -17844,7 +17844,7 @@
       "id": "skills/spec-verification/SKILL.md:101:doc_link:pr-host \u203a Fetch discussion threads",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 101
+        "line": 102
       },
       "kind": "doc_link",
       "value": "pr-host \u203a Fetch discussion threads",
@@ -17860,7 +17860,7 @@
       "id": "skills/spec-verification/SKILL.md:105:doc_link:fan-out \u203a Brief contract",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 105
+        "line": 106
       },
       "kind": "doc_link",
       "value": "fan-out \u203a Brief contract",
@@ -17876,7 +17876,7 @@
       "id": "skills/spec-verification/SKILL.md:105:doc_link:fan-out \u203a Aggregation",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 105
+        "line": 106
       },
       "kind": "doc_link",
       "value": "fan-out \u203a Aggregation",
@@ -17892,7 +17892,7 @@
       "id": "skills/spec-verification/SKILL.md:111:doc_link:references/artifact-template.md",
       "source": {
         "file": "skills/spec-verification/SKILL.md",
-        "line": 111
+        "line": 112
       },
       "kind": "doc_link",
       "value": "references/artifact-template.md",
@@ -17954,7 +17954,7 @@
       "id": "skills/squash-code-review/SKILL.md:14:doc_link:artifact-protocol \u203a Chat link block",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 14,
+        "line": 15,
         "also_lines": [
           112
         ]
@@ -17973,7 +17973,7 @@
       "id": "skills/squash-code-review/SKILL.md:16:doc_link:../code-review/SKILL.md",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 16,
+        "line": 17,
         "also_lines": [
           34,
           52,
@@ -17993,7 +17993,7 @@
       "id": "skills/squash-code-review/SKILL.md:16:doc_link:../code-review/SKILL.md \u203a Step 6 \u2014 Verify Every \ud83d\udd34 and \ud83d\udfe1",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 16,
+        "line": 17,
         "also_lines": [
           94
         ]
@@ -18012,7 +18012,7 @@
       "id": "skills/squash-code-review/SKILL.md:16:skill_ref:code-review",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 16,
+        "line": 17,
         "also_lines": [
           34,
           52,
@@ -18033,7 +18033,7 @@
       "id": "skills/squash-code-review/SKILL.md:18:doc_link:core \u203a The ",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 18,
+        "line": 19,
         "also_lines": [
           112
         ]
@@ -18052,7 +18052,7 @@
       "id": "skills/squash-code-review/SKILL.md:18:doc_link:git-worktrees \u203a Snapshot Lifecycle",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 18,
+        "line": 19,
         "also_lines": [
           74
         ]
@@ -18071,7 +18071,7 @@
       "id": "skills/squash-code-review/SKILL.md:18:skill_ref:proceed",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 18,
+        "line": 19,
         "also_lines": [
           27,
           112
@@ -18090,7 +18090,7 @@
       "id": "skills/squash-code-review/SKILL.md:27:path:../_modules/core.md",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 27
+        "line": 28
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -18106,7 +18106,7 @@
       "id": "skills/squash-code-review/SKILL.md:28:path:../_modules/artifact-protocol.md",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 28
+        "line": 29
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
@@ -18122,7 +18122,7 @@
       "id": "skills/squash-code-review/SKILL.md:29:path:../_modules/git-worktrees.md",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 29
+        "line": 30
       },
       "kind": "path",
       "value": "../_modules/git-worktrees.md",
@@ -18138,7 +18138,7 @@
       "id": "skills/squash-code-review/SKILL.md:30:path:../_modules/pr-counterpart.md",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 30
+        "line": 31
       },
       "kind": "path",
       "value": "../_modules/pr-counterpart.md",
@@ -18154,7 +18154,7 @@
       "id": "skills/squash-code-review/SKILL.md:31:path:../_modules/pr-host.md",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 31
+        "line": 32
       },
       "kind": "path",
       "value": "../_modules/pr-host.md",
@@ -18170,7 +18170,7 @@
       "id": "skills/squash-code-review/SKILL.md:32:path:../_modules/fan-out.md",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 32
+        "line": 33
       },
       "kind": "path",
       "value": "../_modules/fan-out.md",
@@ -18186,7 +18186,7 @@
       "id": "skills/squash-code-review/SKILL.md:34:doc_link:../code-review/references/review-artifact-template.md",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 34,
+        "line": 35,
         "also_lines": [
           104
         ]
@@ -18204,7 +18204,7 @@
       "id": "skills/squash-code-review/SKILL.md:35:doc_link:artifact-protocol \u203a Claim",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 35
+        "line": 36
       },
       "kind": "doc_link",
       "value": "artifact-protocol \u203a Claim",
@@ -18220,7 +18220,7 @@
       "id": "skills/squash-code-review/SKILL.md:45:doc_link:../pr-feedback-review/SKILL.md",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 45,
+        "line": 46,
         "also_lines": [
           53
         ]
@@ -18238,7 +18238,7 @@
       "id": "skills/squash-code-review/SKILL.md:45:skill_ref:pr-feedback-review",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 45,
+        "line": 46,
         "also_lines": [
           53
         ]
@@ -18256,7 +18256,7 @@
       "id": "skills/squash-code-review/SKILL.md:54:doc_link:../pr-post-comments/SKILL.md",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 54
+        "line": 55
       },
       "kind": "doc_link",
       "value": "../pr-post-comments/SKILL.md",
@@ -18271,7 +18271,7 @@
       "id": "skills/squash-code-review/SKILL.md:54:skill_ref:pr-post-comments",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 54
+        "line": 55
       },
       "kind": "skill_ref",
       "value": "pr-post-comments",
@@ -18286,7 +18286,7 @@
       "id": "skills/squash-code-review/SKILL.md:66:doc_link:pr-host \u203a Resolve the PR from a branch",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 66,
+        "line": 67,
         "also_lines": [
           74
         ]
@@ -18305,7 +18305,7 @@
       "id": "skills/squash-code-review/SKILL.md:74:doc_link:pr-counterpart \u203a Counterpart discovery",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 74
+        "line": 75
       },
       "kind": "doc_link",
       "value": "pr-counterpart \u203a Counterpart discovery",
@@ -18321,7 +18321,7 @@
       "id": "skills/squash-code-review/SKILL.md:80:doc_link:../_modules/references/pr-host-threads.md",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 80,
+        "line": 81,
         "also_lines": [
           98
         ]
@@ -18339,7 +18339,7 @@
       "id": "skills/squash-code-review/SKILL.md:80:doc_link:pr-host \u203a Fetch discussion threads",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 80
+        "line": 81
       },
       "kind": "doc_link",
       "value": "pr-host \u203a Fetch discussion threads",
@@ -18355,7 +18355,7 @@
       "id": "skills/squash-code-review/SKILL.md:96:doc_link:/code-review \u203a Severity",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 96
+        "line": 97
       },
       "kind": "doc_link",
       "value": "/code-review \u203a Severity",
@@ -18371,7 +18371,7 @@
       "id": "skills/squash-code-review/SKILL.md:118:doc_link:fan-out \u203a Brief contract",
       "source": {
         "file": "skills/squash-code-review/SKILL.md",
-        "line": 118
+        "line": 119
       },
       "kind": "doc_link",
       "value": "fan-out \u203a Brief contract",
@@ -18387,7 +18387,7 @@
       "id": "skills/squash-ef-core-migrations/SKILL.md:17:path:../_modules/core.md",
       "source": {
         "file": "skills/squash-ef-core-migrations/SKILL.md",
-        "line": 17
+        "line": 18
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -18403,7 +18403,7 @@
       "id": "skills/squash-ef-core-migrations/SKILL.md:18:path:../_modules/artifact-protocol.md",
       "source": {
         "file": "skills/squash-ef-core-migrations/SKILL.md",
-        "line": 18
+        "line": 19
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
@@ -18419,7 +18419,7 @@
       "id": "skills/squash-ef-core-migrations/SKILL.md:19:path:../_modules/git-worktrees.md",
       "source": {
         "file": "skills/squash-ef-core-migrations/SKILL.md",
-        "line": 19
+        "line": 20
       },
       "kind": "path",
       "value": "../_modules/git-worktrees.md",
@@ -18435,7 +18435,7 @@
       "id": "skills/squash-ef-core-migrations/SKILL.md:22:doc_link:references/upgrade-path-verification.md",
       "source": {
         "file": "skills/squash-ef-core-migrations/SKILL.md",
-        "line": 22,
+        "line": 23,
         "also_lines": [
           122
         ]
@@ -18453,7 +18453,7 @@
       "id": "skills/squash-ef-core-migrations/SKILL.md:24:skill_ref:proceed",
       "source": {
         "file": "skills/squash-ef-core-migrations/SKILL.md",
-        "line": 24
+        "line": 25
       },
       "kind": "skill_ref",
       "value": "proceed",
@@ -18546,7 +18546,7 @@
       "id": "skills/suggestion/SKILL.md:18:path:../_modules/core.md",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 18
+        "line": 19
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -18562,7 +18562,7 @@
       "id": "skills/suggestion/SKILL.md:18:skill_ref:proceed",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 18,
+        "line": 19,
         "also_lines": [
           89,
           97
@@ -18581,7 +18581,7 @@
       "id": "skills/suggestion/SKILL.md:19:path:../_modules/artifact-protocol.md",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 19
+        "line": 20
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
@@ -18597,7 +18597,7 @@
       "id": "skills/suggestion/SKILL.md:20:path:../_modules/fan-out.md",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 20
+        "line": 21
       },
       "kind": "path",
       "value": "../_modules/fan-out.md",
@@ -18613,7 +18613,7 @@
       "id": "skills/suggestion/SKILL.md:23:doc_link:references/deep-artifact.md",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 23,
+        "line": 24,
         "also_lines": [
           108
         ]
@@ -18631,7 +18631,7 @@
       "id": "skills/suggestion/SKILL.md:40:doc_link:../investigate/SKILL.md",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 40
+        "line": 41
       },
       "kind": "doc_link",
       "value": "../investigate/SKILL.md",
@@ -18646,7 +18646,7 @@
       "id": "skills/suggestion/SKILL.md:40:skill_ref:investigate",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 40
+        "line": 41
       },
       "kind": "skill_ref",
       "value": "investigate",
@@ -18661,7 +18661,7 @@
       "id": "skills/suggestion/SKILL.md:41:doc_link:../explain/SKILL.md",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 41
+        "line": 42
       },
       "kind": "doc_link",
       "value": "../explain/SKILL.md",
@@ -18676,7 +18676,7 @@
       "id": "skills/suggestion/SKILL.md:41:skill_ref:explain",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 41
+        "line": 42
       },
       "kind": "skill_ref",
       "value": "explain",
@@ -18691,7 +18691,7 @@
       "id": "skills/suggestion/SKILL.md:42:doc_link:../what-am-I-missing/SKILL.md",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 42
+        "line": 43
       },
       "kind": "doc_link",
       "value": "../what-am-I-missing/SKILL.md",
@@ -18706,7 +18706,7 @@
       "id": "skills/suggestion/SKILL.md:42:skill_ref:what-am-I-missing",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 42
+        "line": 43
       },
       "kind": "skill_ref",
       "value": "what-am-I-missing",
@@ -18721,7 +18721,7 @@
       "id": "skills/suggestion/SKILL.md:43:doc_link:../problem/SKILL.md",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 43
+        "line": 44
       },
       "kind": "doc_link",
       "value": "../problem/SKILL.md",
@@ -18736,7 +18736,7 @@
       "id": "skills/suggestion/SKILL.md:43:skill_ref:problem",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 43
+        "line": 44
       },
       "kind": "skill_ref",
       "value": "problem",
@@ -18751,7 +18751,7 @@
       "id": "skills/suggestion/SKILL.md:44:doc_link:../plan/SKILL.md",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 44,
+        "line": 45,
         "also_lines": [
           45
         ]
@@ -18769,7 +18769,7 @@
       "id": "skills/suggestion/SKILL.md:44:doc_link:../code-review/SKILL.md",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 44
+        "line": 45
       },
       "kind": "doc_link",
       "value": "../code-review/SKILL.md",
@@ -18784,7 +18784,7 @@
       "id": "skills/suggestion/SKILL.md:44:skill_ref:code-review",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 44
+        "line": 45
       },
       "kind": "skill_ref",
       "value": "code-review",
@@ -18799,7 +18799,7 @@
       "id": "skills/suggestion/SKILL.md:45:skill_ref:plan",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 45,
+        "line": 46,
         "also_lines": [
           95
         ]
@@ -18817,7 +18817,7 @@
       "id": "skills/suggestion/SKILL.md:63:doc_link:core \u203a Codebase investigation",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 63,
+        "line": 64,
         "also_lines": [
           65
         ]
@@ -18836,7 +18836,7 @@
       "id": "skills/suggestion/SKILL.md:64:doc_link:core \u203a Precedence",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 64
+        "line": 65
       },
       "kind": "doc_link",
       "value": "core \u203a Precedence",
@@ -18852,7 +18852,7 @@
       "id": "skills/suggestion/SKILL.md:78:doc_link:fan-out \u203a Aggregation",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 78
+        "line": 79
       },
       "kind": "doc_link",
       "value": "fan-out \u203a Aggregation",
@@ -18868,7 +18868,7 @@
       "id": "skills/suggestion/SKILL.md:97:doc_link:core \u203a The ",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 97
+        "line": 98
       },
       "kind": "doc_link",
       "value": "core \u203a The ",
@@ -18884,7 +18884,7 @@
       "id": "skills/suggestion/SKILL.md:99:doc_link:core \u203a Golden invariants",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 99
+        "line": 100
       },
       "kind": "doc_link",
       "value": "core \u203a Golden invariants",
@@ -18900,7 +18900,7 @@
       "id": "skills/suggestion/SKILL.md:108:doc_link:artifact-protocol \u203a Chat link block",
       "source": {
         "file": "skills/suggestion/SKILL.md",
-        "line": 108
+        "line": 109
       },
       "kind": "doc_link",
       "value": "artifact-protocol \u203a Chat link block",
@@ -19015,7 +19015,7 @@
       "id": "skills/sync-skills/SKILL.md:57:doc_link:../skill-drift/scripts/check_skill_drift.py",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
-        "line": 57
+        "line": 59
       },
       "kind": "doc_link",
       "value": "../skill-drift/scripts/check_skill_drift.py",
@@ -19030,7 +19030,7 @@
       "id": "skills/sync-skills/SKILL.md:57:doc_link:../skill-drift/SKILL.md",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
-        "line": 57
+        "line": 59
       },
       "kind": "doc_link",
       "value": "../skill-drift/SKILL.md",
@@ -19045,7 +19045,7 @@
       "id": "skills/sync-skills/SKILL.md:57:skill_ref:skill-drift",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
-        "line": 57
+        "line": 59
       },
       "kind": "skill_ref",
       "value": "skill-drift",
@@ -19060,7 +19060,7 @@
       "id": "skills/sync-skills/SKILL.md:86:doc_link:sync_skills.py",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
-        "line": 86
+        "line": 88
       },
       "kind": "doc_link",
       "value": "sync_skills.py",
@@ -19075,7 +19075,7 @@
       "id": "skills/sync-skills/SKILL.md:86:doc_link:../../claude.bash",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
-        "line": 86
+        "line": 88
       },
       "kind": "doc_link",
       "value": "../../claude.bash",
@@ -19090,7 +19090,7 @@
       "id": "skills/sync-skills/SKILL.md:86:doc_link:../../code.bash",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
-        "line": 86
+        "line": 88
       },
       "kind": "doc_link",
       "value": "../../code.bash",
@@ -19105,7 +19105,7 @@
       "id": "skills/sync-skills/SKILL.md:86:doc_link:references/manual-linking.md",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
-        "line": 86
+        "line": 88
       },
       "kind": "doc_link",
       "value": "references/manual-linking.md",
@@ -19120,7 +19120,7 @@
       "id": "skills/sync-skills/SKILL.md:86:path:claude.bash",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
-        "line": 86,
+        "line": 88,
         "also_lines": [
           97
         ]
@@ -19139,7 +19139,7 @@
       "id": "skills/sync-skills/SKILL.md:86:path:code.bash",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
-        "line": 86
+        "line": 88
       },
       "kind": "path",
       "value": "code.bash",
@@ -19185,7 +19185,7 @@
       "id": "skills/verify-assumptions/SKILL.md:17:path:../_modules/core.md",
       "source": {
         "file": "skills/verify-assumptions/SKILL.md",
-        "line": 17
+        "line": 18
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -19201,7 +19201,7 @@
       "id": "skills/verify-assumptions/SKILL.md:17:skill_ref:proceed",
       "source": {
         "file": "skills/verify-assumptions/SKILL.md",
-        "line": 17,
+        "line": 18,
         "also_lines": [
           21
         ]
@@ -19219,7 +19219,7 @@
       "id": "skills/verify-assumptions/SKILL.md:18:path:../_modules/artifact-protocol.md",
       "source": {
         "file": "skills/verify-assumptions/SKILL.md",
-        "line": 18
+        "line": 19
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
@@ -19235,7 +19235,7 @@
       "id": "skills/verify-assumptions/SKILL.md:19:path:../_modules/fan-out.md",
       "source": {
         "file": "skills/verify-assumptions/SKILL.md",
-        "line": 19
+        "line": 20
       },
       "kind": "path",
       "value": "../_modules/fan-out.md",
@@ -19251,7 +19251,7 @@
       "id": "skills/verify-assumptions/SKILL.md:39:doc_link:../investigate/SKILL.md",
       "source": {
         "file": "skills/verify-assumptions/SKILL.md",
-        "line": 39
+        "line": 40
       },
       "kind": "doc_link",
       "value": "../investigate/SKILL.md",
@@ -19266,7 +19266,7 @@
       "id": "skills/verify-assumptions/SKILL.md:39:skill_ref:investigate",
       "source": {
         "file": "skills/verify-assumptions/SKILL.md",
-        "line": 39
+        "line": 40
       },
       "kind": "skill_ref",
       "value": "investigate",
@@ -19281,7 +19281,7 @@
       "id": "skills/verify-assumptions/SKILL.md:40:doc_link:../what-am-I-missing/SKILL.md",
       "source": {
         "file": "skills/verify-assumptions/SKILL.md",
-        "line": 40
+        "line": 41
       },
       "kind": "doc_link",
       "value": "../what-am-I-missing/SKILL.md",
@@ -19296,7 +19296,7 @@
       "id": "skills/verify-assumptions/SKILL.md:40:skill_ref:what-am-I-missing",
       "source": {
         "file": "skills/verify-assumptions/SKILL.md",
-        "line": 40
+        "line": 41
       },
       "kind": "skill_ref",
       "value": "what-am-I-missing",
@@ -19311,7 +19311,7 @@
       "id": "skills/verify-assumptions/SKILL.md:41:doc_link:../plan/SKILL.md",
       "source": {
         "file": "skills/verify-assumptions/SKILL.md",
-        "line": 41
+        "line": 42
       },
       "kind": "doc_link",
       "value": "../plan/SKILL.md",
@@ -19326,7 +19326,7 @@
       "id": "skills/verify-assumptions/SKILL.md:42:doc_link:../spec-verification/SKILL.md",
       "source": {
         "file": "skills/verify-assumptions/SKILL.md",
-        "line": 42
+        "line": 43
       },
       "kind": "doc_link",
       "value": "../spec-verification/SKILL.md",
@@ -19341,7 +19341,7 @@
       "id": "skills/verify-assumptions/SKILL.md:42:skill_ref:spec-verification",
       "source": {
         "file": "skills/verify-assumptions/SKILL.md",
-        "line": 42
+        "line": 43
       },
       "kind": "skill_ref",
       "value": "spec-verification",
@@ -19356,7 +19356,7 @@
       "id": "skills/verify-assumptions/SKILL.md:83:doc_link:fan-out \u203a Aggregation",
       "source": {
         "file": "skills/verify-assumptions/SKILL.md",
-        "line": 83
+        "line": 76
       },
       "kind": "doc_link",
       "value": "fan-out \u203a Aggregation",
@@ -19372,7 +19372,7 @@
       "id": "skills/what-am-I-missing/SKILL.md:18:path:../_modules/core.md",
       "source": {
         "file": "skills/what-am-I-missing/SKILL.md",
-        "line": 18
+        "line": 19
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -19388,7 +19388,7 @@
       "id": "skills/what-am-I-missing/SKILL.md:18:skill_ref:proceed",
       "source": {
         "file": "skills/what-am-I-missing/SKILL.md",
-        "line": 18
+        "line": 19
       },
       "kind": "skill_ref",
       "value": "proceed",
@@ -19403,7 +19403,7 @@
       "id": "skills/what-am-I-missing/SKILL.md:19:path:../_modules/artifact-protocol.md",
       "source": {
         "file": "skills/what-am-I-missing/SKILL.md",
-        "line": 19
+        "line": 20
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
@@ -19419,7 +19419,7 @@
       "id": "skills/what-am-I-missing/SKILL.md:19:skill_ref:code-review",
       "source": {
         "file": "skills/what-am-I-missing/SKILL.md",
-        "line": 19,
+        "line": 20,
         "also_lines": [
           33,
           51
@@ -19438,7 +19438,7 @@
       "id": "skills/what-am-I-missing/SKILL.md:19:skill_ref:implement-feature",
       "source": {
         "file": "skills/what-am-I-missing/SKILL.md",
-        "line": 19,
+        "line": 20,
         "also_lines": [
           52
         ]
@@ -19456,7 +19456,7 @@
       "id": "skills/what-am-I-missing/SKILL.md:22:doc_link:references/vectors.md",
       "source": {
         "file": "skills/what-am-I-missing/SKILL.md",
-        "line": 22,
+        "line": 23,
         "also_lines": [
           42
         ]
@@ -19474,7 +19474,7 @@
       "id": "skills/what-am-I-missing/SKILL.md:23:doc_link:references/artifact-template.md",
       "source": {
         "file": "skills/what-am-I-missing/SKILL.md",
-        "line": 23,
+        "line": 24,
         "also_lines": [
           52
         ]
@@ -19492,7 +19492,7 @@
       "id": "skills/what-am-I-missing/SKILL.md:31:doc_link:../investigate/SKILL.md",
       "source": {
         "file": "skills/what-am-I-missing/SKILL.md",
-        "line": 31
+        "line": 32
       },
       "kind": "doc_link",
       "value": "../investigate/SKILL.md",
@@ -19507,7 +19507,7 @@
       "id": "skills/what-am-I-missing/SKILL.md:31:skill_ref:investigate",
       "source": {
         "file": "skills/what-am-I-missing/SKILL.md",
-        "line": 31
+        "line": 32
       },
       "kind": "skill_ref",
       "value": "investigate",
@@ -19522,7 +19522,7 @@
       "id": "skills/what-am-I-missing/SKILL.md:32:doc_link:../plan/SKILL.md",
       "source": {
         "file": "skills/what-am-I-missing/SKILL.md",
-        "line": 32
+        "line": 33
       },
       "kind": "doc_link",
       "value": "../plan/SKILL.md",
@@ -19537,7 +19537,7 @@
       "id": "skills/what-am-I-missing/SKILL.md:33:doc_link:../code-review/SKILL.md",
       "source": {
         "file": "skills/what-am-I-missing/SKILL.md",
-        "line": 33
+        "line": 34
       },
       "kind": "doc_link",
       "value": "../code-review/SKILL.md",
@@ -19552,7 +19552,7 @@
       "id": "skills/what-am-I-missing/SKILL.md:34:doc_link:../problem/SKILL.md",
       "source": {
         "file": "skills/what-am-I-missing/SKILL.md",
-        "line": 34
+        "line": 35
       },
       "kind": "doc_link",
       "value": "../problem/SKILL.md",
@@ -19567,7 +19567,7 @@
       "id": "skills/what-am-I-missing/SKILL.md:34:skill_ref:problem",
       "source": {
         "file": "skills/what-am-I-missing/SKILL.md",
-        "line": 34
+        "line": 35
       },
       "kind": "skill_ref",
       "value": "problem",
@@ -19582,7 +19582,7 @@
       "id": "skills/what-am-I-missing/SKILL.md:35:doc_link:../suggestion/SKILL.md",
       "source": {
         "file": "skills/what-am-I-missing/SKILL.md",
-        "line": 35
+        "line": 36
       },
       "kind": "doc_link",
       "value": "../suggestion/SKILL.md",
@@ -19597,7 +19597,7 @@
       "id": "skills/what-am-I-missing/SKILL.md:35:skill_ref:suggestion",
       "source": {
         "file": "skills/what-am-I-missing/SKILL.md",
-        "line": 35
+        "line": 36
       },
       "kind": "skill_ref",
       "value": "suggestion",
@@ -19612,7 +19612,7 @@
       "id": "skills/what-am-I-missing/SKILL.md:36:doc_link:../verify-assumptions/SKILL.md",
       "source": {
         "file": "skills/what-am-I-missing/SKILL.md",
-        "line": 36
+        "line": 37
       },
       "kind": "doc_link",
       "value": "../verify-assumptions/SKILL.md",
@@ -19627,7 +19627,7 @@
       "id": "skills/what-am-I-missing/SKILL.md:36:skill_ref:verify-assumptions",
       "source": {
         "file": "skills/what-am-I-missing/SKILL.md",
-        "line": 36
+        "line": 37
       },
       "kind": "skill_ref",
       "value": "verify-assumptions",
@@ -19642,7 +19642,7 @@
       "id": "skills/what-am-I-missing/SKILL.md:56:doc_link:artifact-protocol \u203a Chat link block",
       "source": {
         "file": "skills/what-am-I-missing/SKILL.md",
-        "line": 56
+        "line": 57
       },
       "kind": "doc_link",
       "value": "artifact-protocol \u203a Chat link block",
@@ -20127,7 +20127,7 @@
       "id": "skills/pr-desc/SKILL.md:66:path:scripts/wrap_generics.py",
       "source": {
         "file": "skills/pr-desc/SKILL.md",
-        "line": 66
+        "line": 94
       },
       "kind": "path",
       "value": "scripts/wrap_generics.py",
@@ -20158,7 +20158,7 @@
       "id": "skills/insights/SKILL.md:17:path:../_modules/core.md",
       "source": {
         "file": "skills/insights/SKILL.md",
-        "line": 17
+        "line": 18
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -20174,7 +20174,7 @@
       "id": "skills/insights/SKILL.md:18:path:../_modules/artifact-protocol.md",
       "source": {
         "file": "skills/insights/SKILL.md",
-        "line": 18
+        "line": 19
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
@@ -20190,7 +20190,7 @@
       "id": "skills/insights/SKILL.md:36:path:scripts/generate_insights.py",
       "source": {
         "file": "skills/insights/SKILL.md",
-        "line": 36
+        "line": 37
       },
       "kind": "path",
       "value": "scripts/generate_insights.py",
@@ -20206,7 +20206,7 @@
       "id": "skills/insights/SKILL.md:64:doc_link:core \u203a The /proceed gate",
       "source": {
         "file": "skills/insights/SKILL.md",
-        "line": 64
+        "line": 65
       },
       "kind": "doc_link",
       "value": "core \u203a The /proceed gate",
@@ -20237,7 +20237,7 @@
       "id": "skills/simplify/SKILL.md:10:skill_ref:code-review",
       "source": {
         "file": "skills/simplify/SKILL.md",
-        "line": 10
+        "line": 11
       },
       "kind": "skill_ref",
       "value": "code-review",
@@ -20252,7 +20252,7 @@
       "id": "skills/simplify/SKILL.md:19:path:../_modules/core.md",
       "source": {
         "file": "skills/simplify/SKILL.md",
-        "line": 19
+        "line": 20
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -20268,7 +20268,7 @@
       "id": "skills/simplify/SKILL.md:20:path:../_modules/fan-out.md",
       "source": {
         "file": "skills/simplify/SKILL.md",
-        "line": 20
+        "line": 21
       },
       "kind": "path",
       "value": "../_modules/fan-out.md",
@@ -20284,7 +20284,7 @@
       "id": "skills/simplify/SKILL.md:21:path:../_modules/git-worktrees.md",
       "source": {
         "file": "skills/simplify/SKILL.md",
-        "line": 21
+        "line": 22
       },
       "kind": "path",
       "value": "../_modules/git-worktrees.md",
@@ -20300,7 +20300,7 @@
       "id": "skills/simplify/SKILL.md:32:doc_link:core \u203a Post-edit verification",
       "source": {
         "file": "skills/simplify/SKILL.md",
-        "line": 32
+        "line": 35
       },
       "kind": "doc_link",
       "value": "core \u203a Post-edit verification",
@@ -20316,7 +20316,7 @@
       "id": "skills/simplify/SKILL.md:40:skill_ref:code-review",
       "source": {
         "file": "skills/simplify/SKILL.md",
-        "line": 40
+        "line": 44
       },
       "kind": "skill_ref",
       "value": "code-review",
@@ -20331,7 +20331,7 @@
       "id": "skills/simplify/SKILL.md:41:skill_ref:clean",
       "source": {
         "file": "skills/simplify/SKILL.md",
-        "line": 41
+        "line": 45
       },
       "kind": "skill_ref",
       "value": "clean",
@@ -20346,7 +20346,7 @@
       "id": "skills/simplify/SKILL.md:42:skill_ref:expressive",
       "source": {
         "file": "skills/simplify/SKILL.md",
-        "line": 42
+        "line": 46
       },
       "kind": "skill_ref",
       "value": "expressive",
@@ -20361,7 +20361,7 @@
       "id": "skills/simplify/SKILL.md:43:skill_ref:organize",
       "source": {
         "file": "skills/simplify/SKILL.md",
-        "line": 43
+        "line": 47
       },
       "kind": "skill_ref",
       "value": "organize",
@@ -20376,7 +20376,7 @@
       "id": "skills/simplify/SKILL.md:44:skill_ref:refine",
       "source": {
         "file": "skills/simplify/SKILL.md",
-        "line": 44
+        "line": 48
       },
       "kind": "skill_ref",
       "value": "refine",
@@ -20391,7 +20391,7 @@
       "id": "skills/simplify/SKILL.md:45:skill_ref:priis-backend-dry",
       "source": {
         "file": "skills/simplify/SKILL.md",
-        "line": 45
+        "line": 49
       },
       "kind": "skill_ref",
       "value": "priis-backend-dry",
@@ -20534,7 +20534,7 @@
       "id": "skills/verify-assumptions/SKILL.md:66:doc_link:references/source-routing.md",
       "source": {
         "file": "skills/verify-assumptions/SKILL.md",
-        "line": 66
+        "line": 67
       },
       "kind": "doc_link",
       "value": "references/source-routing.md",
@@ -20549,7 +20549,7 @@
       "id": "skills/verify-assumptions/SKILL.md:77:doc_link:references/source-routing.md \u203a Version match",
       "source": {
         "file": "skills/verify-assumptions/SKILL.md",
-        "line": 77,
+        "line": 78,
         "also_lines": [
           71
         ]
@@ -20568,7 +20568,7 @@
       "id": "skills/verify-assumptions/SKILL.md:91:doc_link:references/report-template.md",
       "source": {
         "file": "skills/verify-assumptions/SKILL.md",
-        "line": 91
+        "line": 92
       },
       "kind": "doc_link",
       "value": "references/report-template.md",

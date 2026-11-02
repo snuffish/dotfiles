@@ -1,6 +1,7 @@
 ---
 name: implement-feature
 description: "Orchestrates end-to-end feature implementation, bug fixes, and user stories. Coordinates ticket intake, codebase research, implementation planning, execution in isolated worktrees, verification testing, self-review, and PR preparation according to repository-specific profiles and rulebooks."
+argument-hint: "[--direct | /no-framing] [<ticket | description>]"
 ---
 
 # Skill: `/implement-feature` — End-to-End Feature Implementation

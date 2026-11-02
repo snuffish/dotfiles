@@ -1,6 +1,7 @@
 ---
 name: code-review
 description: "Reviews code changes along Correctness (bugs, security, performance), Standards (project conventions, cross-repo contracts), and Spec (PR, ticket, acceptance criteria) axes, then a blind-spot pass on the change as a whole. Writes a verified code review artifact. Handles PR URLs, work item IDs, branch comparisons, and dual-repo counterpart PRs. Reads detached git snapshots by default."
+argument-hint: "[--deep] [live] [feedback] [scope]"
 ---
 
 # Code Review Skill

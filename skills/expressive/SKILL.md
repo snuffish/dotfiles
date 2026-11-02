@@ -1,6 +1,7 @@
 ---
 name: expressive
 description: "Rewrites imperative, nested or procedural code into declarative, intent-revealing code without changing behaviour: lookup tables for nested ternaries, domain predicates for complex booleans, guard clauses for nested conditionals, dispatch maps, declarative pipelines, and early-return subcomponents for `&&`-chained markup. Use for /expressive, \"make this more expressive\", \"use early returns instead\", \"flatten this\", \"clean up this conditional mess\", or a readability sweep of a PR. Not for removing dead code (/clean) or finding bugs (/code-review)."
+argument-hint: "[<target>]"
 ---
 
 # Skill: `/expressive` — Make Code Expressive & Intent-Revealing

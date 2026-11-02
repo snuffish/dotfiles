@@ -1,6 +1,7 @@
 ---
 name: pr-post-comments
 description: "Posts drafted review findings and thread replies from review artifacts to Azure DevOps or GitHub pull requests. Anchors inline comments to verified diff lines at PR head, batches minor findings into a summary comment, routes counterpart PR comments, and records remote thread IDs back into the artifact."
+argument-hint: "[draft]"
 ---
 
 # Skill: `/pr-post-comments` — Post Drafted Feedback to a Pull Request
