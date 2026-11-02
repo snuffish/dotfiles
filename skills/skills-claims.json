@@ -3115,22 +3115,6 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md:23:doc_link:CLAUDE.md \u203a Memory",
-      "source": {
-        "file": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md",
-        "line": 23
-      },
-      "kind": "doc_link",
-      "value": "CLAUDE.md \u203a Memory",
-      "quote": "`CLAUDE.md` \u203a _Memory_",
-      "verify": {
-        "method": "heading_pointer",
-        "target": "CLAUDE.md",
-        "heading": "Memory",
-        "base": "repo"
-      }
-    },
-    {
       "id": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md:32:skill_ref:priis-local-stack",
       "source": {
         "file": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md",
@@ -3273,18 +3257,18 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md:45:doc_link:CLAUDE.md \u203a CodeGraph gaps",
+      "id": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md:45:doc_link:core \u203a Codebase investigation",
       "source": {
         "file": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md",
         "line": 45
       },
       "kind": "doc_link",
-      "value": "CLAUDE.md \u203a CodeGraph gaps",
-      "quote": "`CLAUDE.md` \u203a _CodeGraph gaps_",
+      "value": "core \u203a Codebase investigation",
+      "quote": "`core` \u203a _Codebase investigation_",
       "verify": {
         "method": "heading_pointer",
-        "target": "CLAUDE.md",
-        "heading": "CodeGraph gaps",
+        "target": "core",
+        "heading": "Codebase investigation",
         "base": "repo"
       }
     },
@@ -3314,7 +3298,7 @@
       },
       "kind": "skill_ref",
       "value": "priis-backend-ef-core",
-      "quote": "s-backend-notifications` and `priis-backend-ef-core`. The workspace `CLAUDE.md` \u203a _CodeGraph gaps_ says what to grep instead of graph.",
+      "quote": "s-backend-notifications` and `priis-backend-ef-core`. `core` \u203a _Codebase investigation_",
       "verify": {
         "method": "skill_exists",
         "name": "priis-backend-ef-core",
@@ -3329,7 +3313,7 @@
       },
       "kind": "skill_ref",
       "value": "priis-backend-notifications",
-      "quote": "tifications and jobs that is `priis-backend-notifications` and `priis-backend-ef-core`. The workspace `CLAUDE.md` \u203a _CodeGraph gaps_ says what to grep",
+      "quote": "tifications and jobs that is `priis-backend-notifications` and `priis-backend-ef",
       "verify": {
         "method": "skill_exists",
         "name": "priis-backend-notifications",

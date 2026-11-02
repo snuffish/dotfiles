@@ -20,7 +20,7 @@ Read these before step 1:
 
 - **No production access, ever.** Never ask for, accept or store a production connection string, password or Key Vault value, and never try to reach a production host. The user runs every query.
 - **Strictly read-only SQL.** A round script holds only standalone `SELECT` statements. No `DECLARE`, `INSERT` (not even into a table variable), `SELECT … INTO`, `UPDATE`, `DELETE`, `MERGE`, DDL, table variables, `#temp` tables, `EXEC` or stored procedures. Before handing a script over, check it holds none of these keywords. A fix to production data is out of scope: name it and stop.
-- **Results are personal data.** Pasted results carry real names and email addresses. Quote only what the verdict needs, never copy them into commits, PRs, team docs or tickets, and wrap anything saved to memory in `<private>…</private>` (workspace `CLAUDE.md` › _Memory_).
+- **Results are personal data.** Pasted results carry real names and email addresses. Quote only what the verdict needs, never copy them into commits, PRs, team docs or tickets, and wrap anything saved to memory in `<private>…</private>`.
 - **The team skills own the code facts.** This skill adds the remote-desktop loop and the SQL; how notifications, jobs and data access work comes from the repo's own skills (Step 1), not from copies here.
 
 ---
@@ -42,7 +42,7 @@ Read these before step 1:
 
 1. Restate the question as one checkable claim: _"<persona/role> did not get <notification> for <records> between <dates>."_ Pull record ids from the thread: a ticket's UI number is `<municipality code>-<6-digit number>` (`1482-010280`).
 2. Map people to roles. Personas name roles, not people: the table is in `backend/.github/copilot-instructions.md` › _Cross-half contracts_ (Samir = PlacementManager, Lena = CaseworkerGuided, Ines = LocalPurchaseCoordinator, Ewa = LocalContractManager). Business terms are in `GLOSSARY.md`.
-3. Load the team skills for the area from the `priis-profile` skill › _References per layer_. For notifications and jobs that is `priis-backend-notifications` and `priis-backend-ef-core`. The workspace `CLAUDE.md` › _CodeGraph gaps_ says what to grep instead of graph.
+3. Load the team skills for the area from the `priis-profile` skill › _References per layer_. For notifications and jobs that is `priis-backend-notifications` and `priis-backend-ef-core`. `core` › _Codebase investigation_ says what to grep instead of graph.
 
 ### Step 2: Trace what the code says should happen
 
