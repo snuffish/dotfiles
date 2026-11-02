@@ -58,7 +58,7 @@ git -C <repo-root> rev-list --count @{u}..HEAD 2>/dev/null     # commits already
 
 - **Paths given in arguments:** stage only those (`git -C <repo-root> add -- <path> …`).
 - **Already staged:** commit the staged set and name what stays unstaged.
-- **Otherwise:** stage only files belonging to this change. Unrelated concerns → propose separate commits and ask.
+- **Otherwise:** stage only files belonging to this change. Unrelated concerns → separate commits; ask first, except in a trunk-only personal repo (Step 1): split without asking and name the split in chat.
 - **Always exclude and name in chat:** secrets/local config (`.env*`, `*.pem`, `*.key`, `appsettings.local.json`, `credentials*`), build/test output (`bin/`, `obj/`, `dist/`, `build/`, `test-results/`), ignored/generated files, editor settings, workspace-root artifacts (`<prefix>-<artifact>-<suffix>.md`), and scratch files.
 - **Secret check** on staged diff before proceeding (a hit stops the commit; mask the value and ask):
   ```bash
