@@ -111,7 +111,7 @@ Stop there. Agent output never opens the gate (`core` › _The `/proceed` gate_)
 ### Phase B — Apply (after `/proceed`)
 
 1. **Recheck the baseline.** If `git rev-parse HEAD` changed, or `git status --porcelain` changed for a file in a picked row, list it and ask whether to rebuild the matrix or go ahead.
-2. **Run `/simplify` per picked row.** Invoke `/simplify` (the Skill tool in Claude Code, where it is the built-in; the registry's [`/simplify`](../simplify/SKILL.md) in Antigravity) once per row, in row order:
+2. **Apply edits per picked row.** Before each row, copy its files into the scratchpad (note which do not exist yet); that snapshot is the row's restore point. Invoke `/simplify` (the Skill tool in Claude Code, where it is the built-in; the registry's [`/simplify`](../simplify/SKILL.md) in Antigravity) once per row, in row order:
 
    ```text
    Review target: row <X> (<area>) on branch <branch>, changed since <merge-base> against <base>.
@@ -124,10 +124,11 @@ Stop there. Agent output never opens the gate (`core` › _The `/proceed` gate_)
    ```
 
 3. **Guard the boundary** after each row: compare `git status --porcelain` with the baseline. A changed path outside the picked rows that was not dirty in the baseline is out of scope; list it and ask whether to keep or revert it. Never revert on your own.
-4. **Verify.** `/simplify` runs no build, lint or test gate; run the repo's documented gate yourself (`core` › _Post-edit verification_).
+4. **Run the test suite & verification gate.** Once all picked rows have been edited, run the repo's documented verification gate (`core` › _Post-edit verification_) covering build, lint, and relevant tests across the edited files. Applying edits first and running the test suite once at the end avoids repeated slow container spin-ups and test suite overhead per row. If verification fails, use the per-row restore point snapshots to isolate or revert the offending row (restore only from snapshots, never with `git checkout`, `restore` or `stash`, to preserve pre-existing uncommitted work).
+5. **Flag untested rows.** A row whose `namespaces[key].tests` is empty passed only build and lint; mark it `behaviour unverified`.
 
 ### Phase B ends with
 
 - per row: each proposed change marked applied, changed or dropped (with the reason), then any other applied fixes and skipped findings, as `/simplify` returned them, and whether it ran 4-agent or single-pass
-- build, lint and test results, plus any out-of-scope paths
+- build, lint and test results for the verification gate, every `reverted` row with its failing check, every `behaviour unverified` row, plus any out-of-scope paths
 - a closing line saying nothing was committed, with a suggestion to run `/commit` when ready
