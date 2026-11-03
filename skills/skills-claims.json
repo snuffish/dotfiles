@@ -21070,6 +21070,69 @@
         "base": "repo",
         "expect": "present"
       }
+    },
+    {
+      "id": "skills/pr-post-comments/SKILL.md:114:config_key:wontFix",
+      "source": {
+        "file": "skills/pr-post-comments/SKILL.md",
+        "line": 114,
+        "also_lines": [
+          17
+        ]
+      },
+      "kind": "config_key",
+      "value": "wontFix",
+      "quote": "`\"resolve\": \"wontFix\"` (or `\"byDesign\"`) on a reply that declines the suggestion",
+      "context": "post_pr_comments.py accepts resolve status wontFix",
+      "verify": {
+        "method": "grep",
+        "pattern": "ADO_STATUSES = \\{[^}]*\"wontFix\": \"WontFix\"",
+        "paths": [
+          "skills/pr-post-comments/scripts/post_pr_comments.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/pr-post-comments/SKILL.md:114:config_key:byDesign",
+      "source": {
+        "file": "skills/pr-post-comments/SKILL.md",
+        "line": 114
+      },
+      "kind": "config_key",
+      "value": "byDesign",
+      "quote": "`\"resolve\": \"wontFix\"` (or `\"byDesign\"`) on a reply that declines the suggestion",
+      "context": "post_pr_comments.py accepts resolve status byDesign",
+      "verify": {
+        "method": "grep",
+        "pattern": "ADO_STATUSES = \\{[^}]*\"byDesign\": \"ByDesign\"",
+        "paths": [
+          "skills/pr-post-comments/scripts/post_pr_comments.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/pr-post-comments/SKILL.md:17:config_key:closed",
+      "source": {
+        "file": "skills/pr-post-comments/SKILL.md",
+        "line": 17
+      },
+      "kind": "config_key",
+      "value": "closed",
+      "quote": "Never set `closed` unasked, cast votes, or edit the PR description.",
+      "context": "post_pr_comments.py accepts resolve status closed",
+      "verify": {
+        "method": "grep",
+        "pattern": "ADO_STATUSES = \\{[^}]*\"closed\": \"Closed\"",
+        "paths": [
+          "skills/pr-post-comments/scripts/post_pr_comments.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
     }
   ]
 }
