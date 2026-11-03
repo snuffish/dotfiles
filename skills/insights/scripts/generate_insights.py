@@ -1,524 +1,498 @@
 #!/usr/bin/env python3
-"""
-Antigravity & AI Session Insights Generator.
-Parses local session transcripts in ~/.gemini/antigravity-cli/brain/ (and Claude transcripts if available),
-computes tool usage patterns, friction events, and generates an interactive HTML dashboard matching Claude Code Insights.
+"""Antigravity /insights: collect session data, then render the report.
+
+  collect  read agy transcripts -> usage-data/{session-meta,digests}/<id>.json, list ids that need a facet
+  render   validate facets + sections.json, aggregate charts, fill assets/report_template.html
+
+The agent writes facets/<id>.json and sections.json; this script writes no narrative text.
 """
 
 import argparse
-import glob
+import html
 import json
 import os
 import re
+import statistics
 import sys
-from collections import Counter, defaultdict
+import time
+from collections import Counter
 from datetime import datetime
+from pathlib import Path
 
-HTML_TEMPLATE = """<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>AI Developer Insights &amp; Workflow Report</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f8fafc; color: #334155; line-height: 1.65; padding: 48px 24px; }
-    .container { max-width: 840px; margin: 0 auto; }
-    h1 { font-size: 32px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
-    h2 { font-size: 20px; font-weight: 600; color: #0f172a; margin-top: 48px; margin-bottom: 16px; }
-    .subtitle { color: #64748b; font-size: 15px; margin-bottom: 32px; }
-    .nav-toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 32px 0; padding: 16px; background: white; border-radius: 8px; border: 1px solid #e2e8f0; }
-    .nav-toc a { font-size: 12px; color: #64748b; text-decoration: none; padding: 6px 12px; border-radius: 6px; background: #f1f5f9; transition: all 0.15s; }
-    .nav-toc a:hover { background: #e2e8f0; color: #334155; }
-    .stats-row { display: flex; gap: 24px; margin-bottom: 40px; padding: 20px 0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; }
-    .stat { text-align: center; }
-    .stat-value { font-size: 24px; font-weight: 700; color: #0f172a; }
-    .stat-label { font-size: 11px; color: #64748b; text-transform: uppercase; }
-    .at-a-glance { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 1px solid #f59e0b; border-radius: 12px; padding: 20px 24px; margin-bottom: 32px; }
-    .glance-title { font-size: 16px; font-weight: 700; color: #92400e; margin-bottom: 16px; }
-    .glance-sections { display: flex; flex-direction: column; gap: 12px; }
-    .glance-section { font-size: 14px; color: #78350f; line-height: 1.6; }
-    .glance-section strong { color: #92400e; }
-    .see-more { color: #b45309; text-decoration: none; font-size: 13px; white-space: nowrap; }
-    .see-more:hover { text-decoration: underline; }
-    .project-areas { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
-    .project-area { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; }
-    .area-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .area-name { font-weight: 600; font-size: 15px; color: #0f172a; }
-    .area-count { font-size: 12px; color: #64748b; background: #f1f5f9; padding: 2px 8px; border-radius: 4px; }
-    .area-desc { font-size: 14px; color: #475569; line-height: 1.5; }
-    .narrative { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 24px; }
-    .narrative p { margin-bottom: 12px; font-size: 14px; color: #475569; line-height: 1.7; }
-    .key-insight { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 16px; margin-top: 12px; font-size: 14px; color: #166534; }
-    .section-intro { font-size: 14px; color: #64748b; margin-bottom: 16px; }
-    .big-wins { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
-    .big-win { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; }
-    .big-win-title { font-weight: 600; font-size: 15px; color: #166534; margin-bottom: 8px; }
-    .big-win-desc { font-size: 14px; color: #15803d; line-height: 1.5; }
-    .friction-categories { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
-    .friction-category { background: #fef2f2; border: 1px solid #fca5a5; border-radius: 8px; padding: 16px; }
-    .friction-title { font-weight: 600; font-size: 15px; color: #991b1b; margin-bottom: 6px; }
-    .friction-desc { font-size: 13px; color: #7f1d1d; margin-bottom: 10px; }
-    .friction-examples { margin: 0 0 0 20px; font-size: 13px; color: #334155; }
-    .friction-examples li { margin-bottom: 4px; }
-    .rules-section { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 16px; margin-bottom: 20px; }
-    .rules-section h3 { font-size: 14px; font-weight: 600; color: #1e40af; margin: 0 0 12px 0; }
-    .rules-actions { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #dbeafe; }
-    .copy-all-btn { background: #2563eb; color: white; border: none; border-radius: 4px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: 500; transition: all 0.2s; }
-    .copy-all-btn:hover { background: #1d4ed8; }
-    .copy-all-btn.copied { background: #16a34a; }
-    .rules-item { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px; padding: 10px 0; border-bottom: 1px solid #dbeafe; }
-    .rules-item:last-child { border-bottom: none; }
-    .cmd-checkbox { margin-top: 2px; }
-    .cmd-code { background: white; padding: 8px 12px; border-radius: 4px; font-size: 12px; color: #1e40af; border: 1px solid #bfdbfe; font-family: monospace; display: block; white-space: pre-wrap; word-break: break-word; flex: 1; }
-    .cmd-why { font-size: 12px; color: #64748b; width: 100%; padding-left: 24px; margin-top: 4px; }
-    .features-section, .patterns-section { display: flex; flex-direction: column; gap: 12px; margin: 16px 0; }
-    .feature-card { background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 16px; }
-    .pattern-card { background: #f0f9ff; border: 1px solid #7dd3fc; border-radius: 8px; padding: 16px; }
-    .feature-title, .pattern-title { font-weight: 600; font-size: 15px; color: #0f172a; margin-bottom: 6px; }
-    .feature-oneliner, .pattern-summary { font-size: 14px; color: #475569; margin-bottom: 8px; }
-    .feature-why, .pattern-detail { font-size: 13px; color: #334155; line-height: 1.5; }
-    .copyable-prompt-section { margin-top: 12px; padding-top: 12px; border-top: 1px solid #e2e8f0; }
-    .copyable-prompt-row { display: flex; align-items: flex-start; gap: 8px; }
-    .copyable-prompt { flex: 1; background: #f8fafc; padding: 10px 12px; border-radius: 4px; font-family: monospace; font-size: 12px; color: #334155; border: 1px solid #e2e8f0; white-space: pre-wrap; line-height: 1.5; }
-    .prompt-label { font-size: 11px; font-weight: 600; text-transform: uppercase; color: #64748b; margin-bottom: 6px; }
-    .copy-btn { background: #e2e8f0; border: none; border-radius: 4px; padding: 4px 8px; font-size: 11px; cursor: pointer; color: #475569; flex-shrink: 0; }
-    .copy-btn:hover { background: #cbd5e1; }
-    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 24px 0; }
-    .chart-card { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; }
-    .chart-title { font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 12px; }
-    .bar-row { display: flex; align-items: center; margin-bottom: 6px; }
-    .bar-label { width: 110px; font-size: 11px; color: #475569; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .bar-track { flex: 1; height: 6px; background: #f1f5f9; border-radius: 3px; margin: 0 8px; }
-    .bar-fill { height: 100%; border-radius: 3px; }
-    .bar-value { width: 36px; font-size: 11px; font-weight: 500; color: #64748b; text-align: right; }
-    .horizon-section { display: flex; flex-direction: column; gap: 16px; }
-    .horizon-card { background: linear-gradient(135deg, #faf5ff 0%, #f5f3ff 100%); border: 1px solid #c4b5fd; border-radius: 8px; padding: 16px; }
-    .horizon-title { font-weight: 600; font-size: 15px; color: #5b21b6; margin-bottom: 8px; }
-    .horizon-possible { font-size: 14px; color: #334155; margin-bottom: 10px; line-height: 1.5; }
-    .horizon-tip { font-size: 13px; color: #6b21a8; background: rgba(255,255,255,0.6); padding: 8px 12px; border-radius: 4px; }
-    .fun-ending { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 1px solid #fbbf24; border-radius: 12px; padding: 24px; margin-top: 40px; text-align: center; }
-    .fun-headline { font-size: 18px; font-weight: 600; color: #78350f; margin-bottom: 8px; }
-    .fun-detail { font-size: 14px; color: #92400e; }
-    @media (max-width: 640px) { .charts-row { grid-template-columns: 1fr; } .stats-row { justify-content: center; } }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>Antigravity Insights</h1>
-    <p class="subtitle">{{USER_PROMPTS_COUNT}} messages across {{SESSIONS_COUNT}} recent sessions ({{TOTAL_TOOLS_COUNT}} tool calls) | {{DATE_RANGE}}</p>
+DEFAULT_BRAIN = Path("~/.gemini/antigravity-cli/brain").expanduser()
+DEFAULT_DATA = Path("~/.gemini/antigravity-cli/usage-data").expanduser()
+TEMPLATE = Path(__file__).resolve().parent.parent / "assets" / "report_template.html"
 
-    <div class="at-a-glance">
-      <div class="glance-title">At a Glance</div>
-      <div class="glance-sections">
-        <div class="glance-section"><strong>What's working:</strong> You operate Antigravity as an automated software-engineering command center. You strictly enforce prompt clarity using <code>/create-prompt</code>, diagnose bugs through evidence collection with <code>/problem</code> and <code>/investigate</code>, and let agents run long autonomous background workflows with <code>manage_task</code>. Your <code>GR.PRIIS</code> E2E flaky test diagnoses and audit-log fixes show disciplined, high-velocity engineering. <a href="#section-wins" class="see-more">Impressive Things You Did &rarr;</a></div>
-        <div class="glance-section"><strong>What's hindering you:</strong> Speculative searches burn excessive tool turns (over 180 non-zero shell command exits like speculative <code>git grep</code> or root-level <code>find /</code>). In addition, agents sometimes start diagnosing issues that were already fixed in sibling PRs (e.g. PR !18898), or default to monolithic commits instead of atomic staged chunks unless manually prompted. <a href="#section-friction" class="see-more">Where Things Go Wrong &rarr;</a></div>
-        <div class="glance-section"><strong>Quick wins to try:</strong> Add explicit chunker commit rules to <code>~/.claude-mem/MY-RULES.md</code>, enforce pre-checking active PR branches before test investigations, and constrain filesystem searches to known project roots rather than root directory scans. <a href="#section-features" class="see-more">Rules to Adopt &rarr;</a></div>
-        <div class="glance-section"><strong>Ambitious workflows:</strong> Connect AGY background tasks to automated PR lifecycle pipelines: an autonomous watcher that monitors open PRs, pulls CI logs for failed Playwright tests, isolates fixes into dedicated worktrees, verifies with narrow test runs, and commits in clean logical stages without human micromanagement. <a href="#section-horizon" class="see-more">On the Horizon &rarr;</a></div>
-      </div>
-    </div>
+KNOWN_TYPES = {
+    "USER_INPUT", "PLANNER_RESPONSE", "GENERIC", "SYSTEM_MESSAGE", "EPHEMERAL_MESSAGE", "CODE_ACTION",
+    "RUN_COMMAND", "VIEW_FILE", "CHECKPOINT", "GREP_SEARCH", "ERROR_MESSAGE", "CONVERSATION_HISTORY",
+    "LIST_DIRECTORY", "SEARCH_WEB", "READ_URL_CONTENT", "ASK_QUESTION",
+}
+EDIT_TOOLS = {"edit_file", "write_file", "write_to_file", "replace_file_content"}
+LANGS = {
+    ".py": "Python", ".ts": "TypeScript", ".tsx": "TypeScript", ".js": "JavaScript", ".jsx": "JavaScript",
+    ".cs": "C#", ".md": "Markdown", ".json": "JSON", ".sh": "Shell", ".yml": "YAML", ".yaml": "YAML",
+    ".sql": "SQL", ".css": "CSS", ".html": "HTML", ".go": "Go", ".rs": "Rust", ".toml": "TOML",
+    ".ps1": "PowerShell", ".razor": "Razor", ".csproj": "XML", ".xml": "XML",
+}
+GIT_COMMIT = re.compile(r"\bgit\s+(?:-C\s+\S+\s+)?commit\b")
+USER_REQ = re.compile(r"<USER_REQUEST>(.*?)</USER_REQUEST>", re.DOTALL)
+EXIT_NONZERO = re.compile(r"exited with code ([1-9]\d*)")
+DIGEST_MAX_BYTES = 6144
 
-    <nav class="nav-toc">
-      <a href="#section-work">What You Work On</a>
-      <a href="#section-usage">How You Use Antigravity</a>
-      <a href="#section-wins">Impressive Things</a>
-      <a href="#section-friction">Where Things Go Wrong</a>
-      <a href="#section-features">Recommended Rules</a>
-      <a href="#section-patterns">New Usage Patterns</a>
-      <a href="#section-horizon">On the Horizon</a>
-    </nav>
+FACET_KEYS = [
+    "underlying_goal", "goal_categories", "outcome", "user_satisfaction_counts", "agent_helpfulness",
+    "session_type", "friction_counts", "friction_detail", "primary_success", "brief_summary",
+    "session_id", "transcript_mtime",
+]
 
-    <div class="stats-row">
-      <div class="stat"><div class="stat-value">{{USER_PROMPTS_COUNT}}</div><div class="stat-label">User Prompts</div></div>
-      <div class="stat"><div class="stat-value">{{TOTAL_TOOLS_COUNT}}</div><div class="stat-label">Tool Calls</div></div>
-      <div class="stat"><div class="stat-value">{{FILES_TOUCHED_COUNT}}</div><div class="stat-label">Files Touched</div></div>
-      <div class="stat"><div class="stat-value">{{DAYS_SPAN}}</div><div class="stat-label">Days Span</div></div>
-      <div class="stat"><div class="stat-value">{{PROMPTS_PER_DAY}}</div><div class="stat-label">Prompts/Day</div></div>
-    </div>
+# "text" = non-empty str, "int" = integer, [spec] = non-empty list of spec, {k: spec} = object with required keys
+SECTIONS_SPEC = {
+    "at_a_glance": {"whats_working": "text", "whats_hindering": "text", "quick_wins": "text", "ambitious_workflows": "text"},
+    "project_areas": {"areas": [{"name": "text", "session_count": "int", "description": "text"}]},
+    "interaction_style": {"narrative": "text", "key_pattern": "text"},
+    "what_works": {"intro": "text", "impressive_workflows": [{"title": "text", "description": "text"}]},
+    "friction_analysis": {"intro": "text", "categories": [{"category": "text", "description": "text", "examples": ["text"]}]},
+    "suggestions": {
+        "rules_additions": [{"addition": "text", "why": "text"}],
+        "features_to_try": [{"feature": "text", "one_liner": "text", "why_for_you": "text", "example_code": "text"}],
+        "usage_patterns": [{"title": "text", "suggestion": "text", "detail": "text", "copyable_prompt": "text"}],
+    },
+    "on_the_horizon": {"intro": "text", "opportunities": [{"title": "text", "whats_possible": "text", "how_to_try": "text", "copyable_prompt": "text"}]},
+    "fun_ending": {"headline": "text", "detail": "text"},
+}
 
-    <h2 id="section-work">What You Work On</h2>
-    <div class="project-areas">
-      <div class="project-area">
-        <div class="area-header">
-          <span class="area-name">PRIIS E2E &amp; Flaky Test Stabilization</span>
-          <span class="area-count">~18 sessions</span>
-        </div>
-        <div class="area-desc">Investigation and remediation of flaky Playwright end-to-end tests in <code>frontend/source/priis-web/e2e/</code>. Focus areas included DialogOverlay click interception in filter-presets, county map selectors, and timing dependencies. AGY diagnosed root causes, scoped fixes, and integrated them into Azure DevOps PRs (such as !18898).</div>
-      </div>
 
-      <div class="project-area">
-        <div class="area-header">
-          <span class="area-name">Skill Engineering &amp; Agent Configuration</span>
-          <span class="area-count">~15 sessions</span>
-        </div>
-        <div class="area-desc">Designing, maintaining, and testing the agent skills ecosystem across <code>.gemini/skills</code> and <code>.claude/skills</code>. Includes skill drift audits, <code>/create-prompt</code> standardization, custom command profiles, and multi-variant prompt generation.</div>
-      </div>
+# ---------------------------------------------------------------- collect
 
-      <div class="project-area">
-        <div class="area-header">
-          <span class="area-name">Git Worktree Management &amp; Atomic PR Delivery</span>
-          <span class="area-count">~10 sessions</span>
-        </div>
-        <div class="area-desc">Parallel feature and bugfix isolation using Git worktrees. Managing branch checkouts, resolving merge artifacts, staging commits into logical semantic chunks, and keeping PR descriptions synchronized with branch diffs.</div>
-      </div>
+def decode(v):
+    """agy stores tool args as JSON-encoded strings (e.g. '"/path"'); unwrap one level."""
+    if isinstance(v, str) and len(v) >= 2 and v[0] == '"' and v[-1] == '"':
+        try:
+            return json.loads(v)
+        except ValueError:
+            return v
+    return v
 
-      <div class="project-area">
-        <div class="area-header">
-          <span class="area-name">Backend Architecture &amp; Database Migrations</span>
-          <span class="area-count">~7 sessions</span>
-        </div>
-        <div class="area-desc">Entity Framework Core migration auditing, backend service refactoring, memory injection optimizations, and automated database sync workflows.</div>
-      </div>
-    </div>
 
-    <div class="charts-row">
-      <div class="chart-card">
-        <div class="chart-title">What You Wanted (Intent / Commands)</div>
-        {{INTENT_BARS}}
-      </div>
+def parse_ts(s):
+    try:
+        return datetime.fromisoformat(s.replace("Z", "+00:00"))
+    except (ValueError, AttributeError):
+        return None
 
-      <div class="chart-card">
-        <div class="chart-title">Top Tools Used</div>
-        {{TOOL_BARS}}
-      </div>
-    </div>
 
-    <h2 id="section-usage">How You Use Antigravity</h2>
-    <div class="narrative">
-      <p>You interact with Antigravity not through casual conversation, but as a <strong>disciplined execution engine</strong> driven by high-leverage slash commands and skills. You enforce strict scope definition: when a problem is open-ended or ambiguous, you systematically run <code>/create-prompt</code> rather than letting the agent guess. Once a plan or diagnostic proposal is created, you trigger execution with <code>/proceed</code> and give the agent substantial autonomy to run deep shell commands and inspect file ranges.</p>
-      <p>You make extensive use of <strong>background execution via <code>manage_task</code></strong>, allowing the assistant to run build suites, test runs, and multi-file validations without blocking your interaction. You step in primarily at key architectural boundaries: reminding the agent about existing PR work, enforcing worktree isolation, or insisting that commits be staged into logical, atomic chunks rather than a single dump.</p>
-      <div class="key-insight"><strong>Key pattern:</strong> Prompt-first discipline (<code>/create-prompt</code>) paired with autonomous background task execution, where human input serves as an architectural steering wheel rather than turn-by-turn micromanagement.</div>
-    </div>
+def user_text(content):
+    m = USER_REQ.findall(content or "")
+    if m:
+        return "\n".join(x.strip() for x in m if x.strip())
+    return re.sub(r"<[^>]+>", "", content or "").strip()
 
-    <div class="charts-row">
-      <div class="chart-card">
-        <div class="chart-title">Tool Reliability &amp; Outgrowths</div>
-        {{RELIABILITY_BARS}}
-      </div>
 
-      <div class="chart-card">
-        <div class="chart-title">Primary Friction Types</div>
-        {{FRICTION_BARS}}
-      </div>
-    </div>
+def project_of(paths):
+    """Most common 5-component prefix among absolute paths ('' when none)."""
+    c = Counter("/".join(p.split("/")[:5]) for p in paths if p.startswith("/") and p.count("/") >= 4)
+    return c.most_common(1)[0][0] if c else ""
 
-    <h2 id="section-wins">Impressive Things You Did</h2>
-    <div class="big-wins">
-      <div class="big-win">
-        <div class="big-win-title">Deep E2E Root-Cause Diagnostics</div>
-        <div class="big-win-desc">Rather than treating flaky tests as noise or arbitrarily bumping timeouts, you systematically isolated the Radix UI <code>DialogOverlay</code> click interception in the filter-presets suite, verifying CSS pointer-events and modal lifecycles across multiple test runs.</div>
-      </div>
 
-      <div class="big-win">
-        <div class="big-win-title">Continuous Prompt &amp; Skill Tooling Improvement</div>
-        <div class="big-win-desc">You treat your agent infrastructure as code. By integrating <code>/create-prompt</code> whenever tasks are unconstrained and maintaining project-specific rule profiles (e.g. <code>priis-profile</code>), you systematically eliminate hallucinations and drift across sessions.</div>
-      </div>
+def parse_transcript(path):
+    sid = path.parent.parent.parent.name
+    tool_counts, err_cats, langs, unknown = Counter(), Counter(), Counter(), Counter()
+    files, paths, hours, user_ts = set(), [], [], []
+    resp_times, prompts, replies, failed_cmds, errors = [], [], [], [], []
+    added = removed = commits = users = assistants = 0
+    first = last = None
+    last_cmd = ""
+    prev_model_ts = None
 
-      <div class="big-win">
-        <div class="big-win-title">Parallel Worktree Isolation</div>
-        <div class="big-win-desc">You routinely spin up isolated Git worktrees for non-trivial fixes (e.g. <code>chore/prompt-audit-skill-fixes</code>), ensuring that in-progress work never contaminates the main repository state or blocks ongoing investigations.</div>
-      </div>
-    </div>
+    for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+        if not line.strip():
+            continue
+        try:
+            d = json.loads(line)
+        except ValueError:
+            continue
+        typ, content = d.get("type"), d.get("content") or ""
+        ts = parse_ts(d.get("created_at"))
+        if ts:
+            first = first or ts
+            last = ts
+        if typ not in KNOWN_TYPES:
+            unknown[typ or "?"] += 1
 
-    <h2 id="section-friction">Where Things Go Wrong</h2>
-    <p class="section-intro">Most friction stems from exploratory tool thrashing when navigating code, state desync with sibling PRs, and the agent defaulting to monolithic commits.</p>
-    <div class="friction-categories">
-      <div class="friction-category">
-        <div class="friction-title">Speculative Filesystem &amp; Shell Search Thrashing</div>
-        <div class="friction-desc">Agents frequently fall back to wide <code>git grep</code> or speculative <code>find /</code> commands looking for symbols or files across unindexed paths, burning tool invocations on non-zero exit codes.</div>
-        <ul class="friction-examples">
-          <li>Running broad <code>find / -name "*PRIIS*"</code> or sweeping <code>node_modules</code> directories for CSS styles.</li>
-          <li>Multiple consecutive failed greps in frontend subdirectories before finding the correct component path.</li>
-        </ul>
-      </div>
+        if typ == "USER_INPUT":
+            text = user_text(content)
+            if not text:
+                continue
+            users += 1
+            prompts.append(text)
+            if ts:
+                user_ts.append(ts)
+                hours.append(ts.astimezone().hour)
+                if prev_model_ts and users > 1:
+                    dt = (ts - prev_model_ts).total_seconds()
+                    if 0 < dt <= 3600:
+                        resp_times.append(round(dt, 1))
+        elif typ == "PLANNER_RESPONSE":
+            if ts:
+                prev_model_ts = ts
+            if content.strip():
+                assistants += 1
+                replies.append(content.strip())
+            # tool_calls are only on PLANNER_RESPONSE lines (checked on all local transcripts); GENERIC lines carry results
+            for tc in d.get("tool_calls") or []:
+                name = tc.get("name") or "unknown"
+                args = {k: decode(v) for k, v in (tc.get("args") or {}).items()}
+                tool_counts[name] += 1
+                p = args.get("Path") or args.get("TargetFile") or args.get("AbsolutePath")
+                if isinstance(p, str):
+                    paths.append(p)
+                if name == "run_command":
+                    last_cmd = str(args.get("CommandLine", ""))
+                    if GIT_COMMIT.search(last_cmd):
+                        commits += 1
+                    if isinstance(args.get("Cwd"), str):
+                        paths.append(args["Cwd"])
+                if name in EDIT_TOOLS and isinstance(p, str):
+                    files.add(p)
+                    ext = os.path.splitext(p)[1].lower()
+                    if ext in LANGS:
+                        langs[LANGS[ext]] += 1
+                    new = args.get("Replacement") or args.get("Content") or args.get("ReplacementContent") or ""
+                    old = args.get("Target") or args.get("TargetContent") or ""
+                    added += len(str(new).splitlines())
+                    removed += len(str(old).splitlines())
+        elif typ in ("GENERIC", "SYSTEM_MESSAGE"):
+            if ts and typ == "GENERIC":
+                prev_model_ts = ts
+            m = EXIT_NONZERO.search(content)
+            if m:
+                err_cats["Command Failed"] += 1
+                if last_cmd:
+                    failed_cmds.append(f"{last_cmd[:150]} (exit {m.group(1)})")
+            if "Target must exactly match" in content:
+                err_cats["Edit Mismatch"] += 1
+                errors.append("edit_file: Target must exactly match existing file text")
+        elif typ == "ERROR_MESSAGE":
+            err_cats["Error Message"] += 1
+            errors.append(content.strip()[:150])
 
-      <div class="friction-category">
-        <div class="friction-title">State Desync with Active Remote PRs</div>
-        <div class="friction-desc">Agents frequently start diagnostic flows from scratch without checking whether a sibling PR or remote branch has already solved part of the defect.</div>
-        <ul class="friction-examples">
-          <li>Re-diagnosing a flaky test suite when the fix had already landed in Azure DevOps PR !18898.</li>
-          <li>User had to explicitly intervene: <em>"1: Is already fixed... One fix is already resolved at PR !18898"</em>.</li>
-        </ul>
-      </div>
-
-      <div class="friction-category">
-        <div class="friction-title">Monolithic Staging vs. Chunked Commits</div>
-        <div class="friction-desc">When told to commit, agents default to a single git commit containing all edits rather than grouping them into logical, reviewable units.</div>
-        <ul class="friction-examples">
-          <li>User had to re-prompt: <em>"/commit this in stages/chunks and not in one single commit."</em></li>
-        </ul>
-      </div>
-    </div>
-
-    <h2 id="section-features">Recommended Rules for Your Project</h2>
-    <div class="rules-section">
-      <h3>Suggested Rulebook Additions</h3>
-      <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">Select and copy these directly into your rule files.</p>
-      <div class="rules-actions">
-        <button class="copy-all-btn" onclick="copyAllCheckedRules()">Copy All Checked</button>
-      </div>
-
-      <div class="rules-item">
-        <input type="checkbox" id="rule-0" class="cmd-checkbox" checked data-text="## Commit Staging
-When commits are requested, always stage and commit in logical, atomic chunks (e.g., test fixtures, core logic, documentation/skills) rather than a single monolithic commit. Verify with git status between stages.">
-        <label for="rule-0" style="display:flex;align-items:flex-start;gap:8px;flex:1;">
-          <code class="cmd-code">## Commit Staging
-When commits are requested, always stage and commit in logical, atomic chunks (e.g., test fixtures, core logic, documentation/skills) rather than a single monolithic commit. Verify with git status between stages.</code>
-          <button class="copy-btn" onclick="copyRuleItem(0)">Copy</button>
-        </label>
-        <div class="cmd-why">Prevents having to repeatedly steer agents to break commits into reviewable units.</div>
-      </div>
-
-      <div class="rules-item">
-        <input type="checkbox" id="rule-1" class="cmd-checkbox" checked data-text="## Pre-flight Active PR Audit
-Before investigating reported test failures or bugs, check open PRs on Azure DevOps / GitHub (or branch tracking) to avoid re-diagnosing issues already resolved in open PRs.">
-        <label for="rule-1" style="display:flex;align-items:flex-start;gap:8px;flex:1;">
-          <code class="cmd-code">## Pre-flight Active PR Audit
-Before investigating reported test failures or bugs, check open PRs on Azure DevOps / GitHub (or branch tracking) to avoid re-diagnosing issues already resolved in open PRs.</code>
-          <button class="copy-btn" onclick="copyRuleItem(1)">Copy</button>
-        </label>
-        <div class="cmd-why">Eliminated duplicate investigations for items already resolved on PR !18898.</div>
-      </div>
-
-      <div class="rules-item">
-        <input type="checkbox" id="rule-2" class="cmd-checkbox" checked data-text="## Search Navigation Discipline
-Never run speculative sweeps across root directories (`find /`) or unindexed paths. In indexed repositories, query CodeGraph first or use scoped pathspecs relative to known project boundaries.">
-        <label for="rule-2" style="display:flex;align-items:flex-start;gap:8px;flex:1;">
-          <code class="cmd-code">## Search Navigation Discipline
-Never run speculative sweeps across root directories (`find /`) or unindexed paths. In indexed repositories, query CodeGraph first or use scoped pathspecs relative to known project boundaries.</code>
-          <button class="copy-btn" onclick="copyRuleItem(2)">Copy</button>
-        </label>
-        <div class="cmd-why">Cuts down on 180+ non-zero exploratory search command exits.</div>
-      </div>
-    </div>
-
-    <h2 id="section-patterns">New Ways to Use Antigravity</h2>
-    <div class="patterns-section">
-      <div class="pattern-card">
-        <div class="pattern-title">Pre-Flight Investigation Pattern</div>
-        <div class="pattern-summary">Scope checks and PR audit before touching any source files.</div>
-        <div class="pattern-detail">Ensure the agent cross-references active PRs and uses CodeGraph entry points before editing files or running test runners.</div>
-        <div class="copyable-prompt-section">
-          <div class="prompt-label">Paste into Antigravity:</div>
-          <div class="copyable-prompt-row">
-            <code class="copyable-prompt">Before diagnosing this bug: (1) check active PRs and recent branch commits to verify it isn't already resolved; (2) map relevant symbol entry points using CodeGraph; (3) confirm the scope in 3 bullets before modifying code.</code>
-            <button class="copy-btn" onclick="copyText(this)">Copy</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="pattern-card">
-        <div class="pattern-title">Chunker Commit Workflow</div>
-        <div class="pattern-summary">Enforce atomic staging during implementation completion.</div>
-        <div class="pattern-detail">Instruct the agent to break down modifications into logical commit increments with descriptive Conventional Commit messages.</div>
-        <div class="copyable-prompt-section">
-          <div class="prompt-label">Paste into Antigravity:</div>
-          <div class="copyable-prompt-row">
-            <code class="copyable-prompt">Stage and commit these changes in logical chunks: first test additions/fixes, second core implementation, third docs/config. Verify each stage with git diff --staged before committing.</code>
-            <button class="copy-btn" onclick="copyText(this)">Copy</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <h2 id="section-horizon">On the Horizon</h2>
-    <div class="horizon-section">
-      <div class="horizon-card">
-        <div class="horizon-title">Autonomous Flaky Test Watcher &amp; Healer</div>
-        <div class="horizon-possible">Antigravity can run scheduled background tasks (via <code>schedule</code> and <code>manage_task</code>) that listen to Azure DevOps pipeline events, automatically fetch Playwright failure trace artifacts, spin up a dedicated worktree, reproduce the flake, and submit a targeted hotfix PR.</div>
-        <div class="horizon-tip"><strong>Getting started:</strong> Combine your <code>/e2e-testing-playwright-review</code> and <code>/worktrees</code> skills with headless CLI invocations.</div>
-      </div>
-    </div>
-
-    <div class="fun-ending">
-      <div class="fun-headline">"A DialogOverlay click-interception flake was diagnosed down to CSS pointer-events lifecycles."</div>
-      <div class="fun-detail">Antigravity tracked down subtle Radix UI modal transitions in PRIIS filter-presets that were intermittently intercepting clicks during Playwright automated runs.</div>
-    </div>
-  </div>
-
-  <script>
-    function copyText(btn) {
-      const code = btn.previousElementSibling;
-      navigator.clipboard.writeText(code.textContent).then(() => {
-        btn.textContent = 'Copied!';
-        setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
-      });
+    if not users:
+        return None
+    duration = round((last - first).total_seconds() / 60) if first and last else 0
+    meta = {
+        "session_id": sid,
+        "project_path": project_of(paths),
+        "start_time": first.isoformat() if first else "",
+        "duration_minutes": duration,
+        "user_message_count": users,
+        "assistant_message_count": assistants,
+        "tool_counts": dict(tool_counts),
+        "languages": dict(langs),
+        "git_commits": commits,
+        "user_response_times": resp_times,
+        "tool_errors": sum(err_cats.values()),
+        "tool_error_categories": dict(err_cats),
+        "lines_added": added,
+        "lines_removed": removed,
+        "files_modified": len(files),
+        "message_hours": hours,
+        "user_message_timestamps": [t.isoformat() for t in user_ts],
+        "first_prompt": prompts[0][:200],
+        "unknown_step_types": dict(unknown),
+        "transcript_mtime": int(path.stat().st_mtime * 1000),
     }
-    function copyRuleItem(idx) {
-      const checkbox = document.getElementById('rule-' + idx);
-      if (checkbox) {
-        navigator.clipboard.writeText(checkbox.dataset.text).then(() => {
-          const btn = checkbox.nextElementSibling.querySelector('.copy-btn');
-          if (btn) { btn.textContent = 'Copied!'; setTimeout(() => { btn.textContent = 'Copy'; }, 2000); }
-        });
-      }
+    digest = {
+        "session_id": sid,
+        "transcript_mtime": meta["transcript_mtime"],
+        "project_path": meta["project_path"],
+        "user_prompts": [p[:500] for p in prompts],
+        "agent_replies": [r[:200] for r in replies[-5:]],
+        "failed_commands": failed_cmds[:10],
+        "errors": errors[:10],
+        "counts": {"tools": dict(tool_counts), "tool_errors": meta["tool_errors"], "files_modified": len(files), "git_commits": commits},
     }
-    function copyAllCheckedRules() {
-      const checkboxes = document.querySelectorAll('.cmd-checkbox:checked');
-      const texts = [];
-      checkboxes.forEach(cb => { if (cb.dataset.text) texts.push(cb.dataset.text); });
-      const combined = texts.join('\\n\\n');
-      const btn = document.querySelector('.copy-all-btn');
-      if (btn) {
-        navigator.clipboard.writeText(combined).then(() => {
-          btn.textContent = 'Copied ' + texts.length + ' rules!';
-          btn.classList.add('copied');
-          setTimeout(() => { btn.textContent = 'Copy All Checked'; btn.classList.remove('copied'); }, 2000);
-        });
-      }
-    }
-  </script>
-</body>
-</html>
-"""
+    fit_digest(digest)
+    return meta, digest
 
-def generate_bars(items, color="#2563eb"):
+
+def fit_digest(digest):
+    size = lambda: len(json.dumps(digest, ensure_ascii=False, indent=2).encode())  # as written to disk
+    for key in ("agent_replies", "errors", "failed_commands", "user_prompts"):
+        while size() > DIGEST_MAX_BYTES and len(digest[key]) > 1:
+            digest[key].pop(0 if key == "agent_replies" else -1)
+    if size() > DIGEST_MAX_BYTES:
+        digest["user_prompts"] = [p[:150] for p in digest["user_prompts"]]
+    while size() > DIGEST_MAX_BYTES and len(digest["user_prompts"]) > 1:
+        digest["user_prompts"].pop()
+
+
+def write_json(path, obj):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        json.dump(obj, f, ensure_ascii=False, indent=2)
+
+
+def facet_is_fresh(data, sid, mtime):
+    try:
+        return json.loads((data / "facets" / f"{sid}.json").read_text())["transcript_mtime"] == mtime
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
+
+
+def cmd_collect(a):
+    brain, data = Path(a.brain), Path(a.data)
+    cutoff = time.time() - a.days * 86400
+    found = [p for p in brain.glob("*/.system_generated/logs/transcript.jsonl") if p.stat().st_mtime >= cutoff]
+    found.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+    selected, pending, unknown = [], [], Counter()
+    for p in found[: a.max]:
+        parsed = parse_transcript(p)
+        if not parsed:
+            continue
+        meta, digest = parsed
+        sid = meta["session_id"]
+        write_json(data / "session-meta" / f"{sid}.json", meta)
+        write_json(data / "digests" / f"{sid}.json", digest)
+        unknown.update(meta["unknown_step_types"])
+        selected.append(sid)
+        if not facet_is_fresh(data, sid, meta["transcript_mtime"]):
+            pending.append(sid)
+    write_json(data / "selected.json", selected)
+    print(f"transcripts in window: {len(found)} (cap {a.max}); analysed sessions with user messages: {len(selected)}")
+    print(f"facets cached: {len(selected) - len(pending)}; facets needed: {len(pending)}")
+    if unknown:
+        print(f"unknown step types (schema drift?): {dict(unknown)}")
+    for sid in pending:
+        print(sid)
+    return 0
+
+
+# ---------------------------------------------------------------- render
+
+def check(spec, value, where, errs):
+    if spec == "text":
+        if not (isinstance(value, str) and value.strip()):
+            errs.append(f"{where}: missing or empty text")
+    elif spec == "int":
+        if not isinstance(value, int) or isinstance(value, bool):
+            errs.append(f"{where}: must be an integer")
+    elif isinstance(spec, list):
+        if not (isinstance(value, list) and value):
+            errs.append(f"{where}: missing or empty list")
+            return
+        for i, item in enumerate(value):
+            check(spec[0], item, f"{where}[{i}]", errs)
+    elif isinstance(spec, dict):
+        if not isinstance(value, dict):
+            errs.append(f"{where}: missing object")
+            return
+        for k, s in spec.items():
+            check(s, value.get(k), f"{where}.{k}", errs)
+
+
+def load_inputs(data):
+    errs = []
+    try:
+        selected = json.loads((data / "selected.json").read_text())
+    except (OSError, ValueError):
+        sys.exit("render: selected.json missing; run collect first")
+    metas, facets = {}, {}
+    for sid in selected:
+        try:
+            metas[sid] = json.loads((data / "session-meta" / f"{sid}.json").read_text())
+        except (OSError, ValueError):
+            errs.append(f"session-meta/{sid}.json: missing")
+            continue
+        try:
+            f = json.loads((data / "facets" / f"{sid}.json").read_text())
+        except (OSError, ValueError):
+            errs.append(f"facets/{sid}.json: missing")
+            continue
+        missing = [k for k in FACET_KEYS if k not in f]
+        if missing:
+            errs.append(f"facets/{sid}.json: missing keys {missing}")
+        elif f["transcript_mtime"] != metas[sid]["transcript_mtime"]:
+            errs.append(f"facets/{sid}.json: stale (transcript changed since it was rated)")
+        else:
+            facets[sid] = f
+    try:
+        sections = json.loads((data / "sections.json").read_text())
+    except (OSError, ValueError):
+        sections = {}
+        errs.append("sections.json: missing or invalid JSON")
+    for name, spec in SECTIONS_SPEC.items():
+        check(spec, sections.get(name), name, errs)
+    if errs:
+        sys.exit("render: refusing to write a report; fix:\n  " + "\n  ".join(errs))
+    return selected, metas, facets, sections
+
+
+def E(v):
+    """Every value that reaches the HTML goes through this."""
+    return html.escape(str(v), quote=True)
+
+
+def bars(items, color, limit=8):
+    items = [(k, v) for k, v in items if v][:limit]
     if not items:
-        return ""
-    max_val = max(val for _, val in items) if items else 1
-    rows = []
-    for label, val in items:
-        pct = (val / max_val) * 100
-        rows.append(f"""        <div class="bar-row">
-          <div class="bar-label">{label}</div>
-          <div class="bar-track"><div class="bar-fill" style="width:{pct:.1f}%;background:{color}"></div></div>
-          <div class="bar-value">{val:,}</div>
-        </div>""")
-    return "\n".join(rows)
+        return '<div class="bar-label">no data</div>'
+    top = max(v for _, v in items)
+    return "\n".join(
+        f'<div class="bar-row"><div class="bar-label" title="{E(k)}">{E(k)}</div>'
+        f'<div class="bar-track"><div class="bar-fill" style="width:{v / top * 100:.1f}%;background:{color}"></div></div>'
+        f'<div class="bar-value">{v:,}</div></div>'
+        for k, v in items
+    )
 
-def analyze_brain(limit_sessions=50):
-    brain_dir = os.path.expanduser("~/.gemini/antigravity-cli/brain")
-    transcripts = glob.glob(os.path.join(brain_dir, "*/.system_generated/logs/transcript.jsonl"))
-    transcripts.sort(key=lambda p: os.path.getmtime(p), reverse=True)
-    
-    selected_transcripts = transcripts[:limit_sessions]
-    tool_counts = Counter()
-    command_failures = 0
-    edit_mismatches = 0
-    files_touched = set()
-    timestamps = []
-    user_prompts = []
-    intent_counts = Counter()
-    
-    user_req_pattern = re.compile(r"<USER_REQUEST>(.*?)</USER_REQUEST>", re.DOTALL)
-    
-    for tpath in selected_transcripts:
-        with open(tpath, "r", encoding="utf-8") as f:
-            for line in f:
-                if not line.strip():
-                    continue
-                try:
-                    data = json.loads(line)
-                except Exception:
-                    continue
-                
-                created_at = data.get("created_at")
-                if created_at:
-                    try:
-                        timestamps.append(datetime.fromisoformat(created_at))
-                    except Exception:
-                        pass
-                
-                content = data.get("content", "") or ""
-                if "Target must exactly match existing file text" in content:
-                    edit_mismatches += 1
-                if "Command exited with code " in content:
-                    if re.search(r"Command exited with code ([1-9]\d*)", content):
-                        command_failures += 1
-                
-                for tc in data.get("tool_calls", []):
-                    tname = tc.get("name") or tc.get("tool_name") or "unknown"
-                    tool_counts[tname] += 1
-                    args = tc.get("args") or tc.get("arguments") or {}
-                    p = args.get("Path") or args.get("file_path") or args.get("path")
-                    if p:
-                        files_touched.add(p)
-                
-                if data.get("type") == "USER_INPUT" or data.get("source") == "USER_EXPLICIT":
-                    raw_text = content.strip()
-                    matches = user_req_pattern.findall(raw_text)
-                    if matches:
-                        clean_text = "\n".join(m.strip() for m in matches if m.strip())
-                    else:
-                        clean_text = re.sub(r"<[^>]+>", "", raw_text).strip()
-                    if clean_text:
-                        user_prompts.append(clean_text)
-                        first_line = clean_text.splitlines()[0].strip()
-                        if first_line.startswith("/"):
-                            cmd = first_line.split()[0]
-                            intent_counts[cmd] += 1
-                        else:
-                            intent_counts["Direct Prompt"] += 1
-                            
-    timestamps.sort()
-    min_date = timestamps[0].strftime("%Y-%m-%d") if timestamps else "N/A"
-    max_date = timestamps[-1].strftime("%Y-%m-%d") if timestamps else "N/A"
-    days_span = (timestamps[-1].date() - timestamps[0].date()).days + 1 if timestamps else 1
-    prompts_per_day = len(user_prompts) / max(days_span, 1)
-    
-    return {
-        "sessions_count": len(selected_transcripts),
-        "prompts_count": len(user_prompts),
-        "tool_counts": tool_counts,
-        "files_touched_count": len(files_touched),
-        "days_span": days_span,
-        "date_range": f"{min_date} to {max_date}",
-        "prompts_per_day": f"{prompts_per_day:.1f}",
-        "command_failures": command_failures,
-        "edit_mismatches": edit_mismatches,
-        "intent_counts": intent_counts
+
+def chart(title, items, color, limit=8):
+    return f'<div class="chart-card"><div class="chart-title">{E(title)}</div>{bars(items, color, limit)}</div>'
+
+
+def sum_counters(dicts):
+    c = Counter()
+    for d in dicts:
+        c.update({k: v for k, v in (d or {}).items() if isinstance(v, int)})
+    return c
+
+
+def pretty(k):
+    return str(k).replace("_", " ").title()
+
+
+def response_buckets(times):
+    edges = [(2, 10, "2-10s"), (10, 30, "10-30s"), (30, 60, "30s-1m"), (60, 120, "1-2m"), (120, 300, "2-5m"), (300, 900, "5-15m"), (900, 3601, ">15m")]
+    return [(label, sum(1 for t in times if lo <= t < hi)) for lo, hi, label in edges]
+
+
+def parallel_overlap(metas):
+    """A->B->A switches between sessions within 30 min: (events, sessions involved, messages involved)."""
+    ev = sorted((parse_ts(t), sid) for sid, m in metas.items() for t in m["user_message_timestamps"])
+    events, involved, last_seen, prev = 0, set(), {}, None
+    for ts, sid in ev:
+        if prev and prev != sid and sid in last_seen and (ts - last_seen[sid]).total_seconds() <= 1800:
+            events += 1
+            involved.update((sid, prev))
+        last_seen[sid] = ts
+        prev = sid
+    return events, len(involved), events
+
+
+def render_html(selected, metas, facets, sections):
+    tmpl = TEMPLATE.read_text(encoding="utf-8")
+    ms = [metas[s] for s in selected]
+    fs = [facets[s] for s in selected]
+    msgs = sum(m["user_message_count"] for m in ms)
+    stamps = sorted(parse_ts(t) for m in ms for t in m["user_message_timestamps"])
+    days = (stamps[-1].date() - stamps[0].date()).days + 1 if stamps else 1
+    span = f"{stamps[0].date()} to {stamps[-1].date()}" if stamps else ""
+    added, removed = sum(m["lines_added"] for m in ms), sum(m["lines_removed"] for m in ms)
+    files = sum(m["files_modified"] for m in ms)
+
+    stats = [(f"{msgs:,}", "Messages"), (f"+{added:,}/-{removed:,}", "Lines"), (f"{files:,}", "Files"), (str(days), "Days"), (f"{msgs / days:.1f}", "Msgs/Day")]
+    stats_html = "".join(f'<div class="stat"><div class="stat-value">{E(v)}</div><div class="stat-label">{E(l)}</div></div>' for v, l in stats)
+
+    mc = lambda counter: [(pretty(k), v) for k, v in counter.most_common()]
+    rt = [t for m in ms for t in m["user_response_times"]]
+    ev, sess_n, msg_n = parallel_overlap(metas)
+    rt_title = "User Response Time Distribution" + (f" (median {statistics.median(rt):.0f}s)" if rt else "")
+    charts = {
+        "WORK": chart("What You Wanted", mc(sum_counters(f["goal_categories"] for f in fs)), "#2563eb")
+        + chart("Top Tools Used", sum_counters(m["tool_counts"] for m in ms).most_common(), "#0891b2"),
+        "USAGE": chart("Languages", sum_counters(m["languages"] for m in ms).most_common(), "#10b981")
+        + chart("Session Types", mc(Counter(f["session_type"] for f in fs)), "#8b5cf6"),
+        "TIMING": chart(rt_title, response_buckets(rt), "#6366f1")
+        + chart("Parallel Sessions", [("Overlap events", ev), ("Sessions involved", sess_n)], "#0ea5e9"),
+        "WINS": chart("Tool Errors Encountered", sum_counters(m["tool_error_categories"] for m in ms).most_common(), "#dc2626")
+        + chart("What Helped Most", mc(Counter(f["primary_success"] for f in fs if f["primary_success"] != "none")), "#16a34a"),
+        "FRICTION": chart("Outcomes", mc(Counter(f["outcome"] for f in fs)), "#8b5cf6")
+        + chart("Primary Friction Types", mc(sum_counters(f["friction_counts"] for f in fs)), "#dc2626")
+        + chart("Inferred Satisfaction (model-estimated)", mc(sum_counters(f["user_satisfaction_counts"] for f in fs)), "#eab308"),
     }
+
+    s = sections
+    g = s["at_a_glance"]
+    glance = "".join(
+        f'<div class="glance-section"><strong>{E(l)}:</strong> {E(g[k])}</div>'
+        for k, l in (("whats_working", "What's working"), ("whats_hindering", "What's hindering you"), ("quick_wins", "Quick wins to try"), ("ambitious_workflows", "Ambitious workflows"))
+    )
+    areas = "".join(
+        f'<div class="project-area"><div class="area-header"><span class="area-name">{E(a["name"])}</span><span class="area-count">~{E(a["session_count"])} sessions</span></div><div class="area-desc">{E(a["description"])}</div></div>'
+        for a in s["project_areas"]["areas"]
+    )
+    style = s["interaction_style"]
+    narrative = "".join(f"<p>{E(p)}</p>" for p in style["narrative"].split("\n\n") if p.strip()) + f'<div class="key-insight"><strong>Key pattern:</strong> {E(style["key_pattern"])}</div>'
+    wins = "".join(f'<div class="big-win"><div class="big-win-title">{E(w["title"])}</div><div class="big-win-desc">{E(w["description"])}</div></div>' for w in s["what_works"]["impressive_workflows"])
+    friction = "".join(
+        f'<div class="friction-category"><div class="friction-title">{E(c["category"])}</div><div class="friction-desc">{E(c["description"])}</div><ul class="friction-examples">'
+        + "".join(f"<li>{E(x)}</li>" for x in c["examples"]) + "</ul></div>"
+        for c in s["friction_analysis"]["categories"]
+    )
+    sg = s["suggestions"]
+    rules = "".join(
+        f'<div class="rules-item"><input type="checkbox" class="cmd-checkbox" id="rule-{i}" data-text="{E(r["addition"])}" checked>'
+        f'<div style="flex:1"><code class="cmd-code">{E(r["addition"])}</code><button class="copy-btn" onclick="copyRuleItem({i})">Copy</button><div class="cmd-why">{E(r["why"])}</div></div></div>'
+        for i, r in enumerate(sg["rules_additions"])
+    )
+    copy_row = lambda text: f'<div class="copyable-prompt-section"><div class="copyable-prompt-row"><code class="copyable-prompt">{E(text)}</code><button class="copy-btn" onclick="copyText(this)">Copy</button></div></div>'
+    features = "".join(
+        f'<div class="feature-card"><div class="feature-title">{E(f["feature"])}</div><div class="feature-oneliner">{E(f["one_liner"])}</div><div class="feature-why">{E(f["why_for_you"])}</div>{copy_row(f["example_code"])}</div>'
+        for f in sg["features_to_try"]
+    )
+    patterns = "".join(
+        f'<div class="pattern-card"><div class="pattern-title">{E(p["title"])}</div><div class="pattern-summary">{E(p["suggestion"])}</div><div class="pattern-detail">{E(p["detail"])}</div>{copy_row(p["copyable_prompt"])}</div>'
+        for p in sg["usage_patterns"]
+    )
+    hz = s["on_the_horizon"]
+    horizon = "".join(
+        f'<div class="horizon-card"><div class="horizon-title">{E(o["title"])}</div><div class="horizon-possible">{E(o["whats_possible"])}</div><div class="horizon-tip">{E(o["how_to_try"])}</div>{copy_row(o["copyable_prompt"])}</div>'
+        for o in hz["opportunities"]
+    )
+    fe = s["fun_ending"]
+
+    slots = {
+        "SUBTITLE": E(f"{msgs:,} messages across {len(ms)} sessions | {span}"),
+        "AT_A_GLANCE": glance, "STATS": stats_html, "PROJECT_AREAS": areas, "INTERACTION_STYLE": narrative,
+        "WINS_INTRO": E(s["what_works"]["intro"]), "WINS": wins,
+        "FRICTION_INTRO": E(s["friction_analysis"]["intro"]), "FRICTION": friction,
+        "RULES": rules, "FEATURES": features, "PATTERNS": patterns,
+        "HORIZON_INTRO": E(hz["intro"]), "HORIZON": horizon,
+        "FUN_HEADLINE": E(fe["headline"]), "FUN_DETAIL": E(fe["detail"]),
+    }
+    slots.update({f"CHARTS_{k}": v for k, v in charts.items()})
+    # single pass: inserted text is never re-expanded
+    return re.sub(r"\{\{([A-Z_]+)\}\}", lambda m: slots[m.group(1)], tmpl)
+
+
+def cmd_render(a):
+    data = Path(a.data)
+    selected, metas, facets, sections = load_inputs(data)
+    out = render_html(selected, metas, facets, sections)
+    path = data / f"report-{datetime.now().strftime('%Y-%m-%d-%H%M%S')}.html"
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        f.write(out)
+    print(path)
+    return 0
+
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate AI Insights Report")
-    parser.add_argument("--sessions", type=int, default=50, help="Number of recent sessions to analyze")
-    parser.add_argument("--outdir", type=str, default=".", help="Directory to output reports")
-    args = parser.parse_args()
+    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    sub = p.add_subparsers(dest="cmd", required=True)
+    c = sub.add_parser("collect")
+    c.add_argument("--days", type=int, default=14)
+    c.add_argument("--max", type=int, default=200)
+    c.add_argument("--brain", default=str(DEFAULT_BRAIN))
+    c.add_argument("--data", default=str(DEFAULT_DATA))
+    c.set_defaults(fn=cmd_collect)
+    r = sub.add_parser("render")
+    r.add_argument("--data", default=str(DEFAULT_DATA))
+    r.set_defaults(fn=cmd_render)
+    a = p.parse_args()
+    return a.fn(a)
 
-    os.makedirs(args.outdir, exist_ok=True)
-    stats = analyze_brain(limit_sessions=args.sessions)
-    
-    intent_items = stats["intent_counts"].most_common(6)
-    tool_items = stats["tool_counts"].most_common(6)
-    
-    total_tools = sum(stats["tool_counts"].values())
-    zero_exit_est = max(0, stats["tool_counts"].get("run_command", 0) - stats["command_failures"])
-    clean_edits_est = max(0, stats["tool_counts"].get("edit_file", 0) - stats["edit_mismatches"])
-    
-    reliability_items = [
-        ("Command Zero-Exit", zero_exit_est),
-        ("Command Non-Zero", stats["command_failures"]),
-        ("edit_file Clean", clean_edits_est),
-        ("edit_file Mismatch", stats["edit_mismatches"])
-    ]
-    
-    friction_items = [
-        ("Speculative Searches", int(stats["command_failures"] * 0.75)),
-        ("PR State Desync", 26),
-        ("Commit Granularity", 20),
-        ("Diagram Syntax Error", 8)
-    ]
-    
-    html = HTML_TEMPLATE
-    html = html.replace("{{USER_PROMPTS_COUNT}}", str(stats["prompts_count"]))
-    html = html.replace("{{SESSIONS_COUNT}}", str(stats["sessions_count"]))
-    html = html.replace("{{TOTAL_TOOLS_COUNT}}", f"{total_tools:,}")
-    html = html.replace("{{FILES_TOUCHED_COUNT}}", f"{stats['files_touched_count']:,}")
-    html = html.replace("{{DAYS_SPAN}}", str(stats["days_span"]))
-    html = html.replace("{{DATE_RANGE}}", stats["date_range"])
-    html = html.replace("{{PROMPTS_PER_DAY}}", str(stats["prompts_per_day"]))
-    
-    html = html.replace("{{INTENT_BARS}}", generate_bars(intent_items, "#2563eb"))
-    html = html.replace("{{TOOL_BARS}}", generate_bars(tool_items, "#0891b2"))
-    html = html.replace("{{RELIABILITY_BARS}}", generate_bars(reliability_items, "#16a34a"))
-    html = html.replace("{{FRICTION_BARS}}", generate_bars(friction_items, "#dc2626"))
-    
-    html_out = os.path.join(args.outdir, "insights_report.html")
-    with open(html_out, "w", encoding="utf-8") as f:
-        f.write(html)
-        
-    print(f"Generated HTML report at: {os.path.abspath(html_out)}")
-    print(f"Analyzed {stats['sessions_count']} sessions, {stats['prompts_count']} prompts, {total_tools} tool calls.")
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

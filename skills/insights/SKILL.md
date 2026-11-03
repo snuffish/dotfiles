@@ -1,66 +1,52 @@
 ---
 name: insights
-description: Audits recent AI session transcripts for developer habits, tool usage, friction points, and recurring steering, generating an interactive HTML dashboard and project rule improvements.
+description: Analyses recent Antigravity session transcripts and renders an HTML usage report (what you work on, interaction style, friction, rule suggestions) in the same layout as Claude Code's /insights.
 compatibility: antigravity
 ---
 
-# Skill: `/insights` — AI Workflow & Session Analytics
+# Skill: `/insights` — Antigravity usage report
 
-Generates a comprehensive diagnostic audit of developer workflows, tool metrics, friction points, and recurring steering across recent AI sessions. Emits a clean interactive HTML dashboard (matching Claude Code Insights styling) and an actionable markdown artifact with copyable rule recommendations.
+Mirrors Claude Code's `/insights`: a script counts what happened, you rate each session and write the narrative, the script renders the HTML. Data lives in `~/.gemini/antigravity-cli/usage-data/` (`DEFAULT_DATA` in `scripts/generate_insights.py`).
 
----
+The script is `~/.terminal/skills/insights/scripts/generate_insights.py`; use that absolute path.
 
-## Modules
+## Step 1 — Collect
 
-Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
+```bash
+python3 ~/.terminal/skills/insights/scripts/generate_insights.py collect --days 14 --max 200
+```
 
-Read these before step 1:
-- `../_modules/core.md`: read-only until `/proceed`
-- `../_modules/artifact-protocol.md`: writes `<prefix>-insights_report-<suffix>.md` and an interactive HTML report `insights_report.html`
+Reads transcripts modified in the last 14 days (newest 200), writes `session-meta/<id>.json` and `digests/<id>.json` (at most 6 KB each), and prints the ids that need a facet: no facet yet, or the transcript changed since it was rated. Cached facets are reused. The first run rates up to 200 sessions, so say that to the user before starting.
 
----
+## Step 2 — Write a facet per listed id
 
-## When to Use
+Read each listed `digests/<id>.json`, in batches of about 10, and write `facets/<id>.json` with exactly these keys:
 
-Use `/insights` when you want to:
-- Audit recent AI session habits, prompt patterns, and task distributions.
-- Quantify tool reliability (shell command exit codes, file edit anchor mismatches, background tasks).
-- Identify recurring friction (speculative search loops, state desync with remote PRs, commit granularity issues).
-- Generate copyable, actionable additions for `~/.claude-mem/MY-RULES.md` and `AGENTS.md`.
+`underlying_goal` (str), `goal_categories` ({name: count}), `outcome` (str), `user_satisfaction_counts` ({level: count}), `agent_helpfulness` (str), `session_type` (str), `friction_counts` ({type: count}), `friction_detail` (str), `primary_success` (str, `none` if no success), `brief_summary` (str), `session_id` (the id), `transcript_mtime` (copied from the digest).
 
----
+Rate only what the digest shows; do not invent.
 
-## Step 1 — Run Metrics & Transcripts Extraction
+## Step 3 — Write `usage-data/sections.json`
 
-1. Execute the analytics generator script from the skill's real directory:
-   ```bash
-   python3 "$(dirname "$(realpath "$0")")/scripts/generate_insights.py" --sessions 50 --outdir "$ARTIFACT_DIR"
-   ```
-   *(If `$ARTIFACT_DIR` is not set by the harness, output to `<workspace-root>/docs/insights/` or `<appDataDir>/brain/<conversation-id>/`)*.
-2. The script computes:
-   - Total user prompts, session counts, date spans, and prompts-per-day velocity.
-   - Tool invocation distribution (`run_command`, `read_file`, `edit_file`, `manage_task`, `write_file`).
-   - Command reliability and non-zero exit frequency.
-   - User intent classification (e.g. `/create-prompt`, `/proceed`, `/investigate`, `/problem`, plain requests).
+From all facets plus the `session-meta` totals. Every field is required and non-empty:
 
----
+- `at_a_glance`: `whats_working`, `whats_hindering`, `quick_wins`, `ambitious_workflows` (str)
+- `project_areas.areas[]`: `name`, `session_count` (int), `description`
+- `interaction_style`: `narrative` (paragraphs separated by a blank line), `key_pattern`
+- `what_works`: `intro`, `impressive_workflows[]` of `title`, `description`
+- `friction_analysis`: `intro`, `categories[]` of `category`, `description`, `examples[]` (str)
+- `suggestions`: `rules_additions[]` of `addition`, `why`; `features_to_try[]` of `feature`, `one_liner`, `why_for_you`, `example_code`; `usage_patterns[]` of `title`, `suggestion`, `detail`, `copyable_prompt`
+- `on_the_horizon`: `intro`, `opportunities[]` of `title`, `whats_possible`, `how_to_try`, `copyable_prompt`
+- `fun_ending`: `headline`, `detail`
 
-## Step 2 — Synthesize Friction Points & Project Rule Improvements
+## Step 4 — Render
 
-1. **Audit Repeated Interventions**: Review session logs for patterns where the user had to course-correct the assistant:
-   - Monolithic vs. staged chunk commits.
-   - Pre-flight checks on existing remote branches and open PRs.
-   - Speculative filesystem traversals vs. targeted CodeGraph navigation.
-   - Worktree isolation vs. in-place edits.
-2. **Formulate High-Impact Rules**: Draft targeted, concise rules to resolve the identified friction points for:
-   - `~/.claude-mem/MY-RULES.md` (universal developer preferences).
-   - `AGENTS.md` / `CLAUDE.md` (repository-level operational constraints).
+```bash
+python3 ~/.terminal/skills/insights/scripts/generate_insights.py render
+```
 
----
+Exits non-zero, naming the problem, when a section is missing or empty, or when an analysed session has no fresh facet. Fix the named file and rerun. Writes `report-<timestamp>.html` (mode 0600) and prints its path.
 
-## Step 3 — Present Outputs & Gate Next Steps
+## Step 5 — Reply
 
-1. **Artifact Delivery**: Write the synthesis into `<prefix>-insights_report-<suffix>.md` linking to the standalone interactive `insights_report.html` dashboard.
-2. **Follow Artifact Protocol**: Do not dump the entire raw report into chat. Provide concise bullet highlights in chat pointing to the dashboard.
-3. **Closing Gate**: Stop at `core` › *The `/proceed` gate*:
-   > **Next Step Gate:** Reply `/proceed` (or "go ahead") to apply the recommended rule updates to `MY-RULES.md` and `AGENTS.md`, or specify scope/changes.
+Give the report path as a link, the four `at_a_glance` lines, and end with: "Want to dig into any section?". Do not write a markdown artifact or edit `MY-RULES.md` or `AGENTS.md`; the report's rule suggestions are copy buttons for the user.

@@ -20138,70 +20138,6 @@
       }
     },
     {
-      "id": "skills/insights/SKILL.md:17:path:../_modules/core.md",
-      "source": {
-        "file": "skills/insights/SKILL.md",
-        "line": 18
-      },
-      "kind": "path",
-      "value": "../_modules/core.md",
-      "quote": "- `../_modules/core.md`: read-only until `/proceed`",
-      "verify": {
-        "method": "path_exists",
-        "path": "../_modules/core.md",
-        "base": "file_dir",
-        "type": "file"
-      }
-    },
-    {
-      "id": "skills/insights/SKILL.md:18:path:../_modules/artifact-protocol.md",
-      "source": {
-        "file": "skills/insights/SKILL.md",
-        "line": 19
-      },
-      "kind": "path",
-      "value": "../_modules/artifact-protocol.md",
-      "quote": "- `../_modules/artifact-protocol.md`: writes `<prefix>-insights_report-<suffix>.md`",
-      "verify": {
-        "method": "path_exists",
-        "path": "../_modules/artifact-protocol.md",
-        "base": "file_dir",
-        "type": "file"
-      }
-    },
-    {
-      "id": "skills/insights/SKILL.md:36:path:scripts/generate_insights.py",
-      "source": {
-        "file": "skills/insights/SKILL.md",
-        "line": 37
-      },
-      "kind": "path",
-      "value": "scripts/generate_insights.py",
-      "quote": "scripts/generate_insights.py",
-      "verify": {
-        "method": "path_exists",
-        "path": "scripts/generate_insights.py",
-        "base": "file_dir",
-        "type": "file"
-      }
-    },
-    {
-      "id": "skills/insights/SKILL.md:64:doc_link:core \u203a The /proceed gate",
-      "source": {
-        "file": "skills/insights/SKILL.md",
-        "line": 65
-      },
-      "kind": "doc_link",
-      "value": "core \u203a The /proceed gate",
-      "quote": "`core` \u203a *The `/proceed` gate*",
-      "verify": {
-        "method": "heading_pointer",
-        "target": "core",
-        "heading": "The /proceed gate",
-        "base": "repo"
-      }
-    },
-    {
       "id": "skills/README.md:43:skill_ref:simplify",
       "source": {
         "file": "skills/README.md",
@@ -21191,6 +21127,174 @@
         "method": "skill_exists",
         "name": "proceed",
         "base": "repo"
+      }
+    },
+    {
+      "id": "skills/insights/SKILL.md:11:path:skills/insights/scripts/generate_insights.py",
+      "source": {
+        "file": "skills/insights/SKILL.md",
+        "line": 11
+      },
+      "kind": "path",
+      "value": "skills/insights/scripts/generate_insights.py",
+      "quote": "~/.terminal/skills/insights/scripts/generate_insights.py",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/insights/scripts/generate_insights.py",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/insights/SKILL.md:9:symbol:DEFAULT_DATA",
+      "source": {
+        "file": "skills/insights/SKILL.md",
+        "line": 9
+      },
+      "kind": "symbol",
+      "value": "DEFAULT_DATA",
+      "quote": "`DEFAULT_DATA` in `scripts/generate_insights.py`",
+      "verify": {
+        "method": "grep",
+        "pattern": "DEFAULT_DATA\\s*=.*usage-data",
+        "paths": [
+          "skills/insights/scripts/generate_insights.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/insights/SKILL.md:16:other:collect --days 14 --max 200",
+      "source": {
+        "file": "skills/insights/SKILL.md",
+        "line": 16
+      },
+      "kind": "other",
+      "value": "collect --days 14 --max 200",
+      "quote": "collect --days 14 --max 200",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"--days\".*default=14",
+        "paths": [
+          "skills/insights/scripts/generate_insights.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/insights/SKILL.md:19:other:max 200 sessions",
+      "source": {
+        "file": "skills/insights/SKILL.md",
+        "line": 19
+      },
+      "kind": "other",
+      "value": "max 200 sessions",
+      "quote": "(newest 200)",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"--max\".*default=200",
+        "paths": [
+          "skills/insights/scripts/generate_insights.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/insights/SKILL.md:19:symbol:DIGEST_MAX_BYTES",
+      "source": {
+        "file": "skills/insights/SKILL.md",
+        "line": 19
+      },
+      "kind": "symbol",
+      "value": "DIGEST_MAX_BYTES",
+      "quote": "at most 6 KB each",
+      "verify": {
+        "method": "grep",
+        "pattern": "DIGEST_MAX_BYTES\\s*=\\s*6144",
+        "paths": [
+          "skills/insights/scripts/generate_insights.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/insights/SKILL.md:23:symbol:FACET_KEYS",
+      "source": {
+        "file": "skills/insights/SKILL.md",
+        "line": 23
+      },
+      "kind": "symbol",
+      "value": "FACET_KEYS",
+      "quote": "exactly these keys",
+      "verify": {
+        "method": "grep",
+        "pattern": "FACET_KEYS\\s*=",
+        "paths": [
+          "skills/insights/scripts/generate_insights.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/insights/SKILL.md:31:symbol:SECTIONS_SPEC",
+      "source": {
+        "file": "skills/insights/SKILL.md",
+        "line": 31
+      },
+      "kind": "symbol",
+      "value": "SECTIONS_SPEC",
+      "quote": "Every field is required and non-empty",
+      "verify": {
+        "method": "grep",
+        "pattern": "SECTIONS_SPEC\\s*=",
+        "paths": [
+          "skills/insights/scripts/generate_insights.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/insights/SKILL.md:48:other:render exits non-zero",
+      "source": {
+        "file": "skills/insights/SKILL.md",
+        "line": 48
+      },
+      "kind": "other",
+      "value": "render exits non-zero",
+      "quote": "Exits non-zero, naming the problem",
+      "verify": {
+        "method": "grep",
+        "pattern": "sys\\.exit\\(\\\"render: refusing",
+        "paths": [
+          "skills/insights/scripts/generate_insights.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/insights/SKILL.md:48:other:report mode 0600",
+      "source": {
+        "file": "skills/insights/SKILL.md",
+        "line": 48
+      },
+      "kind": "other",
+      "value": "report mode 0600",
+      "quote": "(mode 0600)",
+      "verify": {
+        "method": "grep",
+        "pattern": "0o600",
+        "paths": [
+          "skills/insights/scripts/generate_insights.py"
+        ],
+        "base": "repo",
+        "expect": "present"
       }
     }
   ]
