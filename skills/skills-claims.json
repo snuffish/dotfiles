@@ -16184,22 +16184,6 @@
       }
     },
     {
-      "id": "skills/proceed/SKILL.md:66:doc_link:core \u203a Post-edit verification",
-      "source": {
-        "file": "skills/proceed/SKILL.md",
-        "line": 66
-      },
-      "kind": "doc_link",
-      "value": "core \u203a Post-edit verification",
-      "quote": "`core` \u203a _Post-edit verification_",
-      "verify": {
-        "method": "heading_pointer",
-        "target": "core",
-        "heading": "Post-edit verification",
-        "base": "repo"
-      }
-    },
-    {
       "id": "skills/refine/SKILL.md:17:path:../_modules/core.md",
       "source": {
         "file": "skills/refine/SKILL.md",

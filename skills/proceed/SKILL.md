@@ -4,7 +4,7 @@ description: "Authorizes and executes the next step of a gated read-only command
 disable-model-invocation: true
 argument-hint: "[artifact | option | phase | step | extra instructions]"
 model: sonnet
-effort: medium
+effort: low
 ---
 
 # Skill: `/proceed` — Open the Execution Gate
@@ -47,8 +47,8 @@ Look back through this session for the most recent gated handoff that has not ye
 | `suggestion`                        | Numbered approaches with a recommendation (option 1) | Act on option 1, or the option a bare number in the arguments picks (`/proceed 2`): through `/plan` when the change is non-trivial, otherwise directly                                                                                                           |
 | `investigate`                       | Findings with a handoff                              | Draft the plan with `/plan`; implementing it needs a further `/proceed`                                                                                                                                                                                          |
 | `plan`                              | A plan in `Awaiting User Review`                     | Implement the plan                                                                                                                                                                                                                                               |
-| `handoff`                           | A handoff artifact (`<prefix>-handoff-<suffix>.md`)   | Execute the pending next steps named in the handoff                                                                                                                                                                                                              |
-| `simplify-branch` | A matrix of simplify candidates (rows `A`, `B`, …) | Run `/simplify` on the rows the arguments pick (the ✓ rows by default; `/proceed A,C`, `/proceed all`), each scoped to its files. Never commits |
+| `handoff`                           | A handoff artifact (`<prefix>-handoff-<suffix>.md`)  | Execute the pending next steps named in the handoff                                                                                                                                                                                                              |
+| `simplify-branch`                   | A matrix of simplify candidates (rows `A`, `B`, …)   | Run `/simplify` on the rows the arguments pick (the ✓ rows by default; `/proceed A,C`, `/proceed all`), each scoped to its files. Never commits                                                                                                                  |
 
 Then:
 
@@ -60,11 +60,13 @@ Then:
 
 Re-read the plan artifact from disk before acting; the user may have edited it after the gate closed.
 
+Work inline: start no subagents unless the plan names one.
+
 ### Step 2: Execute & Verify
 
 1. **Mark approved**: set the plan's `Status` to `Approved` (`core` › _The `/proceed` gate_).
 2. **Execute**: follow the plan's phases in order, staying inside its scope and applying the project's References and Profiles (`core` › _Precedence*). Honour an active `[worktree-context]`, `core` › _Worktree opt-in_, and the base profile's **Implementation mode** (`git-worktrees` › _Modes_).
-3. **Verify**: run `core` › _Post-edit verification_ (the plan's own verification commands first, then targeted build, type-check, and tests).
+3. **Verify once, at the end**: run the plan's own verification commands. Only when the plan names none, run one targeted build/type-check and the tests covering the changed files. Never re-run a suite that already passed on the same code, and don't verify per phase unless the plan says so.
 4. **Close out**: update the plan's `Status` (`Completed` or `Approved` with remaining items per `core` › _The `/proceed` gate_) and, in the same edit, every status field the source artifact's Command declares (header `Status:`, summary matrix, per-item status, checklist); then `grep` for `⏸`, `Not addressed`, `uncommitted` and resolve every hit.
 
 ---
