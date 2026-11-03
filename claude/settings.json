@@ -68,6 +68,7 @@
     "vercel-react-best-practices": "off",
     "microsoft-foundry": "off",
     "claude-mem:babysit": "off",
+    "claude-mem:handoff": "off",
     "claude-mem:backup-setup": "off",
     "claude-mem:build": "off",
     "claude-mem:build-and-release": "off",
