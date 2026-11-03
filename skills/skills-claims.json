@@ -4380,7 +4380,7 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "| General (top level) | Command | 44 | `artifacts`, `clean`, `code-documentation`, `code-r",
+      "quote": "| General (top level) | Command | 45 | `artifacts`, `clean`, `code-documentation`, `code-r",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
@@ -4395,7 +4395,7 @@
       },
       "kind": "skill_ref",
       "value": "clean",
-      "quote": "op level) | Command | 44 | `artifacts`, `clean`, `code-documentation`, `code-review`, `",
+      "quote": "op level) | Command | 45 | `artifacts`, `clean`, `code-documentation`, `code-review`, `",
       "verify": {
         "method": "skill_exists",
         "name": "clean",
@@ -4410,7 +4410,7 @@
       },
       "kind": "skill_ref",
       "value": "code-documentation",
-      "quote": " | Command | 44 | `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `",
+      "quote": "| Command | 45 | `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `",
       "verify": {
         "method": "skill_exists",
         "name": "code-documentation",
@@ -4645,7 +4645,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-feedback-review",
-      "quote": "ktrees`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments",
+      "quote": "ktrees`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-po",
       "verify": {
         "method": "skill_exists",
         "name": "pr-feedback-review",
@@ -4660,7 +4660,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-fix-pipeline",
-      "quote": "plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `p",
+      "quote": "plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `pr-s",
       "verify": {
         "method": "skill_exists",
         "name": "pr-fix-pipeline",
@@ -4675,7 +4675,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-post-comments",
-      "quote": "pr-feedback-review`, `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, ",
+      "quote": "eview`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `r",
       "verify": {
         "method": "skill_exists",
         "name": "pr-post-comments",
@@ -4693,7 +4693,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-summary",
-      "quote": " `pr-fix-pipeline`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `refine`, `rem",
+      "quote": "line`, `pr-polish`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `refine`, `remem",
       "verify": {
         "method": "skill_exists",
         "name": "pr-summary",
@@ -4708,7 +4708,7 @@
       },
       "kind": "skill_ref",
       "value": "problem",
-      "quote": "ine`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `refine`, `remember-this`",
+      "quote": "ish`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `refine`, `remember-this`,",
       "verify": {
         "method": "skill_exists",
         "name": "problem",
@@ -20028,13 +20028,13 @@
         "line": 39
       },
       "kind": "count",
-      "value": "45",
-      "quote": "50 skills total \u2014 45 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "value": "46",
+      "quote": "51 skills total \u2014 46 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/*/SKILL.md",
         "base": "repo",
-        "expected": 45,
+        "expected": 46,
         "op": "eq"
       }
     },
@@ -20046,7 +20046,7 @@
       },
       "kind": "count",
       "value": "5 GR.PRIIS project skills",
-      "quote": "50 skills total \u2014 45 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "51 skills total \u2014 46 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/Projects/GR.PRIIS/*/SKILL.md",
@@ -20063,7 +20063,7 @@
       },
       "kind": "count",
       "value": "8 Modules",
-      "quote": "50 skills total \u2014 45 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "51 skills total \u2014 46 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/_modules/*.md",
@@ -21205,6 +21205,421 @@
         "path": "scripts/check_native_mirror.py",
         "base": "file_dir",
         "type": "file"
+      }
+    },
+    {
+      "id": "skills/README.md:43:skill_ref:pr-polish",
+      "source": {
+        "file": "skills/README.md",
+        "line": 43
+      },
+      "kind": "skill_ref",
+      "value": "pr-polish",
+      "quote": "pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `pr-summary`, `pro",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-polish",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/_modules/references/artifact-catalog.md:11:skill_ref:pr-polish",
+      "source": {
+        "file": "skills/_modules/references/artifact-catalog.md",
+        "line": 11
+      },
+      "kind": "skill_ref",
+      "value": "pr-polish",
+      "quote": "| `pr_polish-<suffix>.md` | `/pr-polish` | PR-finishing run: verified findings w",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-polish",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:3:skill_ref:code-review",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 3
+      },
+      "kind": "skill_ref",
+      "value": "code-review",
+      "quote": "PR\". Not for a review-only report (use /code-review) or thread triage alone (use /pr-feed",
+      "verify": {
+        "method": "skill_exists",
+        "name": "code-review",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:43:skill_ref:simplify-branch",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 43
+      },
+      "kind": "skill_ref",
+      "value": "simplify-branch",
+      "quote": "on and dead-code cleanup            | [`/simplify-branch`](../simplify-branch/SKILL.md)       |",
+      "verify": {
+        "method": "skill_exists",
+        "name": "simplify-branch",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:3:skill_ref:pr-feedback-review",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 3
+      },
+      "kind": "skill_ref",
+      "value": "pr-feedback-review",
+      "quote": "ode-review) or thread triage alone (use /pr-feedback-review).'",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-feedback-review",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:45:skill_ref:pr-fix-pipeline",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 45
+      },
+      "kind": "skill_ref",
+      "value": "pr-fix-pipeline",
+      "quote": "| [`/pr-fix-pipeline`](../pr-fix-pipeline/SKILL.md)       |",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-fix-pipeline",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:92:skill_ref:pr-summary",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 92
+      },
+      "kind": "skill_ref",
+      "value": "pr-summary",
+      "quote": "2. **Description**: run [`/pr-summary`](../pr-summary/SKILL.md) in preview mo",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-summary",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:98:skill_ref:pr-post-comments",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 98
+      },
+      "kind": "skill_ref",
+      "value": "pr-post-comments",
+      "quote": "ary update` and post the replies with [`/pr-post-comments`](../pr-post-comments/SKILL.md) from th",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-post-comments",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:20:path:../_modules/core.md",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 20
+      },
+      "kind": "path",
+      "value": "../_modules/core.md",
+      "quote": "- `../_modules/core.md`: edits in place only for high-confidenc",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/core.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:21:path:../_modules/artifact-protocol.md",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 21
+      },
+      "kind": "path",
+      "value": "../_modules/artifact-protocol.md",
+      "quote": "- `../_modules/artifact-protocol.md`: writes `<prefix>-pr_polish-<suffix>.md",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/artifact-protocol.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:22:path:../_modules/project-profile.md",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 22
+      },
+      "kind": "path",
+      "value": "../_modules/project-profile.md",
+      "quote": "- `../_modules/project-profile.md`: build/test commands, PR tooling and _R",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/project-profile.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:23:path:../_modules/pr-host.md",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 23
+      },
+      "kind": "path",
+      "value": "../_modules/pr-host.md",
+      "quote": "- `../_modules/pr-host.md`",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/pr-host.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:24:path:../_modules/fan-out.md",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 24
+      },
+      "kind": "path",
+      "value": "../_modules/fan-out.md",
+      "quote": "- `../_modules/fan-out.md`",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/fan-out.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:25:path:../_modules/outward-writes.md",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 25
+      },
+      "kind": "path",
+      "value": "../_modules/outward-writes.md",
+      "quote": "- `../_modules/outward-writes.md`",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/outward-writes.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:53:path:simplify-branch/scripts/branch_scope.py",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 53
+      },
+      "kind": "path",
+      "value": "simplify-branch/scripts/branch_scope.py",
+      "quote": "1. Run `python3 -I <registry>/simplify-branch/scripts/branch_scope.py [--base <branch>]` from the repo root a",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/simplify-branch/scripts/branch_scope.py",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:56:other:branch_scope skips Migrations/",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 56
+      },
+      "kind": "other",
+      "value": "branch_scope skips Migrations/",
+      "quote": "`Migrations/` folder (`branch_scope.py` skips them from `files`, so take them from `git diff --name-onl",
+      "verify": {
+        "method": "grep",
+        "pattern": "Migrations/",
+        "paths": [
+          "skills/simplify-branch/scripts/branch_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:73:other:branch_scope namespaces carry tests",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 73
+      },
+      "kind": "other",
+      "value": "branch_scope namespaces carry tests",
+      "quote": "vering the batch (the mirrored tests in `namespaces[key].tests`, plus any test file the batch edits).",
+      "verify": {
+        "method": "grep",
+        "pattern": "\\\"tests\\\"",
+        "paths": [
+          "skills/simplify-branch/scripts/branch_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:92:other:pr-summary preview is default",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 92
+      },
+      "kind": "other",
+      "value": "pr-summary preview is default",
+      "quote": "[`/pr-summary`](../pr-summary/SKILL.md) in preview mode against the base. It uses the repo PR t",
+      "verify": {
+        "method": "grep",
+        "pattern": "Preview mode \\(default\\)",
+        "paths": [
+          "skills/pr-summary/SKILL.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:98:cli_command:pr-summary update",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 98
+      },
+      "kind": "cli_command",
+      "value": "pr-summary update",
+      "quote": "e user asks: apply the description with `/pr-summary update` and post the replies with [`/pr-post-co",
+      "verify": {
+        "method": "grep",
+        "pattern": "Update mode\\*\\* \u2014 `/pr-summary update",
+        "paths": [
+          "skills/pr-summary/SKILL.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:92:path:docs/pull_request_template.md",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 92
+      },
+      "kind": "path",
+      "value": "docs/pull_request_template.md",
+      "quote": "the base. It uses the repo PR template (`docs/pull_request_template.md` or the profile's path). Save the body i",
+      "verify": {
+        "method": "path_exists",
+        "path": "docs/pull_request_template.md",
+        "base": "project:GR.PRIIS",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:21:other:pr_polish in artifact catalog",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 21
+      },
+      "kind": "other",
+      "value": "pr_polish in artifact catalog",
+      "quote": "/_modules/artifact-protocol.md`: writes `<prefix>-pr_polish-<suffix>.md`",
+      "verify": {
+        "method": "grep",
+        "pattern": "`pr_polish-<suffix>\\.md`",
+        "paths": [
+          "skills/_modules/references/artifact-catalog.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/pr-polish/references/reviewer-briefs.md:40:other:simplify-branch Step 3 angles",
+      "source": {
+        "file": "skills/pr-polish/references/reviewer-briefs.md",
+        "line": 40
+      },
+      "kind": "other",
+      "value": "simplify-branch Step 3 angles",
+      "quote": "Lens: the four angles of /simplify-branch \u203a Step 3 (Reuse, Simplify, Efficiency, Altitude)",
+      "verify": {
+        "method": "grep",
+        "pattern": "### Step 3: Build the matrix[\\s\\S]*\\*\\*Altitude\\*\\*",
+        "paths": [
+          "skills/simplify-branch/SKILL.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:32:skill_ref:commit",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 32
+      },
+      "kind": "skill_ref",
+      "value": "commit",
+      "quote": "need their own request. Commit through [`/commit`](../commit/SKILL.md) `no-push` with the batch's paths, follo",
+      "verify": {
+        "method": "skill_exists",
+        "name": "commit",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:32:cli_command:/commit no-push",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 32
+      },
+      "kind": "cli_command",
+      "value": "/commit no-push",
+      "quote": "through [`/commit`](../commit/SKILL.md) `no-push` with the batch's paths, following its *",
+      "verify": {
+        "method": "grep",
+        "pattern": "argument-hint: \"\\[no-push\\]",
+        "paths": [
+          "skills/commit/SKILL.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:32:other:commit Steps 3-5 headings",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 32
+      },
+      "kind": "other",
+      "value": "commit Steps 3-5 headings",
+      "quote": "` with the batch's paths, following its *Step 3: Choose what goes into the commit* to *Step 5: Write the message and commi",
+      "verify": {
+        "method": "grep",
+        "pattern": "### Step 3: Choose what goes into the commit[\\s\\S]*### Step 5: Write the message and commit",
+        "paths": [
+          "skills/commit/SKILL.md"
+        ],
+        "base": "repo",
+        "expect": "present"
       }
     }
   ]

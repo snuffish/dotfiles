@@ -8,6 +8,7 @@ On-demand reference for [artifact-protocol.md](../artifact-protocol.md). Every a
 | `code_review-<suffix>.md` | `/code-review` | Code quality audit, severity findings (Critical/Important/Minor), diffs |
 | `squashed_code_review-<suffix>.md` | `/squash-code-review` | Two or more code reviews of one change squashed into one verified review, with a reconciliation table and folded-in PR threads |
 | `pr_feedback_review-<suffix>.md` | `/pr-feedback-review` | PR comment triage matrix, technical resolutions, draft responses |
+| `pr_polish-<suffix>.md` | `/pr-polish` | PR-finishing run: verified findings with status, applied/reverted fix batches with build and test results, PR description and thread-reply drafts |
 | `investigation-<suffix>.md` | `/investigate`, `/pr-fix-pipeline` | Pre-plan research: current-state map, prior art, constraints, options, confidence ledger |
 | `explanation-<suffix>.md` | `/explain` | Deep architectural and code intent breakdown |
 | `suggestion-<suffix>.md` | `/suggestion deep` | Ranked approaches with trade-offs, a recommendation and next steps |
