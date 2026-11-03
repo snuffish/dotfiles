@@ -1,6 +1,6 @@
 ---
 name: commit
-description: "Stages changed files, runs documented pre-commit gates (formatters, linters, tests), formats commit messages matching repo conventions (Conventional Commits or branch work-item prefix), and pushes to upstream. Refuses commits on default branches or detached HEAD."
+description: "Runs the skill-drift check first and fixes STALE claims surgically, then stages changed files, runs documented pre-commit gates (formatters, linters, tests), formats commit messages matching repo conventions (Conventional Commits or branch work-item prefix), and pushes to upstream. Refuses commits on default branches or detached HEAD."
 argument-hint: "[no-push] [message or intent] [paths…]"
 ---
 
@@ -44,11 +44,31 @@ Read these before step 1:
 1. **Repo root:** use `repo-root` from an incoming `[worktree-context]` block, else `git rev-parse --show-toplevel` (in a multi-repo workspace, handle each changed repo separately; check for locked `claude-skill:` worktrees per `git-worktrees` › *Using this Module from a Command*).
 2. **Stop and say why** when:
    - **Detached HEAD:** `git -C <repo-root> symbolic-ref -q HEAD` fails.
-   - **An operation is in progress:** `MERGE_HEAD`, `CHERRY_PICK_HEAD`, `REVERT_HEAD`, or a `rebase-merge/` / `rebase-apply/` directory exists (`resolve-conflicts` › *Step 0 — Detect the Operation, the Sides and the Repo*). Route to [`/resolve-conflicts`](../resolve-conflicts/SKILL.md), except a **resolved merge**: `MERGE_HEAD` exists and `git diff --name-only --diff-filter=U` is empty. Conclude that one yourself with `resolve-conflicts` › *Step 6 — Conclude* (the user's `/commit` is the request to commit), then go to Step 5.
+   - **An operation is in progress:** `MERGE_HEAD`, `CHERRY_PICK_HEAD`, `REVERT_HEAD`, or a `rebase-merge/` / `rebase-apply/` directory exists (`resolve-conflicts` › *Step 0 — Detect the Operation, the Sides and the Repo*). Route to [`/resolve-conflicts`](../resolve-conflicts/SKILL.md), except a **resolved merge**: `MERGE_HEAD` exists and `git diff --name-only --diff-filter=U` is empty. Conclude that one yourself with `resolve-conflicts` › *Step 6 — Conclude* (the user's `/commit` is the request to commit), then go to Step 6.
    - **Protected/default branch:** `main`, `master`, `develop`, `release/*`, or `origin/HEAD` — unless the repo is a trunk-only personal repo (e.g. `~/.terminal` or `~/.terminal/memory`). Otherwise propose a branch name in the repo's convention and create it only on approval.
    - **Nothing to commit and nothing to push:** say so in one line and stop.
 
-### Step 2: Choose what goes into the commit
+### Step 2: Skill-drift gate (before grouping)
+
+Runs before anything is staged, so claim fixes are grouped with the change that caused them. The checker is the first that exists in `<repo-root>`:
+
+| Checker | Claims file | Triage per |
+|---|---|---|
+| `skills/skill-drift/scripts/check_skill_drift.py` (the `~/.terminal` registry) | `skills/skills-claims.json` | [`/skill-drift`](../skill-drift/SKILL.md) |
+| `.claude/scripts/check-skill-drift.py` (a project repo) | `.claude/skills-claims.json` | that repo's drift skill |
+
+No checker → state `"no skill-drift check"` and go to Step 3.
+
+1. **Run** `python3 -I <repo-root>/<checker>` (full run, no `--file`).
+2. **STALE rows → fix now.** Re-extract each claim per `skill-drift` › *3. Re-extract claims after editing a skill*: update only that claim's `quote` / `source.line` (or drop and re-add it) with the Edit tool.
+   - **Never** rewrite the claims file wholesale: no `json.dump(s)`/`jq`/script regeneration, no `--update-stale` (it also silently rewrites `count` claims), no formatter on it.
+   - Keep the file canonical (`json.dumps(data, indent=2)` form: 2-space indent, ASCII-escaped, trailing newline); the checker fails a non-canonical file.
+3. **FAIL rows:** if the claim's `source.file` is in this change, triage and fix per `skill-drift` › *2. Triage a `FAIL`*. Otherwise leave it, name it in chat and in the output's `Left out` line, and continue.
+4. **Diff guard:** before editing, copy the claims file to the scratchpad. After, run `git -C <repo-root> diff --numstat -- <claims file>`: expect about 2 changed lines per fixed claim (more only for added or removed claims). Far more means it was reformatted: restore the copy and redo the edits by hand.
+5. **Re-run the checker:** `0 stale` and no FAIL from this change, else stop and report the rows.
+6. Claim edits (and any skill text fixes) belong to the change that caused them: stage them with it in Step 3.
+
+### Step 3: Choose what goes into the commit
 
 ```bash
 git -C <repo-root> status --porcelain=v1 -uall
@@ -65,14 +85,14 @@ git -C <repo-root> rev-list --count @{u}..HEAD 2>/dev/null     # commits already
   git -C <repo-root> diff --staged -U0 | grep -nE '(-----BEGIN [A-Z ]*PRIVATE KEY|AKIA[0-9A-Z]{16}|ghp_[0-9A-Za-z]{36}|xox[baprs]-|(password|secret|api[_-]?key|token)["'\'' ]*[:=] *["'\''][^"'\'' ]{8,})'
   ```
 
-### Step 3: Run the repo's pre-commit gates
+### Step 4: Run the repo's pre-commit gates
 
 - Run only the pre-commit gates documented in the repo's rulebook (`CLAUDE.md`, `AGENTS.md`, `CONTRIBUTING.md`, workflow skill), scoped to changed files when supported (e.g. formatter, import organiser, lint).
 - Re-stage only files already in the commit if a formatter modifies them; report any untouched files it modified.
 - **A failing gate or git hook stops the commit.** Fix mechanical formatting/lint issues inside the staged change; otherwise report the failure output and stop.
 - If no pre-commit gates are documented, state `"no pre-commit gates documented"` and continue.
 
-### Step 4: Write the message and commit
+### Step 5: Write the message and commit
 
 - **Convention (first match wins):** (1) user's explicit message from arguments, (2) repo rulebook / workflow skill, (3) commitlint / Conventional Commits / `.gitmessage`, (4) pattern of `git -C <repo-root> log --format=%s -20` (e.g. `#<id>: <imperative>`, `feat(scope): …`).
 - **Work-item ID:** extract from the branch name (`feature/30342_slug` → `30342`) or recent branch commits; ask if required and missing.
@@ -83,7 +103,7 @@ git -C <repo-root> rev-list --count @{u}..HEAD 2>/dev/null     # commits already
   git -C <repo-root> commit -F <scratchpad>/commit-msg.txt
   ```
 
-### Step 5: Push
+### Step 6: Push
 
 Skip under `no-push`. Otherwise ensure upstream matches the branch itself (never push a feature branch onto `origin/main` when `@{u}` points at `origin/main`):
 
