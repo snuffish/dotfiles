@@ -222,7 +222,8 @@
     "claude-mem-cowork@thedotmack": true,
     "cc-plugin-you-should-know@builtin": true,
     "frontend-design@claude-plugins-official": false,
-    "skill-creator@claude-plugins-official": false
+    "skill-creator@claude-plugins-official": false,
+    "retro@netresearch-claude-code-marketplace": true
   },
   "extraKnownMarketplaces": {
     "claude-code-skills": {
@@ -241,6 +242,12 @@
       "source": {
         "source": "github",
         "repo": "thedotmack/claude-mem"
+      }
+    },
+    "netresearch-claude-code-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "netresearch/claude-code-marketplace"
       }
     }
   },
@@ -268,6 +275,7 @@
   "theme": "dark",
   "autoCompactEnabled": true,
   "switchModelsOnFlag": true,
+  "agentPushNotifEnabled": true,
   "autoMode": {
     "allow": [
       "$defaults",
@@ -312,6 +320,5 @@
       "Routine under this repo's `.claude/` prefix: skill scripts (`.claude/scripts/check-skill-drift.py`), skill-gap files (`.claude/skill-gaps/`), and review worktrees (`.claude/worktrees/`) are routine project-local operations"
     ]
   },
-  "voiceEnabled": false,
-  "agentPushNotifEnabled": true
+  "voiceEnabled": false
 }
