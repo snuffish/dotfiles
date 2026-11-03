@@ -4380,7 +4380,7 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "| General (top level) | Command | 43 | `artifacts`, `clean`, `code-documentation`, `code",
+      "quote": "| General (top level) | Command | 44 | `artifacts`, `clean`, `code-documentation`, `code-r",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
@@ -4395,7 +4395,7 @@
       },
       "kind": "skill_ref",
       "value": "clean",
-      "quote": "op level) | Command | 43 | `artifacts`, `clean`, `code-documentation`, `code-review`,",
+      "quote": "op level) | Command | 44 | `artifacts`, `clean`, `code-documentation`, `code-review`, `",
       "verify": {
         "method": "skill_exists",
         "name": "clean",
@@ -4410,7 +4410,7 @@
       },
       "kind": "skill_ref",
       "value": "code-documentation",
-      "quote": " | Command | 43 | `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`,",
+      "quote": " | Command | 44 | `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `",
       "verify": {
         "method": "skill_exists",
         "name": "code-documentation",
@@ -4485,7 +4485,7 @@
       },
       "kind": "skill_ref",
       "value": "explain",
-      "quote": "ompt`, `create-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `handoff`",
+      "quote": "ompt`, `create-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `grill-me",
       "verify": {
         "method": "skill_exists",
         "name": "explain",
@@ -4500,7 +4500,7 @@
       },
       "kind": "skill_ref",
       "value": "export-file",
-      "quote": "ate-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `handoff`",
+      "quote": "ate-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `grill-me`, `handoff`, `",
       "verify": {
         "method": "skill_exists",
         "name": "export-file",
@@ -4515,7 +4515,7 @@
       },
       "kind": "skill_ref",
       "value": "expressive",
-      "quote": "eate-ticket`, `explain`, `export-file`, `expressive`, `handoff`, `implement-feature`",
+      "quote": "eate-ticket`, `explain`, `export-file`, `expressive`, `grill-me`, `handoff`, `implement-feat",
       "verify": {
         "method": "skill_exists",
         "name": "expressive",
@@ -4530,7 +4530,7 @@
       },
       "kind": "skill_ref",
       "value": "handoff",
-      "quote": "`export-file`, `expressive`, `handoff`, `implement-feature`, `insights`",
+      "quote": "export-file`, `expressive`, `grill-me`, `handoff`, `implement-feature`, `insights`, `inve",
       "verify": {
         "method": "skill_exists",
         "name": "handoff",
@@ -4549,7 +4549,7 @@
       },
       "kind": "skill_ref",
       "value": "implement-feature",
-      "quote": "`export-file`, `expressive`, `handoff`, `implement-feature`, `insights`, `invest",
+      "quote": "`, `expressive`, `grill-me`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-tes",
       "verify": {
         "method": "skill_exists",
         "name": "implement-feature",
@@ -19965,13 +19965,13 @@
         "line": 39
       },
       "kind": "count",
-      "value": "44",
-      "quote": "49 skills total \u2014 44 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "value": "45",
+      "quote": "50 skills total \u2014 45 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/*/SKILL.md",
         "base": "repo",
-        "expected": 44,
+        "expected": 45,
         "op": "eq"
       }
     },
@@ -19983,7 +19983,7 @@
       },
       "kind": "count",
       "value": "5 GR.PRIIS project skills",
-      "quote": "49 skills total \u2014 44 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "50 skills total \u2014 45 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/Projects/GR.PRIIS/*/SKILL.md",
@@ -20000,7 +20000,7 @@
       },
       "kind": "count",
       "value": "8 Modules",
-      "quote": "49 skills total \u2014 44 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "50 skills total \u2014 45 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/_modules/*.md",
@@ -20130,7 +20130,7 @@
       },
       "kind": "skill_ref",
       "value": "insights",
-      "quote": "`expressive`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-testi",
+      "quote": "ll-me`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `no-w",
       "verify": {
         "method": "skill_exists",
         "name": "insights",
@@ -21132,6 +21132,50 @@
         ],
         "base": "repo",
         "expect": "present"
+      }
+    },
+    {
+      "id": "skills/README.md:43:skill_ref:grill-me",
+      "source": {
+        "file": "skills/README.md",
+        "line": 43
+      },
+      "kind": "skill_ref",
+      "value": "grill-me",
+      "quote": "`explain`, `export-file`, `expressive`, `grill-me`, `handoff`, `implement-feature`, `insig",
+      "verify": {
+        "method": "skill_exists",
+        "name": "grill-me",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/README.md:43:skill_ref:simplify-branch",
+      "source": {
+        "file": "skills/README.md",
+        "line": 43
+      },
+      "kind": "skill_ref",
+      "value": "simplify-branch",
+      "quote": "`skill-drift`, `skill-gap`, `simplify`, `simplify-branch`, `spec-verification`, `squash-code-revi",
+      "verify": {
+        "method": "skill_exists",
+        "name": "simplify-branch",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/grill-me/SKILL.md:7:skill_ref:grilling",
+      "source": {
+        "file": "skills/grill-me/SKILL.md",
+        "line": 7
+      },
+      "kind": "skill_ref",
+      "value": "grilling",
+      "quote": "Call the Skill tool with \"grilling\".",
+      "verify": {
+        "method": "manual",
+        "reason": "grilling is an external skill in ~/.agents/skills (symlinked into ~/.claude/skills), not part of this registry"
       }
     },
     {
