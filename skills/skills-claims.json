@@ -20153,175 +20153,6 @@
       }
     },
     {
-      "id": "skills/simplify/SKILL.md:10:skill_ref:code-review",
-      "source": {
-        "file": "skills/simplify/SKILL.md",
-        "line": 11
-      },
-      "kind": "skill_ref",
-      "value": "code-review",
-      "quote": "(that is what [`/code-review`](../code-review/SKILL.md) is for).",
-      "verify": {
-        "method": "skill_exists",
-        "name": "code-review",
-        "base": "repo"
-      }
-    },
-    {
-      "id": "skills/simplify/SKILL.md:19:path:../_modules/core.md",
-      "source": {
-        "file": "skills/simplify/SKILL.md",
-        "line": 20
-      },
-      "kind": "path",
-      "value": "../_modules/core.md",
-      "quote": "- `../_modules/core.md`",
-      "verify": {
-        "method": "path_exists",
-        "path": "../_modules/core.md",
-        "base": "file_dir",
-        "type": "file"
-      }
-    },
-    {
-      "id": "skills/simplify/SKILL.md:20:path:../_modules/fan-out.md",
-      "source": {
-        "file": "skills/simplify/SKILL.md",
-        "line": 21
-      },
-      "kind": "path",
-      "value": "../_modules/fan-out.md",
-      "quote": "- `../_modules/fan-out.md`",
-      "verify": {
-        "method": "path_exists",
-        "path": "../_modules/fan-out.md",
-        "base": "file_dir",
-        "type": "file"
-      }
-    },
-    {
-      "id": "skills/simplify/SKILL.md:21:path:../_modules/git-worktrees.md",
-      "source": {
-        "file": "skills/simplify/SKILL.md",
-        "line": 22
-      },
-      "kind": "path",
-      "value": "../_modules/git-worktrees.md",
-      "quote": "- `../_modules/git-worktrees.md`",
-      "verify": {
-        "method": "path_exists",
-        "path": "../_modules/git-worktrees.md",
-        "base": "file_dir",
-        "type": "file"
-      }
-    },
-    {
-      "id": "skills/simplify/SKILL.md:32:doc_link:core \u203a Post-edit verification",
-      "source": {
-        "file": "skills/simplify/SKILL.md",
-        "line": 35
-      },
-      "kind": "doc_link",
-      "value": "core \u203a Post-edit verification",
-      "quote": "(`core` \u203a *Post-edit verification*).",
-      "verify": {
-        "method": "heading_pointer",
-        "target": "core",
-        "heading": "Post-edit verification",
-        "base": "repo"
-      }
-    },
-    {
-      "id": "skills/simplify/SKILL.md:40:skill_ref:code-review",
-      "source": {
-        "file": "skills/simplify/SKILL.md",
-        "line": 44
-      },
-      "kind": "skill_ref",
-      "value": "code-review",
-      "quote": "| [`/code-review`](../code-review/SKILL.md) |",
-      "verify": {
-        "method": "skill_exists",
-        "name": "code-review",
-        "base": "repo"
-      }
-    },
-    {
-      "id": "skills/simplify/SKILL.md:41:skill_ref:clean",
-      "source": {
-        "file": "skills/simplify/SKILL.md",
-        "line": 45
-      },
-      "kind": "skill_ref",
-      "value": "clean",
-      "quote": "| [`/clean`](../clean/SKILL.md) |",
-      "verify": {
-        "method": "skill_exists",
-        "name": "clean",
-        "base": "repo"
-      }
-    },
-    {
-      "id": "skills/simplify/SKILL.md:42:skill_ref:expressive",
-      "source": {
-        "file": "skills/simplify/SKILL.md",
-        "line": 46
-      },
-      "kind": "skill_ref",
-      "value": "expressive",
-      "quote": "| [`/expressive`](../expressive/SKILL.md) |",
-      "verify": {
-        "method": "skill_exists",
-        "name": "expressive",
-        "base": "repo"
-      }
-    },
-    {
-      "id": "skills/simplify/SKILL.md:43:skill_ref:organize",
-      "source": {
-        "file": "skills/simplify/SKILL.md",
-        "line": 47
-      },
-      "kind": "skill_ref",
-      "value": "organize",
-      "quote": "| [`/organize`](../organize/SKILL.md) |",
-      "verify": {
-        "method": "skill_exists",
-        "name": "organize",
-        "base": "repo"
-      }
-    },
-    {
-      "id": "skills/simplify/SKILL.md:44:skill_ref:refine",
-      "source": {
-        "file": "skills/simplify/SKILL.md",
-        "line": 48
-      },
-      "kind": "skill_ref",
-      "value": "refine",
-      "quote": "| [`/refine`](../refine/SKILL.md) |",
-      "verify": {
-        "method": "skill_exists",
-        "name": "refine",
-        "base": "repo"
-      }
-    },
-    {
-      "id": "skills/simplify/SKILL.md:45:skill_ref:priis-backend-dry",
-      "source": {
-        "file": "skills/simplify/SKILL.md",
-        "line": 49
-      },
-      "kind": "skill_ref",
-      "value": "priis-backend-dry",
-      "quote": "| `priis-backend-dry` |",
-      "verify": {
-        "method": "skill_exists",
-        "name": "priis-backend-dry",
-        "base": "repo"
-      }
-    },
-    {
       "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:doc_link:backend/AGENTS.md \u203a Cross-half contracts",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
@@ -21295,6 +21126,22 @@
         ],
         "base": "repo",
         "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify/SKILL.md:10:path:scripts/check_native_mirror.py",
+      "source": {
+        "file": "skills/simplify/SKILL.md",
+        "line": 11
+      },
+      "kind": "path",
+      "value": "scripts/check_native_mirror.py",
+      "quote": "Verify with `python3 -I scripts/check_native_mirror.py`",
+      "verify": {
+        "method": "path_exists",
+        "path": "scripts/check_native_mirror.py",
+        "base": "file_dir",
+        "type": "file"
       }
     }
   ]

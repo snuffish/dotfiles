@@ -124,7 +124,7 @@ Stop there. Agent output never opens the gate (`core` › _The `/proceed` gate_)
    ```
 
 3. **Guard the boundary** after each row: compare `git status --porcelain` with the baseline. A changed path outside the picked rows that was not dirty in the baseline is out of scope; list it and ask whether to keep or revert it. Never revert on your own.
-4. **Verify.** `/simplify` runs the build, lint and test gates; if it reports it skipped them, run the repo's documented gate yourself (`core` › _Post-edit verification_).
+4. **Verify.** `/simplify` runs no build, lint or test gate; run the repo's documented gate yourself (`core` › _Post-edit verification_).
 
 ### Phase B ends with
 
