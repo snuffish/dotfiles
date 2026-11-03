@@ -5,6 +5,12 @@ Supports:
   --from claude --to agy --id <session_id> [--cwd <cwd>]
   --from agy --to claude --id <session_id> [--cwd <cwd>]
   --from agy --to agy --id <session_id> [--cwd <cwd>]
+
+Output contract: prints a session id for `--to claude`, and the path of a seed
+handoff .md for `--to agy`. agy cannot load a conversation this script builds or
+copies (it reads ~/.gemini/antigravity-cli/conversations/<id>.db, and a copied .db
+keeps the source's internal trajectory id), so an agy fork is a new session seeded
+with the old history: `agy -i "<prompt naming the seed file>"`.
 """
 
 import argparse
@@ -63,15 +69,65 @@ def find_claude_session_file(session_id: str) -> str | None:
     return None
 
 
+MAX_AGY_SEED_CHARS = int(os.environ.get("MAX_AGY_SEED_CHARS", "200000"))
+
+
+def write_agy_seed(steps: list, label: str, source_id: str, title, cwd: str, dry_run: bool) -> str:
+    """Render normalized steps (agy transcript shape) to a handoff .md; return its path."""
+    forks_dir = os.path.expanduser("~/.cache/agy-forks")
+    ts = time.strftime("%Y%m%d-%H%M%S")
+    path = os.path.join(forks_dir, f"{label}-{source_id[:8]}-{ts}.md")
+
+    blocks = []
+    for s in steps:
+        stype = s.get("type")
+        content = (s.get("content") or "").strip()
+        if stype == "USER_INPUT":
+            text = clean_agy_user_text(content) if label == "agy" else re.sub(
+                r"</?USER_REQUEST>", "", content
+            ).strip()
+            if text:
+                blocks.append(f"## User\n\n{text}\n")
+        elif stype == "PLANNER_RESPONSE":
+            parts = [content] if content else []
+            for tc in s.get("tool_calls") or []:
+                args = json.dumps(tc.get("args", {}), ensure_ascii=False)
+                parts.append(f"[tool {tc.get('name')}: {args[:300]}]")
+            if parts:
+                blocks.append("## Assistant\n\n" + "\n\n".join(parts) + "\n")
+        elif stype == "GENERIC" and content:
+            blocks.append(f"[tool result: {content[:400]}]\n")
+
+    total, kept = 0, []
+    for b in reversed(blocks):
+        total += len(b)
+        if total > MAX_AGY_SEED_CHARS and kept:
+            break
+        kept.append(b)
+    kept.reverse()
+    while kept and not kept[0].startswith("## User"):
+        kept.pop(0)  # start on a user turn
+    truncated = len(kept) < len(blocks)
+
+    header = (
+        f"# Forked session: {title or source_id}\n\n"
+        f"Source: {label} session {source_id}; working directory {cwd}.\n"
+        + (f"Truncated to the newest {len(kept)} of {len(blocks)} turns; full history is not kept here.\n" if truncated else "")
+        + "\n---\n\n"
+    )
+    if dry_run:
+        return f"[DRY-RUN] Would write seed {path} ({len(kept)}/{len(blocks)} turns)"
+    os.makedirs(forks_dir, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(header + "\n".join(kept))
+    os.chmod(path, 0o600)
+    return path
+
+
 def claude_to_agy(source_id: str, cwd: str, dry_run: bool = False) -> str:
     src_file = find_claude_session_file(source_id)
     if not src_file or not os.path.isfile(src_file):
         raise FileNotFoundError(f"Claude session file not found for ID: {source_id}")
-
-    target_uuid = str(uuid.uuid4())
-    cli_dir = os.path.expanduser("~/.gemini/antigravity-cli")
-    target_brain = os.path.join(cli_dir, "brain", target_uuid)
-    db_path = os.path.join(cli_dir, "conversation_summaries.db")
 
     transcript_steps = []
     step_idx = 0
@@ -213,46 +269,7 @@ def claude_to_agy(source_id: str, cwd: str, dry_run: bool = False) -> str:
                     transcript_steps.append(step_data)
                     step_idx += 1
 
-    if dry_run:
-        return f"[DRY-RUN] Would create Antigravity session {target_uuid} with {len(transcript_steps)} steps from {src_file}"
-
-    # Write target files
-    logs_dir = os.path.join(target_brain, ".system_generated", "logs")
-    os.makedirs(logs_dir, exist_ok=True)
-    transcript_path = os.path.join(logs_dir, "transcript.jsonl")
-    transcript_full_path = os.path.join(logs_dir, "transcript_full.jsonl")
-
-    with open(transcript_path, "w", encoding="utf-8") as f:
-        for s in transcript_steps:
-            f.write(json.dumps(s, ensure_ascii=False) + "\n")
-    shutil.copyfile(transcript_path, transcript_full_path)
-
-    # Insert into conversation_summaries.db
-    if os.path.isfile(db_path):
-        try:
-            conn = sqlite3.connect(db_path, timeout=5000)
-            now_iso = time.strftime("%Y-%m-%d %H:%M:%S+00:00", time.gmtime())
-            disp_title = (title or "Forked from Claude").strip()
-            preview = disp_title
-            uris_json = json.dumps([f"file://{cwd}"])
-            conn.execute(
-                """
-                INSERT OR REPLACE INTO conversation_summaries (
-                    conversation_id, title, preview, step_count, last_modified_time,
-                    workspace_uris, status, source, project_id, agent_name,
-                    parent_conversation_id, nesting_depth, battle_id, winning_conversation_id,
-                    not_fully_idle, killed, last_user_input_time, last_user_input_step_index,
-                    app_data_dir, raw_summary, group_id
-                ) VALUES (?, ?, ?, ?, ?, ?, 'CASCADE_RUN_STATUS_IDLE', '', 'default-cli-project', '', '', 0, '', '', 0, 0, ?, ?, 'antigravity-cli', NULL, '')
-            """,
-                (target_uuid, disp_title, preview, len(transcript_steps), now_iso, uris_json, now_iso, 0),
-            )
-            conn.commit()
-            conn.close()
-        except Exception as e:
-            sys.stderr.write(f"Warning: Failed to update SQLite summaries: {e}\n")
-
-    return target_uuid
+    return write_agy_seed(transcript_steps, "claude", source_id, title, cwd, dry_run)
 
 
 def agy_to_claude(source_id: str, cwd: str, dry_run: bool = False) -> str:
@@ -452,52 +469,30 @@ def agy_to_claude(source_id: str, cwd: str, dry_run: bool = False) -> str:
 
 def agy_to_agy(source_id: str, cwd: str, dry_run: bool = False) -> str:
     cli_dir = os.path.expanduser("~/.gemini/antigravity-cli")
-    src_brain = os.path.join(cli_dir, "brain", source_id)
-    if not os.path.isdir(src_brain):
-        raise FileNotFoundError(f"Antigravity brain folder not found: {src_brain}")
+    logs = os.path.join(cli_dir, "brain", source_id, ".system_generated", "logs")
+    transcript_path = next(
+        (p for p in (os.path.join(logs, "transcript.jsonl"), os.path.join(logs, "transcript_full.jsonl")) if os.path.isfile(p)),
+        None,
+    )
+    if not transcript_path:
+        raise FileNotFoundError(f"Antigravity transcript not found for ID: {source_id}")
 
-    target_uuid = str(uuid.uuid4())
-    target_brain = os.path.join(cli_dir, "brain", target_uuid)
-    db_path = os.path.join(cli_dir, "conversation_summaries.db")
+    steps = []
+    with open(transcript_path, "r", encoding="utf-8", errors="ignore") as f:
+        for line in f:
+            try:
+                steps.append(json.loads(line))
+            except Exception:
+                continue
 
-    if dry_run:
-        return f"[DRY-RUN] Would clone Antigravity session {source_id} -> {target_uuid}"
-
-    # Clone brain folder
-    shutil.copytree(src_brain, target_brain)
-
-    # Clone database entry
-    if os.path.isfile(db_path):
-        try:
-            conn = sqlite3.connect(db_path, timeout=5000)
-            c = conn.cursor()
-            c.execute(
-                "SELECT title, preview, step_count, workspace_uris FROM conversation_summaries WHERE conversation_id = ?",
-                (source_id,),
-            )
-            row = c.fetchone()
-            now_iso = time.strftime("%Y-%m-%d %H:%M:%S+00:00", time.gmtime())
-            if row:
-                title, preview, steps, uris = row
-                new_title = f"[Fork] {title}" if title else "[Fork] Antigravity session"
-                conn.execute(
-                    """
-                    INSERT INTO conversation_summaries (
-                        conversation_id, title, preview, step_count, last_modified_time,
-                        workspace_uris, status, source, project_id, agent_name,
-                        parent_conversation_id, nesting_depth, battle_id, winning_conversation_id,
-                        not_fully_idle, killed, last_user_input_time, last_user_input_step_index,
-                        app_data_dir, raw_summary, group_id
-                    ) VALUES (?, ?, ?, ?, ?, ?, 'CASCADE_RUN_STATUS_IDLE', '', 'default-cli-project', '', '', 0, '', '', 0, 0, ?, ?, 'antigravity-cli', NULL, '')
-                """,
-                    (target_uuid, new_title, preview, steps, now_iso, uris or json.dumps([f"file://{cwd}"]), now_iso, 0),
-                )
-                conn.commit()
-            conn.close()
-        except Exception as e:
-            sys.stderr.write(f"Warning: Failed to copy SQLite summary: {e}\n")
-
-    return target_uuid
+    title = None
+    for s in steps:
+        if s.get("type") == "USER_INPUT":
+            cleaned = clean_agy_user_text(s.get("content", ""))
+            if cleaned:
+                title = cleaned.splitlines()[0][:80]
+                break
+    return write_agy_seed(steps, "agy", source_id, title, cwd, dry_run)
 
 
 def main():
@@ -526,6 +521,8 @@ def main():
             sys.stderr.write(f"Unsupported transition: {from_agent} -> {to_agent}\n")
             sys.exit(1)
 
+        if to_agent == "antigravity" and not args.dry_run and not os.path.isfile(res_id):
+            raise RuntimeError(f"seed file was not written: {res_id}")
         print(res_id)
     except Exception as e:
         sys.stderr.write(f"Error during fork: {e}\n")

@@ -126,7 +126,7 @@ antigravity-resume() {
     echo "Forking Antigravity session ${id:0:8}..." >&2
     local new_id
     new_id="$(python3 "$fork_script" --from agy --to agy --id "$id" --cwd "${cwd:-$PWD}")" || return 1
-    (cd "${cwd:-$PWD}" && agy --conversation "$new_id" "$@")
+    (cd "${cwd:-$PWD}" && agy -i "Continue this Antigravity session. Read $new_id first, then wait for my next message." "$@")
     return $?
   fi
 
@@ -183,7 +183,7 @@ agent-resume() {
         echo "Forking Claude session ${id:0:8} -> Antigravity..." >&2
         local new_id
         new_id="$(python3 "$fork_script" --from claude --to agy --id "$id" --cwd "${cwd:-$PWD}")" || return 1
-        (cd "${cwd:-$PWD}" && agy --conversation "$new_id" "$@")
+        (cd "${cwd:-$PWD}" && agy -i "Continue this Claude Code session. Read $new_id first, then wait for my next message." "$@")
       else
         echo "Forking Antigravity session ${id:0:8} -> Claude..." >&2
         local new_id
@@ -198,7 +198,7 @@ agent-resume() {
         echo "Forking Antigravity session ${id:0:8}..." >&2
         local new_id
         new_id="$(python3 "$fork_script" --from agy --to agy --id "$id" --cwd "${cwd:-$PWD}")" || return 1
-        (cd "${cwd:-$PWD}" && agy --conversation "$new_id" "$@")
+        (cd "${cwd:-$PWD}" && agy -i "Continue this Antigravity session. Read $new_id first, then wait for my next message." "$@")
       fi
       ;;
     *)
