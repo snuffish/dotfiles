@@ -45,16 +45,16 @@
     "init": "user-invocable-only",
     "security-review": "user-invocable-only",
     "plugin-authoring": "user-invocable-only",
-    "dataviz": "name-only",
+    "dataviz": "off",
     "claude-api": "name-only",
     "claude-in-chrome": "name-only",
     "artifact-capabilities": "name-only",
     "artifact-design": "name-only",
     "artifact-diagramming": "name-only",
     "update-config": "name-only",
-    "schedule": "name-only",
-    "loop": "name-only",
-    "run": "name-only",
+    "schedule": "off",
+    "loop": "off",
+    "run": "off",
     "simplify": "name-only",
     "workflow-authoring": "name-only",
     "source-command-backend-migrate-to-tunit": "off",
@@ -222,7 +222,7 @@
     "claude-mem-cowork@thedotmack": true,
     "cc-plugin-you-should-know@builtin": true,
     "frontend-design@claude-plugins-official": false,
-    "skill-creator@claude-plugins-official": true
+    "skill-creator@claude-plugins-official": false
   },
   "extraKnownMarketplaces": {
     "claude-code-skills": {
