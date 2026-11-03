@@ -4380,7 +4380,7 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "| General (top level) | Command | 42 | `artifacts`, `clean`, `code-documentation`, `code",
+      "quote": "| General (top level) | Command | 43 | `artifacts`, `clean`, `code-documentation`, `code",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
@@ -4395,7 +4395,7 @@
       },
       "kind": "skill_ref",
       "value": "clean",
-      "quote": "op level) | Command | 42 | `artifacts`, `clean`, `code-documentation`, `code-review`,",
+      "quote": "op level) | Command | 43 | `artifacts`, `clean`, `code-documentation`, `code-review`,",
       "verify": {
         "method": "skill_exists",
         "name": "clean",
@@ -4410,7 +4410,7 @@
       },
       "kind": "skill_ref",
       "value": "code-documentation",
-      "quote": " | Command | 42 | `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`,",
+      "quote": " | Command | 43 | `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`,",
       "verify": {
         "method": "skill_exists",
         "name": "code-documentation",
@@ -4783,7 +4783,7 @@
       },
       "kind": "skill_ref",
       "value": "skill-drift",
-      "quote": ", `remember-this`, `resolve-conflicts`, `skill-drift`, `skill-gap`, `simplify`, `spec-verif",
+      "quote": ", `remember-this`, `resolve-conflicts`, `skill-drift`, `skill-gap`, `simplify`, ",
       "verify": {
         "method": "skill_exists",
         "name": "skill-drift",
@@ -4798,7 +4798,7 @@
       },
       "kind": "skill_ref",
       "value": "skill-gap",
-      "quote": "s`, `resolve-conflicts`, `skill-drift`, `skill-gap`, `simplify`, `spec-verification`, `sq",
+      "quote": "s`, `resolve-conflicts`, `skill-drift`, `skill-gap`, `simplify`, `simplify-branch`, `spec-verification`, `sq",
       "verify": {
         "method": "skill_exists",
         "name": "skill-gap",
@@ -4813,7 +4813,7 @@
       },
       "kind": "skill_ref",
       "value": "spec-verification",
-      "quote": "`skill-drift`, `skill-gap`, `simplify`, `spec-verification`, `squash-code-review`, `squash-ef-cor",
+      "quote": "`skill-drift`, `skill-gap`, `simplify`, `simplify-branch`, `spec-verification`, `squash-code-review`, `squash-ef-cor",
       "verify": {
         "method": "skill_exists",
         "name": "spec-verification",
@@ -4828,7 +4828,7 @@
       },
       "kind": "skill_ref",
       "value": "squash-code-review",
-      "quote": "-gap`, `simplify`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `standu",
+      "quote": "-gap`, `simplify`, `simplify-branch`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `standu",
       "verify": {
         "method": "skill_exists",
         "name": "squash-code-review",
@@ -19981,13 +19981,13 @@
         "line": 39
       },
       "kind": "count",
-      "value": "43",
-      "quote": "48 skills total \u2014 43 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "value": "44",
+      "quote": "49 skills total \u2014 44 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/*/SKILL.md",
         "base": "repo",
-        "expected": 43,
+        "expected": 44,
         "op": "eq"
       }
     },
@@ -19999,7 +19999,7 @@
       },
       "kind": "count",
       "value": "5 GR.PRIIS project skills",
-      "quote": "48 skills total \u2014 43 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "49 skills total \u2014 44 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/Projects/GR.PRIIS/*/SKILL.md",
@@ -20016,7 +20016,7 @@
       },
       "kind": "count",
       "value": "8 Modules",
-      "quote": "48 skills total \u2014 43 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "49 skills total \u2014 44 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/_modules/*.md",
@@ -20225,7 +20225,7 @@
       },
       "kind": "skill_ref",
       "value": "simplify",
-      "quote": "conflicts`, `skill-drift`, `skill-gap`, `simplify`, `spec-verification`, `squash-code-re",
+      "quote": "conflicts`, `skill-drift`, `skill-gap`, `simplify`, `simplify-branch`, `spec-verification`, `squash-code-re",
       "verify": {
         "method": "skill_exists",
         "name": "simplify",
@@ -20766,6 +20766,322 @@
         "pattern": "re\\.compile\\(v\\[\"pattern\"\\], re\\.MULTILINE\\)",
         "paths": [
           "skills/skill-drift/scripts/check_skill_drift.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:20:path:../_modules/core.md",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 20
+      },
+      "kind": "path",
+      "value": "../_modules/core.md",
+      "quote": "`../_modules/core.md`",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/core.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:44:path:scripts/branch_scope.py",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 44
+      },
+      "kind": "path",
+      "value": "scripts/branch_scope.py",
+      "quote": "scripts/branch_scope.py [--base <branch>] [--committed-only]",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/simplify-branch/scripts/branch_scope.py",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:44:cli_command:--committed-only",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 44
+      },
+      "kind": "cli_command",
+      "value": "--committed-only",
+      "quote": "scripts/branch_scope.py [--base <branch>] [--committed-only]",
+      "verify": {
+        "method": "grep",
+        "pattern": "add_argument\\(\"--committed-only\"",
+        "paths": [
+          "skills/simplify-branch/scripts/branch_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:44:cli_command:--base",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 44
+      },
+      "kind": "cli_command",
+      "value": "--base",
+      "quote": "scripts/branch_scope.py [--base <branch>] [--committed-only]",
+      "verify": {
+        "method": "grep",
+        "pattern": "add_argument\\(\"--base\"\\)",
+        "paths": [
+          "skills/simplify-branch/scripts/branch_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:47:other:base order: --base, PR target, origin/HEAD",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 47
+      },
+      "kind": "other",
+      "value": "base order: --base, PR target, origin/HEAD",
+      "quote": "then the target of the branch's active Azure DevOps PR (`az repos pr list`), then `origin/HEAD`",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"az\", \"repos\", \"pr\", \"list\"[\\s\\S]*\"symbolic-ref\", \"--short\", \"refs/remotes/origin/HEAD\"",
+        "paths": [
+          "skills/simplify-branch/scripts/branch_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:49:other:committed diff command",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 49
+      },
+      "kind": "other",
+      "value": "committed diff command",
+      "quote": "`committed`: `git diff --name-only --diff-filter=d <merge-base>...HEAD`",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"diff\", \"--name-only\", \"--diff-filter=d\", f\"\\{merge_base\\}\\.\\.\\.HEAD\"",
+        "paths": [
+          "skills/simplify-branch/scripts/branch_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:50:other:untracked files included",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 50
+      },
+      "kind": "other",
+      "value": "untracked files included",
+      "quote": "`working_tree`: uncommitted tracked changes and untracked files",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"ls-files\", \"--others\", \"--exclude-standard\"",
+        "paths": [
+          "skills/simplify-branch/scripts/branch_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:51:other:generated patterns",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 51
+      },
+      "kind": "other",
+      "value": "generated patterns",
+      "quote": "`*.Designer.cs`, `*ModelSnapshot.cs`, `Migrations/`, `*.gen.ts`, `swagger.json`",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"\\*\\.Designer\\.cs\", \"\\*ModelSnapshot\\.cs\", \"\\*\\.gen\\.ts\"[\\s\\S]*\"swagger\\.json\"[\\s\\S]*\"/Migrations/\"",
+        "paths": [
+          "skills/simplify-branch/scripts/branch_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:51:other:doc patterns",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 51
+      },
+      "kind": "other",
+      "value": "doc patterns",
+      "quote": "`skipped_docs` (`*.md`, `*.html`, `*.txt`, `*.log`)",
+      "verify": {
+        "method": "grep",
+        "pattern": "DOCS = \\(\"\\*\\.md\", \"\\*\\.html\", \"\\*\\.txt\", \"\\*\\.log\"\\)",
+        "paths": [
+          "skills/simplify-branch/scripts/branch_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:53:other:exit codes 0/1/2",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 53
+      },
+      "kind": "other",
+      "value": "exit codes 0/1/2",
+      "quote": "Exit codes: `0` means there are files in scope.",
+      "verify": {
+        "method": "grep",
+        "pattern": "return 2[\\s\\S]*return 0 if out\\[\"files\"\\] else 1",
+        "paths": [
+          "skills/simplify-branch/scripts/branch_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:55:config_key:pr_lookup",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 55
+      },
+      "kind": "config_key",
+      "value": "pr_lookup",
+      "quote": "If `pr_lookup` reports several PR targets",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"pr_lookup\": note",
+        "paths": [
+          "skills/simplify-branch/scripts/branch_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:31:skill_ref:simplify",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 31
+      },
+      "kind": "skill_ref",
+      "value": "simplify",
+      "quote": "One file, a commit range or a PR you name explicitly",
+      "verify": {
+        "method": "skill_exists",
+        "name": "simplify",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:32:skill_ref:code-review",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 32
+      },
+      "kind": "skill_ref",
+      "value": "code-review",
+      "quote": "Hunting bugs, regressions or security flaws",
+      "verify": {
+        "method": "skill_exists",
+        "name": "code-review",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:33:skill_ref:clean",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 33
+      },
+      "kind": "skill_ref",
+      "value": "clean",
+      "quote": "Dead code, unused exports, debug remnants",
+      "verify": {
+        "method": "skill_exists",
+        "name": "clean",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:23:skill_ref:commit",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 23
+      },
+      "kind": "skill_ref",
+      "value": "commit",
+      "quote": "Committing is a separate request (`/commit`).",
+      "verify": {
+        "method": "skill_exists",
+        "name": "commit",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/proceed/SKILL.md:51:skill_ref:simplify-branch",
+      "source": {
+        "file": "skills/proceed/SKILL.md",
+        "line": 51
+      },
+      "kind": "skill_ref",
+      "value": "simplify-branch",
+      "quote": "`simplify-branch` | A matrix of simplify candidates",
+      "verify": {
+        "method": "skill_exists",
+        "name": "simplify-branch",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:56:config_key:churn",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 56
+      },
+      "kind": "config_key",
+      "value": "churn",
+      "quote": "`churn`: `[added, deleted]` lines per file against the merge base; `groups`: files, added and deleted per parent folder, largest first",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"--numstat\"[\\s\\S]*out\\[\"churn\"\\]",
+        "paths": [
+          "skills/simplify-branch/scripts/branch_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:56:config_key:groups",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 56
+      },
+      "kind": "config_key",
+      "value": "groups",
+      "quote": "`churn`: `[added, deleted]` lines per file against the merge base; `groups`: files, added and deleted per parent folder, largest first",
+      "verify": {
+        "method": "grep",
+        "pattern": "out\\[\"groups\"\\] = dict\\(sorted\\(groups\\.items\\(\\), key=lambda kv: -\\(kv\\[1\\]\\[\"added\"\\] \\+ kv\\[1\\]\\[\"deleted\"\\]\\)\\)\\)",
+        "paths": [
+          "skills/simplify-branch/scripts/branch_scope.py"
         ],
         "base": "repo",
         "expect": "present"

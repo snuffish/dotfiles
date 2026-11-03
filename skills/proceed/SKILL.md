@@ -48,6 +48,7 @@ Look back through this session for the most recent gated handoff that has not ye
 | `investigate`                       | Findings with a handoff                              | Draft the plan with `/plan`; implementing it needs a further `/proceed`                                                                                                                                                                                          |
 | `plan`                              | A plan in `Awaiting User Review`                     | Implement the plan                                                                                                                                                                                                                                               |
 | `handoff`                           | A handoff artifact (`<prefix>-handoff-<suffix>.md`)   | Execute the pending next steps named in the handoff                                                                                                                                                                                                              |
+| `simplify-branch` | A matrix of simplify candidates (rows `A`, `B`, …) | Run `/simplify` on the rows the arguments pick (the ✓ rows by default; `/proceed A,C`, `/proceed all`), each scoped to its files. Never commits |
 
 Then:
 
