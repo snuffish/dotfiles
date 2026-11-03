@@ -312,5 +312,6 @@
       "Routine under this repo's `.claude/` prefix: skill scripts (`.claude/scripts/check-skill-drift.py`), skill-gap files (`.claude/skill-gaps/`), and review worktrees (`.claude/worktrees/`) are routine project-local operations"
     ]
   },
-  "voiceEnabled": false
+  "voiceEnabled": false,
+  "agentPushNotifEnabled": true
 }
