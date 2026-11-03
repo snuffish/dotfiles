@@ -41,7 +41,7 @@ Read these before step 1:
 ### Step 1: Frame the question and load the team skills
 
 1. Restate the question as one checkable claim: _"<persona/role> did not get <notification> for <records> between <dates>."_ Pull record ids from the thread: a ticket's UI number is `<municipality code>-<6-digit number>` (`1482-010280`).
-2. Map people to roles. Personas name roles, not people: the table is in `backend/.github/copilot-instructions.md` › _Cross-half contracts_ (Samir = PlacementManager, Lena = CaseworkerGuided, Ines = LocalPurchaseCoordinator, Ewa = LocalContractManager). Business terms are in `GLOSSARY.md`.
+2. Map people to roles. Personas name roles, not people: the table is in `backend/AGENTS.md` › _Cross-half contracts_ (Samir = PlacementManager, Lena = CaseworkerGuided, Ines = LocalPurchaseCoordinator, Ewa = LocalContractManager). Business terms are in `GLOSSARY.md`.
 3. Load the team skills for the area from the `priis-profile` skill › _References per layer_. For notifications and jobs that is `priis-backend-notifications` and `priis-backend-ef-core`. `core` › _Codebase investigation_ says what to grep instead of graph.
 
 ### Step 2: Trace what the code says should happen
