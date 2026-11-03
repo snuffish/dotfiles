@@ -169,7 +169,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 -I ~/.claude/plan-lint.py",
+            "command": "python3 -I ~/.terminal/claude/plan-lint.py",
             "timeout": 5
           }
         ]
@@ -257,12 +257,15 @@
       "effortLevel": "high"
     }
   },
+  "autoCompactWindow": 400000,
   "voice": {
     "enabled": false,
     "mode": "hold"
   },
+  "autoMemoryEnabled": true,
   "autoMemoryDirectory": "~/.claude-memory",
   "skipWorkflowUsageWarning": true,
+  "theme": "dark",
   "autoCompactEnabled": true,
   "switchModelsOnFlag": true,
   "autoMode": {
@@ -309,8 +312,5 @@
       "Routine under this repo's `.claude/` prefix: skill scripts (`.claude/scripts/check-skill-drift.py`), skill-gap files (`.claude/skill-gaps/`), and review worktrees (`.claude/worktrees/`) are routine project-local operations"
     ]
   },
-  "voiceEnabled": false,
-  "autoCompactWindow": 400000,
-  "autoMemoryEnabled": true,
-  "theme": "dark"
+  "voiceEnabled": false
 }
