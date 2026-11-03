@@ -3,9 +3,9 @@
   "root": "..",
   "claims": [
     {
-      "id": ".claude/AGENTS.md:25:skill_ref:create-prompt",
+      "id": "claude/AGENTS.md:25:skill_ref:create-prompt",
       "source": {
-        "file": ".claude/AGENTS.md",
+        "file": "claude/AGENTS.md",
         "line": 25
       },
       "kind": "skill_ref",
@@ -16978,7 +16978,7 @@
       }
     },
     {
-      "id": "skills/skill-drift/SKILL.md:9:path:.claude/AGENTS.md",
+      "id": "skills/skill-drift/SKILL.md:9:path:claude/AGENTS.md",
       "source": {
         "file": "skills/skill-drift/SKILL.md",
         "line": 9,
@@ -16987,11 +16987,11 @@
         ]
       },
       "kind": "path",
-      "value": ".claude/AGENTS.md",
-      "quote": "oject>/`, and the repo docs (`.claude/AGENTS.md`, `skills/README.md`, `GLOSSARY.md`, `docs/adr/*.md`) state facts about `~/.terminal` and target proje",
+      "value": "claude/AGENTS.md",
+      "quote": "t skills in `skills/Projects/<Project>/`, and the repo docs (`claude/AGENTS.md`, `skills/README.md`, `GLOSSARY.md`, `docs/adr/*.md`) state f",
       "verify": {
         "method": "path_exists",
-        "path": ".claude/AGENTS.md",
+        "path": "claude/AGENTS.md",
         "base": "repo",
         "type": "file"
       }
@@ -17026,7 +17026,7 @@
       },
       "kind": "path",
       "value": "skills/README.md",
-      "quote": "o docs (`.claude/AGENTS.md`, `skills/README.md`, `GLOSSARY.md`, `docs/adr/*.md`) state facts about `~/.terminal` and target project repositories (such",
+      "quote": "Projects/<Project>/`, and the repo docs (`claude/AGENTS.md`, `skills/README.md`, `GLOSSARY.md`, `docs/adr/*.md`) state facts about `~/.termi",
       "verify": {
         "method": "path_exists",
         "path": "skills/README.md",
@@ -17046,7 +17046,7 @@
       },
       "kind": "path",
       "value": "skills/_modules",
-      "quote": "lls/`, the shared Modules in `skills/_modules/`, the project skills in `skills/Projects/<Project>/`, and the repo docs (`.claude/AGENTS.md`, `skills/R",
+      "quote": "The skills in `skills/`, the shared Modules in `skills/_modules/`, the project skills in `skills/Projects/<Project>/`, and the repo docs (`c",
       "verify": {
         "method": "path_exists",
         "path": "skills/_modules",
@@ -17146,7 +17146,7 @@
       },
       "kind": "path",
       "value": "claude/skill-drift-warning.py",
-      "quote": "- **Session start:** `claude/skill-drift-warning.py` (registered under `hooks.SessionStart` in `.claude/settings.json`) caches the check result in `.g",
+      "quote": "- **Session start:** `claude/skill-drift-warning.py` (registered under `hooks.SessionStart` in `claude/settings.json`) caches the check resu",
       "verify": {
         "method": "path_exists",
         "path": "claude/skill-drift-warning.py",
@@ -17155,17 +17155,17 @@
       }
     },
     {
-      "id": "skills/skill-drift/SKILL.md:30:path:.claude/settings.json",
+      "id": "skills/skill-drift/SKILL.md:30:path:claude/settings.json",
       "source": {
         "file": "skills/skill-drift/SKILL.md",
         "line": 30
       },
       "kind": "path",
-      "value": ".claude/settings.json",
-      "quote": "nder `hooks.SessionStart` in `.claude/settings.json`) caches the check result in `.git/skill-drift-cache.json` and warns when any claim is `FAIL` or `",
+      "value": "claude/settings.json",
+      "quote": "rift-warning.py` (registered under `hooks.SessionStart` in `claude/settings.json`) caches the check result in `.git/skill-drift-cache.json`",
       "verify": {
         "method": "path_exists",
-        "path": ".claude/settings.json",
+        "path": "claude/settings.json",
         "base": "repo",
         "type": "file"
       }
@@ -17287,17 +17287,17 @@
       }
     },
     {
-      "id": "skills/skill-drift/references/claims-schema.md:74:path:.claude/AGENTS.md",
+      "id": "skills/skill-drift/references/claims-schema.md:74:path:claude/AGENTS.md",
       "source": {
         "file": "skills/skill-drift/references/claims-schema.md",
         "line": 74
       },
       "kind": "path",
-      "value": ".claude/AGENTS.md",
-      "quote": "wn file in `skills/**/*.md`, `.claude/AGENTS.md`, `GLOSSARY.md`, and `docs/adr/*.md`:",
+      "value": "claude/AGENTS.md",
+      "quote": "`check_skill_drift.py` automatically scans every markdown file in `skills/**/*.md`, `claude/AGENTS.md`, `GLOSSARY.md`, and `docs/adr/*.md`:",
       "verify": {
         "method": "path_exists",
-        "path": ".claude/AGENTS.md",
+        "path": "claude/AGENTS.md",
         "base": "repo",
         "type": "file"
       }
@@ -17310,7 +17310,7 @@
       },
       "kind": "path",
       "value": "GLOSSARY.md",
-      "quote": "/*.md`, `.claude/AGENTS.md`, `GLOSSARY.md`, and `docs/adr/*.md`:",
+      "quote": "`check_skill_drift.py` automatically scans every markdown file in `skills/**/*.md`, `claude/AGENTS.md`, `GLOSSARY.md`, and `docs/adr/*.md`:",
       "verify": {
         "method": "path_exists",
         "path": "GLOSSARY.md",
@@ -17319,17 +17319,17 @@
       }
     },
     {
-      "id": "skills/skill-drift/references/claims-schema.md:81:path:.claude/settings.json",
+      "id": "skills/skill-drift/references/claims-schema.md:81:path:claude/settings.json",
       "source": {
         "file": "skills/skill-drift/references/claims-schema.md",
         "line": 81
       },
       "kind": "path",
-      "value": ".claude/settings.json",
-      "quote": "ude/*.py`, `claude/*.sh`, or `.claude/settings.json`.",
+      "value": "claude/settings.json",
+      "quote": "constant, or key in `skills/**/scripts/*.py`, `skills/sync-skills/sync_skills.py`, `claude/*.py`, `claude/*.sh`, or `claude/settings.json`.",
       "verify": {
         "method": "path_exists",
-        "path": ".claude/settings.json",
+        "path": "claude/settings.json",
         "base": "repo",
         "type": "file"
       }
@@ -17342,7 +17342,7 @@
       },
       "kind": "path",
       "value": "skills/sync-skills/sync_skills.py",
-      "quote": "in `skills/**/scripts/*.py`, `skills/sync-skills/sync_skills.py`, `claude/*.py`, `claude/*.sh`, or `.claude/settings.json`.",
+      "quote": "tion, constant, or key in `skills/**/scripts/*.py`, `skills/sync-skills/sync_skills.py`, `claude/*.py`, `claude/*.sh`, or `claude/settings.j",
       "verify": {
         "method": "path_exists",
         "path": "skills/sync-skills/sync_skills.py",
@@ -18960,23 +18960,23 @@
       }
     },
     {
-      "id": "skills/sync-skills/SKILL.md:36:path:.claude/AGENTS.md",
+      "id": "skills/sync-skills/SKILL.md:36:path:claude/AGENTS.md",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
         "line": 36
       },
       "kind": "path",
-      "value": ".claude/AGENTS.md",
-      "quote": "| `.claude/AGENTS.md`     | `AGENTS.md`, `CLAUDE.md` (relative), `~/.claude/CLAUDE.md`, `~/.gemini/GEMINI.md` |",
+      "value": "claude/AGENTS.md",
+      "quote": "| `claude/AGENTS.md` | `AGENTS.md` (relative), `~/.claude/CLAUDE.md`, `~/.gemini/GEMINI.md` |",
       "verify": {
         "method": "path_exists",
-        "path": ".claude/AGENTS.md",
+        "path": "claude/AGENTS.md",
         "base": "repo",
         "type": "file"
       }
     },
     {
-      "id": "skills/sync-skills/SKILL.md:37:path:.claude/settings.json",
+      "id": "skills/sync-skills/SKILL.md:37:path:claude/settings.json",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
         "line": 37,
@@ -18985,11 +18985,11 @@
         ]
       },
       "kind": "path",
-      "value": ".claude/settings.json",
-      "quote": "| `.claude/settings.json` | `~/.claude/settings.json`                                                         |",
+      "value": "claude/settings.json",
+      "quote": "| `claude/settings.json` | `~/.claude/settings.json` |",
       "verify": {
         "method": "path_exists",
-        "path": ".claude/settings.json",
+        "path": "claude/settings.json",
         "base": "repo",
         "type": "file"
       }
@@ -19011,10 +19011,10 @@
       }
     },
     {
-      "id": "skills/sync-skills/SKILL.md:60:doc_link:../skill-drift/scripts/check_skill_drift.py",
+      "id": "skills/sync-skills/SKILL.md:62:doc_link:../skill-drift/scripts/check_skill_drift.py",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
-        "line": 60
+        "line": 62
       },
       "kind": "doc_link",
       "value": "../skill-drift/scripts/check_skill_drift.py",
@@ -19026,10 +19026,10 @@
       }
     },
     {
-      "id": "skills/sync-skills/SKILL.md:60:doc_link:../skill-drift/SKILL.md",
+      "id": "skills/sync-skills/SKILL.md:62:doc_link:../skill-drift/SKILL.md",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
-        "line": 60
+        "line": 62
       },
       "kind": "doc_link",
       "value": "../skill-drift/SKILL.md",
@@ -19041,10 +19041,10 @@
       }
     },
     {
-      "id": "skills/sync-skills/SKILL.md:60:skill_ref:skill-drift",
+      "id": "skills/sync-skills/SKILL.md:62:skill_ref:skill-drift",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
-        "line": 60
+        "line": 62
       },
       "kind": "skill_ref",
       "value": "skill-drift",
@@ -19056,10 +19056,10 @@
       }
     },
     {
-      "id": "skills/sync-skills/SKILL.md:89:doc_link:sync_skills.py",
+      "id": "skills/sync-skills/SKILL.md:91:doc_link:sync_skills.py",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
-        "line": 89
+        "line": 91
       },
       "kind": "doc_link",
       "value": "sync_skills.py",
@@ -19071,10 +19071,10 @@
       }
     },
     {
-      "id": "skills/sync-skills/SKILL.md:89:doc_link:../../claude.bash",
+      "id": "skills/sync-skills/SKILL.md:91:doc_link:../../claude.bash",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
-        "line": 89
+        "line": 91
       },
       "kind": "doc_link",
       "value": "../../claude.bash",
@@ -19086,10 +19086,10 @@
       }
     },
     {
-      "id": "skills/sync-skills/SKILL.md:89:doc_link:../../code.bash",
+      "id": "skills/sync-skills/SKILL.md:91:doc_link:../../code.bash",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
-        "line": 89
+        "line": 91
       },
       "kind": "doc_link",
       "value": "../../code.bash",
@@ -19101,10 +19101,10 @@
       }
     },
     {
-      "id": "skills/sync-skills/SKILL.md:89:doc_link:references/manual-linking.md",
+      "id": "skills/sync-skills/SKILL.md:91:doc_link:references/manual-linking.md",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
-        "line": 89
+        "line": 91
       },
       "kind": "doc_link",
       "value": "references/manual-linking.md",
@@ -19116,10 +19116,10 @@
       }
     },
     {
-      "id": "skills/sync-skills/SKILL.md:89:path:claude.bash",
+      "id": "skills/sync-skills/SKILL.md:91:path:claude.bash",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
-        "line": 89,
+        "line": 91,
         "also_lines": [
           97
         ]
@@ -19135,10 +19135,10 @@
       }
     },
     {
-      "id": "skills/sync-skills/SKILL.md:89:path:code.bash",
+      "id": "skills/sync-skills/SKILL.md:91:path:code.bash",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
-        "line": 89
+        "line": 91
       },
       "kind": "path",
       "value": "code.bash",
@@ -20026,9 +20026,9 @@
       }
     },
     {
-      "id": ".claude/AGENTS.md:7:cli_command:codegraph",
+      "id": "claude/AGENTS.md:7:cli_command:codegraph",
       "source": {
-        "file": ".claude/AGENTS.md",
+        "file": "claude/AGENTS.md",
         "line": 7
       },
       "kind": "cli_command",
@@ -20040,17 +20040,17 @@
       }
     },
     {
-      "id": ".claude/AGENTS.md:16:path:.claude/AGENTS.md",
+      "id": "claude/AGENTS.md:16:path:claude/AGENTS.md",
       "source": {
-        "file": ".claude/AGENTS.md",
+        "file": "claude/AGENTS.md",
         "line": 16
       },
       "kind": "path",
-      "value": ".claude/AGENTS.md",
+      "value": "claude/AGENTS.md",
       "quote": "## Plan Mode",
       "verify": {
         "method": "path_exists",
-        "path": ".claude/AGENTS.md",
+        "path": "claude/AGENTS.md",
         "base": "repo",
         "type": "file"
       }
@@ -20642,10 +20642,10 @@
       }
     },
     {
-      "id": "skills/sync-skills/SKILL.md:39:path:claude/agents",
+      "id": "skills/sync-skills/SKILL.md:40:path:claude/agents",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
-        "line": 39
+        "line": 40
       },
       "kind": "path",
       "value": "claude/agents",
@@ -20658,10 +20658,10 @@
       }
     },
     {
-      "id": "skills/sync-skills/SKILL.md:39:config_key:CONFIG_LINKS.agents",
+      "id": "skills/sync-skills/SKILL.md:40:config_key:CONFIG_LINKS agents entry",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
-        "line": 39
+        "line": 40
       },
       "kind": "config_key",
       "value": "CONFIG_LINKS agents entry",
@@ -20696,10 +20696,10 @@
       }
     },
     {
-      "id": "skills/sync-skills/SKILL.md:96:flag:config-only",
+      "id": "skills/sync-skills/SKILL.md:98:symbol:--config-only",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
-        "line": 96
+        "line": 98
       },
       "kind": "symbol",
       "value": "--config-only",
@@ -20715,10 +20715,10 @@
       }
     },
     {
-      "id": "skills/sync-skills/SKILL.md:41:symbol:json_covers",
+      "id": "skills/sync-skills/SKILL.md:43:symbol:json_covers",
       "source": {
         "file": "skills/sync-skills/SKILL.md",
-        "line": 41
+        "line": 43
       },
       "kind": "symbol",
       "value": "json_covers",

@@ -6,7 +6,7 @@ argument-hint: "[--file <glob> | --project <name> | --strict]"
 
 # Skill: `/skill-drift` — Skills & Modules vs. Code
 
-The skills in `skills/`, the shared Modules in `skills/_modules/`, the project skills in `skills/Projects/<Project>/`, and the repo docs (`.claude/AGENTS.md`, `skills/README.md`, `GLOSSARY.md`, `docs/adr/*.md`) state facts about `~/.terminal` and target project repositories (such as `GR.PRIIS`): paths, scripts, CLI flags, symbols, ports, counts, and other skills. `skills/skills-claims.json` lists each verifiable fact with its source line, quote, and verification rule. [`scripts/check_skill_drift.py`](scripts/check_skill_drift.py) checks every claim against the git-tracked files and automatically verifies all relative markdown links, `#anchor` slugs, and `` `<target>` › *Heading* `` pointers.
+The skills in `skills/`, the shared Modules in `skills/_modules/`, the project skills in `skills/Projects/<Project>/`, and the repo docs (`claude/AGENTS.md`, `skills/README.md`, `GLOSSARY.md`, `docs/adr/*.md`) state facts about `~/.terminal` and target project repositories (such as `GR.PRIIS`): paths, scripts, CLI flags, symbols, ports, counts, and other skills. `skills/skills-claims.json` lists each verifiable fact with its source line, quote, and verification rule. [`scripts/check_skill_drift.py`](scripts/check_skill_drift.py) checks every claim against the git-tracked files and automatically verifies all relative markdown links, `#anchor` slugs, and `` `<target>` › *Heading* `` pointers.
 
 ---
 
@@ -27,7 +27,7 @@ On-demand references (`references/`):
 ## Where it runs
 
 - **Registry lint (`/sync-skills`):** `skills/sync-skills/sync_skills.py` runs `check_skill_drift.py` during Step 1 and folds any `FAIL` or `STALE` claims into the lint error count.
-- **Session start:** `claude/skill-drift-warning.py` (registered under `hooks.SessionStart` in `.claude/settings.json`) caches the check result in `.git/skill-drift-cache.json` and warns when any claim is `FAIL` or `STALE`.
+- **Session start:** `claude/skill-drift-warning.py` (registered under `hooks.SessionStart` in `claude/settings.json`) caches the check result in `.git/skill-drift-cache.json` and warns when any claim is `FAIL` or `STALE`.
 
 ---
 
@@ -90,4 +90,4 @@ A quote that only moved to another line number in the same file is located autom
 Covered in `~/.terminal`:
 - `skills/**/SKILL.md` and `skills/**/references/*.md` (general skills, Profiles, and `skills/Projects/<Project>/**`)
 - Shared Modules under `skills/_modules/` (`*.md` and `references/*.md`)
-- `.claude/AGENTS.md`, `skills/README.md`, `GLOSSARY.md`, and `docs/adr/*.md`
+- `claude/AGENTS.md`, `skills/README.md`, `GLOSSARY.md`, and `docs/adr/*.md`

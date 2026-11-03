@@ -16,7 +16,7 @@ Personal dotfiles: modular Bash setup, Neovim (LazyVim), tmux, WezTerm, Ghostty 
 | `vscode/`                 | VS Code settings and keybindings                                                                                                                                              |
 | `autohotkey/`             | AutoHotkey scripts for Windows                                                                                                                                                |
 | `skills/`                 | Claude Code agent skills                                                                                                                                                      |
-| `claude/`                 | Claude Code statusline                                                                                                                                                        |
+| `claude/`                 | Claude Code config: `AGENTS.md`, `CLAUDE.md`, `settings.json`, `profiles/`, statusline, hooks, agents                                                                         |
 | `claude.bash`             | `cm-sync` shell function and `cm` (opens the claude-mem dashboard at `cm-sync url`) ([snuffish/cm-sync](https://github.com/snuffish/cm-sync), cloned at `~/Projects/cm-sync`) |
 | `docs/`, `GLOSSARY.md`    | ADRs and agent docs                                                                                                                                                           |
 
@@ -38,9 +38,9 @@ ln -sf ~/.terminal/tmux/tmux.conf ~/.tmux.conf
 # WezTerm
 mkdir -p ~/.config/wezterm && ln -sf ~/.terminal/wezterm/wezterm.lua ~/.wezterm.lua
 
-# Claude Code & Antigravity config: AGENTS.md, settings.json and the statusline (see skills/sync-skills/SKILL.md › Rule 7)
+# Claude Code & Antigravity config: AGENTS.md, settings.json, the statusline and ~/.local/bin links (see skills/sync-skills/SKILL.md › Rule 7)
 # - In ~/.gemini/antigravity-cli/settings.json: "statusLine": { "type": "command", "command": "bash ~/.claude/statusline.sh", "enabled": true, "stack_with_default": true }
-sync-skills --apply
+~/.terminal/setup.sh
 ```
 
 ## claude-mem sync

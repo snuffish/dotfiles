@@ -71,13 +71,13 @@ Skip placeholders (`<id>`, `<prefix>`, `{Domain}`), code a sample invents (`Foo`
 
 ## Built-in auto-scan (`--no-auto` to skip)
 
-In addition to `skills/skills-claims.json`, `check_skill_drift.py` automatically scans every markdown file in `skills/**/*.md`, `.claude/AGENTS.md`, `GLOSSARY.md`, and `docs/adr/*.md`:
+In addition to `skills/skills-claims.json`, `check_skill_drift.py` automatically scans every markdown file in `skills/**/*.md`, `claude/AGENTS.md`, `GLOSSARY.md`, and `docs/adr/*.md`:
 - Every relative `[label](href)` and `[label](href#anchor)` outside code fences is checked via `link_resolves`.
 - Every `` `<target>` › *Heading* `` and `[label](href) › *Heading*` pointer outside code fences is checked via `heading_pointer`.
 - Every covered `SKILL.md` and top-level `skills/_modules/*.md` file with zero claims in `skills/skills-claims.json` emits a `WARN` (`FAIL` under `--strict`).
 
 ## Good targets
 
-- **Symbols in `~/.terminal`:** grep for the function, constant, or key in `skills/**/scripts/*.py`, `skills/sync-skills/sync_skills.py`, `claude/*.py`, `claude/*.sh`, or `.claude/settings.json`.
+- **Symbols in `~/.terminal`:** grep for the function, constant, or key in `skills/**/scripts/*.py`, `skills/sync-skills/sync_skills.py`, `claude/*.py`, `claude/*.sh`, or `claude/settings.json`.
 - **Symbols in `GR.PRIIS` (`base: "project:GR.PRIIS"`):** grep for the definition (`class ExtendedEndpoint\b`, `GetDisplayName\b`, `AddChangedByIds\b`, `WriteTitle\b`) in `backend/**/*.cs` or `frontend/source/priis-web/src/**/*.ts*`.
 - **Generated files:** grep the generator config or `.gitignore` entry; never the generated file itself.

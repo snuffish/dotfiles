@@ -509,10 +509,12 @@ def check_global_antigravity(agents_dir, targets=None):
 # (label, source, link paths, legacy): paths are repo-relative or '~/…'.
 # Repo links are written relative, home links absolute.
 CONFIG_LINKS = (
-    ('rules', '.claude/AGENTS.md', ('AGENTS.md', 'CLAUDE.md', '~/.claude/CLAUDE.md', '~/.gemini/GEMINI.md'), 'AGENTS.md'),
-    ('settings', '.claude/settings.json', ('~/.claude/settings.json',), '~/.claude/settings.json'),
+    ('rules', 'claude/AGENTS.md', ('AGENTS.md', '~/.claude/CLAUDE.md', '~/.gemini/GEMINI.md'), 'AGENTS.md'),
+    ('settings', 'claude/settings.json', ('~/.claude/settings.json',), '~/.claude/settings.json'),
     ('statusline', 'claude/statusline.sh', ('~/.claude/statusline.sh',), None),
     ('agents', 'claude/agents', ('~/.claude/agents',), '~/.claude/agents'),
+    ('session-title', 'claude/session-title.sh', ('~/.claude/session-title.sh',), None),
+    ('sync-skills', 'skills/sync-skills/sync_skills.py', ('~/.local/bin/sync-skills',), None),
 )
 
 

@@ -57,7 +57,7 @@ function gcai() {
 # Claude Code for reviews: no claude-mem, auto-memory, MY-RULES or mattpocock-skills; args go to claude.
 # Resume such a session with claude-review --resume <id> (claude-resume starts plain claude, which loads them again)
 function claude-review() {
-  claude --settings "$HOME/.terminal/.claude/profiles/review.json" \
+  claude --settings "$HOME/.terminal/claude/profiles/review.json" \
     --append-system-prompt "claude-mem and auto-memory are disabled in this session; skip instructions to save or search memory." \
     "$@"
 }

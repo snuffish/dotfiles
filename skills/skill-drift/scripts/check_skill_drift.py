@@ -2,7 +2,7 @@
 """Checks the factual claims in the registry's skills, Modules, Profiles, and repo docs against the codebase.
 
 Reads skills/skills-claims.json: one entry per claim, with the source file, line, quote, and how to verify it.
-Also runs a built-in auto-scan pass (--no-auto to skip) across skills/**/*.md, .claude/AGENTS.md, GLOSSARY.md,
+Also runs a built-in auto-scan pass (--no-auto to skip) across skills/**/*.md, claude/AGENTS.md, GLOSSARY.md,
 and docs/adr/*.md that verifies relative links, #anchor slugs, `<target>` › *Heading* pointers, and warns on
 covered SKILL.md or Module files with zero claims.
 
@@ -40,11 +40,10 @@ POINTER_RE = re.compile(
     r"(?:\[([^\]]+)\]\(([^)]+)\)|`([^`\n]+)`(?:\s+skill)?)\s*›\s*(?:\*{1,2}|_{1,2}|`)([^*\n_`]+)(?:\*{1,2}|_{1,2}|`)"
 )
 CONFIG_ALIASES = {
-    "~/.claude/CLAUDE.md": ".claude/AGENTS.md",
-    "~/.gemini/GEMINI.md": ".claude/AGENTS.md",
-    "AGENTS.md": ".claude/AGENTS.md",
-    "CLAUDE.md": ".claude/AGENTS.md",
-    "~/.claude/settings.json": ".claude/settings.json",
+    "~/.claude/CLAUDE.md": "claude/AGENTS.md",
+    "~/.gemini/GEMINI.md": "claude/AGENTS.md",
+    "AGENTS.md": "claude/AGENTS.md",
+    "~/.claude/settings.json": "claude/settings.json",
     "~/.claude/statusline.sh": "claude/statusline.sh",
 }
 
@@ -597,7 +596,7 @@ def covered_markdown_files(repo: Repo, file_globs: list[str] | None, project: st
         f
         for f in repo.files
         if (f.startswith("skills/") and f.endswith(".md") and not f.startswith("skills/flat-links/"))
-        or f in (".claude/AGENTS.md", "GLOSSARY.md")
+        or f in ("claude/AGENTS.md", "claude/CLAUDE.md", "GLOSSARY.md")
         or (f.startswith("docs/adr/") and f.endswith(".md"))
     ]
     if project:

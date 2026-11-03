@@ -29,16 +29,18 @@ Read these before step 1:
 4. **Modules are never skills.** `<registry>/_modules/` holds Modules (plain markdown, no frontmatter; ADR-0001, ADR-0002). Nothing in it is linked or counted as a skill, and a `SKILL.md` there is an error.
 5. **Prune only what this registry, `~/.agents/skills`, or installed plugins own.** A dead link is removed only when it points into `<registry>/`, `~/.agents/skills/`, or an installed Claude plugin directory (`~/.claude/plugins/`). Links into other places are reported, never touched.
 6. **Lint, don't rewrite.** The script edits loader links, audits `.agents/skills.json`, and emits a lint warning when `<registry>/README.md` inventory counts drift. It never modifies `SKILL.md` or `README.md` automatically.
-7. **Config files follow `.claude/`.** The repo above `<registry>` (`~/.terminal`) holds the canonical config files; every live path is a symlink to them (`CONFIG_LINKS` in the script):
+7. **Config files follow `claude/`.** The repo above `<registry>` (`~/.terminal`) holds the canonical config files; every live path is a symlink to them (`CONFIG_LINKS` in the script):
 
-   | Source                  | Linked from                                                                       |
-   | ----------------------- | --------------------------------------------------------------------------------- |
-   | `.claude/AGENTS.md`     | `AGENTS.md`, `CLAUDE.md` (relative), `~/.claude/CLAUDE.md`, `~/.gemini/GEMINI.md` |
-   | `.claude/settings.json` | `~/.claude/settings.json`                                                         |
-   | `claude/statusline.sh`  | `~/.claude/statusline.sh`                                                         |
-   | `claude/agents/`        | `~/.claude/agents` (personal subagents)                                           |
+   | Source                                   | Linked from                                                          |
+   | ---------------------------------------- | -------------------------------------------------------------------- |
+   | `claude/AGENTS.md`                       | `AGENTS.md` (relative), `~/.claude/CLAUDE.md`, `~/.gemini/GEMINI.md` |
+   | `claude/settings.json`                   | `~/.claude/settings.json`                                            |
+   | `claude/statusline.sh`                   | `~/.claude/statusline.sh`                                            |
+   | `claude/session-title.sh`                | `~/.claude/session-title.sh`                                         |
+   | `claude/agents/`                         | `~/.claude/agents` (personal subagents)                              |
+   | `skills/sync-skills/sync_skills.py`      | `~/.local/bin/sync-skills`                                           |
 
-   A missing source adopts its legacy regular file or folder (root `AGENTS.md`, `~/.claude/settings.json`, `~/.claude/agents`): copied into the repo, removed only once its link is in place. A regular file or folder with the source's content is replaced by the link. A regular file or folder that differs is a **conflict**: reported under "left alone", never deleted and never pending, so merge it by hand. The report says which: a `.json` link whose every leaf is already in the source prints `source covers it` with the exact `ln -sf` to run after backing it up. A missing source with nothing to adopt is an error. Links are swapped in with `os.replace`, so a running session never sees the path missing. `.claude/settings.json` is in a public repo: review its diff before every commit.
+   A missing source adopts its legacy regular file or folder (root `AGENTS.md`, `~/.claude/settings.json`, `~/.claude/agents`): copied into the repo, removed only once its link is in place. A regular file or folder with the source's content is replaced by the link. A regular file or folder that differs is a **conflict**: reported under "left alone", never deleted and never pending, so merge it by hand. The report says which: a `.json` link whose every leaf is already in the source prints `source covers it` with the exact `ln -sf` to run after backing it up. A missing source with nothing to adopt is an error. Links are swapped in with `os.replace`, so a running session never sees the path missing. `claude/settings.json` is in a public repo: review its diff before every commit.
 
    Project-level local configs (`CLAUDE.local.md`, `settings.local.json`) in `<registry>/Projects/<Project>/` are symlinked into workspaces declared in `Projects/<Project>/.workspaces` (`CLAUDE.local.md`, `AGENTS.local.md -> CLAUDE.local.md`, and `.claude/settings.local.json`).
 
