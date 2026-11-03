@@ -345,7 +345,8 @@ function _gw_list() {
   function flush() {
     if (dir != "" && !prunable) {
       n++
-      w_label[n] = (branch != "" ? branch : "(detached " substr(head, 1, 7) ")")
+      if (branch != "") w_label[n] = branch
+      else { k = split(dir, seg, "/"); w_label[n] = seg[k] " (detached " substr(head, 1, 7) ")" }
       w_dir[n] = dir; w_lock[n] = lock; w_branch[n] = branch
       if (length(w_label[n]) > width) width = length(w_label[n])
     }
