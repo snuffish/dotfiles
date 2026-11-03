@@ -20402,17 +20402,17 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:doc_link:backend/AGENTS.md \u203a Cross-half contracts",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:doc_link:backend/.github/copilot-instructions.md \u203a Cross-half contracts",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
         "line": 88
       },
       "kind": "doc_link",
-      "value": "backend/AGENTS.md \u203a Cross-half contracts",
-      "quote": "`backend/AGENTS.md` \u203a _Cross-half contracts_",
+      "value": "backend/.github/copilot-instructions.md \u203a Cross-half contracts",
+      "quote": "`backend/.github/copilot-instructions.md` \u203a _Cross-half contracts_",
       "verify": {
         "method": "heading_pointer",
-        "target": "backend/AGENTS.md",
+        "target": "backend/.github/copilot-instructions.md",
         "heading": "Cross-half contracts",
         "base": "project:GR.PRIIS"
       }
@@ -20450,17 +20450,17 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:path:backend/AGENTS.md",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:path:backend/.github/copilot-instructions.md",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
         "line": 88
       },
       "kind": "path",
-      "value": "backend/AGENTS.md",
-      "quote": "`backend/AGENTS.md` \u203a _Cross-half contracts_",
+      "value": "backend/.github/copilot-instructions.md",
+      "quote": "`backend/.github/copilot-instructions.md` \u203a _Cross-half contracts_",
       "verify": {
         "method": "path_exists",
-        "path": "backend/AGENTS.md",
+        "path": "backend/.github/copilot-instructions.md",
         "base": "project:GR.PRIIS",
         "type": "file"
       }
@@ -20498,33 +20498,33 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md:44:doc_link:backend/AGENTS.md \u203a Cross-half contracts",
+      "id": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md:44:doc_link:backend/.github/copilot-instructions.md \u203a Cross-half contracts",
       "source": {
         "file": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md",
         "line": 44
       },
       "kind": "doc_link",
-      "value": "backend/AGENTS.md \u203a Cross-half contracts",
-      "quote": "`backend/AGENTS.md` \u203a _Cross-half contracts_",
+      "value": "backend/.github/copilot-instructions.md \u203a Cross-half contracts",
+      "quote": "`backend/.github/copilot-instructions.md` \u203a _Cross-half contracts_",
       "verify": {
         "method": "heading_pointer",
-        "target": "backend/AGENTS.md",
+        "target": "backend/.github/copilot-instructions.md",
         "heading": "Cross-half contracts",
         "base": "project:GR.PRIIS"
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md:44:path:backend/AGENTS.md",
+      "id": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md:44:path:backend/.github/copilot-instructions.md",
       "source": {
         "file": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md",
         "line": 44
       },
       "kind": "path",
-      "value": "backend/AGENTS.md",
-      "quote": "the table is in `backend/AGENTS.md` \u203a _Cross-half contracts_",
+      "value": "backend/.github/copilot-instructions.md",
+      "quote": "the table is in `backend/.github/copilot-instructions.md` \u203a _Cross-half contracts_",
       "verify": {
         "method": "path_exists",
-        "path": "backend/AGENTS.md",
+        "path": "backend/.github/copilot-instructions.md",
         "base": "project:GR.PRIIS",
         "type": "file"
       }
