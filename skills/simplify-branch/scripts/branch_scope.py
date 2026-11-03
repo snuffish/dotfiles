@@ -56,12 +56,57 @@ def is_generated(path):
     return any(fnmatch.fnmatch(name, p) for p in GENERATED) or "/Migrations/" in f"/{path}"
 
 
+def namespace_key(path, depth):
+    """Namespace-like group key: project plus `depth` folders; tests join their source project's key.
+
+    backend/source/GR.PRIIS.Library/DataAccess/Models/X.cs -> Library/DataAccess/Models
+    backend/tests/GR.PRIIS.Library.UnitTests/DataAccess/Models/X.cs -> Library/DataAccess/Models (is_test)
+    frontend/source/priis-web/src/routes/operations/x.tsx -> web/routes/operations
+    Anything else: its parent folder.
+    """
+    parts = path.split("/")
+    is_test = False
+    if len(parts) > 3 and parts[0] == "backend" and parts[1] in ("source", "tests"):
+        project = parts[2].removeprefix("GR.PRIIS.")
+        if parts[1] == "tests":
+            is_test = True
+            for suffix in (".UnitTests", ".IntegrationTests", ".Tests"):
+                project = project.removesuffix(suffix)
+        folders = parts[3:-1]
+        # API endpoint tests mirror API/Features/<Area> without the Features folder.
+        if is_test and project == "API" and folders and folders[0] not in ("Seeding", "TestDataHelpers", "Mocking"):
+            folders = ["Features", *folders]
+        return "/".join([project, *folders[:depth]]), is_test
+    if len(parts) > 3 and parts[0] == "frontend" and parts[1] == "source":
+        rest = parts[3:-1]
+        is_test = bool(rest) and rest[0] == "e2e"
+        if rest[:1] == ["src"]:
+            rest = rest[1:]
+        return "/".join(["web", *rest[:depth]]), is_test
+    return (path.rsplit("/", 1)[0] if "/" in path else "."), False
+
+
+def namespace_groups(files, churn, depth):
+    """Groups files by namespace_key, tests included, so `/simplify <paths>` can be run per group later."""
+    groups = {}
+    for f in files:
+        key, is_test = namespace_key(f, depth)
+        g = groups.setdefault(key, {"files": [], "tests": [], "added": 0, "deleted": 0})
+        g["tests" if is_test else "files"].append(f)
+        g["added"] += churn[f][0]
+        g["deleted"] += churn[f][1]
+    for g in groups.values():
+        g["simplify"] = "/simplify " + " ".join(g["files"] + g["tests"])
+    return dict(sorted(groups.items(), key=lambda kv: -(kv[1]["added"] + kv[1]["deleted"])))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--base")
     ap.add_argument("--no-pr-lookup", action="store_true")
     ap.add_argument("--no-fetch", action="store_true")
     ap.add_argument("--committed-only", action="store_true")
+    ap.add_argument("--depth", type=int, default=2, help="folders below the project that form a namespace group")
     a = ap.parse_args()
 
     try:
@@ -134,6 +179,7 @@ def main():
         g["added"] += out["churn"][f][0]
         g["deleted"] += out["churn"][f][1]
     out["groups"] = dict(sorted(groups.items(), key=lambda kv: -(kv[1]["added"] + kv[1]["deleted"])))
+    out["namespaces"] = namespace_groups(out["files"], out["churn"], a.depth)
     print(json.dumps(out, indent=2))
     return 0 if out["files"] else 1
 

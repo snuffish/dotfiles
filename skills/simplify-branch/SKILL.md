@@ -53,7 +53,7 @@ It prints JSON and resolves the base in this order: `--base`, then the target of
 - `committed`: `git diff --name-only --diff-filter=d <merge-base>...HEAD`
 - `working_tree`: uncommitted tracked changes and untracked files (empty with `--committed-only`)
 - `files`: both lists combined, minus `skipped_generated` (lockfiles, `*.Designer.cs`, `*ModelSnapshot.cs`, `Migrations/`, `*.gen.ts`, `swagger.json`, …) and `skipped_docs` (`*.md`, `*.html`, `*.txt`, `*.log`)
-- `churn`: `[added, deleted]` lines per file against the merge base; `groups`: files, added and deleted per parent folder, largest first
+- `churn`: `[added, deleted]` lines per file against the merge base; `groups`: files, added and deleted per parent folder, largest first; `namespaces`: the same per namespace-like key (`Library/DataAccess/Models`, `API/Features/Operations`, `web/routes/operations`; `--depth N` folders below the project, default 2), source files in `files`, their mirrored test files in `tests`, and a ready `simplify` line (`/simplify <paths>`)
 
 Exit codes: `0` means there are files in scope. `1` means nothing is in scope: say so and stop. `2` means the script hit an error (detached HEAD, unknown base, or `origin/HEAD` unset): show the `error` and ask for `--base`.
 
@@ -65,7 +65,7 @@ Save `git rev-parse HEAD` and `git status --porcelain`, so Phase B can notice ch
 
 #### Step 3: Build the matrix
 
-1. **Rows.** Merge `groups` into at most ~10 rows by feature area. Keep a source folder and its tests in the same row when they cover the same feature. Label rows `A`, `B`, `C`, …
+1. **Rows.** Each row is one namespace group, so it can be run later as a manual `/simplify <paths>`. Take `namespaces` as the units; fold tiny ones (under ~20 changed lines) into the nearest parent key (`Library/DataAccess` into `Library/DataAccess/Models`) and keep tests with their source namespace. Never merge across projects or halves, and never regroup by feature area: a row's name is its namespace key. At most ~12 rows. Label rows `A`, `B`, `C`, … (shortcuts for `/proceed`; the namespace key is the stable name)
 2. **Skim.** For each row, read its diff (`git diff <merge-base> -- <files>`; read untracked files whole). This is a skim, not a review: note only the signals you can point at.
 3. **Cells.** For each of `/simplify`'s four angles, put `●` (clear candidate, with a `file:line` in the hint), `○` (possible) or `–` (nothing seen):
    - **Reuse**: new code that looks like an existing helper
@@ -84,17 +84,27 @@ Save `git rev-parse HEAD` and `git status --porcelain`, so Phase B can notice ch
 `branch → base` (`base_source`), merge base, file count and skipped files (generated, docs), then the matrix:
 
 ```markdown
-| Row | Area                            | Files | +/-     | Reuse | Simplify | Efficiency | Altitude | Priority | Strongest hint                                     | Proposed change                                                                       |
+| Row | Namespace                       | Files | +/-     | Reuse | Simplify | Efficiency | Altitude | Priority | Strongest hint                                     | Proposed change                                                                       |
 | --- | ------------------------------- | ----- | ------- | :---: | :------: | :--------: | :------: | -------- | -------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| A ✓ | <feature area> (source + tests) | 4     | +719/-0 |   ○   |    ●     |     ●      |    –     | high     | `<File>.cs:88` queries once per item inside a loop | Load all items in one query before the loop; reuse `<ExistingHelper>` for the mapping |
-| B   | <feature area>                  | 3     | +171/-5 |   –   |    ○     |     –      |    –     | low      | …                                                  | …                                                                                     |
+| A ✓ | `Library/DataAccess/Models`     | 4     | +719/-0 |   ○   |    ●     |     ●      |    –     | high     | `<File>.cs:88` queries once per item inside a loop | Load all items in one query before the loop; reuse `<ExistingHelper>` for the mapping |
+| B   | `API/Features/Operations`       | 3     | +171/-5 |   –   |    ○     |     –      |    –     | low      | …                                                  | …                                                                                     |
 ```
 
 **Strongest hint** is the evidence (`file:line`, what is there); **Proposed change** is the action. Keep both short so the table stays readable.
 
-Under the table, list each row's files once (`A: path, path`). Then close with:
+Under the table, one block per row: the namespace key, then its findings grouped by file (`path:line: finding`, source files first, then tests), so a finding can be traced to its file, and a **Run later** line with the row's paste-ready command, built from `namespaces[key].simplify` (source files and mirrored tests):
 
-> **Next Step Gate:** Reply `/proceed` to run `/simplify` on the ✓ rows, `/proceed A,C` for specific rows, `/proceed all` for every non-skip row, or specify changes.
+```markdown
+**A `Library/DataAccess/Models`** (+394/-21)
+- `Address.cs:81`: `FillMissingLocation` repeats `RecordGeocode`
+- `Operation.cs:316`: two branches end in `SetVisitingAddress`
+- tests: `AddressTests.cs`
+- Run later: `/simplify backend/source/…/Address.cs backend/source/…/Operation.cs …`
+```
+
+Then close with:
+
+> **Next Step Gate:** Reply `/proceed` to run `/simplify` on the ✓ rows, `/proceed A,C` (or a namespace key) for specific rows, `/proceed all` for every non-skip row, or specify changes.
 
 Stop there. Agent output never opens the gate (`core` › _The `/proceed` gate_).
 
