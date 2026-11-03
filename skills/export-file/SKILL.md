@@ -47,7 +47,7 @@ Read the arguments and the user's sentence together. Every part is optional.
 | Tokens | Extension | Notes |
 |---|---|---|
 | `/markdown`, `/md`, `markdown`, `md` (default) | `.md` | GitHub-flavoured markdown; owner marker on line 1 |
-| `/html`, `html` | `.html` | One self-contained page: `<!doctype html>`, charset and viewport metas, inline CSS with colour tokens on `:root` and a `prefers-color-scheme: dark` override, an explicit `body` background, no external scripts. Owner marker as the first line inside `<head>` |
+| `/html`, `html` | `.html` | One self-contained page compiled via `render_html.py`: `<!doctype html>`, charset and viewport metas, Tailwind CSS, Mermaid 11 ESM CDN, offline fallback styles, owner marker as metadata. Auto-launches in browser via `--open` |
 | `/txt`, `/text`, `txt`, `text` | `.txt` | Plain text: headings underlined, tables as aligned columns, links as `text (url)`. No owner marker |
 
 Any other format token: say which ones are supported and stop.
@@ -109,5 +109,5 @@ Add one line on what was exported, and mention anything you had to decide: a cou
 Before replying:
 - The file exists at the printed path and is not empty: `ls -l <path>`.
 - No chat-relative wording is left: `grep -niE '\b(above|below|as I said|earlier in (this|the) (chat|conversation))\b' <path>`. Fix any hit that points at chat content, not at the file's own sections.
-- For `.html`: the file starts with `<!doctype html>` and contains no `<script src=`.
+- For `.html`: the file starts with `<!doctype html>` and was compiled via `render_html.py`.
 - Delete the draft from the scratchpad.

@@ -51,6 +51,14 @@ When the session runs inside a linked git worktree (`.claude/worktrees/<name>`, 
 5. **Single Identity Rule**: never write multiple host/model variants in one turn.
 6. **Clickability Rule**: write directly to `<workspace-root>`. Exceptions: `skill_gap` files in `~/.terminal/skill-gaps/` (`core` › *Skill gaps*) and `/export-file` outputs (`export-<suffix>.<ext>` in cwd or user-specified path).
 7. **Status Sync Rule (no half-updated artifact)**: when recording progress (`Approved`, `Completed`, `🕓 Fixed, not pushed (<sha>)`, `✅`, posted thread IDs), update **every** status field the artifact's Command declares (header `Status:`, summary matrix, per-item status, checklist) in the same edit, then `grep` for stale markers (`⏸`, `Not addressed`, `uncommitted`) and resolve every hit. Preserve historical analysis with a dated note beside it.
+8. **HTML Export Pipeline (`--html`)**:
+   - Skills supporting `--html` (e.g. `/investigate --html`, `/export-file /html`) write the canonical markdown artifact `<prefix>-<base>-<suffix>.md` first, then compile its sibling `<prefix>-<base>-<suffix>.html` at the **workspace root** using the shared compiler:
+     ```bash
+     python3 ~/.terminal/skills/_modules/scripts/render_html.py <markdown-file> [<html-file>] --open
+     ```
+   - Markdown remains the lean, canonical AI source of truth for cross-session handoffs, diffs, and LLM reasoning.
+   - The compiled `.html` sibling includes Tailwind CSS, Mermaid 11 ESM CDN for client-rendered diagrams, responsive typography, and auto-launches in the default browser via `--open` (`xdg-open` on Linux, `open` on macOS, `start` on Windows).
+   - In chat output, link both files: `📄 [<artifact>.md](<link-to-md>) · 🌐 [<artifact>.html](<link-to-html>)`.
 
 ---
 

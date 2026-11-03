@@ -23,9 +23,9 @@ Read these before step 1:
 ## Discovery Protocol
 
 ### Step 1: Scan Workspace-Root Artifacts
-`/artifacts` reads **across** hosts, models, and suffixes at the workspace root (`*.md`, plus `*-export-*.html` and `*-export-*.txt`):
+`/artifacts` reads **across** hosts, models, and suffixes at the workspace root (`*.md`, plus `*.html` and `*-export-*.txt`):
 ```bash
-ls -lt *.md *-export-*.html *-export-*.txt 2>/dev/null
+ls -lt *.md *.html *-export-*.txt 2>/dev/null
 ```
 1. Parse each filename into **Host** (`claude`, `antigravity`, or `(standalone)`), **AI Model**, **Base Type** (see `_modules/references/artifact-catalog.md`), and **Suffix / Topic**.
 2. Group revisions (`<name>.md`, `<name>-2.md`, …) into families per `artifact-protocol` › _Claim_ › _Readers & family selection_, and order by the `created` timestamp in each file's `<!-- artifact-owner: … -->` marker (falling back to mtime when absent).

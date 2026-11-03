@@ -1,7 +1,7 @@
 ---
 name: investigate
-description: 'Read-only research before designing a change: traces symbols, maps call flows and blast radius, uncovers prior art and conventions, surfaces cross-layer constraints, weighs options and answers in chat with an evidence-backed confidence ledger. It includes the /what-am-I-missing blind-spot audit unless `--no-blindspot`, `--file` writes `<prefix>-investigation-<suffix>.md` for /plan, `--deep` runs the full protocol with the file; `--from <PR|work item>` frames it from a ticket, `--scope <path>` bounds it. Use for /investigate, "research this", "how does X work before we change it?", "what would it take to add Y?", "scope this out", "is this feasible?".'
-argument-hint: "[--deep] [--no-blindspot] [--file] [--from <PR|work item>] [--scope <path>…] [/worktrees] <topic>"
+description: 'Read-only research before designing a change: traces symbols, maps call flows and blast radius, uncovers prior art and conventions, surfaces cross-layer constraints, weighs options and answers in chat with an evidence-backed confidence ledger. It includes the /what-am-I-missing blind-spot audit unless `--no-blindspot`, `--file` writes `<prefix>-investigation-<suffix>.md` for /plan, `--html` compiles rich standalone HTML and launches the browser, `--deep` runs the full protocol with the file; `--from <PR|work item>` frames it from a ticket, `--scope <path>` bounds it. Use for /investigate, "research this", "how does X work before we change it?", "what would it take to add Y?", "scope this out", "is this feasible?".'
+argument-hint: "[--deep] [--no-blindspot] [--file] [--html] [--from <PR|work item>] [--scope <path>…] [/worktrees] <topic>"
 ---
 
 # Skill: `/investigate` — Pre-Plan Research & Discovery
@@ -19,7 +19,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 
 - `../_modules/core.md`: read-only until `/proceed`
-- `../_modules/artifact-protocol.md`: writes `<prefix>-investigation-<suffix>.md` at the **workspace root** only under `--file` or `--deep` (suffix e.g. `-draft-close-dialog`, `-municipality-sync`); a plain run writes nothing
+- `../_modules/artifact-protocol.md`: writes `<prefix>-investigation-<suffix>.md` at the **workspace root** under `--file`, `--deep`, or `--html` (suffix e.g. `-draft-close-dialog`, `-municipality-sync`); under `--html`, compiles `<prefix>-investigation-<suffix>.html` via `render_html.py` and opens in browser; a plain run writes nothing
 
 Read these only when their flag is given:
 
@@ -70,6 +70,7 @@ On-demand references (`references/`):
 | _(none)_                 | Steps 0–7, blind-spot audit included; answer in chat per §5 _Chat-only response_. No file                                                                                                              |
 | `--no-blindspot`         | Skips Step 6, the blind-spot audit                                                                                                                                                                     |
 | `--file`                 | Writes the §4 artifact and answers per §5 _Artifact response_                                                                                                                                          |
+| `--html`                 | Writes the §4 markdown artifact, compiles its sibling `<prefix>-investigation-<suffix>.html` via `render_html.py`, launches the default browser, and links both in chat                                  |
 | `--deep`                 | The full protocol: `--file` with the audit. With `--no-blindspot` it contradicts itself, so ask which applies                                                                                          |
 | `--from <PR\|work item>` | Frames Step 0 from a PR or work item (URL, id, `#30342`). The topic becomes optional                                                                                                                   |
 | `--scope <path>…`        | Bounds Steps 2–4 to these paths (repo, directory or package); see Step 0                                                                                                                               |
@@ -129,11 +130,12 @@ Classify every key finding into ✅ **Verified** (`path:line`), 🟡 **Inferred*
 
 ---
 
-## 4. Workspace Artifact Specification (`--file` / `--deep`)
+## 4. Workspace Artifact Specification (`--file` / `--deep` / `--html`)
 
 Read [`references/artifact-template.md`](references/artifact-template.md) and [`references/visuals.md`](references/visuals.md), and publish `<prefix>-investigation-<suffix>.md` at the **workspace root** via `artifact-protocol` › _Claim_:
 - **No per-item inventories:** give the count, a table of the few that decide the options, and the command that regenerates the full list.
 - **Cite, don't paste:** a `path:line` replaces a code excerpt; quote at most a few lines where the exact text is the finding.
+- **HTML Compilation (`--html` only):** compile the sibling `.html` artifact via `render_html.py` (`artifact-protocol` › *HTML Export Pipeline*) and launch in the default browser.
 
 ---
 
@@ -152,10 +154,10 @@ Per `core` › _Golden invariants_, keep chat output concise and high-signal; ev
 7. **Open Questions**: blocking user decisions.
 8. **Handoff Line**: `**Next Step:** /plan <suffix> drafts a plan from these findings in this session; re-run with --file (or --deep) to keep them for a new session.`
 
-### Artifact response (`--file` or `--deep`)
+### Artifact response (`--file`, `--deep`, or `--html`)
 
 1. **Headline**: 1–2 sentences summarizing the critical finding and primary direction, plus at most one visual from the artifact (usually §3).
-2. **Link block**: the `artifact-protocol` › _Chat link block_ with real line numbers (`grep -n '^#\{1,3\} ' <file>`) for `Executive Summary`, `Options & Trade-offs`, `Blind Spots`, `Confidence Ledger`, `Plan Seed`, and `Open Questions for User`.
+2. **Link block**: the `artifact-protocol` › _Chat link block_ with real line numbers (`grep -n '^#\{1,3\} ' <file>`) for `Executive Summary`, `Options & Trade-offs`, `Blind Spots`, `Confidence Ledger`, `Plan Seed`, and `Open Questions for User` (under `--html`, include sibling `🌐 [<artifact>.html](<host-link-to-html>)`).
 3. **Primary Recommendation & #1 Blind Spot** (or note `--no-blindspot`) and **Open Questions**.
 4. **Handoff Line**: `**Next Step:** Type /plan <suffix> to convert the Plan Seed into a detailed implementation plan, or /show-me <aspect> for another view of the findings.`
 

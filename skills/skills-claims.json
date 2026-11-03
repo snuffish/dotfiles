@@ -5234,10 +5234,10 @@
       }
     },
     {
-      "id": "skills/_modules/artifact-protocol.md:85:doc_link:references/pr-host-threads.md",
+      "id": "skills/_modules/artifact-protocol.md:93:doc_link:references/pr-host-threads.md",
       "source": {
         "file": "skills/_modules/artifact-protocol.md",
-        "line": 85
+        "line": 93
       },
       "kind": "doc_link",
       "value": "references/pr-host-threads.md",
@@ -5249,10 +5249,10 @@
       }
     },
     {
-      "id": "skills/_modules/artifact-protocol.md:85:doc_link:references/pr-host-threads.md \u203a PR Discussion Thread Links (Dual Navigation)",
+      "id": "skills/_modules/artifact-protocol.md:93:doc_link:references/pr-host-threads.md \u203a PR Discussion Thread Links (Dual Navigation)",
       "source": {
         "file": "skills/_modules/artifact-protocol.md",
-        "line": 85
+        "line": 93
       },
       "kind": "doc_link",
       "value": "references/pr-host-threads.md \u203a PR Discussion Thread Links (Dual Navigation)",
@@ -5265,10 +5265,10 @@
       }
     },
     {
-      "id": "skills/_modules/artifact-protocol.md:86:doc_link:references/artifact-catalog.md",
+      "id": "skills/_modules/artifact-protocol.md:94:doc_link:references/artifact-catalog.md",
       "source": {
         "file": "skills/_modules/artifact-protocol.md",
-        "line": 86
+        "line": 94
       },
       "kind": "doc_link",
       "value": "references/artifact-catalog.md",
@@ -11670,7 +11670,7 @@
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
-      "quote": "- `../_modules/artifact-protocol.md`: writes `<prefix>-investigation-<suffix>.md` at the **workspace root** only under `--file` or `--deep` (suffix e.",
+      "quote": "- `../_modules/artifact-protocol.md`: writes `<prefix>-investigation-<suffix>.md` at the **workspace root** under `--file`, `--deep`, or `--",
       "verify": {
         "method": "path_exists",
         "path": "../_modules/artifact-protocol.md",
@@ -11969,10 +11969,10 @@
       }
     },
     {
-      "id": "skills/investigate/SKILL.md:76:doc_link:git-worktrees \u203a Snapshot Lifecycle",
+      "id": "skills/investigate/SKILL.md:77:doc_link:git-worktrees \u203a Snapshot Lifecycle",
       "source": {
         "file": "skills/investigate/SKILL.md",
-        "line": 76
+        "line": 77
       },
       "kind": "doc_link",
       "value": "git-worktrees \u203a Snapshot Lifecycle",
@@ -11985,10 +11985,10 @@
       }
     },
     {
-      "id": "skills/investigate/SKILL.md:86:doc_link:pr-host \u203a Parse a PR or work-item URL",
+      "id": "skills/investigate/SKILL.md:87:doc_link:pr-host \u203a Parse a PR or work-item URL",
       "source": {
         "file": "skills/investigate/SKILL.md",
-        "line": 86
+        "line": 87
       },
       "kind": "doc_link",
       "value": "pr-host \u203a Parse a PR or work-item URL",
@@ -12001,10 +12001,10 @@
       }
     },
     {
-      "id": "skills/investigate/SKILL.md:86:doc_link:pr-host \u203a When a fetch fails",
+      "id": "skills/investigate/SKILL.md:87:doc_link:pr-host \u203a When a fetch fails",
       "source": {
         "file": "skills/investigate/SKILL.md",
-        "line": 86
+        "line": 87
       },
       "kind": "doc_link",
       "value": "pr-host \u203a When a fetch fails",
@@ -12017,10 +12017,10 @@
       }
     },
     {
-      "id": "skills/investigate/SKILL.md:94:doc_link:core \u203a Precedence",
+      "id": "skills/investigate/SKILL.md:95:doc_link:core \u203a Precedence",
       "source": {
         "file": "skills/investigate/SKILL.md",
-        "line": 94
+        "line": 95
       },
       "kind": "doc_link",
       "value": "core \u203a Precedence",
@@ -12033,10 +12033,10 @@
       }
     },
     {
-      "id": "skills/investigate/SKILL.md:94:skill_ref:priis-backend-dry",
+      "id": "skills/investigate/SKILL.md:95:skill_ref:priis-backend-dry",
       "source": {
         "file": "skills/investigate/SKILL.md",
-        "line": 94
+        "line": 95
       },
       "kind": "skill_ref",
       "value": "priis-backend-dry",
@@ -12048,10 +12048,10 @@
       }
     },
     {
-      "id": "skills/investigate/SKILL.md:124:doc_link:../what-am-I-missing/references/vectors.md",
+      "id": "skills/investigate/SKILL.md:125:doc_link:../what-am-I-missing/references/vectors.md",
       "source": {
         "file": "skills/investigate/SKILL.md",
-        "line": 124
+        "line": 125
       },
       "kind": "doc_link",
       "value": "../what-am-I-missing/references/vectors.md",
@@ -12063,10 +12063,10 @@
       }
     },
     {
-      "id": "skills/investigate/SKILL.md:124:doc_link:../what-am-I-missing/references/artifact-template.md",
+      "id": "skills/investigate/SKILL.md:125:doc_link:../what-am-I-missing/references/artifact-template.md",
       "source": {
         "file": "skills/investigate/SKILL.md",
-        "line": 124
+        "line": 125
       },
       "kind": "doc_link",
       "value": "../what-am-I-missing/references/artifact-template.md",
@@ -12078,10 +12078,10 @@
       }
     },
     {
-      "id": "skills/investigate/SKILL.md:142:doc_link:core \u203a Golden invariants",
+      "id": "skills/investigate/SKILL.md:144:doc_link:core \u203a Golden invariants",
       "source": {
         "file": "skills/investigate/SKILL.md",
-        "line": 142
+        "line": 144
       },
       "kind": "doc_link",
       "value": "core \u203a Golden invariants",
