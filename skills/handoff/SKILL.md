@@ -1,8 +1,7 @@
 ---
 name: handoff
-description: "Prepares a session handoff artifact (<prefix>-handoff-<suffix>.md) capturing goals, current git state, completed work, decisions, and actionable next steps so work can seamlessly continue in a fresh agent session via /proceed <HANDOFF_ARTIFACT.md>."
+description: "Prepares a session handoff artifact (<prefix>-handoff-<suffix>.md) capturing goals, current git state, completed work, decisions, and actionable next steps so work can seamlessly continue in a fresh agent session via /proceed <HANDOFF_ARTIFACT.md>. Use for /handoff, \"write a handoff\", \"hand this off\", \"I'll continue in a new session\", or when a session is getting long and work must resume later."
 argument-hint: "[suffix | what will the next session be used for]"
-disable-model-invocation: true
 ---
 
 # Skill: `/handoff` — Session Handoff & Continuity Manager

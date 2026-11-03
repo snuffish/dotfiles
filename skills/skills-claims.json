@@ -21133,6 +21133,21 @@
         "base": "repo",
         "expect": "present"
       }
+    },
+    {
+      "id": "skills/handoff/SKILL.md:3:skill_ref:proceed",
+      "source": {
+        "file": "skills/handoff/SKILL.md",
+        "line": 3
+      },
+      "kind": "skill_ref",
+      "value": "proceed",
+      "quote": "continue in a fresh agent session via /proceed <HANDOFF_ARTIFACT.md>.",
+      "verify": {
+        "method": "skill_exists",
+        "name": "proceed",
+        "base": "repo"
+      }
     }
   ]
 }
