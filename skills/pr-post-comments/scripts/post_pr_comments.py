@@ -14,7 +14,9 @@ a "body" counts only when the whole body is a placeholder, so `List<T>` in a bod
 "body_file" is resolved relative to spec.json. "end_offset" and "change_tracking_id" are Azure DevOps only;
 GitHub ignores them and anchors on the RIGHT side of "commit".
 "resolve" (replies only) sets the thread to Resolved once the reply is posted: Azure DevOps status "fixed",
-GitHub resolveReviewThread on the review thread whose first comment is "thread_id".
+GitHub resolveReviewThread on the review thread whose first comment is "thread_id". On Azure DevOps it may instead
+name the status: "fixed", "wontFix", "byDesign" or "closed" (a declined suggestion: "wontFix"); true means "fixed".
+GitHub has one resolved state, so any value resolves the thread.
 "--via mcp" (ado only) also writes mcp-<key>.json (and mcp-<key>-resolve.json): the tool name and arguments for the
 azure-devops MCP server, built from the same payload. The agent passes them unchanged; --post is refused with it.
 The MCP reply tool takes no parentCommentId, so a reply lands as a top-level comment in the thread (0, not 1).
@@ -26,6 +28,13 @@ import subprocess
 import sys
 
 PLACEHOLDER = re.compile(r"<[^<>\s]+>")
+ADO_STATUSES = {"fixed": "Fixed", "wontFix": "WontFix", "byDesign": "ByDesign", "closed": "Closed"}
+
+
+def ado_status(item):
+    """The Azure DevOps status a reply's "resolve" asks for: true means "fixed"."""
+    value = item.get("resolve")
+    return "fixed" if value is True else value
 
 
 def load_spec(path):
@@ -100,7 +109,8 @@ def mcp_calls(cfg, item, payload):
     if item["kind"] == "reply":
         calls = [{"action": "reply", **base, "threadId": int(item["thread_id"]), "content": payload["content"]}]
         if item.get("resolve"):
-            calls.append({"action": "update_status", **base, "threadId": int(item["thread_id"]), "status": "Fixed"})
+            calls.append({"action": "update_status", **base, "threadId": int(item["thread_id"]),
+                          "status": ADO_STATUSES[ado_status(item)]})
         return [{"tool": MCP_WRITE_TOOL, "arguments": call} for call in calls]
     call = {"action": "create", **base, "content": payload["comments"][0]["content"], "status": "Active"}
     if item["kind"] == "thread":
@@ -173,7 +183,7 @@ def run(command):
 def resolve_ado(cfg, item, base):
     status_path = os.path.join(base, f"payload-{item['key']}-resolve.json")
     with open(status_path, "w", encoding="utf-8") as f:
-        json.dump({"status": "fixed"}, f)
+        json.dump({"status": ado_status(item)}, f)
     route = [f"project={cfg['project']}", f"repositoryId={cfg['repo']}", f"pullRequestId={cfg['pr']}",
              f"threadId={item['thread_id']}"]
     return run([
@@ -201,7 +211,7 @@ def describe(item):
     if item["kind"] == "thread":
         return f"thread  {item['path']}:{item['start']}-{item['end']}"
     if item["kind"] == "reply":
-        return f"reply   -> thread {item['thread_id']}" + (", then resolve" if item.get("resolve") else "")
+        return f"reply   -> thread {item['thread_id']}" + (f", then resolve ({ado_status(item)})" if item.get("resolve") else "")
     return "general"
 
 
@@ -230,6 +240,9 @@ def main():
     for item in items:
         if item.get("resolve") and item["kind"] != "reply":
             print(f"[{item['key']}] 'resolve' is only allowed on replies; new threads are posted active")
+            sys.exit(2)
+        if item.get("resolve") and ado_status(item) not in ADO_STATUSES:
+            print(f"[{item['key']}] 'resolve' must be true or one of: {', '.join(ADO_STATUSES)}")
             sys.exit(2)
         payload = ado_payload(item, cfg.get("iteration")) if host == "ado" else github_payload(item, cfg.get("commit"))
         payload_path = os.path.join(base, f"payload-{item['key']}.json")

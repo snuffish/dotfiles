@@ -14,7 +14,7 @@ Turns already-drafted review findings and thread replies into anchored comments 
 
 1. **Outward write discipline**: follow `outward-writes` (*Explicit request & draft mode*, *Denied write is final*, *Auth error vs denial*, *Read back*). `/pr-post-comments draft` stops after the dry run and preview.
 2. **Post only what was drafted**: reformat for the PR (*Step 4*), never invent findings or change substance.
-3. **Resolve only verified fixed replies**: new findings are posted **active**; a replied thread is set to Resolved (`fixed` / `resolveReviewThread`) only when *Which replied threads to resolve* holds. Never close threads, cast votes, or edit the PR description.
+3. **Resolve only verified fixed replies**: new findings are posted **active**; a replied thread is set to Resolved (`fixed` / `resolveReviewThread`) only when *Which replied threads to resolve* holds. A declined suggestion gets `wontFix` only on the user's say-so (*Which replied threads to resolve*). Never set `closed` unasked, cast votes, or edit the PR description.
 4. **Do not modify the working tree**: read the PR head via `git show <sha>:<path>`, write payloads to `<scratchpad>/pr<id>/`, and update only the source artifact's *Posted to PR* row and declared status fields.
 
 ---
@@ -111,6 +111,7 @@ git -C <repo> show <head>:<path> | awk 'NR>=<start> && NR<=<end> {print NR": "le
 - **Skip**: *In Plain Terms*, *Feature in Brief*, and praise. Format the 🟢 minor-findings block per [comment-formats.md](references/comment-formats.md).
 - **Replies**: use *Ready-to-Send Reply* verbatim in its drafted language.
 - **Which replied threads to resolve**: set `"resolve": true` on a reply **only** when (1) the artifact marks the thread `✅ Fixed` or `↩ Superseded` (or its Action Checklist item is `[x]`), **and** (2) the fix commit is at the remote PR head (`git -C <repo> merge-base --is-ancestor <fix> <head>` and `git -C <repo> show <head>:<path>` confirms it), **and** `keep-open` was not passed. Leave active whenever the reply asks a question, defers (Path B), or is partial/unpushed.
+- **Declined suggestions** (Azure DevOps): `"resolve": "wontFix"` (or `"byDesign"`) on a reply that declines the suggestion, **only** when the user picks that status in the draft preview or the arguments; otherwise the thread stays active for the reviewer. A reply that ends in a question to the reviewer always stays active.
 
 ### Step 5 — Dedupe, dry-run, post one, verify, post the rest
 
