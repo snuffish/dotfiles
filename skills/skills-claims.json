@@ -21768,7 +21768,7 @@
       },
       "kind": "other",
       "value": "git-worktrees: sub-agents never create or remove worktrees",
-      "quote": "> 3. **One worktree per finding, created and removed by the lead only.** Sub-agents never create, remove, lock or unlock worktrees, and each works onl",
+      "quote": "> 3. **One worktree per work unit, created and removed by the lead only.** Sub-agents never create, remove, lock or unlock worktrees, and each works o",
       "verify": {
         "method": "grep",
         "pattern": "Sub-agents never create, remove, lock, or unlock worktrees",
@@ -21777,6 +21777,39 @@
         ],
         "base": "repo",
         "expect": "present"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:82:other:project-profile defines a Layout field",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 82
+      },
+      "kind": "other",
+      "value": "project-profile defines a Layout field",
+      "quote": "   - Merge small unrelated components into one group only when they sit in the same half or layer of the base profile's **Layout** and their targeted ",
+      "verify": {
+        "method": "grep",
+        "pattern": "^\\| \\*\\*Layout\\*\\* \\|",
+        "paths": [
+          "skills/_modules/project-profile.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/fix-findings/references/landing-and-handoff.md:25:other:git cherry-pick --abort restores the pre-sequence state",
+      "source": {
+        "file": "skills/fix-findings/references/landing-and-handoff.md",
+        "line": 25
+      },
+      "kind": "other",
+      "value": "git cherry-pick --abort restores the pre-sequence state",
+      "quote": "- On a conflict, `git -C <landing-tree> cherry-pick --abort` returns the branch to where it was before the sequence started. Mark every finding of the",
+      "verify": {
+        "method": "manual",
+        "reason": "git docs, man git-cherry-pick: '--abort Cancel the operation and return to the pre-sequence state.' (git 2.x)"
       }
     },
     {

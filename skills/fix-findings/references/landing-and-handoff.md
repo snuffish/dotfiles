@@ -14,6 +14,18 @@ git -C <landing-tree> cherry-pick -x <commit from RESULT.json>
 - On a conflict: `git -C <landing-tree> cherry-pick --abort`, mark the finding `CONFLICT`, and skip every finding that depends on it. Never resolve the conflict by hand inside this skill. The handoff repro covers it, and [`/resolve-conflicts`](../../resolve-conflicts/SKILL.md) can take it from there.
 - An empty cherry-pick (the change already exists on the branch) is skipped with `git cherry-pick --skip` and reported as landed with the note "already present".
 
+### Groups
+
+A GREEN group (`--group`) lands all or nothing, because its tests ran only on the whole group. Pick its `FIXED` commits in one sequence, in the order its `RESULT.json` lists them:
+
+```bash
+git -C <landing-tree> cherry-pick -x <commit of each FIXED finding, in order>
+```
+
+- On a conflict, `git -C <landing-tree> cherry-pick --abort` returns the branch to where it was before the sequence started. Mark every finding of the group `CONFLICT` and skip the groups that depend on it.
+- An empty pick inside the sequence is skipped with `git cherry-pick --skip`, as above, and the sequence continues.
+- `NOT_FIXED` findings have no commit to pick. They go to the handoff with the agent's reason.
+
 ## Full-suite gate
 
 Record `PRE_LAND` (the `BASE` of the batch) before the first pick. After the last pick, run the project's full verify once in the landing tree: the repo's quality gate when it has one (for example a `priis-verify`-style Command), else the profile's full build and test commands. Check `git-worktrees` › _Workspace Lifecycle_ › _Verify_ first: when other `claude-skill:` worktrees of the repo are active, the shared local services force targeted suites, so say which suites ran.

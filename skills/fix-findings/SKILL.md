@@ -1,13 +1,15 @@
 ---
 name: fix-findings
-description: 'Fixes a review findings document in parallel: graphs dependencies between findings, proposes batches and waits for /proceed, then runs one worktree and sub-agent per independent finding that implements only it, builds, runs covering tests and writes RESULT.json (GREEN, RED, BLOCKED_ENV). Cherry-picks only GREEN fixes onto the PR branch in dependency order, runs the full suite once, pushes, and hands off the rest. Invoking it authorizes those commits and the push. Use for /fix-findings, "fix the review findings in parallel". Not for reviewing (use /code-review), serial review-then-fix (use /pr-polish) or CI failures (use /pr-fix-pipeline).'
-argument-hint: "<findings doc> [--pr <id | branch>] [--only <ids>]"
+description: 'Fixes a review findings document in parallel: graphs dependencies between findings, proposes batches and waits for /proceed, then runs one worktree and sub-agent per independent finding that implements only it, builds, runs covering tests and writes RESULT.json (GREEN, RED, BLOCKED_ENV). Cherry-picks only GREEN fixes onto the PR branch in dependency order, runs the full suite once, pushes, and hands off the rest. Invoking it authorizes those commits and the push. Use for /fix-findings, "fix the review findings in parallel". Not for reviewing (use /code-review), serial review-then-fix (use /pr-polish) or CI failures (use /pr-fix-pipeline). --group: one sub-agent per group of related findings.'
+argument-hint: "<findings doc> [--pr <id | branch>] [--only <ids>] [--group]"
 disable-model-invocation: true
 ---
 
 # Skill: `/fix-findings` — Parallel Fixes from a Findings Document
 
 Turns a review findings document into landed fixes: one isolated worktree and sub-agent per independent finding, merged back only when green. The deliverables are the cherry-picked commits on the PR branch, the push, and a handoff artifact for every finding that did not land.
+
+**Work unit.** One worktree, branch and sub-agent handle one _work unit_: a single finding by default, or a group of findings with `--group` (_Step 2_ › item 5). A group's `<id>` is `g1`, `g2`, …, so its branch is `fix/finding-g1`. Every rule below that names a finding applies to a whole work unit, except where it says otherwise.
 
 ---
 
@@ -34,7 +36,7 @@ On-demand references (`references/`):
 >
 > 1. **Never land a finding that did not report GREEN.** Only a `RESULT.json` with `"status": "GREEN"`, `tests_run > 0` and `tests_failed == 0` qualifies. A missing, unparsable or contradictory `RESULT.json` counts as RED.
 > 2. **Invocation is the explicit request** (`outward-writes` › _Explicit request & draft mode_) for: commits on `fix/finding-<id>` branches, cherry-picks onto the PR's source branch, and one `git push` of that branch per batch. Never force-push, rebase the PR branch, post PR comments or touch another PR.
-> 3. **One worktree per finding, created and removed by the lead only.** Sub-agents never create, remove, lock or unlock worktrees, and each works only inside its own `repo-root`.
+> 3. **One worktree per work unit, created and removed by the lead only.** Sub-agents never create, remove, lock or unlock worktrees, and each works only inside its own `repo-root`.
 > 4. **Never delete a `fix/finding-<id>` branch** (`git-worktrees` › _Golden Invariants_ 6). RED and BLOCKED branches are the handoff's repro starting point.
 > 5. **At most 5 sub-agents per batch.** A larger independent set is split into several batches.
 > 6. **Shared local services are serialized.** Worktrees isolate files, not the base profile's **Shared local services** (local database, local API, dev-server ports). Test runs that use one take turns behind a lock (agent brief rule 4), so a collision never turns a good fix RED or BLOCKED_ENV.
@@ -71,22 +73,29 @@ On-demand references (`references/`):
    - a test fix and the production change it asserts.
 2. Two findings conflict when their file sets intersect, and one depends on another when the dependency is semantic. Build the graph and a topological order.
 3. Batch 1 is every finding with no unmet dependency, minus any that share files with an earlier member of the batch (it moves to the next batch), capped at 5. Later batches follow the same rule against the findings already landed.
-4. Show the graph (Mermaid `graph LR`, edges labelled `shares <file>` or `depends: <reason>`), then a batch table (`Batch | Finding | Files | Depends on`), then stop:
+4. Show the graph (Mermaid `graph LR`, edges labelled `shares <file>` or `depends: <reason>`; with `--group`, one `subgraph` per group), then a batch table (`Batch | Finding | Files | Depends on`; with `--group`, `Batch | Group | Findings | Files | Verify`), then stop:
 
 > **Next Step Gate:** Reply `/proceed` to run batch 1 (<ids>), or adjust the batches.
+
+5. **`--group` only: form groups before batching.**
+   - Start from the graph's connected components: findings that share a file or a dependency always go into the same group, so no two groups touch the same file.
+   - Merge small unrelated components into one group only when they sit in the same half or layer of the base profile's **Layout** and their targeted tests do not overlap. Never merge across repos or across a backend/frontend split.
+   - Cap a group at about 8 findings; split a larger component along its topological order into groups that depend on each other.
+   - Batches then work on groups as in items 3–4: at most 5 groups per batch, and a group that depends on another runs in a later batch.
+   - Docs-only findings form their own group, or join the group whose code they document (a rulebook rule and the code it describes).
 
 ### Step 3: Run one batch
 
 1. Record `BASE=$(git -C <landing-tree> rev-parse HEAD)`: the PR branch head that every worktree in this batch starts from.
 2. For each finding, create its worktree with `git-worktrees` › _Workspace Lifecycle_ › _Create_ (`DIR=<repo>/.claude/worktrees/finding-<id>`, branch `fix/finding-<id>`, base `$BASE`), then _Hydrate_. If the branch already exists from an earlier run, stop and ask: reuse it or name the new one `fix/finding-<id>-2`.
 3. Set `LOCK=$(git -C <repo> rev-parse --path-format=absolute --git-common-dir)/fix-findings-services.lock` and pass it in every brief. If `command -v flock` fails (macOS ships without it), allow at most one finding per batch whose tests use a shared local service, and move the others to later batches.
-4. Spawn all sub-agents of the batch **in one message**, each with the brief from [`references/agent-brief.md`](references/agent-brief.md), filled with the finding's full text, its file set, its `[worktree-context]` block and the profile's targeted test commands.
+4. Spawn all sub-agents of the batch **in one message**, each with the brief from [`references/agent-brief.md`](references/agent-brief.md), filled with the finding's full text, its file set, its `[worktree-context]` block and the profile's targeted test commands. With `--group`, use the group variant of the brief: every finding's full text in topological order, the group's union file set and the union of their targeted tests.
 5. Wait for every sub-agent. Do not poll its worktree while it runs.
 
 ### Step 4: Collect, land and verify
 
-1. Read every `<DIR>/RESULT.json`. Classify per invariant 1, and check `files_changed` against `git -C <DIR> diff --name-only $BASE..HEAD`. A file outside the finding's file set downgrades it to RED with the reason "scope drift".
-2. Land the GREEN findings in dependency order following [`references/landing-and-handoff.md`](references/landing-and-handoff.md) › _Cherry-pick_. A conflict aborts that pick, marks the finding `CONFLICT` and skips its dependents.
+1. Read every `<DIR>/RESULT.json`. Classify per invariant 1, and check `files_changed` against `git -C <DIR> diff --name-only $BASE..HEAD`. A file outside the finding's file set downgrades it to RED with the reason "scope drift". For a group, the group's union file set applies; a finding the agent marked `NOT_FIXED` has no commit and goes to the handoff.
+2. Land the GREEN findings in dependency order following [`references/landing-and-handoff.md`](references/landing-and-handoff.md) › _Cherry-pick_. A conflict aborts that pick, marks the finding `CONFLICT` and skips its dependents. A GREEN group lands all or nothing (_Cherry-pick_ › _Groups_): it was tested only as a whole.
 3. Run the full build and test suite **once** in the landing tree (_Full-suite gate_ in the same reference). If it fails, do not push: stop, report the failing tests and which landed commits touch them, and ask.
 4. Run the formatter the repo rulebook requires before a commit. If it changed files, commit them through [`/commit`](../commit/SKILL.md). Then `git -C <landing-tree> push` (no force) and read back `git rev-parse HEAD` against `origin/<branch>`.
 5. Remove this batch's worktrees (_Worktree removal_), keeping every branch.
@@ -104,18 +113,20 @@ If any finding ended RED, BLOCKED_ENV or CONFLICT, write `<prefix>-handoff-<suff
 **Findings:** <n> total · <g> landed · <r> RED · <b> BLOCKED_ENV · <c> CONFLICT · <s> skipped
 **PR branch:** <branch> @ <short-sha> (pushed) · full suite: <passed>/<total>
 
-| Finding | Batch | Status | Tests (run/failed) | Commit on PR branch | Note |
-| ------- | ----- | ------ | ------------------ | ------------------- | ---- |
+| Finding | Group | Batch | Status | Tests (run/failed) | Commit on PR branch | Note |
+| ------- | ----- | ----- | ------ | ------------------ | ------------------- | ---- |
 
 **Handoff:** <absolute path> (only when something did not land)
 **Kept branches:** fix/finding-<id>, …
 ```
 
+Without `--group`, leave the `Group` column out. With it, a group's tests are shared by its findings: give the group's counts on each of its rows.
+
 ---
 
 ## 4. Verification
 
-- Every landed commit maps to a GREEN `RESULT.json` with `tests_run > 0` (invariant 1).
+- Every landed commit maps to a GREEN `RESULT.json` with `tests_run > 0` (invariant 1); with `--group`, to a `FIXED` entry of a GREEN group, and either every commit of that group landed or none did.
 - `git log $FIRST_BASE..HEAD` on the PR branch contains only cherry-picked finding commits and, at most, one formatting commit per batch.
 - The full suite ran once per batch, after landing and before the push, and its counts appear in the Output block.
 - `git worktree list` shows no `finding-*` worktree. `git branch --list 'fix/finding-*'` still lists every branch.

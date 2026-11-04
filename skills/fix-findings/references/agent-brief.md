@@ -44,3 +44,48 @@ Rules:
 - `finding`, `status`, `tests_run`, `tests_failed`, `files_changed` and `summary` are required. The lead adds nothing to the file and reads it as written.
 - `GREEN` requires the build to pass, `tests_run > 0` and `tests_failed == 0`.
 - `files_changed` lists repo-relative paths as committed (`git diff --name-only <BASE>..HEAD`).
+
+## Group brief (`--group`)
+
+Use this brief instead of the one above for a group work unit. The `RESULT.json` rules above still apply to the group as a whole, plus the `findings` list below.
+
+```text
+You fix a group of related review findings, one after another, in one isolated git worktree.
+
+[worktree-context]
+<the group's block, mode=workspace, branch=fix/finding-<group id>, base=<branch>@<BASE short-sha>>
+
+Findings, in the order to fix them:
+<for each finding: "Finding <id>:" followed by its full text, verbatim from the findings document, including its path:line references>
+
+Expected files: <the group's union file set from the dependency graph>
+
+Rules:
+1. Fix the findings in the order given, each with the smallest change that resolves it. Rules 1–2 of the single-finding brief apply to every finding.
+2. One commit per finding, staged by explicit path: "<repo commit prefix> Fix finding <id>: <one-line summary>". Build after each commit; a finding that breaks the build and that you cannot repair is reverted with `git revert --no-edit` and marked NOT_FIXED.
+3. A finding you cannot fix (it does not hold at HEAD, needs a decision the text does not make, or needs a file outside "Expected files"): leave it uncommitted, mark it NOT_FIXED with the reason, and go on with the next one. A later finding that depends on it is NOT_FIXED too.
+4. After the last finding, run the build and the union of the group's targeted tests once, under rules 3–5 of the single-finding brief. That run sets the group's status.
+5. Write <repo-root>/RESULT.json (group schema below) as your last action, then reply with its content and nothing else.
+```
+
+## Group RESULT.json schema
+
+```json
+{
+  "group": "g1",
+  "status": "GREEN | RED | BLOCKED_ENV",
+  "tests_run": 42,
+  "tests_failed": 0,
+  "files_changed": ["backend/source/…/Foo.cs"],
+  "findings": [
+    { "finding": "F3", "status": "FIXED", "commit": "<full sha>", "summary": "What changed." },
+    { "finding": "F7", "status": "NOT_FIXED", "reason": "Needs a decision: restore the command or drop the section." }
+  ],
+  "summary": "One or two sentences for the group.",
+  "commands": ["<exact build command>", "<exact test command>"],
+  "log_excerpt": "Required for RED and BLOCKED_ENV."
+}
+```
+
+- `GREEN` covers only the `FIXED` findings; a `NOT_FIXED` finding has no commit and never lands.
+- `files_changed` is the union for the group (`git diff --name-only <BASE>..HEAD`).
