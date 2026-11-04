@@ -123,6 +123,7 @@ Source: [<seeder>:<n>](<path>#L<n>) (or **seeded by this run**).
 
 - **Metadata** is a bullet list, never a table with an empty header row.
 - **Tables** have at most 5 columns, and cells hold short text. UUIDs, SQL, long URLs and file paths go below the table or in a `<details>` block.
+- **App URLs are written in full** (`http://localhost:5681/operations/<id>/log`), never as a bare route (`/operations/<id>/log`). The HTML export makes a code span holding a full URL clickable in a new tab, and a bare route stays plain text.
 - **Link labels** are `file.ext:line` (e.g. `[Operation.cs:96](…)`), never the full path; the URL carries the path.
 - **Code blocks** keep lines ≤ 100 characters: one SQL statement or clause per line, long shell commands split with `\`.
 - **Each scenario is one collapsed `<details id="sN">` block**, so the page reads as a list of scenarios with their status. The `<summary>` holds the plain-text title in `<b>`, the risk marker and the result (no markdown, links or backticks inside `<summary>`: GitHub doesn't render them there). The `id` on `<details>` keeps the `#sN` links working; the HTML export opens the block when its link is followed. Keep a blank line after `</summary>` and before `</details>`.

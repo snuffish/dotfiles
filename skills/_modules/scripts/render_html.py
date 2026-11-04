@@ -85,6 +85,15 @@ class MarkdownRenderer:
                 "created": m.group(3).strip(),
             }
 
+    _LINK_CLASS = "text-emerald-700 hover:text-emerald-900 underline font-medium break-all"
+
+    @classmethod
+    def _link(cls, url: str, label_html: str, css: str | None = None) -> str:
+        """An <a> for url. Everything but an in-page #anchor opens in a new tab."""
+        escaped_url = html.escape(url, quote=True)
+        target = "" if url.startswith("#") else ' target="_blank" rel="noopener noreferrer"'
+        return f'<a href="{escaped_url}"{target} class="{css or cls._LINK_CLASS}">{label_html}</a>'
+
     def render_inline(self, text: str) -> str:
         if not text:
             return ""
@@ -94,9 +103,11 @@ class MarkdownRenderer:
         def save_code(m: re.Match) -> str:
             idx = len(code_spans)
             escaped = html.escape(m.group(2))
-            code_spans.append(
-                f'<code class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-800 font-mono text-xs border border-slate-200">{escaped}</code>'
-            )
+            code_html = f'<code class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-800 font-mono text-xs border border-slate-200">{escaped}</code>'
+            # A code span that holds nothing but a URL stays clickable.
+            if re.fullmatch(r"https?://\S+", m.group(2).strip()):
+                code_html = self._link(m.group(2).strip(), code_html, "hover:opacity-80")
+            code_spans.append(code_html)
             return f"§§PRIISCODE{idx}§§"
 
         # Protect inline code spans
@@ -111,10 +122,7 @@ class MarkdownRenderer:
             url = m.group(2).strip()
             # Recursively render inline markdown inside link label (except code spans already protected)
             formatted_label = self._format_inline_decorations(label)
-            escaped_url = html.escape(url, quote=True)
-            links.append(
-                f'<a href="{escaped_url}" class="text-emerald-700 hover:text-emerald-900 underline font-medium break-all">{formatted_label}</a>'
-            )
+            links.append(self._link(url, formatted_label))
             return f"§§PRIISLINK{idx}§§"
 
         text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", save_link, text)
@@ -123,10 +131,7 @@ class MarkdownRenderer:
         def save_autolink(m: re.Match) -> str:
             idx = len(links)
             url = m.group(1).strip()
-            escaped_url = html.escape(url, quote=True)
-            links.append(
-                f'<a href="{escaped_url}" class="text-emerald-700 hover:text-emerald-900 underline font-medium break-all">{escaped_url}</a>'
-            )
+            links.append(self._link(url, html.escape(url, quote=True)))
             return f"§§PRIISLINK{idx}§§"
 
         text = re.sub(r"<(https?://[^>]+)>", save_autolink, text)
@@ -493,7 +498,10 @@ class MarkdownRenderer:
 
         tag = "ol" if is_ordered else "ul"
         list_style = "list-decimal list-inside space-y-1 my-3" if is_ordered else "list-disc list-inside space-y-1 my-3"
-        return f'<{tag} class="{list_style}">{"".join(items_html)}</{tag}>'
+        # An ordered list keeps the number it starts at (a "5." after a heading stays 5).
+        start_num = int(first_m.group(2)[:-1]) if is_ordered else 1
+        start = f' start="{start_num}"' if start_num != 1 else ""
+        return f'<{tag}{start} class="{list_style}">{"".join(items_html)}</{tag}>'
 
     def generate_html(self) -> str:
         # Extract title from raw_md if not provided
