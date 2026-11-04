@@ -12340,7 +12340,7 @@
       },
       "kind": "doc_link",
       "value": "../SKILL.md \u203a Step 8 \u2014 Seed the data (",
-      "quote": "[SKILL.md](../SKILL.md) \u203a *Step 8 \u2014 Seed the data (`",
+      "quote": "[SKILL.md](../SKILL.md) \u203a _Step 8 \u2014 Seed the data (`",
       "verify": {
         "method": "heading_pointer",
         "target": "../SKILL.md",
