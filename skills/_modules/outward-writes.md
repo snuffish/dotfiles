@@ -17,13 +17,13 @@ Read these before using this one:
 
 ## Voice pass
 
-Prose a person will read under the user's name (PR thread replies, review comments, PR descriptions, ticket bodies, tracker comments, a reply to whoever asked) goes through `/unslop` before the user sees the preview:
+Prose a person will read under the user's name (PR thread replies, review comments, PR descriptions, ticket bodies, tracker comments, a reply to whoever asked) goes through `/unslop` before the user sees the preview. This holds for every such draft, including one written outside the Commands listed above (for example thread replies drafted after `/fix-findings`); and when the user asks to "unslop" an outward draft, they mean this pass, not a bare `/unslop rewrite`:
 
 1. **Swedish prose**: `/unslop mimic <text>`. It drafts in the taught voice card (`~/.claude/skills/unslop/.unslop/voice/snuffish-sv/`) and must pass every removal gate, as the rule section of `~/.claude/skills/unslop/references/commands/mimic.md` says.
 2. **Other languages**: `/unslop rewrite <text>`. The only voice card is Swedish, and mimic would push English text toward Swedish habits.
 3. **Prose only**: keep code blocks, diffs, `path:line`, SHAs, IDs, commands, links, template headings and checkbox lists exactly as they are. If the pass changes a fact, a number or a quoted identifier, drop that change.
-4. **Once per text**: run it on the final draft, in the skill that writes the draft. Mark the draft `Voice pass: done` in its artifact so the posting skill skips it. If the user revises the text, run the pass again.
-5. **Optional**: if `/unslop` is not installed, or the pass keeps failing its gates, keep the original draft and say so in the preview. Never block a write on it.
+4. **Once per text**: run it on the final draft, in the skill that writes the draft. Mark the draft `Voice pass: done (mimic)` or `Voice pass: done (rewrite)` in its artifact so the posting skill skips it and can fill the spec's `"voice_pass"` (`pr-post-comments` › _Step 4_). If the user revises the text, run the pass again.
+5. **Optional**: if `/unslop` is not installed, or the pass keeps failing its gates, keep the original draft, say so in the preview, and record `skipped: <reason>`. Never block a write on a pass that could not run; only an unrecorded pass blocks one.
 
 ## Denied write is final
 

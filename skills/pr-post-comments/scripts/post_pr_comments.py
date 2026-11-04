@@ -17,6 +17,9 @@ GitHub ignores them and anchors on the RIGHT side of "commit".
 GitHub resolveReviewThread on the review thread whose first comment is "thread_id". On Azure DevOps it may instead
 name the status: "fixed", "wontFix", "byDesign" or "closed" (a declined suggestion: "wontFix"); true means "fixed".
 GitHub has one resolved state, so any value resolves the thread.
+"voice_pass" (every item) records the outward-writes Voice pass on the item's prose: "mimic" (Swedish), "rewrite"
+(other languages) or "skipped: <reason>" (unslop missing, or its gates kept failing). The script refuses an item
+without it, so a draft cannot reach the PR unvoiced.
 "--via mcp" (ado only) also writes mcp-<key>.json (and mcp-<key>-resolve.json): the tool name and arguments for the
 azure-devops MCP server, built from the same payload. The agent passes them unchanged; --post is refused with it.
 The MCP reply tool takes no parentCommentId, so a reply lands as a top-level comment in the thread (0, not 1).
@@ -28,6 +31,7 @@ import subprocess
 import sys
 
 PLACEHOLDER = re.compile(r"<[^<>\s]+>")
+VOICE_PASS = re.compile(r"mimic|rewrite|skipped: \S.*")
 ADO_STATUSES = {"fixed": "Fixed", "wontFix": "WontFix", "byDesign": "ByDesign", "closed": "Closed"}
 
 
@@ -236,6 +240,12 @@ def main():
     if placeholders:
         print(f"Template placeholders left in the spec (replace them, or delete the item): {', '.join(placeholders)}")
         sys.exit(2)
+    unvoiced = [item["key"] for item in items if not VOICE_PASS.fullmatch(str(item.get("voice_pass", "")))]
+    if unvoiced:
+        print(f"No voice pass recorded for: {', '.join(unvoiced)}. Run outward-writes › Voice pass on their prose "
+              "(/unslop mimic for Swedish, /unslop rewrite otherwise), then set \"voice_pass\" to "
+              "\"mimic\", \"rewrite\" or \"skipped: <reason>\".")
+        sys.exit(2)
     read_body_files(items, base)
     for item in items:
         if item.get("resolve") and item["kind"] != "reply":
@@ -248,7 +258,7 @@ def main():
         payload_path = os.path.join(base, f"payload-{item['key']}.json")
         with open(payload_path, "w", encoding="utf-8") as f:
             json.dump(payload, f, ensure_ascii=False)
-        print(f"[{item['key']}] {describe(item)}")
+        print(f"[{item['key']}] {describe(item)} · voice: {item['voice_pass']}")
         if via_mcp:
             for path in write_mcp_calls(base, item, mcp_calls(cfg, item, payload)):
                 print(f"    {os.path.basename(path)}")

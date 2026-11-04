@@ -21,25 +21,29 @@
       "end": "<end-line>",
       "end_offset": "<end-line-length-plus-1>",
       "change_tracking_id": "<change-tracking-id>",
-      "body": "<finding-markdown>"
+      "body": "<finding-markdown>",
+      "voice_pass": "<mimic-or-rewrite>"
     },
     {
       "key": "r1",
       "kind": "reply",
       "thread_id": "<thread-id>",
-      "body_file": "<reply-r1.md>"
+      "body_file": "<reply-r1.md>",
+      "voice_pass": "<mimic-or-rewrite>"
     },
     {
       "key": "r2",
       "kind": "reply",
       "thread_id": "<thread-id>",
       "body_file": "<reply-r2.md>",
-      "resolve": true
+      "resolve": true,
+      "voice_pass": "<mimic-or-rewrite>"
     },
     {
       "key": "g1",
       "kind": "general",
-      "body": "<general-comment-markdown>"
+      "body": "<general-comment-markdown>",
+      "voice_pass": "<mimic-or-rewrite>"
     }
   ]
 }
