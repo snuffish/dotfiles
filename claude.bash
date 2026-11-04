@@ -198,5 +198,5 @@ alias omp-new='omp session start'
 
 alias cc="claude"
 alias ccp="claude-p"
-alias ctail="claude-tail"
+alias ct="claude-tail"
 alias csend="claude-send"
