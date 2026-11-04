@@ -120,7 +120,7 @@ When `--seed-data` is passed, follow [seed-data.md](references/seed-data.md) to 
 
 ## 3. Artifact & Chat Output
 
-1. Publish `<prefix>-manual_test_plan-<suffix>.md` in the artifact dir (`artifact-protocol`) via `artifact-protocol` › _Claim_, following the structure and layout rules in [test-plan-template.md](references/test-plan-template.md).
+1. Publish `<prefix>-manual_test_plan-<suffix>.md` in the artifact dir (`artifact-protocol`) via `artifact-protocol` › _Claim_, following the structure and layout rules in [test-plan-template.md](templates/test-plan-template.md).
 2. In chat, emit the `artifact-protocol` › _Chat link block_, followed by a short summary: any blocker, the single start command, the recommended login, top watchlist items (and seeded record counts when `--seed-data` ran).
 3. End with one **Next** line pointing the user to the first scenario to run, e.g. `Next: run S1 yourself, or say "run S1"; /export-file html for a shareable page.`
 4. **Running a scenario on request** (`run S1`): follow its steps as written, check every _Expect_ line, and report each as ✅/❌ with what was seen. When this session owns the plan, write the ticks, the **Result** line, the scenario's `<summary>` and the table cell back in one edit (template › _Results_); otherwise report in chat only and say the plan was left unchanged.

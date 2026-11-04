@@ -12303,17 +12303,17 @@
       }
     },
     {
-      "id": "skills/manual-testing/SKILL.md:123:doc_link:references/test-plan-template.md",
+      "id": "skills/manual-testing/SKILL.md:123:doc_link:templates/test-plan-template.md",
       "source": {
         "file": "skills/manual-testing/SKILL.md",
         "line": 123
       },
       "kind": "doc_link",
-      "value": "references/test-plan-template.md",
-      "quote": "(references/test-plan-template.md)",
+      "value": "templates/test-plan-template.md",
+      "quote": "(templates/test-plan-template.md)",
       "verify": {
         "method": "link_resolves",
-        "href": "references/test-plan-template.md",
+        "href": "templates/test-plan-template.md",
         "base": "file_dir"
       }
     },
@@ -12349,9 +12349,9 @@
       }
     },
     {
-      "id": "skills/manual-testing/references/test-plan-template.md:3:doc_link:../SKILL.md",
+      "id": "skills/manual-testing/templates/test-plan-template.md:3:doc_link:../SKILL.md",
       "source": {
-        "file": "skills/manual-testing/references/test-plan-template.md",
+        "file": "skills/manual-testing/templates/test-plan-template.md",
         "line": 3
       },
       "kind": "doc_link",
@@ -12364,9 +12364,9 @@
       }
     },
     {
-      "id": "skills/manual-testing/references/test-plan-template.md:3:doc_link:../SKILL.md \u203a 3. Artifact & Chat Output",
+      "id": "skills/manual-testing/templates/test-plan-template.md:3:doc_link:../SKILL.md \u203a 3. Artifact & Chat Output",
       "source": {
-        "file": "skills/manual-testing/references/test-plan-template.md",
+        "file": "skills/manual-testing/templates/test-plan-template.md",
         "line": 3
       },
       "kind": "doc_link",
@@ -12380,9 +12380,9 @@
       }
     },
     {
-      "id": "skills/manual-testing/references/test-plan-template.md:113:skill_ref:code-review",
+      "id": "skills/manual-testing/templates/test-plan-template.md:113:skill_ref:code-review",
       "source": {
-        "file": "skills/manual-testing/references/test-plan-template.md",
+        "file": "skills/manual-testing/templates/test-plan-template.md",
         "line": 113
       },
       "kind": "skill_ref",
@@ -12395,9 +12395,9 @@
       }
     },
     {
-      "id": "skills/manual-testing/references/test-plan-template.md:95:doc_link:artifact-protocol \u203a Host-Specific Link Formats & Section Anchors",
+      "id": "skills/manual-testing/templates/test-plan-template.md:95:doc_link:artifact-protocol \u203a Host-Specific Link Formats & Section Anchors",
       "source": {
-        "file": "skills/manual-testing/references/test-plan-template.md",
+        "file": "skills/manual-testing/templates/test-plan-template.md",
         "line": 95
       },
       "kind": "doc_link",
