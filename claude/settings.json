@@ -16,9 +16,7 @@
       "Bash(npm run build:*)",
       "Az devops invoke"
     ],
-    "additionalDirectories": [
-      "~/.cache/agent-artifacts"
-    ],
+    "additionalDirectories": ["~/.cache/agent-artifacts"],
     "defaultMode": "auto"
   },
   "model": "opus",
@@ -55,7 +53,6 @@
     "artifact-design": "name-only",
     "artifact-diagramming": "name-only",
     "update-config": "name-only",
-    "schedule": "off",
     "loop": "off",
     "run": "off",
     "simplify": "name-only",
@@ -64,7 +61,6 @@
     "source-command-backend-health-check": "off",
     "source-command-frontend-health-check": "off",
     "source-command-backend-release-notes": "off",
-    "skill-creator": "off",
     "stitch-react-components": "off",
     "stitch::react-components": "off",
     "vercel-composition-patterns": "off",
@@ -237,7 +233,7 @@
     "claude-mem-cowork@thedotmack": true,
     "cc-plugin-you-should-know@builtin": true,
     "frontend-design@claude-plugins-official": false,
-    "skill-creator@claude-plugins-official": false,
+    "skill-creator@claude-plugins-official": true,
     "retro@netresearch-claude-code-marketplace": true
   },
   "extraKnownMarketplaces": {
