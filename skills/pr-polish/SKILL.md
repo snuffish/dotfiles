@@ -30,6 +30,7 @@ On-demand references (`references/`):
 
 - **Two gates, never merged.** Gate 1 (`/proceed`) covers applying medium/low rows. Posting the description or replies is a separate explicit request (`outward-writes`), never implied by gate 1.
 - **Commit mode.** `--commit=auto` (default) commits each green batch and carries on; `--commit=ask` shows the files and message and waits for a yes per batch. Invoking `/pr-polish` is the explicit request for these local commits only (`outward-writes` › *Explicit request & draft mode*); push, PR description and replies still need their own request. Commit through [`/commit`](../commit/SKILL.md) `no-push` with the batch's paths, following its *Step 3: Choose what goes into the commit* to *Step 5: Write the message and commit* (repo message convention, pre-commit gates such as the formatter). Stage only the batch's files. **Mixed files always ask:** if a batch file was already dirty in the baseline, the commit would sweep in the user's own edits, so ask even in `auto`; on a no, leave the batch uncommitted.
+- **One commit per run.** Batch commits are restore points. Before each report, fold this run's unpushed commits into one: `NEW=$(git commit-tree HEAD^{tree} -p <commit before the run> -F <message file>) && git reset --soft $NEW`, with the message `<repo commit prefix> <summary>` plus one bullet per applied row. It uses HEAD's own tree, so the user's uncommitted work stays as it was; this `reset --soft` is the one exception to *Restore points, not git*. Never fold a commit that is already pushed.
 - **Restore points, not git.** Revert a batch only from its scratchpad snapshot; never `git checkout`, `restore`, `stash` or `reset`, which would destroy the user's pre-existing uncommitted work.
 - **Scoped tests only.** Each batch runs the build plus the tests that cover its files. Ask before any full or integration suite, and accept a no.
 - **Agent cap.** Exactly four reviewers in one message (`fan-out` › _Brief contract_); no further sub-agents.
@@ -109,7 +110,7 @@ Artifact `<prefix>-pr_polish-<PR id>-<slug>.md` in the artifact dir (`artifact-p
 - **Batches**: files, findings, build and test commands with their results, commit SHA or `uncommitted`, `behaviour unverified` flags
 - **PR description draft** and **Thread replies** (thread ID, file, reply, quoted commit or `needs commit`)
 
-Chat: a short summary (applied / reverted / pending counts), the gate table, and the artifact link. End with the commits made (`<short-sha> <subject>` per batch) and a line that nothing was pushed or posted.
+Chat: a short summary (applied / reverted / pending counts), the gate table, and the artifact link. End with the run's commit (`<short-sha> <subject>`, folded per *One commit per run*) and a line that nothing was pushed or posted.
 
 ---
 
