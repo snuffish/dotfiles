@@ -38,7 +38,7 @@ On-demand references (`references/`):
 > 2. **Invocation is the explicit request** (`outward-writes` › _Explicit request & draft mode_) for: commits on `fix/finding-<id>` branches, cherry-picks onto the PR's source branch, and one `git push` of that branch per batch. Never force-push, rebase the PR branch, post PR comments or touch another PR.
 > 3. **One worktree per work unit, created and removed by the lead only.** Sub-agents never create, remove, lock or unlock worktrees, and each works only inside its own `repo-root`.
 > 4. **Never delete a `fix/finding-<id>` branch** (`git-worktrees` › _Golden Invariants_ 6). RED and BLOCKED branches are the handoff's repro starting point.
-> 5. **At most 5 sub-agents per batch.** A larger independent set is split into several batches.
+> 5. **At most 5 sub-agents per batch, and at most 3 when two or more work units run tests on a shared local service** (invariant 6): past the lock, extra agents only queue. `--max-agents <n>` lowers the cap. A larger independent set is split into several batches.
 > 6. **Shared local services are serialized.** Worktrees isolate files, not the base profile's **Shared local services** (local database, local API, dev-server ports). Test runs that use one take turns behind a lock (agent brief rule 4), so a collision never turns a good fix RED or BLOCKED_ENV.
 
 ---
@@ -90,20 +90,22 @@ On-demand references (`references/`):
 2. For each finding, create its worktree with `git-worktrees` › _Workspace Lifecycle_ › _Create_ (`DIR=<repo>/.claude/worktrees/finding-<id>`, branch `fix/finding-<id>`, base `$BASE`), then _Hydrate_. If the branch already exists from an earlier run, stop and ask: reuse it or name the new one `fix/finding-<id>-2`.
 3. Set `LOCK=$(git -C <repo> rev-parse --path-format=absolute --git-common-dir)/fix-findings-services.lock` and pass it in every brief. If `command -v flock` fails (macOS ships without it), allow at most one finding per batch whose tests use a shared local service, and move the others to later batches.
 4. Spawn all sub-agents of the batch **in one message**, each with the brief from [`references/agent-brief.md`](references/agent-brief.md), filled with the finding's full text, its file set, its `[worktree-context]` block and the profile's targeted test commands. With `--group`, use the group variant of the brief: every finding's full text in topological order, the group's union file set and the union of their targeted tests. The agent applies and commits every fix first and runs the test suites once at the end, never after each fix.
-5. Wait for every sub-agent. Do not poll its worktree while it runs.
+5. Wait for every sub-agent. Do not poll its worktree while it runs; when the user asks for status, read only `<DIR>/PROGRESS.log` (agent brief rule 4) and report each unit's last phase and how long ago it started.
 
 ### Step 4: Collect, land and verify
 
 1. Read every `<DIR>/RESULT.json`. Classify per invariant 1, and check `files_changed` against `git -C <DIR> diff --name-only $BASE..HEAD`. A file outside the finding's file set downgrades it to RED with the reason "scope drift". For a group, the group's union file set applies; a finding the agent marked `NOT_FIXED` has no commit and goes to the handoff.
 2. Land the GREEN findings in dependency order following [`references/landing-and-handoff.md`](references/landing-and-handoff.md) › _Cherry-pick_. A conflict aborts that pick, marks the finding `CONFLICT` and skips its dependents. A GREEN group lands all or nothing, as one commit (_Cherry-pick_ › _Groups_): it was tested only as a whole, and the PR branch then never needs a squash or force-push.
 3. Run the full build and test suite **once** in the landing tree (_Full-suite gate_ in the same reference). If it fails, do not push: stop, report the failing tests and which landed commits touch them, and ask.
-4. Run the formatter the repo rulebook requires before a commit. If it changed files, commit them through [`/commit`](../commit/SKILL.md). Then `git -C <landing-tree> push` (no force) and read back `git rev-parse HEAD` against `origin/<branch>`.
+4. Run the formatter the repo rulebook requires before a commit. If it changed files, commit them through [`/commit`](../commit/SKILL.md). Then push (no force) from a Bash call whose working directory already is the landing tree: run `cd <landing-tree>` as its own call first, because PreToolUse hooks such as a migration push guard read the session's working directory, not a `cd` or `-C` inside the push command. Read back `git rev-parse HEAD` against `origin/<branch>`.
 5. Remove this batch's worktrees (_Worktree removal_), keeping every branch.
 6. If another batch remains, show the updated batch table with this batch's outcomes and stop at the gate again. The next batch's `BASE` is the new pushed head.
 
 ### Step 5: Handoff and report
 
 If any finding ended RED, BLOCKED_ENV or CONFLICT, write `<prefix>-handoff-<suffix>.md` from [`references/landing-and-handoff.md`](references/landing-and-handoff.md) › _Handoff template_, with exact repro commands per finding. Then end with the Output block.
+
+**Fixing what the handoff left.** When the user asks to fix the unlanded findings, use one worktree and one sub-agent for all of them by default, not one per finding: branch `fix/finding-g<next>` from the current PR head, `cherry-pick --no-commit` the kept `fix/finding-<id>` attempts into it as the starting point, and brief the agent with the group brief plus each finding's handoff **Failure** text. It lands as one commit (_Cherry-pick_ › _Groups_). Split into more units only when the user asks.
 
 ---
 

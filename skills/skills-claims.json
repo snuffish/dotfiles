@@ -21659,7 +21659,7 @@
       },
       "kind": "skill_ref",
       "value": "commit",
-      "quote": "4. Run the formatter the repo rulebook requires before a commit. If it changed files, commit them through [`/commit`](../commit/SKILL.md). Then `git -",
+      "quote": "4. Run the formatter the repo rulebook requires before a commit. If it changed files, commit them through [`/commit`](../commit/SKILL.md). Then push (no",
       "verify": {
         "method": "skill_exists",
         "name": "commit",
@@ -21858,7 +21858,7 @@
       },
       "kind": "other",
       "value": "fan-out caps sub-agents at 5",
-      "quote": "> 5. **At most 5 sub-agents per batch.** A larger independent set is split into several batches.",
+      "quote": "> 5. **At most 5 sub-agents per batch, and at most 3 when two or more work units run tests on a shared local service**",
       "verify": {
         "method": "grep",
         "pattern": "cap at 5 per `MY-RULES\\.md`",
@@ -22139,6 +22139,63 @@
         "pattern": "ANCHOR = re.compile\\(r'\\^### <a id=\"thread-",
         "paths": [
           "skills/pr-feedback-review/scripts/review_ui.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md:32:other:seed users have protected-data access",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md",
+        "line": 32
+      },
+      "kind": "other",
+      "value": "seed users have protected-data access",
+      "quote": "Integration-test seed users (the default user and every seeded role user) have `HasAccessToProtectedData = true`",
+      "verify": {
+        "method": "grep",
+        "pattern": "HasAccessToProtectedData = true",
+        "paths": [
+          "backend/tests/GR.PRIIS.API.IntegrationTests/Seeding/IntegrationTestSeedData.cs"
+        ],
+        "base": "project:GR.PRIIS",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/skill-drift/SKILL.md:81:other:prettier PostToolUse hook",
+      "source": {
+        "file": "skills/skill-drift/SKILL.md",
+        "line": 81
+      },
+      "kind": "other",
+      "value": "prettier PostToolUse hook",
+      "quote": "a PostToolUse `prettier --write` hook reformats the whole file",
+      "verify": {
+        "method": "grep",
+        "pattern": "npx prettier --write",
+        "paths": [
+          "claude/settings.json"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/skill-drift/SKILL.md:81:other:claims file canonical format",
+      "source": {
+        "file": "skills/skill-drift/SKILL.md",
+        "line": 81
+      },
+      "kind": "other",
+      "value": "claims file canonical format",
+      "quote": "writes it back with `json.dumps(data, indent=2) + \"\\n\"`",
+      "verify": {
+        "method": "grep",
+        "pattern": "not canonical: write with json\\.dumps\\(data, indent=2\\)",
+        "paths": [
+          "skills/skill-drift/scripts/check_skill_drift.py"
         ],
         "base": "repo",
         "expect": "present"

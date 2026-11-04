@@ -78,7 +78,7 @@ Every fact written into a skill must be true at `HEAD`: `grep` or read the code 
 Whenever you edit a covered file (or create a new skill or Module, or fix a skill gap), update its claims in the same change:
 
 1. Run `check_skill_drift.py --file '<glob>'` on the files you edited. `STALE` rows show the claims whose `quote` changed; `WARN` coverage rows show covered files with zero claims.
-2. In `skills/skills-claims.json`, remove or update the stale entries and add one claim per verifiable fact in the new or edited lines, following [`references/claims-schema.md`](references/claims-schema.md).
+2. In `skills/skills-claims.json`, remove or update the stale entries (from a Python script that loads the file and writes it back with `json.dumps(data, indent=2) + "\n"`, never with the Edit or Write tool: a PostToolUse `prettier --write` hook reformats the whole file, and the checker then fails it as not canonical) and add one claim per verifiable fact in the new or edited lines, following [`references/claims-schema.md`](references/claims-schema.md).
 3. Re-run `check_skill_drift.py` and `/sync-skills`: confirm `0 fail`, `0 stale`, and `✓ 0 errors`.
 
 A quote that only moved to another line number in the same file is located automatically and does not become `STALE`.

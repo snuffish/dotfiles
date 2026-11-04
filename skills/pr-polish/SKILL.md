@@ -72,7 +72,7 @@ Spawn the four briefs in [`references/reviewer-briefs.md`](references/reviewer-b
 ### Step 4: Apply high-confidence batches
 
 1. Group the `high` findings into batches by namespace (`namespaces` keys; never across halves), at most ~5 findings per batch.
-2. Per batch: copy its files into `<scratchpad>/pr-polish/batch-<n>/` (note which did not exist), apply the fixes, then run the build of the touched half and the tests covering the batch (the mirrored tests in `namespaces[key].tests`, plus any test file the batch edits).
+2. Per batch: copy its files into `<scratchpad>/pr-polish/batch-<n>/` (note which did not exist), apply the fixes, then run the build of the touched half and the tests covering the batch (the mirrored tests in `namespaces[key].tests`, plus any test file the batch edits). Take pass or fail from each command's own exit code (`set -o pipefail`, or redirect to a log and `echo exit=$?`), never from the end of a `| tail` pipe.
 3. **Green** → commit it (*Commit mode*) and record `applied (<short-sha>)`, or `applied, uncommitted` when the commit was declined or failed its gates. **Red** → restore the batch from its snapshot, rerun the build to confirm it is back to green, record `reverted` with the failing check, and move its findings to the Step 5 table as `medium`.
 4. After each batch, compare `git status --porcelain` with the baseline; a changed path outside the batch is reported, never reverted on your own.
 5. A batch with no covering tests is `behaviour unverified`.

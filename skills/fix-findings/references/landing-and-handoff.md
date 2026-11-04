@@ -41,7 +41,7 @@ On failure, do not push and do not reset. Report the failing tests, `git log --o
 For each worktree of the batch, landed or not (every branch keeps its committed work per the brief's rule 6):
 
 ```bash
-rm <DIR>/RESULT.json                       # its content is already in the report or handoff
+rm -f <DIR>/RESULT.json <DIR>/PROGRESS.log # their content is already in the report or handoff
 git -C <DIR> status --porcelain            # must be empty; otherwise keep the worktree and report it
 git -C <repo> worktree unlock <DIR>
 git -C <repo> worktree remove <DIR>        # no --force
