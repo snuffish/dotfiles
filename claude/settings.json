@@ -16,8 +16,10 @@
       "Bash(npm run build:*)",
       "Az devops invoke"
     ],
-    "additionalDirectories": ["~/.cache/agent-artifacts"],
-    "defaultMode": "auto"
+    "defaultMode": "auto",
+    "additionalDirectories": [
+      "~/.cache/agent-artifacts"
+    ]
   },
   "model": "opus",
   "skillOverrides": {
