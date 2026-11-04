@@ -4380,7 +4380,7 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "| General (top level) | Command | 45 | `artifacts`, `clean`, `code-documentation`, `code-r",
+      "quote": "| General (top level) | Command | 46 | `artifacts`, `clean`, `code-documentation`, `code-r",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
@@ -4395,7 +4395,7 @@
       },
       "kind": "skill_ref",
       "value": "clean",
-      "quote": "op level) | Command | 45 | `artifacts`, `clean`, `code-documentation`, `code-review`, `",
+      "quote": "op level) | Command | 46 | `artifacts`, `clean`, `code-documentation`, `code-review`, `",
       "verify": {
         "method": "skill_exists",
         "name": "clean",
@@ -4410,7 +4410,7 @@
       },
       "kind": "skill_ref",
       "value": "code-documentation",
-      "quote": "| Command | 45 | `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `",
+      "quote": "| Command | 46 | `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `",
       "verify": {
         "method": "skill_exists",
         "name": "code-documentation",
@@ -4485,7 +4485,7 @@
       },
       "kind": "skill_ref",
       "value": "explain",
-      "quote": "ompt`, `create-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `grill-me",
+      "quote": "ompt`, `create-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `fix-findings",
       "verify": {
         "method": "skill_exists",
         "name": "explain",
@@ -4500,7 +4500,7 @@
       },
       "kind": "skill_ref",
       "value": "export-file",
-      "quote": "ate-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `grill-me`, `handoff`, `",
+      "quote": "ate-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `fix-findings`, `grill-me`, `handoff`, `",
       "verify": {
         "method": "skill_exists",
         "name": "export-file",
@@ -4515,7 +4515,7 @@
       },
       "kind": "skill_ref",
       "value": "expressive",
-      "quote": "eate-ticket`, `explain`, `export-file`, `expressive`, `grill-me`, `handoff`, `implement-feat",
+      "quote": "eate-ticket`, `explain`, `export-file`, `expressive`, `fix-findings`, `grill-me`, `handoff`, `implement-feat",
       "verify": {
         "method": "skill_exists",
         "name": "expressive",
@@ -4530,7 +4530,7 @@
       },
       "kind": "skill_ref",
       "value": "handoff",
-      "quote": "export-file`, `expressive`, `grill-me`, `handoff`, `implement-feature`, `insights`, `inve",
+      "quote": "export-file`, `expressive`, `fix-findings`, `grill-me`, `handoff`, `implement-feature`, `insights`, `inve",
       "verify": {
         "method": "skill_exists",
         "name": "handoff",
@@ -4549,7 +4549,7 @@
       },
       "kind": "skill_ref",
       "value": "implement-feature",
-      "quote": "`, `expressive`, `grill-me`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-tes",
+      "quote": "`, `expressive`, `fix-findings`, `grill-me`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-tes",
       "verify": {
         "method": "skill_exists",
         "name": "implement-feature",
@@ -19444,13 +19444,13 @@
         "line": 39
       },
       "kind": "count",
-      "value": "46",
-      "quote": "51 skills total \u2014 46 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "value": "47",
+      "quote": "52 skills total \u2014 47 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/*/SKILL.md",
         "base": "repo",
-        "expected": 46,
+        "expected": 47,
         "op": "eq"
       }
     },
@@ -19462,7 +19462,7 @@
       },
       "kind": "count",
       "value": "5 GR.PRIIS project skills",
-      "quote": "51 skills total \u2014 46 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "52 skills total \u2014 47 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/Projects/GR.PRIIS/*/SKILL.md",
@@ -19479,7 +19479,7 @@
       },
       "kind": "count",
       "value": "8 Modules",
-      "quote": "51 skills total \u2014 46 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "52 skills total \u2014 47 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/_modules/*.md",
@@ -20388,7 +20388,7 @@
       },
       "kind": "skill_ref",
       "value": "grill-me",
-      "quote": "`explain`, `export-file`, `expressive`, `grill-me`, `handoff`, `implement-feature`, `insig",
+      "quote": "`explain`, `export-file`, `expressive`, `fix-findings`, `grill-me`, `handoff`, `implement-feature`, `insig",
       "verify": {
         "method": "skill_exists",
         "name": "grill-me",
@@ -21305,6 +21305,651 @@
         "method": "link_resolves",
         "href": "../SKILL.md",
         "base": "file_dir"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:3:skill_ref:proceed",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 3
+      },
+      "kind": "skill_ref",
+      "value": "proceed",
+      "quote": "description: 'Fixes a review findings document in parallel: graphs dependencies between findings, proposes batches and waits for /proceed, then runs o",
+      "verify": {
+        "method": "skill_exists",
+        "name": "proceed",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:3:skill_ref:fix-findings",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 3
+      },
+      "kind": "skill_ref",
+      "value": "fix-findings",
+      "quote": "description: 'Fixes a review findings document in parallel: graphs dependencies between findings, proposes batches and waits for /proceed, then runs o",
+      "verify": {
+        "method": "skill_exists",
+        "name": "fix-findings",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:3:skill_ref:code-review",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 3
+      },
+      "kind": "skill_ref",
+      "value": "code-review",
+      "quote": "description: 'Fixes a review findings document in parallel: graphs dependencies between findings, proposes batches and waits for /proceed, then runs o",
+      "verify": {
+        "method": "skill_exists",
+        "name": "code-review",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:3:skill_ref:pr-polish",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 3
+      },
+      "kind": "skill_ref",
+      "value": "pr-polish",
+      "quote": "description: 'Fixes a review findings document in parallel: graphs dependencies between findings, proposes batches and waits for /proceed, then runs o",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-polish",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:3:skill_ref:pr-fix-pipeline",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 3
+      },
+      "kind": "skill_ref",
+      "value": "pr-fix-pipeline",
+      "quote": "description: 'Fixes a review findings document in parallel: graphs dependencies between findings, proposes batches and waits for /proceed, then runs o",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-fix-pipeline",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:8:skill_ref:fix-findings",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 8
+      },
+      "kind": "skill_ref",
+      "value": "fix-findings",
+      "quote": "# Skill: `/fix-findings` \u2014 Parallel Fixes from a Findings Document",
+      "verify": {
+        "method": "skill_exists",
+        "name": "fix-findings",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:20:path:../_modules/core.md",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 20
+      },
+      "kind": "path",
+      "value": "../_modules/core.md",
+      "quote": "`../_modules/core.md`",
+      "verify": {
+        "method": "path_exists",
+        "path": "../_modules/core.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:20:skill_ref:proceed",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 20
+      },
+      "kind": "skill_ref",
+      "value": "proceed",
+      "quote": "- `../_modules/core.md`: read-only until `/proceed` for Steps 1\u20132; the gate opens one batch at a time",
+      "verify": {
+        "method": "skill_exists",
+        "name": "proceed",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:21:path:../_modules/artifact-protocol.md",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 21
+      },
+      "kind": "path",
+      "value": "../_modules/artifact-protocol.md",
+      "quote": "`../_modules/artifact-protocol.md`",
+      "verify": {
+        "method": "path_exists",
+        "path": "../_modules/artifact-protocol.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:22:path:../_modules/git-worktrees.md",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 22
+      },
+      "kind": "path",
+      "value": "../_modules/git-worktrees.md",
+      "quote": "`../_modules/git-worktrees.md`",
+      "verify": {
+        "method": "path_exists",
+        "path": "../_modules/git-worktrees.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:23:path:../_modules/project-profile.md",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 23
+      },
+      "kind": "path",
+      "value": "../_modules/project-profile.md",
+      "quote": "`../_modules/project-profile.md`",
+      "verify": {
+        "method": "path_exists",
+        "path": "../_modules/project-profile.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:24:path:../_modules/pr-host.md",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 24
+      },
+      "kind": "path",
+      "value": "../_modules/pr-host.md",
+      "quote": "`../_modules/pr-host.md`",
+      "verify": {
+        "method": "path_exists",
+        "path": "../_modules/pr-host.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:25:path:../_modules/outward-writes.md",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 25
+      },
+      "kind": "path",
+      "value": "../_modules/outward-writes.md",
+      "quote": "`../_modules/outward-writes.md`",
+      "verify": {
+        "method": "path_exists",
+        "path": "../_modules/outward-writes.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:29:doc_link:references/agent-brief.md",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 29
+      },
+      "kind": "doc_link",
+      "value": "references/agent-brief.md",
+      "quote": "(references/agent-brief.md)",
+      "verify": {
+        "method": "link_resolves",
+        "href": "references/agent-brief.md",
+        "base": "file_dir"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:30:doc_link:references/landing-and-handoff.md",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 30
+      },
+      "kind": "doc_link",
+      "value": "references/landing-and-handoff.md",
+      "quote": "(references/landing-and-handoff.md)",
+      "verify": {
+        "method": "link_resolves",
+        "href": "references/landing-and-handoff.md",
+        "base": "file_dir"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:48:doc_link:../code-review/SKILL.md",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 48
+      },
+      "kind": "doc_link",
+      "value": "../code-review/SKILL.md",
+      "quote": "(../code-review/SKILL.md)",
+      "verify": {
+        "method": "link_resolves",
+        "href": "../code-review/SKILL.md",
+        "base": "file_dir"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:48:skill_ref:code-review",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 48
+      },
+      "kind": "skill_ref",
+      "value": "code-review",
+      "quote": "| No findings document yet                     | [`/code-review`](../code-review/SKILL.md)                                                    |",
+      "verify": {
+        "method": "skill_exists",
+        "name": "code-review",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:49:doc_link:../squash-code-review/SKILL.md",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 49
+      },
+      "kind": "doc_link",
+      "value": "../squash-code-review/SKILL.md",
+      "quote": "(../squash-code-review/SKILL.md)",
+      "verify": {
+        "method": "link_resolves",
+        "href": "../squash-code-review/SKILL.md",
+        "base": "file_dir"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:49:skill_ref:squash-code-review",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 49
+      },
+      "kind": "skill_ref",
+      "value": "squash-code-review",
+      "quote": "| Several review documents for the same change | [`/squash-code-review`](../squash-code-review/SKILL.md) first, then this skill on its output |",
+      "verify": {
+        "method": "skill_exists",
+        "name": "squash-code-review",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:50:doc_link:../pr-polish/SKILL.md",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 50
+      },
+      "kind": "doc_link",
+      "value": "../pr-polish/SKILL.md",
+      "quote": "(../pr-polish/SKILL.md)",
+      "verify": {
+        "method": "link_resolves",
+        "href": "../pr-polish/SKILL.md",
+        "base": "file_dir"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:50:skill_ref:pr-polish",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 50
+      },
+      "kind": "skill_ref",
+      "value": "pr-polish",
+      "quote": "| Review and fix in one serial pass            | [`/pr-polish`](../pr-polish/SKILL.md)                                                        |",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-polish",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:51:doc_link:../pr-fix-pipeline/SKILL.md",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 51
+      },
+      "kind": "doc_link",
+      "value": "../pr-fix-pipeline/SKILL.md",
+      "quote": "(../pr-fix-pipeline/SKILL.md)",
+      "verify": {
+        "method": "link_resolves",
+        "href": "../pr-fix-pipeline/SKILL.md",
+        "base": "file_dir"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:51:skill_ref:pr-fix-pipeline",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 51
+      },
+      "kind": "skill_ref",
+      "value": "pr-fix-pipeline",
+      "quote": "| Red CI on the PR                             | [`/pr-fix-pipeline`](../pr-fix-pipeline/SKILL.md)                                            |",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-fix-pipeline",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:52:doc_link:../pr-feedback-review/SKILL.md",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 52
+      },
+      "kind": "doc_link",
+      "value": "../pr-feedback-review/SKILL.md",
+      "quote": "(../pr-feedback-review/SKILL.md)",
+      "verify": {
+        "method": "link_resolves",
+        "href": "../pr-feedback-review/SKILL.md",
+        "base": "file_dir"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:52:skill_ref:pr-feedback-review",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 52
+      },
+      "kind": "skill_ref",
+      "value": "pr-feedback-review",
+      "quote": "| Reviewer threads, not a findings document    | [`/pr-feedback-review`](../pr-feedback-review/SKILL.md)                                      |",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-feedback-review",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:76:skill_ref:proceed",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 76
+      },
+      "kind": "skill_ref",
+      "value": "proceed",
+      "quote": "> **Next Step Gate:** Reply `/proceed` to run batch 1 (<ids>), or adjust the batches.",
+      "verify": {
+        "method": "skill_exists",
+        "name": "proceed",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:83:doc_link:references/agent-brief.md",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 83
+      },
+      "kind": "doc_link",
+      "value": "references/agent-brief.md",
+      "quote": "(references/agent-brief.md)",
+      "verify": {
+        "method": "link_resolves",
+        "href": "references/agent-brief.md",
+        "base": "file_dir"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:89:doc_link:references/landing-and-handoff.md",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 89
+      },
+      "kind": "doc_link",
+      "value": "references/landing-and-handoff.md",
+      "quote": "(references/landing-and-handoff.md)",
+      "verify": {
+        "method": "link_resolves",
+        "href": "references/landing-and-handoff.md",
+        "base": "file_dir"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:91:doc_link:../commit/SKILL.md",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 91
+      },
+      "kind": "doc_link",
+      "value": "../commit/SKILL.md",
+      "quote": "(../commit/SKILL.md)",
+      "verify": {
+        "method": "link_resolves",
+        "href": "../commit/SKILL.md",
+        "base": "file_dir"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:91:skill_ref:commit",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 91
+      },
+      "kind": "skill_ref",
+      "value": "commit",
+      "quote": "4. Run the formatter the repo rulebook requires before a commit. If it changed files, commit them through [`/commit`](../commit/SKILL.md). Then `git -",
+      "verify": {
+        "method": "skill_exists",
+        "name": "commit",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:97:doc_link:references/landing-and-handoff.md",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 97
+      },
+      "kind": "doc_link",
+      "value": "references/landing-and-handoff.md",
+      "quote": "(references/landing-and-handoff.md)",
+      "verify": {
+        "method": "link_resolves",
+        "href": "references/landing-and-handoff.md",
+        "base": "file_dir"
+      }
+    },
+    {
+      "id": "skills/fix-findings/references/agent-brief.md:3:doc_link:../SKILL.md",
+      "source": {
+        "file": "skills/fix-findings/references/agent-brief.md",
+        "line": 3
+      },
+      "kind": "doc_link",
+      "value": "../SKILL.md",
+      "quote": "(../SKILL.md)",
+      "verify": {
+        "method": "link_resolves",
+        "href": "../SKILL.md",
+        "base": "file_dir"
+      }
+    },
+    {
+      "id": "skills/fix-findings/references/landing-and-handoff.md:3:doc_link:../SKILL.md",
+      "source": {
+        "file": "skills/fix-findings/references/landing-and-handoff.md",
+        "line": 3
+      },
+      "kind": "doc_link",
+      "value": "../SKILL.md",
+      "quote": "(../SKILL.md)",
+      "verify": {
+        "method": "link_resolves",
+        "href": "../SKILL.md",
+        "base": "file_dir"
+      }
+    },
+    {
+      "id": "skills/fix-findings/references/landing-and-handoff.md:14:doc_link:../../resolve-conflicts/SKILL.md",
+      "source": {
+        "file": "skills/fix-findings/references/landing-and-handoff.md",
+        "line": 14
+      },
+      "kind": "doc_link",
+      "value": "../../resolve-conflicts/SKILL.md",
+      "quote": "(../../resolve-conflicts/SKILL.md)",
+      "verify": {
+        "method": "link_resolves",
+        "href": "../../resolve-conflicts/SKILL.md",
+        "base": "file_dir"
+      }
+    },
+    {
+      "id": "skills/fix-findings/references/landing-and-handoff.md:14:skill_ref:resolve-conflicts",
+      "source": {
+        "file": "skills/fix-findings/references/landing-and-handoff.md",
+        "line": 14
+      },
+      "kind": "skill_ref",
+      "value": "resolve-conflicts",
+      "quote": "- On a conflict: `git -C <landing-tree> cherry-pick --abort`, mark the finding `CONFLICT`, and skip every finding that depends on it. Never resolve th",
+      "verify": {
+        "method": "skill_exists",
+        "name": "resolve-conflicts",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:38:other:git-worktrees never deletes a branch",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 38
+      },
+      "kind": "other",
+      "value": "git-worktrees never deletes a branch",
+      "quote": "> 4. **Never delete a `fix/finding-<id>` branch** (`git-worktrees` \u203a _Golden Invariants_ 6). RED and BLOCKED branches are the handoff's repro starting",
+      "verify": {
+        "method": "grep",
+        "pattern": "\\*\\*Never delete a branch\\.\\*\\*",
+        "paths": [
+          "skills/_modules/git-worktrees.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:37:other:git-worktrees: sub-agents never create or remove worktrees",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 37
+      },
+      "kind": "other",
+      "value": "git-worktrees: sub-agents never create or remove worktrees",
+      "quote": "> 3. **One worktree per finding, created and removed by the lead only.** Sub-agents never create, remove, lock or unlock worktrees, and each works onl",
+      "verify": {
+        "method": "grep",
+        "pattern": "Sub-agents never create, remove, lock, or unlock worktrees",
+        "paths": [
+          "skills/_modules/git-worktrees.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:22:other:git-worktrees invariant 4 is one worktree per repo",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 22
+      },
+      "kind": "other",
+      "value": "git-worktrees invariant 4 is one worktree per repo",
+      "quote": "- `../_modules/git-worktrees.md`: workspace mode, one worktree **per finding** (exception to _Golden Invariants_ 4, see invariant 3 below)",
+      "verify": {
+        "method": "grep",
+        "pattern": "4\\. \\*\\*One worktree per repo in scope\\.\\*\\*",
+        "paths": [
+          "skills/_modules/git-worktrees.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:81:other:workspace worktrees live in .claude/worktrees",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 81
+      },
+      "kind": "other",
+      "value": "workspace worktrees live in .claude/worktrees",
+      "quote": "2. For each finding, create its worktree with `git-worktrees` \u203a _Workspace Lifecycle_ \u203a _Create_ (`DIR=<repo>/.claude/worktrees/finding-<id>`, branch ",
+      "verify": {
+        "method": "grep",
+        "pattern": "DIR=<repo>/\\.claude/worktrees/\\$SLUG",
+        "paths": [
+          "skills/_modules/references/git-worktrees-workspace.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/fix-findings/SKILL.md:39:other:fan-out caps sub-agents at 5",
+      "source": {
+        "file": "skills/fix-findings/SKILL.md",
+        "line": 39
+      },
+      "kind": "other",
+      "value": "fan-out caps sub-agents at 5",
+      "quote": "> 5. **At most 5 sub-agents per batch.** A larger independent set is split into several batches.",
+      "verify": {
+        "method": "grep",
+        "pattern": "cap at 5 per `MY-RULES\\.md`",
+        "paths": [
+          "skills/_modules/fan-out.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/fix-findings/references/landing-and-handoff.md:31:other:workspace removal uses no --force",
+      "source": {
+        "file": "skills/fix-findings/references/landing-and-handoff.md",
+        "line": 31
+      },
+      "kind": "other",
+      "value": "workspace removal uses no --force",
+      "quote": "git -C <repo> worktree remove <DIR>        # no --force",
+      "verify": {
+        "method": "grep",
+        "pattern": "worktree remove \"\\$DIR\"\\s+# no --force",
+        "paths": [
+          "skills/_modules/references/git-worktrees-workspace.md"
+        ],
+        "base": "repo",
+        "expect": "present"
       }
     }
   ]
