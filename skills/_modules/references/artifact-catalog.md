@@ -22,6 +22,7 @@ On-demand reference for [artifact-protocol.md](../artifact-protocol.md). Every a
 | `walkthrough-<suffix>.md` | `/implement-feature` | Verification results, screenshots, completed summary |
 | `organize_plan-<suffix>.md` | `/organize` | Directory/module structure refactoring proposal |
 | `clean_report-<suffix>.md` | `/clean` | Multi-file dead-code pruning & sanitation report |
+| `skill_review-<suffix>.md` | `/skill-review` | One skill audited against the code and the writing standard: fixes in application order, checked lenses, verification, decisions and a triage matrix |
 | `skills_sync_report-<suffix>.md` | `/sync-skills` | Registry discovery & loader synchronization audit |
 | `prompt-<suffix>.md` | `/create-prompt` | Paste-ready prompt variants when written to disk |
 | `skill_gap-<suffix>.md` | Any Command, per `core` › *Skill gaps* | One registry skill fact that proved wrong, with evidence, the proposed edit and an open/fixed status; written to `~/.terminal/skill-gaps/`, not the artifact dir |
