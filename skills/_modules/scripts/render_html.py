@@ -6,7 +6,11 @@ Compiles Markdown artifacts into standalone, styled HTML pages featuring:
 - Tailwind CSS CDN for modern typography and layout
 - Mermaid 11 ESM CDN for client-side rendering of diagrams
 - GitHub Flavored Markdown alerts ([!NOTE], [!WARNING], etc.)
-- GFM tables, checklists, code blocks with syntax styling
+- GFM tables (a table whose header row is empty renders without one), code blocks
+- Checklists that can be ticked; state is remembered per page in localStorage
+- <details>/<summary> blocks (collapsible; markdown between the tags still renders)
+- A contents list after the H1 when the page has three or more H2 sections
+- Artifact-owner metadata as <meta> tags and a small footer line
 - Native browser launch (--open) via xdg-open / open / start
 - Offline-resilient fallback CSS
 """
@@ -65,6 +69,8 @@ class MarkdownRenderer:
         self.raw_md = raw_md
         self.title = title or "PRIIS Artifact Document"
         self.owner_meta: dict[str, str] = {}
+        self.toc: list[tuple[str, str]] = []
+        self.h1_index: int | None = None
         self._extract_owner_meta()
 
     def _extract_owner_meta(self):
@@ -229,6 +235,24 @@ class MarkdownRenderer:
                     )
                 continue
 
+            # 4b. Collapsible blocks: <details>, <summary>…</summary>, </details>
+            if re.match(r"^\s*</?(details|summary)\b", line):
+                for tag in re.findall(r"<details[^>]*>|</details>|<summary[^>]*>.*?</summary>", line.strip()):
+                    if tag.startswith("<details"):
+                        blocks.append(
+                            '<details class="my-4 rounded-lg border border-slate-200 bg-white px-4 py-2 shadow-sm">'
+                        )
+                    elif tag == "</details>":
+                        blocks.append("</details>")
+                    else:
+                        inner = re.sub(r"^<summary[^>]*>|</summary>$", "", tag)
+                        blocks.append(
+                            '<summary class="cursor-pointer select-none py-1 text-sm font-semibold text-slate-800">'
+                            f"{self.render_inline(inner)}</summary>"
+                        )
+                i += 1
+                continue
+
             # 5. Headings (# H1 to ###### H6)
             m_head = re.match(r"^(#{1,6})\s+(.*)$", line)
             if m_head:
@@ -236,6 +260,11 @@ class MarkdownRenderer:
                 h_text = m_head.group(2).strip()
                 slug = slugify(h_text)
                 rendered_h = self.render_inline(h_text)
+
+                if level == 2:
+                    self.toc.append((slug, rendered_h))
+                if level == 1 and self.h1_index is None:
+                    self.h1_index = len(blocks)
 
                 if level == 1:
                     blocks.append(
@@ -350,6 +379,7 @@ class MarkdownRenderer:
                     or re.match(r"^(\*{3,}|-{3,}|_{3,})\s*$", curr.strip())
                     or re.match(r"^(\s*)(```+|~~~+)", curr)
                     or re.match(r"^(\s*)([-*+]|\d+\.)\s+", curr)
+                    or re.match(r"^\s*</?(details|summary)\b", curr)
                     or ("|" in curr and i + 1 < n and "|" in lines[i + 1] and re.search(r"^\s*\|?\s*:?-+:?\s*\|", lines[i + 1]))
                 ):
                     break
@@ -393,6 +423,8 @@ class MarkdownRenderer:
                 f'<th class="px-4 py-3 font-semibold tracking-wide text-xs uppercase text-slate-700 {align_class}">{self.render_inline(h)}</th>'
             )
 
+        has_header = any(h for h in headers)
+
         tbody_rows = []
         for r_line in table_lines[2:]:
             cells = split_cells(r_line)
@@ -407,7 +439,12 @@ class MarkdownRenderer:
         return (
             '<div class="overflow-x-auto my-6 rounded-lg border border-slate-200 bg-white shadow-sm">\n'
             '  <table class="w-full text-left border-collapse">\n'
-            f'    <thead class="bg-slate-50 border-b border-slate-200"><tr>{"".join(thead_cells)}</tr></thead>\n'
+            + (
+                f'    <thead class="bg-slate-50 border-b border-slate-200"><tr>{"".join(thead_cells)}</tr></thead>\n'
+                if has_header
+                else ""
+            )
+            +
             f'    <tbody class="divide-y divide-slate-100 text-slate-700">{"".join(tbody_rows)}</tbody>\n'
             '  </table>\n'
             '</div>'
@@ -434,13 +471,14 @@ class MarkdownRenderer:
             if m_task:
                 checked = m_task.group(1).lower() == "x"
                 rest = m_task.group(2)
+                checked_attr = " checked" if checked else ""
                 checkbox = (
-                    '<input type="checkbox" checked disabled class="mr-2 rounded text-emerald-600 focus:ring-0" />'
-                    if checked
-                    else '<input type="checkbox" disabled class="mr-2 rounded text-slate-400 focus:ring-0" />'
+                    f'<input type="checkbox" data-task{checked_attr} '
+                    'class="mt-1 mr-2 h-4 w-4 shrink-0 cursor-pointer accent-emerald-600" />'
                 )
                 items_html.append(
-                    f'<li class="flex items-start text-sm text-slate-700 my-1">{checkbox}<span>{self.render_inline(rest)}</span></li>'
+                    f'<li class="list-none"><label class="flex items-start text-sm text-slate-700 my-1 cursor-pointer">'
+                    f"{checkbox}<span>{self.render_inline(rest)}</span></label></li>"
                 )
             else:
                 items_html.append(
@@ -459,6 +497,18 @@ class MarkdownRenderer:
             doc_title = re.sub(r"<[^>]+>", "", first_h1.group(1)).strip()
 
         blocks = self.parse_blocks()
+        if len(self.toc) >= 3:
+            links = "".join(
+                f'<li><a href="#{slug}" class="text-emerald-700 hover:text-emerald-900 hover:underline">{label}</a></li>'
+                for slug, label in self.toc
+            )
+            toc_html = (
+                '<nav aria-label="Contents" class="my-6 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm">'
+                '<div class="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-500">Contents</div>'
+                f'<ul class="flex flex-wrap gap-x-5 gap-y-1">{links}</ul></nav>'
+            )
+            insert_at = self.h1_index + 1 if self.h1_index is not None else 0
+            blocks.insert(insert_at, toc_html)
         content_body = "\n".join(blocks)
 
         owner_banner = ""
@@ -468,17 +518,10 @@ class MarkdownRenderer:
             session = html.escape(self.owner_meta.get("session", ""))
             created = html.escape(self.owner_meta.get("created", ""))
             owner_meta_tag = f'    <meta name="artifact-owner" content="{owner}" />\n    <meta name="artifact-session" content="{session}" />\n    <meta name="artifact-created" content="{created}" />\n'
-            owner_banner = f"""
-      <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 font-mono border-b border-slate-200 pb-3 mb-6 bg-slate-50/50 p-3 rounded-lg border">
-        <div class="flex items-center gap-2">
-          <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm"></span>
-          <span>Owner: <strong class="text-slate-800">{owner}</strong></span>
-          <span class="text-slate-300">&bull;</span>
-          <span>Session: <code class="text-slate-700">{session}</code></span>
-        </div>
-        <div>Created: {created}</div>
-      </div>
-"""
+            owner_banner = (
+                '\n      <footer class="mt-12 border-t border-slate-200 pt-3 text-xs text-slate-400">'
+                f"Written by {owner} · {created}</footer>\n"
+            )
 
         escaped_title = html.escape(doc_title)
 
@@ -510,10 +553,25 @@ class MarkdownRenderer:
     </style>
   </head>
   <body class="bg-stone-50 text-slate-900 font-sans antialiased selection:bg-emerald-100 selection:text-emerald-900 min-h-screen">
-    <main class="max-w-5xl mx-auto px-6 py-12">
-{owner_banner}
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-12">
 {content_body}
+{owner_banner}
     </main>
+    <script>
+      // Checklist ticks survive a reload; stored per page, never required for the page to render.
+      (() => {{
+        const key = "task-state:" + location.pathname;
+        let saved = {{}};
+        try {{ saved = JSON.parse(localStorage.getItem(key) || "{{}}"); }} catch {{}}
+        document.querySelectorAll("input[data-task]").forEach((box, i) => {{
+          if (i in saved) box.checked = saved[i];
+          box.addEventListener("change", () => {{
+            saved[i] = box.checked;
+            try {{ localStorage.setItem(key, JSON.stringify(saved)); }} catch {{}}
+          }});
+        }});
+      }})();
+    </script>
   </body>
 </html>
 """
