@@ -125,7 +125,7 @@ find() {
   fi
 }
 
-alias f="find"
+alias ff="find"
 
 alias untar="tar -xvzf"
 
