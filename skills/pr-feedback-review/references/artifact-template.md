@@ -13,6 +13,7 @@ On-demand reference for [SKILL.md](../SKILL.md) › *Step 6 — Artifact Managem
 > **Mode:** standard / deep  
 > **Profile:** `<project>-profile` / none (*Project profile*)  
 > **Status:** Active / Needs Attention — <votes>, <n> threads active, <n> resolved  
+> **UI answers:** merged <date> — <a> accepted, <n> to rewrite from notes, <o> own, <s> skipped  <!-- optional, `--ui` merge only -->  
 > **Reviewers:**  
 > - **<Reviewer Name>:** `<Vote / Status>`
 
@@ -34,6 +35,7 @@ On-demand reference for [SKILL.md](../SKILL.md) › *Step 6 — Artifact Managem
 ### <a id="thread-<ThreadId>"></a>Thread [#<ThreadId>](https://dev.azure.com/<org>/<project>/_git/<repo>/pullrequest/<prId>?discussionId=<ThreadId>): <File / Topic Summary>
 - **Author:** <Name> (<Timestamp>)
 - **Status:** Active / Resolved (<date>, reply <comment id>) / Closed
+- **UI decision:** accepted / adjusted from notes / own reply / skipped (<date>), with the user's adjust notes quoted under it  <!-- optional, `--ui` merge only -->
 - **Location:** `[<file>:<line>]`
 - **Selected code** (`<file>:<start>-<end>` @ `<short-sha>`, iteration <n>; omit for general threads):
   ```<lang>
@@ -56,6 +58,8 @@ On-demand reference for [SKILL.md](../SKILL.md) › *Step 6 — Artifact Managem
 
 #### Ready-to-Send Reply (in the PR's language)
 > <Draft reply ready to copy-paste directly into the PR thread>
+
+A reply skipped in `--ui` has the heading `#### Reply (skipped in --ui — not posted)`, and one waiting for a rewrite from notes `#### Reply (rewrite from --ui notes — not posted yet)`; `/pr-post-comments` only posts *Ready-to-Send Reply* blocks, so it is not posted. An own reply loses its `Voice pass: done` mark.
 
 ---
 

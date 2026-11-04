@@ -1,7 +1,7 @@
 ---
 name: pr-feedback-review
-description: "Triages the discussion on a pull request: every reviewer thread, comment and vote, checked against the code at the PR head, with a triage category, its state at head, a recommendation and a ready-to-send reply per thread, in `<prefix>-pr_feedback_review-<suffix>.md`. Also triages the counterpart PR in a sibling repo, where a comment's fix often lands. `--deep` runs Verification, Merit and Impact as parallel sub-agents; reads from a detached snapshot (`live` opts out). Use for /pr-feedback-review, \"triage the PR comments\", \"what did the reviewers say?\", \"draft replies to the threads\"."
-argument-hint: "[--deep] [live] [<target>]"
+description: "Triages the discussion on a pull request: every reviewer thread, comment and vote, checked against the code at the PR head, with a triage category, its state at head, a recommendation and a ready-to-send reply per thread, in `<prefix>-pr_feedback_review-<suffix>.md`. Also triages the counterpart PR in a sibling repo, where a comment's fix often lands. `--deep` runs Verification, Merit and Impact as parallel sub-agents; `--ui` opens a localhost page to edit, accept or skip replies; reads from a detached snapshot (`live` opts out). Use for /pr-feedback-review, \"triage the PR comments\", \"what did the reviewers say?\", \"draft replies to the threads\"."
+argument-hint: "[--deep] [--ui] [live] [<target>]"
 ---
 
 # PR Feedback Review Skill
@@ -13,7 +13,7 @@ Triages pull request reviewer comments, threads, and votes against the code at t
 ## Invariants
 
 1. **Artifact and summary:** every `/pr-feedback-review` writes `<prefix>-pr_feedback_review-<suffix>.md` in the artifact dir (`artifact-protocol`) and opens its chat response with the `artifact-protocol` › *Chat link block*. Never substitute `<prefix>-implementation_plan-<suffix>.md` for the feedback review artifact.
-2. **Read-only:** never edit code, stage commits, run migrations, post replies, or modify the main checkout (`core` › *The `/proceed` gate*, `git-worktrees` › *Snapshot Lifecycle*).
+2. **Read-only:** never edit code, stage commits, run migrations, post replies, or modify the main checkout; the only files written are the artifact and its `--ui` siblings (`core` › *The `/proceed` gate*, `git-worktrees` › *Snapshot Lifecycle*).
 
 ---
 
@@ -53,6 +53,7 @@ Record the loaded profile (or `none`) in the artifact header's **Profile** line.
 | `/pr-feedback-review [target]` | **Standard** (default) | Single pass covering Verification, Merit, and Impact (Steps 3–5) |
 | `/pr-feedback-review --deep [target]` | **Deep** | Verification, Merit, and Impact run in parallel sub-agents ([deep-mode.md](references/deep-mode.md)), then aggregate |
 | `/pr-feedback-review live [target]` | Standard or deep, **no snapshot** | Reads the main checkout directly (same as `/no-worktrees`) |
+| `/pr-feedback-review --ui [target]` | Any mode, plus a **review page** | After publish, a localhost page edits, accepts or skips each reply ([ui-mode.md](references/ui-mode.md)); combinable with `--deep` and `live` |
 
 Every thread is assessed on three axes:
 - **Verification**: what does the code at *head* do about this thread (addressed, partial, not addressed, superseded; commit, `path:line`, and test)?
@@ -144,6 +145,8 @@ For every non-trivial thread:
 
 1. Publish `<prefix>-pr_feedback_review-<suffix>.md` in the artifact dir (`artifact-protocol`) via `artifact-protocol` › *Claim*, following the template in [artifact-template.md](references/artifact-template.md), then remove the snapshot(s).
 2. Begin the chat response with the `artifact-protocol` › *Chat link block*, followed by a concise summary of reviewer votes, blocking/open thread counts, and the closing gate line (`core` › *The `/proceed` gate*).
+
+3. **`--ui`**: after publish, follow [ui-mode.md](references/ui-mode.md) before the chat summary; the chat link block adds the `.answers.json` sibling.
 
 ### 6.4 — Status fields
 
