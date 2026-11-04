@@ -21802,11 +21802,11 @@
       "id": "skills/fix-findings/references/landing-and-handoff.md:25:other:git cherry-pick --abort restores the pre-sequence state",
       "source": {
         "file": "skills/fix-findings/references/landing-and-handoff.md",
-        "line": 25
+        "line": 30
       },
       "kind": "other",
       "value": "git cherry-pick --abort restores the pre-sequence state",
-      "quote": "- On a conflict, `git -C <landing-tree> cherry-pick --abort` returns the branch to where it was before the sequence started. Mark every finding of the",
+      "quote": "- **Conflict:** `git -C <landing-tree> cherry-pick --abort` returns the branch to where it was before the sequence started, with nothing staged. Mark",
       "verify": {
         "method": "manual",
         "reason": "git docs, man git-cherry-pick: '--abort Cancel the operation and return to the pre-sequence state.' (git 2.x)"

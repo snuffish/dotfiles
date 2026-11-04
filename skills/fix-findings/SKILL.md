@@ -89,13 +89,13 @@ On-demand references (`references/`):
 1. Record `BASE=$(git -C <landing-tree> rev-parse HEAD)`: the PR branch head that every worktree in this batch starts from.
 2. For each finding, create its worktree with `git-worktrees` › _Workspace Lifecycle_ › _Create_ (`DIR=<repo>/.claude/worktrees/finding-<id>`, branch `fix/finding-<id>`, base `$BASE`), then _Hydrate_. If the branch already exists from an earlier run, stop and ask: reuse it or name the new one `fix/finding-<id>-2`.
 3. Set `LOCK=$(git -C <repo> rev-parse --path-format=absolute --git-common-dir)/fix-findings-services.lock` and pass it in every brief. If `command -v flock` fails (macOS ships without it), allow at most one finding per batch whose tests use a shared local service, and move the others to later batches.
-4. Spawn all sub-agents of the batch **in one message**, each with the brief from [`references/agent-brief.md`](references/agent-brief.md), filled with the finding's full text, its file set, its `[worktree-context]` block and the profile's targeted test commands. With `--group`, use the group variant of the brief: every finding's full text in topological order, the group's union file set and the union of their targeted tests.
+4. Spawn all sub-agents of the batch **in one message**, each with the brief from [`references/agent-brief.md`](references/agent-brief.md), filled with the finding's full text, its file set, its `[worktree-context]` block and the profile's targeted test commands. With `--group`, use the group variant of the brief: every finding's full text in topological order, the group's union file set and the union of their targeted tests. The agent applies and commits every fix first and runs the test suites once at the end, never after each fix.
 5. Wait for every sub-agent. Do not poll its worktree while it runs.
 
 ### Step 4: Collect, land and verify
 
 1. Read every `<DIR>/RESULT.json`. Classify per invariant 1, and check `files_changed` against `git -C <DIR> diff --name-only $BASE..HEAD`. A file outside the finding's file set downgrades it to RED with the reason "scope drift". For a group, the group's union file set applies; a finding the agent marked `NOT_FIXED` has no commit and goes to the handoff.
-2. Land the GREEN findings in dependency order following [`references/landing-and-handoff.md`](references/landing-and-handoff.md) › _Cherry-pick_. A conflict aborts that pick, marks the finding `CONFLICT` and skips its dependents. A GREEN group lands all or nothing (_Cherry-pick_ › _Groups_): it was tested only as a whole.
+2. Land the GREEN findings in dependency order following [`references/landing-and-handoff.md`](references/landing-and-handoff.md) › _Cherry-pick_. A conflict aborts that pick, marks the finding `CONFLICT` and skips its dependents. A GREEN group lands all or nothing, as one commit (_Cherry-pick_ › _Groups_): it was tested only as a whole, and the PR branch then never needs a squash or force-push.
 3. Run the full build and test suite **once** in the landing tree (_Full-suite gate_ in the same reference). If it fails, do not push: stop, report the failing tests and which landed commits touch them, and ask.
 4. Run the formatter the repo rulebook requires before a commit. If it changed files, commit them through [`/commit`](../commit/SKILL.md). Then `git -C <landing-tree> push` (no force) and read back `git rev-parse HEAD` against `origin/<branch>`.
 5. Remove this batch's worktrees (_Worktree removal_), keeping every branch.
@@ -127,6 +127,6 @@ Without `--group`, leave the `Group` column out. With it, a group's tests are sh
 ## 4. Verification
 
 - Every landed commit maps to a GREEN `RESULT.json` with `tests_run > 0` (invariant 1); with `--group`, to a `FIXED` entry of a GREEN group, and either every commit of that group landed or none did.
-- `git log $FIRST_BASE..HEAD` on the PR branch contains only cherry-picked finding commits and, at most, one formatting commit per batch.
+- `git log $FIRST_BASE..HEAD` on the PR branch contains one commit per landed finding (with `--group`, one per landed group) and, at most, one formatting commit per batch.
 - The full suite ran once per batch, after landing and before the push, and its counts appear in the Output block.
 - `git worktree list` shows no `finding-*` worktree. `git branch --list 'fix/finding-*'` still lists every branch.

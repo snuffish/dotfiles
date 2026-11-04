@@ -64,7 +64,7 @@ Rules:
 1. Fix the findings in the order given, each with the smallest change that resolves it. Rules 1–2 of the single-finding brief apply to every finding.
 2. One commit per finding, staged by explicit path: "<repo commit prefix> Fix finding <id>: <one-line summary>". Build after each commit; a finding that breaks the build and that you cannot repair is reverted with `git revert --no-edit` and marked NOT_FIXED.
 3. A finding you cannot fix (it does not hold at HEAD, needs a decision the text does not make, or needs a file outside "Expected files"): leave it uncommitted, mark it NOT_FIXED with the reason, and go on with the next one. A later finding that depends on it is NOT_FIXED too.
-4. After the last finding, run the build and the union of the group's targeted tests once, under rules 3–5 of the single-finding brief. That run sets the group's status.
+4. Apply every fix first: run no test suite until each finding is committed or marked NOT_FIXED (a compile check between commits is fine). Then run the build and the union of the group's targeted tests once, under rules 3–5 of the single-finding brief. That run sets the group's status.
 5. Write <repo-root>/RESULT.json (group schema below) as your last action, then reply with its content and nothing else.
 ```
 

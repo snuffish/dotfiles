@@ -16,15 +16,19 @@ git -C <landing-tree> cherry-pick -x <commit from RESULT.json>
 
 ### Groups
 
-A GREEN group (`--group`) lands all or nothing, because its tests ran only on the whole group. Pick its `FIXED` commits in one sequence, in the order its `RESULT.json` lists them:
+A GREEN group (`--group`) lands all or nothing, because its tests ran only on the whole group, and it lands as **one commit**: the PR branch gets one commit per group, so nothing has to be squashed or force-pushed after the push. Stage the group's whole tested range, then commit once:
 
 ```bash
-git -C <landing-tree> cherry-pick -x <commit of each FIXED finding, in order>
+git -C <landing-tree> cherry-pick --no-commit $BASE..fix/finding-<group id>
+git -C <landing-tree> diff --quiet --cached fix/finding-<group id> -- <group's files> && echo "matches the tested tree"
+git -C <landing-tree> commit -F <message file>
 ```
 
-- On a conflict, `git -C <landing-tree> cherry-pick --abort` returns the branch to where it was before the sequence started. Mark every finding of the group `CONFLICT` and skip the groups that depend on it.
-- An empty pick inside the sequence is skipped with `git cherry-pick --skip`, as above, and the sequence continues.
-- `NOT_FIXED` findings have no commit to pick. They go to the handoff with the agent's reason.
+- **Message:** `<repo commit prefix> <one-line summary of the group>`, a blank line, one bullet per `FIXED` finding (`<finding or thread id>: <its summary>`), then `Squashed from fix/finding-<group id> @ <short-sha>` (it replaces `-x`) and the attribution trailer. Thread replies cite this commit.
+- **`NOT_FIXED` findings:** an attempt and its `git revert` (rule 2 of the group brief) cancel out inside the range, and a finding left uncommitted (rule 3) has no commit in it. Either way it goes to the handoff with the agent's reason.
+- **Landing part of a group** (only on the user's say-so, after a RED group's failures are traced to some of its findings): `cherry-pick --no-commit` only the picked commits, in order, then commit once, and name the left-out findings in the handoff.
+- **Conflict:** `git -C <landing-tree> cherry-pick --abort` returns the branch to where it was before the sequence started, with nothing staged. Mark every finding of the group `CONFLICT` and skip the groups that depend on it.
+- **Already present:** when `git diff --cached --quiet` shows nothing staged after the pick, skip the commit and report the group as landed with the note "already present".
 
 ## Full-suite gate
 
