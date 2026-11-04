@@ -110,6 +110,34 @@ if [ -f "$transcript" ] && [ -n "$session" ]; then
   fi
 fi
 
+# Most recently written sub-agent: running (last entry not an assistant end_turn) and touched in the last 5 min.
+# Reads only the transcript tail; sub-agents may run other models, so % only when the model matches the main one
+sub=""
+if [ -n "$transcript" ]; then
+  sub_file=$(ls -t "${transcript%.jsonl}/subagents"/agent-*.jsonl 2>/dev/null | head -1)
+  if [ -n "$sub_file" ] && [ $(( $(date +%s) - $(stat -c %Y "$sub_file") )) -lt 300 ]; then
+    meta="${sub_file%.jsonl}.meta.json"
+    last=$(tail -c 262144 "$sub_file" | grep '"type":"assistant"' | tail -1)
+    { read -r stop; read -r toks; } < <(printf '%s\n' "$last" | /usr/bin/jq -r \
+      '.message.stop_reason // "", ((.message.usage.input_tokens // 0) + (.message.usage.cache_read_input_tokens // 0) + (.message.usage.cache_creation_input_tokens // 0))' 2>/dev/null)
+    last_type=$(tail -n 1 "$sub_file" | /usr/bin/jq -r 'if .type == "assistant" then (.message.stop_reason // "") else "" end' 2>/dev/null)
+    if [ "$last_type" != "end_turn" ] && [ -f "$meta" ]; then
+      { read -r atype; read -r adesc; read -r amodel; } < <(/usr/bin/jq -r '(.agentType // ""), (.description // ""), (.pickedEffortModel // "")' "$meta" 2>/dev/null)
+      if [ -n "$atype" ]; then
+        sub="@$atype"
+        if [[ "$toks" =~ ^[0-9]+$ ]] && [ "$toks" -gt 0 ]; then
+          if [ -n "$model_id" ] && [ "${amodel%\[1m\]}" = "${model_id%\[1m\]}" ] && [[ "$ctx_size" =~ ^[0-9]+$ ]] && [ "$ctx_size" -gt 0 ]; then
+            sub="$sub ctx $(( toks * 100 / ctx_size ))%"
+          else
+            sub="$sub $(( toks / 1000 ))k"
+          fi
+        fi
+        [ -n "$adesc" ] && sub="$sub \"${adesc:0:30}\""
+      fi
+    fi
+  fi
+fi
+
 where=""
 if [ -n "$dir" ]; then
   # Branch (short sha when detached), "*" unstaged or untracked, "+" staged, ↑↓ commits ahead/behind upstream
@@ -178,7 +206,7 @@ if [ -n "$used" ]; then
     near=$(awk -v u="$used" -v s="$ctx_size" -v c="$compact" 'BEGIN { printf "%.0f", u * s / c }')
   ctx_color=$(heat "$near" 32 33)
 fi
-ctx=$(join ' · ' "$(color "$ctx_color" "$used_txt")" "$(color '38;5;208' "${skills:+skills:$skills}")")
+ctx=$(join ' · ' "$(color "$ctx_color" "$used_txt")" "$(color '38;5;208' "${skills:+skills:$skills}")" "$(color 36 "$sub")")
 
 # Session cost and plan rate limits share a segment: both describe spend
 usage_parts=()
