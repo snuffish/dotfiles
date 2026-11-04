@@ -57,12 +57,6 @@ Write it with `artifact-protocol` naming (suffix: the PR branch slug plus `fix-f
   <exact build command from RESULT.json>
   <exact test command from RESULT.json>
   ```
-````
-
-For CONFLICT: `git -C <landing-tree> cherry-pick -x <commit>` reproduces the conflict on the current PR head.
-
+  For CONFLICT: `git -C <landing-tree> cherry-pick -x <commit>` reproduces the conflict on the current PR head.
 - **Next step:** <fix the test / restart the SQL container and re-run / rebase onto the new head>
-
-```
-
-```
+````
