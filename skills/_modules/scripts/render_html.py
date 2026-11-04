@@ -239,8 +239,11 @@ class MarkdownRenderer:
             if re.match(r"^\s*</?(details|summary)\b", line):
                 for tag in re.findall(r"<details[^>]*>|</details>|<summary[^>]*>.*?</summary>", line.strip()):
                     if tag.startswith("<details"):
+                        m_id = re.search(r'\bid="([^"]+)"', tag)
+                        id_attr = f' id="{html.escape(m_id.group(1), quote=True)}"' if m_id else ""
+                        open_attr = " open" if re.search(r"\bopen\b", tag) else ""
                         blocks.append(
-                            '<details class="my-4 rounded-lg border border-slate-200 bg-white px-4 py-2 shadow-sm">'
+                            f'<details{id_attr}{open_attr} class="my-3 scroll-mt-4 rounded-lg border border-slate-200 bg-white px-4 py-2 shadow-sm">'
                         )
                     elif tag == "</details>":
                         blocks.append("</details>")
@@ -431,8 +434,11 @@ class MarkdownRenderer:
             td_cells = []
             for idx, c in enumerate(cells):
                 align_class = aligns[idx] if idx < len(aligns) else "text-left"
+                # Short cells (ids like S1, markers, counts) never wrap mid-word.
+                plain = re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", c).strip("`* ")
+                nowrap = " whitespace-nowrap" if len(plain) <= 12 else ""
                 td_cells.append(
-                    f'<td class="px-4 py-2.5 text-sm border-t border-slate-100 {align_class}">{self.render_inline(c)}</td>'
+                    f'<td class="px-4 py-2.5 text-sm border-t border-slate-100 {align_class}{nowrap}">{self.render_inline(c)}</td>'
                 )
             tbody_rows.append(f'<tr class="hover:bg-slate-50/75 transition-colors">{"".join(td_cells)}</tr>')
 
@@ -558,6 +564,32 @@ class MarkdownRenderer:
 {owner_banner}
     </main>
     <script>
+      // Collapsible blocks: following a #link opens the block that holds the target,
+      // and pages with several blocks get "Expand all / Collapse all" above the first one.
+      (() => {{
+        const openFor = () => {{
+          const id = decodeURIComponent(location.hash.slice(1));
+          const el = id && document.getElementById(id);
+          if (!el) return;
+          for (let d = el.closest("details"); d; d = d.parentElement.closest("details")) d.open = true;
+          el.scrollIntoView();
+        }};
+        window.addEventListener("hashchange", openFor);
+        openFor();
+        const all = document.querySelectorAll("main details");
+        if (all.length < 2) return;
+        const bar = document.createElement("div");
+        bar.className = "flex justify-end gap-3 text-xs";
+        for (const [label, state] of [["Expand all", true], ["Collapse all", false]]) {{
+          const b = document.createElement("button");
+          b.type = "button";
+          b.textContent = label;
+          b.className = "text-emerald-700 hover:underline";
+          b.addEventListener("click", () => all.forEach((d) => (d.open = state)));
+          bar.append(b);
+        }}
+        all[0].before(bar);
+      }})();
       // Checklist ticks survive a reload; stored per page, never required for the page to render.
       (() => {{
         const key = "task-state:" + location.pathname;

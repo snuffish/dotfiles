@@ -67,7 +67,8 @@ Source: [<seeder>:<n>](<path>#L<n>) (or **seeded by this run**).
 | --------- | -------- | ----------- | ---- | ------ |
 | [S1](#s1) | <claim>  | `<account>` | 🔥   | ⬜     |
 
-### <a id="s1"></a>S1 · <observable outcome, phrased as a claim>
+<details id="s1">
+<summary><b>S1 · <observable outcome, phrased as a claim></b> · 🔥 · ⬜ not run</summary>
 
 **As** `<account>` · **Risk** 🔥 <why: the Step 3/4 finding behind it>
 
@@ -86,6 +87,8 @@ Source: [<seeder>:<n>](<path>#L<n>) (or **seeded by this run**).
 > ⚠️ **Watch for:** <the specific wrong output this change could produce; omit for a plain happy path>
 
 **Result:** ⬜ not run
+
+</details>
 
 ## <a id="watchlist"></a>5. Regression watchlist
 
@@ -122,11 +125,12 @@ Source: [<seeder>:<n>](<path>#L<n>) (or **seeded by this run**).
 - **Tables** have at most 5 columns, and cells hold short text. UUIDs, SQL, long URLs and file paths go below the table or in a `<details>` block.
 - **Link labels** are `file.ext:line` (e.g. `[Operation.cs:96](…)`), never the full path; the URL carries the path.
 - **Code blocks** keep lines ≤ 100 characters: one SQL statement or clause per line, long shell commands split with `\`.
+- **Each scenario is one collapsed `<details id="sN">` block**, so the page reads as a list of scenarios with their status. The `<summary>` holds the plain-text title in `<b>`, the risk marker and the result (no markdown, links or backticks inside `<summary>`: GitHub doesn't render them there). The `id` on `<details>` keeps the `#sN` links working; the HTML export opens the block when its link is followed. Keep a blank line after `</summary>` and before `</details>`.
 - **Reference material** a tester reads only when needed (record ids, inspect and undo queries) goes in `<details><summary>…</summary>` with a blank line after `<summary>` and before `</details>`, so markdown inside still renders.
 - **Expect** lines use checkboxes (`- [ ]`); in the HTML export they can be ticked and are remembered per browser.
 
 **Results**
 
-- Every scenario ends with `**Result:** ⬜ not run`, mirrored in the _Result_ column of the scenario table. Values: `⬜ not run` · `✅ pass` · `❌ fail — <what you saw>` · `⏭️ skipped — <why>`.
-- When a scenario is run in a session that owns the artifact, update the scenario's _Expect_ boxes, its **Result** line and its table cell in the same edit (`artifact-protocol` › _Status Sync Rule_).
+- Every scenario ends with `**Result:** ⬜ not run`, mirrored in the scenario's `<summary>` and the _Result_ column of the scenario table. Values: `⬜ not run` · `✅ pass` · `❌ fail — <what you saw>` · `⏭️ skipped — <why>`.
+- When a scenario is run in a session that owns the artifact, update the scenario's _Expect_ boxes, its **Result** line, its `<summary>` and its table cell in the same edit (`artifact-protocol` › _Status Sync Rule_).
 - **Links**: format source links per `artifact-protocol` › _Host-Specific Link Formats & Section Anchors_; use HTML anchors (`#s1`, `#watchlist`) for intra-document links.
