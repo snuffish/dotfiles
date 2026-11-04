@@ -1,6 +1,6 @@
 # Skill-review lenses
 
-On-demand reference for [`SKILL.md`](../SKILL.md) steps 2 and 4. Each lens has a check, the evidence command and a worked example. Run every lens; a lens with nothing to report still yields one *Checked, no finding* line. Search with `git grep` and `git ls-files`; a bare `*` or `====` in a zsh command breaks it.
+On-demand reference for [`SKILL.md`](../SKILL.md) steps 2 and 4. Each lens has a check, the evidence command and a worked example. Run every lens; a lens with nothing to report still yields one *Checked, no finding* line. Search with `git grep` and `git ls-files`; with `grep`, options after `--` are read as file names; in zsh a word starting with `=` (like `====`) expands to a command path and breaks the command.
 
 ## 1. Triggers
 

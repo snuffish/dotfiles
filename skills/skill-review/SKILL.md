@@ -115,4 +115,4 @@ Artifact: `<prefix>-skill_review-<suffix>.md`, laid out by the report template.
 - [ ] The independent pass ran before the inputs were opened.
 - [ ] Every input finding has a status; every *wrong* one names what breaks.
 - [ ] Every fix has a decision and an effort; the artifact has *Verification* and *Decisions* sections.
-- [ ] Shell: `git grep` and `git ls-files` for searches (zsh expands globs and `ls` may be an alias); no file was edited, nothing committed or posted.
+- [ ] Shell: `git grep` and `git ls-files` for searches (`ls` and `g`/`gg` may be aliases: use `command ls`, and don't name shell functions `g` or `gg`); no file was edited, nothing committed or posted.
