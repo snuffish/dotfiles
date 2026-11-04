@@ -6153,103 +6153,6 @@
       }
     },
     {
-      "id": "skills/_modules/outward-writes.md:3:doc_link:core \u203a The ",
-      "source": {
-        "file": "skills/_modules/outward-writes.md",
-        "line": 3
-      },
-      "kind": "doc_link",
-      "value": "core \u203a The ",
-      "quote": "`core` \u203a *The `",
-      "verify": {
-        "method": "heading_pointer",
-        "target": "core",
-        "heading": "The ",
-        "base": "repo"
-      }
-    },
-    {
-      "id": "skills/_modules/outward-writes.md:3:skill_ref:commit",
-      "source": {
-        "file": "skills/_modules/outward-writes.md",
-        "line": 3
-      },
-      "kind": "skill_ref",
-      "value": "commit",
-      "quote": ", PR host, or issue tracker (`commit`, `pr-summary`, `pr-post-comments`, `create-ticket`). Extends `core` \u203a *The `/proceed` gate* rule 2.",
-      "verify": {
-        "method": "skill_exists",
-        "name": "commit",
-        "base": "repo"
-      }
-    },
-    {
-      "id": "skills/_modules/outward-writes.md:3:skill_ref:create-ticket",
-      "source": {
-        "file": "skills/_modules/outward-writes.md",
-        "line": 3,
-        "also_lines": [
-          15
-        ]
-      },
-      "kind": "skill_ref",
-      "value": "create-ticket",
-      "quote": "ummary`, `pr-post-comments`, `create-ticket`). Extends `core` \u203a *The `/proceed` gate* rule 2.",
-      "verify": {
-        "method": "skill_exists",
-        "name": "create-ticket",
-        "base": "repo"
-      }
-    },
-    {
-      "id": "skills/_modules/outward-writes.md:3:skill_ref:pr-post-comments",
-      "source": {
-        "file": "skills/_modules/outward-writes.md",
-        "line": 3
-      },
-      "kind": "skill_ref",
-      "value": "pr-post-comments",
-      "quote": "ker (`commit`, `pr-summary`, `pr-post-comments`, `create-ticket`). Extends `core` \u203a *The `/proceed` gate* rule 2.",
-      "verify": {
-        "method": "skill_exists",
-        "name": "pr-post-comments",
-        "base": "repo"
-      }
-    },
-    {
-      "id": "skills/_modules/outward-writes.md:3:skill_ref:pr-summary",
-      "source": {
-        "file": "skills/_modules/outward-writes.md",
-        "line": 3,
-        "also_lines": [
-          15
-        ]
-      },
-      "kind": "skill_ref",
-      "value": "pr-summary",
-      "quote": "or issue tracker (`commit`, `pr-summary`, `pr-post-comments`, `create-ticket`). Extends `core` \u203a *The `/proceed` gate* rule 2.",
-      "verify": {
-        "method": "skill_exists",
-        "name": "pr-summary",
-        "base": "repo"
-      }
-    },
-    {
-      "id": "skills/_modules/outward-writes.md:3:skill_ref:proceed",
-      "source": {
-        "file": "skills/_modules/outward-writes.md",
-        "line": 3
-      },
-      "kind": "skill_ref",
-      "value": "proceed",
-      "quote": "et`). Extends `core` \u203a *The `/proceed` gate* rule 2.",
-      "verify": {
-        "method": "skill_exists",
-        "name": "proceed",
-        "base": "repo"
-      }
-    },
-    {
       "id": "skills/_modules/outward-writes.md:8:doc_link:core.md",
       "source": {
         "file": "skills/_modules/outward-writes.md",
@@ -6272,7 +6175,7 @@
       },
       "kind": "doc_link",
       "value": "pr-host \u203a Tool: MCP vs CLI",
-      "quote": "`pr-host` \u203a *Tool: MCP vs CLI*",
+      "quote": "`pr-host` \u203a _Tool: MCP vs CLI_",
       "verify": {
         "method": "heading_pointer",
         "target": "pr-host",
@@ -6288,7 +6191,7 @@
       },
       "kind": "doc_link",
       "value": "artifact-protocol \u203a Rules",
-      "quote": "`artifact-protocol` \u203a *Rules*",
+      "quote": "`artifact-protocol` \u203a _Rules_",
       "verify": {
         "method": "heading_pointer",
         "target": "artifact-protocol",
@@ -21950,6 +21853,189 @@
         ],
         "base": "repo",
         "expect": "present"
+      }
+    },
+    {
+      "id": "skills/_modules/outward-writes.md:3:doc_link:core \u203a The /proceed gate",
+      "source": {
+        "file": "skills/_modules/outward-writes.md",
+        "line": 3
+      },
+      "kind": "doc_link",
+      "value": "core \u203a The /proceed gate",
+      "quote": "`core` \u203a _The `/proceed` gate_",
+      "verify": {
+        "method": "heading_pointer",
+        "target": "core",
+        "heading": "The `/proceed` gate"
+      }
+    },
+    {
+      "id": "skills/_modules/outward-writes.md:3:skill_ref:commit",
+      "source": {
+        "file": "skills/_modules/outward-writes.md",
+        "line": 3
+      },
+      "kind": "skill_ref",
+      "value": "commit",
+      "quote": "`commit`",
+      "verify": {
+        "method": "skill_exists",
+        "name": "commit"
+      }
+    },
+    {
+      "id": "skills/_modules/outward-writes.md:3:skill_ref:pr-summary",
+      "source": {
+        "file": "skills/_modules/outward-writes.md",
+        "line": 3
+      },
+      "kind": "skill_ref",
+      "value": "pr-summary",
+      "quote": "`pr-summary`",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-summary"
+      }
+    },
+    {
+      "id": "skills/_modules/outward-writes.md:3:skill_ref:pr-desc",
+      "source": {
+        "file": "skills/_modules/outward-writes.md",
+        "line": 3
+      },
+      "kind": "skill_ref",
+      "value": "pr-desc",
+      "quote": "`pr-desc`",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-desc"
+      }
+    },
+    {
+      "id": "skills/_modules/outward-writes.md:3:skill_ref:pr-post-comments",
+      "source": {
+        "file": "skills/_modules/outward-writes.md",
+        "line": 3
+      },
+      "kind": "skill_ref",
+      "value": "pr-post-comments",
+      "quote": "`pr-post-comments`",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-post-comments"
+      }
+    },
+    {
+      "id": "skills/_modules/outward-writes.md:3:skill_ref:create-ticket",
+      "source": {
+        "file": "skills/_modules/outward-writes.md",
+        "line": 3
+      },
+      "kind": "skill_ref",
+      "value": "create-ticket",
+      "quote": "`create-ticket`",
+      "verify": {
+        "method": "skill_exists",
+        "name": "create-ticket"
+      }
+    },
+    {
+      "id": "skills/_modules/outward-writes.md:3:skill_ref:pr-feedback-review",
+      "source": {
+        "file": "skills/_modules/outward-writes.md",
+        "line": 3
+      },
+      "kind": "skill_ref",
+      "value": "pr-feedback-review",
+      "quote": "`pr-feedback-review`",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-feedback-review"
+      }
+    },
+    {
+      "id": "skills/_modules/outward-writes.md:3:skill_ref:pr-polish",
+      "source": {
+        "file": "skills/_modules/outward-writes.md",
+        "line": 3
+      },
+      "kind": "skill_ref",
+      "value": "pr-polish",
+      "quote": "`pr-polish`",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-polish"
+      }
+    },
+    {
+      "id": "skills/_modules/outward-writes.md:3:skill_ref:implement-feature",
+      "source": {
+        "file": "skills/_modules/outward-writes.md",
+        "line": 3
+      },
+      "kind": "skill_ref",
+      "value": "implement-feature",
+      "quote": "`implement-feature`",
+      "verify": {
+        "method": "skill_exists",
+        "name": "implement-feature"
+      }
+    },
+    {
+      "id": "skills/_modules/outward-writes.md:3:skill_ref:proceed",
+      "source": {
+        "file": "skills/_modules/outward-writes.md",
+        "line": 3
+      },
+      "kind": "skill_ref",
+      "value": "proceed",
+      "quote": "_The `/proceed` gate_ rule 2",
+      "verify": {
+        "method": "skill_exists",
+        "name": "proceed"
+      }
+    },
+    {
+      "id": "skills/_modules/outward-writes.md:22:other:unslop voice card snuffish-sv",
+      "source": {
+        "file": "skills/_modules/outward-writes.md",
+        "line": 22
+      },
+      "kind": "other",
+      "value": "unslop voice card snuffish-sv",
+      "quote": "`~/.claude/skills/unslop/.unslop/voice/snuffish-sv/`",
+      "verify": {
+        "method": "manual",
+        "reason": "unslop is installed outside the registry (~/.claude/skills/unslop, not git-tracked here); checked by hand 2026-11-04"
+      }
+    },
+    {
+      "id": "skills/_modules/outward-writes.md:22:other:unslop mimic rule section",
+      "source": {
+        "file": "skills/_modules/outward-writes.md",
+        "line": 22
+      },
+      "kind": "other",
+      "value": "unslop mimic rule section",
+      "quote": "the rule section of `~/.claude/skills/unslop/references/commands/mimic.md`",
+      "verify": {
+        "method": "manual",
+        "reason": "external skill file; '## The rule' heading checked by hand 2026-11-04"
+      }
+    },
+    {
+      "id": "skills/_modules/outward-writes.md:23:other:unslop rewrite command",
+      "source": {
+        "file": "skills/_modules/outward-writes.md",
+        "line": 23
+      },
+      "kind": "other",
+      "value": "unslop rewrite command",
+      "quote": "`/unslop rewrite <text>`",
+      "verify": {
+        "method": "manual",
+        "reason": "external skill; argument-hint lists 'teach \u00b7 cleanup \u00b7 rewrite \u00b7 mimic' (~/.claude/skills/unslop/SKILL.md:6), checked 2026-11-04"
       }
     }
   ]

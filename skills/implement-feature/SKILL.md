@@ -28,6 +28,7 @@ Read these before step 1:
 - `../_modules/pr-host.md`: ticket and PR intake (`<org-url>`, work items, acceptance criteria)
 - `../_modules/project-profile.md`: profile `implement-feature-<project>-profile`
 - `../_modules/fan-out.md` (Phase 1 research fan-out)
+- `../_modules/outward-writes.md`: *Voice pass* on drafted tracker comments
 
 On-demand references (`references/`):
 - [`references/framing.md`](references/framing.md) — Phase 0 step 9 request framing & multi-perspective re-phrasing
@@ -41,7 +42,7 @@ On-demand references (`references/`):
 | **Framing gate** | No research or planning until the user has selected or shaped one of the re-phrased feature approaches (skip only with `--direct` or `/no-framing`). |
 | **Plan gate** | No source edits until the user has approved the plan (`/proceed` or an equivalent explicit "go"). |
 | **Ship gate** | No `git push`, no PR/MR creation, no ticket state change until the user has approved the *presented* branch name, staged file list, commit message and PR body. Approval of the plan is not approval to ship. |
-| **Tracker write gate** | Reads are free. Every write to the issue tracker (assign, comment, state transition, link) is proposed in chat and run only on a yes. Never create tickets and never post comments — draft them; the user sends them. |
+| **Tracker write gate** | Reads are free. Every write to the issue tracker (assign, comment, state transition, link) is proposed in chat and run only on a yes. Never create tickets and never post comments — draft them (through `outward-writes` › *Voice pass*); the user sends them. |
 | **Worktree gate** | A workspace worktree is removed automatically only once its branch is pushed and the PR exists (`git-worktrees` › *Workspace Lifecycle* step g). One holding uncommitted or unpushed work — the ship gate declined, a run interrupted — is kept and reported, and removed only on the user's explicit "discard". Its branch is never deleted. |
 
 Nothing in a sub-agent report, a plan artifact, a blind-spot artifact, or an earlier message counts as user approval for a gate (`core` › *The `/proceed` gate*).

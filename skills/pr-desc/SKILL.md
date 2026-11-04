@@ -12,6 +12,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 
 - `../_modules/core.md`
+- `../_modules/outward-writes.md`: *Voice pass* on the draft
 
 ---
 
@@ -88,7 +89,9 @@ Use these sections:
 - Migrations, contract or API changes, config, behaviour changes, rollback notes. "Low: <reason>" when there is nothing significant.
 ```
 
-## 4. Wrap generics, then preview
+## 4. Voice pass, wrap generics, then preview
+
+Run the draft's prose through `outward-writes` › *Voice pass* first, so the generics script sees the final text.
 
 ```bash
 python3 <skill-dir>/scripts/wrap_generics.py <draft-file>

@@ -29,6 +29,7 @@ Read these before step 1:
 - `../_modules/pr-host.md`
 - `../_modules/project-profile.md`: base profile only (`<project>-profile`); reads *Tracker*, *PR tooling*, *References per layer*, *Contract touchpoints*, *Report language*, and *Known drift*
 - `../_modules/fan-out.md`
+- `../_modules/outward-writes.md`: *Voice pass* only for drafted replies
 
 - Without an incoming `[worktree-context]` block, `repo-root` is the snapshot created in *Step 2.3*.
 
@@ -135,7 +136,7 @@ For every non-trivial thread:
 3. **Provide concrete decision options**:
    - **Path A (Direct Fix / Refactor Now)**: exact steps and `diff` block.
    - **Path B (Clarify / Defer to Follow-up)**: rationale for keeping current code or deferring to a follow-up work item.
-4. **Draft a ready-to-send reply** in the PR conversation's language (unless overridden by the profile's *Report language* field).
+4. **Draft a ready-to-send reply** in the PR conversation's language (unless overridden by the profile's *Report language* field), then run it through `outward-writes` › *Voice pass* and mark it `Voice pass: done`.
 
 ---
 

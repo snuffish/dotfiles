@@ -96,6 +96,7 @@ If an open item already covers the work, stop and show it.
   - **GitHub (Markdown)**: `body.md` with description sections followed by `## Acceptance criteria` (`- [ ]` checkboxes).
 - **Default sections** (include only those with content): **Background**, **Proposal**, **Prerequisites**, **Spike first / open questions**, **Risks**.
 - **References**: tracker IDs (`!18722`, `#110956`) and remote URLs only — never local paths, scratchpad paths, or internal finding numbers.
+- **Voice**: run the Background, Proposal and Risks prose through `outward-writes` › *Voice pass*; acceptance criteria and repro steps stay as written.
 
 ### Step 6 — Spec, dry run, preview
 

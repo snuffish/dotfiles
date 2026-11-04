@@ -16,6 +16,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 
 - `../../../_modules/core.md`: read-only until `/proceed`
+- `../../../_modules/outward-writes.md`: *Voice pass* only, for the draft reply to the asker
 - `../../../_modules/artifact-protocol.md`: writes no artifact — the round script and the verdict go in chat, where the user copies them into the remote desktop session
 
 - **No production access, ever.** Never ask for, accept or store a production connection string, password or Key Vault value, and never try to reach a production host. The user runs every query.
@@ -92,7 +93,7 @@ Write a round two only when round one left the question open, and then only the 
 
 1. A table of checks → result, each tied to a result-set number and a code `path:line`.
 2. Anything the data shows beyond the question (for example a short reminder interval), in one or two lines.
-3. A draft reply to the asker, in their language (Swedish for a Swedish thread; `priis-profile` › _Report language_), quoting only the record numbers and roles it needs. Close with the smallest change that would give the asker what they expected, if any, phrased as an option, not a commitment.
+3. A draft reply to the asker, in their language (Swedish for a Swedish thread; `priis-profile` › _Report language_), quoting only the record numbers and roles it needs. Close with the smallest change that would give the asker what they expected, if any, phrased as an option, not a commitment. Run the reply through `outward-writes` › *Voice pass* before showing it; the pass must keep every record number and role.
 
 ---
 

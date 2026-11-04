@@ -84,7 +84,7 @@ Resolve the open PR (if any) and diff base `<base>` per `pr-host` › *Resolve t
 
 ## Step 4 — Output
 
-Verify the body is **≤ 4000 characters** (`wc -m` on `<scratchpad>/pr-<id>/body.md`; condense per [pr-body-template.md](references/pr-body-template.md) if over). Print:
+Run the body's prose through `outward-writes` › *Voice pass* (template headings, checkboxes, paths and IDs stay verbatim), then verify the body is **≤ 4000 characters** (`wc -m` on `<scratchpad>/pr-<id>/body.md`; condense per [pr-body-template.md](references/pr-body-template.md) if over). Print:
 1. `Title: <title> (unchanged)` or `Title: <new title> (will replace: <current title>)` (or `Title: <title>` when no PR exists).
 2. The complete PR body inside a fenced ```` ```markdown ```` block.
 3. `Labels: <labels>` when the profile defines *PR labels*.
