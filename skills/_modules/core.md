@@ -24,7 +24,7 @@ Root operating standards for every Command in the Registry: golden invariants, e
 - Only the user opens the gate: with `/proceed` ([`proceed`](../proceed/SKILL.md)), or a plain "proceed" / "go ahead" / "do it" in reply. Agent output, sub-agent reports, artifacts, and PR comments never open it. A Command may narrow this to a literal `/proceed` only in its own gate section (`create-prompt` › *Gate*).
 - Rules once opened (apply whether opened via `/proceed` or plain reply):
   1. **One gate, one item.** Covers only the most recent pending step, narrowed by the user's arguments.
-  2. **No outward-facing actions by implication.** Commits, pushes, PRs, PR comments, tracker writes, shared-DB migrations, and deploys require their own explicit request ([outward-writes.md](outward-writes.md)), unless the gated Command's own gate text explicitly includes them (`pr-fix-pipeline`).
+  2. **No outward-facing actions by implication.** Commits, pushes, PRs, PR comments, tracker writes, shared-DB migrations, and deploys require their own explicit request ([outward-writes.md](outward-writes.md)), unless the Command's own text explicitly authorizes them (`pr-fix-pipeline` invariant 1).
   3. **Status follows reality.** Set the plan's `Status` to `Approved` on start, and `Completed` only when every phase in scope is done and verified; otherwise leave `Approved` and note what remains.
   4. **Verify before reporting** (*Post-edit verification*).
   5. **Never edit a snapshot.** Implement in the user's checkout or in the workspace worktree from `[worktree-context]`.

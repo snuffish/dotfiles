@@ -4,12 +4,12 @@ On-demand reference for [artifact-protocol.md](../artifact-protocol.md). Every a
 
 | Base Filename Pattern | Written / Managed By | Primary Purpose |
 |---|---|---|
-| `implementation_plan-<suffix>.md` | `/plan`, `/problem`, `/refine`, `/implement-feature`, `/pr-fix-pipeline` | Technical design, phase breakdown, task checklist, gating approval |
+| `implementation_plan-<suffix>.md` | `/plan`, `/problem`, `/refine`, `/implement-feature` | Technical design, phase breakdown, task checklist, gating approval |
 | `code_review-<suffix>.md` | `/code-review` | Code quality audit, severity findings (Critical/Important/Minor), diffs |
 | `squashed_code_review-<suffix>.md` | `/squash-code-review` | Two or more code reviews of one change squashed into one verified review, with a reconciliation table and folded-in PR threads |
 | `pr_feedback_review-<suffix>.md` | `/pr-feedback-review` | PR comment triage matrix, technical resolutions, draft responses |
 | `pr_polish-<suffix>.md` | `/pr-polish` | PR-finishing run: verified findings with status, applied/reverted fix batches with build and test results, PR description and thread-reply drafts |
-| `investigation-<suffix>.md` | `/investigate`, `/pr-fix-pipeline` | Pre-plan research: current-state map, prior art, constraints, options, confidence ledger |
+| `investigation-<suffix>.md` | `/investigate` | Pre-plan research: current-state map, prior art, constraints, options, confidence ledger |
 | `explanation-<suffix>.md` | `/explain` | Deep architectural and code intent breakdown |
 | `suggestion-<suffix>.md` | `/suggestion deep` | Ranked approaches with trade-offs, a recommendation and next steps |
 | `assumption_check-<suffix>.md` | `/verify-assumptions` | Claim-by-claim verification against primary sources, verdicts and the decisions they affect |

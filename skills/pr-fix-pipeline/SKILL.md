@@ -1,12 +1,13 @@
 ---
 name: pr-fix-pipeline
-description: "Diagnoses failing CI/CD pull request validation pipelines across Azure DevOps Pipelines and GitHub Actions. Correlates failed build/test step logs with git diffs, categorizes root causes (code regressions, flaky tests, pipeline configuration drift), drafts a targeted fix plan, and iterates through post-fix validation until the pipeline is verified passed by the agent."
+description: 'Takes ownership of a PR''s failing CI until every build is green: fetches the failing run''s logs (Azure DevOps or GitHub Actions), classifies each failure as REAL_BUG, FLAKY_TEST or INFRA_FLAKE, fixes bugs and flaky tests at the root, re-runs infra flakes at most twice and logs them in a flake ledger, polls CI, and stops when green or after 5 fix iterations. Runs unattended: invoking it authorizes its commits, pushes, re-runs and a ''## CI fixes'' section in the PR description. Use for /pr-fix-pipeline, "fix the pipeline", "make the PR green". Not for a local build error (use /problem) or reviewer comments (use /pr-feedback-review).'
 argument-hint: "[<PR url | PR id | branch>]"
+disable-model-invocation: true
 ---
 
-# Skill: `/pr-fix-pipeline` — PR Pipeline Failure Diagnosis & Fix Plan
+# Skill: `/pr-fix-pipeline` — Own a PR's CI Until Green
 
-Diagnoses why a pull request's validation pipeline is failing, separates regressions from noise in `<prefix>-investigation-<suffix>.md`, drafts a targeted fix plan in `<prefix>-implementation_plan-<suffix>.md`, and — once approved — iterates through local verification, push/re-queue, and run monitoring until every required check passes.
+Takes ownership of one pull request's validation pipeline and loops (fetch → classify → fix or re-run → poll) until every required build passes, or until the iteration cap is reached. Writes no artifact: the deliverables are the fix commits, the flake ledger, the PR description's `## CI fixes` section and the closing summary table.
 
 ---
 
@@ -15,93 +16,103 @@ Diagnoses why a pull request's validation pipeline is failing, separates regress
 Paths are relative to this skill's real folder. Run `realpath` on the skill's base directory once (it may be a symlink), then resolve each path from there. If any Module cannot be read, stop and report the path. Do not continue without it.
 
 Read these before step 1:
-- `../_modules/core.md`: read-only until `/proceed`
-- `../_modules/artifact-protocol.md`: writes `<prefix>-investigation-<suffix>.md` and `<prefix>-implementation_plan-<suffix>.md` (suffix `<prId>-pipeline-<slug>`)
+
+- `../_modules/core.md`: **not** read-only — invoking this skill opens the gate for the whole loop (invariant 1)
+- `../_modules/outward-writes.md`
 - `../_modules/git-worktrees.md`
-- `../_modules/pr-counterpart.md`
 - `../_modules/pr-host.md`
+
+On-demand references (`references/`):
+
+- [`references/evidence-commands.md`](references/evidence-commands.md) — az/gh commands for the red build, its timeline, failed-step logs, run history and staleness
+- [`references/remediation-loop.md`](references/remediation-loop.md) — narrow reproduction, re-run and polling commands, the flake ledger, the `## CI fixes` section and the summary table
 
 > [!CAUTION]
 > **Golden invariants**
-> 1. **Read-only until `/proceed`**: no source edits, commits, pushes, or branch switches before the gate opens. Local read-only reproduction (build/lint/test of the failing step) is allowed.
-> 2. **Gate-authorized outward actions**: once the user opens the gate (`core` › *The `/proceed` gate*), this skill is authorized to commit and push the approved fix ([`/commit`](../commit/SKILL.md)) and re-queue the red Build policy evaluation (`az repos pr policy queue --id <prId> --evaluation-id <evaluationId> --org <org-url>`). Never cancel runs, post PR comments, change branch policies, or edit service-side pipeline definitions.
-> 3. **Cite the log**: every failure claim cites the run ID, step name, exact error line(s), and `path:line` in code/YAML.
-> 4. **Flake requires proof**: classify a failure as a flake only with evidence (re-run history, local pass on the same commit, unrelated to the diff).
-> 5. **Never complete until verified passed by the agent**: after `/proceed`, keep monitoring and looping until every required PR check succeeds (`succeeded` / `approved`), pausing only on an external human-owned blocker.
+>
+> 1. **Invocation is the explicit request.** Invoking `/pr-fix-pipeline` satisfies `outward-writes` › _Explicit request & draft mode_ for, and only for: commits and pushes of fixes to the PR's source branch (via [`/commit`](../commit/SKILL.md)), re-queuing the PR's red build, writing the flake ledger, and adding or replacing the `## CI fixes` section of the PR description. Never force-push, rebase, cancel runs, post PR comments, change branch policies, edit pipeline definitions on the server, or touch another PR.
+> 2. **Fix the root cause, never paper over it.** Never add retry attributes or retry loops, widen timeouts, add sleeps, or skip, ignore or delete a failing test. Time-dependent code takes an injected clock (`TimeProvider` in .NET, a fake timer or fixed date in JS) instead of `DateTime.Now` / `Date.now()`; order-dependent tests own their data; random inputs get a fixed seed or fixed values.
+> 3. **Cite the log.** Every classification cites the run ID, job/step name, the quoted first error line and the `path:line` it traces to.
+> 4. **INFRA_FLAKE requires proof.** Classify a failure as infrastructure only when the log shows it (container died, agent lost, network/feed/timeout error) and the failing code is unrelated to the diff. Otherwise it is REAL_BUG or FLAKY_TEST.
+> 5. **Hard caps.** At most **5 fix iterations** (pushed fix commits) per invocation, and at most **2 re-runs** per INFRA_FLAKE job. Reaching a cap stops the loop. It never loops past it.
+> 6. **Never rewrite the PR description.** Only add the `## CI fixes` section at the end, or replace that one section if an earlier run of this skill added it.
 
 ---
 
 ## 1. When to Use
 
-| Situation | Use instead |
-|---|---|
-| A local build/test/lint error with no pipeline involved | [`/problem`](../problem/SKILL.md) |
-| Reviewing the PR's code, not its pipeline | [`/code-review`](../code-review/SKILL.md) |
-| Reviewer comments, not build failures | [`/pr-feedback-review`](../pr-feedback-review/SKILL.md) |
+| Situation                                               | Use instead                                             |
+| ------------------------------------------------------- | ------------------------------------------------------- |
+| A local build/test/lint error with no pipeline involved | [`/problem`](../problem/SKILL.md)                       |
+| Reviewing the PR's code, not its pipeline               | [`/code-review`](../code-review/SKILL.md)               |
+| Reviewer comments, not build failures                   | [`/pr-feedback-review`](../pr-feedback-review/SKILL.md) |
 
 ---
 
-## 2. Core Protocol & Workflow
+## 2. Workflow
 
-### Step 1: Resolve the Targets (PRs × Repos)
+### Step 1: Resolve the PR and the working copy
 
-1. **Find every repo in scope** (`git-worktrees` › *Repo Resolution*) and detect the CI host from `git remote get-url origin`.
-2. **Resolve the PR** from the argument or current branch per `pr-host` › *Resolve the PR from a branch* (on GitHub include `statusCheckRollup`). Report repos with no PR.
-3. **Counterpart lookup**: run `pr-counterpart` › *Counterpart discovery* for every resolved PR and check the counterpart's pipeline status too (a red half is often caused by cross-repo contract drift).
-4. **Read the PR description and linked work items** (`pr-host` › *Fetch the PR, its work items and acceptance criteria*).
+1. Detect the CI host from `git remote get-url origin` and resolve the PR from the argument or the current branch (`pr-host` › _Resolve the PR from a branch_). One PR per invocation; with none, stop and say so.
+2. Read the PR (title, description, `isDraft`, source and target branch, head commit) per `pr-host` › _Fetch the PR, its work items and acceptance criteria_. Keep the description verbatim; Step 6 edits only its end.
+3. **Pick where fixes are made.** If the current checkout is on the PR's source branch, clean, and level with `origin/<source>`, work there. Otherwise open a feature worktree on the source branch (`git-worktrees` › _Workspace Lifecycle_). Never switch the main checkout's branch.
 
-### Step 2: Collect the Evidence
+### Step 2: Fetch the failing run
 
-Read [evidence-commands.md](references/evidence-commands.md) and collect the failing policy evaluation, build timeline, failing step logs, target-branch run history, merge-commit staleness check, and pipeline YAML.
+Run the commands in [`references/evidence-commands.md`](references/evidence-commands.md): the PR's required builds and their status, the failing run's timeline, the failed jobs' logs, the run history on the target branch, and the staleness check. If nothing is red and nothing is running, skip to Step 6 with an empty failure list.
 
-### Step 3: Classify Each Failure
+If the run is stale (the source branch moved, or the target branch already fixed the failure), re-queue the build once (no fix, no iteration counted) and go to Step 5.
 
-| Class | Signature | Typical fix owner |
-|---|---|---|
-| **Code regression** | Compile/type/lint error or assertion in code the PR touched | This PR |
-| **Test defect** | Test asserts the wrong thing, or depends on wall-clock, ordering, locale/time zone, random data | This PR or test owner |
-| **Time/data-dependent** | Fails only on boundary dates/times (DST, month/quarter start) | Test/code — make clock injectable |
-| **Flake** | Intermittent, unrelated to the diff, passes on re-run history | Re-queue now; stabilize separately |
-| **Environment / agent** | Missing SDK/tool, image change, feed/auth failure, disk/timeout, outage | Pipeline YAML or infra |
-| **Pipeline config** | YAML error, wrong path/working dir, missing variable/secret, policy misconfig | Pipeline YAML |
-| **Generated-artifact drift** | Uncommitted codegen/snapshot/format verify failure | This PR — regenerate and commit |
-| **Cross-repo contract drift** | Depends on an unmerged change in a sibling repo | Coordinate both PRs / merge order |
+### Step 3: Classify each failure
 
-Identify the **first** error in each failing step, trace it to `path:line`, and check whether `git diff <target>...<source>` touches it.
+Take the **first** error in each failed job and put it in exactly one class:
 
-### Step 4: Reproduce (when cheap)
+| Class           | Signature                                                                                                                             | Action                                             |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| **REAL_BUG**    | Compile, lint, type or assertion failure caused by code or tests in the diff, reproducible locally                                    | Fix (Step 4)                                       |
+| **FLAKY_TEST**  | Test passes and fails on the same code: depends on time of day, date, time zone, culture, test ordering, shared data, or randomness   | Fix the root cause (Step 4)                        |
+| **INFRA_FLAKE** | Testcontainers or the SQL container died or never started, agent lost, feed/network error, job or step timeout with no test assertion | Re-run (Step 5), record in the ledger              |
+| **BLOCKED**     | Pipeline YAML or config error, missing secret or permission, service outage, an unmerged change in another repo                       | Stop the loop and report it as an external blocker |
 
-Reproduce the failing step locally **on the run's commit** when cheap. First confirm `git -C <repo> rev-parse HEAD` equals the run's source commit and `git -C <repo> status --porcelain --untracked-files=no` is empty; if not, reproduce inside a `git-worktrees` snapshot (*Snapshot Lifecycle*) — never switch the main checkout. Ask before restoring dependencies (`npm ci`, `dotnet restore`), starting Docker, or running a slow full suite.
+### Step 4: Fix REAL_BUG and FLAKY_TEST failures
 
-### Step 5: Write the Investigation (`<prefix>-investigation-<suffix>.md`)
+For each one, in the order the jobs fail:
 
-Follow [`/investigate`](../investigate/SKILL.md) to publish the diagnosis artifact, adding:
-- **Run table** in *Current-State*: `repo · PR · pipeline · run id · commit · stale? · result · failing step`.
-- **One entry per failure**: class, quoted first error line, `path:line`, related to diff?, local reproduction command + result.
-- **Pipeline review notes**: non-blocking pipeline smells (missing cache, deprecated tasks, image warnings) separated from blocking failures.
+1. **Reproduce** with the narrowest filter the half's test runner supports (examples in [`references/remediation-loop.md`](references/remediation-loop.md) › _Narrow reproduction_). A FLAKY_TEST that will not fail locally is reproduced by forcing its condition (fixed clock at the failing time, reversed order, the seed from the log).
+2. **Fix the root cause** under invariant 2. Fix the code when the code is wrong and the test when the test is wrong; say which in the commit body.
+3. **Verify locally:** run every test class the fix touched, plus that half's documented lint/build gate. Never run the full suite.
+4. **Commit and push** through [`/commit`](../commit/SKILL.md) Steps 2–5. It uses the repo's message convention, which may be Conventional Commits or a work-item prefix. Include any pending flake-ledger lines in the same commit. Each pushed commit is one fix iteration.
 
-### Step 6: Plan the Fix (`<prefix>-implementation_plan-<suffix>.md`)
+Batch all fixes found in one run into one push when they are independent; that push counts as one iteration.
 
-Follow [`/plan`](../plan/SKILL.md) Case B to publish the fix plan:
-- Order phases **unblock-first**; name per fix the repo, files, change, and **local verification command**.
-- For flakes, specify `re-queue policy evaluation <evaluationId> after /proceed` plus any stabilization task.
-- Put user-owned actions (policy edits, infra tickets) under **Handover**.
-- Stop and wait for the `/proceed` gate (`core` › *The `/proceed` gate*).
+### Step 5: Re-run INFRA_FLAKE jobs and poll
 
-### Step 7: Post-Fix Execution & Autonomous Remediation Loop (after `/proceed`)
+Follow [`references/remediation-loop.md`](references/remediation-loop.md): append the ledger line, re-queue (at most twice per job), then poll the new run every few minutes with non-blocking timers until it finishes. Then go back to Step 2.
 
-Once the gate opens, follow [remediation-loop.md](references/remediation-loop.md) to implement, verify locally, commit/push via [`/commit`](../commit/SKILL.md) (or re-queue), monitor the triggered run with non-blocking timers, and loop until every required check is verified green.
+Leave the loop when one of these holds:
 
----
+- **Green:** all required builds succeeded.
+- **Fix cap:** 5 fix iterations pushed and a build is still red.
+- **Re-run cap:** a job failed as INFRA_FLAKE after 2 re-runs.
+- **BLOCKED:** a failure was classified BLOCKED.
 
-## 3. Output Format & Deliverables
+### Step 6: Update the PR description and report
 
-- **Before `/proceed`**: emit the `artifact-protocol` › *Chat link block* for both `<prefix>-investigation-<suffix>.md` and `<prefix>-implementation_plan-<suffix>.md`, followed by one status line per repo/PR (`❌ <failing step>` with root cause class + evidence grade, or `✅ green`), and the closing gate line (`core` › *The `/proceed` gate*).
-- **After `/proceed`**: emit the completion or external-blocker block from [remediation-loop.md](references/remediation-loop.md).
+1. Add or replace the `## CI fixes` section ([`references/remediation-loop.md`](references/remediation-loop.md) › _PR description section_), then read it back (`outward-writes` › _Read back_).
+2. If ledger lines are still uncommitted (only re-runs followed them), leave them uncommitted in the working copy and say so: one more push would trigger CI again.
+3. End with the summary table (see Output).
 
 ---
 
-## 4. Verification & Validation
+## 3. Output
 
-- **Before `/proceed`**: every repo in scope checked; every failing check classified with run ID, quoted log line, and staleness check; every plan step has a local verify command; no source modified or outward action taken.
-- **After `/proceed`**: local verification passed before push; new `buildId`/check run confirmed and monitored to completion; skill marked complete only after all required PR checks succeeded.
+End with the closing block from [`references/remediation-loop.md`](references/remediation-loop.md) › _Summary_: the stop reason (green, fix cap, re-run cap or blocker), then the summary table with one row per failure, and the links to the PR and the final run.
+
+---
+
+## 4. Verification
+
+- Every failure has a class, a run ID and a quoted error line.
+- Every fix passed its touched test classes locally before it was pushed.
+- No retry, timeout, sleep or skip was added (`git diff <first-head>..HEAD` checked before each push).
+- Both caps were respected. The PR description above `## CI fixes` is byte-for-byte unchanged (compare it with the copy from Step 1).
