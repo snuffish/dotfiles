@@ -223,6 +223,16 @@ def main():
     if len(sys.argv) < 2:
         print(__doc__)
         sys.exit(2)
+    extra, args = [], sys.argv[2:]
+    while args:
+        arg = args.pop(0)
+        if arg in ("--only", "--via") and args:
+            args.pop(0)
+        elif arg != "--post":
+            extra.append(arg)
+    if extra:
+        print(f"Unexpected arguments: {' '.join(extra)}. --only takes one comma-separated list (--only r2,r3).")
+        sys.exit(2)
     spec, base = load_spec(sys.argv[1])
     post = "--post" in sys.argv
     via_mcp = "--via" in sys.argv and sys.argv[sys.argv.index("--via") + 1] == "mcp"

@@ -22476,6 +22476,24 @@
         "heading": "Chat link block",
         "base": "repo"
       }
+    },
+    {
+      "id": "skills/pr-post-comments/SKILL.md:126:cli_command:--only",
+      "source": {
+        "file": "skills/pr-post-comments/SKILL.md",
+        "line": 126
+      },
+      "kind": "cli_command",
+      "value": "--only",
+      "quote": "run with `--post --only <key>,<key>,\u2026` (comma-separated, no spaces;",
+      "verify": {
+        "method": "grep",
+        "pattern": "sys\\.argv\\.index\\(\"--only\"\\) \\+ 1\\]\\.split\\(\",\"\\)",
+        "paths": [
+          "skills/pr-post-comments/scripts/post_pr_comments.py"
+        ],
+        "expect": "present"
+      }
     }
   ]
 }
