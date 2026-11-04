@@ -16,7 +16,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 
 Read these before step 1:
 - `../_modules/core.md`: read-only until `/proceed`
-- `../_modules/artifact-protocol.md`: chat by default. With `deep`, or when more than 10 claims are checked, writes `<prefix>-assumption_check-<suffix>.md` at the **workspace root** (suffix derived from the checked plan, decision or topic, e.g. `-skill-modules`, `-tunit-migration`)
+- `../_modules/artifact-protocol.md`: chat by default. With `deep`, or when more than 10 claims are checked, writes `<prefix>-assumption_check-<suffix>.md` in the artifact dir (`artifact-protocol`) (suffix derived from the checked plan, decision or topic, e.g. `-skill-modules`, `-tunit-migration`)
 - `../_modules/fan-out.md`
 
 - **Read-only until `/proceed`, for you and every sub-agent.** No edits to code, plans, ADRs, glossaries, settings or trackers. A contradicted claim produces a *proposed* edit, never an applied one. Reading files, read-only CLI calls (`--version`, `config get`, `git log`), code-index queries and web fetches are fine.

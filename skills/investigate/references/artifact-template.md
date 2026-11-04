@@ -1,6 +1,6 @@
 # Investigation Artifact Template (`<prefix>-investigation-<suffix>.md`)
 
-Written at the **workspace root** via `artifact-protocol` › _Claim_ only under `--file` or `--deep`.
+Written in the artifact dir (`artifact-protocol`) via `artifact-protocol` › _Claim_ only under `--file` or `--deep`.
 
 ```markdown
 <!-- artifact-owner: … -->

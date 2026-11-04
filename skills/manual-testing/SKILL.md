@@ -6,7 +6,7 @@ argument-hint: "[PR url | PR id | #work-item | branch | area] [--seed-data]"
 
 # Skill: `/manual-testing` — Manual Test Plan From the Diff
 
-Answers *"how do I see this change working with my own eyes?"* by writing a human-executable test plan (`<prefix>-manual_test_plan-<suffix>.md`) at the workspace root where every scenario ends at an observable outcome (screen, badge, number, email, DB row, HTTP response).
+Answers *"how do I see this change working with my own eyes?"* by writing a human-executable test plan (`<prefix>-manual_test_plan-<suffix>.md`) in the artifact dir (`artifact-protocol`) where every scenario ends at an observable outcome (screen, badge, number, email, DB row, HTTP response).
 
 ---
 
@@ -96,7 +96,7 @@ When `--seed-data` is passed, follow [seed-data.md](references/seed-data.md) to 
 
 ## 3. Artifact & Chat Output
 
-1. Publish `<prefix>-manual_test_plan-<suffix>.md` at the workspace root via `artifact-protocol` › *Claim*, following the structure and layout rules in [test-plan-template.md](references/test-plan-template.md).
+1. Publish `<prefix>-manual_test_plan-<suffix>.md` in the artifact dir (`artifact-protocol`) via `artifact-protocol` › *Claim*, following the structure and layout rules in [test-plan-template.md](references/test-plan-template.md).
 2. In chat, emit the `artifact-protocol` › *Chat link block*, followed by a short summary: any blocker, the single start command, the recommended login, top watchlist items (and seeded record counts when `--seed-data` ran).
 
 ---

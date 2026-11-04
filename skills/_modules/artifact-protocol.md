@@ -1,18 +1,32 @@
 # artifact-protocol
 
-How every Command names, places, claims, and links markdown artifacts at the workspace root.
+How every Command names, places, claims, and links markdown artifacts in the per-repo artifact directory.
 
 ---
 
 ## Artifact Location, Host & Model Prefix Resolution & Mandatory Contextual Suffix
 
-Claude Code and Antigravity IDE share one workspace root, and multiple sessions or models may work on the same repo concurrently or consecutively. Every artifact uses a host+model prefix, a contextual suffix, and an atomic session-ownership claim so no session ever overwrites another's file:
+Claude Code and Antigravity IDE share one artifact directory per repo, and multiple sessions or models may work on the same repo concurrently or consecutively. Every artifact uses a host+model prefix, a contextual suffix, and an atomic session-ownership claim so no session ever overwrites another's file:
 
 ```text
-<workspace-root>/<host>-<model>-<base_artifact_name>-<suffix>.md
+<artifact-dir>/<host>-<model>-<base_artifact_name>-<suffix>.md
 ```
 
-When the session runs inside a linked git worktree (`.claude/worktrees/<name>`, detected via `git rev-parse --git-dir` ≠ `--git-common-dir`), `<workspace-root>` is the **main workspace root** above `$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")`, never the linked worktree directory.
+### Artifact directory
+
+`<artifact-dir>` = `${AGENT_ARTIFACTS_DIR:-$HOME/.cache/agent-artifacts}/<repo-name>/`, outside every checkout.
+
+- `<repo-name>` = basename of `dirname(git rev-parse --path-format=absolute --git-common-dir)`; no git repo → basename of cwd. Linked worktrees therefore share the main repo's folder.
+- Multi-repo workspace (a folder holding several repos): the repo the work targets; ambiguous → ask.
+- Resolve once per session, `mkdir -p`, then Claim as below:
+
+```bash
+repo=$(basename "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)")" 2>/dev/null) || repo=
+[ -n "$repo" ] && [ "$repo" != . ] || repo=$(basename "$PWD")
+ART_DIR="${AGENT_ARTIFACTS_DIR:-$HOME/.cache/agent-artifacts}/$repo"; mkdir -p "$ART_DIR"
+```
+
+- **Bare filename from the user** (`/proceed <prefix>-handoff-<suffix>.md`): resolve in `<artifact-dir>` first, then cwd.
 
 ### Rules:
 1. **Resolve Prefix (`<host>-<model>-`) Once Before Writing**:
@@ -46,13 +60,13 @@ When the session runs inside a linked git worktree (`.claude/worktrees/<name>`, 
 
    - **Collision counter**: `<name>.md`, `<name>-2.md`, `<name>-3.md`, …. If a counter was added, note in chat that the base name belongs to another session.
    - **Later updates by the owner**: edit in place and re-run `grep -n` for section anchors.
-   - **Readers & family selection**: treat `<name>.md`, `<name>-2.md`, … across all `<prefix>` values as one family. When one family matches the current branch/PR/ticket, pick the newest by `created` timestamp (else mtime); when multiple families or ambiguous candidates exist, list them (branch match first as `(Recommended)`) and ask the user.
+   - **Readers & family selection**: scan `<artifact-dir>`; treat `<name>.md`, `<name>-2.md`, … across all `<prefix>` values as one family. **Legacy fallback** (read-only, until 2026-11-18): when `<artifact-dir>` has no match, also scan the old workspace-root location and flag hits as "legacy" in chat. When one family matches the current branch/PR/ticket, pick the newest by `created` timestamp (else mtime); when multiple families or ambiguous candidates exist, list them (branch match first as `(Recommended)`) and ask the user.
    - **Independence rule**: when writing a review or verification artifact (`code-review`, `spec-verification`), produce your own findings **before** reading another model's or session's artifact for the same target so the audit stays independent (unless the user explicitly asked to reconcile or `/squash-code-review`).
 5. **Single Identity Rule**: never write multiple host/model variants in one turn.
-6. **Clickability Rule**: write directly to `<workspace-root>`. Exceptions: `skill_gap` files in `~/.terminal/skill-gaps/` (`core` › *Skill gaps*) and `/export-file` outputs (`export-<suffix>.<ext>` in cwd or user-specified path).
+6. **Clickability Rule**: write directly to `<artifact-dir>`. Exceptions: `skill_gap` files in `~/.terminal/skill-gaps/` (`core` › *Skill gaps*) and `/export-file` outputs (`export-<suffix>.<ext>` in cwd or user-specified path).
 7. **Status Sync Rule (no half-updated artifact)**: when recording progress (`Approved`, `Completed`, `🕓 Fixed, not pushed (<sha>)`, `✅`, posted thread IDs), update **every** status field the artifact's Command declares (header `Status:`, summary matrix, per-item status, checklist) in the same edit, then `grep` for stale markers (`⏸`, `Not addressed`, `uncommitted`) and resolve every hit. Preserve historical analysis with a dated note beside it.
 8. **HTML Export Pipeline (`--html`)**:
-   - Skills supporting `--html` (e.g. `/investigate --html`, `/export-file /html`) write the canonical markdown artifact `<prefix>-<base>-<suffix>.md` first, then compile its sibling `<prefix>-<base>-<suffix>.html` at the **workspace root** using the shared compiler:
+   - Skills supporting `--html` (e.g. `/investigate --html`, `/export-file /html`) write the canonical markdown artifact `<prefix>-<base>-<suffix>.md` first, then compile its sibling `<prefix>-<base>-<suffix>.html` in the same `<artifact-dir>` using the shared compiler:
      ```bash
      python3 ~/.terminal/skills/_modules/scripts/render_html.py <markdown-file> [<html-file>] --open
      ```
@@ -66,9 +80,9 @@ When the session runs inside a linked git worktree (`.claude/worktrees/<name>`, 
 
 | Host | Chat Link Syntax | Example |
 |---|---|---|
-| **Antigravity IDE** | Absolute `file://` URI + `#L<line>` | `[<file>.md](file://<workspace-root>/<file>.md#L8)` |
-| **Claude Code, IDE extension** (`$CLAUDE_CODE_ENTRYPOINT != cli`) | Workspace-relative path + `#L<line>` | `[<file>.md](<file>.md#L8)` |
-| **Claude Code, terminal CLI** (`$CLAUDE_CODE_ENTRYPOINT = cli`) | `antigravity-ide://file/` + absolute path + `:<line>` (`%20` for spaces, no range) | `[<file>.md](antigravity-ide://file/<workspace-root>/<file>.md:8)` |
+| **Antigravity IDE** | Absolute `file://` URI + `#L<line>` | `[<file>.md](file://<artifact-dir>/<file>.md#L8)` |
+| **Claude Code, IDE extension** (`$CLAUDE_CODE_ENTRYPOINT != cli`) | Absolute path + `#L<line>` | `[<file>.md](<artifact-dir>/<file>.md#L8)` |
+| **Claude Code, terminal CLI** (`$CLAUDE_CODE_ENTRYPOINT = cli`) | `antigravity-ide://file/` + absolute path + `:<line>` (`%20` for spaces, no range) | `[<file>.md](antigravity-ide://file/<artifact-dir>/<file>.md:8)` |
 
 - **Section anchors in chat**: always point at a line number (`#L<line>` or `:<line>`), never a heading slug. Read actual line numbers after writing or editing:
   ```bash

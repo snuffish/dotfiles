@@ -8,14 +8,14 @@ Root operating standards for every Command in the Registry: golden invariants, e
 
 1. **Truth in Code**: never guess symbol definitions, types, routes, or library behavior from names. Trace real source, models, config, and recent git history (`git log -p`, `git diff`) before explaining, designing, or editing.
 2. **Non-Destructive Work**: never touch unrelated user changes, tests, or config unasked. Preserve existing comments and docstrings unless refactoring the code they describe.
-3. **High-Signal Chat**: keep chat concise and action-oriented; offload deep analysis, plans, and reviews to workspace artifacts. Source comments document code for the next reader — never use them to address the user or defend a change.
+3. **High-Signal Chat**: keep chat concise and action-oriented; offload deep analysis, plans, and reviews to artifacts in the artifact dir (`artifact-protocol`). Source comments document code for the next reader — never use them to address the user or defend a change.
 
 ---
 
 ## Execution gates
 
 ### Planning mode first
-- Formulate an implementation plan (`<prefix>-implementation_plan-<suffix>.md` at the workspace root) and wait for approval before non-trivial modifications, refactorings, or new features.
+- Formulate an implementation plan (`<prefix>-implementation_plan-<suffix>.md` in the artifact dir, `artifact-protocol`) and wait for approval before non-trivial modifications, refactorings, or new features.
 - **Direct-route exception**: a focused, low-risk change (1–2 files, clear scope) chosen from `/suggestion` or `/what-am-I-missing` may be applied directly on `/proceed` without a separate plan artifact.
 
 ### The `/proceed` gate

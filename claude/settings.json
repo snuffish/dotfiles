@@ -16,6 +16,9 @@
       "Bash(npm run build:*)",
       "Az devops invoke"
     ],
+    "additionalDirectories": [
+      "~/.cache/agent-artifacts"
+    ],
     "defaultMode": "auto"
   },
   "model": "opus",

@@ -17,7 +17,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 
 - `../_modules/core.md`: read-only until `/proceed`, and only a literal `/proceed` opens the gate (_Gate_ below)
-- `../_modules/artifact-protocol.md`: writes no artifact by default; with `--file`, writes `<prefix>-prompt-<suffix>.md` at the workspace root
+- `../_modules/artifact-protocol.md`: writes no artifact by default; with `--file`, writes `<prefix>-prompt-<suffix>.md` in the artifact dir (`artifact-protocol`)
 
 On-demand references (`references/`):
 - [`references/skill-selection.md`](references/skill-selection.md) — candidate selection rules, priority hierarchy, and syntax grounding
@@ -98,6 +98,6 @@ Next: paste it, or `/proceed` to run it here.
 ## Options
 
 - **`--variants`**: Generate 2–3 prompt alternatives along distinct axes (Skill, Depth, Plan-first). Use the guidelines and multi-block output format in [`references/variants.md`](references/variants.md).
-- **`--file`**: Write the generated prompt output to `<prefix>-prompt-<suffix>.md` at the workspace root and include its link above `Next:`.
+- **`--file`**: Write the generated prompt output to `<prefix>-prompt-<suffix>.md` in the artifact dir (`artifact-protocol`) and include its link above `Next:`.
 
 See [`references/examples.md`](references/examples.md) for concrete prompt examples.

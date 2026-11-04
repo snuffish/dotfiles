@@ -12,7 +12,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 
 Read these before step 1:
 - `../_modules/core.md`
-- `../_modules/artifact-protocol.md`: writes no artifact at the workspace root — documentation is written into the repository where the user asks (`README.md`, `docs/`, inline comments); confirm the destination before writing
+- `../_modules/artifact-protocol.md`: writes no artifact in the artifact dir (`artifact-protocol`) — documentation is written into the repository where the user asks (`README.md`, `docs/`, inline comments); confirm the destination before writing
 
 On-demand references (`references/`):
 - [`references/readme-template.md`](references/readme-template.md) — README layout (features, quick start, installation, usage, configuration, contributing)

@@ -17,4 +17,4 @@ Read in Section 3. Verdict grades follow `core` › *Codebase investigation* ›
 
 ## Artifact (`deep` or more than 10 claims)
 
-Write `<prefix>-assumption_check-<suffix>.md` at the workspace root with one section per claim: claim, version, sources consulted, verbatim quotes, verdict, effect. In chat, show only the contradicted, undocumented-and-load-bearing and reopened rows, plus the `artifact-protocol` › _Chat link block_.
+Write `<prefix>-assumption_check-<suffix>.md` in the artifact dir with one section per claim: claim, version, sources consulted, verbatim quotes, verdict, effect. In chat, show only the contradicted, undocumented-and-load-bearing and reopened rows, plus the `artifact-protocol` › _Chat link block_.

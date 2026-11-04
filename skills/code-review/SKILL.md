@@ -12,7 +12,7 @@ Use this skill whenever the user requests a code review, feedback on a pull requ
 
 ## Invariants
 
-1. **Artifact:** every `/code-review` writes `<prefix>-code_review-<suffix>.md` at the workspace root and opens its chat response with the `artifact-protocol` › *Chat link block* (plus a link to any active `<prefix>-implementation_plan-<suffix>.md`).
+1. **Artifact:** every `/code-review` writes `<prefix>-code_review-<suffix>.md` in the artifact dir (`artifact-protocol`) and opens its chat response with the `artifact-protocol` › *Chat link block* (plus a link to any active `<prefix>-implementation_plan-<suffix>.md`).
 2. **Read-only:** never edit code, stage commits, run migrations, or touch the main checkout (`core` › *The `/proceed` gate*, `git-worktrees` › *Snapshot Lifecycle*).
 3. **Verified findings only:** every 🔴/🟡 passes Step 6 (*Verify*) before it is written.
 
@@ -174,7 +174,7 @@ On every review, after Step 6 (and 6b):
 
 ## Step 7 — Artifact & Output Format
 
-1. Publish `<prefix>-code_review-<suffix>.md` at the workspace root via `artifact-protocol` › *Claim* (respecting the *Independence rule*), following [Review Artifact Template & Structure](references/review-artifact-template.md). Remove the snapshot(s) after writing.
+1. Publish `<prefix>-code_review-<suffix>.md` in the artifact dir (`artifact-protocol`) via `artifact-protocol` › *Claim* (respecting the *Independence rule*), following [Review Artifact Template & Structure](references/review-artifact-template.md). Remove the snapshot(s) after writing.
 2. In chat, emit the `artifact-protocol` › *Chat link block* for the review artifact (plus any active implementation plan), followed by:
    - Worst finding **per axis** (one line each, or `clean`),
    - Any Spec source that could not be resolved,

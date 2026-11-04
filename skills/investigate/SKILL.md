@@ -8,7 +8,7 @@ argument-hint: "[--deep] [--no-blindspot] [--file] [--html] [--from <PR|work ite
 
 The dedicated reconnaissance pass executed **before** `/plan`. It replaces speculation with verifiable evidence, answering: _"What is actually true in this codebase today, what are our viable options, and what critical traps are we missing?"_
 
-Every assertion is anchored to real code or quarantined as an unverified inference, includes the `/what-am-I-missing` blind-spot audit by default (unless `--no-blindspot`), and hands `/plan` an evidence foundation instead of a blank page. Plain runs answer in chat; `--file` and `--deep` also write the workspace-root artifact.
+Every assertion is anchored to real code or quarantined as an unverified inference, includes the `/what-am-I-missing` blind-spot audit by default (unless `--no-blindspot`), and hands `/plan` an evidence foundation instead of a blank page. Plain runs answer in chat; `--file` and `--deep` also write the artifact in the artifact dir.
 
 ---
 
@@ -19,7 +19,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 
 - `../_modules/core.md`: read-only until `/proceed`
-- `../_modules/artifact-protocol.md`: writes `<prefix>-investigation-<suffix>.md` at the **workspace root** under `--file`, `--deep`, or `--html` (suffix e.g. `-draft-close-dialog`, `-municipality-sync`); under `--html`, compiles `<prefix>-investigation-<suffix>.html` via `render_html.py` and opens in browser; a plain run writes nothing
+- `../_modules/artifact-protocol.md`: writes `<prefix>-investigation-<suffix>.md` in the artifact dir (`artifact-protocol`) under `--file`, `--deep`, or `--html` (suffix e.g. `-draft-close-dialog`, `-municipality-sync`); under `--html`, compiles `<prefix>-investigation-<suffix>.html` via `render_html.py` and opens in browser; a plain run writes nothing
 
 Read these only when their flag is given:
 
@@ -59,7 +59,7 @@ On-demand references (`references/`):
 
 ### Case A: Bare Command (`/investigate` with no arguments)
 
-1. **Locate Existing Investigation**: scan `<prefix>-investigation-*.md` at the **workspace root** and select the family per `artifact-protocol` › _Claim_ › _Readers & family selection_.
+1. **Locate Existing Investigation**: scan `<prefix>-investigation-*.md` in the artifact dir (`artifact-protocol`) and select the family per `artifact-protocol` › _Claim_ › _Readers & family selection_.
 2. **If Found**: read real anchor line numbers (`grep -n '^#\{1,3\} ' <file>`) and render the `artifact-protocol` › _Chat link block_ with links to `Executive Summary (TL;DR)`, `Current-State Architecture`, `Options & Trade-offs`, `Blind Spots`, `Confidence Ledger`, `Plan Seed`, and `Open Questions for User`, plus `**Status:** Complete | Blocked on open questions`.
 3. **If Not Found**: inform the user and prompt for the topic, module, or feature to investigate.
 
@@ -132,7 +132,7 @@ Classify every key finding into ✅ **Verified** (`path:line`), 🟡 **Inferred*
 
 ## 4. Workspace Artifact Specification (`--file` / `--deep` / `--html`)
 
-Read [`references/artifact-template.md`](references/artifact-template.md) and [`references/visuals.md`](references/visuals.md), and publish `<prefix>-investigation-<suffix>.md` at the **workspace root** via `artifact-protocol` › _Claim_:
+Read [`references/artifact-template.md`](references/artifact-template.md) and [`references/visuals.md`](references/visuals.md), and publish `<prefix>-investigation-<suffix>.md` in the artifact dir (`artifact-protocol`) via `artifact-protocol` › _Claim_:
 - **No per-item inventories:** give the count, a table of the few that decide the options, and the command that regenerates the full list.
 - **Cite, don't paste:** a `path:line` replaces a code excerpt; quote at most a few lines where the exact text is the finding.
 - **HTML Compilation (`--html` only):** compile the sibling `.html` artifact via `render_html.py` (`artifact-protocol` › *HTML Export Pipeline*) and launch in the default browser.

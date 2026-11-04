@@ -5,7 +5,7 @@
       "id": 0,
       "name": "standard-session-wrap-up",
       "prompt": "I'm wrapping up this session. Run /handoff so another agent can continue where we left off.",
-      "expected_output": "A <prefix>-handoff-<suffix>.md artifact at workspace root with git status, completed items, and numbered next steps for /proceed.",
+      "expected_output": "A <prefix>-handoff-<suffix>.md artifact in the artifact dir with git status, completed items, and numbered next steps for /proceed.",
       "files": [],
       "assertions": [
         {
@@ -42,7 +42,7 @@
       "id": 1,
       "name": "focused-feature-handoff",
       "prompt": "Run /handoff fix-auth-token-refresh to prepare the next session specifically for fixing auth token refresh edge cases.",
-      "expected_output": "A <prefix>-handoff-fix-auth-token-refresh.md artifact at workspace root tailored to auth token refresh with numbered next steps for /proceed.",
+      "expected_output": "A <prefix>-handoff-fix-auth-token-refresh.md artifact in the artifact dir tailored to auth token refresh with numbered next steps for /proceed.",
       "files": [],
       "assertions": [
         {

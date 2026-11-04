@@ -1,6 +1,6 @@
 # Canonical Artifact Catalog
 
-On-demand reference for [artifact-protocol.md](../artifact-protocol.md). Every artifact filename uses `<prefix>-<base_artifact_name>-<suffix>.md` at the workspace root unless noted.
+On-demand reference for [artifact-protocol.md](../artifact-protocol.md). Every artifact filename uses `<prefix>-<base_artifact_name>-<suffix>.md` in `<artifact-dir>` (`artifact-protocol`) unless noted.
 
 | Base Filename Pattern | Written / Managed By | Primary Purpose |
 |---|---|---|
@@ -24,7 +24,7 @@ On-demand reference for [artifact-protocol.md](../artifact-protocol.md). Every a
 | `clean_report-<suffix>.md` | `/clean` | Multi-file dead-code pruning & sanitation report |
 | `skills_sync_report-<suffix>.md` | `/sync-skills` | Registry discovery & loader synchronization audit |
 | `prompt-<suffix>.md` | `/create-prompt` | Paste-ready prompt variants when written to disk |
-| `skill_gap-<suffix>.md` | Any Command, per `core` › *Skill gaps* | One registry skill fact that proved wrong, with evidence, the proposed edit and an open/fixed status; written to `~/.terminal/skill-gaps/`, not the workspace root |
+| `skill_gap-<suffix>.md` | Any Command, per `core` › *Skill gaps* | One registry skill fact that proved wrong, with evidence, the proposed edit and an open/fixed status; written to `~/.terminal/skill-gaps/`, not the artifact dir |
 | `export-<suffix>.<ext>` | `/export-file` | Standalone copy of conversation content (`.md`, `.html` or `.txt`); written to the current working directory unless the user names a location |
 
 *(Older unprefixed, un-modeled, or unsuffixed files written before the full convention are still recognized during scans).*

@@ -12,7 +12,7 @@ The artifact's *🟢 Minor Findings* list becomes **one general comment per PR**
 - **Scope**: only that PR's items (in a multi-repo review, split by the repo each item cites; cross-repo contract notes go on the PR that owns the contract).
 - **Format**: one bullet per item — `` `File.cs:123`: <claim>. `` Resolved findings become a leading `**✅ <what was checked>: <result>.**` bullet.
 - **Expand compressed tails**: if the artifact ends with `"+N more of the same kind: …"`, expand them under a short *Smaller still:* sub-list.
-- **Paths**: repo-relative `File.cs:123` only; no workspace-root prefixes, local artifact links, or finding numbers.
+- **Paths**: repo-relative `File.cs:123` only; no absolute-path prefixes, local artifact links, or finding numbers.
 
 ---
 

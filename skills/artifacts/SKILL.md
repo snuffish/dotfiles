@@ -22,10 +22,10 @@ Read these before step 1:
 
 ## Discovery Protocol
 
-### Step 1: Scan Workspace-Root Artifacts
-`/artifacts` reads **across** hosts, models, and suffixes at the workspace root (`*.md`, plus `*.html` and `*-export-*.txt`):
+### Step 1: Scan the Artifact Dir
+`/artifacts` reads **across** hosts, models, and suffixes in the artifact dir (`artifact-protocol`) (`*.md`, plus `*.html` and `*-export-*.txt`):
 ```bash
-ls -lt *.md *.html *-export-*.txt 2>/dev/null
+ls -lt "$ART_DIR"/*.md "$ART_DIR"/*.html "$ART_DIR"/*-export-*.txt 2>/dev/null   # $ART_DIR per artifact-protocol; then, read-only and flagged "legacy", the old workspace-root files
 ```
 1. Parse each filename into **Host** (`claude`, `antigravity`, or `(standalone)`), **AI Model**, **Base Type** (see `_modules/references/artifact-catalog.md`), and **Suffix / Topic**.
 2. Group revisions (`<name>.md`, `<name>-2.md`, …) into families per `artifact-protocol` › _Claim_ › _Readers & family selection_, and order by the `created` timestamp in each file's `<!-- artifact-owner: … -->` marker (falling back to mtime when absent).
@@ -34,7 +34,7 @@ ls -lt *.md *.html *-export-*.txt 2>/dev/null
 
 ## Presenting & Selecting Artifacts
 
-Present discovered artifact families in a structured table, formatting every `[view]` link for the **current host** per `artifact-protocol` › *Host-Specific Link Formats* (`file://<workspace-root>/<file>` in Antigravity, `<file>` in the Claude Code IDE extension, `antigravity-ide://file/<workspace-root>/<file>` in the Claude Code terminal CLI):
+Present discovered artifact families in a structured table, formatting every `[view]` link for the **current host** per `artifact-protocol` › *Host-Specific Link Formats* (`file://<artifact-dir>/<file>` in Antigravity and the Claude Code IDE extension, `antigravity-ide://file/<artifact-dir>/<file>` in the Claude Code terminal CLI; always absolute):
 
 ```markdown
 # 📂 Recent Artifacts

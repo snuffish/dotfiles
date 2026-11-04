@@ -109,7 +109,7 @@ For long specs (> ~40 lines) or dual-repo features, fan out Steps 3–5 across p
 
 ## 3. Output Format & Deliverables
 
-1. Publish `<prefix>-spec_verification-<suffix>.md` at the workspace root via `artifact-protocol` › *Claim*, following [artifact-template.md](references/artifact-template.md).
+1. Publish `<prefix>-spec_verification-<suffix>.md` in the artifact dir (`artifact-protocol`) via `artifact-protocol` › *Claim*, following [artifact-template.md](references/artifact-template.md).
 2. In chat, emit the `artifact-protocol` › *Chat link block*, followed by the one-sentence verdict and grade counts, the `❌`/`◐`/`❔` items, the `↗` deferred summary, any unreadable spec sources, and the closing gate line (`core` › *The `/proceed` gate*).
 
 ---

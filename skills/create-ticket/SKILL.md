@@ -111,7 +111,7 @@ If an open item already covers the work, stop and show it.
 
 ### Step 8 — Record the id
 
-When the source is a workspace-root artifact, update the single checklist/follow-up line with the created ID, URL, and date (`- [x] Follow-up story created: #31201 (2026-10-19)`, or `drafted, not yet created`), and re-emit the `artifact-protocol` › *Chat link block* if line numbers shifted.
+When the source is a artifact in the artifact dir, update the single checklist/follow-up line with the created ID, URL, and date (`- [x] Follow-up story created: #31201 (2026-10-19)`, or `drafted, not yet created`), and re-emit the `artifact-protocol` › *Chat link block* if line numbers shifted.
 
 ---
 

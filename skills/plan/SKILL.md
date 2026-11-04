@@ -17,7 +17,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 
 - `../_modules/core.md`
-- `../_modules/artifact-protocol.md`: writes `<prefix>-implementation_plan-<suffix>.md` at the **workspace root**
+- `../_modules/artifact-protocol.md`: writes `<prefix>-implementation_plan-<suffix>.md` in the artifact dir (`artifact-protocol`)
 - `../_modules/project-profile.md`: base profile only (no Command profile), for the review (_Case D_); reads _References per layer_, _Contract touchpoints_, _Sibling chain_ and an optional _Plan-review checks_ field
 
 On-demand references (`references/`):
@@ -100,20 +100,20 @@ Pick the case from the arguments, first match wins:
 
 ### Case A: Bare Command (`/plan` with no arguments or message)
 
-1. **Locate the plan:** scan for `<prefix>-implementation_plan-*.md` at the **workspace root** and select the family per `artifact-protocol` › _Claim_ › _Readers & family selection_ (tell the user they can skip the prompt next time with `/plan <suffix>`). If none exists, say so and offer to create one from the user's next prompt.
+1. **Locate the plan:** scan for `<prefix>-implementation_plan-*.md` in the artifact dir (`artifact-protocol`) and select the family per `artifact-protocol` › _Claim_ › _Readers & family selection_ (tell the user they can skip the prompt next time with `/plan <suffix>`). If none exists, say so and offer to create one from the user's next prompt.
 2. **Render the link block** (_§1 Link block_) for the chosen plan, with its current `Status`. Do not edit anything or run background commands.
 
 ### Case B: Command With Instructions (`/plan <instructions>`)
 
 1. **Resolve the contextual suffix** per `artifact-protocol` › rule 2.
 2. **Plan, without changing code:**
-   - **Check for an existing investigation first.** If `<prefix>-investigation-<suffix>.md` exists at the workspace root and covers this topic, build on it: its _Plan Seed_, _Options & Trade-offs_ and _Confidence Ledger_. Do not re-run research it already documents; do resolve any ❓ Unknown the plan depends on.
+   - **Check for an existing investigation first.** If `<prefix>-investigation-<suffix>.md` exists in the artifact dir (`artifact-protocol`) and covers this topic, build on it: its _Plan Seed_, _Options & Trade-offs_ and _Confidence Ledger_. Do not re-run research it already documents; do resolve any ❓ Unknown the plan depends on.
    - Otherwise research the relevant code read-only. If the topic is large or the unknowns are substantial, run [`/investigate`](../investigate/SKILL.md) first.
    - Design to the project's own conventions: its workspace rulebooks, project-scoped References and Profile (`core` › _Precedence_).
-3. **Write the plan** in the _§1 Skeleton_, at the **workspace root**:
+3. **Write the plan** in the _§1 Skeleton_, in the artifact dir (`artifact-protocol`):
    - **New plan:** draft it in a session-private path, then publish it with _Claim_ (`artifact-protocol` › rule 4). If the base name is taken, Claim writes `…-2.md`; use the path it printed and say so in chat.
    - **Existing plan:** update it only if its owner marker names this session, or if the user named that file and asked for it to be updated (`artifact-protocol` › rule 3). Otherwise write a new revision through _Claim_, and link the one it supersedes in **Inputs**.
-   - Set `Status` to `Awaiting User Review` when it is complete. Under Antigravity, when writing a mirrored artifact copy inside `<appDataDir>/brain/<conversation-id>/`, set `UserFacing = true` and `RequestFeedback = true` in `ArtifactMetadata` (omit `ArtifactMetadata` on the workspace-root file).
+   - Set `Status` to `Awaiting User Review` when it is complete. Under Antigravity, when writing a mirrored artifact copy inside `<appDataDir>/brain/<conversation-id>/`, set `UserFacing = true` and `RequestFeedback = true` in `ArtifactMetadata` (omit `ArtifactMetadata` on the artifact dir file).
 4. **Self-review before presenting:** read [`references/review.md`](references/review.md) and run _Case D_ steps 2–3 on the plan just written, in the main context. Use its pillars and severities. Do not print its report or its gate: this is part of drafting, and the user reviews the folded plan.
    - Fold every finding into the plan before presenting:
 
@@ -133,7 +133,7 @@ Pick the case from the arguments, first match wins:
 
 Shows an existing plan in the host's planning preview panel (using `ExitPlanMode` when available), so the user can read, comment on, and approve it interactively.
 
-1. **Resolve plan:** Use argument (path or suffix), the session's active plan file, or the latest workspace-root plan family (Case A).
+1. **Resolve plan:** Use argument (path or suffix), the session's active plan file, or the latest plan family in the artifact dir (Case A).
 2. **Host capability check:** If the host lacks `ExitPlanMode` (such as Antigravity IDE), output the plan's link block (Case A) and explain that the host renders plans directly via markdown links.
 3. **Enter plan mode & copy:** Call `EnterPlanMode`, read the host plan-file path from the system message, and copy the source plan into it (omitting the leading `<!-- artifact-owner: … -->` comment).
 4. **Open preview:** Call `ExitPlanMode`.

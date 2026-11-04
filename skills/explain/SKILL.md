@@ -1,6 +1,6 @@
 ---
 name: explain
-description: "Explains code, PR review comments, complex expressions, architecture patterns, or design intent across the codebase. Supports fast, concise in-chat explanations (/explain) and `--deep`, which researches the three explanation axes (Mechanism, Rationale, Context) in parallel sub-agents and writes a workspace-root artifact (/explain --deep)."
+description: "Explains code, PR review comments, complex expressions, architecture patterns, or design intent across the codebase. Supports fast, concise in-chat explanations (/explain) and `--deep`, which researches the three explanation axes (Mechanism, Rationale, Context) in parallel sub-agents and writes an artifact in the artifact dir (/explain --deep)."
 argument-hint: "[--deep] [<target>]"
 ---
 
@@ -54,7 +54,7 @@ Suggest `--deep` in chat (never switch silently) when a bare `/explain` target s
 
 ## 3. Mode 2: `/explain --deep` — In-Depth, Parallel Axes
 
-1. **Resolve the target first** (`fan-out` › *Brief contract*): exact symbols, files and line ranges, repo(s), head SHA (`git rev-parse --short HEAD` + dirty check), related workspace-root artifacts, and any PR counterpart (`pr-counterpart` › *Counterpart discovery*).
+1. **Resolve the target first** (`fan-out` › *Brief contract*): exact symbols, files and line ranges, repo(s), head SHA (`git rev-parse --short HEAD` + dirty check), related artifacts in the artifact dir, and any PR counterpart (`pr-counterpart` › *Counterpart discovery*).
 2. **Spawn the three axis sub-agents in parallel** per `fan-out` and [`references/deep-axes.md`](references/deep-axes.md).
-3. **Verify & aggregate** (`fan-out` › *Aggregation*): write `<prefix>-explanation-<suffix>.md` at the **workspace root** using the structure in [`references/deep-axes.md`](references/deep-axes.md). Highlight any disagreement between axes (e.g. Rationale cites a constraint that Mechanism shows the code no longer honours).
+3. **Verify & aggregate** (`fan-out` › *Aggregation*): write `<prefix>-explanation-<suffix>.md` in the artifact dir (`artifact-protocol`) using the structure in [`references/deep-axes.md`](references/deep-axes.md). Highlight any disagreement between axes (e.g. Rationale cites a constraint that Mechanism shows the code no longer honours).
 4. **Report in chat**: a 1–2 sentence **TL;DR**, the `artifact-protocol` › _Chat link block_ with real section line numbers (`grep -n`), the mode (`deep`) and head SHA, and 2–3 takeaways without duplicating the document.

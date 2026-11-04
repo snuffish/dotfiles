@@ -1,6 +1,6 @@
 # `/suggestion --deep` — Artifact Structure (`<prefix>-suggestion-<suffix>.md`)
 
-Write `<prefix>-suggestion-<suffix>.md` at the **workspace root** via `artifact-protocol` › *Claim* containing, in order:
+Write `<prefix>-suggestion-<suffix>.md` in the artifact dir (`artifact-protocol`) via `artifact-protocol` › *Claim* containing, in order:
 
 1. `# Suggestion: <short title>`
 2. **Header** — a small table: question as framed (Step 1), goal (and whether it was assumed), constraints, repo(s), head SHA, mode (`deep`), related artifacts and prior decisions.

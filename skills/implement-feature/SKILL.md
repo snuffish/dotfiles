@@ -22,7 +22,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 
 Read these before step 1:
 - `../_modules/core.md`
-- `../_modules/artifact-protocol.md`: writes `<prefix>-implementation_plan-<suffix>.md` and `<prefix>-what_am_i_missing-<suffix>.md` (Phase 2), and `<prefix>-walkthrough-<suffix>.md` (Phase 7) at the **workspace root** (`<suffix>` is `<ticket-id>-<feature-slug>` when there is a ticket, else a 2–4 word topic slug)
+- `../_modules/artifact-protocol.md`: writes `<prefix>-implementation_plan-<suffix>.md` and `<prefix>-what_am_i_missing-<suffix>.md` (Phase 2), and `<prefix>-walkthrough-<suffix>.md` (Phase 7) in the artifact dir (`artifact-protocol`) (`<suffix>` is `<ticket-id>-<feature-slug>` when there is a ticket, else a 2–4 word topic slug)
 - `../_modules/git-worktrees.md`: workspace by default (creates/reuses a workspace worktree per repo in Phase 0 and removes landed ones in Phase 7 per *Workspace Lifecycle*; paste `[worktree-context]` into every delegated skill and sub-agent brief; `/no-worktrees` opts out)
 - `../_modules/pr-counterpart.md`
 - `../_modules/pr-host.md`: ticket and PR intake (`<org-url>`, work items, acceptance criteria)
@@ -150,7 +150,7 @@ Check each row that applies against the profile's *Contract touchpoints*:
 
 ## Phase 2 — Implementation Plan
 
-Write `<prefix>-implementation_plan-<suffix>.md` at the workspace root following [`/plan`](../plan/SKILL.md) › *§1 The Plan Contract* (created via *Claim*, using `/plan`'s 7-section skeleton, *Status values*, and *Style*), adding:
+Write `<prefix>-implementation_plan-<suffix>.md` in the artifact dir (`artifact-protocol`) following [`/plan`](../plan/SKILL.md) › *§1 The Plan Contract* (created via *Claim*, using `/plan`'s 7-section skeleton, *Status values*, and *Style*), adding:
 - `## User Review Required` (after `## 1. Context & Goal`): breaking changes, migrations, irreversible steps as `> [!WARNING]`.
 - `### Cross-repo order` (inside `## 3. Proposed Changes`, when >1 repo): which PR merges first and what the second depends on.
 - `## Blind-spot Pass` (after `## 5. Risks`): populated in Phase 2b with the artifact link, the #1 finding in one sentence, and where each finding landed.
@@ -232,7 +232,7 @@ Present in chat: branch name, exact file list to stage, commit message, and `/pr
 
 ## Phase 7 — Walkthrough
 
-Write `<prefix>-walkthrough-<suffix>.md` at the workspace root:
+Write `<prefix>-walkthrough-<suffix>.md` in the artifact dir (`artifact-protocol`):
 - Files changed per repo and why (grouped, not a raw diff).
 - Verification results (summary line per command, migration check, flakes ruled out).
 - Self-review outcome: spec-verification grades, unresolved code-review findings, and blind-spot closure linking `<prefix>-what_am_i_missing-<suffix>.md`.

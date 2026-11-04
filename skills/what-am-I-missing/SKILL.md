@@ -17,7 +17,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 
 - `../_modules/core.md`: read-only until `/proceed`
-- `../_modules/artifact-protocol.md`: answers in chat by default; writes `<prefix>-what_am_i_missing-<suffix>.md` at the **workspace root** only under `--deep` or when called from `/implement-feature` Phase 2b (calls from `/code-review` Step 6c stay in chat mode and write no file)
+- `../_modules/artifact-protocol.md`: answers in chat by default; writes `<prefix>-what_am_i_missing-<suffix>.md` in the artifact dir (`artifact-protocol`) only under `--deep` or when called from `/implement-feature` Phase 2b (calls from `/code-review` Step 6c stay in chat mode and write no file)
 
 On-demand references (`references/`):
 - [`references/vectors.md`](references/vectors.md) — the 7 Universal Blindspot Vectors (including sibling-plan & library-source checks)
@@ -50,7 +50,7 @@ Read [`references/vectors.md`](references/vectors.md) and audit the user's curre
 | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/what-am-I-missing [target]`, or a casual "what am I missing?"                      | **Chat only.** Compressed: the bold #1 sentence, _Trigger · Impact · Why it went unnoticed_ in three lines, up to two secondary blind spots in one line each, and the _Immediate Fix_. No file.                           |
 | A call from `/code-review` _Step 6c_                                                 | **Chat mode, no file.** Return the #1 and up to two secondary blind spots _outside_ the findings the review passed in. The review verifies them and carries the result in its own artifact.                               |
-| `/what-am-I-missing --deep [target]`, or a call from `/implement-feature` Phase 2b   | **Artifact.** Write `<prefix>-what_am_i_missing-<suffix>.md` at the **workspace root** using [`references/artifact-template.md`](references/artifact-template.md), plus the chat summary below.                           |
+| `/what-am-I-missing --deep [target]`, or a call from `/implement-feature` Phase 2b   | **Artifact.** Write `<prefix>-what_am_i_missing-<suffix>.md` in the artifact dir (`artifact-protocol`) using [`references/artifact-template.md`](references/artifact-template.md), plus the chat summary below.                           |
 
 **Report Back in Chat** (artifact mode):
 - The bold **#1 Most Important Thing You Are Missing** takeaway sentence.

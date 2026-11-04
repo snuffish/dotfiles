@@ -102,7 +102,7 @@ Only when the user asks: apply the description with `/pr-summary update` and pos
 
 ## 3. Output
 
-Artifact `<prefix>-pr_polish-<PR id>-<slug>.md` at the workspace root, with these sections:
+Artifact `<prefix>-pr_polish-<PR id>-<slug>.md` in the artifact dir (`artifact-protocol`), with these sections:
 
 - **Context**: branch, base, merge base, PR, loaded profiles, baseline dirty files, reviewers that failed
 - **Findings**: every verified finding (`#`, severity, confidence, reviewers, `file:line`, issue, proposed fix, `Status`: `applied (batch n)` · `reverted (batch n: <check>)` · `pending gate` · `dropped (<reason>)` · `blocks-description`)

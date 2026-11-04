@@ -36,12 +36,12 @@ Never delete the `fix/finding-<id>` branch. A worktree that is not clean stays l
 
 ## Handoff template
 
-Write it with `artifact-protocol` naming (suffix: the PR branch slug plus `fix-findings`) at the workspace root:
+Write it with `artifact-protocol` naming (suffix: the PR branch slug plus `fix-findings`) in the artifact dir:
 
 ````markdown
 # Handoff: unlanded findings from <findings doc>
 
-- PR branch: <branch> @ <short-sha> · Findings doc: <workspace-relative path>
+- PR branch: <branch> @ <short-sha> · Findings doc: <absolute path>
 - Landed: <ids> · Not landed: <ids>
 
 ## <id>: <finding title> — RED | BLOCKED_ENV | CONFLICT

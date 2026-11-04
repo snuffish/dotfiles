@@ -9,7 +9,7 @@ One protocol for reading or changing a repository without touching the user's ma
 Read these before using this one:
 - [core.md](core.md) (same folder as this file)
 
-Artifacts stay at the **main workspace root** (`artifact-protocol` › *Rules* › rule 6) and keep workspace-relative paths. This Module writes none; its deliverables are the worktree, the `[worktree-context]` block handed to called Commands/sub-agents, and the hand-off line in chat.
+Artifacts live in `<artifact-dir>` (`artifact-protocol` › *Artifact directory*), outside every checkout, and are linked by absolute path. This Module writes none; its deliverables are the worktree, the `[worktree-context]` block handed to called Commands/sub-agents, and the hand-off line in chat.
 
 ---
 
@@ -24,7 +24,7 @@ A Command that lists this Module in `## Modules` gets both rules below without r
 
 ## Golden Invariants
 
-1. **The main checkout is read-only while a worktree is active for its repo.** No `status`-driven decisions, `stash create`, `checkout`, `switch`, `add`, `commit`, `push`, `reset`, or file edits there. The only writes outside the worktree are artifacts at the main workspace root and `.git/info/exclude` (*Workspace Lifecycle* › *Create*).
+1. **The main checkout is read-only while a worktree is active for its repo.** No `status`-driven decisions, `stash create`, `checkout`, `switch`, `add`, `commit`, `push`, `reset`, or file edits there. The only writes outside the worktree are artifacts in `<artifact-dir>` and `.git/info/exclude` (*Workspace Lifecycle* › *Create*).
 2. **Never move the session working directory.** Use `git -C <path>` and absolute file paths.
 3. **Hybrid host worktree support.** If the session was launched in a linked worktree (`claude --worktree` / `-w` or `EnterWorktree`, detected by `git rev-parse --git-dir` ≠ `--git-common-dir`), reuse that linked worktree as `repo-root` instead of creating a nested one (*Workspace Lifecycle* › *Reuse an active linked worktree*). Never use sub-agent `isolation: "worktree"` — sub-agents always work inside the parent's `repo-root`.
 4. **One worktree per repo in scope.** A two-repo change has two worktrees, two context blocks, and two removals.

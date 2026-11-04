@@ -6,7 +6,7 @@ argument-hint: "[suffix | what will the next session be used for]"
 
 # Skill: `/handoff` — Session Handoff & Continuity Manager
 
-Compacts the current session into a high-fidelity workspace handoff artifact (`<prefix>-handoff-<suffix>.md`) at the workspace root. Enables any fresh agent session to pick up immediately without losing context or re-doing verified work, by running `/proceed <HANDOFF_ARTIFACT.md>`.
+Compacts the current session into a high-fidelity handoff artifact (`<prefix>-handoff-<suffix>.md`) in the artifact dir (`artifact-protocol`). Enables any fresh agent session to pick up immediately without losing context or re-doing verified work, by running `/proceed <HANDOFF_ARTIFACT.md>`.
 
 ---
 
@@ -17,7 +17,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 
 - `../_modules/core.md`: read-only until `/proceed`
-- `../_modules/artifact-protocol.md`: writes `<prefix>-handoff-<suffix>.md` at the **workspace root**
+- `../_modules/artifact-protocol.md`: writes `<prefix>-handoff-<suffix>.md` in the artifact dir (`artifact-protocol`)
 - `../_modules/git-worktrees.md`: captures active worktree context
 
 ---
@@ -26,7 +26,7 @@ Read these before step 1:
 
 | Command | Output | Research / Collection Scope | Primary Use |
 | :--- | :--- | :--- | :--- |
-| **`/handoff [suffix \| focus]`** | `<prefix>-handoff-<suffix>.md` at workspace root + chat link block | Transcript context, git state, modified files, test outputs | Wrapping up a session, switching agents, branching off to a fresh session |
+| **`/handoff [suffix \| focus]`** | `<prefix>-handoff-<suffix>.md` in the artifact dir + chat link block | Transcript context, git state, modified files, test outputs | Wrapping up a session, switching agents, branching off to a fresh session |
 
 ### When *not* to use
 
@@ -72,7 +72,7 @@ Gather the concrete facts from the active workspace and conversation history:
    - Priority 4: Task descriptor (2–4 words, `-api-contract-refactor`).
 2. **Claim File**:
    - Draft the artifact using `artifact-protocol` › *Claim* at:
-     `<workspace-root>/<prefix>handoff-<suffix>.md`
+     `<artifact-dir>/<prefix>-handoff-<suffix>.md`
    - Ensure the line 1 ownership marker is present:
      `<!-- artifact-owner: <host>-<model> · session <session-id> · created <ISO-8601 timestamp> -->`
    - Publish atomically (`publish_new_artifact` / collision counter `-1`, `-2`, …).
@@ -121,7 +121,7 @@ Gather the concrete facts from the active workspace and conversation history:
 ---
 
 > **Next Step Gate:** In a fresh or current agent session, run:
-> `/proceed <artifact-filename>`
+> `/proceed <absolute-path-to-artifact>`
 > to authorize and execute the next steps listed above.
 ```
 
@@ -139,14 +139,14 @@ Render the `artifact-protocol` chat link block:
 - **Git State**: `<branch>` at `<sha>` (<n> dirty files)
 
 To continue in a fresh agent session, start the session and run:
-`/proceed <artifact-filename>`
+`/proceed <absolute-path-to-artifact>`
 ```
 
 ---
 
 ## 3. Verification & Validation
 
-- [ ] `<prefix>-handoff-<suffix>.md` is written directly to the workspace root with a valid `artifact-owner` marker and contextual suffix.
+- [ ] `<prefix>-handoff-<suffix>.md` is written directly to the artifact dir with a valid `artifact-owner` marker and contextual suffix.
 - [ ] No code modifications, staging, or outward writes occurred during handoff execution (`core` read-only until `/proceed`).
 - [ ] Git state (branch, commit, uncommitted files) is accurately captured without guessing.
 - [ ] Next steps are concrete, numbered, and executable by `/proceed`.

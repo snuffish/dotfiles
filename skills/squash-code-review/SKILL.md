@@ -12,7 +12,7 @@ Reconciles two or more code reviews of the same change into one verified review 
 
 ## Invariants
 
-1. **Mandatory artifact:** writes `<prefix>-squashed_code_review-<suffix>.md` at the workspace root and opens chat with the `artifact-protocol` › *Chat link block*.
+1. **Mandatory artifact:** writes `<prefix>-squashed_code_review-<suffix>.md` in the artifact dir (`artifact-protocol`) and opens chat with the `artifact-protocol` › *Chat link block*.
 2. **Never edit a source review:** source artifacts stay byte-for-byte intact.
 3. **Sources are evidence, not verdicts:** every 🔴/🟡 passes [`/code-review`](../code-review/SKILL.md) › *Step 6 — Verify Every 🔴 and 🟡* at the pinned head.
 4. **Conservation:** every source finding is accounted for in a squashed finding, a minor finding, or a *Refuted / dropped* row.
@@ -63,7 +63,7 @@ Read these before step 1:
 | User passes | Sources |
 |---|---|
 | Two or more `@file` paths | Those files |
-| A PR id, PR URL or suffix | Every `*code_review-<suffix>*.md` at the workspace root for that PR, across hosts and models |
+| A PR id, PR URL or suffix | Every `*code_review-<suffix>*.md` in the artifact dir (`artifact-protocol`) for that PR, across hosts and models |
 | Nothing | The current branch's PR (`pr-host` › *Resolve the PR from a branch*), then as above |
 
 - Fewer than two sources, or sources for different PRs/changes → stop and report what was found.
@@ -77,7 +77,7 @@ Read these before step 1:
 
 ### Step 3 — Fold in the PR discussion
 
-1. If a `*pr_feedback_review-<suffix>*.md` at the workspace root matches the pinned head, reuse its triage matrix.
+1. If a `*pr_feedback_review-<suffix>*.md` in the artifact dir (`artifact-protocol`) matches the pinned head, reuse its triage matrix.
 2. Otherwise fetch threads read-only per `pr-host` › *Fetch discussion threads* ([pr-host-threads.md](../_modules/references/pr-host-threads.md)) for every PR in scope.
 3. Also read each source's *Posted to PR* row to map posted thread IDs back to their source findings.
 4. Record per thread: ID, `file:line`, author, status, and *State at head* (`✅ Fixed` · `◐ Partial` · `⏸ Not addressed` · `↩ Superseded` · `⚪ n/a`). If fetching fails, continue without threads and say so.
@@ -102,7 +102,7 @@ Apply [`/code-review`](../code-review/SKILL.md) › *Step 6 — Verify Every �
 
 ## 3. Output Format & Deliverables
 
-Write `<prefix>-squashed_code_review-<suffix>.md` at the workspace root following [review-artifact-template.md](../code-review/references/review-artifact-template.md), with these additions:
+Write `<prefix>-squashed_code_review-<suffix>.md` in the artifact dir (`artifact-protocol`) following [review-artifact-template.md](../code-review/references/review-artifact-template.md), with these additions:
 1. **Review Context** adds **Sources squashed** (`A` · file link · host/model · mode · head reviewed · `same head` / `N commits since`), **PR threads** (source, human thread count, attached count), and **Read from** (snapshot / object reads at `<sha>` / live checkout).
 2. **Findings Summary** adds a **Sources** column (`A B`, `B`, `A T#110776`), followed by:
    - **Reconciliation**: one row per non-unanimous cluster (*Point* · per-source claim/rating · *Verdict* with proof).

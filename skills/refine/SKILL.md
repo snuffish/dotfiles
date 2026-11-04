@@ -46,4 +46,4 @@ Take audit criteria from the project's rulebooks, Profiles, and References (`cor
 
 ## 4. Phase 3: Formulating & Presenting the Refinement Plan (`/plan` Case B)
 
-For each finding, record: **Problem / Odd Behavior**, **Historical Context / Skill Citation**, **Why it Matters**, and **Refined Solution**. Write `<prefix>-implementation_plan-<suffix>.md` at the workspace root via [`/plan`](../plan/SKILL.md) › *Case B* (using its skeleton, `Status` values, self-review, and link block). Wait at `core` › _The `/proceed` gate_ before modifying any workspace files.
+For each finding, record: **Problem / Odd Behavior**, **Historical Context / Skill Citation**, **Why it Matters**, and **Refined Solution**. Write `<prefix>-implementation_plan-<suffix>.md` in the artifact dir (`artifact-protocol`) via [`/plan`](../plan/SKILL.md) › *Case B* (using its skeleton, `Status` values, self-review, and link block). Wait at `core` › _The `/proceed` gate_ before modifying any workspace files.

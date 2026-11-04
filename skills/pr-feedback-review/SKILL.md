@@ -12,7 +12,7 @@ Triages pull request reviewer comments, threads, and votes against the code at t
 
 ## Invariants
 
-1. **Artifact and summary:** every `/pr-feedback-review` writes `<prefix>-pr_feedback_review-<suffix>.md` at the workspace root and opens its chat response with the `artifact-protocol` › *Chat link block*. Never substitute `<prefix>-implementation_plan-<suffix>.md` for the feedback review artifact.
+1. **Artifact and summary:** every `/pr-feedback-review` writes `<prefix>-pr_feedback_review-<suffix>.md` in the artifact dir (`artifact-protocol`) and opens its chat response with the `artifact-protocol` › *Chat link block*. Never substitute `<prefix>-implementation_plan-<suffix>.md` for the feedback review artifact.
 2. **Read-only:** never edit code, stage commits, run migrations, post replies, or modify the main checkout (`core` › *The `/proceed` gate*, `git-worktrees` › *Snapshot Lifecycle*).
 
 ---
@@ -141,7 +141,7 @@ For every non-trivial thread:
 
 ## Step 6 — Artifact Management & Output Format
 
-1. Publish `<prefix>-pr_feedback_review-<suffix>.md` at the workspace root via `artifact-protocol` › *Claim*, following the template in [artifact-template.md](references/artifact-template.md), then remove the snapshot(s).
+1. Publish `<prefix>-pr_feedback_review-<suffix>.md` in the artifact dir (`artifact-protocol`) via `artifact-protocol` › *Claim*, following the template in [artifact-template.md](references/artifact-template.md), then remove the snapshot(s).
 2. Begin the chat response with the `artifact-protocol` › *Chat link block*, followed by a concise summary of reviewer votes, blocking/open thread counts, and the closing gate line (`core` › *The `/proceed` gate*).
 
 ### 6.4 — Status fields

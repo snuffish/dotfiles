@@ -93,7 +93,7 @@ Chat, by default:
 - !566 CI Frontend red
 ```
 
-With `--file`, also write the same content to `<prefix>-standup_recap-<window.start>.md` at the workspace root (`artifact-protocol` › _Claim_) and link it.
+With `--file`, also write the same content to `<prefix>-standup_recap-<window.start>.md` in the artifact dir (`artifact-protocol`) (`artifact-protocol` › _Claim_) and link it.
 
 ---
 

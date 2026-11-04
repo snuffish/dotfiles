@@ -2,7 +2,7 @@
 
 ## Parallel Sub-Agent Briefs
 
-Spawn the three read-only sub-agents in parallel (`fan-out` › *Brief contract*). Each prompt includes the repo path(s), the resolved target (`path:line` ranges), the head SHA, the list of related workspace-root artifacts, and its axis brief:
+Spawn the three read-only sub-agents in parallel (`fan-out` › *Brief contract*). Each prompt includes the repo path(s), the resolved target (`path:line` ranges), the head SHA, the list of related artifacts in the artifact dir, and its axis brief:
 
 - **Mechanism** — "Trace what this code does at head, hop by hop: entry points, the call and data flow across layers, state transitions, transactions and query filters it runs under, and every failure path. Read whole files where needed. Cite `path:line` for each hop. Produce (a) a numbered walkthrough and (b) a Mermaid sequence or flow diagram source. Say what you could not confirm by reading. Report only what the aggregation needs: one entry per hop with its citation, nothing else."
 - **Rationale** — "Explain why it is the way it is. Use `git log --follow -p` on the touched files, PR descriptions and review threads if a CLI is authenticated (`az repos pr list --source-branch`, `gh pr view`), linked work items, ADRs/docs, and comments that state constraints. Report: the decisions that shaped it, the alternatives that were considered or rejected and why, and any constraint that is no longer true. Quote the source (commit, thread id, doc) for each. Never infer intent from a branch name. Report only what the aggregation needs: one entry per decision with its citation, nothing else."
@@ -10,7 +10,7 @@ Spawn the three read-only sub-agents in parallel (`fan-out` › *Brief contract*
 
 ## Artifact Structure (`<prefix>-explanation-<suffix>.md`)
 
-Write at the **workspace root** via `artifact-protocol` › *Claim* containing, in this order:
+Write in the artifact dir (`artifact-protocol`) via `artifact-protocol` › *Claim* containing, in this order:
 
 1. **Header**: target, repo(s), head SHA, mode (`deep`), related artifacts.
 2. **Executive Summary / Core Concept**.

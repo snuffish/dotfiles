@@ -1,6 +1,6 @@
 # Reorganization Plan Artifact Template (`<prefix>-organize_plan-<suffix>.md`)
 
-Written at the **workspace root** via `artifact-protocol` › _Claim_.
+Written in the artifact dir (`artifact-protocol`) via `artifact-protocol` › _Claim_.
 
 ```markdown
 <!-- artifact-owner: … -->

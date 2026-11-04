@@ -17,7 +17,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 
 - `../_modules/core.md`: read-only until `/proceed`
-- `../_modules/artifact-protocol.md`: writes `<prefix>-suggestion-<suffix>.md` at the **workspace root** in `/suggestion --deep` only (suffix derived from the question, e.g. `-cache-invalidation-strategy`, `-pdf-export-library`); bare `/suggestion` writes no artifact
+- `../_modules/artifact-protocol.md`: writes `<prefix>-suggestion-<suffix>.md` in the artifact dir (`artifact-protocol`) in `/suggestion --deep` only (suffix derived from the question, e.g. `-cache-invalidation-strategy`, `-pdf-export-library`); bare `/suggestion` writes no artifact
 - `../_modules/fan-out.md` (`--deep` mode)
 
 On-demand references (`references/`):
@@ -30,7 +30,7 @@ On-demand references (`references/`):
 | Command                                                             | Output                                        | Research scope                                                                                                  | Latency      |
 | :------------------------------------------------------------------ | :-------------------------------------------- | :-------------------------------------------------------------------------------------------------------------- | :----------- |
 | **`/suggestion <question>`** (default — Simple & Fast)              | Direct in-chat answer (no artifact written)   | Focused: the files, symbols and conventions the question touches (handful of reads)                             | **Fast**     |
-| **`/suggestion --deep <question>`** (or "compare these thoroughly") | Workspace-root artifact + linked chat summary | Comprehensive: wider prior-art sweep, every affected layer, optional parallel sub-agents per candidate approach | **Thorough** |
+| **`/suggestion --deep <question>`** (or "compare these thoroughly") | Artifact in the artifact dir + linked chat summary | Comprehensive: wider prior-art sweep, every affected layer, optional parallel sub-agents per candidate approach | **Thorough** |
 
 Suggest `--deep` in chat (never switch silently) when a bare `/suggestion` spans several repos or layers, needs a contract or migration decision, or requires more than a handful of reads.
 
@@ -63,7 +63,7 @@ Suggest `--deep` in chat (never switch silently) when a bare `/suggestion` spans
 
 - **Prior art first** (`core` › *Codebase investigation* › *Navigation*): an existing pattern beats a theoretically better one unless demonstrably broken; cite the precedent with `path:line`.
 - **Conventions second**: read governing rulebook sections and project-scoped skills (`core` › *Precedence*). Flag and justify any departure.
-- **Blast radius & prior decisions**: note touched contracts/migrations/enums/tests, and check recent git history, open PRs, workspace-root artifacts and memory (`core` › *Codebase investigation* › *Historical decisions*).
+- **Blast radius & prior decisions**: note touched contracts/migrations/enums/tests, and check recent git history, open PRs, artifacts in the artifact dir and memory (`core` › *Codebase investigation* › *Historical decisions*).
 - **External research**: only in `--deep` mode or when a version/API fact must be verified.
 
 ### Step 3: Enumerate and rank
@@ -106,7 +106,7 @@ Choose the closing **Next step** line per `core` › *Golden invariants* › *Pl
 
 ### `/suggestion --deep` — artifact & chat response
 
-Write `<prefix>-suggestion-<suffix>.md` at the **workspace root** using [`references/deep-artifact.md`](references/deep-artifact.md). In chat, render the `artifact-protocol` › _Chat link block_ linking `Recommendation`, `Approaches`, `Decision & Rationale`, and `What /proceed will do` (with a one-line summary on each), followed by the mode and head SHA, the 2–3 deciding facts, and the _Next step_ line.
+Write `<prefix>-suggestion-<suffix>.md` in the artifact dir (`artifact-protocol`) using [`references/deep-artifact.md`](references/deep-artifact.md). In chat, render the `artifact-protocol` › _Chat link block_ linking `Recommendation`, `Approaches`, `Decision & Rationale`, and `What /proceed will do` (with a one-line summary on each), followed by the mode and head SHA, the 2–3 deciding facts, and the _Next step_ line.
 
 ---
 

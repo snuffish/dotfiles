@@ -19,7 +19,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 
 Read these before step 1:
 - `../_modules/core.md`
-- `../_modules/artifact-protocol.md`: writes `<prefix>-export-<suffix>.<ext>`, in the current working directory instead of the workspace root unless the user gives a location; prefix, suffix, owner marker and *Claim* apply as written there
+- `../_modules/artifact-protocol.md`: writes `<prefix>-export-<suffix>.<ext>`, in the current working directory instead of the artifact dir unless the user gives a location; prefix, suffix, owner marker and *Claim* apply as written there
 
 - Write exactly one file. No git staging or commits, no edits to other files, and no new analysis: the export carries what the conversation already established.
 - Never overwrite an existing file. A name the user chose that is already taken is a question, not a write.

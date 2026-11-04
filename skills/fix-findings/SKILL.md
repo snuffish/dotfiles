@@ -107,7 +107,7 @@ If any finding ended RED, BLOCKED_ENV or CONFLICT, write `<prefix>-handoff-<suff
 | Finding | Batch | Status | Tests (run/failed) | Commit on PR branch | Note |
 | ------- | ----- | ------ | ------------------ | ------------------- | ---- |
 
-**Handoff:** <workspace-relative path> (only when something did not land)
+**Handoff:** <absolute path> (only when something did not land)
 **Kept branches:** fix/finding-<id>, …
 ```
 

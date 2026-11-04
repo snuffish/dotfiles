@@ -27,7 +27,7 @@ On-demand references (`references/`):
 ## ⛔ Golden Invariants
 
 > [!CAUTION]
-> 1. **PROPOSAL & PLAN FIRST.** Before moving, renaming or modifying files, write `<prefix>-organize_plan-<suffix>.md` at the workspace root and present the before/after structure. Exception: when the user names the exact moves themselves (`a/x.ts → b/x.ts`), list them in chat and skip the artifact.
+> 1. **PROPOSAL & PLAN FIRST.** Before moving, renaming or modifying files, write `<prefix>-organize_plan-<suffix>.md` in the artifact dir (`artifact-protocol`) and present the before/after structure. Exception: when the user names the exact moves themselves (`a/x.ts → b/x.ts`), list them in chat and skip the artifact.
 > 2. **THE APPROVAL GATE (`/proceed`).** Do not mutate files until the user opens `core` › _The `/proceed` gate_, including the exact-moves case above.
 > 3. **PRESERVE GIT HISTORY WITH `git mv`.** Never use plain `rm`/`cp`/`mv` or filesystem-only writes that break git file identity and blame.
 > 4. **ZERO BROKEN REFERENCES (CODE & NON-CODE).** Scan and update static/dynamic imports, CSS `url()` assets, test fixtures, string paths, build configs, and `.csproj` inclusions.
@@ -72,7 +72,7 @@ On-demand references (`references/`):
 
 ### Phase 2: Formulate the Reorganization Plan Artifact
 
-Write `<prefix>-organize_plan-<suffix>.md` at the **workspace root** via `artifact-protocol` › _Claim_ using [`references/organize-plan-template.md`](references/organize-plan-template.md).
+Write `<prefix>-organize_plan-<suffix>.md` in the artifact dir (`artifact-protocol`) via `artifact-protocol` › _Claim_ using [`references/organize-plan-template.md`](references/organize-plan-template.md).
 
 ### Phase 3: The Approval Gate
 
