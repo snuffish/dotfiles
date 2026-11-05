@@ -55,7 +55,7 @@ Runs before anything is staged, so claim fixes are grouped with the change that 
 | Checker | Claims file | Triage per |
 |---|---|---|
 | `skills/skill-drift/scripts/check_skill_drift.py` (the `~/.terminal` registry) | `skills/skills-claims.json` | [`/skill-drift`](../skill-drift/SKILL.md) |
-| `.claude/scripts/check-skill-drift.py` (a project repo) | `.claude/skills-claims.json` | that repo's drift skill |
+| `.claude/scripts/check_skill_drift.py` (a project repo) | `.claude/skills-claims.json` | that repo's drift skill |
 
 No checker → state `"no skill-drift check"` and go to Step 3.
 
@@ -88,6 +88,7 @@ git -C <repo-root> rev-list --count @{u}..HEAD 2>/dev/null     # commits already
 ### Step 4: Run the repo's pre-commit gates
 
 - Run only the pre-commit gates documented in the repo's rulebook (`CLAUDE.md`, `AGENTS.md`, `CONTRIBUTING.md`, workflow skill), scoped to changed files when supported (e.g. formatter, import organiser, lint).
+- **Run independent gates at the same time**: when gates cover separate parts (backend and frontend, two repos), start the slowest with `run_in_background` and run the others meanwhile, keeping each part's own order (formatter before build or lint). Draft the Step 5 message while they run.
 - Re-stage only files already in the commit if a formatter modifies them; report any untouched files it modified.
 - **A failing gate or git hook stops the commit.** Fix mechanical formatting/lint issues inside the staged change; otherwise report the failure output and stop.
 - If no pre-commit gates are documented, state `"no pre-commit gates documented"` and continue.

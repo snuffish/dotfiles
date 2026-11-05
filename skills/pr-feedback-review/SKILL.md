@@ -115,6 +115,8 @@ Compare `HEAD_SHA` with the PR's `lastMergeSourceCommit` from Step 2.1; if they 
    - Check the counterpart PR snapshot when a thread touches a shared contract.
 3. **Assess technical & architectural constraints**: database/migration safety, layer conventions (*References per layer*), authorization/query filters, and API contract compatibility (*Contract touchpoints*).
 
+**Verification lanes (Standard mode).** With more than 5 active human threads, group them by the file they anchor to (general threads join the group whose code they discuss; at most 4 groups) and run the Verification axis per group as `Explore` lanes per `fan-out` › *Speed fan-out*. Each lane gets the snapshot `[worktree-context]`, the paths of `threads-human.txt` and the selected-code quotes from Step 2, and its thread IDs, and returns per thread its *State at head* value (6.4) with commit and `path:line`. Merit, Impact and the replies stay in the lead. Run inline with 5 or fewer threads.
+
 ---
 
 ## Step 4 — Triage & Technical Assessment

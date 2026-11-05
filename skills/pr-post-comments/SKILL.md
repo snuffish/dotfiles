@@ -123,7 +123,7 @@ git -C <repo> show <head>:<path> | awk -v s=<start> -v e=<end> 'NR>=s && NR<=e {
    ```
    (Add `--via mcp` for the MCP route: [azure-devops-mcp.md](references/azure-devops-mcp.md).) In **draft mode**, stop here, print the preview ([comment-formats.md](references/comment-formats.md)), and ask.
 3. **Post one & verify**: run with `--post --only <first-key>` (per PR), then read the posted thread back (`pullRequestThreads` `threadContext` & `status` on ADO; `pulls/comments/<id>` on GitHub) to verify the anchor and resolved state before posting the rest.
-4. **Post the rest**: run with `--post --only <key>,<key>,…` (comma-separated, no spaces; or remaining `mcp-*.json` files). Stop on any error and report what posted.
+4. **Post the rest**: run with `--post --only <key>,<key>,…` (comma-separated, no spaces; or remaining `mcp-*.json` files, all in one message per [azure-devops-mcp.md](references/azure-devops-mcp.md)). Stop on any error and report what posted.
 
 ### Step 6 — When the post is denied or blocked
 

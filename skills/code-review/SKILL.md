@@ -40,7 +40,7 @@ Read these before step 1:
 
 | Invocation | Mode | How the axes run |
 | --- | --- | --- |
-| `/code-review [scope]` | **Standard** (default) | One pass; the reviewer covers the selected axes (*Step 5a*) itself |
+| `/code-review [scope]` | **Standard** (default) | One pass; the reviewer covers the selected axes (*Step 5a*) itself, or as parallel axis lanes on larger diffs (*Step 5b*) |
 | `/code-review --deep [scope]` | **Deep** | Each selected axis runs in a parallel sub-agent ([deep-mode.md](references/deep-mode.md)), then aggregate and pass to an independent verifier sub-agent |
 | `/code-review live [scope]` | Standard or deep, **no snapshot** | Reads the main checkout directly (same as `/no-worktrees`). Only when a snapshot is impossible (e.g. uncommitted untracked files) |
 | `/code-review feedback [scope]` | Standard or deep, **full thread triage** | After Step 6 verifies findings, runs `/pr-feedback-review` and folds PR threads into the review (*Step 6b*) |
@@ -158,6 +158,8 @@ Tag every finding with one selected axis and rank severity within each axis on i
 - **Drift**: docs, skills, rulebooks, code comments and checked-in generated artifacts (API snapshots, generated clients, route trees) that no longer match the code at head. The PR description stays on Spec.
 
 An issue whose axis is off goes to its fallback: Security → Correctness; Tests → Standards (missing coverage) or Correctness (untested failing path); Drift → Standards.
+
+**Axis lanes (Standard mode).** When the Step 4 inventory shows more than ~300 changed lines, review the selected axes as parallel lanes per `fan-out` › *Speed fan-out*, one lane per axis and at most 4: with more than 4 axes on, Security rides with Correctness and Tests and Drift ride with Standards. Each lane gets the snapshot `[worktree-context]`, the diff base, the Step 4 inventory, the Spec source (Step 2), the Standards sources (Step 3), its axis definitions above verbatim and the severity scale, and returns findings tagged with axis and severity at `path:line`. The lead merges them and runs Step 6 on every 🔴/🟡 as usual. Review inline at or below ~300 lines, or when `/code-review` itself runs inside a sub-agent. This is not `--deep`: there is no verifier sub-agent and no `deep-mode.md`.
 
 ### Severity
 - **🔴 Critical / Defect**: blocking bugs, security vulnerabilities, broken runtime contracts, or wrong behavior.

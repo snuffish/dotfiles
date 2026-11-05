@@ -5927,7 +5927,7 @@
       },
       "kind": "skill_ref",
       "value": "investigate",
-      "quote": "*Speed fan-out* steps of `investigate`, `plan`, `pr-summary` and `what-am-I-missing`",
+      "quote": "*Speed fan-out* steps of `investigate`, `plan`, `pr-summary`, `what-am-I-missing`",
       "verify": {
         "method": "skill_exists",
         "name": "investigate",
@@ -5942,7 +5942,7 @@
       },
       "kind": "skill_ref",
       "value": "plan",
-      "quote": "*Speed fan-out* steps of `investigate`, `plan`, `pr-summary` and `what-am-I-missing`",
+      "quote": "*Speed fan-out* steps of `investigate`, `plan`, `pr-summary`, `what-am-I-missing`",
       "verify": {
         "method": "skill_exists",
         "name": "plan",
@@ -5957,7 +5957,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-summary",
-      "quote": "*Speed fan-out* steps of `investigate`, `plan`, `pr-summary` and `what-am-I-missing`",
+      "quote": "*Speed fan-out* steps of `investigate`, `plan`, `pr-summary`, `what-am-I-missing`",
       "verify": {
         "method": "skill_exists",
         "name": "pr-summary",
@@ -9265,17 +9265,17 @@
       }
     },
     {
-      "id": "skills/commit/SKILL.md:58:path:.claude/scripts/check-skill-drift.py",
+      "id": "skills/commit/SKILL.md:58:path:.claude/scripts/check_skill_drift.py",
       "source": {
         "file": "skills/commit/SKILL.md",
         "line": 58
       },
       "kind": "path",
-      "value": ".claude/scripts/check-skill-drift.py",
-      "quote": "| `.claude/scripts/check-skill-drift.py` (a project repo) |",
+      "value": ".claude/scripts/check_skill_drift.py",
+      "quote": "| `.claude/scripts/check_skill_drift.py` (a project repo) |",
       "verify": {
         "method": "path_exists",
-        "path": ".claude/scripts/check-skill-drift.py",
+        "path": ".claude/scripts/check_skill_drift.py",
         "base": "project:GR.PRIIS",
         "type": "file"
       }
