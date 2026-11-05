@@ -1,7 +1,8 @@
 ---
 name: create-prompt
-description: "Turns rough intent into a paste-ready prompt invoking the best-fitting skill with real arguments scoped to the git branch or diff. Prints and stops without executing. Use for /create-prompt, 'write a prompt for', or 'turn this into a prompt'. Also invoke automatically when a user request is vague (no clear action, scope, or done-state, e.g. 'clean this up', 'fix the tests', 'make it better') before doing work. For UI generation use /enhance-prompt; for tickets use /create-ticket; for plans use /plan."
+description: "Turns rough intent into a paste-ready prompt invoking the best-fitting skill with real arguments scoped to the git branch or diff. Prints and stops without executing. Use for /create-prompt, 'write a prompt for', or 'turn this into a prompt'. For UI generation use /enhance-prompt; for tickets use /create-ticket; for plans use /plan."
 argument-hint: "<what you intend to do> [--variants] [--file]"
+disable-model-invocation: true
 ---
 
 # Skill: `/create-prompt` — Intent → One Prompt

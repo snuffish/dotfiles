@@ -3,21 +3,6 @@
   "root": "..",
   "claims": [
     {
-      "id": "claude/AGENTS.md:25:skill_ref:create-prompt",
-      "source": {
-        "file": "claude/AGENTS.md",
-        "line": 25
-      },
-      "kind": "skill_ref",
-      "value": "create-prompt",
-      "quote": "make it better\"), invoke the `create-prompt` skill before doing any work, instead of guessing.",
-      "verify": {
-        "method": "skill_exists",
-        "name": "create-prompt",
-        "base": "repo"
-      }
-    },
-    {
       "id": "GLOSSARY.md:16:skill_ref:code-review",
       "source": {
         "file": "GLOSSARY.md",
