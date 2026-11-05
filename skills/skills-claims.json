@@ -22494,6 +22494,88 @@
         ],
         "expect": "present"
       }
+    },
+    {
+      "id": "skills/verify-assumptions/SKILL.md:76:doc_link:references/web-sweep.md",
+      "source": {
+        "file": "skills/verify-assumptions/SKILL.md",
+        "line": 76
+      },
+      "kind": "doc_link",
+      "value": "references/web-sweep.md",
+      "quote": "(references/web-sweep.md)",
+      "verify": {
+        "method": "link_resolves",
+        "href": "references/web-sweep.md",
+        "base": "file_dir"
+      }
+    },
+    {
+      "id": "skills/verify-assumptions/SKILL.md:66:doc_link:fan-out \u203a Bare vs deep",
+      "source": {
+        "file": "skills/verify-assumptions/SKILL.md",
+        "line": 66
+      },
+      "kind": "doc_link",
+      "value": "fan-out \u203a Bare vs deep",
+      "quote": "`fan-out` \u203a *Bare vs deep*",
+      "verify": {
+        "method": "heading_pointer",
+        "target": "fan-out",
+        "heading": "Bare vs deep",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/verify-assumptions/SKILL.md:76:other:fan-out cap of 5",
+      "source": {
+        "file": "skills/verify-assumptions/SKILL.md",
+        "line": 76
+      },
+      "kind": "other",
+      "value": "fan-out cap of 5",
+      "quote": "within the `fan-out` cap of 5",
+      "verify": {
+        "method": "grep",
+        "pattern": "cap at 5",
+        "paths": [
+          "skills/_modules/fan-out.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/verify-assumptions/references/source-routing.md:11:path:skills/verify-assumptions/references/web-sweep.md",
+      "source": {
+        "file": "skills/verify-assumptions/references/source-routing.md",
+        "line": 11
+      },
+      "kind": "path",
+      "value": "skills/verify-assumptions/references/web-sweep.md",
+      "quote": "found by the web sweep (`references/web-sweep.md`)",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/verify-assumptions/references/web-sweep.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/verify-assumptions/references/web-sweep.md:13:path:skills/verify-assumptions/references/source-routing.md",
+      "source": {
+        "file": "skills/verify-assumptions/references/web-sweep.md",
+        "line": 13
+      },
+      "kind": "path",
+      "value": "skills/verify-assumptions/references/source-routing.md",
+      "quote": "preferring the domain from `source-routing.md`",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/verify-assumptions/references/source-routing.md",
+        "base": "repo",
+        "type": "file"
+      }
     }
   ]
 }

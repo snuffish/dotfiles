@@ -8,7 +8,10 @@ Read in Step 3. Pass the rows for each group's domain to its sub-agent in Step 4
 | Libraries and frameworks | The official docs at the pinned version, then the package's source or type definitions (`node_modules/…`, the NuGet package, the GitHub tag) | Stack Overflow, tutorials |
 | Platforms (Azure DevOps, GitHub, cloud services) | Official REST and CLI reference, `--help` output | Third-party wrappers |
 | The codebase | The code itself at the current head (`core` › *Codebase investigation* › *Navigation*) | Comments, READMEs that may have drifted |
+| Known bugs, regressions, deprecations | Release notes and changelog for the versions in between, the official issue tracker (maintainer statements, linked fixes); found by the web sweep (`references/web-sweep.md`) | Unconfirmed issues, workaround posts |
 | This machine | The config files and read-only commands that show the real state (settings files, `env`, `--version`) | Assumed defaults |
+
+Model memory is never evidence in any row, however familiar the product.
 
 For a product without a row above, take its official home from the package's own metadata (npm `homepage`/`repository`, NuGet `projectUrl`), not from search ranking.
 
