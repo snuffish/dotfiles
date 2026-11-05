@@ -17,9 +17,7 @@
       "Az devops invoke"
     ],
     "defaultMode": "auto",
-    "additionalDirectories": [
-      "~/.cache/agent-artifacts"
-    ]
+    "additionalDirectories": ["~/.cache/agent-artifacts"]
   },
   "model": "opus",
   "skillOverrides": {
@@ -158,7 +156,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "f=$(jq -r '.tool_input.file_path // empty'); [ -n \"$f\" ] || exit 0; case \"$(realpath -m \"$f\")\" in \"$HOME\"/.terminal/skills/*.md) exit 0 ;; esac; npx prettier --write \"$f\""
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); [ -n \"$f\" ] || exit 0; case \"$(realpath \"$f\" 2>/dev/null || echo \"$f\")\" in \"$HOME\"/.terminal/skills/*.md) exit 0 ;; esac; npx prettier --write --ignore-unknown \"$f\""
           },
           {
             "type": "command",
