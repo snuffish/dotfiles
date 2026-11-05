@@ -57,8 +57,12 @@ print("\n".join(out_lines))
     header_args=(--header "$wrapped_header")
   fi
 
+  # Ctrl-R pattern mode (utils/fzf-pattern.sh) filters this cache of the list; the driver's reloads keep it current
+  local -x FZFP_DIR
+  FZFP_DIR="$(mktemp -d)" || return 1
+
   out="$(
-    bash "$driver" list "$scope" | fzf --ansi \
+    bash "$driver" list "$scope" | tee "$FZFP_DIR/rows" | fzf --ansi \
       "${header_args[@]}" \
       --border rounded --border-label " $title " --preview-border rounded \
       --color 'border:8,label:6:bold,preview-border:8,preview-label:6:bold,info:8,separator:8,scrollbar:8' \
@@ -67,12 +71,16 @@ print("\n".join(out_lines))
       --bind='focus:transform-preview-label:printf " %s " {4}' \
       --bind="ctrl-t:transform:bash $driver key scope" \
       --bind="ctrl-g:transform:bash $driver key mode" \
+      --bind="ctrl-r:transform:bash $driver key pattern" \
       --bind="change:transform:bash $driver key change" \
       --bind="ctrl-s:execute-silent(printf %s {5} | (wl-copy 2>/dev/null || xclip -selection clipboard 2>/dev/null || pbcopy 2>/dev/null))+abort" \
       "${extra_binds[@]}" \
       --preview="bash $driver preview {6}" \
       --preview-window 'right,55%,wrap,follow' --height 60% --layout reverse
-  )" || return 1
+  )"
+  local rc=$?
+  command rm -rf -- "$FZFP_DIR"
+  [[ $rc -eq 0 ]] || return 1
 
   printf "%s\n" "$out"
 }

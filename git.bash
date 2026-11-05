@@ -82,14 +82,16 @@ alias gpa="git-pull-all"
 
 # Data & key-binding helper for gb:
 #   _gb_list list local|all [current_root]  -> TSV rows: "<age>\t<branch>\t<meta+subject>\t<checkout_branch>\t<ref>\t<wt_dir>\t<lock>"
-#   _gb_list key                            -> fzf transform action for ctrl-t (toggles Local> / All> prompt + reloads list)
+#   _gb_list key                            -> fzf transform action for ctrl-t (toggles Local> / All> prompt + reloads list,
+#                                              keeping pattern mode; utils/fzf-pattern.sh filters it)
 function _gb_list() {
   if [[ "$1" == key ]]; then
-    local self="$HOME/.terminal/git.bash"
+    local self="$HOME/.terminal/git.bash" fp="$HOME/.terminal/utils/fzf-pattern.sh" mode=
+    [[ "$FZF_PROMPT" == *pattern* ]] && mode=' pattern'
     if [[ "$FZF_PROMPT" == All* ]]; then
-      echo "change-prompt(Local> )+reload(bash -c 'source \"$self\" && _gb_list list local')"
+      echo "change-prompt(Local$mode> )+reload(bash -c 'source \"$self\" && _gb_list list local' | bash $fp pipe 2,3)"
     else
-      echo "change-prompt(All> )+reload(bash -c 'source \"$self\" && _gb_list list all')"
+      echo "change-prompt(All$mode> )+reload(bash -c 'source \"$self\" && _gb_list list all' | bash $fp pipe 2,3)"
     fi
     return 0
   fi
@@ -301,7 +303,13 @@ function gb() {
   local max_len=$(( cols * 45 / 100 - 4 ))
   [[ $max_len -lt 35 ]] && max_len=35
   local header
-  header=$(_git_fzf_wrap_header "$max_len" '[Enter] Checkout/Switch · [Ctrl-T] Local/All · [Ctrl-D] Diff · [Ctrl-S] Log · [Ctrl-Y] Copy')
+  header=$(_git_fzf_wrap_header "$max_len" '[Enter] Checkout/Switch · [Ctrl-T] Local/All · [Ctrl-R] Fuzzy/pattern · [Ctrl-D] Diff · [Ctrl-S] Log · [Ctrl-Y] Copy')
+
+  # Ctrl-R pattern mode (regex or glob on branch + subject) filters this cache of the full list
+  local fp="$HOME/.terminal/utils/fzf-pattern.sh"
+  local -x FZFP_DIR
+  FZFP_DIR=$(mktemp -d) || return $?
+  printf '%s\n' "$rows" > "$FZFP_DIR/rows"
 
   local pick
   pick=$(printf '%s\n' "$rows" | fzf --ansi \
@@ -313,11 +321,14 @@ function gb() {
     --query "$*" --select-1 --exit-0 "${pos_bind[@]}" \
     --bind='focus:transform-preview-label:printf " %s " {4}' \
     --bind="ctrl-t:transform:bash -c 'source \"$self\" && _gb_list key'" \
+    --bind="ctrl-r:transform:bash $fp toggle 2,3" \
+    --bind="change:transform:bash $fp change 2,3" \
     --bind="ctrl-d:change-preview:$preview_diff" \
     --bind="ctrl-s:change-preview:$preview_log" \
     --bind="ctrl-y:execute-silent(printf %s {4} | (wl-copy 2>/dev/null || xclip -selection clipboard 2>/dev/null || pbcopy 2>/dev/null))+abort" \
     --preview="$preview_log" \
-    --preview-window 'right,55%,wrap' --height 60% --layout reverse) || return 0
+    --preview-window 'right,55%,wrap' --height 60% --layout reverse)
+  command rm -rf -- "$FZFP_DIR"
   [[ -n "$pick" ]] || return 0
 
   local target_branch target_wt target_lock
@@ -486,18 +497,24 @@ function gw() {
   preview_diff+=' git diff HEAD --color=always;'
   preview_diff+=' git ls-files -z --others --exclude-standard | xargs -0 -n1 git diff --no-index --color=always -- /dev/null 2>/dev/null; true'
 
-  # Ctrl-X / Ctrl-R run in a bash subshell (helpers use bash syntax), then reload the list
+  # Ctrl-X / Ctrl-R run in a bash subshell (helpers use bash syntax), then reload the list;
+  # reloads go through fzf-pattern.sh, which keeps the Ctrl-F pattern-mode cache current
   local self="$HOME/.terminal/git.bash" q_root
   q_root=$(printf %q "$current_root")
   local delete_cmd="bash -c 'source \"$self\" && _gw_delete \"\$@\"' _ {3} {4} $q_root {5}"
   local prune_cmd="bash -c 'source \"$self\" && _gw_prune'"
-  local reload_cmd="bash -c 'source \"$self\" && _gw_list \"\$1\"' _ $q_root"
+  local fp="$HOME/.terminal/utils/fzf-pattern.sh"
+  local reload_cmd="bash -c 'source \"$self\" && _gw_list \"\$1\"' _ $q_root | bash $fp pipe 1"
 
   local cols="${COLUMNS:-$(tput cols 2>/dev/null || echo 100)}"
   local max_len=$(( cols * 50 / 100 - 4 ))
   [[ $max_len -lt 35 ]] && max_len=35
   local header
-  header=$(_git_fzf_wrap_header "$max_len" '[Enter] Switch · [Ctrl-D] Diff · [Ctrl-S] Status · [Ctrl-O] Open in Antigravity · [Ctrl-Y] Copy path · [Ctrl-X] Delete · [Ctrl-R] Prune · [Shift-↑/↓] Scroll preview')
+  header=$(_git_fzf_wrap_header "$max_len" '[Enter] Switch · [Ctrl-D] Diff · [Ctrl-S] Status · [Ctrl-O] Open in Antigravity · [Ctrl-Y] Copy path · [Ctrl-X] Delete · [Ctrl-R] Prune · [Ctrl-F] Fuzzy/pattern · [Shift-↑/↓] Scroll preview')
+
+  local -x FZFP_DIR
+  FZFP_DIR=$(mktemp -d) || return $?
+  printf '%s\n' "$rows" > "$FZFP_DIR/rows"
 
   # Show label + badges; match the query against the label only (the shared parent path would fuzzy-match everything)
   local wt_line
@@ -510,9 +527,12 @@ function gw() {
     --bind "ctrl-s:change-preview-label( status )+change-preview:$preview_status" \
     --bind "ctrl-x:execute($delete_cmd)+reload($reload_cmd)" \
     --bind "ctrl-r:execute($prune_cmd)+reload($reload_cmd)" \
+    --bind "ctrl-f:transform:bash $fp toggle 1" \
+    --bind "change:transform:bash $fp change 1" \
     --bind "ctrl-o:execute-silent(antigravity-ide {3})+abort" \
     --bind "ctrl-y:execute-silent(printf %s {3} | (wl-copy 2>/dev/null || xclip -selection clipboard 2>/dev/null || pbcopy 2>/dev/null))+abort" \
     --height 50% --layout reverse)
+  command rm -rf -- "$FZFP_DIR"
   [[ -n "$wt_line" ]] || return 0
 
   local wt_dir

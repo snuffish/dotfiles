@@ -54,6 +54,8 @@ function catc() {
 # - find <dir> <query>       -> fuzzy-find in <dir> pre-filtered
 # - find . -name "*.txt"     -> passes through directly to GNU find
 # - find ~<tab>              -> fuzzy-completes on Tab (handled by fzf completion)
+# - ff [<dir>] [<pattern>]   -> same picker in pattern mode: regex (^fi.*sh$) or glob (*.py)
+# - Ctrl-R in the picker     -> toggles fuzzy / pattern mode
 find() {
   # If stdin is not a terminal (e.g. piped input), delegate directly to system find
   if [[ ! -t 0 ]]; then
@@ -106,26 +108,52 @@ find() {
     --border
     --preview="$preview_cmd"
     --preview-window='right:50%:wrap'
-    --header='[Enter] Print path | [Ctrl-E] Edit (nvim) | [Ctrl-O] Open | [Ctrl-Y] Copy path'
     --bind="ctrl-e:execute(${EDITOR:-nvim} {})+abort"
     --bind="ctrl-o:execute(xdg-open {} >/dev/null 2>&1 || open {} >/dev/null 2>&1 &)+abort"
     --bind="ctrl-y:execute-silent(echo -n {} | (wl-copy 2>/dev/null || xclip -selection clipboard 2>/dev/null || pbcopy 2>/dev/null))+abort"
   )
   [[ -n "$query" ]] && fzf_opts+=(--query "$query")
 
-  local selected
+  # Two modes, toggled with Ctrl-R; the list command reads the mode from $FZF_PROMPT.
+  # - fuzzy: list every file once, fzf filters it
+  # - pattern: fzf only displays, each keystroke re-runs the query through fd as a regex,
+  #   or as a glob (*.py) when it isn't a valid regex
+  local dir_q list_cmd
+  dir_q=$(printf '%q' "$search_dir")
   if command -v fd >/dev/null 2>&1; then
-    selected=$(fd --hidden --exclude .git . "$search_dir" 2>/dev/null | fzf "${fzf_opts[@]}")
+    local fd_cmd="fd --hidden --exclude .git"
+    list_cmd="if [[ \$FZF_PROMPT == pattern* ]]; then $fd_cmd -- {q} $dir_q 2>/dev/null || $fd_cmd --glob -- {q} $dir_q 2>/dev/null; else $fd_cmd . $dir_q 2>/dev/null; fi; true"
   else
-    selected=$(command find "$search_dir" -not -path '*/.*' 2>/dev/null | fzf "${fzf_opts[@]}")
+    list_cmd="if [[ \$FZF_PROMPT == pattern* ]]; then command find $dir_q -not -path '*/.*' 2>/dev/null | grep -E -- {q}; else command find $dir_q -not -path '*/.*' 2>/dev/null; fi; true"
   fi
+  local to_pattern="change-prompt(pattern> )+disable-search+rebind(change)+reload:$list_cmd"
+  local to_fuzzy="change-prompt(fuzzy> )+enable-search+unbind(change)+reload:$list_cmd"
+  local toggle="[[ \$FZF_PROMPT == pattern* ]] && echo $(printf '%q' "$to_fuzzy") || echo $(printf '%q' "$to_pattern")"
+
+  fzf_opts+=(
+    --header='[Enter] Print path | [Ctrl-E] Edit (nvim) | [Ctrl-O] Open | [Ctrl-Y] Copy path | [Ctrl-R] Fuzzy/pattern'
+    --bind="change:reload:$list_cmd"
+    --bind="ctrl-r:transform:$toggle"
+  )
+  if [[ -n "$__FIND_PATTERN" ]]; then
+    fzf_opts+=(--prompt='pattern> ' --disabled --bind="start:reload:$list_cmd")
+  else
+    fzf_opts+=(--prompt='fuzzy> ' --bind="start:unbind(change)+reload:$list_cmd")
+  fi
+
+  local selected
+  selected=$(: | fzf "${fzf_opts[@]}")
 
   if [[ -n "$selected" ]]; then
     echo "$selected"
   fi
 }
 
-alias ff="find"
+# Same picker as find, but starts in pattern mode: regex or glob on file names (Ctrl-R toggles)
+unalias ff 2>/dev/null
+ff() {
+  __FIND_PATTERN=1 find "$@"
+}
 
 alias untar="tar -xvzf"
 

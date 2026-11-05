@@ -7,8 +7,9 @@
 #                                     with TEXT, only sessions whose transcript contains it (literal, any case)
 #   sessions.sh preview FILE          the session's last 30 messages, styled with ANSI colors; in text mode
 #                                     ($FZF_PROMPT says "text"), the messages and tool calls that contain $FZF_QUERY
-#   sessions.sh key scope|mode|change the fzf action for that key or query change; the prompt holds the state:
-#                                     scope (This dir / All) and mode (fuzzy over titles / text in transcripts)
+#   sessions.sh key scope|mode|pattern|change  the fzf action for that key or query change; the prompt holds the
+#                                     state: scope (This dir / All) and mode (fuzzy over titles / text in transcripts /
+#                                     pattern: regex or glob over the list, via utils/fzf-pattern.sh)
 # Transcripts can be large, so list greps out the few lines it needs instead of parsing every file with jq
 
 projects="$HOME/.claude/projects"
@@ -73,18 +74,29 @@ fi
 if [[ "$1" == key ]]; then
   scope=here; [[ "$FZF_PROMPT" == All* ]] && scope=all
   text=; [[ "$FZF_PROMPT" == *text* ]] && text=1
+  pattern=; [[ "$FZF_PROMPT" == *pattern* ]] && pattern=1
+  fp="$HOME/.terminal/utils/fzf-pattern.sh" cached=
   case "$2" in
     scope) if [[ $scope == all ]]; then scope=here; else scope=all; fi ;;
-    mode) if [[ $text ]]; then text=; else text=1; fi ;;
+    mode) if [[ $text ]]; then text=; else text=1; pattern=; fi ;;
+    # The cache already holds the list for this scope, unless text mode changed the scope
+    pattern) [[ $text ]] || cached=1; if [[ $pattern ]]; then pattern=; else pattern=1; text=; fi ;;
     # Fuzzy mode filters inside fzf (fzf can't search the hidden full id, so a pasted session id searches its
     # 8-char short id); text mode asks the transcripts again
-    change) [[ $text ]] || { [[ "$FZF_QUERY" =~ ^([0-9a-fA-F]{8})-[0-9a-fA-F-]*$ ]] && echo "search(${BASH_REMATCH[1]})"; exit 0; } ;;
+    # Pattern mode (Ctrl-R) matches the cached list by regex or glob
+    change) [[ $pattern ]] && { bash "$fp" change 2,3,4; exit 0; }
+      [[ $text ]] || { [[ "$FZF_QUERY" =~ ^([0-9a-fA-F]{8})-[0-9a-fA-F-]*$ ]] && echo "search(${BASH_REMATCH[1]})"; exit 0; } ;;
   esac
   label='This dir'; [[ $scope == all ]] && label=All
-  if [[ $text ]]; then
+  rows="bash $0 list $scope | bash $fp pipe 2,3,4"
+  if [[ $pattern ]]; then
+    [[ $cached ]] && rows="bash $fp filter 2,3,4 {q} < \"\$FZFP_DIR/rows\""
+    echo "change-prompt($label pattern> )+disable-search+reload($rows)+refresh-preview"
+  elif [[ $text ]]; then
     echo "change-prompt($label text> )+disable-search+reload(bash $0 list $scope {q})+refresh-preview"
   else
-    echo "change-prompt($label> )+enable-search+reload(bash $0 list $scope)+refresh-preview"
+    [[ $cached ]] && rows="cat \"\$FZFP_DIR/rows\""
+    echo "change-prompt($label> )+enable-search+reload($rows)+refresh-preview"
   fi
   exit
 fi

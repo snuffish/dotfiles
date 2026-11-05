@@ -129,7 +129,7 @@ function claude-resume() {
     run_agent_session_picker \
       --driver "$sessions" \
       --title "Resume Claude session" \
-      --header $'[Enter] Resume · [Ctrl-O] Fork · [Ctrl-S] Copy ID\n[Ctrl-T] This dir/All · [Ctrl-G] Titles/Text' \
+      --header $'[Enter] Resume · [Ctrl-O] Fork · [Ctrl-S] Copy ID\n[Ctrl-T] This dir/All · [Ctrl-G] Titles/Text · [Ctrl-R] Pattern' \
       --scope "$scope" \
       --prompt "$prompt"
   )" || return

@@ -2,7 +2,7 @@
 # Unified session data for agent-resume (code.bash):
 #   unified-sessions.sh list <scope> [TEXT] [agent_filter]
 #   unified-sessions.sh preview <file> [TEXT]
-#   unified-sessions.sh key <scope|mode|agent|change>
+#   unified-sessions.sh key <scope|mode|pattern|agent|change>
 
 claude_sessions="$HOME/.terminal/claude/sessions.sh"
 agy_sessions="$HOME/.terminal/antigravity/sessions.sh"
@@ -25,6 +25,8 @@ fi
 if [[ "$1" == key ]]; then
   scope=here; [[ "$FZF_PROMPT" == All* ]] && scope=all
   text=; [[ "$FZF_PROMPT" == *text* ]] && text=1
+  pattern=; [[ "$FZF_PROMPT" == *pattern* ]] && pattern=1
+  fp="$HOME/.terminal/utils/fzf-pattern.sh" cached=
 
   # Agent filter from prompt prefix: "All", "Claude", "Antigravity"
   agent=all
@@ -33,7 +35,9 @@ if [[ "$1" == key ]]; then
 
   case "$2" in
     scope) if [[ $scope == all ]]; then scope=here; else scope=all; fi ;;
-    mode) if [[ $text ]]; then text=; else text=1; fi ;;
+    mode) if [[ $text ]]; then text=; else text=1; pattern=; fi ;;
+    # The cache already holds the list for this scope, unless text mode changed the scope
+    pattern) [[ $text ]] || cached=1; if [[ $pattern ]]; then pattern=; else pattern=1; text=; fi ;;
     agent)
       case "$agent" in
         all) agent=claude ;;
@@ -42,7 +46,9 @@ if [[ "$1" == key ]]; then
       esac
       ;;
     # Fuzzy mode can't search the hidden full id: a pasted session id searches its 8-char short id
-    change) [[ $text ]] || { [[ "$FZF_QUERY" =~ ^([0-9a-fA-F]{8})-[0-9a-fA-F-]*$ ]] && echo "search(${BASH_REMATCH[1]})"; exit 0; } ;;
+    # Pattern mode (Ctrl-R) matches the cached list by regex or glob
+    change) [[ $pattern ]] && { bash "$fp" change 2,3,4; exit 0; }
+      [[ $text ]] || { [[ "$FZF_QUERY" =~ ^([0-9a-fA-F]{8})-[0-9a-fA-F-]*$ ]] && echo "search(${BASH_REMATCH[1]})"; exit 0; } ;;
   esac
 
   label='This dir'; [[ $scope == all ]] && label=All
@@ -52,10 +58,15 @@ if [[ "$1" == key ]]; then
     label="$label [Agy]"
   fi
 
-  if [[ $text ]]; then
+  rows="bash $0 list $scope '' $agent | bash $fp pipe 2,3,4"
+  if [[ $pattern ]]; then
+    [[ $cached ]] && rows="bash $fp filter 2,3,4 {q} < \"\$FZFP_DIR/rows\""
+    echo "change-prompt($label pattern> )+disable-search+reload($rows)+refresh-preview"
+  elif [[ $text ]]; then
     echo "change-prompt($label text> )+disable-search+reload(bash $0 list $scope {q} $agent)+refresh-preview"
   else
-    echo "change-prompt($label> )+enable-search+reload(bash $0 list $scope '' $agent)+refresh-preview"
+    [[ $cached ]] && rows="cat \"\$FZFP_DIR/rows\""
+    echo "change-prompt($label> )+enable-search+reload($rows)+refresh-preview"
   fi
   exit 0
 fi

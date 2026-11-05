@@ -5,7 +5,7 @@
 #       "<age>\t<short id>\t<branch>\t<label>\t<id>\t<file>\t<cwd>"
 #   sessions.sh preview FILE_OR_ID
 #       Prose and tool calls styled with ANSI colors.
-#   sessions.sh key scope|mode|subagent|change
+#   sessions.sh key scope|mode|pattern|subagent|change
 #       fzf action for keys / query change.
 
 cli_dir="$HOME/.gemini/antigravity-cli"
@@ -123,21 +123,32 @@ fi
 if [[ "$1" == key ]]; then
   scope=here; [[ "$FZF_PROMPT" == All* ]] && scope=all
   text=; [[ "$FZF_PROMPT" == *text* ]] && text=1
+  pattern=; [[ "$FZF_PROMPT" == *pattern* ]] && pattern=1
+  fp="$HOME/.terminal/utils/fzf-pattern.sh" cached=
   sub=; [[ "$FZF_PROMPT" == *+sub* ]] && sub=1
   case "$2" in
     scope) if [[ $scope == all ]]; then scope=here; else scope=all; fi ;;
-    mode) if [[ $text ]]; then text=; else text=1; fi ;;
+    mode) if [[ $text ]]; then text=; else text=1; pattern=; fi ;;
+    # The cache already holds the list for this scope, unless text mode changed the scope
+    pattern) [[ $text ]] || cached=1; if [[ $pattern ]]; then pattern=; else pattern=1; text=; fi ;;
     subagent) if [[ $sub ]]; then sub=; else sub=1; fi ;;
     # Fuzzy mode can't search the hidden full id: a pasted session id searches its 8-char short id
-    change) [[ $text ]] || { [[ "$FZF_QUERY" =~ ^([0-9a-fA-F]{8})-[0-9a-fA-F-]*$ ]] && echo "search(${BASH_REMATCH[1]})"; exit 0; } ;;
+    # Pattern mode (Ctrl-R) matches the cached list by regex or glob
+    change) [[ $pattern ]] && { bash "$fp" change 2,3,4; exit 0; }
+      [[ $text ]] || { [[ "$FZF_QUERY" =~ ^([0-9a-fA-F]{8})-[0-9a-fA-F-]*$ ]] && echo "search(${BASH_REMATCH[1]})"; exit 0; } ;;
   esac
   label='This dir'; [[ $scope == all ]] && label=All
   [[ $sub ]] && label="$label+sub"
   sub_arg="${sub:-0}"
-  if [[ $text ]]; then
+  rows="bash $0 list $scope '' $sub_arg | bash $fp pipe 2,3,4"
+  if [[ $pattern ]]; then
+    [[ $cached ]] && rows="bash $fp filter 2,3,4 {q} < \"\$FZFP_DIR/rows\""
+    echo "change-prompt($label pattern> )+disable-search+reload($rows)+refresh-preview"
+  elif [[ $text ]]; then
     echo "change-prompt($label text> )+disable-search+reload(bash $0 list $scope {q} $sub_arg)+refresh-preview"
   else
-    echo "change-prompt($label> )+enable-search+reload(bash $0 list $scope '' $sub_arg)+refresh-preview"
+    [[ $cached ]] && rows="cat \"\$FZFP_DIR/rows\""
+    echo "change-prompt($label> )+enable-search+reload($rows)+refresh-preview"
   fi
   exit 0
 fi
