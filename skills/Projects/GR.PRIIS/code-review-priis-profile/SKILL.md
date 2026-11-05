@@ -37,7 +37,7 @@ The checklists come from Commands with their own procedure. Under `/code-review`
 | --- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | C1  | Snapshot in `.claude/worktrees/review-<slug>` and `EnterWorktree`                                      | `/code-review` Step 1b (`git-worktrees` snapshot mode). Ignore the review skills' Step 1d                                                                                                                                            |
 | C2  | Pass F: `npm ci`, a dev server on :5682 and clicking through                                           | Not run. See _Hand-offs_                                                                                                                                                                                                             |
-| C3  | Four tags: Correctness, Standards, Spec, Tests                                                         | Three axes. See _Step 5_                                                                                                                                                                                                             |
+| C3  | Four tags: Correctness, Standards, Spec, Tests | Tests is its own axis when `/code-review` Step 5a turns it on; otherwise see _Step 5_ |
 | C4  | Read PR threads up front to skip already-raised items                                                  | Threads only with `feedback`, after Step 6. The lessons' recorded decisions still apply in Step 6                                                                                                                                    |
 | C5  | Blocking / Should fix / Minor, ADO-pasteable report, `--comment` posting                               | `/code-review`'s artifact and severities. Posting is `/pr-post-comments`                                                                                                                                                             |
 | C6  | Counterpart None → "single-repo change" only                                                           | Same: in the monorepo every change is a single-repo change (`priis-profile` › _Layout_)                                                                                                                                              |
@@ -63,7 +63,7 @@ Keep only these sections (headings exact, _verified 2026-10-31_ on `origin/main`
 | `### Pass A — Reuse and duplication (highest yield)`   |   ✅    |    ✅    | Standards   | Its _Need / Already exists / Do not accept_ table is the core. Check "already exists" against the review's **base**, not `origin/main`: some symbols exist only on a release branch |
 | `### Pass B — Domain correctness`                      |   ✅    |          | Correctness | Query filters, protected data, state machines, audit trail, transactions, jobs                                                                                                      |
 | `### Pass B — Behaviour and state`                     |         |    ✅    | Correctness | RTK Query tags, form wiring across entry points, Zod, RHF, payload shape, access in the UI                                                                                          |
-| `### Pass C — Tests`                                   |   ✅    |    ✅    | Standards   | An untested failing branch is Correctness instead (_Step 5_)                                                                                                                        |
+| `### Pass C — Tests` | ✅ | ✅ | Tests | With Tests off: Standards, or Correctness for an untested failing branch (_Step 5_) |
 | `### Pass D — Contract and cross-repo`                 |   ✅    |    ✅    | Standards   | Against the counterpart in code, per `/code-review` _Heuristics_                                                                                                                    |
 | `### Pass E — Spec and text that drifts from the code` |   ✅    |    ✅    | Spec        |                                                                                                                                                                                     |
 | `### Pass G — Conventions and modern idioms`           |   ✅    |    ✅    | Standards   | Items 1–3 only. Item 1's skill list follows `priis-profile` › _References per layer_ (C7). Item 4 is a hand-off                                                                     |
@@ -96,8 +96,9 @@ Besides the above: the rulebooks per half (`backend/CLAUDE.md`, `frontend/CLAUDE
 | Correctness (Pass B)                                                                                                                                              | Correctness         |
 | Standards (Passes A, D, G)                                                                                                                                        | Standards           |
 | Spec (Pass E)                                                                                                                                                     | Spec                |
-| Tests (Pass C), missing coverage a testing skill or Pass C requires (401 / 403 / happy path per endpoint, a spec for new interaction, a unit spec for pure logic) | Standards           |
-| Tests (Pass C), a failing branch, guard or rollback path no test exercises                                                                                        | Correctness         |
+| Tests (Pass C), missing coverage a testing skill or Pass C requires (401 / 403 / happy path per endpoint, a spec for new interaction, a unit spec for pure logic) | Tests; Standards when Tests is off |
+| Tests (Pass C), a failing branch, guard or rollback path no test exercises | Tests; Correctness when Tests is off |
+| Correctness (Pass B) on access in the UI, protected data or query filters | Security; Correctness when Security is off |
 
 | Review-skill severity | `/code-review` severity |
 | --------------------- | ----------------------- |
@@ -140,7 +141,7 @@ Report additions, inside `## Detailed Review Findings` after `### 🟢 Minor Fin
 | Lessons              | `git show origin/main:…/references/lessons-from-prs.md`              | memory of past reviews                                  |
 | Snapshot             | `/code-review` Step 1b                                               | `.claude/worktrees/review-<slug>` + `EnterWorktree`     |
 | Click-through        | `/manual-testing`, or `priis-frontend-review` Pass F                 | `npm ci` + dev server inside `/code-review`             |
-| Tests tag            | Standards (missing coverage) / Correctness (untested failing branch) | a fourth axis                                           |
+| Tests tag | the Tests axis when on; else Standards (missing coverage) / Correctness (untested failing branch) | a Spec finding |
 | Severity             | 🔴 / 🟡 / 🟢                                                         | Blocking / Should fix / Minor                           |
 | C# conventions       | `priis-backend-modern-csharp` (team upstream) + `modern-csharp`      | ignoring team C# rules                                  |
 | Hotfix base          | `.claude/skills/_shared/review-target.md` (`origin/release/<x>.X`)   | `origin/main`                                           |

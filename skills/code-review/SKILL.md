@@ -1,7 +1,7 @@
 ---
 name: code-review
-description: "Reviews code changes along Correctness (bugs, security, performance), Standards (project conventions, cross-repo contracts), and Spec (PR, ticket, acceptance criteria) axes, then a blind-spot pass on the change as a whole. Writes a verified code review artifact. Handles PR URLs, work item IDs, branch comparisons, and dual-repo counterpart PRs. Reads detached git snapshots by default."
-argument-hint: "[--deep] [live] [feedback] [scope]"
+description: "Reviews code changes along Correctness (bugs, performance), Standards (project conventions, cross-repo contracts), and Spec (PR, ticket, acceptance criteria) axes, plus Security, Tests and Drift when the diff calls for them (it recommends the axis set per review), then a blind-spot pass on the change as a whole. Writes a verified code review artifact. Handles PR URLs, work item IDs, branch comparisons, and dual-repo counterpart PRs. Reads detached git snapshots by default."
+argument-hint: "[--deep] [--axes <list>] [live] [feedback] [scope]"
 ---
 
 # Code Review Skill
@@ -40,8 +40,8 @@ Read these before step 1:
 
 | Invocation | Mode | How the axes run |
 | --- | --- | --- |
-| `/code-review [scope]` | **Standard** (default) | One pass; the reviewer covers all three axes itself |
-| `/code-review --deep [scope]` | **Deep** | Correctness, Standards, and Spec each run in a parallel sub-agent ([deep-mode.md](references/deep-mode.md)), then aggregate |
+| `/code-review [scope]` | **Standard** (default) | One pass; the reviewer covers the selected axes (*Step 5a*) itself |
+| `/code-review --deep [scope]` | **Deep** | Each selected axis runs in a parallel sub-agent ([deep-mode.md](references/deep-mode.md)), then aggregate and pass to an independent verifier sub-agent |
 | `/code-review live [scope]` | Standard or deep, **no snapshot** | Reads the main checkout directly (same as `/no-worktrees`). Only when a snapshot is impossible (e.g. uncommitted untracked files) |
 | `/code-review feedback [scope]` | Standard or deep, **full thread triage** | After Step 6 verifies findings, runs `/pr-feedback-review` and folds PR threads into the review (*Step 6b*) |
 
@@ -70,7 +70,7 @@ Resolve `<project>-profile` and `code-review-<project>-profile` before Step 1 pe
 | **Sibling hints** | Where the nearest existing feature usually lives, by kind of change | Recent feature commit (`git log --stat`) |
 | **Review checklists** | Per repo: upstream skill path, exact headings that apply, which axis each feeds, and exclusions | None: Step 3 sources only |
 | **Lessons catalogs** | Per repo: upstream path of past review lessons and sections recording team decisions | None |
-| **Axis and severity mapping** | How the project's finding tags/severities map onto Correctness / Standards / Spec and 🔴/🟡/🟢 | Not needed |
+| **Axis and severity mapping** | How the project's finding tags/severities map onto the *Step 5* axes and 🔴/🟡/🟢 | Not needed |
 | **Report additions** | Subsections added inside *Detailed Review Findings* | None |
 | **Hand-offs** | Checks delegated to other skills (verify skills, manual testing) | None |
 
@@ -131,13 +131,33 @@ Load documented repo standards in `core` › *Precedence* order:
 
 ---
 
-## Step 5 — Review Along Three Axes
+## Step 5 — Pick the Axes, Then Review
 
-Tag every finding with one axis and rank severity within each axis on its own merits:
+### Step 5a — Recommend the axes
 
-- **Correctness**: logical bugs, off-by-one/boundary errors, race conditions, null/undefined dereferences, unhandled exceptions, N+1 queries, missing `async`/`await`, memory/resource leaks, re-render/memoisation bugs, SQLi/XSS/authz gaps, exposed secrets.
+From the Step 4 inventory, recommend the axis set and print it in chat before reviewing: one row per axis with on/off and the diff evidence that decided it. Continue with it; `--axes <list>` (e.g. `--axes correctness,security,tests`) replaces the recommendation. Record the final set, and each skipped axis with its reason, in *Review Context* › **Axes**.
+
+| Axis | On when |
+| --- | --- |
+| **Correctness** | Always |
+| **Standards** | Always |
+| **Spec** | Always; limited to unannounced behaviour without a Spec source (Step 2) |
+| **Security** | The diff touches authentication, authorization policies or roles, access or ownership checks, protected or personal data, query filters, endpoints or routes taking input, raw SQL, HTML rendering, secrets or config |
+| **Tests** | The diff changes production behaviour, or adds, removes or changes tests |
+| **Drift** | The diff touches docs, skills, rulebooks, code comments or checked-in generated artifacts, or renames, moves or deletes something they reference |
+
+### Step 5b — Review along the selected axes
+
+Tag every finding with one selected axis and rank severity within each axis on its own merits:
+
+- **Correctness**: logical bugs, off-by-one/boundary errors, race conditions, null/undefined dereferences, unhandled exceptions, N+1 queries, missing `async`/`await`, memory/resource leaks, re-render/memoisation bugs.
 - **Standards**: documented convention breaches (cite file + rule), cross-repo contract mismatches (🔴 when runtime breaks, 🟡 otherwise), DRY/separation-of-concerns issues, readability, and [smell-baseline.md](references/smell-baseline.md) judgement calls.
 - **Spec**: quoting the spec/AC line — **Missing or partial**, **Wrong**, **Scope creep / unannounced**, or **Stale description**.
+- **Security**: authentication and authorization gaps, missing access or ownership checks, protected data reaching a caller who may not see it, bypassed query filters, injection (SQL, XSS, command), secrets in code or logs, unvalidated input.
+- **Tests**: behaviour the diff adds or changes with no test exercising it, coverage the repo's testing rules require, failing branches, guards or rollback paths no test reaches, assertions too weak to catch the defect the test is named for, deleted tests without a replacement.
+- **Drift**: docs, skills, rulebooks, code comments and checked-in generated artifacts (API snapshots, generated clients, route trees) that no longer match the code at head. The PR description stays on Spec.
+
+An issue whose axis is off goes to its fallback: Security → Correctness; Tests → Standards (missing coverage) or Correctness (untested failing path); Drift → Standards.
 
 ### Severity
 - **🔴 Critical / Defect**: blocking bugs, security vulnerabilities, broken runtime contracts, or wrong behavior.
@@ -149,7 +169,7 @@ Tag every finding with one axis and rank severity within each axis on its own me
 
 ## Step 6 — Verify Every 🔴 and 🟡
 
-Before writing the artifact (and after sub-agent aggregation in `deep` mode):
+Before writing the artifact (in `deep` mode, after aggregation and the independent verifier, `deep-mode.md` steps 3–5):
 1. **Re-open the cited `path:line`** in the snapshot and verify the code matches the claim.
 2. **Try to refute it**: check callers, guards, validators, query filters, config, and any team decision in the profile's lessons catalog.
 3. **Classify**: **Verified** (failing path traced in code), **Plausible** (needs runtime/test confirmation — state the exact command), or **Refuted** (drop, or downgrade to 🟢 if a near-miss).
@@ -176,7 +196,7 @@ On every review, after Step 6 (and 6b):
 
 1. Publish `<prefix>-code_review-<suffix>.md` in the artifact dir (`artifact-protocol`) via `artifact-protocol` › *Claim* (respecting the *Independence rule*), following [Review Artifact Template & Structure](references/review-artifact-template.md). Remove the snapshot(s) after writing.
 2. In chat, emit the `artifact-protocol` › *Chat link block* for the review artifact (plus any active implementation plan), followed by:
-   - Worst finding **per axis** (one line each, or `clean`),
+   - Worst finding **per reviewed axis** (one line each, or `clean`),
    - Any Spec source that could not be resolved,
    - Blind-spot pass outcome (one line),
    - With `feedback`: link to the `pr_feedback_review` artifact + one-line thread disposition summary,

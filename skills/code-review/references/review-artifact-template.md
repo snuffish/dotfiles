@@ -20,6 +20,7 @@ Sections in this order, and **nothing after In Plain Terms**:
    | **Spec & Standards sources** | Spec source (or `none available — Spec axis limited to unannounced behaviour`) + Standards files loaded |
    | **Profile** | Loaded profiles, each upstream checklist/catalog as `<repo> origin/<default> @ <short-sha>`, and any missing heading (`none` without a profile) |
    | **Mode & Blind-spot pass** | `standard` / `deep` (+ `feedback`); blind-spot outcome (`finding N` / `covered by finding N` / `refuted: <evidence>`) |
+   | **Axes** | Reviewed axes; each skipped axis with its reason (`Security: off — no auth, data or input paths touched`); `--axes` when it overrode the recommendation |
    | **PR feedback** *(`feedback` only)* | Link to `pr_feedback_review` artifact(s), human thread count, attached count, and added-finding count (or why skipped) |
 2. `## Feature in Brief` — what is being built and why, in domain terms (3–5 sentences covering **Who**, **The problem**, **The outcome**, **Where it sits**; drawn from the Step 2 spec source, or marked *"_Inferred from the diff — no description or work item available._"*).
 3. `## Summary of Changes` — 1–3 sentences on what the changes accomplish and their architectural intent.
