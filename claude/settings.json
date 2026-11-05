@@ -158,7 +158,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.file_path' | xargs npx prettier --write"
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); [ -n \"$f\" ] || exit 0; case \"$(realpath -m \"$f\")\" in \"$HOME\"/.terminal/skills/*.md) exit 0 ;; esac; npx prettier --write \"$f\""
           },
           {
             "type": "command",
