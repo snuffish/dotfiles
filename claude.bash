@@ -54,9 +54,10 @@ function gcai() {
   claude-p "/commit $*"
 }
 
-# Merge with Claude in print mode; args are appended to the prompt (e.g. a branch or PR to merge)
+# Merge with Claude in print mode, in a new git worktree so the checkout stays clean; args are appended to the prompt
+# (e.g. a branch or PR to merge)
 function ccmerge() {
-  claude-p "merge $*"
+  claude-p --worktree "ccmerge-$(date +%Y%m%d-%H%M%S)" "merge $*"
 }
 
 # Claude Code for reviews: no claude-mem, auto-memory, MY-RULES or mattpocock-skills; args go to claude.
