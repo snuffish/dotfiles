@@ -21,14 +21,26 @@ else
 fi
 case "$_PROCS_SELF" in /*) ;; *) _PROCS_SELF="$PWD/$_PROCS_SELF" ;; esac
 
+# Linux reads /proc; Darwin has none and gets the same data from ps, sysctl, vm_stat and lsof.
+_PROCS_OS=$(uname -s)
+
 # ------------------------------------------------------------------------------
 # Identity & protection
 # ------------------------------------------------------------------------------
 
 # _procs_stat_field <pid> <n>: field n (1=state, 2=ppid, 20=starttime) of /proc/<pid>/stat,
 # parsed after the last ") " so comm with spaces/parens cannot shift columns.
+# Darwin: same fields from ps; starttime is lstart with spaces and colons dropped.
 _procs_stat_field() {
   local s
+  if [ "$_PROCS_OS" = Darwin ]; then
+    case "$2" in
+      1) s=$(command ps -o stat= -p "$1" 2>/dev/null) || return 1; printf '%.1s\n' "$s" ;;
+      2) s=$(command ps -o ppid= -p "$1" 2>/dev/null) || return 1; printf '%s\n' "${s// /}" ;;
+      20) s=$(LC_ALL=C command ps -o lstart= -p "$1" 2>/dev/null) || return 1; printf '%s\n' "$s" | tr -d ' :' ;;
+    esac
+    return 0
+  fi
   s=$(command cat "/proc/$1/stat" 2>/dev/null) || return 1
   s=${s##*) }
   printf '%s\n' "$s" | awk -v n="$2" '{print $n}'
@@ -36,13 +48,14 @@ _procs_stat_field() {
 
 _procs_start() { _procs_stat_field "$1" 20; }
 
-# 0 = protected (never kill): pid 1/2, kernel threads, own shell and its ancestors.
+# 0 = protected (never kill): pid 0/1/2, kernel threads, own shell and its ancestors.
 _procs_protected() {
   local target="$1" p pp
+  [ "$target" = 0 ] && return 0
   [ "$target" = 1 ] && return 0
-  [ "$target" = 2 ] && return 0
+  [ "$_PROCS_OS" = Darwin ] || [ "$target" != 2 ] || return 0
   pp=$(_procs_stat_field "$target" 2) || return 1
-  [ "$pp" = 2 ] && return 0
+  [ "$_PROCS_OS" != Darwin ] && [ "$pp" = 2 ] && return 0
   p=$$
   while [ -n "$p" ] && [ "$p" != 0 ] && [ "$p" != 1 ]; do
     [ "$p" = "$target" ] && return 0
@@ -105,15 +118,34 @@ _procs_kill_checked() {
 # Sampler
 # ------------------------------------------------------------------------------
 
+# _procs_feed: one row per process, kernel threads dropped:
+#   pid <TAB> start <TAB> threads <TAB> comm <TAB> jiffies <TAB> cpu%
+# Linux leaves cpu% empty (computed from the jiffy delta); Darwin takes ps %cpu and has no thread count.
+_procs_feed() {
+  if [ "$_PROCS_OS" = Darwin ]; then
+    LC_ALL=C command ps -axo pid=,%cpu=,lstart=,comm= | awk -v OFS='\t' '{
+      start = $3 $4 $5 $6 $7; gsub(/:/, "", start)
+      c = $0; for (i = 1; i <= 7; i++) sub(/^ *[^ ]+/, "", c); sub(/^ +/, "", c); sub(/.*\//, "", c)
+      print $1, start, "-", c, "", $2 }'
+    return
+  fi
+  for f in /proc/[0-9]*/stat; do { read -r l < "$f"; } 2>/dev/null && printf '%s\n' "$l"; done |
+    awk -v OFS='\t' '{
+      pid = $1; c = $0; sub(/^[0-9]+ \(/, "", c); sub(/\) [^)]*$/, "", c)
+      rest = $0; sub(/.*\) /, "", rest); split(rest, f, " ")
+      if (f[2] == 2 || pid == 2) next
+      print pid, f[20], f[18], c, f[12] + f[13], "" }'
+}
+
 # _procs_sample <statedir> <cpu|mem> <group 0|1> <mine 0|1> <n> <color 0|1>
-# One /proc/*/stat pass + one ps. Emits a header row, then rows
+# One _procs_feed pass + one ps. Emits a header row, then rows
 #   id1 <TAB> id2 <TAB> display <TAB> spec
 # id1/id2 = pid/start (group mode: g:<comm> / 0); spec = "pid:start[,pid:start...]" (kill + preview target).
 # CPU% = jiffy delta against the previous sample kept in <statedir>/prev; samples < 1 s apart
 # reuse the last computed CPU values (a forced refresh would otherwise show 0.0 everywhere).
 _procs_sample() {
   local st="$1" sortby="${2:-cpu}" group="${3:-0}" mine="${4:-0}" n="${5:-300}" color="${6:-0}"
-  local now prev_t dk dt keep tab hz memkb
+  local now prev_t dk dt keep tab hz memkb pscmd
   tab=$(printf '\t')
   now=$(date +%s.%N)
   prev_t=$(command cat "$st/t" 2>/dev/null)
@@ -122,17 +154,23 @@ _procs_sample() {
   dt=${dk%% *}; keep=${dk##* }
   [ -f "$st/valid" ] || keep=0
   hz=$(getconf CLK_TCK 2>/dev/null || echo 100)
-  memkb=$(awk '/^MemTotal:/ { print $2 }' /proc/meminfo)
+  if [ "$_PROCS_OS" = Darwin ]; then
+    memkb=$(($(sysctl -n hw.memsize) / 1024))
+    pscmd="ps -axww -o pid=,user=,rss=,args="
+  else
+    memkb=$(awk '/^MemTotal:/ { print $2 }' /proc/meminfo)
+    pscmd="ps -eww -o pid=,user:16=,rss=,args="
+  fi
   rm -f "$st/prev.new"
   {
     if [ "$color" = 1 ]; then printf '0\t0\t\033[1m'; else printf '0\t0\t'; fi
     printf '%7s  %-10s %6s %6s %6s %4s  %-16s %s' PID USER 'CPU%' 'MEM%' RSS THR PROGRAM COMMAND
     if [ "$color" = 1 ]; then printf '\033[0m'; fi
     printf '\t0:0\n'
-    for f in /proc/[0-9]*/stat; do { read -r l < "$f"; } 2>/dev/null && printf '%s\n' "$l"; done |
-      LC_NUMERIC=C awk -v prev="$st/prev" -v out="$st/prev.new" -v keep="$keep" -v dt="$dt" -v hz="$hz" \
+    _procs_feed |
+      LC_NUMERIC=C awk -F'\t' -v prev="$st/prev" -v out="$st/prev.new" -v keep="$keep" -v dt="$dt" -v hz="$hz" \
         -v memkb="$memkb" -v me="${USER:-}" -v home="$HOME" -v mode="$sortby" -v grp="$group" \
-        -v mine="$mine" -v color="$color" '
+        -v mine="$mine" -v color="$color" -v cmd="$pscmd" '
         function hum(k) { return k >= 1048576 ? sprintf("%.1fG", k/1048576) : k >= 1024 ? sprintf("%dM", k/1024) : sprintf("%dK", k) }
         function heat(v, lo, mid, hi) { return !color ? "" : v < lo ? "\033[90m" : v < mid ? "" : v < hi ? "\033[33m" : "\033[1;31m" }
         function sgr(c) { return color ? "\033[" c "m" : "" }
@@ -149,7 +187,6 @@ _procs_sample() {
         BEGIN {
           while ((getline l < prev) > 0) { split(l, a, " "); pj[a[1] " " a[2]] = a[3]; pc[a[1] " " a[2]] = a[4] }
           close(prev)
-          cmd = "ps -eww -o pid=,user:16=,rss=,args="
           while ((cmd | getline l) > 0) {
             split(l, a, " "); p = a[1]; u[p] = a[2]; r[p] = a[3]
             s = l; sub(/^ *[0-9]+ +[^ ]+ +[0-9]+ */, "", s); args[p] = s
@@ -157,14 +194,13 @@ _procs_sample() {
           close(cmd)
         }
         {
-          pid = $1; c = $0; sub(/^[0-9]+ \(/, "", c); sub(/\) [^)]*$/, "", c)
-          rest = $0; sub(/.*\) /, "", rest); split(rest, f, " ")
-          ppid = f[2]; j = f[12] + f[13]; start = f[20]; thr = f[18]
-          if (ppid == 2 || pid == 2 || !(pid in u)) next            # kernel threads / vanished
+          pid = $1; start = $2; thr = $3; c = $4; j = $5
+          if (!(pid in u)) next                                     # vanished
           key = pid " " start
-          if (keep) cpu = (key in pc) ? pc[key] : 0
+          if ($6 != "") cpu = $6 + 0
+          else if (keep) cpu = (key in pc) ? pc[key] : 0
           else cpu = (key in pj && dt > 0) ? (j - pj[key]) / hz / dt * 100 : 0
-          if (!keep) print pid, start, j, cpu > out
+          if (!keep && $6 == "") print pid, start, j, cpu > out
           own = (u[pid] == me)
           if (mine == 1 && !own) next
           mem = memkb > 0 ? r[pid] * 100 / memkb : 0
@@ -175,7 +211,7 @@ _procs_sample() {
             next
           }
           if (!(c in cnt)) { order[++no] = c; gu[c] = u[pid]; ga[c] = a2 } else if (gu[c] != u[pid]) gu[c] = "mixed"
-          cnt[c]++; gcpu[c] += cpu; grss[c] += r[pid]; gthr[c] += thr
+          cnt[c]++; gcpu[c] += cpu; grss[c] += r[pid]; gthr[c] = (thr == "-") ? "-" : gthr[c] + thr
           gs[c] = (c in gs) ? gs[c] "," pid ":" start : pid ":" start
         }
         END {
@@ -230,32 +266,61 @@ _procs_label() {
   [ -f "$st/paused" ] && run="⏸ paused"
   [ "$(_procs_state_get "$st" mine 0)" = 1 ] && scope="mine"
   [ "$(_procs_state_get "$st" group 0)" = 1 ] && kind=" · grouped"
-  printf ' procs · %s cores · sort %s ▼%s · %s · %s ' "$(nproc)" "$(_procs_state_get "$st" mode cpu)" "$kind" "$scope" "$run"
+  printf ' procs · %s cores · sort %s ▼%s · %s · %s ' "$(getconf _NPROCESSORS_ONLN)" "$(_procs_state_get "$st" mode cpu)" "$kind" "$scope" "$run"
 }
 
-# CPU / MEM bars (htop-style), width from $FZF_COLUMNS; frozen while paused.
-_procs_meters() {
-  local st="$1" w cols="${FZF_COLUMNS:-}" cu cn cs ci cio cirq csirq csteal busy total pb pt
-  if [ -f "$st/paused" ] && [ -f "$st/meters" ]; then command cat "$st/meters"; return; fi
-  w=36
-  if [ -n "$cols" ]; then w=$((cols * 6 / 10 - 52)); [ "$w" -lt 10 ] && w=10; [ "$w" -gt 36 ] && w=36; fi
+# _procs_sysinfo <statedir>: one line "cpu% memtotal memavail swaptotal swapfree load1 load5 load15 tasks uptime"
+# (memory in KiB, uptime in seconds). Linux CPU% is the /proc/stat delta since the last call; Darwin sums ps %cpu.
+_procs_sysinfo() {
+  local st="$1" cu cn cs ci cio cirq csirq csteal busy total pb pt
+  if [ "$_PROCS_OS" = Darwin ]; then
+    {
+      command ps -axo %cpu= | awk -v n="$(getconf _NPROCESSORS_ONLN)" '{ s += $1 } END { v = s / n; print (v > 100 ? 100 : v) }'
+      sysctl -n hw.memsize
+      vm_stat
+      sysctl -n vm.swapusage vm.loadavg kern.boottime
+      command ps -ax -o pid= | wc -l
+      date +%s
+    } | awk '
+      NR == 1 { cp = $1 } NR == 2 { mt = $1 / 1024 }
+      /page size of/ { pg = $8 / 1024 }
+      /^Pages (free|inactive|speculative):/ { avail += $NF }
+      /^total = / { swt = $3 * 1024; swf = $9 * 1024 }
+      /^\{ [0-9.]+ / { l = $2 " " $3 " " $4 }
+      /^\{ sec = / { boot = $4 + 0 }
+      /^ *[0-9]+$/ { last2 = last1; last1 = $1 }
+      END { printf "%s %d %d %d %d %s %d %d\n", cp, mt, avail * pg, swt, swf, l, last2, last1 - boot }'
+    return
+  fi
   read -r _ cu cn cs ci cio cirq csirq csteal _ < /proc/stat
   busy=$((cu + cn + cs + cirq + csirq + csteal)); total=$((cu + cn + cs + ci + cio + cirq + csirq + csteal))
   pb=0; pt=0
   { read -r pb pt < "$st/cpu"; } 2>/dev/null
   printf '%s %s\n' "$busy" "$total" > "$st/cpu" 2>/dev/null
-  awk -v b=$((busy - pb)) -v t=$((total - pt)) -v w="$w" '
-    function bar(p, col,   n, s, k) { n = int(p * w / 100 + .5); s = col; for (k = 0; k < w; k++) { if (k == n) s = s "\033[90m"; s = s (k < n ? "■" : "·") } return s "\033[0m" }
-    function col(p) { return p < 50 ? "\033[32m" : p < 80 ? "\033[33m" : "\033[31m" }
+  awk -v b=$((busy - pb)) -v t=$((total - pt)) '
     FILENAME == "/proc/meminfo" && /^MemTotal:/ { mt = $2 } FILENAME == "/proc/meminfo" && /^MemAvailable:/ { ma = $2 }
     FILENAME == "/proc/meminfo" && /^SwapTotal:/ { swt = $2 } FILENAME == "/proc/meminfo" && /^SwapFree:/ { swf = $2 }
     FILENAME == "/proc/loadavg" { l = $1 " " $2 " " $3; split($4, q, "/"); tasks = q[2] }
     FILENAME == "/proc/uptime" { up = $1 }
-    END {
-      cp = t > 0 ? b * 100 / t : 0; mp = mt > 0 ? (mt - ma) * 100 / mt : 0
+    END { printf "%s %d %d %d %d %s %d %d\n", (t > 0 ? b * 100 / t : 0), mt, ma, swt, swf, l, tasks, up }' \
+    /proc/meminfo /proc/loadavg /proc/uptime
+}
+
+# CPU / MEM bars (htop-style), width from $FZF_COLUMNS; frozen while paused.
+_procs_meters() {
+  local st="$1" w cols="${FZF_COLUMNS:-}"
+  if [ -f "$st/paused" ] && [ -f "$st/meters" ]; then command cat "$st/meters"; return; fi
+  w=36
+  if [ -n "$cols" ]; then w=$((cols * 6 / 10 - 52)); [ "$w" -lt 10 ] && w=10; [ "$w" -gt 36 ] && w=36; fi
+  _procs_sysinfo "$st" | awk -v w="$w" '
+    function bar(p, col,   n, s, k) { n = int(p * w / 100 + .5); s = col; for (k = 0; k < w; k++) { if (k == n) s = s "\033[90m"; s = s (k < n ? "■" : "·") } return s "\033[0m" }
+    function col(p) { return p < 50 ? "\033[32m" : p < 80 ? "\033[33m" : "\033[31m" }
+    {
+      cp = $1; mt = $2; ma = $3; swt = $4; swf = $5; l = $6 " " $7 " " $8; tasks = $9; up = $10
+      mp = mt > 0 ? (mt - ma) * 100 / mt : 0
       printf " \033[1mCPU\033[0m %s %5.1f%%   \033[90mload\033[0m %s   \033[90mtasks\033[0m %s\n", bar(cp, col(cp)), cp, l, tasks
       printf " \033[1mMEM\033[0m %s %5.1f%%   \033[90mused\033[0m %.1f/%.1fG   \033[90mswap\033[0m %.1fG   \033[90mup\033[0m %dh%02dm", bar(mp, col(mp)), mp, (mt-ma)/1048576, mt/1048576, (swt-swf)/1048576, up/3600, (up%3600)/60
-    }' /proc/meminfo /proc/loadavg /proc/uptime > "$st/meters.new" && mv "$st/meters.new" "$st/meters"
+    }' > "$st/meters.new" && mv "$st/meters.new" "$st/meters"
   command cat "$st/meters"
 }
 
@@ -264,24 +329,39 @@ _procs_first_pid() { local s="${1%%,*}"; printf '%s\n' "${s%%:*}"; }
 
 # Process card for the preview; <spec> may be a group.
 _procs_info() {
-  local spec="$1" p l c ports kids
+  local spec="$1" p l c ports kids thr="" fields cwd cmdline
   p=$(_procs_first_pid "$spec")
   case "$p" in '' | *[!0-9]* | 0) printf '\033[90mno process selected\033[0m\n'; return ;; esac
-  read -r l < "/proc/$p/stat" 2>/dev/null || { printf 'process %s is gone\n' "$p"; return; }
-  c=${l#*\(}; c=${c%\)*}
+  if [ "$_PROCS_OS" = Darwin ]; then
+    c=$(command ps -o comm= -p "$p" 2>/dev/null) || { printf 'process %s is gone\n' "$p"; return; }
+    c=${c##*/}
+    thr=$(command ps -M -p "$p" 2>/dev/null | tail -n +2 | wc -l | tr -d ' ')
+    fields=user=,stat=,lstart=,etime=,time=,rss=
+    cwd=$(lsof -a -p "$p" -d cwd -Fn 2>/dev/null | sed -n 's/^n//p')
+    ports=$(lsof -nP -a -p "$p" -iTCP -sTCP:LISTEN -Fn 2>/dev/null | sed -n 's/^n/tcp /p' | sort -u | paste -sd ',' - | sed 's/,/, /g')
+    cmdline=$(command ps -ww -o args= -p "$p" 2>/dev/null)
+    kids=$(command ps -axo pid=,ppid=,comm= | awk -v p="$p" '$2 == p { c = $0; sub(/^ *[0-9]+ +[0-9]+ +/, "", c); sub(/.*\//, "", c); printf "%7s %s\n", $1, c }' | head -n 8)
+  else
+    read -r l < "/proc/$p/stat" 2>/dev/null || { printf 'process %s is gone\n' "$p"; return; }
+    c=${l#*\(}; c=${c%\)*}
+    fields=user=,stat=,lstart=,etime=,time=,nlwp=,rss=
+    cwd=$(readlink "/proc/$p/cwd" 2>/dev/null)
+    ports=$(ss -ltnupH 2>/dev/null | awk -v p="pid=$p," 'index($0, p) { print $1 " " $5 }' | sort -u | paste -sd ',' | sed 's/,/, /g')
+    cmdline=$(tr '\0' ' ' < "/proc/$p/cmdline" 2>/dev/null)
+    kids=$(command ps --ppid "$p" -o pid=,comm= 2>/dev/null | head -n 8)
+  fi
   printf '\033[1;36m%s\033[0m  \033[90mpid %s · parent %s\033[0m\n\n' "$c" "$p" "$(_procs_stat_field "$p" 2)"
   case "$spec" in *,*)
     printf '  \033[33mgroup of %s processes:\033[0m %s\n\n' "$(printf '%s\n' "$spec" | tr ',' '\n' | wc -l)" \
       "$(printf '%s\n' "$spec" | tr ',' '\n' | sed 's/:.*//' | head -n 12 | paste -sd ' ')" ;;
   esac
-  command ps -o user=,stat=,lstart=,etime=,time=,nlwp=,rss= -p "$p" | awk '{
+  LC_ALL=C command ps -o "$fields" -p "$p" | awk -v thr="$thr" '{
+    if (thr != "") { $11 = $10; $10 = thr }
     printf "  \033[90m%-9s\033[0m %s\n  \033[90m%-9s\033[0m %s\n  \033[90m%-9s\033[0m %s %s %s %s\n  \033[90m%-9s\033[0m %s   \033[90mcpu time\033[0m %s\n  \033[90m%-9s\033[0m %s   \033[90mrss\033[0m %dM\n",
       "user", $1, "state", $2, "started", $4, $5, $6, $7, "elapsed", $8, $9, "threads", $10, $11/1024 }'
-  printf '  \033[90m%-9s\033[0m %s\n' cwd "$(readlink "/proc/$p/cwd" 2>/dev/null | sed "s|^$HOME|~|")"
-  ports=$(ss -ltnupH 2>/dev/null | awk -v p="pid=$p," 'index($0, p) { print $1 " " $5 }' | sort -u | paste -sd ',' | sed 's/,/, /g')
+  printf '  \033[90m%-9s\033[0m %s\n' cwd "$(printf '%s\n' "$cwd" | sed "s|^$HOME|~|")"
   [ -n "$ports" ] && printf '  \033[90m%-9s\033[0m \033[33m%s\033[0m\n' listening "$ports"
-  printf '\n\033[90m── command ──\033[0m\n%s\n' "$(tr '\0' ' ' < "/proc/$p/cmdline" 2>/dev/null | sed "s|$HOME|~|g")"
-  kids=$(command ps --ppid "$p" -o pid=,comm= 2>/dev/null | head -n 8)
+  printf '\n\033[90m── command ──\033[0m\n%s\n' "$(printf '%s\n' "$cmdline" | sed "s|$HOME|~|g")"
   [ -n "$kids" ] && printf '\n\033[90m── children ──\033[0m\n%s\n'  "$kids"
   return 0
 }
@@ -290,7 +370,20 @@ _procs_tree() {
   local p
   p=$(_procs_first_pid "$1")
   case "$p" in '' | *[!0-9]* | 0) printf '\033[90mno process selected\033[0m\n'; return ;; esac
-  if command -v pstree >/dev/null 2>&1; then
+  if [ "$_PROCS_OS" = Darwin ]; then
+    # no ps --forest and brew pstree takes other flags: ancestors, then the subtree, from one ps pass
+    command ps -axww -o pid=,ppid=,args= | awk -v t="$p" '
+      { pp[$1] = $2; s = $0; sub(/^ *[0-9]+ +[0-9]+ */, "", s); a[$1] = s; if ($1 != $2) kids[$2] = kids[$2] " " $1 }
+      function line(p, d, mark,   i, s) { s = ""; for (i = 0; i < d; i++) s = s "  "; printf "%s%s%s %s\033[0m\n", s, mark, p, a[p] }
+      function walk(p, d,   n, k, i) { line(p, d, p == t ? "\033[1;36m" : ""); n = split(kids[p], k, " "); for (i = 1; i <= n; i++) walk(k[i], d + 1) }
+      END {
+        if (!(t in a)) exit
+        for (p = pp[t]; (p in a) && p != pp[p]; p = pp[p]) anc[++n] = p
+        if (p in a) anc[++n] = p
+        for (i = n; i >= 1; i--) line(anc[i], n - i, "\033[90m")
+        walk(t, n)
+      }' | sed "s|$HOME|~|g"
+  elif command -v pstree >/dev/null 2>&1; then
     pstree -p -a -s -l -U "$p" 2>/dev/null | sed "s|$HOME|~|g"
   else
     command ps --forest -o pid=,user=,args= -g "$(command ps -o pgid= -p "$p" | tr -d ' ')" 2>/dev/null | sed "s|$HOME|~|g"
