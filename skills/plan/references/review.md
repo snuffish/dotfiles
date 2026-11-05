@@ -1,6 +1,6 @@
 # Plan Review Protocol (`--review` / Case D)
 
- Used by `/plan --review [target]` (Case D) and `/plan` self-review (Case B step 4).
+Used by `/plan --review [target]` (Case D) and `/plan` self-review (Case B step 4).
 
 ## Case D Steps
 
@@ -20,6 +20,7 @@
       - Every new endpoint or write path carries the project's authorization; data scoped to the caller (tenant, owner, role).
       - No privilege escalation or unprotected write paths.
    4. **Edge cases, resilience & invariants**
+      - Every claim the plan builds on is checked in the code, not taken on trust. This covers a type or interface exposing what a change needs (e.g. an extension method that only accepts `DbSet<T>`, not `IQueryable<T>`) and the schema a test database actually has (tables a migration keeps can be missing from a database built from the current model). A claim that turns out wrong is 🔴 when the change can't compile or the test can't run.
       - Validation failures handled; messages follow the project's language and locale.
       - Constraints, cascades and foreign keys satisfied; migration safe for existing data.
       - Cancellation tokens threaded through async calls.
