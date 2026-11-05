@@ -56,7 +56,7 @@ function gcai() {
 
 # Merge with Claude in print mode; args are appended to the prompt (e.g. a branch or PR to merge)
 function ccmerge() {
-  claude-p "merge $*"
+  claude-p "git merge $*"
 }
 
 # Claude Code for reviews: no claude-mem, auto-memory, MY-RULES or mattpocock-skills; args go to claude.
