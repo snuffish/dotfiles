@@ -14,7 +14,14 @@
       "Bash(dotnet test:*)",
       "Bash(npm run lint:*)",
       "Bash(npm run build:*)",
-      "Az devops invoke"
+      "Az devops invoke",
+      "Bash(python3 -I .claude/skills/priis-local-env/scripts/db.py --yes *)",
+      "Bash(python3 -I .claude/skills/priis-local-env/scripts/api.py *--yes*)",
+      "Bash(python3 -I .claude/skills/priis-local-env/scripts/create_ticket.py *--yes*)",
+      "Bash(python3 -I .claude/skills/priis-local-env/scripts/advance_ticket.py *--yes*)",
+      "mcp__azure-devops__wit_work_item",
+      "mcp__azure-devops__repo_pull_request",
+      "mcp__azure-devops__repo_pull_request_thread"
     ],
     "defaultMode": "auto",
     "additionalDirectories": ["~/.cache/agent-artifacts"]

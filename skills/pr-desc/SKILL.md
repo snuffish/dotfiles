@@ -104,6 +104,8 @@ Print the full draft, then ask with AskUserQuestion: **Apply** / **Revise** (tak
 
 ## 5. Apply
 
+Prefer the MCP: `repo_pull_request_write` with `action: update`, `repositoryId`, `pullRequestId`, `description` (the draft file's text) and `isDraft` set to the PR's current value. Omitting `isDraft` also keeps the draft state. Verify with `repo_pull_request` `get`. If the MCP is unavailable or denied, use the `az` command below.
+
 ```bash
 az repos pr update --id <id> --description "$(cat '<draft-file>')" --draft <draft> \
   --query "{id:pullRequestId,draft:isDraft}" -o json

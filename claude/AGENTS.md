@@ -25,4 +25,10 @@ If no `.codegraph/` directory exists there or in any parent, skip CodeGraph enti
 - For multi-file bug investigations, flaky test repairs, or new features, prefer isolated git worktrees (`/worktrees`) to keep the primary checkout clean.
 - Before formulating a fix plan for a reported defect, check recent commits on active PR branches (`git log -n 5 --oneline origin/main..HEAD`) to verify the defect is not already resolved upstream.
 
+## Bash Calls
+
+- One simple command per Bash call: no `cd x;`, no `VAR=…;` prefix, no `;`/`&&` chains, no multi-line scripts. Allow rules match only simple commands, so compound ones always prompt.
+- Use absolute paths or `git -C <dir>` instead of `cd`; use `quiet <cmd>` instead of `| tail`.
+- Run build, pack, lint and format commands through `quiet`, or the quiet-guard hook rejects them.
+
 @~/.claude-mem/MY-RULES.md

@@ -131,7 +131,7 @@ Follow `outward-writes` › *Denied write is final* and *Auth error vs denial*. 
 ```bash
 python3 -I /<skill-dir>/scripts/post_pr_comments.py /<scratchpad>/pr<id>/spec.json --post
 ```
-(plus `mcp-*.json` paths when on the MCP route) and ask the user to paste the resulting thread IDs so Step 7 can record them.
+(plus `mcp-*.json` paths when on the MCP route) and ask the user to paste the resulting thread IDs so Step 7 can record them. On ADO, prefer the MCP route (`repo_pull_request_thread_write` `create`) so the thread IDs come back to you and nothing needs pasting.
 
 ### Step 7 — Record what was posted
 
