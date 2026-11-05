@@ -19,6 +19,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 
 - `../_modules/core.md`: read-only until `/proceed`
+- `../_modules/fan-out.md`: _Speed fan-out_ for the research lanes (Steps 1.3–4) and _Review lenses_ for Step 6
 - `../_modules/artifact-protocol.md`: writes `<prefix>-investigation-<suffix>.md` in the artifact dir (`artifact-protocol`) under `--file`, `--deep`, or `--html` (suffix e.g. `-draft-close-dialog`, `-municipality-sync`); under `--html`, compiles `<prefix>-investigation-<suffix>.html` via `render_html.py` and opens in browser; a plain run writes nothing
 
 Read these only when their flag is given:
@@ -29,6 +30,7 @@ Read these only when their flag is given:
 On-demand references (`references/`):
 - [`references/artifact-template.md`](references/artifact-template.md) — template for `<prefix>-investigation-<suffix>.md` (`--file` / `--deep`)
 - [`references/visuals.md`](references/visuals.md) — view selection and symbol-citation rules for diagrams and call trees
+- [`references/lane-briefs.md`](references/lane-briefs.md) — the four research-lane briefs and their return format (Steps 1.3–4)
 
 ---
 
@@ -82,6 +84,8 @@ Flags combine and their order does not matter. An unknown `--flag` is a question
 
 ## 3. The 8-Step Investigation Protocol
 
+**Research lanes.** Steps 1.3, 2, 3 and 4 do not depend on each other. After Steps 0, 1.1 and 1.2, run them as four parallel lanes per `fan-out` › _Speed fan-out_ and [`references/lane-briefs.md`](references/lane-briefs.md): History (1.3), Prior art (2), Trace (3) and Blast radius (4). Each lane gets the Step 0 goal and questions, the `--scope` paths, the rulebooks and References loaded in 1.1, and the topology from 1.2. Then merge the lanes, re-open the load-bearing citations, and continue with Step 5 in the main context. Run the four steps inline instead when the change stays in one layer (Step 1.2 found no boundary) and Step 0 has at most 3 questions.
+
 ### Step 0 — Frame the Scope & Questions
 
 0. **Intake (`--from` only)**: Resolve the PR or work item per `pr-host` › _Parse a PR or work-item URL_ and _Fetch the PR, its work items and acceptance criteria_ (a work item without a PR is fine; read the item and its parent). Derive the goal and questions from its title, description and acceptance criteria, and cite them. A failed fetch follows `pr-host` › _When a fetch fails_.
@@ -122,7 +126,7 @@ Present 2–3 viable, contrasting implementation approaches with **Approach Summ
 
 Under `--no-blindspot` the artifact's §8 says _Not run_ and the handoff offers a re-run without the flag or `/what-am-I-missing`.
 
-Read [`../what-am-I-missing/references/vectors.md`](../what-am-I-missing/references/vectors.md) (stop and report the path if it cannot be read) and audit the recommended option against its **7 Universal Blindspot Vectors**, recording the fields defined in [`../what-am-I-missing/references/artifact-template.md`](../what-am-I-missing/references/artifact-template.md) (#1 Primary Blind Spot, Failure Scenario, Secondary Blind Spots, Actionable Recommendation).
+Read [`../what-am-I-missing/references/vectors.md`](../what-am-I-missing/references/vectors.md) (stop and report the path if it cannot be read) and audit the recommended option against its **7 Universal Blindspot Vectors** as `fan-out` › _Review lenses_ (write the option and its cited code map to `<scratchpad>/lens-target.md` as the target), recording the fields defined in [`../what-am-I-missing/references/artifact-template.md`](../what-am-I-missing/references/artifact-template.md) (#1 Primary Blind Spot, Failure Scenario, Secondary Blind Spots, Actionable Recommendation).
 
 ### Step 7 — Assemble the Confidence Ledger
 

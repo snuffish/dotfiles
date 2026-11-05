@@ -6,7 +6,7 @@ Used by `/plan --review [target]` (Case D) and `/plan` self-review (Case B step 
 
 1. **Locate the plan:** the argument names it (`/plan --review 18176`, `/plan --review begar-prefix`); otherwise follow _Case A_ step 1 (`artifact-protocol` › _Claim_ › _Readers & family selection_). For a proposal that is not a plan artifact (a branch, PR or design doc), locate its files or work items.
 2. **Read the project's rules** (`core` › _Precedence_): the workspace rulebooks, the project-scoped References for the layers the plan touches, and the base profile when one matches the workspace (`project-profile` › _Discovery_). Its _References per layer_, _Contract touchpoints_ and _Plan-review checks_ fields name the concrete conventions to check.
-3. **Evaluate against five pillars** (_Case D step 3_), plus every item of the profile's _Plan-review checks_ under the pillar it names:
+3. **Evaluate against five pillars** (_Case D step 3_), plus every item of the profile's _Plan-review checks_ under the pillar it names. Run the pillars as `fan-out` › _Review lenses_: each lens brief carries its pillars' bullets below and the _Plan-review checks_ filed under them. Below the lenses' inline threshold, evaluate them here in the main context:
    1. **Architecture & domain modeling**
       - Aggregate and module boundaries respected; domain logic in the domain layer, not endpoints, controllers or DTOs.
       - Follows the nearest existing feature of the same kind (profile's _Sibling chain_), or says why not.

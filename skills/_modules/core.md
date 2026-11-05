@@ -9,6 +9,7 @@ Root operating standards for every Command in the Registry: golden invariants, e
 1. **Truth in Code**: never guess symbol definitions, types, routes, or library behavior from names. Trace real source, models, config, and recent git history (`git log -p`, `git diff`) before explaining, designing, or editing.
 2. **Non-Destructive Work**: never touch unrelated user changes, tests, or config unasked. Preserve existing comments and docstrings unless refactoring the code they describe.
 3. **High-Signal Chat**: keep chat concise and action-oriented; offload deep analysis, plans, and reviews to artifacts in the artifact dir (`artifact-protocol`). Source comments document code for the next reader — never use them to address the user or defend a change.
+4. **Batch Independent Calls**: send tool calls that don't depend on each other's output (reads, searches, `git` lookups, fetches) together in one message, each still one simple command. Wait between calls only when the next one needs the previous result.
 
 ---
 

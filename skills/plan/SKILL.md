@@ -19,6 +19,7 @@ Read these before step 1:
 - `../_modules/core.md`
 - `../_modules/artifact-protocol.md`: writes `<prefix>-implementation_plan-<suffix>.md` in the artifact dir (`artifact-protocol`)
 - `../_modules/project-profile.md`: base profile only (no Command profile), for the review (_Case D_); reads _References per layer_, _Contract touchpoints_, _Sibling chain_ and an optional _Plan-review checks_ field
+- `../_modules/fan-out.md`: _Review lenses_ for the self-review (_Case B step 4_) and `--review` (_Case D step 3_)
 
 On-demand references (`references/`):
 - [`references/review.md`](references/review.md) — five review pillars (_Case D step 3_) and report template for `--review` (Case D) and self-review (Case B step 4)
@@ -114,7 +115,7 @@ Pick the case from the arguments, first match wins:
    - **New plan:** draft it in a session-private path, then publish it with _Claim_ (`artifact-protocol` › rule 4). If the base name is taken, Claim writes `…-2.md`; use the path it printed and say so in chat.
    - **Existing plan:** update it only if its owner marker names this session, or if the user named that file and asked for it to be updated (`artifact-protocol` › rule 3). Otherwise write a new revision through _Claim_, and link the one it supersedes in **Inputs**.
    - Set `Status` to `Awaiting User Review` when it is complete. Under Antigravity, when writing a mirrored artifact copy inside `<appDataDir>/brain/<conversation-id>/`, set `UserFacing = true` and `RequestFeedback = true` in `ArtifactMetadata` (omit `ArtifactMetadata` on the artifact dir file).
-4. **Self-review before presenting:** read [`references/review.md`](references/review.md) and run _Case D_ steps 2–3 on the plan just written, in the main context. Use its pillars and severities. Do not print its report or its gate: this is part of drafting, and the user reviews the folded plan.
+4. **Self-review before presenting:** read [`references/review.md`](references/review.md) and run _Case D_ steps 2–3 on the plan just written: step 2 in the main context, step 3 as `fan-out` › _Review lenses_ (inline below its threshold). Use its pillars and severities. Do not print its report or its gate: this is part of drafting, and the user reviews the folded plan.
    - Fold every finding into the plan before presenting:
 
      | Finding                                   | Goes into                                                                                              |

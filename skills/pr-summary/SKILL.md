@@ -25,6 +25,7 @@ Read these before step 1:
 - `../_modules/pr-host.md`
 - `../_modules/project-profile.md`: base profile only (`<project>-profile`); reads *Tracker*, *PR tooling*, *PR labels*, and *Report language*
 - `../_modules/outward-writes.md`
+- `../_modules/fan-out.md`: _Speed fan-out_ for the diff digests (Step 2)
 
 - Confirm `repo-root` (`git-worktrees` › *Using this Module from a Command*) before Step 0's `status`, `add`, `commit`, or `push`.
 
@@ -66,10 +67,10 @@ Resolve the open PR (if any) and diff base `<base>` per `pr-host` › *Resolve t
 
 ## Step 2 — Gather context
 
-1. List changed files (`--name-status`) and skip machine-generated files (`*.gen.ts`, `*.g.cs`).
-2. Read the raw diff for small changes (< ~200 lines); for larger changes, read changed files in full with the host's file-reading tool.
-3. Check for a repo PR template (`docs/pull_request_template.md`, `.github/pull_request_template.md`).
-4. Extract the work-item / ticket ID from the branch name, commit subjects, or linked work items.
+1. List changed files (`--name-status`, plus `--stat` for the totals) and skip machine-generated files (`*.gen.ts`, `*.g.cs`).
+2. **Small changes (< ~200 diff lines):** read the raw diff inline.
+3. **Larger changes:** split the changed files by area (for example backend, frontend, tests and config; at most 3 areas, merging the smallest) and spawn one digest sub-agent per area per `fan-out` › _Speed fan-out_ and [diff-digest.md](references/diff-digest.md). Compose from their digests and the `--stat`, re-opening at least one cited hunk per digest before relying on it.
+4. **In the same message as the digests** (or as parallel tool calls when inline), fetch the context: the repo PR template (`docs/pull_request_template.md`, `.github/pull_request_template.md`), the work-item / ticket ID from the branch name, commit subjects or linked work items, the recent PR titles (Step 3.2), and in `update` mode the counterpart PR (`pr-counterpart` › *Counterpart discovery*, reused in Step 5.1).
 
 ---
 
@@ -95,7 +96,7 @@ In preview mode, stop here.
 
 ## Step 5 — Update the real PR (`update` mode only)
 
-1. **Locate the PR(s)**: reuse the PR resolved in Step 1 (`pr-host` › *Resolve the PR from a branch*) and run `pr-counterpart` › *Counterpart discovery* across repos.
+1. **Locate the PR(s)**: reuse the PR resolved in Step 1 (`pr-host` › *Resolve the PR from a branch*) and the counterpart found in Step 2.4 (`pr-counterpart` › *Counterpart discovery* across repos).
    - No open PR → do not create one unasked; print the Step 4 output and offer to create the PR.
    - Multiple open PRs for the same branch → list and ask.
    - Cross-repo counterpart found → fill each PR's footer relation link (`This PR relates to: !<other-id>`) with the real counterpart ID before updating.

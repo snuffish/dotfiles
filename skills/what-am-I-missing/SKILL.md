@@ -17,6 +17,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 
 - `../_modules/core.md`: read-only until `/proceed`
+- `../_modules/fan-out.md`: _Review lenses_ for the vector audit (§2)
 - `../_modules/artifact-protocol.md`: answers in chat by default; writes `<prefix>-what_am_i_missing-<suffix>.md` in the artifact dir (`artifact-protocol`) only under `--deep` or when called from `/implement-feature` Phase 2b (calls from `/code-review` Step 6c stay in chat mode and write no file)
 
 On-demand references (`references/`):
@@ -41,6 +42,8 @@ On-demand references (`references/`):
 ## 2. Universal Investigation Protocol
 
 Read [`references/vectors.md`](references/vectors.md) and audit the user's current task, active file, recent diff, plan, or conversation context across all **7 Universal Blindspot Vectors** (Persistence/Outliving State, Concurrency/State Drift, Boundaries/Contracts, Security/Tenancy, Operational Realities/Performance, Testing Realities/Library Source, Leaky Abstractions/Profile Checks).
+
+Gather the target's context (files, diff, plan, related code) in the main context first, then audit the vectors as `fan-out` › _Review lenses_ (inline below its threshold, and inline when called from `/code-review` Step 6c). Pick the #1 blind spot and the secondary ones from the lenses' merged findings yourself.
 
 ---
 
