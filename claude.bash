@@ -1,9 +1,32 @@
 #!/bin/bash
 
 
+# Remove the print-mode worktree on branch $1 (claude -p leaves it locked) when it is clean and every commit on the
+# branch is also on another branch or remote; otherwise keep it and print its path
+function _claude_worktree_cleanup() {
+  local branch=$1 dir
+  dir=$(git worktree list --porcelain | awk -v b="branch refs/heads/$branch" '/^worktree / { d = substr($0, 10) } $0 == b { print d; exit }')
+  [[ -n "$dir" ]] || return 0
+  if [[ -z "$(git -C "$dir" status --porcelain)" ]] &&
+    [[ "$(git rev-list --count "$branch" --not --exclude="$branch" --branches --remotes)" == 0 ]]; then
+    git worktree unlock "$dir" 2>/dev/null
+    git worktree remove "$dir" && git branch -q -D "$branch" && echo "claude-p: removed worktree $dir" >&2
+  else
+    echo "claude-p: kept worktree $dir (uncommitted or unpushed work on $branch)" >&2
+  fi
+}
+
 # claude -p with live progress: the session id and each tool call go to stderr as they start, the final answer to
-# stdout; args go to claude
+# stdout; args go to claude. With a named -w/--worktree that this run creates, the worktree is cleaned up after the run
+# (_claude_worktree_cleanup); an unnamed or pre-existing one is left alone, so other sessions' worktrees are never touched
 function claude-p() {
+  local arg prev="" name="" branch="" rc
+  for arg in "$@"; do
+    case "$prev" in -w | --worktree) [[ "$arg" =~ ^[A-Za-z0-9._/-]+$ && "$arg" != -* ]] && name=$arg ;; esac
+    [[ "$arg" == --worktree=* ]] && name=${arg#--worktree=}
+    prev=$arg
+  done
+  [[ -n "$name" ]] && ! git show-ref -q --verify "refs/heads/worktree-$name" 2>/dev/null && branch="worktree-$name"
   claude -p --output-format stream-json --verbose "$@" | jq --unbuffered -rj '
     if .type == "system" and .subtype == "init" then
       "\u001b[2msession \(.session_id)\u001b[0m\n" | stderr | empty
@@ -13,7 +36,9 @@ function claude-p() {
       | "\u001b[2m→ \(.name) \($arg)\u001b[0m\n" | stderr | empty
     elif .type == "result" then .result + "\n"
     else empty end'
-  return "${PIPESTATUS[0]:-${pipestatus[1]}}"
+  rc="${PIPESTATUS[0]:-${pipestatus[1]}}"
+  [[ -n "$branch" ]] && _claude_worktree_cleanup "$branch"
+  return "$rc"
 }
 
 # Follow a Claude Code session's transcript live: prompts and answers, plus each tool call dimmed. With no arg the
@@ -55,7 +80,7 @@ function gcai() {
 }
 
 # Merge with Claude in print mode, in a new git worktree so the checkout stays clean; args are appended to the prompt
-# (e.g. a branch or PR to merge)
+# (e.g. a branch or PR to merge). The name keeps --worktree from taking the prompt as its name; claude-p cleans it up
 function ccmerge() {
   claude-p --worktree "ccmerge-$(date +%Y%m%d-%H%M%S)" "merge $*"
 }
