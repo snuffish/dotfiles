@@ -54,6 +54,11 @@ function gcai() {
   claude-p "/commit $*"
 }
 
+# Merge with Claude in print mode; args are appended to the prompt (e.g. a branch or PR to merge)
+function ccmerge() {
+  claude-p "merge $*"
+}
+
 # Claude Code for reviews: no claude-mem, auto-memory, MY-RULES or mattpocock-skills; args go to claude.
 # Resume such a session with claude-review --resume <id> (claude-resume starts plain claude, which loads them again)
 function claude-review() {
