@@ -234,7 +234,8 @@
     "cc-plugin-you-should-know@builtin": true,
     "frontend-design@claude-plugins-official": false,
     "skill-creator@claude-plugins-official": true,
-    "retro@netresearch-claude-code-marketplace": true
+    "retro@netresearch-claude-code-marketplace": true,
+    "prompt-improver@severity1-marketplace": true
   },
   "extraKnownMarketplaces": {
     "claude-code-skills": {
@@ -259,6 +260,12 @@
       "source": {
         "source": "github",
         "repo": "netresearch/claude-code-marketplace"
+      }
+    },
+    "severity1-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "severity1/severity1-marketplace"
       }
     }
   },
