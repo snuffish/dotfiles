@@ -15,6 +15,8 @@ Everything in the Registry is one of four kinds (defined in [`../GLOSSARY.md`](.
 | **Profile** | Project-specific facts a Command reads to adapt to that project: a base profile shared by the project's Commands, plus one Command profile per Command | yes | `priis-profile`, `implement-feature-priis-profile`, `code-review-priis-profile` |
 | **Module** | A shared contract Commands depend on; never runs on its own | **no** | See [Inventory](#inventory) |
 
+Before adding a new Command, check whether it is a mode or flag of an existing one, as `/plan preview` and `/plan --review` are. Make it a separate skill only when it has its own trigger and its own workflow. Three skills added in October 2026 (`plan-preview`, `plan-review`, `typescript-conventions`) were folded into existing skills within 5–11 days.
+
 ## Layout
 
 ```plaintext
