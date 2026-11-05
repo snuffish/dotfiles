@@ -1,6 +1,6 @@
 ---
 name: code-review-priis-profile
-description: "[Project: GR.PRIIS] Command profile adapting /code-review to PRIIS conventions: maps backend/frontend review checklists to review axes, applies lessons-from-prs rules, counterpart pathspecs, hotfix branch rules, and verification handoffs. Load with code-review when reviewing PRs in the GR workspace. Load ONLY when working in the GR.PRIIS repository or the GR folder that holds it."
+description: "[Project: GR.PRIIS] Command profile adapting /code-review to PRIIS conventions: maps the team's review rules (.claude/rules/review-*.md) to review axes, applies the priis-review lessons catalogs, counterpart pathspecs, hotfix branch rules, and verification handoffs. Load with code-review when reviewing PRs in the GR workspace. Load ONLY when working in the GR.PRIIS repository or the GR folder that holds it."
 user-invocable: false
 ---
 
@@ -10,7 +10,7 @@ Reference data for the general `code-review` skill (`/code-review`). It does not
 
 The shared PRIIS fields — Layout, Tracker & PR tooling, References per layer, Sibling chain, Contract touchpoints, Report language, Known drift — are in the `priis-profile` skill › _Profile fields_. Load it first; nothing here restates them.
 
-The review checklists belong to the PRIIS team. They live in `GR.PRIIS` under `.claude/skills/priis-<side>-review/` and `.claude/skills/_shared/` and change through team PRs.
+The review checklists belong to the PRIIS team. They live in `GR.PRIIS` as path-scoped rules in `.claude/rules/review-{backend,frontend,seam}.md`, with the workflow and lessons in `.claude/skills/priis-review/` and `.claude/skills/_shared/`, and change through team PRs.
 
 ---
 
@@ -31,49 +31,53 @@ The review checklists belong to the PRIIS team. They live in `GR.PRIIS` under `.
 
 ### Precedence overrides for the team's review skills
 
-The checklists come from Commands with their own procedure. Under `/code-review`, its steps win wherever the two disagree:
+The checklists come with the team's `priis-review` Command, which has its own procedure. Under `/code-review`, its steps win wherever the two disagree:
 
 | #   | The review skill says                                                                                  | Under `/code-review`                                                                                                                                                                                                                 |
 | --- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| C1  | Snapshot in `.claude/worktrees/review-<slug>` and `EnterWorktree`                                      | `/code-review` Step 1b (`git-worktrees` snapshot mode). Ignore the review skills' Step 1d                                                                                                                                            |
+| C1  | Snapshot in `.claude/worktrees/review-<slug>` and `EnterWorktree`                                      | `/code-review` Step 1b (`git-worktrees` snapshot mode). Ignore `priis-review` Step 1 and `_shared/review-target.md` › _Materialise the head_                                                                                         |
 | C2  | Pass F: `npm ci`, a dev server on :5682 and clicking through                                           | Not run. See _Hand-offs_                                                                                                                                                                                                             |
-| C3  | Four tags: Correctness, Standards, Spec, Tests | Tests is its own axis when `/code-review` Step 5a turns it on; otherwise see _Step 5_ |
+| C3  | Six axes: Correctness, Security, Architecture, Standards, Spec, Tests; one `priis-review-track` subagent per half | `/code-review`'s axes (_Step 5_ maps Architecture). Never launch the tracks; `--deep` uses `/code-review`'s own axis sub-agents |
 | C4  | Read PR threads up front to skip already-raised items                                                  | Threads only with `feedback`, after Step 6. The lessons' recorded decisions still apply in Step 6                                                                                                                                    |
 | C5  | Blocking / Should fix / Minor, ADO-pasteable report, `--comment` posting                               | `/code-review`'s artifact and severities. Posting is `/pr-post-comments`                                                                                                                                                             |
 | C6  | Counterpart None → "single-repo change" only                                                           | Same: in the monorepo every change is a single-repo change (`priis-profile` › _Layout_)                                                                                                                                              |
 | C7  | Load `priis-backend-modern-csharp`; test conventions in `.claude/skills/priis-<side>-testing/SKILL.md` | Prefer the repo team skills `priis-backend-modern-csharp`, `priis-backend-testing`, `priis-frontend-testing` (`core` › _Precedence_, [ADR-0005](../../../../docs/adr/0005-team-skills-vs-personal-skills-boundary.md)), plus personal `modern-csharp` (`priis-profile` › _References per layer_) |
 
-Ignore the review skills' Steps 1, 2, 4, 5 and 6, their _Usage_ and _Invariants_, every "run every pass" and sub-agent instruction, and their `allowed-tools`. `/code-review` owns all of that.
+Ignore `priis-review`'s Steps 1, 2, 3a, 4, 5 and 6, its _Usage_ and _Invariants_, every sub-agent instruction, `.claude/agents/priis-review-track.md`, and its `allowed-tools`. `/code-review` owns all of that.
 
 ---
 
 ## Step 3 — Review checklists
 
-Read per `project-profile` › _Upstream content_, from `GR.PRIIS` (the side(s) the diff touches):
+Read per `project-profile` › _Upstream content_, from `GR.PRIIS`: the rule file of each side the diff touches, plus the seam rules when the diff touches the API surface or both halves.
 
 ```bash
-git -C <repo> show origin/main:.claude/skills/priis-backend-review/SKILL.md      # GR.PRIIS, backend/
-git -C <repo> show origin/main:.claude/skills/priis-frontend-review/SKILL.md     # GR.PRIIS, frontend/
+git -C <repo> show origin/main:.claude/rules/review-backend.md     # backend/
+git -C <repo> show origin/main:.claude/rules/review-frontend.md    # frontend/
+git -C <repo> show origin/main:.claude/rules/review-seam.md        # the contract between them (Pass D)
+git -C <repo> show origin/main:.claude/skills/priis-review/SKILL.md   # Pass E only
 ```
 
-Keep only these sections (headings exact, _verified 2026-10-31_ on `origin/main` @ `25f5e64d7`), and file each under its axis:
+**Until GR.PRIIS !18924 merges**, these paths exist only on its branch: when `git -C <repo> cat-file -e origin/main:.claude/rules/review-backend.md` fails, read the same paths from `origin/chore/review-skills-human-review-findings` and record that ref and its short SHA under **Profile**. Delete this paragraph once the PR has merged.
 
-| Heading                                                | Backend | Frontend | Axis        | Notes                                                                                                                                                                               |
-| ------------------------------------------------------ | :-----: | :------: | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `### Pass A — Reuse and duplication (highest yield)`   |   ✅    |    ✅    | Standards   | Its _Need / Already exists / Do not accept_ table is the core. Check "already exists" against the review's **base**, not `origin/main`: some symbols exist only on a release branch |
-| `### Pass B — Domain correctness`                      |   ✅    |          | Correctness | Query filters, protected data, state machines, audit trail, transactions, jobs                                                                                                      |
-| `### Pass B — Behaviour and state`                     |         |    ✅    | Correctness | RTK Query tags, form wiring across entry points, Zod, RHF, payload shape, access in the UI                                                                                          |
-| `### Pass C — Tests` | ✅ | ✅ | Tests | With Tests off: Standards, or Correctness for an untested failing branch (_Step 5_) |
-| `### Pass D — Contract and cross-repo`                 |   ✅    |    ✅    | Standards   | Against the counterpart in code, per `/code-review` _Heuristics_                                                                                                                    |
-| `### Pass E — Spec and text that drifts from the code` |   ✅    |    ✅    | Spec        |                                                                                                                                                                                     |
-| `### Pass G — Conventions and modern idioms`           |   ✅    |    ✅    | Standards   | Items 1–3 only. Item 1's skill list follows `priis-profile` › _References per layer_ (C7). Item 4 is a hand-off                                                                     |
+Keep these sections (headings exact, _verified 2026-11-05_ on `chore/review-skills-human-review-findings` @ `9beb6e3b5`). Every `###` section in a rule file ends in `· <Axis>`; file each finding under that axis through _Step 5_:
 
-Excluded: ``### Pass F — Click through the running app (unless `--no-browser`)`` (frontend, C2).
+| File | Heading | Axis | Notes |
+| --- | --- | --- | --- |
+| backend, frontend | `## Reuse before you add (Pass A · Standards)` | Standards | Its _Need / Already exists / Do not accept_ table is the core. Check "already exists" against the review's **base**, not `origin/main`: some symbols exist only on a release branch |
+| backend | `## Domain correctness (Pass B)` | per `###` tag | Its trigger table picks which `###` checks apply |
+| frontend | `## Behaviour and state (Pass B)` | per `###` tag | |
+| backend, frontend | `## Tests (Pass C · Tests)` | Tests | With Tests off: Standards, or Correctness for an untested failing branch (_Step 5_) |
+| seam | `## Across the boundary (Pass D)` and `## Also check` | Correctness; rule 4 Security | Both halves in code, per `/code-review` _Heuristics_ |
+| `priis-review/SKILL.md` | `### Pass E — Spec and text that drifts from the code` | Spec; rulebook and skill text → Drift | |
+| backend, frontend | `## Conventions and modern idioms (Pass G)` | per `###` tag | Item 1's skill list follows `priis-profile` › _References per layer_ (C7). Item 2 is a hand-off. Skip `### Smell baseline (judgement calls) · Standards` (_Step 5_) |
+
+Excluded: ``### Pass F — Click through the running app (unless `--no-browser`)`` in `priis-review/SKILL.md` (C2). Also skip `priis-review` Step 4.2's "a backend 'missing guard' is a non-issue when the UI never offers the path": it contradicts seam rule 3, so grade by seam rule 3 instead.
 
 ## Step 3 — Lessons catalogs
 
 ```bash
-git -C <repo> show origin/main:.claude/skills/priis-<side>-review/references/lessons-from-prs.md
+git -C <repo> show origin/main:.claude/skills/priis-review/references/lessons-<side>.md   # <side> = backend | frontend
 ```
 
 Read once per review. Every entry is a pattern, how it was detected, the accepted fix and the PR it came from. Use the entries as Standards and Correctness evidence ("Rule:" lessons `<n.n>`, `!<pr>`). These sections record decisions and feed Step 6's refute check:
@@ -93,12 +97,13 @@ Besides the above: the rulebooks per half (`backend/CLAUDE.md`, `frontend/CLAUDE
 
 | Review-skill tag                                                                                                                                                  | `/code-review` axis |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
-| Correctness (Pass B)                                                                                                                                              | Correctness         |
-| Standards (Passes A, D, G)                                                                                                                                        | Standards           |
-| Spec (Pass E)                                                                                                                                                     | Spec                |
+| Correctness (Pass B, Pass D)                                                                                                                                      | Correctness         |
+| Standards (Passes A, G)                                                                                                                                           | Standards           |
+| Architecture (Pass B, G: where a member lives, entities as API types, read-only context, mutations that save, convention-only contracts) | Standards; Correctness when the section names a failing path (a silent fail-closed) |
+| Spec (Pass E)                                                                                                                                                     | Spec; Drift for rulebook, rules, skill and comment text |
 | Tests (Pass C), missing coverage a testing skill or Pass C requires (401 / 403 / happy path per endpoint, a spec for new interaction, a unit spec for pure logic) | Tests; Standards when Tests is off |
 | Tests (Pass C), a failing branch, guard or rollback path no test exercises | Tests; Correctness when Tests is off |
-| Correctness (Pass B) on access in the UI, protected data or query filters | Security; Correctness when Security is off |
+| Security (Pass B: query filters, protected data, access rules, access in the UI; seam rule 4; secrets or personal data in logs) | Security; Correctness when Security is off |
 
 | Review-skill severity | `/code-review` severity |
 | --------------------- | ----------------------- |
@@ -106,7 +111,7 @@ Besides the above: the rulebooks per half (`backend/CLAUDE.md`, `frontend/CLAUDE
 | Should fix            | 🟡                      |
 | Minor                 | 🟢                      |
 
-The review skills' _Smell baseline_ is the same Fowler table as `/code-review` Step 3; use `/code-review`'s.
+The rule files' _Smell baseline_ is the same Fowler table as `/code-review` Step 3; use `/code-review`'s.
 
 ---
 
@@ -127,7 +132,7 @@ Report additions, inside `## Detailed Review Findings` after `### 🟢 Minor Fin
 ## Hand-offs
 
 - **Grep-able anti-patterns** belong to `priis-backend-verify` / `priis-frontend-verify` (`.Include` + `AsNoTracking`, `new List<`, `.Result`, relative imports, `zod/v4`, `any`, `console.log`, …). Say once in the chat response that the verify skill should be run if it clearly was not; do not list its hits as findings.
-- **Clicking through the running app** is out of `/code-review` (C2). For UI changes, suggest `/manual-testing` for a runnable click path, or running the team's `priis-frontend-review` itself, whose Pass F covers it.
+- **Clicking through the running app** is out of `/code-review` (C2). For UI changes, suggest `/manual-testing` for a runnable click path, or running the team's `priis-review` itself, whose Pass F covers it.
 - **PR threads**: when the PR has human threads, suggest the `feedback` modifier (C4).
 - **Posting** findings to the PR: `/pr-post-comments`.
 
@@ -137,10 +142,10 @@ Report additions, inside `## Detailed Review Findings` after `### 🟢 Minor Fin
 
 | Topic                | Use                                                                  | Not                                                     |
 | -------------------- | -------------------------------------------------------------------- | ------------------------------------------------------- |
-| Review checklists    | `git show origin/main:.claude/skills/priis-<side>-review/SKILL.md`   | the registry copy, the reviewed head, the main checkout |
-| Lessons              | `git show origin/main:…/references/lessons-from-prs.md`              | memory of past reviews                                  |
+| Review checklists    | `git show origin/main:.claude/rules/review-<side>.md` (+ `review-seam.md`) | the registry copy, the reviewed head, the main checkout |
+| Lessons              | `git show origin/main:.claude/skills/priis-review/references/lessons-<side>.md` | memory of past reviews                                  |
 | Snapshot             | `/code-review` Step 1b                                               | `.claude/worktrees/review-<slug>` + `EnterWorktree`     |
-| Click-through        | `/manual-testing`, or `priis-frontend-review` Pass F                 | `npm ci` + dev server inside `/code-review`             |
+| Click-through        | `/manual-testing`, or `priis-review` Pass F                          | `npm ci` + dev server inside `/code-review`             |
 | Tests tag | the Tests axis when on; else Standards (missing coverage) / Correctness (untested failing branch) | a Spec finding |
 | Severity             | 🔴 / 🟡 / 🟢                                                         | Blocking / Should fix / Minor                           |
 | C# conventions       | `priis-backend-modern-csharp` (team upstream) + `modern-csharp`      | ignoring team C# rules                                  |

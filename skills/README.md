@@ -49,7 +49,7 @@ skills/
 | `GR.PRIIS/*-profile` | Profile | 3 | `priis-profile` (base), `implement-feature-priis-profile` (read by `implement-feature`), `code-review-priis-profile` (read by `code-review`) |
 | `_modules/` | Module | 8 | `core`, `artifact-protocol`, `git-worktrees`, `pr-counterpart`, `pr-host`, `project-profile`, `fan-out`, `outward-writes` |
 
-(Project skill names are the group prefix + the listed suffix — e.g. `priis-backend-dry`. The PRIIS team skills (`priis-backend-*`, `priis-frontend-*`, `priis-fullstack-review`, `priis-ship`, …) live only in the GR.PRIIS repo's `.claude/skills/`; the registry keeps no copies.)
+(Project skill names are the group prefix + the listed suffix — e.g. `priis-backend-dry`. The PRIIS team skills (`priis-backend-*`, `priis-frontend-*`, `priis-review`, `priis-ship`, …) live only in the GR.PRIIS repo's `.claude/skills/`; the registry keeps no copies.)
 
 ## Modules & Precedence
 

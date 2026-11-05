@@ -18,20 +18,41 @@ The artifact's *🟢 Minor Findings* list becomes **one general comment per PR**
 
 ## Draft Preview Format (`draft` mode)
 
-Show each item verbatim as it will be posted, grouped per PR:
+Open with one table row per item so the user can pick keys at a glance, then show each item: its anchored code, then its body verbatim as it will be posted. Group per PR:
 
 ````markdown
-**Draft — nothing posted yet.**
+**Draft — nothing posted yet.** <Repo> !<id> "<PR title>" · iteration <n> · `<short-sha>`
 
-### <Repo> !<id> "<PR title>" (iteration <n>, `<short-sha>`)
+| Key | Kind | Severity · title | Anchor | After posting |
+|---|---|---|---|---|
+| 1 | new thread | 🟡 <title> | `<path>:<start>-<end>` | active |
+| r1 | reply to #<threadId> | — | `<thread's path>:<line>` | resolved / active: <reason> |
+| g1 | general | 🟢 Minor findings (<n>) | — | active |
 
-**1 · reply to #<threadId>, then resolve** · `<path>:<line>` (or `, stays active: <reason>`)
+---
+
+#### 1 · new thread · `<path>:<start>-<end>`
+
+```<lang>
+<start> │ <anchored line, from git show <head>:<path>>
+<end>   │ <anchored line>
+```
+
 > <full comment body, verbatim as in payload>
 
-**2 · new thread** · `<path>:<start>-<end>`
-> <full comment body, verbatim as in payload>
+---
 
-Skipped: <key> already posted on a live thread (#<id>) · <key> outside the diff → general comment
+#### r1 · reply to #<threadId> · `<path>:<line>`
+
+> <full reply body, verbatim as in payload>
+
+---
+
+**Skipped:** <key> already on live thread #<id> · <key> outside the diff → general comment
 ````
+
+- **Anchored code**: the lines the thread will highlight, read with *Step 3*'s command at the pinned head, so the user sees what the comment points at. Show them for a new thread, and for a reply on a thread that has a `threadContext`; omit the block for a general comment or a file-level thread. Number each line, tag the fence with the file's language (`md`, `cs`, `tsx`, …), and cut a line over 160 characters to its first 160 plus ` …` (preview only; the payload anchors the whole line). For a range over 12 lines, show the first 5 and the last 5 around a `⋮` line.
+- **Body**: the payload text verbatim in a blockquote, attribution line and bold title line included.
+- **Separators**: a `---` rule between items, so each body is visibly bounded.
 
 End the preview with the payload directory's absolute path (`<scratchpad>/pr<id>/`), then prompt the user (*Post all <N>* / *Keep as draft*, or on a host without a question tool: `Reply "post" to send all, "post 1,3" for a subset, or tell me what to change.`).

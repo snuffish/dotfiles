@@ -44,7 +44,7 @@ Workspace (*verified 2026-10-31*): one git repo, `GR.PRIIS`, at `~/Projects/GR/G
 | Backend — refactor | The endpoint or library row above, plus `priis-backend-dry` |
 | Frontend — feature or page | `priis-frontend-component-patterns`, `priis-frontend-forms`, `priis-frontend-rtk-query`, `priis-frontend-routing`, `priis-frontend-testing` |
 
-Load each skill from the repo-root `.claude/skills/` (`priis-backend-dry` is registry-only). By `core` › *Precedence* ([ADR-0005](../../../../docs/adr/0005-team-skills-vs-personal-skills-boundary.md)), the team's `priis-backend-modern-csharp` wins over the personal `modern-csharp` wherever they overlap. A change that spans both halves is reviewed with `priis-fullstack-review` (or `/priis-verify` for quality gates).
+Load each skill from the repo-root `.claude/skills/` (`priis-backend-dry` is registry-only). By `core` › *Precedence* ([ADR-0005](../../../../docs/adr/0005-team-skills-vs-personal-skills-boundary.md)), the team's `priis-backend-modern-csharp` wins over the personal `modern-csharp` wherever they overlap. A change in either half or both is reviewed with `priis-review` (or `/priis-verify` for quality gates).
 
 ---
 

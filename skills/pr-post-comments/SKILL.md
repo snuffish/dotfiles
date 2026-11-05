@@ -92,7 +92,7 @@ If `<head>` moved since the artifact's reviewed head, run `git -C <repo> diff <r
 ### Step 3 — Verify every anchor at the PR head
 
 ```bash
-git -C <repo> show <head>:<path> | awk 'NR>=<start> && NR<=<end> {print NR": "length($0)": "$0}'
+git -C <repo> show <head>:<path> | awk -v s=<start> -v e=<end> 'NR>=s && NR<=e {printf "%d: %d: ", NR, length; print}'
 ```
 
 - Confirm the lines match the quoted code (fix drifted line numbers in both the spec and the artifact). Set `end_offset = length(end line) + 1`.
