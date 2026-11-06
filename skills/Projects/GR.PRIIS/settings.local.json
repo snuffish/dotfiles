@@ -16,7 +16,7 @@
       "Bash(python3 -c ' *)",
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(python3 -I .claude/scripts/check-skill-drift.py)",
+      "Bash(python3 -I .claude/scripts/check_skill_drift.py)",
       "Bash(python3 -I .claude/scripts/check_reference_manifests.py)",
       "Bash(git log *)",
       "Bash(command -v az)",
