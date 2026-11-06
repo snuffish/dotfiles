@@ -37,4 +37,11 @@ If no `.codegraph/` directory exists there or in any parent, skip CodeGraph enti
 - Use absolute paths or `git -C <dir>` instead of `cd`; use `quiet <cmd>` instead of `| tail`.
 - Run build, pack, lint and format commands through `quiet`, or the quiet-guard hook rejects them.
 
+## Friction becomes configuration
+
+- Treat every correction, rejection or "why did you do that?" from me as a missing instruction, not a one-off. Treat a fix that worked the same way: if it lives only in this conversation, it is lost.
+- After each round (a delivered answer, a failed command, a review I push back on), ask: what does this output reveal about the system that produced it? Which skill, rule, hook, setting or memory let it happen, or would have prevented it?
+- Then make the change that removes the friction at its source, in the narrowest home that will be loaded next time: the skill's SKILL.md or references (a repo's own skill-gap process when it has one), a project AGENTS.md or rule file, a hook or `settings.json` entry, or a memory file. Prefer an automated check over prose when one can catch it.
+- Name the change in one line at the end of the turn ("Recorded in X so it does not recur"). If the right home is unclear or the change is global, propose it and ask instead of guessing.
+
 @~/.claude-mem/MY-RULES.md
