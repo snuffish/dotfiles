@@ -74,6 +74,19 @@ Draft `SKILL.md` from [`references/command-template.md`](references/command-temp
 
 ---
 
+### Step 3b — Prove It
+
+New tooling is proven by a run, not just written. Before Step 4, run two realistic prompts through sub-agents that read the new `SKILL.md` and follow it:
+
+- Keep run outputs in the session scratchpad, never next to the skill: the registry lints every folder in it.
+- A skill that asks the user questions or writes outside its outputs runs in a dry-run mode (add the flag to the skill if it has none), with each round's answers scripted in the sub-agent's prompt.
+- Each sub-agent also writes `notes.md`: every instruction it found unclear, contradictory or had to guess at. These notes are the main signal; fix the skill from them, then rerun once.
+- With the skill-creator's static review page, an absent `feedback.json` means the user did not submit; ask for comments in chat instead of reading it as approval.
+
+Done when a rerun's `notes.md` holds no problem you would still fix.
+
+---
+
 ### Step 4 — Registry Inventory, Lint & Sync
 
 1. Update [`skills/README.md`](../README.md) (summary counts, Inventory table row, and `Projects/<Project>/` tree when project-scoped).
