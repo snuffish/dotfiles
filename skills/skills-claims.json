@@ -4365,7 +4365,7 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "| Command | 48 | `analyze-personal-feedback`, `artifacts`, `clean`, `code-documentation`, `code-review`, `c",
+      "quote": "el) | Command | 49 | `analyze-personal-feedback`, `artifacts`, `clean`, `code-documentation`, `code-review`, `c",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
@@ -4380,7 +4380,7 @@
       },
       "kind": "skill_ref",
       "value": "clean",
-      "quote": "Command | 48 | `analyze-personal-feedback`, `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `",
+      "quote": "| 49 | `analyze-personal-feedback`, `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `",
       "verify": {
         "method": "skill_exists",
         "name": "clean",
@@ -4395,7 +4395,7 @@
       },
       "kind": "skill_ref",
       "value": "code-documentation",
-      "quote": "| 48 | `analyze-personal-feedback`, `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-pro",
+      "quote": "analyze-personal-feedback`, `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-pro",
       "verify": {
         "method": "skill_exists",
         "name": "code-documentation",
@@ -4660,7 +4660,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-post-comments",
-      "quote": "feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `refine`, `r",
+      "quote": "feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `pr-summary`, `principles-interview`, `problem`,",
       "verify": {
         "method": "skill_exists",
         "name": "pr-post-comments",
@@ -4678,7 +4678,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-summary",
-      "quote": "r-fix-pipeline`, `pr-polish`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `refine`, `remember-this`,",
+      "quote": "r-fix-pipeline`, `pr-polish`, `pr-post-comments`, `pr-summary`, `principles-interview`, `problem`, `proceed`, `r",
       "verify": {
         "method": "skill_exists",
         "name": "pr-summary",
@@ -4693,7 +4693,7 @@
       },
       "kind": "skill_ref",
       "value": "problem",
-      "quote": "`, `pr-polish`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-c",
+      "quote": "-comments`, `pr-summary`, `principles-interview`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-c",
       "verify": {
         "method": "skill_exists",
         "name": "problem",
@@ -4708,7 +4708,7 @@
       },
       "kind": "skill_ref",
       "value": "proceed",
-      "quote": "sh`, `pr-post-comments`, `pr-summary`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-conflicts`, ",
+      "quote": "`pr-summary`, `principles-interview`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-conflicts`,",
       "verify": {
         "method": "skill_exists",
         "name": "proceed",
@@ -4723,7 +4723,7 @@
       },
       "kind": "skill_ref",
       "value": "refine",
-      "quote": "st-comments`, `pr-summary`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-conflicts`, `skill-dri",
+      "quote": "y`, `principles-interview`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-conflicts`, `skill-dri",
       "verify": {
         "method": "skill_exists",
         "name": "refine",
@@ -4738,7 +4738,7 @@
       },
       "kind": "skill_ref",
       "value": "remember-this",
-      "quote": "s`, `pr-summary`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-conflicts`, `skill-drift`, `skill-gap`,",
+      "quote": "iples-interview`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-conflicts`, `skill-drift`, `skill-gap`,",
       "verify": {
         "method": "skill_exists",
         "name": "remember-this",
@@ -5113,19 +5113,19 @@
       }
     },
     {
-      "id": "skills/README.md:41:count:49",
+      "id": "skills/README.md:41:count:50",
       "source": {
         "file": "skills/README.md",
         "line": 41
       },
       "kind": "count",
-      "value": "49",
-      "quote": "54 skills total \u2014 49 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "value": "50",
+      "quote": "55 skills total \u2014 50 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/*/SKILL.md",
         "base": "repo",
-        "expected": 49,
+        "expected": 50,
         "op": "eq"
       }
     },
@@ -5137,7 +5137,7 @@
       },
       "kind": "count",
       "value": "5 GR.PRIIS project skills",
-      "quote": "54 skills total \u2014 49 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "55 skills total \u2014 50 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/Projects/GR.PRIIS/*/SKILL.md",
@@ -5154,7 +5154,7 @@
       },
       "kind": "count",
       "value": "8 Modules",
-      "quote": "54 skills total \u2014 49 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "55 skills total \u2014 50 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/_modules/*.md",
@@ -5246,7 +5246,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-polish",
-      "quote": "r-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `pr-summary`, `problem`, `pr",
+      "quote": "r-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `pr-summary`, `principles-in",
       "verify": {
         "method": "skill_exists",
         "name": "pr-polish",
@@ -23566,6 +23566,130 @@
         ],
         "base": "repo",
         "expect": "present"
+      }
+    },
+    {
+      "id": "skills/README.md:45:skill_ref:principles-interview",
+      "source": {
+        "file": "skills/README.md",
+        "line": 45
+      },
+      "kind": "skill_ref",
+      "value": "principles-interview",
+      "quote": "`, `pr-polish`, `pr-post-comments`, `pr-summary`, `principles-interview`, `problem`, `proceed`, `refine`, `remember-this`,",
+      "verify": {
+        "method": "skill_exists",
+        "name": "principles-interview",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/principles-interview/SKILL.md:23:skill_ref:remember-this",
+      "source": {
+        "file": "skills/principles-interview/SKILL.md",
+        "line": 23,
+        "also_lines": [
+          31,
+          113,
+          130
+        ]
+      },
+      "kind": "skill_ref",
+      "value": "remember-this",
+      "quote": "**Saving follows [`remember-this`](../remember-this/SKILL.md).**",
+      "verify": {
+        "method": "skill_exists",
+        "name": "remember-this",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/principles-interview/SKILL.md:23:doc_link:remember-this \u203a Core Protocol & Workflow",
+      "source": {
+        "file": "skills/principles-interview/SKILL.md",
+        "line": 23
+      },
+      "kind": "doc_link",
+      "value": "remember-this \u203a Core Protocol & Workflow",
+      "quote": "Read its *Core Protocol & Workflow*, steps 2\u20135, before step 5 here.",
+      "verify": {
+        "method": "heading_pointer",
+        "target": "remember-this",
+        "heading": "Core Protocol & Workflow"
+      }
+    },
+    {
+      "id": "skills/principles-interview/SKILL.md:130:doc_link:remember-this \u203a Verification & Validation",
+      "source": {
+        "file": "skills/principles-interview/SKILL.md",
+        "line": 130
+      },
+      "kind": "doc_link",
+      "value": "remember-this \u203a Verification & Validation",
+      "quote": "Before reporting, run remember-this *Verification & Validation*, plus:",
+      "verify": {
+        "method": "heading_pointer",
+        "target": "remember-this",
+        "heading": "Verification & Validation"
+      }
+    },
+    {
+      "id": "skills/principles-interview/SKILL.md:32:skill_ref:grill-me",
+      "source": {
+        "file": "skills/principles-interview/SKILL.md",
+        "line": 32
+      },
+      "kind": "skill_ref",
+      "value": "grill-me",
+      "quote": "| Stress-test a plan or design | [`/grill-me`](../grill-me/SKILL.md) |",
+      "verify": {
+        "method": "skill_exists",
+        "name": "grill-me",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/principles-interview/SKILL.md:33:skill_ref:analyze-personal-feedback",
+      "source": {
+        "file": "skills/principles-interview/SKILL.md",
+        "line": 33
+      },
+      "kind": "skill_ref",
+      "value": "analyze-personal-feedback",
+      "quote": "| Review what others said about my work | [`/analyze-personal-feedback`](../analyze-personal-feedback/SKILL.md) |",
+      "verify": {
+        "method": "skill_exists",
+        "name": "analyze-personal-feedback",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/principles-interview/SKILL.md:61:path:~/.claude-mem/MY-RULES.md",
+      "source": {
+        "file": "skills/principles-interview/SKILL.md",
+        "line": 61
+      },
+      "kind": "path",
+      "value": "~/.claude-mem/MY-RULES.md",
+      "quote": "`~/.claude-mem/MY-RULES.md` (written by claude-mem from My Rules; read-only here).",
+      "verify": {
+        "method": "manual",
+        "reason": "Outside the repo; written by claude-mem on this machine"
+      }
+    },
+    {
+      "id": "skills/principles-interview/SKILL.md:104:doc_link:core \u203a Post-edit verification",
+      "source": {
+        "file": "skills/principles-interview/SKILL.md",
+        "line": 104
+      },
+      "kind": "doc_link",
+      "value": "core \u203a Post-edit verification",
+      "quote": "(e.g. `core.md` \u203a *Post-edit verification*)",
+      "verify": {
+        "method": "heading_pointer",
+        "target": "core",
+        "heading": "Post-edit verification"
       }
     }
   ]
