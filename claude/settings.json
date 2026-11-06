@@ -48,6 +48,7 @@
     "create-skill": "off",
     "crypto-com-app": "off",
     "no-worktrees": "off",
+    "principles-interview": "off",
     "keybindings-help": "user-invocable-only",
     "fewer-permission-prompts": "user-invocable-only",
     "init": "user-invocable-only",
@@ -209,6 +210,16 @@
           {
             "type": "command",
             "command": "codegraph prompt-hook"
+          }
+        ]
+      }
+    ],
+    "UserPromptExpansion": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I \"$HOME/.terminal/claude/skill-help.py\""
           }
         ]
       }
