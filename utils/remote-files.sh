@@ -39,23 +39,35 @@ cmd_list() {
   _rf_exec bash -c 'cd -- "$1" 2>/dev/null && ls -1Ap' _ "$cwd"
 }
 
-# Show the cwd listing with an empty query; fzf drops its marks on reload, so re-select basket files by row
-_rf_reload() {
-  local cwd base sel
-  cwd=$(<"$S/cwd")
-  [[ "$cwd" == / ]] && base="" || base="$cwd"
-  cmd_list >"$S/listing"
-  sel=$(RF_BASE="$base" awk -v b="$S/basket" '
-    BEGIN { base = ENVIRON["RF_BASE"]; while ((getline l < b) > 0) m[l] = 1 }
-    !/\/$/ && ((base "/" $0) in m) { printf "+pos(%d)+select", NR }' "$S/listing")
-  printf 'clear-query+reload-sync(cat -- "%s")+clear-selection%s+pos(1)+change-border-label(%s)+change-header()' \
-    "$S/listing" "$sel" "$(_rf_label)"
+# fzf drops its marks on reload: emit "+pos(N)+select" for every basket file in a listing.
+# <listing> <prefix that turns a row into a full path: "<cwd>/", or "" for absolute rows>
+_rf_select_rows() {
+  RF_PREFIX="$2" awk -v b="$S/basket" '
+    BEGIN { p = ENVIRON["RF_PREFIX"]; while ((getline l < b) > 0) m[l] = 1 }
+    !/\/$/ && ((p $0) in m) { printf "+pos(%d)+select", NR }' "$1"
 }
 
-cmd_finddirs() {
+# Show the cwd listing with an empty query, the cursor on <focus name> when given, else the top row
+_rf_reload() {
+  local cwd sel row
+  cwd=$(<"$S/cwd")
+  cmd_list >"$S/listing"
+  sel=$(_rf_select_rows "$S/listing" "${cwd%/}/")
+  row=1
+  [[ -n "${1:-}" ]] && row=$(awk -v f="$1" '$0 == f { print NR; exit }' "$S/listing")
+  printf 'clear-query+reload-sync(cat -- "%s")+clear-selection%s+pos(%s)+change-border-label(%s)+change-header()' \
+    "$S/listing" "$sel" "${row:-1}" "$(_rf_label)"
+}
+
+# Dirs (with a trailing "/") and files under cwd, relative to it so the fuzzy match skips the shared prefix
+cmd_findall() {
   local cwd
   cwd=$(<"$S/cwd")
-  _rf_exec find "$cwd" -mindepth 1 -maxdepth 4 \( -name .git -o -name node_modules -o -name .cache \) -prune -o -type d -print
+  _rf_exec bash -c '
+    cd -- "$1" || exit
+    prune=(\( -name .git -o -name node_modules -o -name .cache \) -prune -o)
+    find . -mindepth 1 -maxdepth 4 "${prune[@]}" -type d -print | sed "s|^\./||; s|\$|/|"
+    find . -mindepth 1 -maxdepth 4 "${prune[@]}" -type f -print | sed "s|^\./||"' _ "$cwd"
 }
 
 _rf_browse() {
@@ -63,7 +75,7 @@ _rf_browse() {
   printf '%s+enable-search' "$(_rf_prompt BROWSE)"
 }
 
-_rf_enter_mode() { # <GOTO|FIND>
+_rf_enter_mode() { # <GOTO|FIND|DEST>
   local cur
   cur=$(<"$S/mode")
   if [[ "$cur" == "$1" ]]; then
@@ -75,7 +87,11 @@ _rf_enter_mode() { # <GOTO|FIND>
   echo "$1" >"$S/mode"
   printf 'change-header()+'
   case "$1" in
-    FIND) printf 'clear-query+reload-sync("%s" finddirs)+clear-selection+pos(1)+enable-search+%s' "$RF_SELF" "$(_rf_prompt FIND)" ;;
+    FIND)
+      cmd_findall >"$S/found"
+      printf 'clear-query+reload-sync(cat -- "%s")+clear-selection%s+pos(1)+enable-search+%s' \
+        "$S/found" "$(_rf_select_rows "$S/found" "$(sed 's|/*$|/|' "$S/cwd")")" "$(_rf_prompt FUZZY)"
+      ;;
     *)
       [[ "$cur" == FIND ]] && printf 'reload-sync(cat -- "%s")+' "$S/listing"
       printf 'disable-search+clear-query+%s' "$(_rf_prompt "$1")"
@@ -85,6 +101,7 @@ _rf_enter_mode() { # <GOTO|FIND>
 
 cmd_goto_start() { _rf_enter_mode GOTO; }
 cmd_find_start() { _rf_enter_mode FIND; }
+cmd_dest_start() { _rf_enter_mode DEST; }
 
 _rf_toggle() { # <full path>
   if grep -Fxq -- "$1" "$S/basket"; then
@@ -96,10 +113,14 @@ _rf_toggle() { # <full path>
 }
 
 cmd_toggle() { # <item> <down|up>
-  local item="${1:-}" cwd
-  [[ "$(<"$S/mode")" == BROWSE && -n "$item" && "$item" != */ ]] || return
-  cwd=$(<"$S/cwd")
-  _rf_toggle "$(_rf_join "$cwd" "$item")"
+  local item="${1:-}" mode cwd
+  mode=$(<"$S/mode")
+  [[ -n "$item" && "$item" != */ ]] || return
+  case "$mode" in
+    BROWSE) cwd=$(<"$S/cwd"); _rf_toggle "$(_rf_join "$cwd" "$item")" ;;
+    FIND) cwd=$(<"$S/cwd"); _rf_toggle "$(_rf_join "$cwd" "$item")" ;;
+    *) return ;;
+  esac
   printf 'toggle+%s+refresh-preview' "${2:-down}"
 }
 
@@ -124,7 +145,7 @@ _rf_resolve_dir() {
 }
 
 cmd_enter() { # <item> <query>
-  local mode item="${1:-}" query="${2:-}" cwd new
+  local mode item="${1:-}" query="${2:-}" cwd new dest
   mode=$(<"$S/mode")
   cwd=$(<"$S/cwd")
   case "$mode" in
@@ -147,8 +168,26 @@ cmd_enter() { # <item> <query>
       ;;
     FIND)
       [[ -n "$item" ]] || return
-      echo "$item" >"$S/cwd"
-      printf '%s+%s' "$(_rf_browse)" "$(_rf_reload)"
+      item=$(_rf_join "$cwd" "$item")
+      # A dir opens itself; a file opens its dir with the cursor on it
+      if [[ "$item" == */ ]]; then
+        echo "${item%/}" >"$S/cwd"
+        printf '%s+%s' "$(_rf_browse)" "$(_rf_reload)"
+      else
+        dirname -- "$item" >"$S/cwd"
+        printf '%s+%s' "$(_rf_browse)" "$(_rf_reload "$(basename -- "$item")")"
+      fi
+      ;;
+    DEST)
+      [[ -n "$query" ]] || return
+      # Pull lands on this Mac; push dests are relative to the PC home, as scp's SFTP session starts there
+      if [[ "$RF_SIDE" == pull || "$RF_HOST" == local ]]; then
+        dest="${query/#\~/$HOME}"
+      else
+        dest="${query#\~/}"
+      fi
+      echo "$dest" >"$S/dest"
+      printf '%s+clear-query+change-header()+refresh-preview' "$(_rf_browse)"
       ;;
   esac
 }
@@ -215,10 +254,10 @@ cmd_start() { # pull|push
     echo "${RF_DEST:-Downloads/}" >"$S/dest"
   fi
   cmd_list >"$S/listing"
-  fzf --layout reverse --border --multi --marker '● ' --with-shell 'bash -c' <"$S/listing" \
+  fzf --layout reverse --border --multi --scheme path --marker '● ' --with-shell 'bash -c' <"$S/listing" \
     --prompt 'BROWSE ▸ ' --border-label "$(_rf_label)" \
     --preview '"$RF_SELF" basket' --preview-window right:40% --preview-label ' Basket ' \
-    --footer 'Enter open · Tab select · ⌫/⌥↑ back · ^G goto · ^F find · ^T transfer · ^X clear' \
+    --footer 'Enter open · Tab select · ⌫/⌥↑ back · ^G goto · ^F fuzzy · ^D dest · ^T transfer · ^X clear' \
     --bind 'enter:transform:"$RF_SELF" enter {} {q}' \
     --bind 'tab:transform:"$RF_SELF" toggle {} down' \
     --bind 'shift-tab:transform:"$RF_SELF" toggle {} up' \
@@ -226,13 +265,14 @@ cmd_start() { # pull|push
     --bind 'alt-up:transform:"$RF_SELF" back' \
     --bind 'ctrl-g:transform:"$RF_SELF" goto-start' \
     --bind 'ctrl-f:transform:"$RF_SELF" find-start' \
+    --bind 'ctrl-d:transform:"$RF_SELF" dest-start' \
     --bind 'ctrl-x:transform:"$RF_SELF" clear' \
     --bind 'ctrl-t:transform:"$RF_SELF" transfer'
 }
 
 case "${1:-}" in
   pull | push) cmd_start "$1" ;;
-  list | finddirs | goto-start | find-start | toggle | back | enter | basket | clear | transfer | do-transfer)
+  list | findall | goto-start | find-start | dest-start | toggle | back | enter | basket | clear | transfer | do-transfer)
     sub="${1//-/_}"
     shift
     "cmd_$sub" "$@"
