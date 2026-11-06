@@ -20524,6 +20524,98 @@
       }
     },
     {
+      "id": "skills/simplify-branch/SKILL.md:80:path:../_modules/fan-out.md",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 80
+      },
+      "kind": "path",
+      "value": "../_modules/fan-out.md",
+      "quote": "Briefs follow [`fan-out`](../_modules/fan-out.md)",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/fan-out.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:80:other:fan-out Brief contract heading",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 80
+      },
+      "kind": "other",
+      "value": "fan-out Brief contract heading",
+      "quote": "Briefs follow [`fan-out`](../_modules/fan-out.md) \u203a *Brief contract*.",
+      "verify": {
+        "method": "grep",
+        "pattern": "^## Brief contract$",
+        "paths": [
+          "skills/_modules/fan-out.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:85:other:fan-out Aggregation heading",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 85
+      },
+      "kind": "other",
+      "value": "fan-out Aggregation heading",
+      "quote": "(`fan-out` \u203a *Aggregation*)",
+      "verify": {
+        "method": "grep",
+        "pattern": "^## Aggregation$",
+        "paths": [
+          "skills/_modules/fan-out.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:83:other:angle agents on Sonnet via Explore",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 83
+      },
+      "kind": "other",
+      "value": "angle agents on Sonnet via Explore",
+      "quote": "with `model: \"sonnet\"` and `subagent_type: \"Explore\"` in Claude Code",
+      "verify": {
+        "method": "grep",
+        "pattern": "pass `model: \"sonnet\"` to the Agent tool, and `subagent_type: \"Explore\"` for search-only lanes",
+        "paths": [
+          "skills/_modules/fan-out.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:82:config_key:churn summed for cost check",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 82
+      },
+      "kind": "config_key",
+      "value": "churn summed for cost check",
+      "quote": "Sum `churn` over `files`.",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"--numstat\"[\\s\\S]*out\\[\"churn\"\\]",
+        "paths": [
+          "skills/simplify-branch/scripts/branch_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
       "id": "skills/pr-post-comments/SKILL.md:115:config_key:wontFix",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
