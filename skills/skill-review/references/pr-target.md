@@ -20,7 +20,7 @@ Give each changed file one kind. One artifact covers the whole PR, with suffix `
 | Skill file | `<skills-dir>/<skill>/SKILL.md`, `references/*` | Target `<skill>`: every lens |
 | Shared module | `_shared/*`, `_modules/*`, any file several skills load | Target itself. **Consumers** are `git grep -l -F '<file name>'` at the head; read each consumer's pointer and check the changed text still fits it |
 | Rule or profile a skill loads | `.claude/rules/*`, profile files | Reference text of every skill that names it (`git grep -l -F '<file name>'`); lenses 3, 5, 7, 8 |
-| Claims file | `skills-claims.json` or the profile's equivalent | Run the repo's drift script in the head snapshot; review each added or changed claim with lens 5 |
+| Claims file | `skills-claims.json` or the profile's equivalent | Run the repo's drift script in the head snapshot. When the target moved, also build the merge result yourself, since the host's cached merge ref can predate the target's newer commits: `git -C <repo> merge-tree --write-tree origin/<target> <head>`. A conflict there is a **Should fix** finding naming the conflicted claims. A clean tree is committed with `git -C <repo> commit-tree <tree> -p origin/<target> -p <head> -m merge`, snapshotted, and drift-checked too. Review each added or changed claim with lens 5 |
 | Anything else | product code, config, pipelines | Out of scope: list them in the report and point at `/code-review` |
 
 Done when every changed file has a kind and every target is named.
@@ -30,6 +30,7 @@ Done when every changed file has a kind and every target is named.
 - **Changed hunks** get every lens that applies to their kind.
 - **Unchanged text** in a touched file gets lenses 5 and 7 only where the diff changes something it relies on.
 - A problem that predates the PR is `later`, marked *pre-existing*; it does not block the PR.
+- **Dependencies at the target.** List every path, symbol, anchor and commit the changed text cites, then `git -C <repo> diff --stat <head>...origin/<target> -- <cited paths>`. Re-check each claim whose file moved at `origin/<target>`; one true at the head but wrong there is *latent*. Done when every cited path is listed as unmoved or re-checked.
 
 ## 4. PR checks
 
@@ -43,6 +44,6 @@ Run these alongside the lenses; findings carry source `new (pr)`.
 ## 5. Inputs, change scope and evidence
 
 - The PR's existing threads (`pr-host` › *Fetch discussion threads*) are inputs: open them in step 3, after the independent pass.
-- Statuses are at the head SHA. **Latent** here means true at the head, wrong once the target branch's newer commits reach it (check `origin/<target>` when it moved after branch-off).
+- Statuses are at the head SHA; **latent** comes from §3 *Dependencies at the target*.
 - **Change scope:** when the PR author is the git user, fixes may land on the PR branch with `/proceed`. Otherwise the fixes are review comments for `/pr-post-comments`, and a fix the user wants made goes on a new branch stacked on the PR, never onto the author's branch.
 - Cite `path:line` at the head SHA, on a line the diff touches when one exists, so `/pr-post-comments` can anchor the comment there.
