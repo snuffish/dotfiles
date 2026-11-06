@@ -32,7 +32,7 @@ The shared PRIIS fields — workspace, Layout, Tracker & PR tooling, References 
 
 ## Phase 0 — Intake
 
-1. Fetch the work item per `priis-profile` › *Tracker & PR tooling* (`wit_work_item` MCP or `az boards work-item show --id <ID> --org https://dev.azure.com/ADO_ORG --expand relations --output json`).
+1. Fetch the work item per `priis-profile` › *Tracker & PR tooling* (`wit_work_item` MCP or `az boards work-item show --id <ID> --org https://dev.azure.com/<org> --expand relations --output json`).
 2. Read the discussion with `wit_work_item` MCP (`action: list_comments`, `workItemId: <ID>`); `az` cannot read work-item comments here. Only when the MCP is unavailable, ask the user to paste the thread (a screenshot is fine). Also note any `product decision <date>` comments in the code; they can disagree with the thread.
 3. Housekeeping to propose, never run unprompted: assign when `System.AssignedTo` is empty; move to `Active` when the state is not `Active`.
 4. **Framing Gate (Step 9)**: when the ticket or project context is in Swedish, include the Swedish phrasing / translation alongside the English *Concept & Touch* for each re-phrased perspective (`implement-feature/references/framing.md`).

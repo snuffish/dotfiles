@@ -328,33 +328,6 @@
       "Bash(az devops invoke:* --http-method POST*)",
       "Bash(az repos pr:* --status all)",
       "Bash(az devops invoke:* --http-method POST)"
-    ],
-    "environment": [
-      "### Org-wide",
-      "**Organization**: Azure DevOps org `ADO_ORG`, project `PRIIS`, repository `GR.PRIIS` (ssh.dev.azure.com:v3/ADO_ORG/PRIIS/GR.PRIIS)",
-      "**Cloud provider(s)**: None configured",
-      "**Repository visibility**: Not queryable via gh (origin remote is an Azure DevOps SSH URL, not a plain owner/repo host); assume private — Azure DevOps repos default to private and nothing in the recon indicates otherwise",
-      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
-      "**Secrets management**: None configured",
-      "**Default / protected branches**: `main` is the default branch (Azure DevOps). Branch protection/rulesets not queryable here (gh does not cover Azure DevOps); treat `main`, `release/*` branches as protected by convention per repo workflow docs",
-      "**CI/CD deploy targets**: Azure Pipelines defined under `devops/` (CI for backend and frontend); no deploy target details gathered",
-      "**Network posture**: None configured",
-      "**Host containment**: None configured — assume Claude Code runs on an ordinary developer machine with open internet",
-      "**Source control**: The trusted repo and its remote — Azure DevOps `ADO_ORG/PRIIS/GR.PRIIS` (ssh.dev.azure.com:v3/ADO_ORG/PRIIS/GR.PRIIS) and `ADO_ORG.visualstudio.com` (alternate auth host for the same org) only",
-      "**Trusted internal domains**: dev.azure.com, ADO_ORG.visualstudio.com (this project's Azure DevOps org, seen repeatedly in usage)",
-      "**Trusted cloud buckets**: None configured",
-      "**Key internal services**: Azure DevOps MCP server (`@azure-devops/mcp`, org `ADO_ORG`) for work items, PRs and wiki operations on project PRIIS",
-      "**Internal package registry**: None configured",
-      "**Sensitive data locations & audiences**: `frontend/source/priis-web/.env`, `.env.development`, `.env.devintegration`, `.env.production`, `.env.staging`, `.env.utbildning` — environment files, share only with audiences cleared for this project's deployment secrets; any file or store holding personal data, confidential business data, credentials, regulated data, or similarly sensitive material more generally",
-      "**Data retention / declassification**: None configured",
-      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment (e.g. `release/*` production hotfix targets, `.env.production`)",
-      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic (k8s namespaces seen in usage — frontend, backend, devops, e2e — carry no prod/production marker and are not elevated by this alone)",
-      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
-      "### User-specific",
-      "**Primary use of Claude Code**: software development — GR.PRIIS monorepo (.NET backend + React frontend) work via Claude Code skills and Azure DevOps integration",
-      "**Trusted repo**: This repo's working directory (GR.PRIIS monorepo) and its Azure DevOps remote `ssh.dev.azure.com:v3/ADO_ORG/PRIIS/GR.PRIIS`; treated as private — confidential project material is fine here, but content ported from outside this session's repo is not this repo's own work",
-      "**Org-specific CLIs**: `az` (Azure CLI, fallback for Azure DevOps MCP server operations); Azure DevOps MCP tools (`mcp__azure-devops__*`)",
-      "Routine under this repo's `.claude/` prefix: skill scripts (`.claude/scripts/check-skill-drift.py`), skill-gap files (`.claude/skill-gaps/`), and review worktrees (`.claude/worktrees/`) are routine project-local operations"
     ]
   },
   "voiceEnabled": false

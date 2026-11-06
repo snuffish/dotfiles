@@ -1,13 +1,7 @@
 {
-  "meligo": {
-    "test frontend tail": "az webapp log tail --name $MELIGO_TEST_WEBAPP_NAME --resource-group $MELIGO_TEST_RESOURCE_GROUP",
-    "test backend tail": "az webapp log tail --name MELIGO_TEST_API --resource-group MELIGO_TEST_API_RG",
-    "prod frontend tail": "az webapp log tail --name $MELIGO_PROD_WEBAPP_NAME --resource-group $MELIGO_PROD_RESOURCE_GROUP",
-    "prod backend tail": "az webapp log tail --name MELIGO_PROD_API --resource-group MELIGO_PROD_API_RG"
-  },
   "gr": {
-    "[SSH] priis-docker01": "ssh -i ~/.ssh/gr_rsa GR_DOCKER01_SSH",
-    "[SSH] priis-docker02": "ssh -i ~/.ssh/gr_rsa GR_DOCKER02_SSH",
+    "[SSH] priis-docker01": "ssh -i ~/.ssh/gr_rsa $GR_DOCKER01_SSH",
+    "[SSH] priis-docker02": "ssh -i ~/.ssh/gr_rsa $GR_DOCKER02_SSH",
     "[SSH TUNNEL & PROXY] IVO": "ivo-proxy",
     "[PRIIS] Re-seed Demodata": "dotnet run --project ~/Projects/GR/GR.PRIIS.Backend/source/GR.PRIIS.CLI -- migrations -s -d"
   },
@@ -15,7 +9,7 @@
     "Reset origin": "git reset --hard origin/main"
   },
   "home": {
-    "[SSH] Snuffish-PC": "ssh HOME_PC_IP",
+    "[SSH] Snuffish-PC": "ssh snuffish-pc",
     "[PULL] From Snuffish-PC": "~/.terminal/utils/remote-files.sh pull",
     "[PUSH] To Snuffish-PC": "~/.terminal/utils/remote-files.sh push",
     "[TUNNEL] Ollama": "ollama-proxy"

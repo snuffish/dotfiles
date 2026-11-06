@@ -581,8 +581,6 @@ function gcw() {
   fi
 }
 
-alias meligo="run_fzf_json meligo --title 'Meligo Azure Logs'"
-
 function gdw() {
   SEARCH=$1
   if [[ ! $SEARCH ]]; then

@@ -6,10 +6,10 @@ PROXY_INTERFACE="Wi-Fi"
 PROXY_HOST="127.0.0.1"
 PROXY_PORT="9090"
 SSH_TUNNEL_KEY="$HOME/.ssh/gr_rsa"
-SSH_TUNNEL_TARGET="GR_DOCKER01_SSH"
+SSH_TUNNEL_TARGET="$GR_DOCKER01_SSH" # Set in .env.bash
 
 ivo-tunnel-pid() {
-  pgrep -f "ssh.*-D.*$PROXY_PORT.*priis-docker01" 2>/dev/null || lsof -nP -iTCP:"$PROXY_PORT" -sTCP:LISTEN 2>/dev/null | awk 'NR>1 {print $2}' | head -n1
+  pgrep -f "ssh.*-D.*$PROXY_PORT.*$SSH_TUNNEL_TARGET" 2>/dev/null || lsof -nP -iTCP:"$PROXY_PORT" -sTCP:LISTEN 2>/dev/null | awk 'NR>1 {print $2}' | head -n1
 }
 
 ivo-tunnel-start() {

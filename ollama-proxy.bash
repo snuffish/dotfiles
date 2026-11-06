@@ -3,7 +3,7 @@
 # Ollama SSH Tunnel Helpers
 OLLAMA_PROXY_SCRIPT="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd)/$(basename "${BASH_SOURCE[0]:-$0}")"
 OLLAMA_PORT="11436"
-OLLAMA_TARGET="HOME_PC_IP"
+OLLAMA_TARGET="snuffish-pc" # Host alias in ~/.ssh/config
 
 ollama-tunnel-pid() {
   pgrep -f "ssh.*-L.*$OLLAMA_PORT.*$OLLAMA_TARGET" 2>/dev/null || lsof -nP -iTCP:"$OLLAMA_PORT" -sTCP:LISTEN 2>/dev/null | awk 'NR>1 {print $2}' | head -n1

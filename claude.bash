@@ -85,6 +85,16 @@ function ccmerge() {
   claude-p --worktree "ccmerge-$(date +%Y%m%d-%H%M%S)" "git merge $*"
 }
 
+# Adds the git-ignored claude/settings.private.json (autoMode environment) unless the caller passes its own --settings
+function claude() {
+  local private="$HOME/.terminal/claude/settings.private.json"
+  if [[ -f "$private" && " $* " != *" --settings "* ]]; then
+    command claude --settings "$private" "$@"
+  else
+    command claude "$@"
+  fi
+}
+
 # Claude Code for reviews: no claude-mem, auto-memory, MY-RULES or mattpocock-skills; args go to claude.
 # Resume such a session with claude-review --resume <id> (claude-resume starts plain claude, which loads them again)
 function claude-review() {
