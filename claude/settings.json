@@ -129,12 +129,11 @@
         ]
       },
       {
-        "matcher": "startup",
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.claude/session-title.sh",
-            "timeout": 5
+            "command": "python3 -I ~/.terminal/claude/session-lineage.py",
+            "timeout": 10
           }
         ]
       },
@@ -217,6 +216,11 @@
           {
             "type": "command",
             "command": "codegraph prompt-hook"
+          },
+          {
+            "type": "command",
+            "command": "python3 -I ~/.terminal/claude/session-lineage.py",
+            "timeout": 5
           }
         ]
       }
@@ -234,6 +238,11 @@
     "SessionEnd": [
       {
         "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I ~/.terminal/claude/session-lineage.py",
+            "timeout": 5
+          },
           {
             "type": "command",
             "command": "python3 -I ~/Projects/cm-sync/cm_sync.py sync --quiet || true",
