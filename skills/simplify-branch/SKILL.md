@@ -135,9 +135,30 @@ Stop there. Agent output never opens the gate (`core` › _The `/proceed` gate_)
 3. **Guard the boundary** after each row: compare `git status --porcelain` with the baseline. A changed path outside the picked rows that was not dirty in the baseline is out of scope; list it and ask whether to keep or revert it. Never revert on your own.
 4. **Run the test suite & verification gate.** Once all picked rows have been edited, run the repo's documented verification gate (`core` › _Post-edit verification_) covering build, lint, and relevant tests across the edited files. Applying edits first and running the test suite once at the end avoids repeated slow container spin-ups and test suite overhead per row. If verification fails, use the per-row restore point snapshots to isolate or revert the offending row (restore only from snapshots, never with `git checkout`, `restore` or `stash`, to preserve pre-existing uncommitted work).
 5. **Flag untested rows.** A row whose `namespaces[key].tests` is empty passed only build and lint; mark it `behaviour unverified`.
+6. **Write the review brief.** Write `<prefix>-simplify_review_brief-<suffix>.md` in the artifact dir (`artifact-protocol`) so a later `/code-review`, on a cheaper model, can use it as its Spec input without re-deriving the run. Write it now, while the run is still in context: a new session would have to re-read everything to produce it. Keep it under ~60 lines and record facts only. Leave out verdicts such as "behaviour-preserving" or "safe": the reviewer has to check those itself, without being anchored by this run.
+
+   ```markdown
+   # Simplify review brief: <branch> → <base>
+   Merge base: <sha>. Review target: the commits made from this run (one per row).
+   Spec: the picked rows below, with behaviour unchanged. Treat behaviour preservation as unproven.
+
+   ## Rows
+   | Row | Namespace | Files | Proposed change | Outcome (applied / changed / dropped: reason) |
+
+   ## Not picked
+   - <row>: <reason it was skipped or deprioritised>
+
+   ## Verification run
+   - `<command>`: <pass / fail + failing check / not run + why>
+   - behaviour unverified: <rows>
+
+   ## Known risks
+   - <path:line>: <what could change behaviour and why it was kept>
+   ```
 
 ### Phase B ends with
 
 - per row: each proposed change marked applied, changed or dropped (with the reason), then any other applied fixes and skipped findings, as `/simplify` returned them, and whether it ran 4-agent or single-pass
 - build, lint and test results for the verification gate, every `reverted` row with its failing check, every `behaviour unverified` row, plus any out-of-scope paths
-- a closing line saying nothing was committed, with a suggestion to run `/commit` when ready
+- the review brief's path
+- a closing line saying nothing was committed, with a suggestion to run `/commit` when ready, then `/code-review` on the commit range (Sonnet or Opus, not the run's model) with the brief as its spec
