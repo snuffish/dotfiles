@@ -218,4 +218,4 @@ tails=$(perl -e 'for my $f (@ARGV) {
       "\u001b[35m\(.branch // "" | pad($bw))\u001b[0m",
       (if $scope == "all" then "\u001b[34m\(.cwd // "?" | sub("^\($home)"; "~"))\u001b[0m  " else "" end) + $wts + $title,
       $id, .file, .cwd // "" ] | @tsv
-'
+' | python3 -I "$HOME/.terminal/utils/session_tree.py"

@@ -279,8 +279,6 @@ for cid, title, prev, uris_raw, mtime, status, parent in rows:
     if scope == "all" and cwd:
         disp_cwd = cwd.replace(home, "~")
         prefix = f"\033[34m{disp_cwd}\033[0m  "
-    if parent != "":
-        prefix += "\033[33m↳ subagent\033[0m "
 
     label_col = f"{prefix}{display_title}"
     out_rows.append((age_col, id_col, branch, label_col, cid, transcript, cwd or cwd_filter))
@@ -289,4 +287,4 @@ for cid, title, prev, uris_raw, mtime, status, parent in rows:
 bw = max((len(r[2]) for r in out_rows), default=0)
 for age_col, id_col, branch, label_col, cid, transcript, cwd in out_rows:
     print(f"{age_col}\t{id_col}\t\033[35m{branch:<{bw}}\033[0m\t{label_col}\t{cid}\t{transcript}\t{cwd}")
-' "$db_path" "$presence_dir" "$brain_dir" "$scope" "$query" "$show_subs"
+' "$db_path" "$presence_dir" "$brain_dir" "$scope" "$query" "$show_subs" | python3 -I "$HOME/.terminal/utils/session_tree.py"
