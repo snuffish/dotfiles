@@ -1,6 +1,6 @@
 # Skill-review report template
 
-On-demand reference for [`SKILL.md`](../SKILL.md) step 6. Fill every section; delete none.
+On-demand reference for [`SKILL.md`](../SKILL.md) step 6. Fill every section; delete none. A PR target changes the header (see *Rules*).
 
 ````markdown
 <!-- artifact-owner: <host>-<model> · session <session-id> · created <ISO-8601 timestamp> -->
@@ -56,3 +56,4 @@ Rules:
 - Source is the input's id (`input 4`, `handoff 2`), `new (<lens>)`, or `plan review` for step 5 findings.
 - One matrix row per fix number, in application order; a number added late keeps its number.
 - Add a **Posted to PR** line only when `/pr-post-comments` records it.
+- PR target: the title reads `# Skill review: PR !<id> <title> @ <head sha>`; **Scope** lists each target with its kind and adds **Out of scope:** the changed files left to `/code-review`; one `###` group per target inside each fix group; status key reads "at the PR head".

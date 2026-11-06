@@ -1,7 +1,7 @@
 ---
 name: skill-review
-description: 'Audits one skill (its SKILL.md and references/) against the code and the writing standard, folds in findings from an earlier code review or handoff after re-checking each at HEAD, and writes a fix list ordered by what to apply first. Use for /skill-review, "review this skill", "audit the skill", "is this skill still right?", "fix list for the skill". Not for a diff (use /code-review), claim drift alone (use /skill-drift), logged gaps (use /skill-gap) or a plan (use /plan --review).'
-argument-hint: "<skill folder> [--inputs <review|handoff>…] [--ref <sha|branch>] [/worktrees]"
+description: 'Audits one skill (its SKILL.md and references/), or the skill, module, rule and claims files a pull request changes, against the code and the writing standard, folds in findings from an earlier code review, handoff or PR threads after re-checking each at the pinned ref, and writes a fix list ordered by what to apply first. Use for /skill-review, "review this skill", "review this skill PR", "audit the skill", "is this skill still right?", "fix list for the skill". Not for product code (use /code-review), claim drift alone (use /skill-drift), logged gaps (use /skill-gap) or a plan (use /plan --review).'
+argument-hint: "<skill folder | PR URL | !id> [--inputs <review|handoff>…] [--ref <sha|branch>] [/worktrees]"
 ---
 
 # Skill: `/skill-review` — Skill Audit & Fix List
@@ -17,16 +17,17 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 
 - `../_modules/core.md`: read-only until `/proceed`
-- `../_modules/artifact-protocol.md`: writes `<prefix>-skill_review-<suffix>.md` (suffix: the skill name, e.g. `-priis-backend-review`)
+- `../_modules/artifact-protocol.md`: writes `<prefix>-skill_review-<suffix>.md` (suffix: the skill name, e.g. `-priis-backend-review`, or `pr<id>` for a PR target)
 - `../_modules/git-worktrees.md`: snapshot by default; the target skill is read at a pinned ref
 
-Read this only when an input is a pull request or work item:
+Read this only when the target or an input is a pull request or work item:
 
 - `../_modules/pr-host.md`: read-only, to resolve the PR, its threads and the work item
 
 On-demand references (`references/`):
 
-- [`references/lenses.md`](references/lenses.md) — step 3: the check, evidence command and example for each lens
+- [`references/pr-target.md`](references/pr-target.md) — step 1, PR target: pin the head, map changed files to targets, review depth, PR checks, change scope
+- [`references/lenses.md`](references/lenses.md) — steps 2 and 4: the check, evidence command and example for each lens
 - [`references/report-template.md`](references/report-template.md) — step 5: the artifact skeleton, status key and matrix columns
 
 Load the writing standard before step 2: the `writing-for-agents` skill and its `SKILL-MECHANICS.md`. A project profile may add a `Skill-review checks` field (drift script, size budget, CI gate, text that repo skills must not name); read it when one exists.
@@ -37,7 +38,7 @@ Load the writing standard before step 2: the `writing-for-agents` skill and its 
 
 | Situation | Use instead |
 |---|---|
-| Reviewing a code diff or PR | [`/code-review`](../code-review/SKILL.md) |
+| A diff or PR of product code; for a mixed PR, run it on the code and this skill on the skill files | [`/code-review`](../code-review/SKILL.md) |
 | Only claim drift (FAIL / STALE rows) | [`/skill-drift`](../skill-drift/SKILL.md) |
 | Working through logged skill gaps | [`/skill-gap`](../skill-gap/SKILL.md) |
 | Auditing a plan before code is written | [`/plan --review`](../plan/SKILL.md) |
@@ -49,7 +50,7 @@ Load the writing standard before step 2: the `writing-for-agents` skill and its 
 
 ### Step 1: Resolve the target and its inputs
 
-1. Name the **target**: a skill folder (`SKILL.md` plus `references/*.md`). Pin the **ref** to review: `--ref`, else the current `HEAD` SHA. Read it from a snapshot (`git-worktrees` › *Snapshot Lifecycle*) when the user may be editing the checkout.
+1. Name the **target**: a skill folder (`SKILL.md` plus `references/*.md`). Pin the **ref** to review: `--ref`, else the current `HEAD` SHA. Read it from a snapshot (`git-worktrees` › *Snapshot Lifecycle*) when the user may be editing the checkout. When the target is a PR, follow [`references/pr-target.md`](references/pr-target.md) instead: the ref is the PR head, and its changed files name the targets and the change scope.
 2. List the **inputs**: code reviews, handoffs, PR threads or a user list of findings for this skill, from `--inputs`, the artifact dir (`artifact-protocol`) or the conversation. Do not open them yet. Inputs may be none.
 3. Name the **source heads**: when an input depends on a PR that has not merged, record its head SHA. Read it with `git show <sha>:<path>`.
 4. Note the **change scope** the user set (which repos and files fixes may touch). Without one, ask.
@@ -68,8 +69,8 @@ Open the inputs now. Give each finding one status, proven with a command at the 
 
 | Status | Meaning |
 |---|---|
-| **confirmed** | True at HEAD |
-| **latent** | True at HEAD, wrong once a source PR merges |
+| **confirmed** | True at the ref |
+| **latent** | True at the ref, wrong once a source PR (or, for a PR target, the target branch) merges |
 | **stale** | Already fixed |
 | **wrong** | The finding or its proposed fix does not hold |
 
