@@ -1,6 +1,6 @@
 # Research lane briefs (Steps 1.3–4)
 
-Used by `/investigate` § 3 _Research lanes_. Spawn all four lanes in one message per `fan-out` › _Speed fan-out_. Every brief starts with the shared block, then adds its lane's task.
+Used by `/investigate` § 3 _Research lanes_, and Lanes 2–3 by `/plan` _Case B_ step 2 when no investigation exists. Spawn all four lanes in one message per `fan-out` › _Speed fan-out_. Every brief starts with the shared block, then adds its lane's task.
 
 ## Shared block
 

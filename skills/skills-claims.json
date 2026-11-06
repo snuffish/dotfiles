@@ -13485,7 +13485,7 @@
       },
       "kind": "skill_ref",
       "value": "investigate",
-      "quote": "- Otherwise research the relevant code read-only. If the topic is large or the unknowns are substantial, run [`/investigate`](../investigate/SKILL.md) first.",
+      "quote": "- Otherwise research the relevant code read-only. If the topic is large or the unknowns are substantial, run [`/investigate`](../investigate/SKILL.md) first (or suggest `/investigate --to-plan`).",
       "verify": {
         "method": "skill_exists",
         "name": "investigate",
@@ -18333,7 +18333,7 @@
       },
       "kind": "path",
       "value": "../_modules/fan-out.md",
-      "quote": "- `../_modules/fan-out.md` (`--deep` mode)",
+      "quote": "- `../_modules/fan-out.md` (`--deep` mode, and _Speed fan-out_ for Step 4 in bare mode)",
       "verify": {
         "method": "path_exists",
         "path": "../_modules/fan-out.md",

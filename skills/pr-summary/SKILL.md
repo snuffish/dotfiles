@@ -56,6 +56,7 @@ git -C <repo-root> rev-list --count @{u}..HEAD 2>/dev/null
 ```
 - **Preview mode**: never commit or push; note in chat if uncommitted or unpushed changes are included.
 - **Update mode**: if uncommitted or unpushed work exists, list the files, proposed commit subject, and unpushed commits per repo and **ask once**. On approval, follow [`/commit`](../commit/SKILL.md) Steps 2–5 (selective staging, repo commit convention + trailer rule, pre-commit gates, `git -C <repo-root> push` / `push -u origin HEAD`). Never amend, rebase, or force-push.
+- **Overlap with the gates (update mode):** once the commit's files are staged, start its pre-commit gates with `run_in_background` and run Steps 1–2 meanwhile on `git -C <repo-root> diff --staged "$BASE"` plus the committed `"$BASE...HEAD"` range. After the push, compare `git -C <repo-root> diff --stat "$BASE...HEAD"` with what was digested; re-digest only the files that differ (a formatter changed them).
 
 ---
 

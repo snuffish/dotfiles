@@ -109,7 +109,7 @@ Pick the case from the arguments, first match wins:
 1. **Resolve the contextual suffix** per `artifact-protocol` › rule 2.
 2. **Plan, without changing code:**
    - **Check for an existing investigation first.** If `<prefix>-investigation-<suffix>.md` exists in the artifact dir (`artifact-protocol`) and covers this topic, build on it: its _Plan Seed_, _Options & Trade-offs_ and _Confidence Ledger_. Do not re-run research it already documents; do resolve any ❓ Unknown the plan depends on.
-   - Otherwise research the relevant code read-only. If the topic is large or the unknowns are substantial, run [`/investigate`](../investigate/SKILL.md) first.
+   - Otherwise research the relevant code read-only. If the topic is large or the unknowns are substantial, run [`/investigate`](../investigate/SKILL.md) first (or suggest `/investigate --to-plan`). When the change touches more than one file, run the research as two parallel lanes per `fan-out` › _Speed fan-out_, using [`../investigate/references/lane-briefs.md`](../investigate/references/lane-briefs.md) _Shared block_ with _Lane 2 — Prior art_ and _Lane 3 — Trace_, with the instructions in place of the Step 0 goal and questions.
    - Design to the project's own conventions: its workspace rulebooks, project-scoped References and Profile (`core` › _Precedence_).
 3. **Write the plan** in the _§1 Skeleton_, in the artifact dir (`artifact-protocol`):
    - **New plan:** draft it in a session-private path, then publish it with _Claim_ (`artifact-protocol` › rule 4). If the base name is taken, Claim writes `…-2.md`; use the path it printed and say so in chat.

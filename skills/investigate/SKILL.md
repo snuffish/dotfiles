@@ -1,7 +1,7 @@
 ---
 name: investigate
-description: 'Read-only research before designing a change: traces symbols, maps call flows and blast radius, uncovers prior art and conventions, surfaces cross-layer constraints, weighs options and answers in chat with an evidence-backed confidence ledger. It includes the /what-am-I-missing blind-spot audit unless `--no-blindspot`, `--file` writes `<prefix>-investigation-<suffix>.md` for /plan, `--html` compiles rich standalone HTML and launches the browser, `--deep` runs the full protocol with the file; `--from <PR|work item>` frames it from a ticket, `--scope <path>` bounds it. Use for /investigate, "research this", "how does X work before we change it?", "what would it take to add Y?", "scope this out", "is this feasible?".'
-argument-hint: "[--deep] [--no-blindspot] [--file] [--html] [--from <PR|work item>] [--scope <path>…] [/worktrees] <topic>"
+description: 'Read-only research before designing a change: traces symbols, maps call flows and blast radius, uncovers prior art and conventions, surfaces cross-layer constraints, weighs options and answers in chat with an evidence-backed confidence ledger. It includes the /what-am-I-missing blind-spot audit unless `--no-blindspot`, `--file` writes `<prefix>-investigation-<suffix>.md` for /plan, `--html` compiles rich standalone HTML and launches the browser, `--deep` runs the full protocol with the file, `--to-plan` writes the file and goes straight on to /plan; `--from <PR|work item>` frames it from a ticket, `--scope <path>` bounds it. Use for /investigate, "research this", "how does X work before we change it?", "what would it take to add Y?", "scope this out", "is this feasible?".'
+argument-hint: "[--deep] [--to-plan] [--no-blindspot] [--file] [--html] [--from <PR|work item>] [--scope <path>…] [/worktrees] <topic>"
 ---
 
 # Skill: `/investigate` — Pre-Plan Research & Discovery
@@ -39,7 +39,7 @@ On-demand references (`references/`):
 1. **Read-only:** never edit source code, scaffold files, stage git changes, run database migrations, or execute mutating commands. The only file this skill creates or modifies is `<prefix>-investigation-<suffix>.md`, and only under `--file` or `--deep`.
 2. **No plan:** deliver current-state findings, architectural options, trade-offs, and a seed outline. Never draft task phases, step-by-step checklists, or `<prefix>-implementation_plan-<suffix>.md`. Solution architecture belongs to `/plan`.
 3. **Cite every claim:** every factual claim about codebase behavior, interfaces, or types carries a precise `path:line` citation. Mark deductions explicitly as **Inferred** or **Unknown** (`core` › _Codebase investigation* › *Confidence Ledger*).
-4. **No auto-proceed:** never roll directly from research into planning or implementation without explicit user authorization.
+4. **No auto-proceed:** never roll directly from research into planning or implementation without explicit user authorization. `--to-plan` is that authorization for planning only; implementation still waits at `core` › _The `/proceed` gate_.
 
 ---
 
@@ -74,6 +74,7 @@ On-demand references (`references/`):
 | `--file`                 | Writes the §4 artifact and answers per §5 _Artifact response_                                                                                                                                          |
 | `--html`                 | Writes the §4 markdown artifact, compiles its sibling `<prefix>-investigation-<suffix>.html` via `render_html.py`, launches the default browser, and links both in chat                                  |
 | `--deep`                 | The full protocol: `--file` with the audit. With `--no-blindspot` it contradicts itself, so ask which applies                                                                                          |
+| `--to-plan`              | `--file`, then runs [`/plan`](../plan/SKILL.md) _Case B_ on the artifact in the same turn and presents only the plan (§3 _To plan_). Replaces the `/investigate` → `/what-am-I-missing` → `/plan` chain: Step 6 already is that audit. With `--no-blindspot` the plan's self-review is the only audit |
 | `--from <PR\|work item>` | Frames Step 0 from a PR or work item (URL, id, `#30342`). The topic becomes optional                                                                                                                   |
 | `--scope <path>…`        | Bounds Steps 2–4 to these paths (repo, directory or package); see Step 0                                                                                                                               |
 | `/worktrees`             | Reads a pinned snapshot instead of the live checkout (`git-worktrees` › _Snapshot Lifecycle_). With `--from <PR>`, the snapshot is the PR head, so the findings describe the PR, not your working tree |
@@ -84,7 +85,7 @@ Flags combine and their order does not matter. An unknown `--flag` is a question
 
 ## 3. The 8-Step Investigation Protocol
 
-**Research lanes.** Steps 1.3, 2, 3 and 4 do not depend on each other. After Steps 0, 1.1 and 1.2, run them as four parallel lanes per `fan-out` › _Speed fan-out_ and [`references/lane-briefs.md`](references/lane-briefs.md): History (1.3), Prior art (2), Trace (3) and Blast radius (4). Each lane gets the Step 0 goal and questions, the `--scope` paths, the rulebooks and References loaded in 1.1, and the topology from 1.2. Then merge the lanes, re-open the load-bearing citations, and continue with Step 5 in the main context. Run the four steps inline instead when the change stays in one layer (Step 1.2 found no boundary) and Step 0 has at most 3 questions.
+**Research lanes.** Steps 1.3, 2, 3 and 4 do not depend on each other. After Steps 0, 1.1 and 1.2, run them as four parallel lanes per `fan-out` › _Speed fan-out_ and [`references/lane-briefs.md`](references/lane-briefs.md): History (1.3), Prior art (2), Trace (3) and Blast radius (4). Each lane gets the Step 0 goal and questions, the `--scope` paths, the rulebooks and References loaded in 1.1, and the topology from 1.2. Then merge the lanes, re-open the load-bearing citations, and continue with Step 5 in the main context. Run the four steps inline only when Step 0 targets a single file or symbol.
 
 ### Step 0 — Frame the Scope & Questions
 
@@ -131,6 +132,10 @@ Read [`../what-am-I-missing/references/vectors.md`](../what-am-I-missing/referen
 ### Step 7 — Assemble the Confidence Ledger
 
 Classify every key finding into ✅ **Verified** (`path:line`), 🟡 **Inferred** (with how to verify), or ❓ **Unknown** (with owner and whether it blocks planning) per `core` › _Codebase investigation_ › _Confidence Ledger_.
+
+### To plan (`--to-plan` only)
+
+After Step 7, publish the §4 artifact, then run [`/plan`](../plan/SKILL.md) _Case B_ with the topic as its instructions. It finds this artifact and builds on it, so it does no research of its own. Skip this section's chat response (§5) and present only `/plan`'s, with the investigation's link added to its link block. Stop instead, and answer per §5 _Artifact response_, when an ❓ Unknown blocks planning or the recommendation in Step 5 is a tie the user must break.
 
 ---
 

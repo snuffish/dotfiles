@@ -21,6 +21,7 @@ Read these before step 1:
 - `../_modules/outward-writes.md`
 - `../_modules/git-worktrees.md`
 - `../_modules/pr-host.md`
+- `../_modules/fan-out.md`: _Speed fan-out_ for the job lanes (Step 3)
 
 On-demand references (`references/`):
 
@@ -66,6 +67,8 @@ If the run is stale (the source branch moved, or the target branch already fixed
 ### Step 3: Classify each failure
 
 Take the **first** error in each failed job and put it in exactly one class:
+
+**Job lanes.** With 2 or more failed jobs, classify them as `Explore` lanes per `fan-out` › _Speed fan-out_, one per job (at most 4). Each lane gets the run ID, its job's log path or log commands from Step 2, the diff base, this table and invariants 3–4, and returns the class, job/step name, quoted first error line and the `path:line` it traces to. The lead re-opens each cited `path:line` before Step 4. Classify inline with one failed job.
 
 | Class           | Signature                                                                                                                             | Action                                             |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |

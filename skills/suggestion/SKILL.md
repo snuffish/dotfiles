@@ -18,7 +18,7 @@ Read these before step 1:
 
 - `../_modules/core.md`: read-only until `/proceed`
 - `../_modules/artifact-protocol.md`: writes `<prefix>-suggestion-<suffix>.md` in the artifact dir (`artifact-protocol`) in `/suggestion --deep` only (suffix derived from the question, e.g. `-cache-invalidation-strategy`, `-pdf-export-library`); bare `/suggestion` writes no artifact
-- `../_modules/fan-out.md` (`--deep` mode)
+- `../_modules/fan-out.md` (`--deep` mode, and _Speed fan-out_ for Step 4 in bare mode)
 
 On-demand references (`references/`):
 - [`references/deep-artifact.md`](references/deep-artifact.md) — artifact structure for `/suggestion --deep`
@@ -74,9 +74,11 @@ Suggest `--deep` in chat (never switch silently) when a bare `/suggestion` spans
 4. **Number them in ranked order**, the pick as **1**. Keep numbers stable for the rest of the session (dropped approaches leave a gap; nothing else in the answer uses numbers).
 5. **Pick one** and say why in a sentence (or state the single deciding fact if two are tied). Separate verified facts (`path:line`) from inferences.
 
-### Step 4 (--deep mode only): Parallel candidate evaluation
+### Step 4: Parallel candidate evaluation
 
-When `--deep` is requested and candidates are independent, spawn one read-only sub-agent per approach per `fan-out` (passing repo path(s), Step 1 framing/constraints, Step 2 precedent, head SHA, and candidate; returning touched files, closest pattern, contract/migration/test changes, risks, and T-shirt effort with `path:line`). Aggregate and re-open every cited `path:line` yourself (`fan-out` › *Aggregation*).
+**Bare mode.** With 3 or more candidates that each need reads beyond Step 2's precedent, evaluate them as lanes per `fan-out` › _Speed fan-out_, one per candidate (same brief and return as below). The answer stays in chat. Otherwise evaluate inline.
+
+**`--deep` mode.** When candidates are independent, spawn one read-only sub-agent per approach per `fan-out` (passing repo path(s), Step 1 framing/constraints, Step 2 precedent, head SHA, and candidate; returning touched files, closest pattern, contract/migration/test changes, risks, and T-shirt effort with `path:line`). Aggregate and re-open every cited `path:line` yourself (`fan-out` › *Aggregation*).
 
 ---
 

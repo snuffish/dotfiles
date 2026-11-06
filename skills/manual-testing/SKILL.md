@@ -39,6 +39,7 @@ Read these before step 1:
 - `../_modules/artifact-protocol.md`: writes `<prefix>-manual_test_plan-<suffix>.md`
 - `../_modules/pr-counterpart.md`
 - `../_modules/pr-host.md`
+- `../_modules/fan-out.md`: _Speed fan-out_ for the research lanes (Steps 3–7)
 
 **Rules**
 
@@ -66,6 +67,10 @@ Read these before step 1:
 ---
 
 ## 2. Workflow
+
+**After a review.** When the artifact dir holds a `code_review` artifact for the same PR at the same head commit, take the intent, Spec source and file inventory from it and skip the fetches in Steps 1–2.
+
+**Research lanes.** Steps 3–7 do not depend on each other. After Step 2, run them as three parallel `Explore` lanes per `fan-out` › _Speed fan-out_: Behaviour + consumers (Steps 3–4), How to run + gotchas (Steps 5 and 7), and Logins + data (Step 6). Each lane gets the intent and acceptance criteria from Step 1, the diff base and `--name-status` from Step 2, its steps' text verbatim and Rule 3; it returns findings only, with `path:line`. The lead merges them and writes the artifact. Run inline when the diff is under ~100 lines in one repo.
 
 ### Step 1 — Resolve the intent
 

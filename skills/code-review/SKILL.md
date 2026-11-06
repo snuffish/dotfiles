@@ -159,7 +159,7 @@ Tag every finding with one selected axis and rank severity within each axis on i
 
 An issue whose axis is off goes to its fallback: Security → Correctness; Tests → Standards (missing coverage) or Correctness (untested failing path); Drift → Standards.
 
-**Axis lanes (Standard mode).** When the Step 4 inventory shows more than ~300 changed lines, review the selected axes as parallel lanes per `fan-out` › *Speed fan-out*, one lane per axis and at most 4: with more than 4 axes on, Security rides with Correctness and Tests and Drift ride with Standards. Each lane gets the snapshot `[worktree-context]`, the diff base, the Step 4 inventory, the Spec source (Step 2), the Standards sources (Step 3), its axis definitions above verbatim and the severity scale, and returns findings tagged with axis and severity at `path:line`. The lead merges them and runs Step 6 on every 🔴/🟡 as usual. Review inline at or below ~300 lines, or when `/code-review` itself runs inside a sub-agent. This is not `--deep`: there is no verifier sub-agent and no `deep-mode.md`.
+**Axis lanes (Standard mode).** When the Step 4 inventory shows more than ~100 changed lines, review the selected axes as parallel lanes per `fan-out` › *Speed fan-out*, one lane per axis and at most 4: with more than 4 axes on, Security rides with Correctness and Tests and Drift ride with Standards. Each lane gets the snapshot `[worktree-context]`, the diff base, the Step 4 inventory, the Spec source (Step 2), the Standards sources (Step 3), its axis definitions above verbatim and the severity scale, and returns findings tagged with axis and severity at `path:line`. The lead merges them and runs Step 6 on every 🔴/🟡 as usual. Review inline at or below ~100 lines, or when `/code-review` itself runs inside a sub-agent. This is not `--deep`: there is no verifier sub-agent and no `deep-mode.md`.
 
 ### Severity
 - **🔴 Critical / Defect**: blocking bugs, security vulnerabilities, broken runtime contracts, or wrong behavior.
@@ -190,6 +190,7 @@ After Step 6, when a PR is in scope:
 
 On every review, after Step 6 (and 6b):
 1. Run [`/what-am-I-missing`](../what-am-I-missing/SKILL.md) in chat mode against the spec + diff, passing the snapshot `[worktree-context]` and the already-verified findings.
+   - **Parallel with Step 6** (when Step 5b ran as axis lanes): start it as one background `general-purpose` sub-agent on Sonnet as soon as the lanes return, passing the merged candidate findings instead of verified ones, and run Step 6 (and 6b) in the lead meanwhile. The sub-agent runs `/what-am-I-missing` inline (`fan-out` › *Speed fan-out* › *Nested calls stay inline*) and returns its blind spots only; the lead keeps the snapshot until it returns.
 2. Verify its top blind spots via Step 6; add any surviving finding on its owning axis tagged `· blind-spot pass`, and record the outcome in *Review Context* › **Mode & Blind-spot pass**.
 
 ---

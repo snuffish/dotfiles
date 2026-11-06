@@ -1,6 +1,6 @@
 # fan-out
 
-Shared protocol for Commands that fan out across parallel read-only sub-agents (`code-review`, `pr-feedback-review`, `squash-code-review`, `spec-verification`, `explain`, `suggestion`, `verify-assumptions`, `implement-feature`, and the *Speed fan-out* steps of `investigate`, `plan`, `pr-summary`, `what-am-I-missing`, `code-review` Step 5b and `pr-feedback-review` Step 3), plus the one Command that fans out edits (`proceed`, *Edit lanes*).
+Shared protocol for Commands that fan out across parallel read-only sub-agents (`code-review`, `pr-feedback-review`, `squash-code-review`, `spec-verification`, `explain`, `suggestion`, `verify-assumptions`, `implement-feature`, and the *Speed fan-out* steps of `investigate`, `plan`, `pr-summary`, `what-am-I-missing`, `manual-testing`, `pr-fix-pipeline`, bare `suggestion` Step 4, `code-review` Steps 5b and 6c and `pr-feedback-review` Step 3), plus the one Command that fans out edits (`proceed`, *Edit lanes*).
 
 ## Modules
 
@@ -37,16 +37,16 @@ The *Speed fan-out* for checklist reviews: `plan` self-review and `--review`, `w
 - **Brief.** The artifact under review by path (the plan file, or the target written to `<scratchpad>/lens-target.md` when it is not a file), the rulebook, Reference and profile paths the lead resolved, the lens's checklist items verbatim from the reference, and the severity scale. Leave out the author's reasoning and the conversation: the lens reviews what is written, not how it was reached.
 - **Return.** Each finding with its severity, its `path:line` or plan section, and a one-line fix; or `none`.
 - **Lead.** Dedupes across lenses by `path:line`, re-opens the load-bearing findings, then folds or ranks them per the Command. The lead remains the only author of the plan or answer.
-- **Inline threshold.** Review inline when the target is small: a plan whose _Proposed Changes_ names at most 3 files, or a single snippet or one-line decision.
+- **Inline threshold.** Review inline when the target is small: a plan whose _Proposed Changes_ names a single file, or a single snippet or one-line decision.
 
 ## Edit lanes
 
 The only exception to *Read-only* in the *Brief contract*, and only where a Command names it (`proceed` Step 2). It applies a list of already-approved fixes in parallel; it never decides what to change.
 
-- **When.** At least 4 approved items that fall into at least 2 groups sharing no file. Keep a group together when its items touch the same file, a migration, a generated artifact or snapshot, or both sides of a contract (producer → consumer order). Below the threshold, or when everything lands in one group, edit inline.
+- **When.** At least 3 approved items that fall into at least 2 groups sharing no file. Keep a group together when its items touch the same file, a migration, a generated artifact or snapshot, or both sides of a contract (producer → consumer order). Below the threshold, or when everything lands in one group, edit inline.
 - **Lanes.** At most 4, one per file group, spawned in one message as `general-purpose` sub-agents on Sonnet (`model: "sonnet"`), all in the same worktree or checkout. No `isolation: "worktree"`: the groups share no file, so they cannot conflict.
 - **Brief.** The plan or artifact path and the item numbers this lane owns, quoted verbatim; the exact files it may edit; the References and profile rules that apply; `[worktree-context]` when active. It states: *"Edit only the listed files. No commits, pushes, worktrees, outward writes, installs, builds or test runs. Return each item number with the files you changed and one line on what changed, or why you could not apply it."*
-- **Lead.** Runs `git -C <repo-root> diff --stat` and stops if any file outside the lanes' lists changed. Reads every hunk against its item, fixes or reverts what is wrong, then verifies once, per the Command. The lead stays the only author of status fields and the chat reply.
+- **Lead.** Runs `git -C <repo-root> diff --stat` and stops if any file outside the lanes' lists changed. Starts the Command's slowest verification command with `run_in_background` as soon as the lanes return, then reads every hunk against its item while it runs, fixes or reverts what is wrong, and re-runs only the commands whose files the fixes touched. The lead stays the only author of status fields and the chat reply.
 
 ## Brief contract
 
