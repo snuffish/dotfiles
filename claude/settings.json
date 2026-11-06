@@ -154,6 +154,11 @@
             "type": "command",
             "command": "python3 -I \"$HOME/.terminal/claude/quiet-guard.py\"",
             "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "python3 -I \"$HOME/.terminal/claude/safety-guard.py\"",
+            "timeout": 5
           }
         ]
       }
