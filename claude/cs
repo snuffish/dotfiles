@@ -1,0 +1,203 @@
+#!/usr/bin/env python3
+"""cs: pick a Claude Code session from its lineage tree and resume it.
+
+Reads the records session-lineage.py writes to ~/.claude/session-lineage/ (SESSION_LINEAGE_DIR overrides),
+groups the trees by ticket tag and hands the rows to fzf. Enter resumes the session in its own cwd.
+
+  cs              interactive picker (ctrl-b: only the current git branch, ctrl-a: all)
+  cs --print      the tree as plain text, no fzf (add --branch to filter)
+  cs --preview ID the preview pane for one session (used by fzf)
+"""
+import json
+import os
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+STATE = Path(os.environ.get("SESSION_LINEAGE_DIR") or Path.home() / ".claude" / "session-lineage")
+GLYPHS = {"startup": "·", "clear": "⟲", "fork": "⑂"}
+NO_TAG = "no ticket"
+
+
+def main():
+    args = sys.argv[1:]
+    if args[:1] == ["--preview"]:
+        return preview(args[1])
+    records = load_all()
+    branch_only = "--branch" in args
+    if "--list" in args:
+        return print("\n".join(f"{sid}\t{text}" for sid, text in rows(records, branch_only)))
+    if "--print" in args:
+        return print("\n".join(text for _, text in rows(records, branch_only)))
+    pick(records)
+
+
+def load_all():
+    records = {}
+    for path in STATE.glob("*.json"):
+        try:
+            record = json.loads(path.read_text())
+        except (OSError, ValueError):
+            continue
+        records[record["id"]] = record
+    return records
+
+
+# Tree
+
+def rows(records, branch_only=False):
+    """(session id or '-', display text) per row: group headers, tree rows and ticket-hop stubs."""
+    here = current_branch()
+    if branch_only:
+        records = {sid: r for sid, r in records.items() if r.get("branch") == here}
+    children = {}
+    for r in sorted(records.values(), key=lambda r: r.get("started", 0)):
+        if r.get("parent") in records:
+            children.setdefault(r["parent"], []).append(r)
+    roots = [r for r in records.values() if r.get("parent") not in records]
+
+    groups, stubs = {}, {}
+    for root in roots:
+        groups.setdefault(root.get("tag", ""), []).append(root)
+        for node in walk(root, children):
+            parent = records.get(node.get("parent"))
+            if parent and node.get("tag", "") != parent.get("tag", ""):
+                stubs.setdefault(node.get("tag", ""), []).append((node, parent))
+    for tag in stubs:
+        groups.setdefault(tag, [])
+
+    def newest(tag):
+        trees = [walk(root, children) for root in groups[tag]]
+        return max([n.get("updated", 0) for tree in trees for n in tree] + [s.get("updated", 0) for s, _ in stubs.get(tag, [])])
+
+    out = []
+    for tag in sorted(groups, key=newest, reverse=True):
+        total = sum(len(walk(root, children)) for root in groups[tag])
+        mark = " ◀" if here and any(n.get("branch") == here for root in groups[tag] for n in walk(root, children)) else ""
+        out.append(("-", f"▾ {tag or NO_TAG} ({total}){mark}"))
+        for root in sorted(groups[tag], key=lambda r: r.get("updated", 0), reverse=True):
+            out.append((root["id"], f"  {line(root)}"))
+            emit(root, children, "  ", out)
+        for node, parent in sorted(stubs.get(tag, []), key=lambda p: p[0].get("updated", 0), reverse=True):
+            out.append((node["id"], f"  ↗ {line(node)}  (from {parent.get('tag') or NO_TAG})"))
+    return out
+
+
+def walk(node, children):
+    nodes = [node]
+    for child in children.get(node["id"], []):
+        nodes += walk(child, children)
+    return nodes
+
+
+def emit(node, children, prefix, out):
+    kids = children.get(node["id"], [])
+    for i, kid in enumerate(kids):
+        last = i == len(kids) - 1
+        out.append((kid["id"], f"{prefix}{'└' if last else '├'} {line(kid)}"))
+        emit(kid, children, prefix + ("  " if last else "│ "), out)
+
+
+def line(record):
+    title = current_title(record)
+    if not title.lstrip().startswith(tuple(GLYPHS.values())):
+        title = f"{GLYPHS.get(record.get('source'), '·')} {title}"
+    return f"{title}  {age(record.get('updated'))}"
+
+
+def current_title(record):
+    """The latest custom or AI title in the transcript, so /rename shows up; else the record's own."""
+    latest = None
+    path = record.get("transcript")
+    if path and os.path.exists(path):
+        with open(path, errors="ignore") as f:
+            for text in f:
+                if '"type":"custom-title"' in text or '"type":"ai-title"' in text:
+                    try:
+                        entry = json.loads(text)
+                    except ValueError:
+                        continue
+                    latest = entry.get("customTitle") or entry.get("aiTitle") or latest
+    title = (latest or record.get("title") or record.get("first_prompt") or record["id"][:8]).strip()
+    tag = record.get("tag") or ""
+    return title[len(tag):].strip() if tag and title.startswith(tag + " ") else title
+
+
+# Picker
+
+def pick(records):
+    if not records:
+        sys.exit(f"cs: no lineage records in {STATE}")
+    me = os.path.realpath(sys.argv[0])
+    query = " ".join(sys.argv[1:])
+    text = "\n".join(f"{sid}\t{row}" for sid, row in rows(records))
+    cmd = [
+        "fzf", "--ansi", "--delimiter", "\t", "--with-nth", "2", "--no-sort", "--layout", "reverse",
+        "--query", query, "--header", "enter resume · ctrl-b this branch · ctrl-a all",
+        "--preview", f"{me} --preview {{1}}", "--preview-window", "right,45%,wrap",
+        "--bind", f"ctrl-b:reload({me} --list --branch)+first,ctrl-a:reload({me} --list)+first",
+    ]
+    result = subprocess.run(cmd, input=text, capture_output=False, text=True, stdout=subprocess.PIPE)
+    fields = result.stdout.strip().split("\t")
+    sid = fields[0] if fields else ""
+    if result.returncode != 0 or sid in ("", "-"):
+        return
+    record = records[sid]
+    cwd = record.get("cwd") or str(Path.home())
+    os.chdir(cwd if os.path.isdir(cwd) else Path.home())
+    os.execvp("claude", ["claude", "-r", sid])
+
+
+def preview(sid):
+    record = load_all().get(sid)
+    if not record:
+        return
+    started = record.get("started")
+    when = time.strftime("%Y-%m-%d %H:%M", time.localtime(started)) if started else "?"
+    out = [
+        current_title(record), "",
+        f"branch  {record.get('branch') or '-'}",
+        f"cwd     {record.get('cwd') or '-'}",
+        f"started {when} · updated {age(record.get('updated'))} ago",
+    ]
+    if turns := count_prompts(record.get("transcript")):
+        out[-1] += f" · {turns} turns"
+    if record.get("ended"):
+        out.append(f"ended   {record.get('end_reason') or '?'}")
+    out += ["", f"first: {record.get('first_prompt') or '-'}", f"last:  {record.get('last_prompt') or '-'}", "", sid]
+    print("\n".join(out))
+
+
+def count_prompts(path):
+    if not path or not os.path.exists(path):
+        return 0
+    with open(path, errors="ignore") as f:
+        return sum('"type":"user"' in text and '"isMeta":true' not in text and '"toolUseResult"' not in text for text in f)
+
+
+# Helpers
+
+def current_branch():
+    try:
+        return subprocess.run(["git", "--no-optional-locks", "symbolic-ref", "--quiet", "--short", "HEAD"],
+                              capture_output=True, text=True, timeout=3).stdout.strip()
+    except (OSError, subprocess.SubprocessError):
+        return ""
+
+
+def age(ts):
+    if not ts:
+        return "?"
+    seconds = max(0, int(time.time()) - int(ts))
+    for unit, size in (("d", 86400), ("h", 3600), ("m", 60)):
+        if seconds >= size:
+            return f"{seconds // size}{unit}"
+    return f"{seconds}s"
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        pass
