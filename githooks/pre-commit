@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# Pre-commit leak guard for this public repo. Enable per clone:
+#   git config core.hooksPath githooks
+# Blocks the commit when either check finds something. Never prints matched values.
+#   1. gitleaks scans the staged changes for secrets.
+#   2. Added lines are checked against private strings:
+#      - .leak-denylist (git-ignored): one string per line, # for comments, case-insensitive.
+#      - values exported in .env* (git-ignored), 8+ chars, without $ expansions.
+# Bypass once, deliberately: git commit --no-verify
+
+set -uo pipefail
+
+root=$(git rev-parse --show-toplevel)
+failed=0
+
+if command -v gitleaks >/dev/null 2>&1; then
+  if ! gitleaks git --pre-commit --staged --redact --no-banner "$root"; then
+    echo "leak-guard: gitleaks found possible secrets in the staged changes." >&2
+    failed=1
+  fi
+else
+  echo "leak-guard: gitleaks is not installed; install it or commit with --no-verify." >&2
+  failed=1
+fi
+
+patterns=$(mktemp)
+trap 'rm -f "$patterns"' EXIT
+
+if [[ -f "$root/.leak-denylist" ]]; then
+  grep -vE '^[[:space:]]*(#|$)' "$root/.leak-denylist" >>"$patterns"
+fi
+
+for env_file in "$root"/.env*; do
+  [[ -f "$env_file" ]] || continue
+  sed -nE 's/^[[:space:]]*export[[:space:]]+[A-Za-z_][A-Za-z0-9_]*=//p' "$env_file" |
+    sed -E 's/^"(.*)"$/\1/; s/^'\''(.*)'\''$/\1/' |
+    grep -v '\$' |
+    awk 'length($0) >= 8' >>"$patterns"
+done
+
+if [[ -s "$patterns" ]]; then
+  # Added lines only, per file, so the report can name the file without the value.
+  while IFS= read -r -d '' file; do
+    if git diff --cached --no-color -U0 -- "$file" | grep -E '^\+' | grep -vE '^\+\+\+ ' |
+      grep -qiFf "$patterns"; then
+      echo "leak-guard: $file adds a string from .leak-denylist or .env*." >&2
+      failed=1
+    fi
+  done < <(git diff --cached --name-only -z --diff-filter=ACMR)
+fi
+
+# autoMode.environment is org-specific and belongs in claude/settings.private.json.
+# Claude Code settings commands write it through the ~/.claude/settings.json symlink.
+if git diff --cached --no-color -U0 -- claude/settings.json | grep -E '^\+' | grep -q '"environment"'; then
+  echo "leak-guard: claude/settings.json adds \"environment\"; keep it in claude/settings.private.json." >&2
+  failed=1
+fi
+
+exit "$failed"
