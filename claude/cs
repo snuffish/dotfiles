@@ -7,9 +7,12 @@ groups the trees by ticket tag and hands the rows to fzf. Enter resumes the sess
   cs              interactive picker (ctrl-b: only the current git branch, ctrl-a: all)
   cs --print      the tree as plain text, no fzf (add --branch to filter)
   cs --preview ID the preview pane for one session (used by fzf)
+  cs --backfill   report old transcripts without a record; --apply writes them (parents only for forks)
 """
+import calendar
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -24,6 +27,8 @@ def main():
     args = sys.argv[1:]
     if args[:1] == ["--preview"]:
         return preview(args[1])
+    if "--backfill" in args:
+        return backfill("--apply" in args)
     records = load_all()
     branch_only = "--branch" in args
     if "--list" in args:
@@ -174,6 +179,63 @@ def count_prompts(path):
         return 0
     with open(path, errors="ignore") as f:
         return sum('"type":"user"' in text and '"isMeta":true' not in text and '"toolUseResult"' not in text for text in f)
+
+
+# Backfill
+
+def backfill(apply):
+    """Records for transcripts from before the hook. A fork copies its parent's messages, so transcripts that
+    share a first message uuid form one chain; each one is the child of the one started just before it.
+    /clear parents are unknown (their messages are new)."""
+    known = {p.stem for p in STATE.glob("*.json")}
+    found = []
+    for path in (Path.home() / ".claude" / "projects").glob("*/*.jsonl"):
+        if path.stem not in known and (info := scan(path)):
+            found.append(info)
+    chains = {}
+    for info in sorted(found, key=lambda i: i["started"]):
+        chains.setdefault(info.pop("first_uuid"), []).append(info)
+    for chain in chains.values():
+        for earlier, later in zip(chain, chain[1:]):
+            later["parent"], later["source"] = earlier["id"], "fork"
+    print(f"{len(found)} transcripts without a record, {sum(len(c) - 1 for c in chains.values())} linked as forks")
+    if not apply:
+        return print("dry run; add --apply to write them")
+    STATE.mkdir(parents=True, exist_ok=True)
+    for chain in chains.values():
+        for info in chain:
+            (STATE / f"{info['id']}.json").write_text(json.dumps(info, ensure_ascii=False))
+    print(f"wrote {len(found)} records to {STATE}")
+
+
+def scan(path):
+    first_uuid = cwd = branch = prompt = title = ""
+    started = 0
+    with open(path, errors="ignore") as f:
+        for text in f:
+            try:
+                entry = json.loads(text)
+            except ValueError:
+                continue
+            first_uuid = first_uuid or entry.get("uuid") or ""
+            cwd = cwd or entry.get("cwd") or ""
+            branch = branch or entry.get("gitBranch") or ""
+            if not started and entry.get("timestamp"):
+                started = calendar.timegm(time.strptime(entry["timestamp"][:19], "%Y-%m-%dT%H:%M:%S"))
+            if entry.get("type") in ("custom-title", "ai-title"):
+                title = entry.get("customTitle") or entry.get("aiTitle") or title
+            if not prompt and entry.get("type") == "user" and entry.get("promptId") and not entry.get("isMeta"):
+                content = entry.get("message", {}).get("content")
+                prompt = " ".join(re.sub(r"<[^>]+>", " ", content).split())[:200] if isinstance(content, str) else ""
+    if not first_uuid:
+        return None
+    match = re.match(r"(?:[A-Za-z]+/)?(\d+)[_-]", branch)
+    return {
+        "id": path.stem, "parent": None, "source": "startup", "tag": match.group(1) if match else "",
+        "branch": branch, "cwd": cwd, "transcript": str(path), "started": started or int(path.stat().st_mtime),
+        "updated": int(path.stat().st_mtime), "title": title, "naming": "done", "first_prompt": prompt,
+        "last_prompt": "", "backfilled": True, "first_uuid": first_uuid,
+    }
 
 
 # Helpers
