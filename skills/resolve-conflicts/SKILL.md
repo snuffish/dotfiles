@@ -122,8 +122,8 @@ When `commit` was passed (or `/commit` is concluding a resolved merge), `diff --
 | Operation | Conclude with | Then |
 |---|---|---|
 | `merge` | `git -C "$R" commit --no-edit --cleanup=strip` (plus trailer per [`/commit`](../commit/SKILL.md) › *Step 4: Write the message and commit*; `--cleanup=strip` drops `# Conflicts:` comment lines) | `git -C "$R" show --remerge-diff HEAD` |
-| `rebase` | `GIT_EDITOR=true git -C "$R" rebase --continue` (keep user's commit message, add no trailer) | Repeat Steps 0–5 per stop; full gates at end |
-| `cherry-pick` / `revert` | `GIT_EDITOR=true git -C "$R" cherry-pick --continue` / `revert --continue` | Repeat per stop |
+| `rebase` | `GIT_EDITOR=true git -C "$R" -c core.commentChar=';' rebase --continue` (keep user's commit message, add no trailer) | Repeat Steps 0–5 per stop; full gates at end; then compare `git log --format=%s` with the original subjects |
+| `cherry-pick` / `revert` | `GIT_EDITOR=true git -C "$R" -c core.commentChar=';' cherry-pick --continue` / `revert --continue` | Repeat per stop |
 | `stash pop/apply` | Leave resolved changes in tree; never `stash drop` | Report that stash entry is kept |
 
 Confirm the operation state files from Step 0 are gone and report the new short SHA. Never push.
@@ -150,4 +150,5 @@ In chat, report: (1) **Operation & sides by branch name**, (2) **Per-file resolu
 | Swapping ours/theirs during a rebase | Name sides by branch (Step 0 table) and read `REBASE_HEAD` for the replayed commit |
 | `checkout --conflict=zdiff3` after editing | Run only before editing; it overwrites working-tree edits on that file |
 | `git commit --no-edit` leaving `# Conflicts:` in commit message | Always pass `--cleanup=strip` |
+| A commit subject starting with `#` (e.g. `#31471: …`) is stripped as a comment on `rebase --continue`, so the commit is dropped | Pass `-c core.commentChar=';'` on `--continue` (simulated 2026-11-06: default loses the commit, `;` keeps the subject) |
 | `.git` treated as a directory inside a linked worktree | Always use `git rev-parse --git-path <name>` |
