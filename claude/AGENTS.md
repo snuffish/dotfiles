@@ -20,6 +20,12 @@ If no `.codegraph/` directory exists there or in any parent, skip CodeGraph enti
   1. **Steps:** a numbered list of concrete steps.
   2. **Unresolved questions:** what I must decide, each with your recommendation. Leave this block out when there are none.
 
+## Commit workflow
+
+- When the user asks to commit or push, commit immediately. Do not wait on test runs or formatting unless the user asks for them. If tests or format are pending, say so in one line and continue.
+- Never create a git worktree unless explicitly asked; work on the current branch.
+- Split unrelated changes into separate logical commits and push to the current branch's upstream.
+
 ## Git & Branch Isolation
 
 - For multi-file bug investigations, flaky test repairs, or new features, prefer isolated git worktrees (`/worktrees`) to keep the primary checkout clean.
