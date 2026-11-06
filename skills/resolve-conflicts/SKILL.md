@@ -1,7 +1,7 @@
 ---
 name: resolve-conflicts
-description: "Resolves git merge, rebase, cherry-pick, and stash conflicts. Reconstructs intent from the merge base and both commit branches, preserves non-conflicting logic, regenerates lockfiles, runs verification builds/tests, and stages cleanly resolved hunks. Refuses destructive overwrites."
-argument-hint: "[commit | stage-only] [<paths…>]"
+description: "Resolves git merge, rebase, cherry-pick, and stash conflicts. Reconstructs intent from the merge base and both commit branches, preserves non-conflicting logic, regenerates lockfiles, runs verification builds/tests, and stages cleanly resolved hunks. Refuses destructive overwrites. `main` mode merges the branch's base in, runs the drift and formatter gates, commits the merge and pushes after your go (\"merge main in\", \"update my branch with main\")."
+argument-hint: "[commit | stage-only | main [<base>]] [<paths…>]"
 ---
 
 # Skill: `/resolve-conflicts` — Git Conflict Resolution
@@ -18,8 +18,9 @@ Read these before step 1:
 - `../_modules/core.md`
 - `../_modules/artifact-protocol.md`: only when the artifact threshold is met (at least one conflict needed a user decision, or the operation spans >10 conflicted files or multiple rebase stops), then writes `<prefix>-conflict_resolution-<suffix>.md`
 - `../_modules/git-worktrees.md`: only with `/worktrees` or an incoming `[worktree-context]` block
+- `../_modules/pr-host.md`: only in `main` mode, read-only, to find the base and the PR
 
-- **Authorization**: invoking `/resolve-conflicts` authorizes editing conflicted files, regenerating lockfiles/codegen and staging resolved paths. It stops there (`stage-only`) by default; the `commit` argument, or a `/commit` that finds the merge resolved, concludes the operation once Step 6's gates hold. Never push or `stash drop`.
+- **Authorization**: invoking `/resolve-conflicts` authorizes editing conflicted files, regenerating lockfiles/codegen and staging resolved paths. It stops there (`stage-only`) by default; the `commit` argument, or a `/commit` that finds the merge resolved, concludes the operation once Step 6's gates hold. Never push or `stash drop`, except the confirmed push in `main` mode (*Step 0c — `main` Mode*).
 - **Isolation**: resolve in the tree where the conflict lives (`repo-root`). If a skill worktree is active for the repo and the conflict is in the main checkout, ask first (`git-worktrees` › *Golden Invariants*). If `/worktrees` is passed to *start* a merge/rebase, run in a workspace worktree (`git-worktrees` › *Workspace Lifecycle*).
 
 ---
@@ -77,6 +78,17 @@ Also check `git -C "$R" rerere status` and `rerere diff` to verify any auto-repl
 
 Preview conflicts without touching the tree (`git -C "$R" merge-tree --write-tree --name-only HEAD origin/<target>`). If the user asked to update the branch and the working tree is clean of tracked edits, start the repo's standard operation (merge by default; rebase only when requested or required by repo rules).
 
+#### Step 0c — `main` Mode
+
+`/resolve-conflicts main [<base>]` brings the current branch up to date in one merge commit:
+
+1. **Preflight:** refuse on the default branch, a detached HEAD or tracked working-tree edits (never stash). **Base:** the argument, else the open PR's target branch (`pr-host` › *Resolve the PR from a branch*), else `origin/HEAD`; never assume `main`.
+2. **Merge:** `git -C "$R" fetch origin`, then `git -C "$R" merge --no-commit --no-ff <base>` (`--no-commit` keeps gate output in the merge commit). Already up to date → say so and stop.
+3. **Resolve** per Steps 1–5. Keep this branch's structure and fold the base's additions in; when the base already holds this branch's own work (a squash-merged PR it stacked on), prefer this branch's hunks and say so per file. Mark each conflict trivial or non-trivial (competing values, shape vs. content, modify/delete, or a user decision).
+4. **Gates:** run [`/commit`](../commit/SKILL.md) › *Step 2: Skill-drift gate (before grouping)* and the repo's formatters and import sorters (`commit` › *Step 4: Run the repo's pre-commit gates*) on the merged files. Stage every file they modify; `git -C "$R" status --short` must show no unstaged tracked edits.
+5. **Commit** per Step 6 (merge row), then show `git -C "$R" diff --stat HEAD^1 HEAD`.
+6. **Push:** list the non-trivial conflicts with their resolutions and ask; push per `commit` › *Step 6: Push* only on the user's go.
+
 ### Step 1 — Inventory and Classify Every Conflicted Path
 
 | Kind | Signal | Resolution route |
@@ -126,7 +138,7 @@ When `commit` was passed (or `/commit` is concluding a resolved merge), `diff --
 | `cherry-pick` / `revert` | `GIT_EDITOR=true git -C "$R" -c core.commentChar=';' cherry-pick --continue` / `revert --continue` | Repeat per stop |
 | `stash pop/apply` | Leave resolved changes in tree; never `stash drop` | Report that stash entry is kept |
 
-Confirm the operation state files from Step 0 are gone and report the new short SHA. Never push.
+Confirm the operation state files from Step 0 are gone and report the new short SHA. Never push (`main` mode: Step 0c.6).
 
 ---
 
@@ -139,7 +151,7 @@ In chat, report: (1) **Operation & sides by branch name**, (2) **Per-file resolu
 ## 4. Verification & Validation
 
 - `git diff --name-only --diff-filter=U` is empty, `git diff --check` is clean, and build/test gates pass.
-- Only resolved paths and regenerated lockfiles/codegen were staged; after a merge commit, `git show --remerge-diff HEAD` matches the reported resolutions and has no `# Conflicts:` lines; nothing was pushed.
+- Only resolved paths and regenerated lockfiles/codegen were staged; after a merge commit, `git show --remerge-diff HEAD` matches the reported resolutions and has no `# Conflicts:` lines; nothing was pushed outside a confirmed `main`-mode push.
 
 ---
 
