@@ -65,6 +65,11 @@ def on_start(data):
         "naming": "done" if source == "startup" and inherited else "pending",
         "naming_prompts": 0, "first_prompt": "", "last_prompt": "",
     })
+    if source == "clear" and parent:
+        # systemMessage prints in the new session's terminal; the id is what `claude -r` takes
+        previous = load(parent) or {}
+        title = latest_custom_title(previous.get("transcript")) or previous.get("title") or "(untitled)"
+        print(json.dumps({"systemMessage": f"Previous session: {title}\n  claude -r {parent}"}, ensure_ascii=False))
 
 
 def on_prompt(data):
