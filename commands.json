@@ -16,6 +16,8 @@
   },
   "home": {
     "[SSH] Snuffish-PC": "ssh HOME_PC_IP",
+    "[PULL] From Snuffish-PC": "~/.terminal/utils/remote-files.sh pull",
+    "[PUSH] To Snuffish-PC": "~/.terminal/utils/remote-files.sh push",
     "[TUNNEL] Ollama": "ollama-proxy"
   }
 }
