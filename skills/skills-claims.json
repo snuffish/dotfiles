@@ -20578,14 +20578,14 @@
       }
     },
     {
-      "id": "skills/simplify-branch/SKILL.md:83:other:angle agents on Sonnet via Explore",
+      "id": "skills/simplify-branch/SKILL.md:82:other:angle agents on Sonnet via Explore",
       "source": {
         "file": "skills/simplify-branch/SKILL.md",
-        "line": 83
+        "line": 82
       },
       "kind": "other",
       "value": "angle agents on Sonnet via Explore",
-      "quote": "with `model: \"sonnet\"` and `subagent_type: \"Explore\"` in Claude Code",
+      "quote": "the default is `sonnet`. `sonnet`, `opus` and `haiku` become `model: \"<name>\"` with `subagent_type: \"Explore\"`",
       "verify": {
         "method": "grep",
         "pattern": "pass `model: \"sonnet\"` to the Agent tool, and `subagent_type: \"Explore\"` for search-only lanes",
