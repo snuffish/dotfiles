@@ -29,7 +29,7 @@ Read these before step 1:
 | Situation | Use instead |
 |---|---|
 | Save one decision just made in this conversation | [`/remember-this`](../remember-this/SKILL.md) |
-| Stress-test a plan or design | [`/grill-me`](../grill-me/SKILL.md) |
+| Stress-test a plan or design | `/grilling` (plugin skill) |
 | Review what others said about my work | [`/analyze-personal-feedback`](../analyze-personal-feedback/SKILL.md) |
 | A rule the whole team should follow | The repo's `AGENTS.md`, through a normal change |
 

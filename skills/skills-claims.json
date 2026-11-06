@@ -4365,7 +4365,7 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "el) | Command | 49 | `analyze-personal-feedback`, `artifacts`, `clean`, `code-documentation`, `code-review`, `c",
+      "quote": "and | 49 | `analyze-personal-feedback`, `artifacts`, `clean`, `code-documentation`, `code-r",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
@@ -4380,7 +4380,7 @@
       },
       "kind": "skill_ref",
       "value": "clean",
-      "quote": "| 49 | `analyze-personal-feedback`, `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `",
+      "quote": "nalyze-personal-feedback`, `artifacts`, `clean`, `code-documentation`, `code-review`, `",
       "verify": {
         "method": "skill_exists",
         "name": "clean",
@@ -4515,7 +4515,7 @@
       },
       "kind": "skill_ref",
       "value": "handoff",
-      "quote": "-file`, `expressive`, `fix-findings`, `grill-me`, `handoff`, `implement-feature`, `insights`, `investigate`, ",
+      "quote": "xpressive`, `fix-findings`, `grill-me`, `handoff`, `implement-feature`, `insights`, `inve",
       "verify": {
         "method": "skill_exists",
         "name": "handoff",
@@ -4534,7 +4534,7 @@
       },
       "kind": "skill_ref",
       "value": "implement-feature",
-      "quote": "pressive`, `fix-findings`, `grill-me`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `no",
+      "quote": " `fix-findings`, `grill-me`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-tes",
       "verify": {
         "method": "skill_exists",
         "name": "implement-feature",
@@ -4549,7 +4549,7 @@
       },
       "kind": "skill_ref",
       "value": "investigate",
-      "quote": "-me`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `no-worktrees`, `organize`, `p",
+      "quote": "doff`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `no-worktrees`, `org",
       "verify": {
         "method": "skill_exists",
         "name": "investigate",
@@ -4564,7 +4564,7 @@
       },
       "kind": "skill_ref",
       "value": "manual-testing",
-      "quote": ", `implement-feature`, `insights`, `investigate`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `pr-desc`, `",
+      "quote": "nt-feature`, `insights`, `investigate`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `p",
       "verify": {
         "method": "skill_exists",
         "name": "manual-testing",
@@ -4579,7 +4579,7 @@
       },
       "kind": "skill_ref",
       "value": "no-worktrees",
-      "quote": "re`, `insights`, `investigate`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `pr-desc`, `pr-feedback-revi",
+      "quote": "ghts`, `investigate`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `pr-desc`, `pr-fee",
       "verify": {
         "method": "skill_exists",
         "name": "no-worktrees",
@@ -5186,7 +5186,7 @@
       },
       "kind": "skill_ref",
       "value": "insights",
-      "quote": "ngs`, `grill-me`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `no-worktrees`,",
+      "quote": "ll-me`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `no-w",
       "verify": {
         "method": "skill_exists",
         "name": "insights",
@@ -5216,7 +5216,7 @@
       },
       "kind": "skill_ref",
       "value": "grill-me",
-      "quote": "in`, `export-file`, `expressive`, `fix-findings`, `grill-me`, `handoff`, `implement-feature`, `insights`, `inv",
+      "quote": "rt-file`, `expressive`, `fix-findings`, `grill-me`, `handoff`, `implement-feature`, `insig",
       "verify": {
         "method": "skill_exists",
         "name": "grill-me",
@@ -20587,20 +20587,6 @@
       }
     },
     {
-      "id": "skills/grill-me/SKILL.md:7:skill_ref:grilling",
-      "source": {
-        "file": "skills/grill-me/SKILL.md",
-        "line": 7
-      },
-      "kind": "skill_ref",
-      "value": "grilling",
-      "quote": "Call the Skill tool with \"grilling\".",
-      "verify": {
-        "method": "manual",
-        "reason": "grilling is an external skill in ~/.agents/skills (symlinked into ~/.claude/skills), not part of this registry"
-      }
-    },
-    {
       "id": "skills/handoff/SKILL.md:3:skill_ref:proceed",
       "source": {
         "file": "skills/handoff/SKILL.md",
@@ -23634,18 +23620,17 @@
       }
     },
     {
-      "id": "skills/principles-interview/SKILL.md:32:skill_ref:grill-me",
+      "id": "skills/principles-interview/SKILL.md:32:skill_ref:grilling",
       "source": {
         "file": "skills/principles-interview/SKILL.md",
         "line": 32
       },
       "kind": "skill_ref",
-      "value": "grill-me",
-      "quote": "| Stress-test a plan or design | [`/grill-me`](../grill-me/SKILL.md) |",
+      "value": "grilling",
+      "quote": "| Stress-test a plan or design | `/grilling` (plugin skill) |",
       "verify": {
-        "method": "skill_exists",
-        "name": "grill-me",
-        "base": "repo"
+        "method": "manual",
+        "reason": "grilling is an external plugin skill (mattpocock-skills), not part of this registry"
       }
     },
     {
