@@ -24,7 +24,9 @@
       "mcp__azure-devops__repo_pull_request_thread"
     ],
     "defaultMode": "auto",
-    "additionalDirectories": ["~/.cache/agent-artifacts"]
+    "additionalDirectories": [
+      "~/.cache/agent-artifacts"
+    ]
   },
   "model": "opus",
   "skillOverrides": {
@@ -277,7 +279,7 @@
     "retro@netresearch-claude-code-marketplace": true,
     "prompt-improver@severity1-marketplace": true,
     "cmem-pro@thedotmack": true,
-    "code-simplifier@anthropic-plugin-directory": false
+    "only-cli@only-cli": true
   },
   "extraKnownMarketplaces": {
     "claude-code-skills": {
@@ -308,6 +310,12 @@
       "source": {
         "source": "github",
         "repo": "severity1/severity1-marketplace"
+      }
+    },
+    "only-cli": {
+      "source": {
+        "source": "github",
+        "repo": "only-cli/oc"
       }
     }
   },
