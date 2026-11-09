@@ -9030,7 +9030,7 @@
       },
       "kind": "path",
       "value": "../_modules/pr-host.md",
-      "quote": "- `../_modules/pr-host.md`: read-only, to name the PR the push updates",
+      "quote": "- `../_modules/pr-host.md`: to resolve the PR, its target branch and the stack in Step 7",
       "verify": {
         "method": "path_exists",
         "path": "../_modules/pr-host.md",

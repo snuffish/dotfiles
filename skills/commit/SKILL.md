@@ -1,6 +1,6 @@
 ---
 name: commit
-description: "Runs the skill-drift check first and fixes STALE claims surgically, then stages changed files, runs documented pre-commit gates (formatters, linters, tests), formats commit messages matching repo conventions (Conventional Commits or branch work-item prefix), and pushes to upstream. Refuses commits on default branches or detached HEAD."
+description: "Runs the skill-drift check first and fixes STALE claims surgically, then stages changed files, runs documented pre-commit gates (formatters, linters, tests), formats commit messages matching repo conventions (Conventional Commits or branch work-item prefix), and pushes to upstream. After the push, finds the branch's open PR and the branch it is stacked on, warns when that base is behind main, and regenerates its marked description block in English from the commits, leaving hand-written parts untouched. Refuses commits on default branches or detached HEAD."
 argument-hint: "[no-push] [message or intent] [paths…]"
 model: sonnet
 ---
@@ -18,10 +18,10 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 - `../_modules/core.md`
 - `../_modules/git-worktrees.md`: only with an incoming `[worktree-context]` block, which names the `repo-root` to commit in; otherwise runs in place
-- `../_modules/pr-host.md`: read-only, to name the PR the push updates
+- `../_modules/pr-host.md`: to resolve the PR, its target branch and the stack in Step 7
 - `../_modules/outward-writes.md`
 
-- Invoking `/commit` (or explicitly asking to commit/push in the current message) satisfies `outward-writes` › *Explicit request & draft mode* for this commit and push only.
+- Invoking `/commit` (or explicitly asking to commit/push in the current message) satisfies `outward-writes` › *Explicit request & draft mode* for this commit and push, and for the Step 7 description update of the branch's own open PR only (never its title, labels, draft state or any other PR).
 - **Never** `git add -A` / `git add .`, `--amend`, `--no-verify`, `--force` / `--force-with-lease`, `rebase`, `reset`, or `stash` here (unless the user explicitly asks for `--force-with-lease` in the current message).
 - Every command uses `git -C <repo-root> …` (`git-worktrees` › *Golden Invariants*).
 
@@ -32,7 +32,7 @@ Read these before step 1:
 | Situation | Use instead |
 |---|---|
 | Branch from a work item, commit, push and open a PR in one go | the project's ship skill (e.g. `priis-ship`), when the workspace has one |
-| Commit, push and rewrite the PR description | [`/pr-summary update`](../pr-summary/SKILL.md) |
+| Rewrite the PR title or labels, or describe the full diff rather than the commits | [`/pr-summary update`](../pr-summary/SKILL.md) |
 | A merge, rebase or cherry-pick is in progress, or the push was rejected and needs a merge | [`/resolve-conflicts`](../resolve-conflicts/SKILL.md) |
 | Work that should go on its own branch in a separate checkout | [`/worktrees`](../worktrees/SKILL.md) |
 
@@ -121,6 +121,27 @@ fi
 
 - **Rejected (non-fast-forward or branch policy):** stop, show `git -C <repo-root> log --oneline HEAD..@{u}` or the server message verbatim, and offer `git pull --rebase` or [`/resolve-conflicts`](../resolve-conflicts/SKILL.md). Never force-push.
 
+### Step 7: Check the PR and its stack, then regenerate the description
+
+Skip under `no-push` or when the push failed.
+
+1. **Find the PR:** resolve the branch's open PR per `pr-host` › *Resolve the PR from a branch*. No open PR → report `no open PR for this branch`, do not create one, and skip the rest of this step. Several open PRs → list them and ask which one to update.
+2. **Find the stack:** take the PR's target branch `TGT` (strip `refs/heads/` per `pr-host` › *Branch names & Diff base*) and the default branch `DEF` (`git -C <repo-root> symbolic-ref --short refs/remotes/origin/HEAD`, minus `origin/`). Then `git -C <repo-root> fetch origin "$TGT" "$DEF"`.
+   - `TGT` = `DEF` → not stacked.
+   - `TGT` ≠ `DEF` → stacked on `TGT`. Resolve `TGT`'s own open PR the same way and repeat until a target is `DEF` (stop after 5 levels), giving the chain, e.g. `this !B → feature/x !A → main`.
+3. **Warn when the base is behind main** (stacked only): `git -C <repo-root> rev-list --count origin/$TGT..origin/$DEF`. A count above 0 → `⚠️ <TGT> is <n> commits behind <DEF>`, and suggest rebasing the base first. Never rebase or merge here.
+4. **Regenerate the description from the commits:**
+   - Read the commits the PR adds: `git -C <repo-root> log --reverse --format='%h %s%n%b' origin/$TGT..HEAD`, plus `git -C <repo-root> diff --stat origin/$TGT...HEAD` to check each claim against what changed.
+   - Read the current description first and save it to `<scratchpad>/pr-<id>/previous.md` so it can be restored (`pr-summary` › *Step 5 — Update the real PR*, item 2).
+   - **Rewrite only the generated block.** The text between `<!-- commit:auto:start -->` and `<!-- commit:auto:end -->` belongs to this skill. Everything outside the markers is hand-written (screenshots, reviewer notes) and stays byte for byte.
+     - One marker pair → replace only what is between the markers.
+     - No markers (first run) → the new description is the generated block, followed by `## Manual` and the old description verbatim (leave the section out when the old description is empty).
+     - A lone marker or several pairs → do not write. Print the generated block and ask where it goes.
+   - Write the block **in English**, whatever the profile's *Report language*. Follow the repo PR template per `pr-summary` › *Step 3 — Compose the PR body & title* item 1. Group the commits by behaviour (one bullet per behaviour, not one per commit), and open the block with `Stacked on !<id>` when Step 2 found a stack. Run `outward-writes` › *Voice pass* on the block only.
+   - **4000-character budget for the whole description:** when it is over, shorten the generated block, never the manual part. When the manual part alone is over, do not write: print the block and say so.
+   - Apply only the description per `pr-summary` › *Step 5 — Update the real PR* item 3 (body from `<scratchpad>/pr-<id>/body.md`; on Azure DevOps always pass `--draft <isDraft>` from the read-back). Then read it back per `outward-writes` › *Read back*.
+   - A denied or failed write → print the body and the exact command, then continue to the output.
+
 ---
 
 ## 3. Output Format & Deliverables
@@ -130,12 +151,14 @@ fi
 - `<short-sha>` <subject>
 - Files: <n> (<list>) · gates: <what ran> ✅
 - Left out: <path> (<reason>)
-- PR: [<repo> !<id>](<url>) now at `<short-sha>` (or: no open PR for this branch)
+- PR: [<repo> !<id>](<url>) now at `<short-sha>` · generated block rewritten (English, <n> commits; manual part kept) (or: no open PR for this branch)
+- Stack: `<branch>` → `<TGT>` !<id> → `main` (or: not stacked)
+- ⚠️ `<TGT>` is <n> commits behind `main`: rebase the base first (only when it is)
 
-Next: <one action, e.g. `/pr-summary update` or opening a PR>.
+Next: <one action, e.g. rebasing the base or opening a PR>.
 ```
 
-Resolve the open PR read-only via `pr-host` › *Resolve the PR from a branch*. Under `no-push`, state the commit is local and how many commits are unpushed.
+Under `no-push`, state the commit is local and how many commits are unpushed, and leave out the PR and Stack lines.
 
 ---
 
@@ -143,4 +166,5 @@ Resolve the open PR read-only via `pr-host` › *Resolve the PR from a branch*. 
 
 - `git -C <repo-root> log -1 --format='%h %s'` and `show --stat HEAD` match the intended files and convention.
 - After pushing, `git -C <repo-root> rev-list --count @{u}..HEAD` is `0` and `@{u}` is `origin/<branch>`.
+- After Step 7, the live PR description matches `<scratchpad>/pr-<id>/body.md`, everything outside the markers matches `previous.md`, and on Azure DevOps `isDraft` is unchanged.
 - `git -C <repo-root> status --short` holds only the excluded files named in chat; no amend, force-push, `--no-verify`, rebase, reset, or stash ran.
