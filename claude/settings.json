@@ -271,7 +271,8 @@
     "skill-creator@claude-plugins-official": true,
     "retro@netresearch-claude-code-marketplace": true,
     "prompt-improver@severity1-marketplace": true,
-    "cmem-pro@thedotmack": true
+    "cmem-pro@thedotmack": true,
+    "code-simplifier@anthropic-plugin-directory": false
   },
   "extraKnownMarketplaces": {
     "claude-code-skills": {
