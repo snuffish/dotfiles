@@ -23768,6 +23768,53 @@
         "target": "core",
         "heading": "Post-edit verification"
       }
+    },
+    {
+      "id": "skills/grill-me/SKILL.md:4:config_key:disable-model-invocation",
+      "source": {
+        "file": "skills/grill-me/SKILL.md",
+        "line": 4
+      },
+      "kind": "config_key",
+      "value": "disable-model-invocation",
+      "quote": "disable-model-invocation: true",
+      "verify": {
+        "method": "grep",
+        "pattern": "^disable-model-invocation: true$",
+        "paths": [
+          "skills/grill-me/SKILL.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/grill-me/SKILL.md:9:other:AskUserQuestion tool, up to 4 questions per round",
+      "source": {
+        "file": "skills/grill-me/SKILL.md",
+        "line": 9
+      },
+      "kind": "other",
+      "value": "AskUserQuestion tool, up to 4 questions per round",
+      "quote": "Ask every question through the AskUserQuestion tool, up to 4 per round.",
+      "verify": {
+        "method": "manual",
+        "reason": "Claude Code host tool AskUserQuestion: 1-4 questions per call, 2-4 options each, optional per-option `preview` field (tool schema in the session)"
+      }
+    },
+    {
+      "id": "skills/grill-me/SKILL.md:11:other:AskUserQuestion option preview field",
+      "source": {
+        "file": "skills/grill-me/SKILL.md",
+        "line": 11
+      },
+      "kind": "other",
+      "value": "AskUserQuestion option preview field",
+      "quote": "give each option a `preview` mockup of the result.",
+      "verify": {
+        "method": "manual",
+        "reason": "Claude Code host tool AskUserQuestion: 1-4 questions per call, 2-4 options each, optional per-option `preview` field (tool schema in the session)"
+      }
     }
   ]
 }
