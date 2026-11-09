@@ -76,7 +76,7 @@ function claude-tail() {
 
 # Commit and push the pending changes with Claude's /commit skill; args are passed to it (e.g. no-push, intent)
 function gcai() {
-  claude-p "/commit $*"
+  claude-p --model sonnet "/commit $*"
 }
 
 # Merge with Claude in print mode, in a new git worktree so the checkout stays clean; args are appended to the prompt

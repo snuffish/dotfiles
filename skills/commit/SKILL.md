@@ -2,6 +2,7 @@
 name: commit
 description: "Runs the skill-drift check first and fixes STALE claims surgically, then stages changed files, runs documented pre-commit gates (formatters, linters, tests), formats commit messages matching repo conventions (Conventional Commits or branch work-item prefix), and pushes to upstream. Refuses commits on default branches or detached HEAD."
 argument-hint: "[no-push] [message or intent] [paths…]"
+model: sonnet
 ---
 
 # Skill: `/commit` — Commit and Push the Current Change

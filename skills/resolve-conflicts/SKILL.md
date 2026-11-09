@@ -2,6 +2,7 @@
 name: resolve-conflicts
 description: "Resolves git merge, rebase, cherry-pick, and stash conflicts. Reconstructs intent from the merge base and both commit branches, preserves non-conflicting logic, regenerates lockfiles, runs verification builds/tests, and stages cleanly resolved hunks. Refuses destructive overwrites. `main` mode merges the branch's base in, runs the drift and formatter gates, commits the merge and pushes after your go (\"merge main in\", \"update my branch with main\")."
 argument-hint: "[commit | stage-only | main [<base>]] [<paths…>]"
+model: sonnet
 ---
 
 # Skill: `/resolve-conflicts` — Git Conflict Resolution
@@ -104,12 +105,12 @@ Also record files git **merged cleanly** that both sides touched (`git diff --na
 
 ### Step 2 — Extract Both Sides' Intent
 
-**Step 2 Exit Bound:** Before editing any hunk, inspect `:1:<path>` (base), `:2:<path>`, `:3:<path>`, and `git -C "$R" log --oneline --left-right --merge -- <path>`, quote the commit messages for both sides, and state each side's intent in one sentence. (Optionally run `git -C "$R" checkout --conflict=zdiff3 -- <path>` **before** making any edits to view the base inside markers.)
+**Step 2 Exit Bound:** Before editing a path, run `git -C "$R" checkout --conflict=zdiff3 -- <path>` (base inside the markers, so one read replaces `:1:`/`:2:`/`:3:`) and `git -C "$R" log --oneline --left-right --merge -- <path>`, then state each side's intent in one sentence. Trivial hunks (identical change, independent additions such as imports or list entries) need no intent sentence; quote commit messages only for non-trivial ones. Read `:1:`/`:2:`/`:3:` in full only when the markers don't settle a hunk.
 
 ### Step 3 — Resolve Hunk by Hunk
 
 1. **Pick the pattern per hunk**: **Independent additions** (keep both, ordered by file convention), **Identical change** (keep one), **Shape vs. content change** (apply content edit to new shape), **Composing edits** (apply both), **Competing values** (ask the user if tests/commits/ticket don't settle it), **Formatting vs. logic** (keep logic, run formatter).
-2. **Edit precisely** and re-read the file to confirm valid syntax, balanced braces/JSX, and used imports.
+2. **Edit precisely** and re-read the edited hunks (not the whole file) to confirm valid syntax, balanced braces/JSX, and used imports.
 3. **Lockfiles & generated files**: reset lockfile to the base tree (`--theirs` on merge, `--ours` on rebase) and regenerate in lockfile-only mode (`npm install --package-lock-only`, `pnpm install --lockfile-only`, `yarn install --mode update-lockfile`, `cargo update -w`, `uv lock`, `dotnet restore --force-evaluate`); rerun code/snapshot generators.
 4. **Stage per path**: `git -C "$R" add <path>` (or `git -C "$R" rm <path>`).
 
@@ -125,7 +126,7 @@ git -C "$R" diff --name-only --diff-filter=U   # must be empty
 git -C "$R" status --short                     # only intended paths staged; untracked files untouched
 ```
 
-Run the repo's build/type-check, unit tests, and fast lint gates, and the project's *Post-merge checks* (`project-profile` › *Discovery*) when the base profile lists them. Fix any failure introduced by the merge; report pre-existing single-side failures.
+Run once per operation: the repo's build/type-check and fast lint gates, only the tests for projects or folders the merge touched (the full suite only when the repo has no scoped runner), and the project's *Post-merge checks* (`project-profile` › *Discovery*) when the base profile lists them. Fix any failure introduced by the merge; report pre-existing single-side failures.
 
 ### Step 6 — Conclude
 
@@ -134,7 +135,7 @@ When `commit` was passed (or `/commit` is concluding a resolved merge), `diff --
 | Operation | Conclude with | Then |
 |---|---|---|
 | `merge` | `git -C "$R" commit --no-edit --cleanup=strip` (plus trailer per [`/commit`](../commit/SKILL.md) › *Step 4: Write the message and commit*; `--cleanup=strip` drops `# Conflicts:` comment lines) | `git -C "$R" show --remerge-diff HEAD` |
-| `rebase` | `GIT_EDITOR=true git -C "$R" -c core.commentChar=';' rebase --continue` (keep user's commit message, add no trailer) | Repeat Steps 0–5 per stop; full gates at end; then compare `git log --format=%s` with the original subjects |
+| `rebase` | `GIT_EDITOR=true git -C "$R" -c core.commentChar=';' rebase --continue` (keep user's commit message, add no trailer) | Repeat Steps 0–4 and Step 5's three git checks per stop; build and tests once at the end; then compare `git log --format=%s` with the original subjects |
 | `cherry-pick` / `revert` | `GIT_EDITOR=true git -C "$R" -c core.commentChar=';' cherry-pick --continue` / `revert --continue` | Repeat per stop |
 | `stash pop/apply` | Leave resolved changes in tree; never `stash drop` | Report that stash entry is kept |
 
