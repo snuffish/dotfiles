@@ -24,9 +24,7 @@
       "mcp__azure-devops__repo_pull_request_thread"
     ],
     "defaultMode": "auto",
-    "additionalDirectories": [
-      "~/.cache/agent-artifacts"
-    ]
+    "additionalDirectories": ["~/.cache/agent-artifacts"]
   },
   "model": "opus",
   "skillOverrides": {
@@ -51,6 +49,10 @@
     "crypto-com-app": "off",
     "no-worktrees": "off",
     "principles-interview": "off",
+    "expressive": "off",
+    "fix-findings": "off",
+    "remember-this": "off",
+    "pr-polish": "user-invocable-only",
     "keybindings-help": "user-invocable-only",
     "fewer-permission-prompts": "user-invocable-only",
     "init": "user-invocable-only",
@@ -264,12 +266,12 @@
     "tanstack-ai@tanstack-ai": false,
     "mattpocock-skills@claude-plugins-official": false,
     "claude-mem@thedotmack": true,
-    "claude-mem-cowork@thedotmack": true,
     "cc-plugin-you-should-know@builtin": true,
     "frontend-design@claude-plugins-official": false,
     "skill-creator@claude-plugins-official": true,
     "retro@netresearch-claude-code-marketplace": true,
-    "prompt-improver@severity1-marketplace": true
+    "prompt-improver@severity1-marketplace": true,
+    "cmem-pro@thedotmack": true
   },
   "extraKnownMarketplaces": {
     "claude-code-skills": {
