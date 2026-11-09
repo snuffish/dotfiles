@@ -22969,7 +22969,7 @@
       },
       "kind": "path",
       "value": ".claude/skills/priis-review/SKILL.md",
-      "quote": "git -C <repo> show origin/main:.claude/skills/priis-review/SKILL.md   # Pass E only",
+      "quote": "git -C <repo> grep -h -A 8 \"^### Pass E\" origin/main -- .claude/skills/priis-review/SKILL.md   # Pass E section only; if the output does not end at \"### Pass F\", rerun with a larger -A",
       "verify": {
         "method": "path_exists",
         "path": ".claude/skills/priis-review/SKILL.md",
