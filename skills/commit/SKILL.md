@@ -137,6 +137,7 @@ Skip under `no-push` or when the push failed.
      - One marker pair → replace only what is between the markers.
      - No markers (first run) → the new description is the generated block, followed by `## Manual` and the old description verbatim (leave the section out when the old description is empty).
      - A lone marker or several pairs → do not write. Print the generated block and ask where it goes.
+   - **Check the manual part for stale claims.** Byte for byte means unedited, not unchecked: read the manual part against the commits and the PR's live state (target branch, merged or abandoned PRs it names, behaviour, counts). List every line the change made false (`"<quote>"` → what is true now) in chat and in the output's `Stale` line. Fix them only on the user's go, as their own text; then they are no longer byte for byte, so say so.
    - Write the block **in English**, whatever the profile's *Report language*. Follow the repo PR template per `pr-summary` › *Step 3 — Compose the PR body & title* item 1. Group the commits by behaviour (one bullet per behaviour, not one per commit), and open the block with `Stacked on !<id>` when Step 2 found a stack. Run `outward-writes` › *Voice pass* on the block only.
    - **4000-character budget for the whole description:** when it is over, shorten the generated block, never the manual part. When the manual part alone is over, do not write: print the block and say so.
    - Apply only the description per `pr-summary` › *Step 5 — Update the real PR* item 3 (body from `<scratchpad>/pr-<id>/body.md`; on Azure DevOps always pass `--draft <isDraft>` from the read-back). Then read it back per `outward-writes` › *Read back*.
@@ -152,6 +153,7 @@ Skip under `no-push` or when the push failed.
 - Files: <n> (<list>) · gates: <what ran> ✅
 - Left out: <path> (<reason>)
 - PR: [<repo> !<id>](<url>) now at `<short-sha>` · generated block rewritten (English, <n> commits; manual part kept) (or: no open PR for this branch)
+- Stale: <n> manual-part lines contradict the change: "<quote>" → <now> (or: none)
 - Stack: `<branch>` → `<TGT>` !<id> → `main` (or: not stacked)
 - ⚠️ `<TGT>` is <n> commits behind `main`: rebase the base first (only when it is)
 
