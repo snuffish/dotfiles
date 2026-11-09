@@ -31,6 +31,13 @@ If no `.codegraph/` directory exists there or in any parent, skip CodeGraph enti
 - For multi-file bug investigations, flaky test repairs, or new features, prefer isolated git worktrees (`/worktrees`) to keep the primary checkout clean.
 - Before formulating a fix plan for a reported defect, check recent commits on active PR branches (`git log -n 5 --oneline origin/main..HEAD`) to verify the defect is not already resolved upstream.
 
+## Git / PR workflow
+
+- Cut new PRs from `main` unless I name another base, even when we are currently on a feature branch. Exception: work that builds on someone else's open PR stacks on that PR's branch (see memory `stack-on-others-pr-branches`).
+- When extracting or cherry-picking work into a standalone PR, take the latest version of the code, including later fix commits. Compare test counts before and after.
+- To retarget a PR, use the method in memory `az-pr-update-drops-draft` (MCP `repo_pull_request_write` with `targetRefName`). Check memory before stating any az CLI command.
+- After pushing to a branch with an open PR, update the PR description so it matches the actual commits.
+
 ## Handoffs (/proceed workflow)
 
 - Every handoff step ends by writing the next-step handoff document. Do this without being asked.
