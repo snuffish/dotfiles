@@ -18,6 +18,10 @@ import sys
 import time
 from pathlib import Path
 
+# The tree walk is shared with the ar/cr/agr pickers
+sys.path.insert(0, str(Path(os.path.realpath(__file__)).parent.parent / "utils"))
+from session_tree import emit, walk  # noqa: E402
+
 STATE = Path(os.environ.get("SESSION_LINEAGE_DIR") or Path.home() / ".claude" / "session-lineage")
 GLYPHS = {"startup": "·", "clear": "⟲", "fork": "⑂"}
 NO_TAG = "no ticket"
@@ -83,25 +87,10 @@ def rows(records, branch_only=False):
         out.append(("-", f"▾ {tag or NO_TAG} ({total}){mark}"))
         for root in sorted(groups[tag], key=lambda r: r.get("updated", 0), reverse=True):
             out.append((root["id"], f"  {line(root)}"))
-            emit(root, children, "  ", out)
+            emit(root, children, "  ", out, line)
         for node, parent in sorted(stubs.get(tag, []), key=lambda p: p[0].get("updated", 0), reverse=True):
             out.append((node["id"], f"  ↗ {line(node)}  (from {parent.get('tag') or NO_TAG})"))
     return out
-
-
-def walk(node, children):
-    nodes = [node]
-    for child in children.get(node["id"], []):
-        nodes += walk(child, children)
-    return nodes
-
-
-def emit(node, children, prefix, out):
-    kids = children.get(node["id"], [])
-    for i, kid in enumerate(kids):
-        last = i == len(kids) - 1
-        out.append((kid["id"], f"{prefix}{'└' if last else '├'} {line(kid)}"))
-        emit(kid, children, prefix + ("  " if last else "│ "), out)
 
 
 def line(record):

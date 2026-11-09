@@ -31,6 +31,12 @@ If no `.codegraph/` directory exists there or in any parent, skip CodeGraph enti
 - For multi-file bug investigations, flaky test repairs, or new features, prefer isolated git worktrees (`/worktrees`) to keep the primary checkout clean.
 - Before formulating a fix plan for a reported defect, check recent commits on active PR branches (`git log -n 5 --oneline origin/main..HEAD`) to verify the defect is not already resolved upstream.
 
+## Handoffs (/proceed workflow)
+
+- Every handoff step ends by writing the next-step handoff document. Do this without being asked.
+- Handoff status lines must list every branch and PR involved (names + IDs). Re-read the status line before saving.
+- Verify claims against real data (live PR, real directory, CI run) before marking a step done. If you can't, say explicitly what was only unit-tested.
+
 ## Bash Calls
 
 - One simple command per Bash call: no `cd x;`, no `VAR=…;` prefix, no `;`/`&&` chains, no multi-line scripts. Allow rules match only simple commands, so compound ones always prompt.

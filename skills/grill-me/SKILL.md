@@ -8,6 +8,7 @@ Interview me to surface my guiding principles and decision frameworks.
 
 - Ask every question through the AskUserQuestion tool, up to 4 per round.
 - Write each question as a concrete situation with 2–4 ways to act.
+- When a question picks a layout, row format or other visible output, give each option a `preview` mockup of the result.
 - Put your recommended option first, labelled `(Recommended)`, with the reason in its description.
 - Build each round on my previous answers.
 - Keep going until I say stop or no open decision area is left, then list the principles I chose.

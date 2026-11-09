@@ -92,12 +92,14 @@ claude_sh = sys.argv[4]
 agy_sh = sys.argv[5]
 
 rows = []
+# Each driver would build its own tree; the tree is built once below over the merged rows
+env = dict(os.environ, SESSION_TREE="0")
 
 if agent_filter in ("all", "claude") and os.path.isfile(claude_sh):
     cmd = ["bash", claude_sh, "list", scope]
     if query: cmd.append(query)
     try:
-        out = subprocess.run(cmd, capture_output=True, text=True, timeout=5).stdout
+        out = subprocess.run(cmd, capture_output=True, text=True, timeout=5, env=env).stdout
         for line in out.splitlines():
             if not line: continue
             parts = line.split("\t")
@@ -112,7 +114,7 @@ if agent_filter in ("all", "antigravity") and os.path.isfile(agy_sh):
     cmd = ["bash", agy_sh, "list", scope]
     if query: cmd.append(query)
     try:
-        out = subprocess.run(cmd, capture_output=True, text=True, timeout=5).stdout
+        out = subprocess.run(cmd, capture_output=True, text=True, timeout=5, env=env).stdout
         for line in out.splitlines():
             if not line: continue
             parts = line.split("\t")
@@ -131,4 +133,4 @@ bw = max((len(branch(r)) for _, r in rows), default=0)
 for _, r in rows:
     r[2] = "\033[35m" + branch(r).ljust(bw) + "\033[0m"
     print("\t".join(r))
-' "$scope" "$query" "$agent_filter" "$claude_sessions" "$agy_sessions"
+' "$scope" "$query" "$agent_filter" "$claude_sessions" "$agy_sessions" | python3 -I "$HOME/.terminal/utils/session_tree.py"
