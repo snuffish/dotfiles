@@ -111,7 +111,12 @@
     "mattpocock-skills:to-questionnaire": "off",
     "mattpocock-skills:wait-what": "off",
     "mattpocock-skills:handoff": "off",
-    "claude-security:scan": "off"
+    "claude-security:scan": "off",
+    "priis-prod-diagnose": "off",
+    "private-pr-review": "off",
+    "schedule": "off",
+    "skill-gap": "user-invocable-only",
+    "skill-creator": "user-invocable-only"
   },
   "hooks": {
     "SessionStart": [
