@@ -99,7 +99,7 @@ git -C <repo-root> rev-list --count @{u}..HEAD 2>/dev/null     # commits already
 - **Convention (first match wins):** (1) user's explicit message from arguments, (2) repo rulebook / workflow skill, (3) commitlint / Conventional Commits / `.gitmessage`, (4) pattern of `git -C <repo-root> log --format=%s -20` (e.g. `#<id>: <imperative>`, `feat(scope): …`).
 - **Work-item ID:** extract from the branch name (`feature/30342_slug` → `30342`) or recent branch commits; ask if required and missing.
 - **Subject & body:** imperative mood, ≤72 chars including prefix, no trailing period, matching recent commit language; add a bulleted body only when the change spans multiple behaviours.
-- **Trailer (canonical rule):** apply the attribution trailer rule in force — the project profile's or user's trailer policy overrides the host's default attribution instruction (if a project forbids trailers, add none).
+- **Trailer (canonical rule):** apply the attribution trailer rule in force — the project profile's or user's trailer policy overrides the host's default attribution instruction (if a project forbids trailers, add none). A trailer that names a model names the session's working model, the one that wrote the change, never the `model:` this skill runs under; when the working model is unknown, use the model-neutral `Co-Authored-By: Claude <noreply@anthropic.com>`. Before Step 6, run `git -C <repo-root> log '--format=%h %(trailers:key=Co-Authored-By,valueonly)' '@{u}..HEAD'` (on a branch with no upstream, `<base>..HEAD`) and reword any commit whose trailer names this skill's own model.
 - **Commit from a scratchpad file** so shell metacharacters (`!`, backticks) are never expanded:
   ```bash
   git -C <repo-root> commit -F <scratchpad>/commit-msg.txt
