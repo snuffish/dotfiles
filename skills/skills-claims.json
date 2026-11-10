@@ -4365,7 +4365,7 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "and | 51 | `analyze-personal-feedback`, `artifacts`, `clean`, `code-documentation`, `code-r",
+      "quote": "and | 52 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `clean`, `code-documentation`, `code-r",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
@@ -4380,7 +4380,7 @@
       },
       "kind": "skill_ref",
       "value": "clean",
-      "quote": "nalyze-personal-feedback`, `artifacts`, `clean`, `code-documentation`, `code-review`, `",
+      "quote": "nalyze-personal-feedback`, `artifacts`, `brainstorming`, `clean`, `code-documentation`, `code-review`, `",
       "verify": {
         "method": "skill_exists",
         "name": "clean",
@@ -4395,7 +4395,7 @@
       },
       "kind": "skill_ref",
       "value": "code-documentation",
-      "quote": "analyze-personal-feedback`, `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-pro",
+      "quote": "analyze-personal-feedback`, `artifacts`, `brainstorming`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-pro",
       "verify": {
         "method": "skill_exists",
         "name": "code-documentation",
@@ -4410,7 +4410,7 @@
       },
       "kind": "skill_ref",
       "value": "commit",
-      "quote": "s`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-skill`, `cr",
+      "quote": "g`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-skill`, `cr",
       "verify": {
         "method": "skill_exists",
         "name": "commit",
@@ -5113,19 +5113,19 @@
       }
     },
     {
-      "id": "skills/README.md:41:count:52",
+      "id": "skills/README.md:41:count:53",
       "source": {
         "file": "skills/README.md",
         "line": 41
       },
       "kind": "count",
-      "value": "52",
-      "quote": "57 skills total \u2014 52 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "value": "53",
+      "quote": "58 skills total \u2014 53 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/*/SKILL.md",
         "base": "repo",
-        "expected": 52,
+        "expected": 53,
         "op": "eq"
       }
     },
@@ -5137,7 +5137,7 @@
       },
       "kind": "count",
       "value": "5 GR.PRIIS project skills",
-      "quote": "57 skills total \u2014 52 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "58 skills total \u2014 53 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/Projects/GR.PRIIS/*/SKILL.md",
@@ -5154,7 +5154,7 @@
       },
       "kind": "count",
       "value": "8 Modules",
-      "quote": "57 skills total \u2014 52 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "58 skills total \u2014 53 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/_modules/*.md",
