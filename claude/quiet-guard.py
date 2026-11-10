@@ -17,7 +17,9 @@ NOISY = re.compile(
     r"|\bnpx\s+(playwright\s+test|tsc|eslint|vitest)\b"
     r"|\bnpm\s+(ci|install|i)\b"
     r"|\bnpm\s+run\s+(build|lint|test|e2e)[\w:-]*"
-    r"|\bformat-changed\.ps1\b"
+    # Only when executed (after -File, or as the command itself), so `git grep … format-changed.ps1`
+    # or a `sed` on a doc that names the script is not mistaken for a run.
+    r"|(?:-File\s+|(?:^|(?<=[;&|(\n]))\s*)\S*(?P<script>format-changed\.ps1)\b"
 )
 SEGMENT_START = re.compile(r"&&|\|\||[;\n(]")
 PASS = re.compile(r"--help\b|\s-h\b|--version\b|--list\b")
@@ -39,7 +41,7 @@ def needs_quiet(command):
         segment = segment_of(command, match.start())
         if re.search(r"(^|\s)quiet\s", segment) or re.search(r"[|>]", segment) or PASS.search(segment):
             continue
-        return match.group(0)
+        return match.group("script") or match.group(0)
     return None
 
 
@@ -55,7 +57,7 @@ def main():
         return 0
     reason = (
         f"`{noisy}` prints build/test noise that would stay in context. Rerun the same command with "
-        f"`quiet` in front of it (e.g. `cd x && quiet {noisy} …`). quiet keeps the full log and prints "
+        f"`quiet` in front of it (e.g. `quiet {noisy} …`, with absolute paths instead of `cd`). quiet keeps the full log and prints "
         "errors, warning counts and the tail with the log path; read the log only if that is not enough."
     )
     json.dump(
