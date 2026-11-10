@@ -14,7 +14,7 @@ Turns an agreed follow-up, decision, or defect into one well-formed ticket in th
 
 1. **Outward write discipline**: follow `outward-writes` (*Explicit request & draft mode*, *Denied write is final*, *Auth error vs denial*, *Read back*). `/create-ticket draft` (or a standing draft-only rule) stops at the *Draft preview*.
 2. **File only what the source says**: restructure and translate into the tracker's language without adding unverified claims or estimates.
-3. **No side effects beyond the one ticket**: never assign, set a sprint, change state, set priority, or link to a PR/commit unless explicitly asked. Set a parent link only when the request/source names the parent or the type (`Task`) requires one.
+3. **No side effects beyond the one ticket**: never assign, set a sprint, change state, set priority, or link to a PR/commit unless explicitly asked (to link PRs when asked, list their ids in the spec's `pull_requests`). Set a parent link only when the request/source names the parent or the type (`Task`) requires one.
 4. **Do not modify the working tree**: write payload files to `<scratchpad>/ticket-<slug>/` and update at most the one ID record line in the source artifact (*Step 8*).
 
 ---

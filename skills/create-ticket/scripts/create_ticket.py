@@ -2,7 +2,7 @@
 
 Usage (run in place; files named in the spec are read from beside spec.json):
   python3 -I <skill-dir>/scripts/create_ticket.py <dir>/spec.json            # dry run: validates the spec, prints every field, runs nothing
-  python3 -I <skill-dir>/scripts/create_ticket.py <dir>/spec.json --create   # create it, add the parent link if any, print id and URL
+  python3 -I <skill-dir>/scripts/create_ticket.py <dir>/spec.json --create   # create it, add the parent and PR links if any, print id and URL
 
 spec.json:
   {
@@ -15,6 +15,7 @@ spec.json:
     "iteration": "<IterationPath>",                    # ADO, optional
     "tags": ["Backend"],                               # ADO System.Tags / GitHub labels, optional
     "parent": 31172,                                   # ADO, optional
+    "pull_requests": [19009],                          # ADO, optional: PR ids to link (only when asked)
     "fields": {"Custom.Component": "Matching"},        # ADO, optional extra fields (never Priority unless asked)
     "description_file": "description.html",           # ADO System.Description (non-Bug)
     "acceptance_file": "acceptance.html",              # ADO Microsoft.VSTS.Common.AcceptanceCriteria
@@ -61,6 +62,11 @@ def validate(spec):
             print("warning: a Task without a parent; most boards expect tasks under a story")
         if spec["type"] == "Bug" and spec.get("description_file"):
             sys.exit("Bug work items use repro_file (Microsoft.VSTS.TCM.ReproSteps) instead of description_file")
+        prs = spec.get("pull_requests", [])
+        if not isinstance(prs, list) or not all(isinstance(pr, int) and not isinstance(pr, bool) and pr > 0 for pr in prs):
+            sys.exit("pull_requests must be a list of PR ids (positive integers)")
+    elif spec.get("pull_requests"):
+        sys.exit("pull_requests is ado only")
     if host == "github" and not spec.get("body_file"):
         sys.exit("body_file is required for github")
     return host
@@ -119,7 +125,7 @@ def main():
 
     command = ado_commands(spec, base) if host == "ado" else github_command(spec, base)
     print(f"{host}: {spec.get('type', 'issue')} · {spec['title']}")
-    for key in ("area", "iteration", "tags", "parent", "fields"):
+    for key in ("area", "iteration", "tags", "parent", "pull_requests", "fields"):
         if spec.get(key):
             print(f"  {key}: {spec[key]}")
     print("  command:", " ".join(shown(command)))
@@ -137,6 +143,10 @@ def main():
         run(["az", "boards", "work-item", "relation", "add", "--org", cfg["org"], "--id", item_id,
              "--relation-type", "parent", "--target-id", str(spec["parent"]), "-o", "none"])
         print(f"  parent #{spec['parent']} linked")
+    for pr in spec.get("pull_requests") or []:
+        run(["az", "repos", "pr", "work-item", "add", "--org", cfg["org"], "--id", str(pr),
+             "--work-items", item_id, "-o", "none"])
+        print(f"  PR !{pr} linked")
     print(f"created #{item_id} {cfg['org'].rstrip('/')}/{quote(cfg['project'])}/_workitems/edit/{item_id}")
 
 
