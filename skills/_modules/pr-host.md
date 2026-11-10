@@ -23,7 +23,7 @@ Azure DevOps accepts both `https://dev.azure.com/{org}` and `https://{org}.visua
 3. `organization` from `az devops configure --list`.
 4. The repo's git remote (`vs-ssh.visualstudio.com` → `https://{org}.visualstudio.com`, `ssh.dev.azure.com` → `https://dev.azure.com/{org}`).
 
-Pass `--org <org-url>` explicitly on every `az repos` / `az boards` / `az devops invoke` call (never rely on `--detect` or ambient defaults). `az repos pr show` accepts only `--id`, `--org`, `--detect`, and `--open`; `pr list` also takes `--project` and `--repository`.
+Pass `--org <org-url>` explicitly on every `az repos` / `az boards` / `az devops invoke` call (never rely on `--detect` or ambient defaults). `az repos pr show` accepts only `--id`, `--org`, `--detect`, and `--open`; `pr list` also takes `--project` and `--repository`. No `az` command takes `--output-file`: `az devops invoke` saves the response body with `--out-file <path>`, and every other `az` command writes to a file through `> <path>`.
 
 ## Tool: MCP vs CLI
 
