@@ -3,8 +3,8 @@
 
 - `rm` with an unquoted glob: a glob deleted a user backup on 2026-11-03. Delete by exact path.
 - `az repos pr update --description` without `--draft`: the call publishes a draft PR.
-- An unquoted glob in a `--flag=value` word (`--include=*.py`): zsh expands it and aborts the whole command
-  with "no matches found" (sessions d5b3dbc1 and 26411941).
+- An unquoted glob in a `--flag=value` word (`--include=*.py`, `--format=%(trailers)`): zsh expands it and
+  aborts the whole command with "no matches found" (sessions d5b3dbc1, 26411941 and afba83ab).
 
 Set CLAUDE_SAFETY_GUARD=0 to turn the guard off.
 """
@@ -19,8 +19,9 @@ QUOTED = re.compile(r"'[^']*'|\"(?:[^\"\\]|\\.)*\"")
 RM = re.compile(r"^\s*(sudo\s+)?rm\s")
 GLOB = re.compile(r"[*?]|\[[^\]]*\]")
 PR_UPDATE = re.compile(r"\baz\s+repos\s+pr\s+update\b")
-# A `--flag=value` word whose value holds a glob character that no backslash escapes.
-FLAG_GLOB = re.compile(r"(?<!\S)--[\w-]+=(?:\\.|[^\s\\*?])*[*?]\S*")
+# A `--flag=value` word whose value holds a glob character that no backslash escapes. A bare `(` counts
+# (`--format=%(trailers)`, session afba83ab); the `(` of a `$(…)` substitution does not.
+FLAG_GLOB = re.compile(r"(?<!\S)--[\w-]+=(?:\\.|\$\(|(?!\$\()[^\s\\*?(])*[*?(]\S*")
 
 
 def segments(command):
