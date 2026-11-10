@@ -9,20 +9,19 @@ On-demand reference for [git-worktrees.md](../git-worktrees.md). Read before run
 Before creating a worktree, check whether `<repo>` is already a linked worktree:
 
 ```bash
-GIT_DIR=$(git -C <repo> rev-parse --path-format=absolute --git-dir)
-COMMON_DIR=$(git -C <repo> rev-parse --path-format=absolute --git-common-dir)
+git -C <repo> rev-parse --path-format=absolute --git-dir --git-common-dir   # prints <git-dir>, then <common-dir>
 ```
 
-When `$GIT_DIR != $COMMON_DIR`:
-1. Do **not** create a nested worktree. Set `repo-root` to `$(git -C <repo> rev-parse --show-toplevel)` and `main-checkout` to `$(dirname "$COMMON_DIR")`.
-2. If the current branch matches `worktree-*`, rename it in place to the project's branch convention (`git -C <repo-root> branch -m <branch>`) and unset any accidental upstream to `origin/<default>` (`git -C <repo-root> branch --unset-upstream 2>/dev/null || true`).
+When `<git-dir>` differs from `<common-dir>`:
+1. Do **not** create a nested worktree. Set `repo-root` to the output of `git -C <repo> rev-parse --show-toplevel` and `main-checkout` to the parent folder of `<common-dir>`.
+2. If the current branch matches `worktree-*`, rename it in place to the project's branch convention (`git -C <repo-root> branch -m <branch>`) and unset any accidental upstream to `origin/<default>` (`git -C <repo-root> branch --unset-upstream`; an error that no upstream is set is fine).
 3. Lock the worktree with the standard `claude-skill:` reason if not already locked, emit the `[worktree-context]` block, and proceed directly to **Hydrate**.
 
 ## Base and branch
 
 ```bash
 git -C <repo> fetch -q origin
-DEFAULT=$(git -C <repo> symbolic-ref --short refs/remotes/origin/HEAD)   # e.g. origin/main
+git -C <repo> symbolic-ref --short refs/remotes/origin/HEAD   # <default>, e.g. origin/main
 ```
 
 - Default base: `origin/<default>` as just fetched ("branch out of latest main"). A caller may pass another base explicitly (a release branch, a PR head).
@@ -40,7 +39,7 @@ DIR=<repo>/.claude/worktrees/$SLUG
 REASON="claude-skill:<skill> ticket:<id> branch:<branch> started:$(date +%F) session:<session-id>"   # session id as in artifact-protocol › Claim › owner marker
 git -C <repo> worktree prune
 EXCLUDE="$(git -C <repo> rev-parse --path-format=absolute --git-common-dir)/info/exclude"   # absolute: a relative .git would resolve against the session cwd, i.e. the wrong repo
-git -C <repo> check-ignore -q .claude/worktrees/probe || echo '.claude/worktrees/' >> "$EXCLUDE"   # idempotent: skipped when any rule already ignores the path
+git -C <repo> check-ignore -q .claude/worktrees/probe   # exit 0: already ignored; exit 1: append `.claude/worktrees/` to $EXCLUDE (Edit tool)
 git -C <repo> worktree add --lock --reason "$REASON" --no-track -b <branch> "$DIR" <base>
 ```
 

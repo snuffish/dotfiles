@@ -20,7 +20,7 @@ A GREEN group (`--group`) lands all or nothing, because its tests ran only on th
 
 ```bash
 git -C <landing-tree> cherry-pick --no-commit $BASE..fix/finding-<group id>
-git -C <landing-tree> diff --quiet --cached fix/finding-<group id> -- <group's files> && echo "matches the tested tree"
+git -C <landing-tree> diff --quiet --cached fix/finding-<group id> -- <group's files>   # exit 0 = matches the tested tree
 git -C <landing-tree> commit -F <message file>
 ```
 

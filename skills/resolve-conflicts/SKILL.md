@@ -53,13 +53,13 @@ Read these before step 1:
 
 Use `git rev-parse --git-path` so detection works inside linked worktrees (a lone `REBASE_HEAD` without `rebase-merge` / `rebase-apply` is ignored as a leftover):
 
+Run each as its own Bash call. `command ls -d` prints the paths that exist and errors on the rest; each existing path names the operation in progress:
+
 ```bash
-R=<repo-root>
-for f in MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD rebase-merge rebase-apply; do
-  p=$(git -C "$R" rev-parse --git-path "$f"); [ -e "$R/$p" ] || [ -e "$p" ] && echo "$f"
-done
-git -C "$R" status --porcelain=v2 --branch
-git -C "$R" diff --name-only --diff-filter=U
+git -C <repo-root> rev-parse --path-format=absolute --git-path MERGE_HEAD --git-path CHERRY_PICK_HEAD --git-path REVERT_HEAD --git-path rebase-merge --git-path rebase-apply
+command ls -d <the five printed paths>
+git -C <repo-root> status --porcelain=v2 --branch
+git -C <repo-root> diff --name-only --diff-filter=U
 ```
 
 Unmerged paths with no head file and a stash in `git stash list` indicate a conflicted **stash pop/apply**.

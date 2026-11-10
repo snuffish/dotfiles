@@ -78,7 +78,8 @@ az devops invoke --org <org-url> --area wit --resource comments \
 # GitHub / GitLab
 gh pr view <n> --json title,body,state,headRefName,baseRefName,files,reviewDecision,reviews
 gh issue view <id> --comments
-glab mr view <n> && glab issue view <id> --comments
+glab mr view <n>
+glab issue view <id> --comments
 ```
 
 - **Follow linked work items, comments, and wiki links**: tasks often point to a parent story (`Hierarchy-Reverse`), work-item comments, or a wiki page for acceptance criteria.

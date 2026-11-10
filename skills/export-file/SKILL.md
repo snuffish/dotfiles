@@ -87,7 +87,7 @@ The host's file-writing tool overwrites silently, so never write the target with
    - `<suffix>` is the content kind followed by that section's suffix (ID + slug, else the branch, else a topic), e.g. `claude-opus-5.5-export-code-review-18815-local-env-scripts.md`.
    - The base name is always `export`, never a catalog name such as `code_review`. Commands that read those families expect their own structure.
 3. **Publish** with an exclusive create (`artifact-protocol` › *Claim*):
-   - **Generated name:** call `publish_new_artifact "$draft" "<dir>/<prefix>-export-<suffix>" "<ext>"` (`artifact-protocol` › *Claim*; its third argument sets the extension, defaulting to `md`).
+   - **Generated name:** run `bash ~/.terminal/skills/_modules/scripts/publish_new_artifact.sh <draft> <dir>/<prefix>-export-<suffix> <ext>` (`artifact-protocol` › *Claim*; its third argument sets the extension, defaulting to `md`).
    - **User-given name:** make one attempt with `( set -C; cat "$draft" > "$target" )`. If the file exists, show its first lines and ask whether to overwrite it or choose another name. Overwrite only on an explicit yes.
    - **Failure:** if publishing fails (missing or read-only directory), report the path and the reason. Don't fall back to another location unasked.
 

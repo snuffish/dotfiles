@@ -73,7 +73,8 @@ No checker → state `"no skill-drift check"` and go to Step 3.
 
 ```bash
 git -C <repo-root> status --porcelain=v1 -uall
-git -C <repo-root> diff --stat; git -C <repo-root> diff --staged --stat
+git -C <repo-root> diff --stat
+git -C <repo-root> diff --staged --stat
 git -C <repo-root> rev-list --count @{u}..HEAD 2>/dev/null     # commits already waiting to be pushed
 ```
 
@@ -109,15 +110,11 @@ git -C <repo-root> rev-list --count @{u}..HEAD 2>/dev/null     # commits already
 
 Skip under `no-push`. Otherwise ensure upstream matches the branch itself (never push a feature branch onto `origin/main` when `@{u}` points at `origin/main`):
 
-```bash
-UP=$(git -C <repo-root> rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || true)
-BR=$(git -C <repo-root> rev-parse --abbrev-ref HEAD)
-if [ "$UP" = "origin/$BR" ]; then
-  git -C <repo-root> push
-else
-  git -C <repo-root> push -u origin HEAD
-fi
-```
+Run each as its own Bash call:
+
+1. `git -C <repo-root> rev-parse --abbrev-ref HEAD` gives the branch `<BR>`.
+2. `git -C <repo-root> rev-parse --abbrev-ref --symbolic-full-name @{u}` gives the upstream. It fails when none is set.
+3. When the upstream is `origin/<BR>`, run `git -C <repo-root> push`. Otherwise, or when step 2 failed, run `git -C <repo-root> push -u origin HEAD`.
 
 - **Behind upstream (non-fast-forward, `fetch first`):** integrate and push; do not stop to ask. Run the same push mode: `/commit` was the request to get the commit onto the remote.
   1. Note the incoming commits: `git -C <repo-root> fetch` then `git -C <repo-root> log --oneline HEAD..@{u}` (name them in the output).
