@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "unslop": {
+      "source": "theclaymethod/unslop",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "d72fb3b3f3ee5ff8007406910f789a278e6798ee1e90e966723bc5fe112f1bdf"
+    }
+  }
+}
