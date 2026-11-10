@@ -1,6 +1,6 @@
 # outward-writes
 
-Shared safety contract for Commands that write to a remote git remote, PR host, or issue tracker (`commit`, `pr-summary`, `pr-desc`, `pr-post-comments`, `create-ticket`), plus _Voice pass_ for Commands that draft text other people will read (`pr-feedback-review`, `pr-polish`, `implement-feature`, `priis-prod-diagnose`). Extends `core` › _The `/proceed` gate_ rule 2.
+Shared safety contract for Commands that write to a remote git remote, PR host, or issue tracker (`commit`, `pr-desc`, `pr-post-comments`, `create-ticket`), plus _Voice pass_ for Commands that draft text other people will read (`pr-feedback-review`, `pr-polish`, `implement-feature`, `priis-prod-diagnose`). Extends `core` › _The `/proceed` gate_ rule 2.
 
 ## Modules
 
@@ -13,7 +13,7 @@ Read these before using this one:
 ## Explicit request & draft mode
 
 - Outward writes (commits, pushes, PR creation or description/title/label updates, PR comment or reply posts, tracker item creation) require an explicit request for that action.
-- Preview / draft is the default whenever the Command supports a preview mode (`pr-summary`, `create-ticket`, `pr-post-comments --dry-run`): render the exact payload first and write only when asked.
+- Preview / draft is the default whenever the Command supports a preview mode (`pr-desc`, `create-ticket`, `pr-post-comments --dry-run`): render the exact payload first and write only when asked.
 
 ## Voice pass
 

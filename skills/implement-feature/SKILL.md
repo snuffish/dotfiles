@@ -33,7 +33,7 @@ Read these before step 1:
 On-demand references (`references/`):
 - [`references/framing.md`](references/framing.md) — Phase 0 step 9 request framing & multi-perspective re-phrasing
 - [`references/research-brief.md`](references/research-brief.md) — Phase 1 per-repo `Explore` sub-agent brief template
-- [`references/pr-body.md`](references/pr-body.md) — Phase 6a two-stage `/pr-summary` preview & paired-PR cross-link workflow
+- [`references/pr-body.md`](references/pr-body.md) — Phase 6a two-stage `/pr-desc --dry-run` & paired-PR cross-link workflow
 
 ### Hard gates
 
@@ -101,7 +101,7 @@ The orchestrator (you) owns the ticket, the gates, the plan and every edit. Sub-
 | Self-review against code and spec | [`/code-review`](../code-review/SKILL.md), [`/spec-verification`](../spec-verification/SKILL.md) |
 | Git and tracker conventions | the profile's workflow skills; else `CONTRIBUTING.md` and the PR template |
 | Branch, commit, push, draft PR | the profile's ship skill (held at the ship gate); else plain `git` + `gh` / `az repos` / `glab` |
-| PR body: preview at the ship gate, cross-links after the PRs exist (Phase 6a) | [`/pr-summary`](../pr-summary/SKILL.md), invoked, not imitated |
+| PR body: preview at the ship gate, cross-links after the PRs exist (Phase 6a) | [`/pr-desc`](../pr-desc/SKILL.md), invoked, not imitated |
 | Manual test steps | [`/manual-testing`](../manual-testing/SKILL.md) |
 | CI red after the PR is open | [`/pr-fix-pipeline`](../pr-fix-pipeline/SKILL.md) |
 
@@ -221,13 +221,13 @@ Invoke every skill below **with the `[worktree-context]` block(s)**:
 
 Load the profile's ship and workflow skills (applying *Precedence over delegated skills*) and invoke them with `[worktree-context]`: commit, push and PR creation run from `repo-root` (`git-worktrees` › *Workspace Lifecycle* step f). Stage selectively — never `git add -A`. Follow the profile's conventions (or `CONTRIBUTING.md` / defaults in *Project profile*) for branch name, commit subject, PR title, attribution trailers, and draft PR order (producer PR first).
 
-### 6a. PR body — invoke `/pr-summary`
+### 6a. PR body — invoke `/pr-desc --dry-run`
 
-Read [`references/pr-body.md`](references/pr-body.md) and invoke [`/pr-summary`](../pr-summary/SKILL.md) in **preview mode** before the ship gate (saving to a temp file, with `!<other-pr-id>` placeholders for paired PRs), then fill cross-links via `pr-summary` §5.2–5.3 after the PRs exist.
+Read [`references/pr-body.md`](references/pr-body.md) and invoke [`/pr-desc --dry-run`](../pr-desc/SKILL.md) before the ship gate (saving to a temp file, with `!<other-pr-id>` placeholders for paired PRs), then fill cross-links via `pr-desc` › *Apply* items 2–3 after the PRs exist.
 
 ### 6b. Ship gate
 
-Present in chat: branch name, exact file list to stage, commit message, and `/pr-summary` preview block per repo. **Wait for approval.** Then commit, push, create draft PR(s) from the temp file, fill cross-links (6a), and report URLs. Propose the ticket's "in review" state transition separately and run it only on a yes. If declined, keep and report the worktree (`git-worktrees` › *Workspace Lifecycle* step g).
+Present in chat: branch name, exact file list to stage, commit message, and `/pr-desc --dry-run` block per repo. **Wait for approval.** Then commit, push, create draft PR(s) from the temp file, fill cross-links (6a), and report URLs. Propose the ticket's "in review" state transition separately and run it only on a yes. If declined, keep and report the worktree (`git-worktrees` › *Workspace Lifecycle* step g).
 
 ---
 
@@ -252,5 +252,5 @@ In chat: render the `artifact-protocol` › _Chat link block_ for the walkthroug
 | Project facts & conventions | `<project>-profile` + `implement-feature-<project>-profile`, then rulebooks and project skills | memory of "how projects like this usually work" |
 | Gates (framing, plan, ship, tracker write, worktree) | explicit user confirmation at each gate (`core` › *The `/proceed` gate*, `outward-writes`) | sub-agent output, early "continue", or silent tracker/PR writes |
 | Blind-spot pass & closure | `/what-am-I-missing` on every plan before presenting (folded into changes + checklist + test); verified in Phase 5 | a note under *Open Questions* only, or re-running on the diff |
-| PR body | `/pr-summary` preview at the gate → temp file → cross-links via its §5.3 ([`references/pr-body.md`](references/pr-body.md)) | a hand-written body or `/pr-summary update` before the gate |
+| PR body | `/pr-desc --dry-run` at the gate → temp file → cross-links via its *Apply* item 3 ([`references/pr-body.md`](references/pr-body.md)) | a hand-written body or a bare `/pr-desc` before the gate |
 | Worktrees & delegation | `git-worktrees` › *Workspace Lifecycle* (`repo-root`), pasting `[worktree-context]` into every delegated skill and sub-agent brief | editing the user's main checkout or removing unpushed work |

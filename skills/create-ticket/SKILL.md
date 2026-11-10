@@ -36,7 +36,7 @@ Read these before step 1:
 | Situation | Use instead |
 |---|---|
 | Commenting on an existing PR or thread | [`/pr-post-comments`](../pr-post-comments/SKILL.md) |
-| Writing or refreshing a PR description | [`/pr-summary`](../pr-summary/SKILL.md) |
+| Writing or refreshing a PR description | [`/pr-desc`](../pr-desc/SKILL.md) |
 | The follow-up still needs research before filing | [`/investigate`](../investigate/SKILL.md) |
 | Implementing the ticket | [`/implement-feature`](../implement-feature/SKILL.md) |
 

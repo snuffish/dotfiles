@@ -48,7 +48,7 @@ Read these before step 1:
 | Situation | Use instead |
 |---|---|
 | Nothing drafted yet | [`/code-review`](../code-review/SKILL.md) or [`/pr-feedback-review`](../pr-feedback-review/SKILL.md) |
-| Writing or updating the PR description | [`/pr-summary`](../pr-summary/SKILL.md) |
+| Writing or updating the PR description | [`/pr-desc`](../pr-desc/SKILL.md) |
 | Red pipeline on the PR | [`/pr-fix-pipeline`](../pr-fix-pipeline/SKILL.md) |
 
 ---

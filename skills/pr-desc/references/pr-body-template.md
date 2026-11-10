@@ -1,6 +1,6 @@
 # Default PR Body Template & Composition Rules
 
-On-demand reference for [SKILL.md](../SKILL.md) › *Step 3 — Compose the PR body*. When the repo defines its own PR template (`docs/pull_request_template.md`, `.github/pull_request_template.md`), use the repo's template structure instead.
+On-demand reference for [SKILL.md](../SKILL.md) › *Step 4 — Compose the body and title*. When the repo defines its own PR template, use its structure instead and append only *Testing* and *Risks* from here.
 
 ---
 
@@ -24,6 +24,14 @@ On-demand reference for [SKILL.md](../SKILL.md) › *Step 3 — Compose the PR b
 #### Bug description
 
 <!-- Include whenever the PR actually fixes a bug — i.e. the classification includes "Bug fix"/"Hotfix" — regardless of branch prefix. Explain what the bug was, why it happened, and how it was resolved. Omit entirely when nothing incorrect is being corrected. -->
+
+#### Testing
+
+<!-- What was actually run (tests, builds, manual checks) and what wasn't. If nothing is known, write "Not yet tested" and suggest what to run. -->
+
+#### Risks
+
+<!-- Migrations, contract or API changes, config, behaviour changes, rollback notes. "Low: <reason>" when there is nothing significant. -->
 ```
 
 ---
@@ -40,6 +48,8 @@ On-demand reference for [SKILL.md](../SKILL.md) › *Step 3 — Compose the PR b
   - **Dependency update**, **Test coverage**, **Documentation**, **Code cleanup**.
 - **PR Summary**: 2–3 sentences maximum stating *what*, *why*, and *impact*. Do not mention a paired PR in prose when the footer relation link (`This PR relates to: !<id>`) carries it.
 - **Key impacts**: 2–5 bullets labelled by backticked behaviour name (e.g. `` `Closure under expired template` ``), grouping related file edits.
+- **Testing**: never claim a check you didn't see pass.
+- **Risks**: one bullet per risk; `Low: <reason>` when there is nothing significant.
 - **Bug description**: include whenever the classification includes **Bug fix** or **Hotfix** (regardless of branch prefix); omit entirely when no defect is fixed.
 - **Footer trailer lines**: place platform trailer lines at the bottom after a `---` divider, with `Resolved: #<work-item-id>` first and `This PR relates to: !<counterpart-id>` last.
-- **Length budget — max 4000 characters**: Azure DevOps hard-caps PR descriptions at 4000 characters. Measure with `wc -m` before printing or updating; if over 4000 characters, condense (tighten prose → collapse nested sub-bullets → merge overlapping bullets → shorten Bug description) without truncating mid-sentence or dropping footer trailers.
+- **Length budget — max 4000 characters**: Azure DevOps hard-caps PR descriptions at 4000 characters. Measure with `wc -m` before printing or updating; if over 4000 characters, condense (tighten prose → collapse nested sub-bullets → merge overlapping bullets → shorten Bug description, Testing and Risks) without truncating mid-sentence or dropping footer trailers.

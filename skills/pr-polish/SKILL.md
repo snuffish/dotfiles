@@ -91,13 +91,13 @@ After `/proceed`, apply the picked rows with the Step 4 batch procedure (commits
 ### Step 6: PR description and thread replies (drafts only)
 
 1. Stop if any `blocks-description` finding is open.
-2. **Description**: run [`/pr-summary`](../pr-summary/SKILL.md) in preview mode against the base. It uses the repo PR template (`docs/pull_request_template.md` or the profile's path). Save the body in the artifact.
-3. **Threads**: fetch the active threads (`pr-host` › _Fetch discussion threads_, `az repos pr` / `az devops invoke` on Azure DevOps). For each thread, check the code at HEAD (verify in code, not commit messages, as in [`/pr-feedback-review`](../pr-feedback-review/SKILL.md)), find the commit that addresses it (`git log --oneline <merge-base>..HEAD -- <path>`, `git log -L` for the lines) and draft a reply quoting `<short-sha> <subject>`. Run each reply through `outward-writes` › _Voice pass_ (the SHA stays verbatim) and mark it `Voice pass: done`; `/pr-summary` runs the pass on the description itself.
+2. **Description**: run [`/pr-desc --dry-run`](../pr-desc/SKILL.md) against the base. It uses the repo PR template (`docs/pull_request_template.md` or the profile's path). Save the body in the artifact.
+3. **Threads**: fetch the active threads (`pr-host` › _Fetch discussion threads_, `az repos pr` / `az devops invoke` on Azure DevOps). For each thread, check the code at HEAD (verify in code, not commit messages, as in [`/pr-feedback-review`](../pr-feedback-review/SKILL.md)), find the commit that addresses it (`git log --oneline <merge-base>..HEAD -- <path>`, `git log -L` for the lines) and draft a reply quoting `<short-sha> <subject>`. Run each reply through `outward-writes` › _Voice pass_ (the SHA stays verbatim) and mark it `Voice pass: done`; `/pr-desc` runs the pass on the description itself.
 4. **Uncommitted fixes have no commit to quote.** Check the working tree first: if `git diff HEAD -- <path>` touches the thread's lines, the fix is uncommitted (a batch left `applied, uncommitted`, or the user's own uncommitted work). Mark that draft `needs commit`, with no SHA, and never fall back to an older commit that merely touched the same path. Quote a SHA only after `git show <sha> -- <path>` shows the change the thread asked for. A batch committed in Step 4/5 is quoted by its SHA. List the `needs commit` threads and suggest `/commit`. After the user commits, rerun this step for those threads only, so the drafts quote the new SHAs.
 
 ### Step 7: Post on explicit request
 
-Only when the user asks: apply the description with `/pr-summary update` and post the replies with [`/pr-post-comments`](../pr-post-comments/SKILL.md) from the artifact. Never post a `needs commit` draft: leave those threads out, name them, and post them only after Step 6.4 has re-drafted them with a SHA. A declined write is final (`outward-writes` › _Denied write is final_).
+Only when the user asks: apply the description with `/pr-desc` and post the replies with [`/pr-post-comments`](../pr-post-comments/SKILL.md) from the artifact. Never post a `needs commit` draft: leave those threads out, name them, and post them only after Step 6.4 has re-drafted them with a SHA. A declined write is final (`outward-writes` › _Denied write is final_).
 
 ---
 

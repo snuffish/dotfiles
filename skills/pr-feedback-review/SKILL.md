@@ -68,7 +68,7 @@ Suggest `--deep` (`fan-out` › *Bare vs deep*) when there are >10 active thread
 |---|---|
 | Reviewing the PR's code yourself | [`/code-review`](../code-review/SKILL.md) |
 | The PR's build validation is red | [`/pr-fix-pipeline`](../pr-fix-pipeline/SKILL.md) |
-| Writing or refreshing the PR description | [`/pr-summary`](../pr-summary/SKILL.md) |
+| Writing or refreshing the PR description | [`/pr-desc`](../pr-desc/SKILL.md) |
 | How to try the change by hand | [`/manual-testing`](../manual-testing/SKILL.md) |
 
 ---

@@ -20,12 +20,12 @@ The shared PRIIS fields — workspace, Layout, Tracker & PR tooling, References 
 | **Implementing ID** | Follow `.claude/skills/priis-backend-workflow/SKILL.md` › work-item intake on `origin/main` (`project-profile` › *Upstream content*): branch, commit and PR use the **Task or Bug** ID, never the parent story (or the story ID itself when no `Backend`/`Frontend`-tagged child task exists; never create tickets under `/implement-feature`). |
 | **Scaffold skills** | `priis-backend-scaffold`, `priis-frontend-scaffold` |
 | **Verify** | `priis-backend-verify` (incl. its architecture-tests phase), `priis-frontend-verify` (+ `npm run e2e`, which the verify skill lacks). |
-| **Ship** | `priis-ship` (backend, frontend or both), `.claude/skills/_shared/workflow.md`, `priis-backend-workflow`, `priis-frontend-workflow`, `pr-summary`. Conventions in *Phase 6*. |
+| **Ship** | `priis-ship` (backend, frontend or both), `.claude/skills/_shared/workflow.md`, `priis-backend-workflow`, `priis-frontend-workflow`, `pr-desc`. Conventions in *Phase 6*. |
 | **Worktree branch** | Follow `.claude/skills/_shared/workflow.md` on `origin/main` (`feature/<id>_<english-kebab-slug>`, `bugfix/`, `hotfix/`, underscore after ID; base = freshly fetched `origin/main`, or `origin/release/<major>.<minor>.X` for hotfixes). |
 
 ### Precedence overrides for delegated PRIIS skills
 
-- `priis-ship` pushes and creates the PR right after its file prompt, passes the PR body inline, and moves the work item to `Pull Request` unconditionally. Under the orchestrator: push and PR creation wait for the ship gate; the PR body goes through a temp file (`pr-summary` §5.2); the state transition is a tracker write.
+- `priis-ship` pushes and creates the PR right after its file prompt, passes the PR body inline, and moves the work item to `Pull Request` unconditionally. Under the orchestrator: push and PR creation wait for the ship gate; the PR body goes through a temp file (`pr-desc` › *Apply* item 3); the state transition is a tracker write.
 - `priis-ship`, `priis-backend-verify` and `priis-frontend-verify` resolve the repo from the current working directory (`rev-parse --show-toplevel`, `cd frontend/source/priis-web`) when no `[worktree-context]` is handed in. Under the orchestrator they always receive the block and run against `repo-root`; the ship skill confirms the worktree's existing branch instead of `checkout -b`.
 
 ---
@@ -96,7 +96,7 @@ The frontend reads the committed `frontend/source/priis-web/openapi/swagger.json
 
 Follow `.claude/skills/_shared/workflow.md` on `origin/main` for branch naming (`feature/<id>_<english-kebab-slug>`, `bugfix/`, `hotfix/`) and commit/PR subject format (`#<id>: <short English imperative description>`), plus these orchestrator overrides:
 - **No AI-attribution trailers** (`Co-Authored-By`, `🤖 Generated with …`) in commits or PR bodies.
-- **PR body**: invoke `/pr-summary` in preview mode (reads `docs/pull_request_template.md`), then follow `/implement-feature` Phase 6a (`implement-feature/references/pr-body.md`).
+- **PR body**: invoke `/pr-desc --dry-run` (reads `docs/pull_request_template.md`), then follow `/implement-feature` Phase 6a (`implement-feature/references/pr-body.md`).
 - **Work-item state** after the PR exists: propose `Pull Request` and run only on a yes.
 
 ---
@@ -109,4 +109,4 @@ Follow `.claude/skills/_shared/workflow.md` on `origin/main` for branch naming (
 | Migrations | `.claude/skills/priis-backend-ef-core/SKILL.md` §13; verify via `GR.PRIIS.CLI -- migrations -s -d` (ask before `-d`) | trusting `EnsureCreated` integration tests |
 | Single test project | `dotnet test --project backend/tests/… --treenode-filter "/*/*/Class/*"` | positional directory or `--filter` |
 | Swagger snapshot & imports | hand-patch small changes + `npm run codegen`; `npm run organize-imports` on changed files only | blanket `codegen:refresh` or `organize-imports:all` |
-| Ship & PR body | `.claude/skills/_shared/workflow.md` + `/pr-summary` preview → temp file, no AI trailers | inline `--description "…"`, Swedish title, or attribution trailers |
+| Ship & PR body | `.claude/skills/_shared/workflow.md` + `/pr-desc --dry-run` → temp file, no AI trailers | inline `--description "…"`, Swedish title, or attribution trailers |

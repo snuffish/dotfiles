@@ -368,21 +368,6 @@
       }
     },
     {
-      "id": "docs/adr/0004-pr-host-access-is-a-module.md:3:skill_ref:pr-summary",
-      "source": {
-        "file": "docs/adr/0004-pr-host-access-is-a-module.md",
-        "line": 3
-      },
-      "kind": "skill_ref",
-      "value": "pr-summary",
-      "quote": "eview`, `/pr-fix-pipeline`, `/pr-summary`, `/spec-verification` and `/pr-post-comments` each carried their own copy, and `/manual-testing` pulled in a",
-      "verify": {
-        "method": "skill_exists",
-        "name": "pr-summary",
-        "base": "repo"
-      }
-    },
-    {
       "id": "docs/adr/0004-pr-host-access-is-a-module.md:3:skill_ref:spec-verification",
       "source": {
         "file": "docs/adr/0004-pr-host-access-is-a-module.md",
@@ -1130,7 +1115,7 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/implement-feature-priis-profile/SKILL.md:23:skill_ref:pr-summary",
+      "id": "skills/Projects/GR.PRIIS/implement-feature-priis-profile/SKILL.md:23:skill_ref:pr-desc",
       "source": {
         "file": "skills/Projects/GR.PRIIS/implement-feature-priis-profile/SKILL.md",
         "line": 23,
@@ -1141,11 +1126,11 @@
         ]
       },
       "kind": "skill_ref",
-      "value": "pr-summary",
-      "quote": ", `priis-frontend-workflow`, `pr-summary`. Conventions in *Phase 6*. |",
+      "value": "pr-desc",
+      "quote": ", `priis-frontend-workflow`, `pr-desc`. Conventions in *Phase 6*. |",
       "verify": {
         "method": "skill_exists",
-        "name": "pr-summary",
+        "name": "pr-desc",
         "base": "repo"
       }
     },
@@ -1162,7 +1147,7 @@
       },
       "kind": "path",
       "value": ".claude/skills/_shared/workflow.md",
-      "quote": "(backend, frontend or both), `.claude/skills/_shared/workflow.md`, `priis-backend-workflow`, `priis-frontend-workflow`, `pr-summary`. Conventions in *",
+      "quote": "*Ship** | `priis-ship` (backend, frontend or both), `.claude/skills/_shared/workflow.md`, `priis-backend-workflow`, `priis-frontend-workflow",
       "verify": {
         "method": "path_exists",
         "path": ".claude/skills/_shared/workflow.md",
@@ -1178,7 +1163,7 @@
       },
       "kind": "skill_ref",
       "value": "priis-frontend-workflow",
-      "quote": "`, `priis-backend-workflow`, `priis-frontend-workflow`, `pr-summary`. Conventions in *Phase 6*. |",
+      "quote": "or both), `.claude/skills/_shared/workflow.md`, `priis-backend-workflow`, `priis-frontend-workflow`, `pr-desc`. Conventions in *Phase 6*. |",
       "verify": {
         "method": "skill_exists",
         "name": "priis-frontend-workflow",
@@ -1594,7 +1579,7 @@
       },
       "kind": "path",
       "value": "docs/pull_request_template.md",
-      "quote": "mary` in preview mode (reads `docs/pull_request_template.md`), then follow `/implement-feature` Phase 6a (`implement-feature/references/pr-body.md`).",
+      "quote": "- **PR body**: invoke `/pr-desc --dry-run` (reads `docs/pull_request_template.md`), then follow `/implement-feature` Phase 6a (`implement-feat",
       "verify": {
         "method": "path_exists",
         "path": "docs/pull_request_template.md",
@@ -4365,7 +4350,7 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "and | 52 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `clean`, `code-documentation`, `code-r",
+      "quote": "neral (top level) | Command | 51 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `clean`, `code-documentation`, `code-review`,",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
@@ -4645,7 +4630,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-fix-pipeline",
-      "quote": "ganize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `pr-summary`, `",
+      "quote": "trees`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `pr",
       "verify": {
         "method": "skill_exists",
         "name": "pr-fix-pipeline",
@@ -4660,28 +4645,10 @@
       },
       "kind": "skill_ref",
       "value": "pr-post-comments",
-      "quote": "feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `pr-summary`, `principles-interview`, `problem`,",
+      "quote": "desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `refine`, `re",
       "verify": {
         "method": "skill_exists",
         "name": "pr-post-comments",
-        "base": "repo"
-      }
-    },
-    {
-      "id": "skills/README.md:45:skill_ref:pr-summary",
-      "source": {
-        "file": "skills/README.md",
-        "line": 45,
-        "also_lines": [
-          68
-        ]
-      },
-      "kind": "skill_ref",
-      "value": "pr-summary",
-      "quote": "r-fix-pipeline`, `pr-polish`, `pr-post-comments`, `pr-summary`, `principles-interview`, `problem`, `proceed`, `r",
-      "verify": {
-        "method": "skill_exists",
-        "name": "pr-summary",
         "base": "repo"
       }
     },
@@ -4693,7 +4660,7 @@
       },
       "kind": "skill_ref",
       "value": "problem",
-      "quote": "-comments`, `pr-summary`, `principles-interview`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-c",
+      "quote": "eline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-conflicts`, `shap",
       "verify": {
         "method": "skill_exists",
         "name": "problem",
@@ -4708,7 +4675,7 @@
       },
       "kind": "skill_ref",
       "value": "proceed",
-      "quote": "`pr-summary`, `principles-interview`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-conflicts`,",
+      "quote": "-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-conflicts`, `shape-idea`, `s",
       "verify": {
         "method": "skill_exists",
         "name": "proceed",
@@ -5113,19 +5080,19 @@
       }
     },
     {
-      "id": "skills/README.md:41:count:53",
+      "id": "skills/README.md:41:count:52",
       "source": {
         "file": "skills/README.md",
         "line": 41
       },
       "kind": "count",
-      "value": "53",
-      "quote": "58 skills total \u2014 53 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "value": "52",
+      "quote": "57 skills total \u2014 52 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/*/SKILL.md",
         "base": "repo",
-        "expected": 53,
+        "expected": 52,
         "op": "eq"
       }
     },
@@ -5137,7 +5104,7 @@
       },
       "kind": "count",
       "value": "5 GR.PRIIS project skills",
-      "quote": "58 skills total \u2014 53 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "57 skills total \u2014 52 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/Projects/GR.PRIIS/*/SKILL.md",
@@ -5154,7 +5121,7 @@
       },
       "kind": "count",
       "value": "8 Modules",
-      "quote": "58 skills total \u2014 53 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "57 skills total \u2014 52 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/_modules/*.md",
@@ -5246,7 +5213,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-polish",
-      "quote": "r-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `pr-summary`, `principles-in",
+      "quote": "e`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed",
       "verify": {
         "method": "skill_exists",
         "name": "pr-polish",
@@ -5927,7 +5894,7 @@
       },
       "kind": "skill_ref",
       "value": "investigate",
-      "quote": "*Speed fan-out* steps of `investigate`, `plan`, `pr-summary`, `what-am-I-missing`",
+      "quote": "ptions`, `implement-feature`, and the *Speed fan-out* steps of `investigate`, `plan`, `pr-desc`, `what-am-I-missing`, `manual-testing`, `pr-",
       "verify": {
         "method": "skill_exists",
         "name": "investigate",
@@ -5942,7 +5909,7 @@
       },
       "kind": "skill_ref",
       "value": "plan",
-      "quote": "*Speed fan-out* steps of `investigate`, `plan`, `pr-summary`, `what-am-I-missing`",
+      "quote": "mplement-feature`, and the *Speed fan-out* steps of `investigate`, `plan`, `pr-desc`, `what-am-I-missing`, `manual-testing`, `pr-fix-pipelin",
       "verify": {
         "method": "skill_exists",
         "name": "plan",
@@ -5950,17 +5917,17 @@
       }
     },
     {
-      "id": "skills/_modules/fan-out.md:3:skill_ref:pr-summary",
+      "id": "skills/_modules/fan-out.md:3:skill_ref:pr-desc",
       "source": {
         "file": "skills/_modules/fan-out.md",
         "line": 3
       },
       "kind": "skill_ref",
-      "value": "pr-summary",
-      "quote": "*Speed fan-out* steps of `investigate`, `plan`, `pr-summary`, `what-am-I-missing`",
+      "value": "pr-desc",
+      "quote": "*Speed fan-out* steps of `investigate`, `plan`, `pr-desc`, `what-am-I-missing`",
       "verify": {
         "method": "skill_exists",
-        "name": "pr-summary",
+        "name": "pr-desc",
         "base": "repo"
       }
     },
@@ -9087,17 +9054,17 @@
       }
     },
     {
-      "id": "skills/commit/SKILL.md:35:doc_link:../pr-summary/SKILL.md",
+      "id": "skills/commit/SKILL.md:35:doc_link:../pr-desc/SKILL.md",
       "source": {
         "file": "skills/commit/SKILL.md",
         "line": 35
       },
       "kind": "doc_link",
-      "value": "../pr-summary/SKILL.md",
-      "quote": "(../pr-summary/SKILL.md)",
+      "value": "../pr-desc/SKILL.md",
+      "quote": "(../pr-desc/SKILL.md)",
       "verify": {
         "method": "link_resolves",
-        "href": "../pr-summary/SKILL.md",
+        "href": "../pr-desc/SKILL.md",
         "base": "file_dir"
       }
     },
@@ -9202,10 +9169,10 @@
       }
     },
     {
-      "id": "skills/commit/SKILL.md:128:doc_link:pr-host \u203a Resolve the PR from a branch",
+      "id": "skills/commit/SKILL.md:134:doc_link:pr-host \u203a Resolve the PR from a branch",
       "source": {
         "file": "skills/commit/SKILL.md",
-        "line": 128
+        "line": 134
       },
       "kind": "doc_link",
       "value": "pr-host \u203a Resolve the PR from a branch",
@@ -10088,32 +10055,32 @@
       }
     },
     {
-      "id": "skills/create-ticket/SKILL.md:38:doc_link:../pr-summary/SKILL.md",
+      "id": "skills/create-ticket/SKILL.md:39:doc_link:../pr-desc/SKILL.md",
       "source": {
         "file": "skills/create-ticket/SKILL.md",
         "line": 39
       },
       "kind": "doc_link",
-      "value": "../pr-summary/SKILL.md",
-      "quote": "(../pr-summary/SKILL.md)",
+      "value": "../pr-desc/SKILL.md",
+      "quote": "(../pr-desc/SKILL.md)",
       "verify": {
         "method": "link_resolves",
-        "href": "../pr-summary/SKILL.md",
+        "href": "../pr-desc/SKILL.md",
         "base": "file_dir"
       }
     },
     {
-      "id": "skills/create-ticket/SKILL.md:38:skill_ref:pr-summary",
+      "id": "skills/create-ticket/SKILL.md:39:skill_ref:pr-desc",
       "source": {
         "file": "skills/create-ticket/SKILL.md",
         "line": 39
       },
       "kind": "skill_ref",
-      "value": "pr-summary",
-      "quote": "| Writing or refreshing a PR description | [`/pr-summary`](../pr-summary/SKILL.md) |",
+      "value": "pr-desc",
+      "quote": "| Writing or refreshing a PR description | [`/pr-desc`](../pr-desc/SKILL.md) |",
       "verify": {
         "method": "skill_exists",
-        "name": "pr-summary",
+        "name": "pr-desc",
         "base": "repo"
       }
     },
@@ -11212,7 +11179,7 @@
       }
     },
     {
-      "id": "skills/implement-feature/SKILL.md:36:skill_ref:pr-summary",
+      "id": "skills/implement-feature/SKILL.md:36:skill_ref:pr-desc",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
         "line": 36,
@@ -11225,11 +11192,11 @@
         ]
       },
       "kind": "skill_ref",
-      "value": "pr-summary",
-      "quote": "- [`references/pr-body.md`](references/pr-body.md) \u2014 Phase 6a two-stage `/pr-summary` preview & paired-PR cross-link workflow",
+      "value": "pr-desc",
+      "quote": "- [`references/pr-body.md`](references/pr-body.md) \u2014 Phase 6a two-stage `/pr-desc --dry-run` & paired-PR cross-link workflow",
       "verify": {
         "method": "skill_exists",
-        "name": "pr-summary",
+        "name": "pr-desc",
         "base": "repo"
       }
     },
@@ -11517,7 +11484,7 @@
       }
     },
     {
-      "id": "skills/implement-feature/SKILL.md:104:doc_link:../pr-summary/SKILL.md",
+      "id": "skills/implement-feature/SKILL.md:104:doc_link:../pr-desc/SKILL.md",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
         "line": 104,
@@ -11526,11 +11493,11 @@
         ]
       },
       "kind": "doc_link",
-      "value": "../pr-summary/SKILL.md",
-      "quote": "(../pr-summary/SKILL.md)",
+      "value": "../pr-desc/SKILL.md",
+      "quote": "(../pr-desc/SKILL.md)",
       "verify": {
         "method": "link_resolves",
-        "href": "../pr-summary/SKILL.md",
+        "href": "../pr-desc/SKILL.md",
         "base": "file_dir"
       }
     },
@@ -11699,7 +11666,7 @@
       }
     },
     {
-      "id": "skills/implement-feature/references/pr-body.md:1:skill_ref:pr-summary",
+      "id": "skills/implement-feature/references/pr-body.md:1:skill_ref:pr-desc",
       "source": {
         "file": "skills/implement-feature/references/pr-body.md",
         "line": 1,
@@ -11709,26 +11676,26 @@
         ]
       },
       "kind": "skill_ref",
-      "value": "pr-summary",
-      "quote": "# Phase 6a \u2014 PR Body via `/pr-summary`",
+      "value": "pr-desc",
+      "quote": "# Phase 6a \u2014 PR Body via `/pr-desc`",
       "verify": {
         "method": "skill_exists",
-        "name": "pr-summary",
+        "name": "pr-desc",
         "base": "repo"
       }
     },
     {
-      "id": "skills/implement-feature/references/pr-body.md:3:doc_link:../../pr-summary/SKILL.md",
+      "id": "skills/implement-feature/references/pr-body.md:3:doc_link:../../pr-desc/SKILL.md",
       "source": {
         "file": "skills/implement-feature/references/pr-body.md",
         "line": 3
       },
       "kind": "doc_link",
-      "value": "../../pr-summary/SKILL.md",
-      "quote": "(../../pr-summary/SKILL.md)",
+      "value": "../../pr-desc/SKILL.md",
+      "quote": "(../../pr-desc/SKILL.md)",
       "verify": {
         "method": "link_resolves",
-        "href": "../../pr-summary/SKILL.md",
+        "href": "../../pr-desc/SKILL.md",
         "base": "file_dir"
       }
     },
@@ -13725,10 +13692,10 @@
       }
     },
     {
-      "id": "skills/plan/references/review.md:31:doc_link:SKILL.md \u203a Link block",
+      "id": "skills/plan/references/review.md:33:doc_link:SKILL.md \u203a Link block",
       "source": {
         "file": "skills/plan/references/review.md",
-        "line": 31
+        "line": 33
       },
       "kind": "doc_link",
       "value": "SKILL.md \u203a Link block",
@@ -14074,32 +14041,32 @@
       }
     },
     {
-      "id": "skills/pr-feedback-review/SKILL.md:71:doc_link:../pr-summary/SKILL.md",
+      "id": "skills/pr-feedback-review/SKILL.md:71:doc_link:../pr-desc/SKILL.md",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
         "line": 71
       },
       "kind": "doc_link",
-      "value": "../pr-summary/SKILL.md",
-      "quote": "(../pr-summary/SKILL.md)",
+      "value": "../pr-desc/SKILL.md",
+      "quote": "(../pr-desc/SKILL.md)",
       "verify": {
         "method": "link_resolves",
-        "href": "../pr-summary/SKILL.md",
+        "href": "../pr-desc/SKILL.md",
         "base": "file_dir"
       }
     },
     {
-      "id": "skills/pr-feedback-review/SKILL.md:71:skill_ref:pr-summary",
+      "id": "skills/pr-feedback-review/SKILL.md:71:skill_ref:pr-desc",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
         "line": 71
       },
       "kind": "skill_ref",
-      "value": "pr-summary",
-      "quote": "| Writing or refreshing the PR description | [`/pr-summary`](../pr-summary/SKILL.md) |",
+      "value": "pr-desc",
+      "quote": "| Writing or refreshing the PR description | [`/pr-desc`](../pr-desc/SKILL.md) |",
       "verify": {
         "method": "skill_exists",
-        "name": "pr-summary",
+        "name": "pr-desc",
         "base": "repo"
       }
     },
@@ -14643,32 +14610,32 @@
       }
     },
     {
-      "id": "skills/pr-post-comments/SKILL.md:50:doc_link:../pr-summary/SKILL.md",
+      "id": "skills/pr-post-comments/SKILL.md:51:doc_link:../pr-desc/SKILL.md",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
         "line": 51
       },
       "kind": "doc_link",
-      "value": "../pr-summary/SKILL.md",
-      "quote": "(../pr-summary/SKILL.md)",
+      "value": "../pr-desc/SKILL.md",
+      "quote": "(../pr-desc/SKILL.md)",
       "verify": {
         "method": "link_resolves",
-        "href": "../pr-summary/SKILL.md",
+        "href": "../pr-desc/SKILL.md",
         "base": "file_dir"
       }
     },
     {
-      "id": "skills/pr-post-comments/SKILL.md:50:skill_ref:pr-summary",
+      "id": "skills/pr-post-comments/SKILL.md:51:skill_ref:pr-desc",
       "source": {
         "file": "skills/pr-post-comments/SKILL.md",
         "line": 51
       },
       "kind": "skill_ref",
-      "value": "pr-summary",
-      "quote": "| Writing or updating the PR description | [`/pr-summary`](../pr-summary/SKILL.md) |",
+      "value": "pr-desc",
+      "quote": "| Writing or updating the PR description | [`/pr-desc`](../pr-desc/SKILL.md) |",
       "verify": {
         "method": "skill_exists",
-        "name": "pr-summary",
+        "name": "pr-desc",
         "base": "repo"
       }
     },
@@ -14987,10 +14954,10 @@
       }
     },
     {
-      "id": "skills/pr-summary/SKILL.md:21:path:../_modules/core.md",
+      "id": "skills/pr-desc/SKILL.md:23:path:../_modules/core.md",
       "source": {
-        "file": "skills/pr-summary/SKILL.md",
-        "line": 21
+        "file": "skills/pr-desc/SKILL.md",
+        "line": 23
       },
       "kind": "path",
       "value": "../_modules/core.md",
@@ -15003,14 +14970,14 @@
       }
     },
     {
-      "id": "skills/pr-summary/SKILL.md:22:path:../_modules/artifact-protocol.md",
+      "id": "skills/pr-desc/SKILL.md:24:path:../_modules/artifact-protocol.md",
       "source": {
-        "file": "skills/pr-summary/SKILL.md",
-        "line": 22
+        "file": "skills/pr-desc/SKILL.md",
+        "line": 24
       },
       "kind": "path",
       "value": "../_modules/artifact-protocol.md",
-      "quote": "- `../_modules/artifact-protocol.md`: writes no artifact \u2014 prints in chat (preview) or updates the open PR (`update` mode)",
+      "quote": "- `../_modules/artifact-protocol.md`: writes no artifact; prints in chat",
       "verify": {
         "method": "path_exists",
         "path": "../_modules/artifact-protocol.md",
@@ -15019,10 +14986,10 @@
       }
     },
     {
-      "id": "skills/pr-summary/SKILL.md:23:path:../_modules/git-worktrees.md",
+      "id": "skills/pr-desc/SKILL.md:25:path:../_modules/git-worktrees.md",
       "source": {
-        "file": "skills/pr-summary/SKILL.md",
-        "line": 23
+        "file": "skills/pr-desc/SKILL.md",
+        "line": 25
       },
       "kind": "path",
       "value": "../_modules/git-worktrees.md",
@@ -15035,10 +15002,10 @@
       }
     },
     {
-      "id": "skills/pr-summary/SKILL.md:24:path:../_modules/pr-counterpart.md",
+      "id": "skills/pr-desc/SKILL.md:26:path:../_modules/pr-counterpart.md",
       "source": {
-        "file": "skills/pr-summary/SKILL.md",
-        "line": 24
+        "file": "skills/pr-desc/SKILL.md",
+        "line": 26
       },
       "kind": "path",
       "value": "../_modules/pr-counterpart.md",
@@ -15051,10 +15018,10 @@
       }
     },
     {
-      "id": "skills/pr-summary/SKILL.md:25:path:../_modules/pr-host.md",
+      "id": "skills/pr-desc/SKILL.md:27:path:../_modules/pr-host.md",
       "source": {
-        "file": "skills/pr-summary/SKILL.md",
-        "line": 25
+        "file": "skills/pr-desc/SKILL.md",
+        "line": 27
       },
       "kind": "path",
       "value": "../_modules/pr-host.md",
@@ -15067,10 +15034,10 @@
       }
     },
     {
-      "id": "skills/pr-summary/SKILL.md:26:path:../_modules/project-profile.md",
+      "id": "skills/pr-desc/SKILL.md:28:path:../_modules/project-profile.md",
       "source": {
-        "file": "skills/pr-summary/SKILL.md",
-        "line": 26
+        "file": "skills/pr-desc/SKILL.md",
+        "line": 28
       },
       "kind": "path",
       "value": "../_modules/project-profile.md",
@@ -15083,10 +15050,10 @@
       }
     },
     {
-      "id": "skills/pr-summary/SKILL.md:27:path:../_modules/outward-writes.md",
+      "id": "skills/pr-desc/SKILL.md:29:path:../_modules/outward-writes.md",
       "source": {
-        "file": "skills/pr-summary/SKILL.md",
-        "line": 27
+        "file": "skills/pr-desc/SKILL.md",
+        "line": 29
       },
       "kind": "path",
       "value": "../_modules/outward-writes.md",
@@ -15099,10 +15066,10 @@
       }
     },
     {
-      "id": "skills/pr-summary/SKILL.md:30:doc_link:git-worktrees \u203a Using this Module from a Command",
+      "id": "skills/pr-desc/SKILL.md:32:doc_link:git-worktrees \u203a Using this Module from a Command",
       "source": {
-        "file": "skills/pr-summary/SKILL.md",
-        "line": 30
+        "file": "skills/pr-desc/SKILL.md",
+        "line": 32
       },
       "kind": "doc_link",
       "value": "git-worktrees \u203a Using this Module from a Command",
@@ -15115,17 +15082,17 @@
       }
     },
     {
-      "id": "skills/pr-summary/SKILL.md:30:skill_ref:commit",
+      "id": "skills/pr-desc/SKILL.md:32:skill_ref:commit",
       "source": {
-        "file": "skills/pr-summary/SKILL.md",
-        "line": 30,
+        "file": "skills/pr-desc/SKILL.md",
+        "line": 32,
         "also_lines": [
           57
         ]
       },
       "kind": "skill_ref",
       "value": "commit",
-      "quote": "- Confirm `repo-root` (`git-worktrees` \u203a *Using this Module from a Command*) before Step 0's `status`, `add`, `commit`, or `push`.",
+      "quote": "- Confirm `repo-root` (`git-worktrees` \u203a *Using this Module from a Command*) before Step 1's `status`, `add`, `commit`, or `push`.",
       "verify": {
         "method": "skill_exists",
         "name": "commit",
@@ -15133,10 +15100,10 @@
       }
     },
     {
-      "id": "skills/pr-summary/SKILL.md:36:doc_link:project-profile \u203a Discovery",
+      "id": "skills/pr-desc/SKILL.md:40:doc_link:project-profile \u203a Discovery",
       "source": {
-        "file": "skills/pr-summary/SKILL.md",
-        "line": 36
+        "file": "skills/pr-desc/SKILL.md",
+        "line": 40
       },
       "kind": "doc_link",
       "value": "project-profile \u203a Discovery",
@@ -15149,10 +15116,10 @@
       }
     },
     {
-      "id": "skills/pr-summary/SKILL.md:58:doc_link:../commit/SKILL.md",
+      "id": "skills/pr-desc/SKILL.md:68:doc_link:../commit/SKILL.md",
       "source": {
-        "file": "skills/pr-summary/SKILL.md",
-        "line": 58
+        "file": "skills/pr-desc/SKILL.md",
+        "line": 68
       },
       "kind": "doc_link",
       "value": "../commit/SKILL.md",
@@ -15164,10 +15131,10 @@
       }
     },
     {
-      "id": "skills/pr-summary/SKILL.md:65:doc_link:pr-host \u203a Resolve the PR from a branch",
+      "id": "skills/pr-desc/SKILL.md:75:doc_link:pr-host \u203a Resolve the PR from a branch",
       "source": {
-        "file": "skills/pr-summary/SKILL.md",
-        "line": 65,
+        "file": "skills/pr-desc/SKILL.md",
+        "line": 75,
         "also_lines": [
           98
         ]
@@ -15183,10 +15150,10 @@
       }
     },
     {
-      "id": "skills/pr-summary/SKILL.md:80:doc_link:references/pr-body-template.md",
+      "id": "skills/pr-desc/SKILL.md:102:doc_link:references/pr-body-template.md",
       "source": {
-        "file": "skills/pr-summary/SKILL.md",
-        "line": 80,
+        "file": "skills/pr-desc/SKILL.md",
+        "line": 102,
         "also_lines": [
           87
         ]
@@ -15201,10 +15168,10 @@
       }
     },
     {
-      "id": "skills/pr-summary/SKILL.md:74:doc_link:pr-counterpart \u203a Counterpart discovery",
+      "id": "skills/pr-desc/SKILL.md:89:doc_link:pr-counterpart \u203a Counterpart discovery",
       "source": {
-        "file": "skills/pr-summary/SKILL.md",
-        "line": 74
+        "file": "skills/pr-desc/SKILL.md",
+        "line": 89
       },
       "kind": "doc_link",
       "value": "pr-counterpart \u203a Counterpart discovery",
@@ -15217,10 +15184,10 @@
       }
     },
     {
-      "id": "skills/pr-summary/SKILL.md:109:doc_link:outward-writes \u203a Read back",
+      "id": "skills/pr-desc/SKILL.md:141:doc_link:outward-writes \u203a Read back",
       "source": {
-        "file": "skills/pr-summary/SKILL.md",
-        "line": 109
+        "file": "skills/pr-desc/SKILL.md",
+        "line": 141
       },
       "kind": "doc_link",
       "value": "outward-writes \u203a Read back",
@@ -15233,10 +15200,10 @@
       }
     },
     {
-      "id": "skills/pr-summary/SKILL.md:28:path:../_modules/fan-out.md",
+      "id": "skills/pr-desc/SKILL.md:30:path:../_modules/fan-out.md",
       "source": {
-        "file": "skills/pr-summary/SKILL.md",
-        "line": 28
+        "file": "skills/pr-desc/SKILL.md",
+        "line": 30
       },
       "kind": "path",
       "value": "../_modules/fan-out.md",
@@ -15249,10 +15216,10 @@
       }
     },
     {
-      "id": "skills/pr-summary/SKILL.md:73:doc_link:fan-out \u203a Speed fan-out",
+      "id": "skills/pr-desc/SKILL.md:88:doc_link:fan-out \u203a Speed fan-out",
       "source": {
-        "file": "skills/pr-summary/SKILL.md",
-        "line": 73
+        "file": "skills/pr-desc/SKILL.md",
+        "line": 88
       },
       "kind": "doc_link",
       "value": "fan-out \u203a Speed fan-out",
@@ -15265,10 +15232,10 @@
       }
     },
     {
-      "id": "skills/pr-summary/SKILL.md:73:doc_link:references/diff-digest.md",
+      "id": "skills/pr-desc/SKILL.md:88:doc_link:references/diff-digest.md",
       "source": {
-        "file": "skills/pr-summary/SKILL.md",
-        "line": 73
+        "file": "skills/pr-desc/SKILL.md",
+        "line": 88
       },
       "kind": "doc_link",
       "value": "references/diff-digest.md",
@@ -15280,9 +15247,9 @@
       }
     },
     {
-      "id": "skills/pr-summary/references/pr-body-template.md:3:doc_link:../SKILL.md",
+      "id": "skills/pr-desc/references/pr-body-template.md:3:doc_link:../SKILL.md",
       "source": {
-        "file": "skills/pr-summary/references/pr-body-template.md",
+        "file": "skills/pr-desc/references/pr-body-template.md",
         "line": 3
       },
       "kind": "doc_link",
@@ -15295,18 +15262,18 @@
       }
     },
     {
-      "id": "skills/pr-summary/references/pr-body-template.md:3:doc_link:../SKILL.md \u203a Step 3 \u2014 Compose the PR body",
+      "id": "skills/pr-desc/references/pr-body-template.md:3:doc_link:../SKILL.md \u203a Step 4 \u2014 Compose the body and title",
       "source": {
-        "file": "skills/pr-summary/references/pr-body-template.md",
+        "file": "skills/pr-desc/references/pr-body-template.md",
         "line": 3
       },
       "kind": "doc_link",
-      "value": "../SKILL.md \u203a Step 3 \u2014 Compose the PR body",
-      "quote": "[SKILL.md](../SKILL.md) \u203a *Step 3 \u2014 Compose the PR body*",
+      "value": "../SKILL.md \u203a Step 4 \u2014 Compose the body and title",
+      "quote": "[SKILL.md](../SKILL.md) \u203a *Step 4 \u2014 Compose the body and title*",
       "verify": {
         "method": "heading_pointer",
         "target": "../SKILL.md",
-        "heading": "Step 3 \u2014 Compose the PR body",
+        "heading": "Step 4 \u2014 Compose the body and title",
         "base": "repo"
       }
     },
@@ -19822,14 +19789,14 @@
       }
     },
     {
-      "id": "skills/pr-desc/SKILL.md:97:path:scripts/wrap_generics.py",
+      "id": "skills/pr-desc/SKILL.md:115:path:scripts/wrap_generics.py",
       "source": {
         "file": "skills/pr-desc/SKILL.md",
-        "line": 97
+        "line": 115
       },
       "kind": "path",
       "value": "scripts/wrap_generics.py",
-      "quote": "python3 <skill-dir>/scripts/wrap_generics.py <draft-file>",
+      "quote": "python3 <skill-dir>/scripts/wrap_generics.py <scratchpad>/pr-<id>/body.md",
       "verify": {
         "method": "path_exists",
         "path": "scripts/wrap_generics.py",
@@ -20953,17 +20920,17 @@
       }
     },
     {
-      "id": "skills/pr-polish/SKILL.md:94:skill_ref:pr-summary",
+      "id": "skills/pr-polish/SKILL.md:94:skill_ref:pr-desc",
       "source": {
         "file": "skills/pr-polish/SKILL.md",
         "line": 94
       },
       "kind": "skill_ref",
-      "value": "pr-summary",
-      "quote": "2. **Description**: run [`/pr-summary`](../pr-summary/SKILL.md) in preview mo",
+      "value": "pr-desc",
+      "quote": "2. **Description**: run [`/pr-desc --dry-run`](../pr-desc/SKILL.md) against the base",
       "verify": {
         "method": "skill_exists",
-        "name": "pr-summary",
+        "name": "pr-desc",
         "base": "repo"
       }
     },
@@ -20975,7 +20942,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-post-comments",
-      "quote": "ary update` and post the replies with [`/pr-post-comments`](../pr-post-comments/SKILL.md) from th",
+      "quote": "the description with `/pr-desc` and post the replies with [`/pr-post-comments`](../pr-post-comments/SKILL.md) from the artifact. Never post",
       "verify": {
         "method": "skill_exists",
         "name": "pr-post-comments",
@@ -21133,38 +21100,38 @@
       }
     },
     {
-      "id": "skills/pr-polish/SKILL.md:94:other:pr-summary preview is default",
+      "id": "skills/pr-polish/SKILL.md:94:other:pr-desc --dry-run is default",
       "source": {
         "file": "skills/pr-polish/SKILL.md",
         "line": 94
       },
       "kind": "other",
-      "value": "pr-summary preview is default",
-      "quote": "[`/pr-summary`](../pr-summary/SKILL.md) in preview mode against the base. It uses the repo PR t",
+      "value": "pr-desc --dry-run mode exists",
+      "quote": "[`/pr-desc --dry-run`](../pr-desc/SKILL.md) against the base. It uses the repo PR t",
       "verify": {
         "method": "grep",
-        "pattern": "Preview mode \\(default\\)",
+        "pattern": "`/pr-desc --dry-run \\[",
         "paths": [
-          "skills/pr-summary/SKILL.md"
+          "skills/pr-desc/SKILL.md"
         ],
         "base": "repo",
         "expect": "present"
       }
     },
     {
-      "id": "skills/pr-polish/SKILL.md:100:cli_command:pr-summary update",
+      "id": "skills/pr-polish/SKILL.md:100:cli_command:pr-desc",
       "source": {
         "file": "skills/pr-polish/SKILL.md",
         "line": 100
       },
       "kind": "cli_command",
-      "value": "pr-summary update",
-      "quote": "e user asks: apply the description with `/pr-summary update` and post the replies with [`/pr-post-co",
+      "value": "pr-desc",
+      "quote": "e user asks: apply the description with `/pr-desc` and post the replies with [`/pr-post-co",
       "verify": {
         "method": "grep",
-        "pattern": "Update mode\\*\\* \u2014 `/pr-summary update",
+        "pattern": "\\| `/pr-desc \\[branch",
         "paths": [
-          "skills/pr-summary/SKILL.md"
+          "skills/pr-desc/SKILL.md"
         ],
         "base": "repo",
         "expect": "present"
@@ -22254,17 +22221,17 @@
       }
     },
     {
-      "id": "skills/_modules/outward-writes.md:3:skill_ref:pr-summary",
+      "id": "skills/_modules/outward-writes.md:3:skill_ref:pr-desc",
       "source": {
         "file": "skills/_modules/outward-writes.md",
         "line": 3
       },
       "kind": "skill_ref",
-      "value": "pr-summary",
-      "quote": "`pr-summary`",
+      "value": "pr-desc",
+      "quote": "`pr-desc`",
       "verify": {
         "method": "skill_exists",
-        "name": "pr-summary"
+        "name": "pr-desc"
       }
     },
     {
@@ -23320,9 +23287,9 @@
       }
     },
     {
-      "id": "skills/pr-summary/references/diff-digest.md:3:doc_link:fan-out \u203a Speed fan-out",
+      "id": "skills/pr-desc/references/diff-digest.md:3:doc_link:fan-out \u203a Speed fan-out",
       "source": {
-        "file": "skills/pr-summary/references/diff-digest.md",
+        "file": "skills/pr-desc/references/diff-digest.md",
         "line": 3
       },
       "kind": "doc_link",
@@ -23336,9 +23303,9 @@
       }
     },
     {
-      "id": "skills/pr-summary/references/diff-digest.md:7:doc_link:fan-out \u203a Brief contract",
+      "id": "skills/pr-desc/references/diff-digest.md:7:doc_link:fan-out \u203a Brief contract",
       "source": {
-        "file": "skills/pr-summary/references/diff-digest.md",
+        "file": "skills/pr-desc/references/diff-digest.md",
         "line": 7
       },
       "kind": "doc_link",
@@ -23654,7 +23621,7 @@
       },
       "kind": "skill_ref",
       "value": "principles-interview",
-      "quote": "`, `pr-polish`, `pr-post-comments`, `pr-summary`, `principles-interview`, `problem`, `proceed`, `refine`, `remember-this`,",
+      "quote": "view`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `refine`, `remember-this`, `resolve",
       "verify": {
         "method": "skill_exists",
         "name": "principles-interview",

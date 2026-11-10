@@ -32,7 +32,7 @@ Read these before step 1:
 | Situation | Use instead |
 |---|---|
 | Branch from a work item, commit, push and open a PR in one go | the project's ship skill (e.g. `priis-ship`), when the workspace has one |
-| Rewrite the PR title or labels, or describe the full diff rather than the commits | [`/pr-summary update`](../pr-summary/SKILL.md) |
+| Rewrite the PR title or labels, or describe the full diff rather than the commits | [`/pr-desc`](../pr-desc/SKILL.md) |
 | A merge, rebase or cherry-pick is in progress before `/commit` starts | [`/resolve-conflicts`](../resolve-conflicts/SKILL.md) |
 | Work that should go on its own branch in a separate checkout | [`/worktrees`](../worktrees/SKILL.md) |
 
@@ -138,15 +138,15 @@ Skip under `no-push` or when the push failed.
 3. **Warn when the base is behind main** (stacked only): `git -C <repo-root> rev-list --count origin/$TGT..origin/$DEF`. A count above 0 → `⚠️ <TGT> is <n> commits behind <DEF>`, and suggest rebasing the base first. Never rebase or merge here.
 4. **Regenerate the description from the commits:**
    - Read the commits the PR adds: `git -C <repo-root> log --reverse --format='%h %s%n%b' origin/$TGT..HEAD`, plus `git -C <repo-root> diff --stat origin/$TGT...HEAD` to check each claim against what changed.
-   - Read the current description first and save it to `<scratchpad>/pr-<id>/previous.md` so it can be restored (`pr-summary` › *Step 5 — Update the real PR*, item 2).
+   - Read the current description first and save it to `<scratchpad>/pr-<id>/previous.md` so it can be restored (`pr-desc` › *Apply*, item 2).
    - **Rewrite only the generated block.** The text between `<!-- commit:auto:start -->` and `<!-- commit:auto:end -->` belongs to this skill. Everything outside the markers is hand-written (screenshots, reviewer notes) and stays byte for byte.
      - One marker pair → replace only what is between the markers.
      - No markers (first run) → the new description is the generated block, followed by `## Manual` and the old description verbatim (leave the section out when the old description is empty).
      - A lone marker or several pairs → do not write. Print the generated block and ask where it goes.
    - **Check the manual part for stale claims.** Byte for byte means unedited, not unchecked: read the manual part against the commits and the PR's live state (target branch, merged or abandoned PRs it names, behaviour, counts). List every line the change made false (`"<quote>"` → what is true now) in chat and in the output's `Stale` line. Fix them only on the user's go, as their own text; then they are no longer byte for byte, so say so.
-   - Write the block **in English**, whatever the profile's *Report language*. Follow the repo PR template per `pr-summary` › *Step 3 — Compose the PR body & title* item 1. Group the commits by behaviour (one bullet per behaviour, not one per commit), and open the block with `Stacked on !<id>` when Step 2 found a stack. Run `outward-writes` › *Voice pass* on the block only.
+   - Write the block **in English**, whatever the profile's *Report language*. Follow the repo PR template per `pr-desc` › *Step 4 — Compose the body and title* item 1. Group the commits by behaviour (one bullet per behaviour, not one per commit), and open the block with `Stacked on !<id>` when Step 2 found a stack. Run `outward-writes` › *Voice pass* on the block only.
    - **4000-character budget for the whole description:** when it is over, shorten the generated block, never the manual part. When the manual part alone is over, do not write: print the block and say so.
-   - Apply only the description per `pr-summary` › *Step 5 — Update the real PR* item 3 (body from `<scratchpad>/pr-<id>/body.md`; on Azure DevOps always pass `--draft <isDraft>` from the read-back). Then read it back per `outward-writes` › *Read back*.
+   - Apply only the description per `pr-desc` › *Apply* item 3 (body from `<scratchpad>/pr-<id>/body.md`; on Azure DevOps always pass `--draft <isDraft>` from the read-back). Then read it back per `outward-writes` › *Read back*.
    - A denied or failed write → print the body and the exact command, then continue to the output.
 
 ---

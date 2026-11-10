@@ -38,11 +38,11 @@ skills/
 
 ## Inventory
 
-58 skills total — 53 general + 5 under `Projects/GR.PRIIS/` — plus 8 Modules.
+57 skills total — 52 general + 5 under `Projects/GR.PRIIS/` — plus 8 Modules.
 
 | Group | Kind | Count | Entries |
 | --- | --- | :---: | --- |
-| General (top level) | Command | 52 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `fix-findings`, `grill-me`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `pr-summary`, `principles-interview`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-conflicts`, `shape-idea`, `skill-drift`, `skill-gap`, `skill-review`, `simplify`, `simplify-branch`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `standup-recap`, `state`, `suggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing`, `worktrees` |
+| General (top level) | Command | 51 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `fix-findings`, `grill-me`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-conflicts`, `shape-idea`, `skill-drift`, `skill-gap`, `skill-review`, `simplify`, `simplify-branch`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `standup-recap`, `state`, `suggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing`, `worktrees` |
 | General (top level) | Reference | 1 | `modern-csharp` |
 | `GR.PRIIS/priis-prod-*` | Command | 1 | `diagnose` (production diagnosis over remote desktop: read-only T-SQL rounds) |
 | `GR.PRIIS/priis-backend-*` | Reference | 1 | `dry` (the other PRIIS team skills ship in the repo's `.claude/skills/`, not here) |
@@ -67,7 +67,7 @@ Read these before step 1:
 - `../_modules/pr-counterpart.md`
 ```
 
-A Command lists only the Modules it uses directly; a Module lists its own dependencies (for example, [`project-profile`](_modules/project-profile.md) is read by `implement-feature`, `code-review`, `plan`, `pr-feedback-review`, and `pr-summary`; [`pr-host`](_modules/pr-host.md) by every PR-reading Command). Sections inside a Module are referred to by name (`` `git-worktrees` › *Workspace* ``), never by number. **References** and **Profiles** carry no `## Modules` section and inherit the standards through [`core` › *Precedence*](_modules/core.md#precedence).
+A Command lists only the Modules it uses directly; a Module lists its own dependencies (for example, [`project-profile`](_modules/project-profile.md) is read by `implement-feature`, `code-review`, `plan`, `pr-feedback-review`, and `pr-desc`; [`pr-host`](_modules/pr-host.md) by every PR-reading Command). Sections inside a Module are referred to by name (`` `git-worktrees` › *Workspace* ``), never by number. **References** and **Profiles** carry no `## Modules` section and inherit the standards through [`core` › *Precedence*](_modules/core.md#precedence).
 
 ## Naming convention (inside `Projects/GR.PRIIS/`)
 
