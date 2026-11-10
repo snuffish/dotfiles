@@ -28,6 +28,8 @@ Used by `/plan --review [target]` (Case D) and `/plan` self-review (Case B step 
    5. **Verification & testing**
       - Concrete automated test strategy in the project's framework and fixtures.
       - Covers authorized, forbidden and unauthenticated paths, not only the happy path.
+      - For every CI check the plan adds or changes: what re-runs it (a push, a manual queue; not an edit to the PR description) and on which build reasons it runs (PR, manual, draft). A check that cannot re-run after its fix, or that the plan's own verification build skips, is 🟡.
+      - A phase that depends on a tool's output format nobody has looked at (a runner listing, a JSON report, a CI checkout) is preceded by a spike phase that records the format.
 4. **Report** (`--review` only; skipped during Case B self-review): render the plan's link block (`SKILL.md` › _Link block_) with real line numbers and a one-sentence summary after each section link (what the context decides, what the changes touch, how it is verified), then:
 
    ```markdown
