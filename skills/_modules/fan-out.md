@@ -19,7 +19,7 @@ Read these before using this one:
 
 A step that does several independent reads in a row can run them in parallel lanes in bare mode too, when the Command's SKILL.md names that step. This changes only wall-clock time: the output shape, artifacts and gates stay those of bare mode, so it is not an upgrade to `deep`.
 
-- **Only where named.** Fan out only the steps the Command names, and only above the size threshold it names. Below it, run inline: spawning costs more than it saves.
+- **Only where named.** Fan out only the steps the Command names, and only above the size threshold it names. Below it, run inline: spawning costs more than it saves. Run inline too when the host or the user's rules forbid spawning agents unasked.
 - **Lanes.** At most 4 per step, so a later lens or verifier still fits the cap of 5. Lanes run on Sonnet (in Claude Code pass `model: "sonnet"` to the Agent tool, and `subagent_type: "Explore"` for search-only lanes; elsewhere use the host's default). Synthesis stays on the session model.
 - **Brief.** The *Brief contract* applies, plus the lane's narrow question, what the lead already knows (so the lane does not re-read it), and the return format: findings only, each tagged ✅ Verified (`path:line`), 🟡 Inferred or ❓ Unknown, with no file dumps or pasted code.
 - **Nested calls stay inline.** When the Command runs inside a sub-agent, or is called from a step that already fanned out (`code-review` Step 6c calling `what-am-I-missing`), do the step inline.
@@ -37,7 +37,7 @@ The *Speed fan-out* for checklist reviews: `plan` self-review and `--review`, `w
 - **Brief.** The artifact under review by path (the plan file, or the target written to `<scratchpad>/lens-target.md` when it is not a file), the rulebook, Reference and profile paths the lead resolved, the lens's checklist items verbatim from the reference, and the severity scale. Leave out the author's reasoning and the conversation: the lens reviews what is written, not how it was reached.
 - **Return.** Each finding with its severity, its `path:line` or plan section, and a one-line fix; or `none`.
 - **Lead.** Dedupes across lenses by `path:line`, re-opens the load-bearing findings, then folds or ranks them per the Command. The lead remains the only author of the plan or answer.
-- **Inline threshold.** Review inline when the target is small: a plan whose _Proposed Changes_ names a single file, or a single snippet or one-line decision.
+- **Inline threshold.** Review inline when the target is small: a plan whose _Proposed Changes_ names a single file, or a single snippet or one-line decision. Also review inline when the host or the user's rules forbid spawning agents unasked, and write "inline review" where the verdict is reported.
 
 ## Edit lanes
 

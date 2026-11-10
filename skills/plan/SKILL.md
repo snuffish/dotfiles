@@ -77,7 +77,7 @@ The user's rule (`~/.claude/CLAUDE.md` › _Plan Mode_) applies: extremely conci
 Every plan writer applies it to the whole file **and to the chat response that presents the plan**:
 
 - Fragments, not prose: no paragraphs, no full-sentence explanations.
-- One idea per bullet; split a longer one into sub-bullets.
+- One idea per bullet; split a longer one into sub-bullets. A hook (`claude/plan-lint.py`) rejects a bullet over 25 words and any other line over 15, with an inline code span counted as one word: keep to that while drafting.
 - _Decisions_ and _Risks_ as tables.
 - Every open question carries **Rec:** with the recommended answer.
 - Nothing after _Open Questions_. If there are no unresolved questions, note "None" (or omit).
@@ -128,7 +128,7 @@ Pick the case from the arguments, first match wins:
    - Re-read the plan once for anything a fix contradicts (an earlier step, a test, a decision row), and fix it.
    - Run the review **once**. Fill the **Review:** header line with the verdict the folded plan would get.
    - Run it on every new plan, and on every update that changes _Proposed Changes_ or _Verification Plan_. Skip it for an update that only ticks the checklist or changes `Status`.
-5. **Present the plan:** the link block (_§1 Link block_), the review verdict and the findings that changed the design (one bullet each), the key decisions as fragment bullets, then the open questions last, each with its **Rec:** (_§1 Style_ applies to this chat text too: no paragraphs, no full sentences). Wait for the user to open the gate (`core` › _The `/proceed` gate_) before any code change.
+5. **Present the plan:** the link block (_§1 Link block_), the review verdict and the findings that changed the design (one bullet each), the key decisions as fragment bullets, then the open questions last, each with its **Rec:** (_§1 Style_ applies to this chat text too: no paragraphs, no full sentences). When the host has a work-state or to-do tool, attach the plan file to its item there before presenting. Wait for the user to open the gate (`core` › _The `/proceed` gate_) before any code change.
 
 ### Case C: Preview Command (`/plan preview [target]`)
 
