@@ -1,6 +1,8 @@
 {
   "env": {
-    "CLAUDE_MEM_DISABLE_FILE_CONTEXT": "1"
+    "CLAUDE_MEM_DISABLE_FILE_CONTEXT": "1",
+    "EDITOR": "nvim",
+    "VISUAL": "nvim"
   },
   "permissions": {
     "allow": [
@@ -28,7 +30,7 @@
       "~/.cache/agent-artifacts"
     ]
   },
-  "model": "opus",
+  "model": "claude-fable-5-2",
   "skillOverrides": {
     "find-skills": "off",
     "problem": "off",

@@ -3,6 +3,8 @@
 
 - `rm` with an unquoted glob: a glob deleted a user backup on 2026-11-03. Delete by exact path.
 - `az repos pr update --description` without `--draft`: the call publishes a draft PR.
+- An unquoted glob in a `--flag=value` word (`--include=*.py`): zsh expands it and aborts the whole command
+  with "no matches found" (sessions d5b3dbc1 and 26411941).
 
 Set CLAUDE_SAFETY_GUARD=0 to turn the guard off.
 """
@@ -17,6 +19,8 @@ QUOTED = re.compile(r"'[^']*'|\"(?:[^\"\\]|\\.)*\"")
 RM = re.compile(r"^\s*(sudo\s+)?rm\s")
 GLOB = re.compile(r"[*?]|\[[^\]]*\]")
 PR_UPDATE = re.compile(r"\baz\s+repos\s+pr\s+update\b")
+# A `--flag=value` word whose value holds a glob character that no backslash escapes.
+FLAG_GLOB = re.compile(r"(?<!\S)--[\w-]+=(?:\\.|[^\s\\*?])*[*?]\S*")
 
 
 def segments(command):
@@ -42,6 +46,13 @@ def pr_update_without_draft(command):
     return None
 
 
+def flag_glob(command):
+    # Quoted globs reach the command literally, so only unquoted ones make zsh abort.
+    unquoted = QUOTED.sub(lambda m: " " * len(m.group(0)), command)
+    match = FLAG_GLOB.search(unquoted)
+    return match.group(0) if match else None
+
+
 def main():
     if os.environ.get("CLAUDE_SAFETY_GUARD") == "0":
         return 0
@@ -58,6 +69,11 @@ def main():
         reason = (
             "`az repos pr update --description` without `--draft` publishes a draft PR. Read the PR's "
             "isDraft and pass `--draft <isDraft>`."
+        )
+    elif hit := flag_glob(command):
+        reason = (
+            f"`{hit}` holds an unquoted glob: zsh expands it and aborts with \"no matches found\". "
+            "Quote the value, e.g. `--include='*.py'`."
         )
     else:
         return 0

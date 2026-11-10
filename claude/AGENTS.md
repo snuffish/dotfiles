@@ -54,6 +54,11 @@ If no `.codegraph/` directory exists there or in any parent, skip CodeGraph enti
 - Use absolute paths or `git -C <dir>` instead of `cd`; use `quiet <cmd>` instead of `| tail`.
 - Run build, pack, lint and format commands through `quiet`, or the quiet-guard hook rejects them.
 
+## Earlier work first
+
+- Before giving a verdict, a suggestion or interview questions on a topic, search for earlier work on it: the repo's artifact directory (`~/.cache/agent-artifacts/<repo>/`), the work state and claude-mem.
+- Build on what was decided there, and say so when a new answer contradicts it.
+
 ## Friction becomes configuration
 
 - Treat every correction, rejection or "why did you do that?" from me as a missing instruction, not a one-off. Treat a fix that worked the same way: if it lives only in this conversation, it is lost.
