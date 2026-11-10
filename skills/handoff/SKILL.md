@@ -49,6 +49,7 @@ Gather the concrete facts from the active workspace and conversation history:
    - Run `git status --porcelain` to record modified, added, untracked, or deleted files.
    - Run `git branch --show-current` and `git rev-parse --short HEAD` (commit subject via `git log -1 --oneline`).
    - If in a linked git worktree, capture its path and branch (`git-worktrees` › *Workspace Lifecycle*).
+   - When updating an existing handoff, run `python3 -I <this skill>/scripts/check_shas.py <repo-root> <handoff> [<plan>]` after writing. It lists every backticked SHA that is not an ancestor of `HEAD` (left behind by a reword, rebase or force-push); replace each, or say in the text that it is gone.
 3. **Completed & Verified Work**:
    - List files created or edited in this session with clickable `path:line` links.
    - List verification commands that ran (linters, test suites, build scripts) and their passing status (`✅`).
@@ -148,7 +149,7 @@ To continue in a fresh agent session, start the session and run:
 
 - [ ] `<prefix>-handoff-<suffix>.md` is written directly to the artifact dir with a valid `artifact-owner` marker and contextual suffix.
 - [ ] No code modifications, staging, or outward writes occurred during handoff execution (`core` read-only until `/proceed`).
-- [ ] Git state (branch, commit, uncommitted files) is accurately captured without guessing.
+- [ ] Git state (branch, commit, uncommitted files) is accurately captured without guessing; on an updated handoff, `check_shas.py` reports no SHA off the branch that the text does not call gone.
 - [ ] Next steps are concrete, numbered, and executable by `/proceed`.
 - [ ] Sensitive credentials/tokens are completely redacted.
 - [ ] Chat link block uses the host's native link format with verified line numbers.

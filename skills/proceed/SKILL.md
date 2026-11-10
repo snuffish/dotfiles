@@ -2,7 +2,7 @@
 name: proceed
 description: "Authorizes and executes the next step of a gated read-only command."
 disable-model-invocation: true
-argument-hint: "[artifact | option | phase | step | extra instructions]"
+argument-hint: "[artifact | all | option | phase | step | extra instructions]"
 model: sonnet
 effort: low
 ---
@@ -65,9 +65,12 @@ Work inline: start no subagents unless the plan names one, or Step 2 qualifies f
 
 1. **Mark approved**: set the plan's `Status` to `Approved` (`core` › _The `/proceed` gate_).
 2. **Execute**: follow the plan's phases in order, staying inside its scope and applying the project's References and Profiles (`core` › _Precedence*). Honour an active `[worktree-context]`, `core` › _Worktree opt-in_, and the base profile's **Implementation mode** (`git-worktrees` › _Modes_).
+   - **One phase per run**: when the pending item has several phases or numbered next steps (a plan, a handoff), do only the first unfinished one. Verify it (step 3), close out (step 4), then stop and wait; never start the next phase in the same turn. Edit lanes and a `/suggestion` option are one item, not phases.
+   - **`/proceed all`** bypasses that halt: do every remaining phase in order in this run, with no stop and no handoff between phases, even when the source artifact's working rules say one phase per run. Verify once at the end (step 3) and close out once (step 4). `/proceed phases 3-4` does the same for the phases it names. Stop early only for a failed verification or a decision that is the user's.
    - **Edit lanes**: when the approved items are independent fixes (a review's findings, a fix list, a thread triage's resolutions) that meet the threshold in [`fan-out`](../_modules/fan-out.md) › _Edit lanes_, apply them as edit lanes per that section, then continue with step 3. Never for a plan whose phases build on each other, and never when resuming `implement-feature` (its Phase 3 forbids fan-out).
 3. **Verify once, at the end**: run the plan's own verification commands. Only when the plan names none, run one targeted build/type-check and the tests covering the changed files. Never re-run a suite that already passed on the same code, and don't verify per phase unless the plan says so. When the commands cover independent parts (backend and frontend, two repos), start the slowest with `run_in_background` and run the rest meanwhile; draft the close-out while they run.
 4. **Close out**: update the plan's `Status` (`Completed` or `Approved` with remaining items per `core` › _The `/proceed` gate_) and, in the same edit, every status field the source artifact's Command declares (header `Status:`, summary matrix, per-item status, checklist); then `grep` for `⏸`, `Not addressed`, `uncommitted` and resolve every hit.
+5. **Hand off when the run stops with phases remaining** (not under `/proceed all`, unless context runs low): first offer the commit for the finished phase and wait for the answer, so each commit holds one phase and the handoff names final SHAs. Then run [`/handoff`](../handoff/SKILL.md) so a fresh session can do the next phase. Update the handoff this run started from in place when there is one, else write a new one. The output's `Next:` line is then `/proceed <handoff path>`.
 
 ---
 
@@ -91,4 +94,6 @@ Next: <the single next action, usually a commit/push or ship command for the use
 - [ ] The pending item was resolved from this session, not guessed; ambiguity was asked about.
 - [ ] Only the authorized scope was changed; no commit, push, PR or tracker write happened without its own request, and no edit landed in a snapshot worktree.
 - [ ] Verification commands ran and their results are reported faithfully.
+- [ ] With phases remaining: only one phase ran (unless `/proceed all` or a phase range widened it), the commit for it was offered before the handoff, and a handoff naming the next phase was written or updated.
+- [ ] Under `/proceed all`: every remaining phase ran without a halt or a handoff in between.
 - [ ] The plan's `Status` and every status field in any source review artifact match reality (Step 2.4).
