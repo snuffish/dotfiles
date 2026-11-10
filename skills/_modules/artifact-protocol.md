@@ -97,8 +97,11 @@ Every Command that writes or updates an artifact emits a compact link block in c
 
 ```markdown
 📄 [<artifact-filename>](<host-link-to-file>)
+`<absolute path of the artifact>`
 - [Section 1](<host-link-to-L1>) · [Section 2](<host-link-to-L2>) · [Section 3](<host-link-to-L3>)
 ```
+
+- **Plain path line**: always print the artifact's absolute filesystem path in backticks on the line under the link, with no scheme and no `#L`/`:<line>`. A host link can fail to open or be mangled, but the user can always copy the plain path.
 
 ---
 
