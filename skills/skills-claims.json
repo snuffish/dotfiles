@@ -22373,10 +22373,10 @@
       },
       "kind": "other",
       "value": "unslop voice card snuffish-sv",
-      "quote": "`~/.claude/skills/unslop/.unslop/voice/snuffish-sv/`",
+      "quote": "`~/.claude-memory/unslop-voice/snuffish-sv/`",
       "verify": {
         "method": "manual",
-        "reason": "unslop is installed outside the registry (~/.claude/skills/unslop, not git-tracked here); checked by hand 2026-11-04"
+        "reason": "voice card lives outside the registry (~/.claude-memory/unslop-voice/snuffish-sv, not git-tracked here); checked by hand 2026-11-09"
       }
     },
     {
