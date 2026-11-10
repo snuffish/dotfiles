@@ -30,7 +30,7 @@
       "~/.cache/agent-artifacts"
     ]
   },
-  "model": "claude-fable-5-2",
+  "model": "opus",
   "skillOverrides": {
     "find-skills": "off",
     "problem": "off",
