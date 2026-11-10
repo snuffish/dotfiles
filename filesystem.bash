@@ -22,7 +22,7 @@ mkcd() {
 }
 
 if command -v eza >/dev/null 2>&1; then
-  alias ls="eza -laho --octal-permissions --icons=always --group-directories-first"
+  alias ls="eza -laho --octal-permissions --icons=always --group-directories-first --sort=modified"
   alias l=ls
   alias lD="ls -D"
   alias ldot="ls -ld .*"
