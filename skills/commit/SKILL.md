@@ -22,7 +22,7 @@ Read these before step 1:
 - `../_modules/outward-writes.md`
 
 - Invoking `/commit` (or explicitly asking to commit/push in the current message) satisfies `outward-writes` › *Explicit request & draft mode* for this commit and push, and for the Step 7 description update of the branch's own open PR only (never its title, labels, draft state or any other PR).
-- **Never** `git add -A` / `git add .`, `--amend`, `--no-verify`, `--force` / `--force-with-lease`, `rebase`, `reset`, or `stash` here (unless the user explicitly asks for `--force-with-lease` in the current message).
+- **Never** `git add -A` / `git add .`, `--amend`, `--no-verify`, `--force` / `--force-with-lease`, `rebase`, `reset`, or `stash` here (unless the user explicitly asks for `--force-with-lease` in the current message). The one exception is Step 6 › *Behind upstream*: `git pull --rebase --autostash` of this branch's own unpushed commits onto `@{u}`.
 - Every command uses `git -C <repo-root> …` (`git-worktrees` › *Golden Invariants*).
 
 ---
@@ -33,7 +33,7 @@ Read these before step 1:
 |---|---|
 | Branch from a work item, commit, push and open a PR in one go | the project's ship skill (e.g. `priis-ship`), when the workspace has one |
 | Rewrite the PR title or labels, or describe the full diff rather than the commits | [`/pr-summary update`](../pr-summary/SKILL.md) |
-| A merge, rebase or cherry-pick is in progress, or the push was rejected and needs a merge | [`/resolve-conflicts`](../resolve-conflicts/SKILL.md) |
+| A merge, rebase or cherry-pick is in progress before `/commit` starts | [`/resolve-conflicts`](../resolve-conflicts/SKILL.md) |
 | Work that should go on its own branch in a separate checkout | [`/worktrees`](../worktrees/SKILL.md) |
 
 ---
@@ -119,7 +119,13 @@ else
 fi
 ```
 
-- **Rejected (non-fast-forward or branch policy):** stop, show `git -C <repo-root> log --oneline HEAD..@{u}` or the server message verbatim, and offer `git pull --rebase` or [`/resolve-conflicts`](../resolve-conflicts/SKILL.md). Never force-push.
+- **Behind upstream (non-fast-forward, `fetch first`):** integrate and push; do not stop to ask. Run the same push mode: `/commit` was the request to get the commit onto the remote.
+  1. Note the incoming commits: `git -C <repo-root> fetch` then `git -C <repo-root> log --oneline HEAD..@{u}` (name them in the output).
+  2. `git -C <repo-root> pull --rebase --autostash`. This only replays this branch's unpushed commits onto `@{u}`; nothing already pushed is rewritten.
+  3. **Conflicts:** resolve them in place per [`/resolve-conflicts`](../resolve-conflicts/SKILL.md) (rebase mode: Steps 1–6), then `git -C <repo-root> -c core.editor=true rebase --continue` until done. When a hunk's intent cannot be reconstructed with confidence, run `git -C <repo-root> rebase --abort`, confirm `HEAD` is back on the local commit, and stop with the conflicting files and the incoming commits.
+  4. **Re-run the Step 2 drift checker** when `git -C <repo-root> diff --name-only ORIG_HEAD HEAD` (or the incoming log) touches `skills/`, `.claude/`, `AGENTS.md` or the claims file. STALE fixes become their own follow-up commit (`fix(skills): …`), committed per Step 5.
+  5. Push again (plain `git -C <repo-root> push`). Rejected a second time for the same reason → repeat once from 1, then stop.
+- **Rejected by branch policy, hook or permissions:** stop and show the server message verbatim. Never force-push.
 
 ### Step 7: Check the PR and its stack, then regenerate the description
 
@@ -150,6 +156,7 @@ Skip under `no-push` or when the push failed.
 ```markdown
 ✅ Committed and pushed <repo-dirname> `<branch>` → `origin/<branch>`
 - `<short-sha>` <subject>
+- Rebased onto <n> incoming commits (<conflicts resolved: files | clean>; drift re-run: <result>) (only when Step 6 integrated)
 - Files: <n> (<list>) · gates: <what ran> ✅
 - Left out: <path> (<reason>)
 - PR: [<repo> !<id>](<url>) now at `<short-sha>` · generated block rewritten (English, <n> commits; manual part kept) (or: no open PR for this branch)
@@ -169,4 +176,4 @@ Under `no-push`, state the commit is local and how many commits are unpushed, an
 - `git -C <repo-root> log -1 --format='%h %s'` and `show --stat HEAD` match the intended files and convention.
 - After pushing, `git -C <repo-root> rev-list --count @{u}..HEAD` is `0` and `@{u}` is `origin/<branch>`.
 - After Step 7, the live PR description matches `<scratchpad>/pr-<id>/body.md`, everything outside the markers matches `previous.md`, and on Azure DevOps `isDraft` is unchanged.
-- `git -C <repo-root> status --short` holds only the excluded files named in chat; no amend, force-push, `--no-verify`, rebase, reset, or stash ran.
+- `git -C <repo-root> status --short` holds only the excluded files named in chat; no amend, force-push, `--no-verify`, reset, or stash ran, and no rebase except Step 6 › *Behind upstream* (named in the output with the incoming commits).

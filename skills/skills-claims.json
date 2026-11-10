@@ -9132,7 +9132,7 @@
       },
       "kind": "skill_ref",
       "value": "resolve-conflicts",
-      "quote": "| A merge, rebase or cherry-pick is in progress, or the push was rejected and needs a merge | [`/resolve-conflicts`](../resolve-conflicts/SKILL.md) |",
+      "quote": "| A merge, rebase or cherry-pick is in progress before `/commit` starts | [`/resolve-conflicts`](../resolve-conflicts/SKILL.md) |",
       "verify": {
         "method": "skill_exists",
         "name": "resolve-conflicts",
