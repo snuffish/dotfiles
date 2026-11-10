@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: "Use only when the user explicitly asks to brainstorm (/brainstorming, \"let's brainstorm\", \"brainstorm options for X\"): open-ended divergent exploration of a design. Not for a rough idea to turn into a plan (use /shape-idea), routine features, fixes or plans."
+description: "Use only when the user explicitly asks to brainstorm (/brainstorming, \"let's brainstorm\", \"brainstorm options for X\"): open-ended divergent exploration of a design. Not for a rough idea to turn into a plan: suggest the user runs /shape-idea (user-invoked only). Not for routine features, fixes or plans."
 ---
 
 # Brainstorming
