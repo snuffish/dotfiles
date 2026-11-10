@@ -4365,7 +4365,7 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "neral (top level) | Command | 50 | `analyze-personal-feedback`, `artifacts`, `clean`, `code-documentation`, `code-review`, `commit`, `contin",
+      "quote": "and | 51 | `analyze-personal-feedback`, `artifacts`, `clean`, `code-documentation`, `code-r",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
@@ -4723,7 +4723,7 @@
       },
       "kind": "skill_ref",
       "value": "refine",
-      "quote": "y`, `principles-interview`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-conflicts`, `skill-dri",
+      "quote": "iples-interview`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-conflicts`, ",
       "verify": {
         "method": "skill_exists",
         "name": "refine",
@@ -4738,7 +4738,7 @@
       },
       "kind": "skill_ref",
       "value": "remember-this",
-      "quote": "iples-interview`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-conflicts`, `skill-drift`, `skill-gap`,",
+      "quote": "rview`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-conflicts`, `shape-idea`, `sk",
       "verify": {
         "method": "skill_exists",
         "name": "remember-this",
@@ -4753,7 +4753,7 @@
       },
       "kind": "skill_ref",
       "value": "resolve-conflicts",
-      "quote": " `problem`, `proceed`, `refine`, `remember-this`, `resolve-conflicts`, `skill-drift`, `skill-gap`, `skill-review`, `sim",
+      "quote": ", `proceed`, `refine`, `remember-this`, `resolve-conflicts`, `shape-idea`, `skill-drift`, `skill-ga",
       "verify": {
         "method": "skill_exists",
         "name": "resolve-conflicts",
@@ -4768,7 +4768,7 @@
       },
       "kind": "skill_ref",
       "value": "skill-drift",
-      "quote": ", `refine`, `remember-this`, `resolve-conflicts`, `skill-drift`, `skill-gap`, `skill-review`, `simplify`, `simpli",
+      "quote": "is`, `resolve-conflicts`, `shape-idea`, `skill-drift`, `skill-gap`, `skill-review`, `simplify",
       "verify": {
         "method": "skill_exists",
         "name": "skill-drift",
@@ -4783,7 +4783,7 @@
       },
       "kind": "skill_ref",
       "value": "skill-gap",
-      "quote": "member-this`, `resolve-conflicts`, `skill-drift`, `skill-gap`, `skill-review`, `simplify`, `simplify-branch`, `",
+      "quote": "onflicts`, `shape-idea`, `skill-drift`, `skill-gap`, `skill-review`, `simplify`, `simplify-",
       "verify": {
         "method": "skill_exists",
         "name": "skill-gap",
@@ -5113,19 +5113,19 @@
       }
     },
     {
-      "id": "skills/README.md:41:count:51",
+      "id": "skills/README.md:41:count:52",
       "source": {
         "file": "skills/README.md",
         "line": 41
       },
       "kind": "count",
-      "value": "51",
-      "quote": "56 skills total \u2014 51 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "value": "52",
+      "quote": "57 skills total \u2014 52 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/*/SKILL.md",
         "base": "repo",
-        "expected": 51,
+        "expected": 52,
         "op": "eq"
       }
     },
@@ -5137,7 +5137,7 @@
       },
       "kind": "count",
       "value": "5 GR.PRIIS project skills",
-      "quote": "56 skills total \u2014 51 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "57 skills total \u2014 52 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/Projects/GR.PRIIS/*/SKILL.md",
@@ -5154,7 +5154,7 @@
       },
       "kind": "count",
       "value": "8 Modules",
-      "quote": "56 skills total \u2014 51 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "57 skills total \u2014 52 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/_modules/*.md",
@@ -5201,7 +5201,7 @@
       },
       "kind": "skill_ref",
       "value": "simplify",
-      "quote": "cts`, `skill-drift`, `skill-gap`, `skill-review`, `simplify`, `simplify-branch`, `spec-verification`, `squash-",
+      "quote": "ll-drift`, `skill-gap`, `skill-review`, `simplify`, `simplify-branch`, `spec-verification`",
       "verify": {
         "method": "skill_exists",
         "name": "simplify",
