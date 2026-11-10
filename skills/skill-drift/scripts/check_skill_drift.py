@@ -752,18 +752,6 @@ def main() -> int:
     repos = MultiRepo(repo_root)
     checker = Checker(repos, args.mcp)
 
-    if args.update_stale:
-        reconciled = 0
-        for claim in all_claims:
-            if reconcile_claim(claim, repos.primary, checker):
-                reconciled += 1
-        if reconciled:
-            raw = json.dumps(data, indent=2) + "\n"
-            claims_path.write_text(raw, encoding="utf-8")
-            print(f"Reconciled {reconciled} stale/drifted claim(s) in {claims_path.name}")
-
-    format_ok = raw == json.dumps(data, indent=2) + "\n"
-
     claims = list(all_claims)
     if args.project:
         proj_prefix = f"skills/Projects/{args.project}/"
@@ -775,6 +763,19 @@ def main() -> int:
         ]
     if args.file:
         claims = [c for c in claims if any(fnmatch.fnmatch(c["source"]["file"], g) for g in args.file)]
+
+    # --file/--project scope the reconcile too, so a scoped run never rewrites other skills' claims
+    if args.update_stale:
+        reconciled = 0
+        for claim in claims:
+            if reconcile_claim(claim, repos.primary, checker):
+                reconciled += 1
+        if reconciled:
+            raw = json.dumps(data, indent=2) + "\n"
+            claims_path.write_text(raw, encoding="utf-8")
+            print(f"Reconciled {reconciled} stale/drifted claim(s) in {claims_path.name}")
+
+    format_ok = raw == json.dumps(data, indent=2) + "\n"
 
     results = []
     for claim in claims:
