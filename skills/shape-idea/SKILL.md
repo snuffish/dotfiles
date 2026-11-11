@@ -1,6 +1,6 @@
 ---
 name: shape-idea
-description: "Turns a vague idea into an approved plan: gathers earlier decisions (artifacts, work state, PR threads on the target), checks claims against the code, grills the what and why, writes a short design doc, drafts it with /plan, grills the plan's open questions, and stops at /proceed. Use for /shape-idea, \"I have a rough idea\", \"help me think this through\". Not for clear instructions (use /plan), research (use /investigate) or one decision (use /suggestion)."
+description: "Turns a vague idea into an approved plan: gathers earlier decisions (artifacts, work state, PR threads on the target), checks claims against the code, grills the what and why, writes a short design doc, drafts it with /plan, grills the plan's open questions, and stops at /proceed. Use for /shape-idea, \"I have a rough idea\", \"help me think this through\". Not for clear instructions (use /plan), research (use /investigate), one decision (use /suggestion) or an explicit brainstorm (use /brainstorming)."
 disable-model-invocation: true
 argument-hint: "<vague idea> [--dry-run]"
 ---

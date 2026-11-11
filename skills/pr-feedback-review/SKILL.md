@@ -97,9 +97,9 @@ Follow `git-worktrees` › *Snapshot Lifecycle* ([git-worktrees-snapshot.md](../
 
 ```bash
 git -C <repo> fetch origin <sourceBranch> <targetBranch>
-HEAD_SHA=$(git -C <repo> rev-parse origin/<sourceBranch>)    # source ref: origin/<sourceBranch>
+git -C <repo> rev-parse origin/<sourceBranch>                 # <head-sha>, the source ref
 git -C <repo> rev-parse --abbrev-ref HEAD                      # main checkout's branch
-git -C <repo> rev-list --left-right --count "$HEAD_SHA"...HEAD # "<behind> <ahead>"
+git -C <repo> rev-list --left-right --count <head-sha>...HEAD  # "<behind> <ahead>"
 ```
 
 Compare `HEAD_SHA` with the PR's `lastMergeSourceCommit` from Step 2.1; if they differ, the PR moved during the fetch — re-fetch.

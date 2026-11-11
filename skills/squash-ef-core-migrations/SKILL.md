@@ -64,10 +64,9 @@ Read any doc comments inside the migrations — they record what the scaffolder 
 ## Step 2 — Back up before deleting
 
 ```bash
-BACKUP=$(mktemp -d -t mig-backup.XXXXXX)
-cp <MigrationsDir>/<each-candidate>* "$BACKUP"/
-cp <MigrationsDir>/<Context>ModelSnapshot.cs "$BACKUP"/snapshot-branch.cs
-echo "$BACKUP"
+mktemp -d -t mig-backup.XXXXXX                                  # prints <backup>; report it
+cp <MigrationsDir>/<each-candidate>* <backup>/
+cp <MigrationsDir>/<Context>ModelSnapshot.cs <backup>/snapshot-branch.cs
 ```
 
 ## Step 3 — Establish the baseline
@@ -76,7 +75,7 @@ The baseline is the newest migration that is **not** being squashed. Find it by 
 
 ```bash
 git ls-tree -r --name-only origin/<default> -- <MigrationsDir> \
-  | grep -E '/[0-9]{14}_.*\.cs$' | grep -v Designer | sed 's#.*/##' | sort | tail -3
+  | grep -E '/[0-9]{14}_.*\.cs$' | grep -v Designer | sed 's#.*/##' | sort   # the last three lines
 ```
 
 ## Step 4 — Delete and reset the snapshot

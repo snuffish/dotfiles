@@ -18,13 +18,9 @@ Claude Code and Antigravity IDE share one artifact directory per repo, and multi
 
 - `<repo-name>` = basename of `dirname(git rev-parse --path-format=absolute --git-common-dir)`; no git repo → basename of cwd. Linked worktrees therefore share the main repo's folder.
 - Multi-repo workspace (a folder holding several repos): the repo the work targets; ambiguous → ask.
-- Resolve once per session, `mkdir -p`, then Claim as below:
-
-```bash
-repo=$(basename "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)")" 2>/dev/null) || repo=
-[ -n "$repo" ] && [ "$repo" != . ] || repo=$(basename "$PWD")
-ART_DIR="${AGENT_ARTIFACTS_DIR:-$HOME/.cache/agent-artifacts}/$repo"; mkdir -p "$ART_DIR"
-```
+- Resolve once per session, each step as its own Bash call, then Claim as below:
+  1. `git rev-parse --path-format=absolute --git-common-dir`: `<repo-name>` is the basename of the printed path's parent folder. A failure means no git repo, so use the basename of the cwd.
+  2. `mkdir -p <artifact-dir>`, with `<artifact-dir>` written out in full.
 
 - **Bare filename from the user** (`/proceed <prefix>-handoff-<suffix>.md`): resolve in `<artifact-dir>` first, then cwd.
 
@@ -47,15 +43,10 @@ ART_DIR="${AGENT_ARTIFACTS_DIR:-$HOME/.cache/agent-artifacts}/$repo"; mkdir -p "
    A file with no owner marker is read-only unless created in this conversation.
 4. **Claim (atomic create; counter on collision)**: draft in a session-private file (`<scratchpad>` or `mktemp`), with the owner marker on line 1:
    `<!-- artifact-owner: <host>-<model> · session <session-id> · created <ISO-8601 timestamp> -->`
-   Then publish with `O_EXCL` (`set -C`):
+   Then publish with `O_EXCL` (`set -C`) through `publish_new_artifact` ([script](scripts/publish_new_artifact.sh)), which prints the path it created:
 
    ```bash
-   # $1 = draft file, $2 = target path without extension, $3 = extension (default: md)
-   publish_new_artifact() {
-     local ext="${3:-md}" p="$2.${3:-md}" n=1
-     until ( set -C; cat "$1" > "$p" ) 2>/dev/null; do n=$((n + 1)); p="$2-$n.$ext"; done
-     printf '%s\n' "$p"
-   }
+   bash ~/.terminal/skills/_modules/scripts/publish_new_artifact.sh <draft-file> <target-path-without-extension> [<extension, default md>]
    ```
 
    - **Collision counter**: `<name>.md`, `<name>-2.md`, `<name>-3.md`, …. If a counter was added, note in chat that the base name belongs to another session.

@@ -80,7 +80,8 @@ Every plan writer applies it to the whole file **and to the chat response that p
 - One idea per bullet; split a longer one into sub-bullets. A hook (`claude/plan-lint.py`) rejects a bullet over 25 words and any other line over 15, with an inline code span counted as one word: keep to that while drafting.
 - _Decisions_ and _Risks_ as tables.
 - Every open question carries **Rec:** with the recommended answer.
-- Nothing after _Open Questions_. If there are no unresolved questions, note "None" (or omit).
+- Nothing after _Open Questions_ in the file. If there are no unresolved questions, note "None" (or omit).
+- **Steps** and **Unresolved questions** (the user's rule above) are chat-only: end the chat response with them, never write a **Steps** block into the plan file (`plan-lint.py` flags each numbered step as a question without a Rec). The file's _Proposed Changes_ holds the steps.
 
 ### Link block
 
