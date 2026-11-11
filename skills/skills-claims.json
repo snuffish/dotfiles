@@ -23882,6 +23882,117 @@
         "name": "resolve-conflicts",
         "base": "repo"
       }
+    },
+    {
+      "id": "skills/subagent/SKILL.md:19:path:../_modules/core.md",
+      "source": {
+        "file": "skills/subagent/SKILL.md",
+        "line": 19
+      },
+      "kind": "path",
+      "value": "../_modules/core.md",
+      "quote": "- `../_modules/core.md`",
+      "verify": {
+        "method": "path_exists",
+        "path": "../_modules/core.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/subagent/SKILL.md:20:path:../_modules/git-worktrees.md",
+      "source": {
+        "file": "skills/subagent/SKILL.md",
+        "line": 20
+      },
+      "kind": "path",
+      "value": "../_modules/git-worktrees.md",
+      "quote": "- `../_modules/git-worktrees.md`",
+      "verify": {
+        "method": "path_exists",
+        "path": "../_modules/git-worktrees.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/subagent/SKILL.md:21:path:../_modules/fan-out.md",
+      "source": {
+        "file": "skills/subagent/SKILL.md",
+        "line": 21
+      },
+      "kind": "path",
+      "value": "../_modules/fan-out.md",
+      "quote": "- `../_modules/fan-out.md`",
+      "verify": {
+        "method": "path_exists",
+        "path": "../_modules/fan-out.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/subagent/SKILL.md:24:path:references/brief.md",
+      "source": {
+        "file": "skills/subagent/SKILL.md",
+        "line": 24
+      },
+      "kind": "path",
+      "value": "references/brief.md",
+      "quote": "(references/brief.md)",
+      "verify": {
+        "method": "path_exists",
+        "path": "references/brief.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/subagent/SKILL.md:54:doc_link:git-worktrees \u203a Workspace Lifecycle",
+      "source": {
+        "file": "skills/subagent/SKILL.md",
+        "line": 54
+      },
+      "kind": "doc_link",
+      "value": "git-worktrees \u203a Workspace Lifecycle",
+      "quote": "`git-worktrees` \u203a *Workspace Lifecycle*",
+      "verify": {
+        "method": "heading_pointer",
+        "target": "git-worktrees",
+        "heading": "Workspace Lifecycle",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/subagent/SKILL.md:76:doc_link:fan-out \u203a Aggregation",
+      "source": {
+        "file": "skills/subagent/SKILL.md",
+        "line": 76
+      },
+      "kind": "doc_link",
+      "value": "fan-out \u203a Aggregation",
+      "quote": "`fan-out` \u203a *Aggregation*",
+      "verify": {
+        "method": "heading_pointer",
+        "target": "fan-out",
+        "heading": "Aggregation",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/subagent/SKILL.md:31:skill_ref:pr-fix-pipeline",
+      "source": {
+        "file": "skills/subagent/SKILL.md",
+        "line": 31
+      },
+      "kind": "skill_ref",
+      "value": "pr-fix-pipeline",
+      "quote": "`/pr-fix-pipeline`",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-fix-pipeline",
+        "base": "repo"
+      }
     }
   ]
 }
