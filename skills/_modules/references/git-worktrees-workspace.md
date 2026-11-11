@@ -33,6 +33,8 @@ git -C <repo> symbolic-ref --short refs/remotes/origin/HEAD   # <default>, e.g. 
 
 ## Create
 
+**Dirty main checkout first.** A new worktree starts from `<base>`, not from the files on disk, so uncommitted edits in `main-checkout` are absent from it, and merging the branch back later fails on any file changed on both sides. Before `worktree add`, run `git -C <repo> status --porcelain`. If it lists anything, stop and show the files, marking those the plan or handoff will also edit, and ask: commit them first (base the worktree on that commit), stash them, or go on without them. Never decide alone; the edits are the user's.
+
 ```bash
 SLUG=<ticket-id>-<kebab-slug>                                   # or the branch slug
 DIR=<repo>/.claude/worktrees/$SLUG
