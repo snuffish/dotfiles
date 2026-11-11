@@ -156,9 +156,27 @@
             "timeout": 60
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I ~/.terminal/claude/session-look.py",
+            "timeout": 5
+          }
+        ]
       }
     ],
     "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I ~/.terminal/claude/session-look.py",
+            "timeout": 5
+          }
+        ]
+      },
       {
         "matcher": "Bash",
         "hooks": [
@@ -224,6 +242,38 @@
             "command": "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"'"
           }
         ]
+      },
+      {
+        "matcher": "permission_prompt|elicitation_dialog|elicitation_url_dialog|agent_needs_input",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I ~/.terminal/claude/session-look.py",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I ~/.terminal/claude/session-look.py",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I ~/.terminal/claude/session-look.py",
+            "timeout": 5
+          }
+        ]
       }
     ],
     "UserPromptSubmit": [
@@ -236,6 +286,11 @@
           {
             "type": "command",
             "command": "python3 -I ~/.terminal/claude/session-lineage.py",
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "python3 -I ~/.terminal/claude/session-look.py",
             "timeout": 5
           }
         ]
@@ -257,6 +312,11 @@
           {
             "type": "command",
             "command": "python3 -I ~/.terminal/claude/session-lineage.py",
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "python3 -I ~/.terminal/claude/session-look.py",
             "timeout": 5
           },
           {

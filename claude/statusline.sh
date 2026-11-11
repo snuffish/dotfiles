@@ -222,4 +222,12 @@ usage=$(join ' · ' "${usage_parts[@]}")
 # Title and id both identify the session; the full id goes last so it can be copied into `claude --resume <id>`
 sess=$(join ' · ' "$(color 35 "$title")" "$(color 2 "$session")")
 
-join "$(color 2 ' │ ')" "$(color 36 "$model")" "$where" "$ctx" "$usage" "$sess"
+# Identity colour and state from session-look.py; absent file means no badge
+badge=""
+look_file="$HOME/.claude/session-look/$session.json"
+if [ -n "$session" ] && [ -f "$look_file" ]; then
+  { read -r look_sgr; read -r look_glyph; read -r look_color; read -r look_label; } < <(/usr/bin/jq -r '(.sgr // ""), (.glyph // ""), (.color // ""), (.label // "")' "$look_file" 2>/dev/null)
+  [ -n "$look_sgr" ] && badge=$(color "$look_sgr" " $look_glyph $look_color · $look_label ")
+fi
+
+join "$(color 2 ' │ ')" "$badge" "$(color 36 "$model")" "$where" "$ctx" "$usage" "$sess"
