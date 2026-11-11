@@ -1,0 +1,8 @@
+# Template: `adopr.sh agent install` renders it into ~/.config/systemd/user
+[Unit]
+Description=Refresh the adopr activity badge for tmux
+
+[Service]
+Type=oneshot
+Environment=PATH=@PATH@
+ExecStart=/bin/bash @ADOPR@ poll

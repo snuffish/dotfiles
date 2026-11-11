@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Pick from your Azure DevOps pull requests (the PRs you created or review) with fzf
 #   adopr.sh [--all]    --all also lists completed and abandoned PRs
+#   adopr.sh --activity opens on the activity view (the tmux badge's prefix + A popup)
 # Enter opens the PR in the browser, Ctrl-Y copies its URL, Ctrl-R refreshes, Ctrl-F toggles pattern mode
 # (utils/fzf-pattern.sh). Read-only: one `az repos pr list` for the PRs you created and one for those you review per
 # refresh. The lists and PR threads are cached in $ADOPR_CACHE (default ~/.cache/adopr): the picker opens on the cache and
@@ -167,20 +168,73 @@ fetch_activity() {
   jq -s '.' "${files[@]}" >"$ADOPR_DIR/activity.json"
 }
 
+# The comment events of the cached PR threads, shared by the activity rows and the tmux badge counts: one parser
+ADOPR_ENTRIES_JQ='
+  def epoch: (.[0:19] + "Z" | fromdateiso8601);
+  def kind: if .t != "system" then "comment" elif (.x | test(" voted ")) then "vote" else "status" end;
+  def pr_events($me): [.[] | .id as $pr | .threads[]? | .id as $th | .threadContext.filePath as $fp
+    | .comments[]? | select(.isDeleted | not) | select(.content != "Policy status has been updated")
+    | {pr: $pr, th: $th, fp: $fp, d: .publishedDate, t: .commentType, who: .author.displayName,
+       mine: (.author.uniqueName == $me), x: (.content // "")}];
+'
+
+# $ADOPR_CACHE/activity.json: the threads the activity view last showed, kept for the badge
+persist_activity() {
+  command cp "$ADOPR_DIR/activity.json" "$ADOPR_CACHE/activity.json.$$" &&
+    command mv -f "$ADOPR_CACHE/activity.json.$$" "$ADOPR_CACHE/activity.json"
+}
+
+# $ADOPR_CACHE/seen: epoch of the newest entry the activity view showed; only ever moves forward
+mark_seen() {
+  local newest seen
+  newest="$(jq -n -r --arg me "$(current_user)" --slurpfile act "$ADOPR_CACHE/activity.json" --slurpfile wi "$ADOPR_WI" \
+    "$ADOPR_ENTRIES_JQ"'[($act[0] | pr_events($me)[].d), ($wi[0].items[]? | .changed)] | map(select(. != null) | epoch) | max // empty')"
+  [[ "$newest" =~ ^[0-9]+$ ]] || return 0
+  seen="$(cat "$ADOPR_CACHE/seen" 2>/dev/null)"
+  [[ "$seen" =~ ^[0-9]+$ && "$seen" -ge "$newest" ]] && return 0
+  printf %s "$newest" >"$ADOPR_CACHE/seen.$$" && command mv -f "$ADOPR_CACHE/seen.$$" "$ADOPR_CACHE/seen"
+}
+
+# $ADOPR_CACHE/badge: the tmux pill with what others did since the activity view was last opened (empty when nothing):
+# ✎ comments, ✓ votes and status changes, # work items that mention or are assigned to you. Reads only the caches.
+badge() {
+  local act="$ADOPR_CACHE/activity.json" wi="$ADOPR_WI" seen now text
+  [[ -r "$act" ]] || act=/dev/null
+  [[ -r "$wi" ]] || wi=/dev/null
+  now="$(date +%s)"
+  seen="$(cat "$ADOPR_CACHE/seen" 2>/dev/null)"
+  [[ "$seen" =~ ^[0-9]+$ ]] || seen=$((now - 86400))
+  command mkdir -p -m 700 "$ADOPR_CACHE"
+  text="$(jq -n -r --argjson seen "$seen" --arg me "$(current_user)" --slurpfile act "$act" --slurpfile wi "$wi" \
+    "$ADOPR_ENTRIES_JQ"'
+    ($act[0] // [] | pr_events($me) | map(select(.mine | not) | select((.d | epoch) > $seen))) as $pr
+    | ([$wi[0].items[]? | select(.mine | not) | select(.mention or .assigned) | select(.changed != null)
+        | select((.changed | epoch) > $seen)] | length) as $w
+    | ([$pr[] | select(kind == "comment")] | length) as $c
+    | ([$pr[] | select(kind != "comment")] | length) as $v
+    | [(if $c > 0 then "✎ \($c)" else empty end), (if $v > 0 then "✓ \($v)" else empty end),
+       (if $w > 0 then "# \($w)" else empty end)]
+    | if length == 0 then "" else "#[fg=colour16,bg=colour179,bold] ADO " + join(" ") + " #[default]" end')" || return 1
+  write_badge "$text"
+}
+
+write_badge() {
+  command mkdir -p -m 700 "$ADOPR_CACHE"
+  printf %s "$1" >"$ADOPR_CACHE/badge.$$" && command mv -f "$ADOPR_CACHE/badge.$$" "$ADOPR_CACHE/badge"
+}
+
 # Rows: PR ID, KIND (comment/vote/status), WHO, TEXT, AGE (shown), URL, PR:THREAD (hidden); every comment in the
-# cached threads, newest first
+# cached threads, newest first. Showing them marks them seen and clears the badge.
 activity() {
   fetch_activity "$1" || return 1
-  jq -r --argjson now "$(date +%s)" --arg me "$(current_user)" --slurpfile prs "$ADOPR_PRS" --slurpfile wi "$ADOPR_WI" '
+  persist_activity 2>/dev/null
+  jq -r --argjson now "$(date +%s)" --arg me "$(current_user)" --slurpfile prs "$ADOPR_PRS" --slurpfile wi "$ADOPR_WI" \
+    "$ADOPR_ENTRIES_JQ"'
     def age: ($now - (.d[0:19] + "Z" | fromdateiso8601)) as $s
       | if $s < 3600 then "\($s / 60 | floor)m" elif $s < 86400 then "\($s / 3600 | floor)h" else "\($s / 86400 | floor)d" end;
     def paint($c): "\u001b[\($c)m" + . + "\u001b[0m";
-    def kind: if .t != "system" then "comment" elif (.x | test(" voted ")) then "vote" else "status" end;
     def short: gsub("\\s+"; " ") | if length > 100 then .[0:99] + "…" else . end;
-    ([.[] | .id as $pr | .threads[]? | .id as $th | .threadContext.filePath as $fp
-      | .comments[]? | select(.isDeleted | not) | select(.content != "Policy status has been updated")
-      | {pr: $pr, th: $th, fp: $fp, d: .publishedDate, t: .commentType, who: .author.displayName,
-         mine: (.author.uniqueName == $me), x: (.content // "")}]
+    (pr_events($me)
       | map(. as $c | ($prs[0][] | select(.id == $c.pr) | .url) as $url
         | {d: .d, r: [(.pr | tostring | paint("1")), (kind | paint(if . == "comment" then "33" else "90" end)),
            (.who | paint(if $c.mine then "36" else "35" end)), (.x | short), (age | paint("90")),
@@ -194,6 +248,9 @@ activity() {
       | {d: ($now | todate), r: ["!" | paint("31"), ("error" | paint("31")), ("workitems" | paint("90")), ($e | short),
            ("now" | paint("90")), "", "err"]}])
     | sort_by(.d) | reverse | .[].r | @tsv' "$ADOPR_DIR/activity.json"
+  local rc=$?
+  { mark_seen && badge; } 2>/dev/null
+  return $rc
 }
 
 # Every comment of thread $1 (PR:THREAD), from the cache
@@ -276,7 +333,98 @@ copy_url() {
   printf %s "$1" | { wl-copy 2>/dev/null || xclip -selection clipboard 2>/dev/null || pbcopy 2>/dev/null || clip.exe; }
 }
 
+# Background refresh for the tmux badge (run by the agent every 10 minutes): fetches the PRs, threads and work items
+# fresh into the caches and rewrites the badge. A sign-in or az failure leaves a grey "ADO !" until the next good poll.
+poll() {
+  local me
+  command -v az >/dev/null 2>&1 || die "az is not installed"
+  command -v jq >/dev/null 2>&1 || die "jq is not installed"
+  command mkdir -p -m 700 "$ADOPR_CACHE"
+  # A lock left by a killed poll expires after half an hour
+  [[ -z "$(find "$ADOPR_CACHE/poll.lock" -maxdepth 0 -mmin +30 2>/dev/null)" ]] || command rmdir "$ADOPR_CACHE/poll.lock"
+  command mkdir "$ADOPR_CACHE/poll.lock" 2>/dev/null || return 0
+  ADOPR_DIR="$(mktemp -d)" || { command rmdir "$ADOPR_CACHE/poll.lock"; return 1; }
+  FZFP_DIR="$ADOPR_DIR"
+  export ADOPR_DIR FZFP_DIR
+  trap 'command rm -rf -- "$ADOPR_DIR"; command rmdir "$ADOPR_CACHE/poll.lock"' EXIT
+  me="$(current_user)"
+  ADOPR_PRS="$ADOPR_CACHE/prs-active-${me//[^[:alnum:]]/_}.json"
+  ADOPR_STATE="${ADOPR_PRS%.json}.state"
+  export ADOPR_PRS ADOPR_STATE
+  # fetch and fetch_activity `die`, which would end the whole script: run them in a subshell
+  if [[ -n "$me" ]] && ( fetch && fetch_activity fresh ); then
+    persist_activity && badge
+  else
+    write_badge '#[fg=colour244] ADO ! #[default]'
+    return 1
+  fi
+}
+
+# A unit template from utils/adopr-agent/ with this script, the PATH az and jq need and $HOME filled in
+render_unit() {
+  local tpl path d
+  tpl="$(cat "$(dirname "$self")/adopr-agent/$1")" || return 1
+  for d in "$(command -v az)" "$(command -v jq)"; do
+    [[ -n "$d" ]] || die "agent: az and jq must be on PATH to render the unit"
+    [[ ":$path" == *":${d%/*}:"* ]] || path+="${d%/*}:"
+  done
+  [[ ":$path" == *":/usr/bin:"* ]] || path+="/usr/bin:"
+  path+="/bin"
+  tpl="${tpl//@ADOPR@/"$self"}"
+  tpl="${tpl//@PATH@/"$path"}"
+  printf '%s\n' "${tpl//@HOME@/"$HOME"}"
+}
+
+# adopr.sh agent install|uninstall|status|render: the 10-minute `poll` as a launchd agent (macOS) or a systemd user
+# timer (Linux). `render` prints the units that install would write.
+agent() {
+  local os label=com.snuffish.adopr-poll plist unitdir
+  os="$(uname -s)"
+  plist="$HOME/Library/LaunchAgents/$label.plist"
+  unitdir="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user"
+  [[ "$os" == Darwin || "$os" == Linux ]] || die "agent: unsupported OS"
+  case "$1" in
+    render)
+      if [[ "$os" == Darwin ]]; then render_unit adopr-poll.plist
+      else render_unit adopr-poll.service; echo; render_unit adopr-poll.timer; fi ;;
+    install)
+      command mkdir -p -m 700 "$ADOPR_CACHE"
+      if [[ "$os" == Darwin ]]; then
+        command mkdir -p "${plist%/*}"
+        render_unit adopr-poll.plist >"$plist" || return 1
+        launchctl bootout "gui/$(id -u)/$label" 2>/dev/null
+        launchctl bootstrap "gui/$(id -u)" "$plist" || die "agent: launchctl bootstrap failed"
+      else
+        command mkdir -p "$unitdir"
+        render_unit adopr-poll.service >"$unitdir/adopr-poll.service" || return 1
+        command cp "$(dirname "$self")/adopr-agent/adopr-poll.timer" "$unitdir/adopr-poll.timer"
+        systemctl --user daemon-reload && systemctl --user enable --now adopr-poll.timer || die "agent: systemctl failed"
+      fi ;;
+    uninstall)
+      if [[ "$os" == Darwin ]]; then
+        launchctl bootout "gui/$(id -u)/$label" 2>/dev/null
+        command rm -f -- "$plist"
+      else
+        systemctl --user disable --now adopr-poll.timer 2>/dev/null
+        command rm -f -- "$unitdir/adopr-poll.service" "$unitdir/adopr-poll.timer"
+        systemctl --user daemon-reload
+      fi ;;
+    status)
+      if [[ "$os" == Darwin ]]; then launchctl print "gui/$(id -u)/$label" 2>&1 | grep -E 'state =|runs =|last exit code|^Could not' || true
+      else systemctl --user list-timers adopr-poll.timer --no-pager | head -n 2; fi
+      if [[ -e "$ADOPR_CACHE/badge" ]]; then
+        echo "badge updated $(date -r "$ADOPR_CACHE/badge" '+%F %T')"
+      else
+        echo "badge: not written yet"
+      fi ;;
+    *) die "usage: adopr.sh agent install|uninstall|status|render" ;;
+  esac
+}
+
 case "$1" in
+  agent) agent "$2"; exit ;;
+  badge) badge; exit ;;
+  poll) poll; exit ;;
   rows) rows; exit ;;
   preview) preview "$2"; exit ;;
   fetch) fetch; exit ;;
@@ -297,6 +445,8 @@ command -v az >/dev/null 2>&1 || die "az is not installed"
 command -v fzf >/dev/null 2>&1 || die "fzf is not installed"
 command -v jq >/dev/null 2>&1 || die "jq is not installed"
 [[ "$1" == --all ]] && export ADOPR_ALL=1
+force_activity=
+[[ "$1" == --activity ]] && force_activity=1
 
 ADOPR_DIR="$(mktemp -d)" || exit 1
 FZFP_DIR="$ADOPR_DIR"
@@ -337,6 +487,7 @@ if [[ -r "$ADOPR_STATE" ]]; then
     esac
   done <"$ADOPR_STATE"
 fi
+[[ -n "$force_activity" ]] && view=activity
 
 prompt="PRs> " label=" $title " preview="bash $self preview {1}" input="$FZFP_DIR/rows" opts=()
 if [[ "$view" == activity ]] && bash "$self" activity >"$ADOPR_DIR/arows"; then
