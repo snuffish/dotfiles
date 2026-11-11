@@ -63,7 +63,8 @@ Suggest `--deep` in chat (never switch silently) when a bare `/suggestion` spans
 
 - **Prior art first** (`core` › *Codebase investigation* › *Navigation*): an existing pattern beats a theoretically better one unless demonstrably broken; cite the precedent with `path:line`.
 - **Conventions second**: read governing rulebook sections and project-scoped skills (`core` › *Precedence*). Flag and justify any departure.
-- **Blast radius & prior decisions**: note touched contracts/migrations/enums/tests, and check recent git history, open PRs, artifacts in the artifact dir and memory (`core` › *Codebase investigation* › *Historical decisions*).
+- **Blast radius**: note touched contracts/migrations/enums/tests.
+- **Prior work on the topic**: search handoffs, brainstorms, designs and plans in the artifact dir, related branches (`git branch -a`), open and recent PRs, recent git history and memory (`core` › *Codebase investigation* › *Historical decisions*). Build on what was decided there; when an option contradicts it, say so in that option.
 - **External research**: only in `--deep` mode or when a version/API fact must be verified.
 
 ### Step 3: Enumerate and rank
@@ -88,6 +89,7 @@ Suggest `--deep` in chat (never switch silently) when a bare `/suggestion` spans
 
 - **Recommendation**: 1–2 sentences naming the pick (`**1. <name>**`, plus assumed goal if inferred), or plain yes/no.
 - **Why**: 2–4 concise bullets grounded in clickable `path:line` links or named docs.
+- **Prior work**: 1–3 bullets naming each earlier handoff, design, branch or PR on the topic and what it decided, or `None found` with where you looked.
 - **Options**: numbered list (`1. **<name>** (recommended): <one line>`, `2. **<name>**: <when it would win instead>`, up to 4).
 - **What `/proceed` will do (option 1)**: the _Proceed plan_ below.
 - **Next step**: the _Next step_ line below.
