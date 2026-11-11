@@ -107,6 +107,14 @@ class Tmux(Base):
         pill = CONFIG["states"]["waiting"]["pill"]
         self.assertIn(f"#[bg={pill},fg=#11111b] ◆ WAIT #[default]", self.calls[-1])
 
+    def test_square_is_a_pane_option_in_the_state_colour(self):
+        self.fire("UserPromptSubmit")
+        args = self.calls[-1]
+        i = args.index("@claude_square")
+        square = f"#[fg={CONFIG['states']['working']['pill']}]■#[fg=default]"
+        self.assertEqual(args[i - 3:i + 2], ["-p", "-t", "%1", "@claude_square", square])
+        self.assertNotIn("-w", args)
+
     def test_pane_title_is_the_repo(self):
         self.fire("UserPromptSubmit")
         self.assertEqual(self.calls[-1][-1], look.repo_name("/x/GR.PRIIS/backend"))
@@ -128,6 +136,7 @@ class Tmux(Base):
         self.assertIn("-pu", self.calls[-1])
         self.assertIn("@claude_frame", self.calls[-1])
         self.assertIn("@claude_pill", self.calls[-1])
+        self.assertIn("@claude_square", self.calls[-1])
         self.assertFalse((look.STATE / "s1.json").exists())
 
     def test_no_tmux_pane_means_no_call(self):

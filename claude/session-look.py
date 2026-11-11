@@ -5,7 +5,8 @@ Identity (which project) comes from claude/session-colors.json: ordered rules, f
 the repo name. State (what the session is doing) comes from the event: working, waiting, done, plan.
 
 In tmux the pane carries its identity colour (@claude_frame, read by the border styles in tmux.conf) and its
-state as a pill (@claude_pill for the pane border, @claude_glyph for the window tab). The pane background is
+state as a pill on the pane border (@claude_pill) and a coloured square (@claude_square); the window tab lines
+up the squares of all its Claude panes. The pane background is
 never touched. Every event also prints an OSC 2 title
 (terminalSequence) so a plain terminal shows the state too. statusline.sh reads the state file for its badge.
 Any error exits 0 without output: a hook bug must never block a prompt.
@@ -123,7 +124,7 @@ def apply_args(pane, frame, spec, repo):
     return [
         "set-option", "-p", "-t", pane, "@claude_frame", frame, ";",
         "set-option", "-p", "-t", pane, "@claude_pill", pill, ";",
-        "set-option", "-w", "-t", pane, "@claude_glyph", pill, ";",
+        "set-option", "-p", "-t", pane, "@claude_square", f"#[fg={spec['pill']}]■#[fg=default]", ";",
         "select-pane", "-t", pane, "-T", repo,
     ]
 
@@ -134,6 +135,7 @@ def reset_args(pane):
         "set-option", "-pu", "-t", pane, "window-style", ";",
         "set-option", "-pu", "-t", pane, "@claude_frame", ";",
         "set-option", "-pu", "-t", pane, "@claude_pill", ";",
+        "set-option", "-pu", "-t", pane, "@claude_square", ";",
         "set-option", "-wu", "-t", pane, "@claude_glyph", ";",
         "select-pane", "-t", pane, "-T", "",
     ]
