@@ -1,6 +1,6 @@
 ---
 name: shape-idea
-description: "Turns a vague idea into an approved plan: gathers earlier decisions (artifacts, work state, PR threads on the target), checks claims against the code, grills the what and why, writes a short design doc, drafts it with /plan, grills the plan's open questions, and stops at /proceed. Use for /shape-idea, \"I have a rough idea\", \"help me think this through\". Not for clear instructions (use /plan), research (use /investigate), one decision (use /suggestion) or an explicit brainstorm (use /brainstorming)."
+description: "Turns a vague idea into an approved plan: gathers earlier decisions (artifacts, work state, PR threads on the target), checks claims against the code, grills the what and why, writes a short design doc, drafts it with /plan, grills the plan's open questions, writes a /handoff, and stops at /proceed. Use for /shape-idea, \"I have a rough idea\", \"help me think this through\". Not for clear instructions (use /plan), research (use /investigate), one decision (use /suggestion) or an explicit brainstorm (use /brainstorming)."
 disable-model-invocation: true
 argument-hint: "<vague idea> [--dry-run]"
 ---
@@ -17,7 +17,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 
 Read these before step 1:
 - `../_modules/core.md`: read-only until `/proceed`; used here: *Codebase investigation* (item 3, memory lookup) and *The `/proceed` gate*
-- `../_modules/artifact-protocol.md`: writes `<prefix>-design-<suffix>.md`; used here: *Artifact directory*, *Rules* 1–4 (prefix, suffix, owner marker, Claim) and *Chat link block*. The plan itself is written by [`/plan`](../plan/SKILL.md)
+- `../_modules/artifact-protocol.md`: writes `<prefix>-design-<suffix>.md`; used here: *Artifact directory*, *Rules* 1–4 (prefix, suffix, owner marker, Claim) and *Chat link block*. The plan itself is written by [`/plan`](../plan/SKILL.md), the handoff by [`/handoff`](../handoff/SKILL.md)
 
 On-demand references (`references/`):
 - [`references/blind-replay.md`](references/blind-replay.md) — load when the idea changes what a review skill finds or how (passes, agents, rules, modes), not its wording
@@ -40,6 +40,7 @@ For testing the skill:
 - Every file goes to `<scratchpad>/shape-idea-dry-run/` (the session scratchpad, or the folder the prompt names), named per `artifact-protocol` › *Rules* 1–2, with the owner marker but without *Claim*. The line after **Status:** reads `**Dry run** — scripted answers`.
 - Sources the run skips are marked `skipped (dry run)`. Each grilling step runs one round unless the script raises more.
 - No work-state or memory writes; nested skills run inline, `/plan`'s self-review included (no sub-agents).
+- `/handoff` writes to the same folder, and its gate line names that path.
 
 ---
 
@@ -118,18 +119,21 @@ Turn every item under the plan's *Open Questions* into `AskUserQuestion` rounds.
 
 ### Step 7: Stop at the gate
 
-List the principles behind the user's answers in Steps 3–6: the rule each choice follows, phrased so it applies next time ("prove before publishing", not "replay !18785"). Attach the design doc and plan to a work-state item as `work_product`, then end with `core` › *The `/proceed` gate* line.
+1. List the principles behind the user's answers in Steps 3–6: the rule each choice follows, phrased so it applies next time ("prove before publishing", not "replay !18785").
+2. Run [`/handoff`](../handoff/SKILL.md) with the design doc's suffix, in the same turn that delivers the plan. Its *Next Steps* are the plan's phases, its *Key Decisions* the design doc's *Decided design* and *Overrides*, and it links both files.
+3. Attach the design doc, plan and handoff to a work-state item as `work_product`, then end with `core` › *The `/proceed` gate* line naming `/proceed <handoff path>`.
 
 ---
 
 ## 3. Output Format & Deliverables
 
-- `<prefix>-design-<suffix>.md` and the `/plan` artifact, both in the artifact dir.
+- `<prefix>-design-<suffix>.md`, the `/plan` artifact and the `/handoff` artifact, all in the artifact dir.
 - Final chat reply:
 
 ```markdown
 <design doc chat link block>        (artifact-protocol › *Chat link block*)
 <plan chat link block, with its Status>
+<handoff chat link block>
 
 **Principles you chose:**
 1. <principle> — <one line why>
@@ -137,7 +141,7 @@ List the principles behind the user's answers in Steps 3–6: the rule each choi
 **My calls:** <each, one line> (or: none)
 **Overrides:** <earlier decision> → <user's call> (or: none)
 
-> **Next Step Gate:** Reply `/proceed` (or "go ahead") to run phases <n–m>, or specify scope/changes.
+> **Next Step Gate:** Reply `/proceed <handoff path>` (or "go ahead") to run phases <n–m>, or specify scope/changes.
 ```
 
 ---
@@ -148,4 +152,5 @@ List the principles behind the user's answers in Steps 3–6: the rule each choi
 - Every claim the design relies on carries its evidence (Step 2).
 - The design doc has *Approaches* with the user's pick and **Status:** Approved.
 - The plan's *Open Questions* says "None", and its *Verification Plan* says how the change is proven.
+- A `<prefix>-handoff-<suffix>.md` links the design doc and plan, and the gate line names it.
 - No file was edited outside the artifact dir (the scratchpad under `--dry-run`), and nothing was committed.
