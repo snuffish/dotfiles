@@ -4,8 +4,9 @@
 Identity (which project) comes from claude/session-colors.json: ordered rules, first match wins, else a hash of
 the repo name. State (what the session is doing) comes from the event: working, waiting, done, plan.
 
-In tmux the pane gets an identity background (brighter while waiting) and the pane and window carry the state,
-read by pane-border-format and window-status-format in tmux.conf. Every event also prints an OSC 2 title
+In tmux the pane carries its identity colour (@claude_frame, read by the border styles in tmux.conf) and its
+state as a pill (@claude_pill for the pane border, @claude_glyph for the window tab). The pane background is
+never touched. Every event also prints an OSC 2 title
 (terminalSequence) so a plain terminal shows the state too. statusline.sh reads the state file for its badge.
 Any error exits 0 without output: a hook bug must never block a prompt.
 """
@@ -48,7 +49,7 @@ def handle(data, config, tmux_pane, run=None):
     record = None if event == "SessionStart" else load_record(sid)
     if record is None:
         color = pick_color(config, data.get("cwd") or "")
-        record = {"color": color, "bg": config["colors"][color]["bg"], "state": None, "mode": None}
+        record = {"color": color, "frame": config["colors"][color]["frame"], "state": None, "mode": None}
     state = state_for(event, data)
     if state is None:
         return None
@@ -61,8 +62,7 @@ def handle(data, config, tmux_pane, run=None):
     record |= {"state": state, "mode": mode, "glyph": spec["glyph"], "label": spec["label"], "sgr": look["sgr"]}
     save_record(sid, record)
     if tmux_pane and (changed or event == "SessionStart"):
-        bg = look["alert"] if state == "waiting" else look["bg"]
-        run(apply_args(tmux_pane, bg, state, spec))
+        run(apply_args(tmux_pane, record["frame"], spec, repo_name(data.get("cwd") or "")))
     out = {"terminalSequence": osc_title(f"{spec['glyph']} {record['color']}")}
     if event == "SessionStart" and config.get("color_command"):
         out["initialUserMessage"] = f"/color {record['color']}"
@@ -118,20 +118,22 @@ def git_branch(path):
         return ""
 
 
-def apply_args(pane, bg, state, spec):
-    glyph = f"#[fg={spec['tmux']}]{spec['glyph']}#[default]"
+def apply_args(pane, frame, spec, repo):
+    pill = f"#[bg={spec['pill']},fg=#11111b] {spec['glyph']} {spec['tag']} #[default]"
     return [
-        "set-option", "-p", "-t", pane, "window-style", f"bg={bg}", ";",
-        "set-option", "-p", "-t", pane, "@claude_state", state, ";",
-        "set-option", "-w", "-t", pane, "@claude_glyph", glyph, ";",
-        "select-pane", "-t", pane, "-T", f"{spec['glyph']} {spec['label']}",
+        "set-option", "-p", "-t", pane, "@claude_frame", frame, ";",
+        "set-option", "-p", "-t", pane, "@claude_pill", pill, ";",
+        "set-option", "-w", "-t", pane, "@claude_glyph", pill, ";",
+        "select-pane", "-t", pane, "-T", repo,
     ]
 
 
 def reset_args(pane):
     return [
+        # window-style: clears the tint v1 left in panes that were open during the upgrade
         "set-option", "-pu", "-t", pane, "window-style", ";",
-        "set-option", "-pu", "-t", pane, "@claude_state", ";",
+        "set-option", "-pu", "-t", pane, "@claude_frame", ";",
+        "set-option", "-pu", "-t", pane, "@claude_pill", ";",
         "set-option", "-wu", "-t", pane, "@claude_glyph", ";",
         "select-pane", "-t", pane, "-T", "",
     ]

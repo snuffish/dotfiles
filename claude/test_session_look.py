@@ -92,11 +92,24 @@ class EventToState(Base):
 
 
 class Tmux(Base):
-    def test_waiting_brightens_background(self):
-        self.fire("UserPromptSubmit")
+    def test_frame_is_the_identity_colour_in_every_state(self):
+        for event in ("UserPromptSubmit", "PermissionRequest", "Stop"):
+            self.fire(event)
+            self.assertIn(CONFIG["colors"]["blue"]["frame"], self.calls[-1])
+
+    def test_pane_background_is_never_set(self):
+        for event in ("SessionStart", "UserPromptSubmit", "PermissionRequest", "Stop"):
+            self.fire(event)
+            self.assertNotIn("window-style", self.calls[-1])
+
+    def test_waiting_pill_is_a_filled_wait_tag(self):
         self.fire("PermissionRequest")
-        args = self.calls[-1]
-        self.assertIn(f"bg={CONFIG['colors']['blue']['alert']}", args)
+        pill = CONFIG["states"]["waiting"]["pill"]
+        self.assertIn(f"#[bg={pill},fg=#11111b] ◆ WAIT #[default]", self.calls[-1])
+
+    def test_pane_title_is_the_repo(self):
+        self.fire("UserPromptSubmit")
+        self.assertEqual(self.calls[-1][-1], look.repo_name("/x/GR.PRIIS/backend"))
 
     def test_unchanged_state_makes_no_tmux_call(self):
         self.fire("UserPromptSubmit")
@@ -113,6 +126,8 @@ class Tmux(Base):
         self.fire("UserPromptSubmit")
         self.fire("SessionEnd")
         self.assertIn("-pu", self.calls[-1])
+        self.assertIn("@claude_frame", self.calls[-1])
+        self.assertIn("@claude_pill", self.calls[-1])
         self.assertFalse((look.STATE / "s1.json").exists())
 
     def test_no_tmux_pane_means_no_call(self):
@@ -123,7 +138,7 @@ class Tmux(Base):
         self.fire("PermissionRequest")
         self.fire("SessionStart")
         self.assertEqual(self.state(), "done")
-        self.assertIn(f"bg={CONFIG['colors']['blue']['bg']}", self.calls[-1])
+        self.assertIn(CONFIG["colors"]["blue"]["frame"], self.calls[-1])
 
 
 class Output(Base):
@@ -144,7 +159,7 @@ class Output(Base):
     def test_state_file_is_valid_json_with_badge_fields(self):
         self.fire("UserPromptSubmit")
         record = json.loads((look.STATE / "s1.json").read_text())
-        for key in ("color", "bg", "state", "glyph", "label", "sgr"):
+        for key in ("color", "frame", "state", "glyph", "label", "sgr"):
             self.assertIn(key, record)
 
 
