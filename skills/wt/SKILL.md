@@ -30,6 +30,7 @@ On-demand references (`references/`):
 
 - **The prompt starts with another Command** (`/refine … /wt`): that Command handles the token under `core` › *Worktree opt-in*; this skill is not involved.
 - **Stepping into a kept worktree from an earlier run**: give the user the path and `EnterWorktree path:<dir>` (`git-worktrees` › *Workspace Lifecycle* › *Hand-off*).
+- **Starting a fresh single-task session**: launch `claude -w <slug>` (`--tmux` optional) instead; inside it `/wt` and `/wt` Commands reuse that tree (*Step 4*).
 - **Running in the user's own checkout**: use [`/no-wt`](../no-wt/SKILL.md).
 - **Remote-only operations** (completing a PR on the host, editing a PR description): nothing to isolate; say so and run only on an explicit ask.
 
