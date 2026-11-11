@@ -23,7 +23,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 - `../_modules/core.md`
 - `../_modules/artifact-protocol.md`: writes `<prefix>-implementation_plan-<suffix>.md` and `<prefix>-what_am_i_missing-<suffix>.md` (Phase 2), and `<prefix>-walkthrough-<suffix>.md` (Phase 7) in the artifact dir (`artifact-protocol`) (`<suffix>` is `<ticket-id>-<feature-slug>` when there is a ticket, else a 2–4 word topic slug)
-- `../_modules/git-worktrees.md`: workspace by default (creates/reuses a workspace worktree per repo in Phase 0 and removes landed ones in Phase 7 per *Workspace Lifecycle*; paste `[worktree-context]` into every delegated skill and sub-agent brief; `/no-worktrees` opts out)
+- `../_modules/git-worktrees.md`: workspace by default (creates/reuses a workspace worktree per repo in Phase 0 and removes landed ones in Phase 7 per *Workspace Lifecycle*; paste `[worktree-context]` into every delegated skill and sub-agent brief; `/no-wt` opts out)
 - `../_modules/pr-counterpart.md`
 - `../_modules/pr-host.md`: ticket and PR intake (`<org-url>`, work items, acceptance criteria)
 - `../_modules/project-profile.md`: profile `implement-feature-<project>-profile`
@@ -116,7 +116,7 @@ The orchestrator (you) owns the ticket, the gates, the plan and every edit. Sub-
 5. **Resolve scope:** which repos, which feature domains, and whether the acceptance criteria imply UI, API, background, permission, data or contract changes.
 6. **Offer tracker housekeeping, do not perform it.** If the ticket is unassigned or not in the "in progress" state the profile names, propose the exact commands and run them only on a yes.
 7. **Write a scope statement** in chat: one paragraph naming the implementing ID, the repos touched, the domains, whether the discussion thread was read, the resolved profile fields that matter (tracker, verify, ship conventions) and anything the ticket leaves ambiguous.
-8. **Create the workspace worktree(s)** (skip under `/no-worktrees`) per `git-worktrees` › *Workspace Lifecycle* steps a–c, one per repo in scope (base = freshly fetched `origin/<default>`; branch = project convention with implementing ID; copy *Worktree include list*; run *Dependency hydration*). Append the resulting `[worktree-context]` block(s) to the scope statement.
+8. **Create the workspace worktree(s)** (skip under `/no-wt`) per `git-worktrees` › *Workspace Lifecycle* steps a–c, one per repo in scope (base = freshly fetched `origin/<default>`; branch = project convention with implementing ID; copy *Worktree include list*; run *Dependency hydration*). Append the resulting `[worktree-context]` block(s) to the scope statement.
 9. **Request Framing & Multi-Perspective Re-phrasing (Framing Gate)**: read [`references/framing.md`](references/framing.md), present 3–4 contrasting perspectives from its menu, and **stop** until the user picks or blends a framing (skip only with `--direct` or `/no-framing`).
 
 ---

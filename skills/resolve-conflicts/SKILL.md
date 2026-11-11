@@ -18,11 +18,11 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 - `../_modules/core.md`
 - `../_modules/artifact-protocol.md`: only when the artifact threshold is met (at least one conflict needed a user decision, or the operation spans >10 conflicted files or multiple rebase stops), then writes `<prefix>-conflict_resolution-<suffix>.md`
-- `../_modules/git-worktrees.md`: only with `/worktrees` or an incoming `[worktree-context]` block
+- `../_modules/git-worktrees.md`: only with `/wt` or an incoming `[worktree-context]` block
 - `../_modules/pr-host.md`: only in `main` mode, read-only, to find the base and the PR
 
 - **Authorization**: invoking `/resolve-conflicts` authorizes editing conflicted files, regenerating lockfiles/codegen and staging resolved paths. It stops there (`stage-only`) by default; the `commit` argument, or a `/commit` that finds the merge resolved, concludes the operation once Step 6's gates hold. Never push or `stash drop`, except the confirmed push in `main` mode (*Step 0c — `main` Mode*).
-- **Isolation**: resolve in the tree where the conflict lives (`repo-root`). If a skill worktree is active for the repo and the conflict is in the main checkout, ask first (`git-worktrees` › *Golden Invariants*). If `/worktrees` is passed to *start* a merge/rebase, run in a workspace worktree (`git-worktrees` › *Workspace Lifecycle*).
+- **Isolation**: resolve in the tree where the conflict lives (`repo-root`). If a skill worktree is active for the repo and the conflict is in the main checkout, ask first (`git-worktrees` › *Golden Invariants*). If `/wt` is passed to *start* a merge/rebase, run in a workspace worktree (`git-worktrees` › *Workspace Lifecycle*).
 
 ---
 

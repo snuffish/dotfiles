@@ -42,7 +42,7 @@ Read these before step 1:
 | --- | --- | --- |
 | `/code-review [scope]` | **Standard** (default) | One pass; the reviewer covers the selected axes (*Step 5a*) itself, or as parallel axis lanes on larger diffs (*Step 5b*) |
 | `/code-review --deep [scope]` | **Deep** | Each selected axis runs in a parallel sub-agent ([deep-mode.md](references/deep-mode.md)), then aggregate and pass to an independent verifier sub-agent |
-| `/code-review live [scope]` | Standard or deep, **no snapshot** | Reads the main checkout directly (same as `/no-worktrees`). Only when a snapshot is impossible (e.g. uncommitted untracked files) |
+| `/code-review live [scope]` | Standard or deep, **no snapshot** | Reads the main checkout directly (same as `/no-wt`). Only when a snapshot is impossible (e.g. uncommitted untracked files) |
 | `/code-review feedback [scope]` | Standard or deep, **full thread triage** | After Step 6 verifies findings, runs `/pr-feedback-review` and folds PR threads into the review (*Step 6b*) |
 
 `live` and `feedback` are modifiers (`/code-review --deep feedback <pr>` is valid). Suggest `--deep` (`fan-out` › *Bare vs deep*) when the diff exceeds ~1,500 changed lines or spans two repos with contract changes.

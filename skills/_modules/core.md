@@ -35,7 +35,7 @@ Root operating standards for every Command in the Registry: golden invariants, e
 - Run targeted verification (build, type-check, relevant tests) after every code edit. Fix failures before claiming completion.
 
 ### Worktree opt-in
-- Token `/worktrees` or an incoming `[worktree-context]` block opts any Command into [git-worktrees.md](git-worktrees.md); `/no-worktrees` forces in-place execution. Prompts with either token and no Command route to [`worktrees`](../worktrees/SKILL.md) or [`no-worktrees`](../no-worktrees/SKILL.md). Full rules: `git-worktrees` › *Modes*.
+- Token `/wt` or an incoming `[worktree-context]` block opts any Command into [git-worktrees.md](git-worktrees.md); `/no-wt` forces in-place execution. Prompts with either token and no Command route to [`wt`](../wt/SKILL.md) or [`no-wt`](../no-wt/SKILL.md). Full rules: `git-worktrees` › *Modes*.
 
 ---
 

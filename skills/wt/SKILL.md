@@ -1,9 +1,9 @@
 ---
-name: worktrees
-description: "Runs commands or multi-step requests in isolated git worktrees or detached snapshots to keep the primary checkout clean. Supports mutating workflows in feature worktrees, read-only tasks in detached snapshots, and combining multiple PRs into local integration branches. Use for /worktrees, \"run this in a worktree\", \"do this in a worktree\", \"in an isolated worktree\"."
+name: wt
+description: "Runs commands or multi-step requests in isolated git worktrees or detached snapshots to keep the primary checkout clean. Supports mutating workflows in feature worktrees, read-only tasks in detached snapshots, and combining multiple PRs into local integration branches. Use for /wt, \"run this in a worktree\", \"do this in a worktree\", \"in an isolated worktree\"."
 ---
 
-# Skill: `/worktrees` — Run a Request in a Worktree
+# Skill: `/wt` — Run a Request in a Worktree
 
 Gives a plain prompt the same worktree isolation a Command gets from the `git-worktrees` Module: it picks the mode, creates (or reuses) one worktree per repo, does the work there and reports where the work is.
 
@@ -28,9 +28,9 @@ On-demand references (`references/`):
 
 ## 1. When *not* to use
 
-- **The prompt starts with another Command** (`/refine … /worktrees`): that Command handles the token under `core` › *Worktree opt-in*; this skill is not involved.
+- **The prompt starts with another Command** (`/refine … /wt`): that Command handles the token under `core` › *Worktree opt-in*; this skill is not involved.
 - **Stepping into a kept worktree from an earlier run**: give the user the path and `EnterWorktree path:<dir>` (`git-worktrees` › *Workspace Lifecycle* › *Hand-off*).
-- **Running in the user's own checkout**: use [`/no-worktrees`](../no-worktrees/SKILL.md).
+- **Running in the user's own checkout**: use [`/no-wt`](../no-wt/SKILL.md).
 - **Remote-only operations** (completing a PR on the host, editing a PR description): nothing to isolate; say so and run only on an explicit ask.
 
 ---
@@ -39,14 +39,14 @@ On-demand references (`references/`):
 
 ### Step 1: Parse the prompt
 
-1. Remove every `/worktrees` token. What remains is the **request**.
-2. **No request (bare `/worktrees`):** list the worktrees per repo (`git-worktrees` › *Repo Resolution*, then *Workspace Lifecycle* › *Create*). Show each locked `claude-skill:` worktree with its path, branch, lock reason and `git -C <dir> status --short` count. Change nothing, then stop.
+1. Remove every `/wt` token. What remains is the **request**.
+2. **No request (bare `/wt`):** list the worktrees per repo (`git-worktrees` › *Repo Resolution*, then *Workspace Lifecycle* › *Create*). Show each locked `claude-skill:` worktree with its path, branch, lock reason and `git -C <dir> status --short` count. Change nothing, then stop.
 
 ### Step 2: Route
 
 | The request | Route |
 |---|---|
-| Names a registry Command or matches its trigger ("review PR 123" → `code-review`, "resolve the conflicts" → `resolve-conflicts`, "clean up X" → `clean`) | Invoke that Command with the request plus the token `/worktrees`. It runs `git-worktrees` itself, so this skill is done. Report only that the request was routed. |
+| Names a registry Command or matches its trigger ("review PR 123" → `code-review`, "resolve the conflicts" → `resolve-conflicts`, "clean up X" → `clean`) | Invoke that Command with the request plus the token `/wt`. It runs `git-worktrees` itself, so this skill is done. Report only that the request was routed. |
 | Matches several Commands in sequence ("review PR 123 and fix what you find") | Route to the first. Say which Command picks up the rest. |
 | Matches no Command (merge PRs, try a rebase, bump a package, run a codemod) | Carry it out here, from Step 3 on. |
 
@@ -57,7 +57,7 @@ On-demand references (`references/`):
 
 ### Step 4: Base, branch and worktree (workspace mode)
 
-Follow `git-worktrees` › *Workspace Lifecycle* (`_modules/references/git-worktrees-workspace.md`) with `<skill>` = `worktrees`:
+Follow `git-worktrees` › *Workspace Lifecycle* (`_modules/references/git-worktrees-workspace.md`) with `<skill>` = `wt`:
 1. **Detect existing worktree first:** for a single-repo workspace, if the session is already inside a `claude --worktree` or `EnterWorktree` checkout (`git rev-parse --git-dir` ≠ `git rev-parse --git-common-dir`), **reuse it** instead of creating a nested worktree — rename any `worktree-*` branch to the convention, lock with the `claude-skill:worktrees … session:<session-id>` reason, and hydrate if needed.
 2. **Otherwise create:** resolve base (`origin/<default>` unless specified) and branch (`<type>/<kebab-slug>`, never `worktree-<name>`), create and lock per *Workspace Lifecycle* › *Create* (`session:<session-id>` is mandatory for statusline detection), and hydrate when the request builds, tests, or runs the project.
 

@@ -34,7 +34,7 @@ Read these before step 1:
 | Branch from a work item, commit, push and open a PR in one go | the project's ship skill (e.g. `priis-ship`), when the workspace has one |
 | Rewrite the PR title or labels, or describe the full diff rather than the commits | [`/pr-desc`](../pr-desc/SKILL.md) |
 | A merge, rebase or cherry-pick is in progress before `/commit` starts | [`/resolve-conflicts`](../resolve-conflicts/SKILL.md) |
-| Work that should go on its own branch in a separate checkout | [`/worktrees`](../worktrees/SKILL.md) |
+| Work that should go on its own branch in a separate checkout | [`/wt`](../wt/SKILL.md) |
 
 ---
 

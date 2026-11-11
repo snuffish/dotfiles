@@ -63,32 +63,32 @@
       }
     },
     {
-      "id": "GLOSSARY.md:24:skill_ref:no-worktrees",
+      "id": "GLOSSARY.md:24:skill_ref:no-wt",
       "source": {
         "file": "GLOSSARY.md",
         "line": 24
       },
       "kind": "skill_ref",
-      "value": "no-worktrees",
-      "quote": "`git-worktrees` Module, and `no-worktrees` runs one in place.",
+      "value": "no-wt",
+      "quote": "`git-worktrees` Module, and `no-wt` runs one in place.",
       "verify": {
         "method": "skill_exists",
-        "name": "no-worktrees",
+        "name": "no-wt",
         "base": "repo"
       }
     },
     {
-      "id": "GLOSSARY.md:24:skill_ref:worktrees",
+      "id": "GLOSSARY.md:24:skill_ref:wt",
       "source": {
         "file": "GLOSSARY.md",
         "line": 24
       },
       "kind": "skill_ref",
-      "value": "worktrees",
-      "quote": "dule for a plain prompt: the `worktrees` Command runs a request under the `git-worktrees` Module, and `no-worktrees` runs one in place.",
+      "value": "wt",
+      "quote": "dule for a plain prompt: the `wt` Command runs a request under the `git-worktrees` Module, and `no-wt` runs one in place.",
       "verify": {
         "method": "skill_exists",
-        "name": "worktrees",
+        "name": "wt",
         "base": "repo"
       }
     },
@@ -3630,17 +3630,17 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md:22:skill_ref:no-worktrees",
+      "id": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md:22:skill_ref:no-wt",
       "source": {
         "file": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md",
         "line": 22
       },
       "kind": "skill_ref",
-      "value": "no-worktrees",
-      "quote": "`git-worktrees` \u203a *Modes*); `/no-worktrees` opts out. |",
+      "value": "no-wt",
+      "quote": "`git-worktrees` \u203a *Modes*); `/no-wt` opts out. |",
       "verify": {
         "method": "skill_exists",
-        "name": "no-worktrees",
+        "name": "no-wt",
         "base": "repo"
       }
     },
@@ -3652,7 +3652,7 @@
       },
       "kind": "skill_ref",
       "value": "proceed",
-      "quote": "ace`: edits by any Command, `/proceed` on a plan included, land in `<repo>/.claude/worktrees/<slug>` (`git-worktrees` \u203a *Modes*); `/no-worktrees` opts",
+      "quote": "ace`: edits by any Command, `/proceed` on a plan included, land in `<repo>/.claude/worktrees/<slug>` (`git-worktrees` \u203a *Modes*); `/no-wt` opts",
       "verify": {
         "method": "skill_exists",
         "name": "proceed",
@@ -4534,7 +4534,7 @@
       },
       "kind": "skill_ref",
       "value": "investigate",
-      "quote": "doff`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `no-worktrees`, `org",
+      "quote": "doff`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `no-wt`, `org",
       "verify": {
         "method": "skill_exists",
         "name": "investigate",
@@ -4549,7 +4549,7 @@
       },
       "kind": "skill_ref",
       "value": "manual-testing",
-      "quote": "nt-feature`, `insights`, `investigate`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `p",
+      "quote": "nt-feature`, `insights`, `investigate`, `manual-testing`, `no-wt`, `organize`, `plan`, `p",
       "verify": {
         "method": "skill_exists",
         "name": "manual-testing",
@@ -4557,17 +4557,17 @@
       }
     },
     {
-      "id": "skills/README.md:45:skill_ref:no-worktrees",
+      "id": "skills/README.md:45:skill_ref:no-wt",
       "source": {
         "file": "skills/README.md",
         "line": 45
       },
       "kind": "skill_ref",
-      "value": "no-worktrees",
-      "quote": "ghts`, `investigate`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `pr-desc`, `pr-fee",
+      "value": "no-wt",
+      "quote": "ghts`, `investigate`, `manual-testing`, `no-wt`, `organize`, `plan`, `pr-desc`, `pr-fee",
       "verify": {
         "method": "skill_exists",
-        "name": "no-worktrees",
+        "name": "no-wt",
         "base": "repo"
       }
     },
@@ -4579,7 +4579,7 @@
       },
       "kind": "skill_ref",
       "value": "organize",
-      "quote": " `investigate`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix",
+      "quote": " `investigate`, `manual-testing`, `no-wt`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix",
       "verify": {
         "method": "skill_exists",
         "name": "organize",
@@ -4597,7 +4597,7 @@
       },
       "kind": "skill_ref",
       "value": "plan",
-      "quote": "e`, `manual-testing`, `no-worktrees`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipelin",
+      "quote": "e`, `manual-testing`, `no-wt`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipelin",
       "verify": {
         "method": "skill_exists",
         "name": "plan",
@@ -4615,7 +4615,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-feedback-review",
-      "quote": "`, `no-worktrees`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comment",
+      "quote": "`, `no-wt`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comment",
       "verify": {
         "method": "skill_exists",
         "name": "pr-feedback-review",
@@ -4630,7 +4630,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-fix-pipeline",
-      "quote": "trees`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `pr",
+      "quote": " `no-wt`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `",
       "verify": {
         "method": "skill_exists",
         "name": "pr-fix-pipeline",
@@ -4810,7 +4810,7 @@
       },
       "kind": "skill_ref",
       "value": "suggestion",
-      "quote": "review`, `squash-ef-core-migrations`, `standup-recap`, `state`, `suggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing`, `wor",
+      "quote": "-review`, `squash-ef-core-migrations`, `standup-recap`, `state`, `suggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing`, `wt",
       "verify": {
         "method": "skill_exists",
         "name": "suggestion",
@@ -4828,7 +4828,7 @@
       },
       "kind": "skill_ref",
       "value": "sync-skills",
-      "quote": "`squash-ef-core-migrations`, `standup-recap`, `state`, `suggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing`, `worktrees` |",
+      "quote": "`squash-ef-core-migrations`, `standup-recap`, `state`, `suggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing`, `wt` |",
       "verify": {
         "method": "skill_exists",
         "name": "sync-skills",
@@ -4843,7 +4843,7 @@
       },
       "kind": "skill_ref",
       "value": "verify-assumptions",
-      "quote": "`squash-ef-core-migrations`, `standup-recap`, `state`, `suggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing`, `worktrees` |",
+      "quote": "`squash-ef-core-migrations`, `standup-recap`, `state`, `suggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing`, `wt` |",
       "verify": {
         "method": "skill_exists",
         "name": "verify-assumptions",
@@ -4858,7 +4858,7 @@
       },
       "kind": "skill_ref",
       "value": "what-am-I-missing",
-      "quote": "suggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing`, `worktrees` |",
+      "quote": "suggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing`, `wt` |",
       "verify": {
         "method": "skill_exists",
         "name": "what-am-I-missing",
@@ -4866,17 +4866,17 @@
       }
     },
     {
-      "id": "skills/README.md:45:skill_ref:worktrees",
+      "id": "skills/README.md:45:skill_ref:wt",
       "source": {
         "file": "skills/README.md",
         "line": 45
       },
       "kind": "skill_ref",
-      "value": "worktrees",
-      "quote": "ills`, `verify-assumptions`, `what-am-I-missing`, `worktrees` |",
+      "value": "wt",
+      "quote": "ills`, `verify-assumptions`, `what-am-I-missing`, `wt` |",
       "verify": {
         "method": "skill_exists",
-        "name": "worktrees",
+        "name": "wt",
         "base": "repo"
       }
     },
@@ -5138,7 +5138,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-desc",
-      "quote": "ual-testing`, `no-worktrees`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-pol",
+      "quote": "ual-testing`, `no-wt`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-pol",
       "verify": {
         "method": "skill_exists",
         "name": "pr-desc",
@@ -5517,32 +5517,32 @@
       }
     },
     {
-      "id": "skills/_modules/core.md:38:doc_link:../worktrees/SKILL.md",
+      "id": "skills/_modules/core.md:38:doc_link:../wt/SKILL.md",
       "source": {
         "file": "skills/_modules/core.md",
         "line": 38
       },
       "kind": "doc_link",
-      "value": "../worktrees/SKILL.md",
-      "quote": "(../worktrees/SKILL.md)",
+      "value": "../wt/SKILL.md",
+      "quote": "(../wt/SKILL.md)",
       "verify": {
         "method": "link_resolves",
-        "href": "../worktrees/SKILL.md",
+        "href": "../wt/SKILL.md",
         "base": "file_dir"
       }
     },
     {
-      "id": "skills/_modules/core.md:38:doc_link:../no-worktrees/SKILL.md",
+      "id": "skills/_modules/core.md:38:doc_link:../no-wt/SKILL.md",
       "source": {
         "file": "skills/_modules/core.md",
         "line": 38
       },
       "kind": "doc_link",
-      "value": "../no-worktrees/SKILL.md",
-      "quote": "(../no-worktrees/SKILL.md)",
+      "value": "../no-wt/SKILL.md",
+      "quote": "(../no-wt/SKILL.md)",
       "verify": {
         "method": "link_resolves",
-        "href": "../no-worktrees/SKILL.md",
+        "href": "../no-wt/SKILL.md",
         "base": "file_dir"
       }
     },
@@ -5563,32 +5563,32 @@
       }
     },
     {
-      "id": "skills/_modules/core.md:38:skill_ref:no-worktrees",
+      "id": "skills/_modules/core.md:38:skill_ref:no-wt",
       "source": {
         "file": "skills/_modules/core.md",
         "line": 38
       },
       "kind": "skill_ref",
-      "value": "no-worktrees",
-      "quote": "rees.md](git-worktrees.md); `/no-worktrees` forces in-place execution. Prompts with either token and no Command route to [`worktrees`](../worktrees/SK",
+      "value": "no-wt",
+      "quote": " either token and no Command route to [`wt`](../wt/SKILL.md) or [`no-wt`](../no-wt/SKILL.md). Full rules: `git-worktrees` \u203a *Mode",
       "verify": {
         "method": "skill_exists",
-        "name": "no-worktrees",
+        "name": "no-wt",
         "base": "repo"
       }
     },
     {
-      "id": "skills/_modules/core.md:38:skill_ref:worktrees",
+      "id": "skills/_modules/core.md:38:skill_ref:wt",
       "source": {
         "file": "skills/_modules/core.md",
         "line": 38
       },
       "kind": "skill_ref",
-      "value": "worktrees",
-      "quote": "- Token `/worktrees` or an incoming `[worktree-context]` block opts any Command into [git-worktrees.md](git-worktrees.md); `/no-worktrees` forces in-p",
+      "value": "wt",
+      "quote": "- Token `/wt` or an incoming `[worktree-context]` block opts any Command into [git-worktrees.md](git-worktrees.md); `/no-wt` forces in-p",
       "verify": {
         "method": "skill_exists",
-        "name": "worktrees",
+        "name": "wt",
         "base": "repo"
       }
     },
@@ -5970,7 +5970,7 @@
       }
     },
     {
-      "id": "skills/_modules/git-worktrees.md:3:skill_ref:worktrees",
+      "id": "skills/_modules/git-worktrees.md:3:skill_ref:wt",
       "source": {
         "file": "skills/_modules/git-worktrees.md",
         "line": 3,
@@ -5981,11 +5981,11 @@
         ]
       },
       "kind": "skill_ref",
-      "value": "worktrees",
-      "quote": "y default or opt in via the `/worktrees` token (*Modes*).",
+      "value": "wt",
+      "quote": "y default or opt in via the `/wt` token (*Modes*).",
       "verify": {
         "method": "skill_exists",
-        "name": "worktrees",
+        "name": "wt",
         "base": "repo"
       }
     },
@@ -6039,7 +6039,7 @@
       }
     },
     {
-      "id": "skills/_modules/git-worktrees.md:20:skill_ref:no-worktrees",
+      "id": "skills/_modules/git-worktrees.md:20:skill_ref:no-wt",
       "source": {
         "file": "skills/_modules/git-worktrees.md",
         "line": 20,
@@ -6048,11 +6048,11 @@
         ]
       },
       "kind": "skill_ref",
-      "value": "no-worktrees",
-      "quote": "t** (*Snapshot Lifecycle*). `/no-worktrees` (*Modes* \u203a *Opt-out token*) overrides the default and runs in place.",
+      "value": "no-wt",
+      "quote": "t** (*Snapshot Lifecycle*). `/no-wt` (*Modes* \u203a *Opt-out token*) overrides the default and runs in place.",
       "verify": {
         "method": "skill_exists",
-        "name": "no-worktrees",
+        "name": "no-wt",
         "base": "repo"
       }
     },
@@ -6252,17 +6252,17 @@
       }
     },
     {
-      "id": "skills/_modules/git-worktrees.md:45:doc_link:../worktrees/SKILL.md",
+      "id": "skills/_modules/git-worktrees.md:45:doc_link:../wt/SKILL.md",
       "source": {
         "file": "skills/_modules/git-worktrees.md",
         "line": 45
       },
       "kind": "doc_link",
-      "value": "../worktrees/SKILL.md",
-      "quote": "(../worktrees/SKILL.md)",
+      "value": "../wt/SKILL.md",
+      "quote": "(../wt/SKILL.md)",
       "verify": {
         "method": "link_resolves",
-        "href": "../worktrees/SKILL.md",
+        "href": "../wt/SKILL.md",
         "base": "file_dir"
       }
     },
@@ -8181,17 +8181,17 @@
       }
     },
     {
-      "id": "skills/code-review/SKILL.md:44:skill_ref:no-worktrees",
+      "id": "skills/code-review/SKILL.md:44:skill_ref:no-wt",
       "source": {
         "file": "skills/code-review/SKILL.md",
         "line": 45
       },
       "kind": "skill_ref",
-      "value": "no-worktrees",
-      "quote": "checkout directly (same as `/no-worktrees`). Only when a snapshot is impossible (e.g. uncommitted untracked files) |",
+      "value": "no-wt",
+      "quote": "checkout directly (same as `/no-wt`). Only when a snapshot is impossible (e.g. uncommitted untracked files) |",
       "verify": {
         "method": "skill_exists",
-        "name": "no-worktrees",
+        "name": "no-wt",
         "base": "repo"
       }
     },
@@ -9107,32 +9107,32 @@
       }
     },
     {
-      "id": "skills/commit/SKILL.md:37:doc_link:../worktrees/SKILL.md",
+      "id": "skills/commit/SKILL.md:37:doc_link:../wt/SKILL.md",
       "source": {
         "file": "skills/commit/SKILL.md",
         "line": 37
       },
       "kind": "doc_link",
-      "value": "../worktrees/SKILL.md",
-      "quote": "(../worktrees/SKILL.md)",
+      "value": "../wt/SKILL.md",
+      "quote": "(../wt/SKILL.md)",
       "verify": {
         "method": "link_resolves",
-        "href": "../worktrees/SKILL.md",
+        "href": "../wt/SKILL.md",
         "base": "file_dir"
       }
     },
     {
-      "id": "skills/commit/SKILL.md:37:skill_ref:worktrees",
+      "id": "skills/commit/SKILL.md:37:skill_ref:wt",
       "source": {
         "file": "skills/commit/SKILL.md",
         "line": 37
       },
       "kind": "skill_ref",
-      "value": "worktrees",
-      "quote": "| Work that should go on its own branch in a separate checkout | [`/worktrees`](../worktrees/SKILL.md) |",
+      "value": "wt",
+      "quote": "| Work that should go on its own branch in a separate checkout | [`/wt`](../wt/SKILL.md) |",
       "verify": {
         "method": "skill_exists",
-        "name": "worktrees",
+        "name": "wt",
         "base": "repo"
       }
     },
@@ -11041,7 +11041,7 @@
       }
     },
     {
-      "id": "skills/implement-feature/SKILL.md:25:skill_ref:no-worktrees",
+      "id": "skills/implement-feature/SKILL.md:25:skill_ref:no-wt",
       "source": {
         "file": "skills/implement-feature/SKILL.md",
         "line": 26,
@@ -11050,11 +11050,11 @@
         ]
       },
       "kind": "skill_ref",
-      "value": "no-worktrees",
-      "quote": "skill and sub-agent brief; `/no-worktrees` opts out)",
+      "value": "no-wt",
+      "quote": "skill and sub-agent brief; `/no-wt` opts out)",
       "verify": {
         "method": "skill_exists",
-        "name": "no-worktrees",
+        "name": "no-wt",
         "base": "repo"
       }
     },
@@ -11826,7 +11826,7 @@
       },
       "kind": "path",
       "value": "../_modules/git-worktrees.md",
-      "quote": "- `../_modules/git-worktrees.md` (`/worktrees`): snapshot mode, per `core` \u203a _Worktree opt-in_",
+      "quote": "- `../_modules/git-worktrees.md` (`/wt`): snapshot mode, per `core` \u203a _Worktree opt-in_",
       "verify": {
         "method": "path_exists",
         "path": "../_modules/git-worktrees.md",
@@ -11851,7 +11851,7 @@
       }
     },
     {
-      "id": "skills/investigate/SKILL.md:28:skill_ref:worktrees",
+      "id": "skills/investigate/SKILL.md:28:skill_ref:wt",
       "source": {
         "file": "skills/investigate/SKILL.md",
         "line": 28,
@@ -11861,11 +11861,11 @@
         ]
       },
       "kind": "skill_ref",
-      "value": "worktrees",
-      "quote": "- `../_modules/git-worktrees.md` (`/worktrees`): snapshot mode, per `core` \u203a _Worktree opt-in_",
+      "value": "wt",
+      "quote": "- `../_modules/git-worktrees.md` (`/wt`): snapshot mode, per `core` \u203a _Worktree opt-in_",
       "verify": {
         "method": "skill_exists",
-        "name": "worktrees",
+        "name": "wt",
         "base": "repo"
       }
     },
@@ -12666,27 +12666,27 @@
       }
     },
     {
-      "id": "skills/no-worktrees/SKILL.md:8:doc_link:../worktrees/SKILL.md",
+      "id": "skills/no-wt/SKILL.md:8:doc_link:../wt/SKILL.md",
       "source": {
-        "file": "skills/no-worktrees/SKILL.md",
+        "file": "skills/no-wt/SKILL.md",
         "line": 8,
         "also_lines": [
           30
         ]
       },
       "kind": "doc_link",
-      "value": "../worktrees/SKILL.md",
-      "quote": "(../worktrees/SKILL.md)",
+      "value": "../wt/SKILL.md",
+      "quote": "(../wt/SKILL.md)",
       "verify": {
         "method": "link_resolves",
-        "href": "../worktrees/SKILL.md",
+        "href": "../wt/SKILL.md",
         "base": "file_dir"
       }
     },
     {
-      "id": "skills/no-worktrees/SKILL.md:8:doc_link:git-worktrees \u203a Modes",
+      "id": "skills/no-wt/SKILL.md:8:doc_link:git-worktrees \u203a Modes",
       "source": {
-        "file": "skills/no-worktrees/SKILL.md",
+        "file": "skills/no-wt/SKILL.md",
         "line": 8
       },
       "kind": "doc_link",
@@ -12700,9 +12700,9 @@
       }
     },
     {
-      "id": "skills/no-worktrees/SKILL.md:8:skill_ref:worktrees",
+      "id": "skills/no-wt/SKILL.md:8:skill_ref:wt",
       "source": {
-        "file": "skills/no-worktrees/SKILL.md",
+        "file": "skills/no-wt/SKILL.md",
         "line": 8,
         "also_lines": [
           30,
@@ -12710,18 +12710,18 @@
         ]
       },
       "kind": "skill_ref",
-      "value": "worktrees",
-      "quote": "he in-place counterpart of [`/worktrees`](../worktrees/SKILL.md). It gives a plain prompt the `/no-worktrees` opt-out (`git-worktrees` \u203a *Modes* \u203a *Op",
+      "value": "wt",
+      "quote": "he in-place counterpart of [`/wt`](../wt/SKILL.md). It gives a plain prompt the `/no-wt` opt-out (`git-worktrees` \u203a *Modes* \u203a *Op",
       "verify": {
         "method": "skill_exists",
-        "name": "worktrees",
+        "name": "wt",
         "base": "repo"
       }
     },
     {
-      "id": "skills/no-worktrees/SKILL.md:17:path:../_modules/core.md",
+      "id": "skills/no-wt/SKILL.md:17:path:../_modules/core.md",
       "source": {
-        "file": "skills/no-worktrees/SKILL.md",
+        "file": "skills/no-wt/SKILL.md",
         "line": 17
       },
       "kind": "path",
@@ -12735,9 +12735,9 @@
       }
     },
     {
-      "id": "skills/no-worktrees/SKILL.md:18:path:../_modules/artifact-protocol.md",
+      "id": "skills/no-wt/SKILL.md:18:path:../_modules/artifact-protocol.md",
       "source": {
-        "file": "skills/no-worktrees/SKILL.md",
+        "file": "skills/no-wt/SKILL.md",
         "line": 18
       },
       "kind": "path",
@@ -12751,9 +12751,9 @@
       }
     },
     {
-      "id": "skills/no-worktrees/SKILL.md:19:path:../_modules/git-worktrees.md",
+      "id": "skills/no-wt/SKILL.md:19:path:../_modules/git-worktrees.md",
       "source": {
-        "file": "skills/no-worktrees/SKILL.md",
+        "file": "skills/no-wt/SKILL.md",
         "line": 19
       },
       "kind": "path",
@@ -12767,9 +12767,9 @@
       }
     },
     {
-      "id": "skills/no-worktrees/SKILL.md:21:doc_link:core \u203a Planning mode first",
+      "id": "skills/no-wt/SKILL.md:21:doc_link:core \u203a Planning mode first",
       "source": {
-        "file": "skills/no-worktrees/SKILL.md",
+        "file": "skills/no-wt/SKILL.md",
         "line": 21
       },
       "kind": "doc_link",
@@ -12783,9 +12783,9 @@
       }
     },
     {
-      "id": "skills/no-worktrees/SKILL.md:28:doc_link:core \u203a Worktree opt-in",
+      "id": "skills/no-wt/SKILL.md:28:doc_link:core \u203a Worktree opt-in",
       "source": {
-        "file": "skills/no-worktrees/SKILL.md",
+        "file": "skills/no-wt/SKILL.md",
         "line": 28
       },
       "kind": "doc_link",
@@ -12799,9 +12799,9 @@
       }
     },
     {
-      "id": "skills/no-worktrees/SKILL.md:29:doc_link:../continue/SKILL.md",
+      "id": "skills/no-wt/SKILL.md:29:doc_link:../continue/SKILL.md",
       "source": {
-        "file": "skills/no-worktrees/SKILL.md",
+        "file": "skills/no-wt/SKILL.md",
         "line": 29
       },
       "kind": "doc_link",
@@ -12814,9 +12814,9 @@
       }
     },
     {
-      "id": "skills/no-worktrees/SKILL.md:29:skill_ref:continue",
+      "id": "skills/no-wt/SKILL.md:29:skill_ref:continue",
       "source": {
-        "file": "skills/no-worktrees/SKILL.md",
+        "file": "skills/no-wt/SKILL.md",
         "line": 29
       },
       "kind": "skill_ref",
@@ -12829,14 +12829,14 @@
       }
     },
     {
-      "id": "skills/no-worktrees/SKILL.md:46:skill_ref:code-review",
+      "id": "skills/no-wt/SKILL.md:46:skill_ref:code-review",
       "source": {
-        "file": "skills/no-worktrees/SKILL.md",
+        "file": "skills/no-wt/SKILL.md",
         "line": 46
       },
       "kind": "skill_ref",
       "value": "code-review",
-      "quote": "s trigger (\"review PR 123\" \u2192 `code-review`, \"implement #1234\" \u2192 `implement-feature`) | Invoke that Command with the request plus the token `/no-worktr",
+      "quote": "| Names a registry Command or matches its trigger (\"review PR 123\" \u2192 `code-review`, \"implement #1234\" \u2192 `implement-feature`) | Invoke that Command wit",
       "verify": {
         "method": "skill_exists",
         "name": "code-review",
@@ -12844,14 +12844,14 @@
       }
     },
     {
-      "id": "skills/no-worktrees/SKILL.md:46:skill_ref:implement-feature",
+      "id": "skills/no-wt/SKILL.md:46:skill_ref:implement-feature",
       "source": {
-        "file": "skills/no-worktrees/SKILL.md",
+        "file": "skills/no-wt/SKILL.md",
         "line": 46
       },
       "kind": "skill_ref",
       "value": "implement-feature",
-      "quote": "review`, \"implement #1234\" \u2192 `implement-feature`) | Invoke that Command with the request plus the token `/no-worktrees`. Report only that the request",
+      "quote": "review`, \"implement #1234\" \u2192 `implement-feature`) | Invoke that Command with the request plus the token `/no-wt`. Report only that the request",
       "verify": {
         "method": "skill_exists",
         "name": "implement-feature",
@@ -12859,9 +12859,9 @@
       }
     },
     {
-      "id": "skills/no-worktrees/SKILL.md:48:doc_link:core \u203a Post-edit verification",
+      "id": "skills/no-wt/SKILL.md:48:doc_link:core \u203a Post-edit verification",
       "source": {
-        "file": "skills/no-worktrees/SKILL.md",
+        "file": "skills/no-wt/SKILL.md",
         "line": 48
       },
       "kind": "doc_link",
@@ -13947,17 +13947,17 @@
       }
     },
     {
-      "id": "skills/pr-feedback-review/SKILL.md:55:skill_ref:no-worktrees",
+      "id": "skills/pr-feedback-review/SKILL.md:55:skill_ref:no-wt",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
         "line": 55
       },
       "kind": "skill_ref",
-      "value": "no-worktrees",
-      "quote": "| `/pr-feedback-review live [target]` | Standard or deep, **no snapshot** | Reads the main checkout directly (same as `/no-worktrees`) |",
+      "value": "no-wt",
+      "quote": "| `/pr-feedback-review live [target]` | Standard or deep, **no snapshot** | Reads the main checkout directly (same as `/no-wt`) |",
       "verify": {
         "method": "skill_exists",
-        "name": "no-worktrees",
+        "name": "no-wt",
         "base": "repo"
       }
     },
@@ -16441,17 +16441,17 @@
       }
     },
     {
-      "id": "skills/resolve-conflicts/SKILL.md:25:skill_ref:worktrees",
+      "id": "skills/resolve-conflicts/SKILL.md:25:skill_ref:wt",
       "source": {
         "file": "skills/resolve-conflicts/SKILL.md",
         "line": 25
       },
       "kind": "skill_ref",
-      "value": "worktrees",
-      "quote": "ain checkout, ask first (`git-worktrees` \u203a *Golden Invariants*). If `/worktrees` is passed to *start* a merge/rebase, run in a workspace worktree (`gi",
+      "value": "wt",
+      "quote": "ain checkout, ask first (`git-worktrees` \u203a *Golden Invariants*). If `/wt` is passed to *start* a merge/rebase, run in a workspace worktree (`gi",
       "verify": {
         "method": "skill_exists",
-        "name": "worktrees",
+        "name": "wt",
         "base": "repo"
       }
     },
@@ -19416,9 +19416,9 @@
       }
     },
     {
-      "id": "skills/worktrees/SKILL.md:17:path:../_modules/core.md",
+      "id": "skills/wt/SKILL.md:17:path:../_modules/core.md",
       "source": {
-        "file": "skills/worktrees/SKILL.md",
+        "file": "skills/wt/SKILL.md",
         "line": 17
       },
       "kind": "path",
@@ -19432,9 +19432,9 @@
       }
     },
     {
-      "id": "skills/worktrees/SKILL.md:18:path:../_modules/artifact-protocol.md",
+      "id": "skills/wt/SKILL.md:18:path:../_modules/artifact-protocol.md",
       "source": {
-        "file": "skills/worktrees/SKILL.md",
+        "file": "skills/wt/SKILL.md",
         "line": 18
       },
       "kind": "path",
@@ -19448,9 +19448,9 @@
       }
     },
     {
-      "id": "skills/worktrees/SKILL.md:19:path:../_modules/git-worktrees.md",
+      "id": "skills/wt/SKILL.md:19:path:../_modules/git-worktrees.md",
       "source": {
-        "file": "skills/worktrees/SKILL.md",
+        "file": "skills/wt/SKILL.md",
         "line": 19
       },
       "kind": "path",
@@ -19464,9 +19464,9 @@
       }
     },
     {
-      "id": "skills/worktrees/SKILL.md:22:doc_link:references/merge-prs-recipe.md",
+      "id": "skills/wt/SKILL.md:22:doc_link:references/merge-prs-recipe.md",
       "source": {
-        "file": "skills/worktrees/SKILL.md",
+        "file": "skills/wt/SKILL.md",
         "line": 22,
         "also_lines": [
           70
@@ -19482,9 +19482,9 @@
       }
     },
     {
-      "id": "skills/worktrees/SKILL.md:25:doc_link:core \u203a Planning mode first",
+      "id": "skills/wt/SKILL.md:25:doc_link:core \u203a Planning mode first",
       "source": {
-        "file": "skills/worktrees/SKILL.md",
+        "file": "skills/wt/SKILL.md",
         "line": 25
       },
       "kind": "doc_link",
@@ -19498,9 +19498,9 @@
       }
     },
     {
-      "id": "skills/worktrees/SKILL.md:31:doc_link:core \u203a Worktree opt-in",
+      "id": "skills/wt/SKILL.md:31:doc_link:core \u203a Worktree opt-in",
       "source": {
-        "file": "skills/worktrees/SKILL.md",
+        "file": "skills/wt/SKILL.md",
         "line": 31
       },
       "kind": "doc_link",
@@ -19514,9 +19514,9 @@
       }
     },
     {
-      "id": "skills/worktrees/SKILL.md:32:doc_link:git-worktrees \u203a Workspace Lifecycle",
+      "id": "skills/wt/SKILL.md:32:doc_link:git-worktrees \u203a Workspace Lifecycle",
       "source": {
-        "file": "skills/worktrees/SKILL.md",
+        "file": "skills/wt/SKILL.md",
         "line": 32,
         "also_lines": [
           55,
@@ -19534,39 +19534,39 @@
       }
     },
     {
-      "id": "skills/worktrees/SKILL.md:33:doc_link:../no-worktrees/SKILL.md",
+      "id": "skills/wt/SKILL.md:33:doc_link:../no-wt/SKILL.md",
       "source": {
-        "file": "skills/worktrees/SKILL.md",
+        "file": "skills/wt/SKILL.md",
         "line": 33
       },
       "kind": "doc_link",
-      "value": "../no-worktrees/SKILL.md",
-      "quote": "(../no-worktrees/SKILL.md)",
+      "value": "../no-wt/SKILL.md",
+      "quote": "(../no-wt/SKILL.md)",
       "verify": {
         "method": "link_resolves",
-        "href": "../no-worktrees/SKILL.md",
+        "href": "../no-wt/SKILL.md",
         "base": "file_dir"
       }
     },
     {
-      "id": "skills/worktrees/SKILL.md:33:skill_ref:no-worktrees",
+      "id": "skills/wt/SKILL.md:33:skill_ref:no-wt",
       "source": {
-        "file": "skills/worktrees/SKILL.md",
+        "file": "skills/wt/SKILL.md",
         "line": 33
       },
       "kind": "skill_ref",
-      "value": "no-worktrees",
-      "quote": "- **Running in the user's own checkout**: use [`/no-worktrees`](../no-worktrees/SKILL.md).",
+      "value": "no-wt",
+      "quote": "- **Running in the user's own checkout**: use [`/no-wt`](../no-wt/SKILL.md).",
       "verify": {
         "method": "skill_exists",
-        "name": "no-worktrees",
+        "name": "no-wt",
         "base": "repo"
       }
     },
     {
-      "id": "skills/worktrees/SKILL.md:43:doc_link:git-worktrees \u203a Repo Resolution",
+      "id": "skills/wt/SKILL.md:43:doc_link:git-worktrees \u203a Repo Resolution",
       "source": {
-        "file": "skills/worktrees/SKILL.md",
+        "file": "skills/wt/SKILL.md",
         "line": 43,
         "also_lines": [
           56
@@ -19583,14 +19583,14 @@
       }
     },
     {
-      "id": "skills/worktrees/SKILL.md:49:skill_ref:clean",
+      "id": "skills/wt/SKILL.md:49:skill_ref:clean",
       "source": {
-        "file": "skills/worktrees/SKILL.md",
+        "file": "skills/wt/SKILL.md",
         "line": 49
       },
       "kind": "skill_ref",
       "value": "clean",
-      "quote": "icts\" \u2192 `resolve-conflicts`, \"clean up X\" \u2192 `clean`) | Invoke that Command with the request plus the token `/worktrees`. It runs `git-worktrees` itsel",
+      "quote": "icts\" \u2192 `resolve-conflicts`, \"clean up X\" \u2192 `clean`) | Invoke that Command with the request plus the token `/wt`. It runs `git-worktrees` itsel",
       "verify": {
         "method": "skill_exists",
         "name": "clean",
@@ -19598,9 +19598,9 @@
       }
     },
     {
-      "id": "skills/worktrees/SKILL.md:49:skill_ref:code-review",
+      "id": "skills/wt/SKILL.md:49:skill_ref:code-review",
       "source": {
-        "file": "skills/worktrees/SKILL.md",
+        "file": "skills/wt/SKILL.md",
         "line": 49
       },
       "kind": "skill_ref",
@@ -19613,14 +19613,14 @@
       }
     },
     {
-      "id": "skills/worktrees/SKILL.md:49:skill_ref:resolve-conflicts",
+      "id": "skills/wt/SKILL.md:49:skill_ref:resolve-conflicts",
       "source": {
-        "file": "skills/worktrees/SKILL.md",
+        "file": "skills/wt/SKILL.md",
         "line": 49
       },
       "kind": "skill_ref",
       "value": "resolve-conflicts",
-      "quote": "`, \"resolve the conflicts\" \u2192 `resolve-conflicts`, \"clean up X\" \u2192 `clean`) | Invoke that Command with the request plus the token `/worktrees`. It runs",
+      "quote": "`, \"resolve the conflicts\" \u2192 `resolve-conflicts`, \"clean up X\" \u2192 `clean`) | Invoke that Command with the request plus the token `/wt`. It runs",
       "verify": {
         "method": "skill_exists",
         "name": "resolve-conflicts",
@@ -19628,9 +19628,9 @@
       }
     },
     {
-      "id": "skills/worktrees/SKILL.md:64:doc_link:git-worktrees \u203a Snapshot Lifecycle",
+      "id": "skills/wt/SKILL.md:64:doc_link:git-worktrees \u203a Snapshot Lifecycle",
       "source": {
-        "file": "skills/worktrees/SKILL.md",
+        "file": "skills/wt/SKILL.md",
         "line": 64
       },
       "kind": "doc_link",
@@ -19644,9 +19644,9 @@
       }
     },
     {
-      "id": "skills/worktrees/SKILL.md:71:doc_link:core \u203a Post-edit verification",
+      "id": "skills/wt/SKILL.md:71:doc_link:core \u203a Post-edit verification",
       "source": {
-        "file": "skills/worktrees/SKILL.md",
+        "file": "skills/wt/SKILL.md",
         "line": 71
       },
       "kind": "doc_link",
@@ -19660,9 +19660,9 @@
       }
     },
     {
-      "id": "skills/worktrees/references/merge-prs-recipe.md:10:skill_ref:resolve-conflicts",
+      "id": "skills/wt/references/merge-prs-recipe.md:10:skill_ref:resolve-conflicts",
       "source": {
-        "file": "skills/worktrees/references/merge-prs-recipe.md",
+        "file": "skills/wt/references/merge-prs-recipe.md",
         "line": 10
       },
       "kind": "skill_ref",
@@ -19675,9 +19675,9 @@
       }
     },
     {
-      "id": "skills/worktrees/references/merge-prs-recipe.md:16:doc_link:git-worktrees \u203a Workspace Lifecycle",
+      "id": "skills/wt/references/merge-prs-recipe.md:16:doc_link:git-worktrees \u203a Workspace Lifecycle",
       "source": {
-        "file": "skills/worktrees/references/merge-prs-recipe.md",
+        "file": "skills/wt/references/merge-prs-recipe.md",
         "line": 16
       },
       "kind": "doc_link",
@@ -19691,9 +19691,9 @@
       }
     },
     {
-      "id": "skills/worktrees/references/merge-prs-recipe.md:17:doc_link:SKILL.md \u203a When not to use",
+      "id": "skills/wt/references/merge-prs-recipe.md:17:doc_link:SKILL.md \u203a When not to use",
       "source": {
-        "file": "skills/worktrees/references/merge-prs-recipe.md",
+        "file": "skills/wt/references/merge-prs-recipe.md",
         "line": 17
       },
       "kind": "doc_link",
@@ -19759,11 +19759,11 @@
         "line": 23
       },
       "kind": "other",
-      "value": "git-worktrees loads under /worktrees, [worktree-context], /implement-feature or Implementation mode: workspace",
-      "quote": "- `../_modules/git-worktrees.md`: only when `/worktrees`, a `[worktree-context]` block, `/implement-feature`, or a base profile with `Implementation mode: workspace` applies (`core` \u203a _Worktree opt-in_)",
+      "value": "git-worktrees loads under /wt, [worktree-context], /implement-feature or Implementation mode: workspace",
+      "quote": "- `../_modules/git-worktrees.md`: only when `/wt`, a `[worktree-context]` block, `/implement-feature`, or a base profile with `Implementation mode: workspace` applies (`core` \u203a _Worktree opt-in_)",
       "verify": {
         "method": "grep",
-        "pattern": "`/worktrees`.*`\\[worktree-context\\]`.*`/implement-feature`.*`Implementation mode: workspace`",
+        "pattern": "`/wt`.*`\\[worktree-context\\]`.*`/implement-feature`.*`Implementation mode: workspace`",
         "paths": [
           "skills/_modules/git-worktrees.md"
         ],

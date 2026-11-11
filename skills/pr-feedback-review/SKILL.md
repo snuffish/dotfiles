@@ -52,7 +52,7 @@ Record the loaded profile (or `none`) in the artifact header's **Profile** line.
 |---|---|---|
 | `/pr-feedback-review [target]` | **Standard** (default) | Single pass covering Verification, Merit, and Impact (Steps 3–5) |
 | `/pr-feedback-review --deep [target]` | **Deep** | Verification, Merit, and Impact run in parallel sub-agents ([deep-mode.md](references/deep-mode.md)), then aggregate |
-| `/pr-feedback-review live [target]` | Standard or deep, **no snapshot** | Reads the main checkout directly (same as `/no-worktrees`) |
+| `/pr-feedback-review live [target]` | Standard or deep, **no snapshot** | Reads the main checkout directly (same as `/no-wt`) |
 | `/pr-feedback-review --ui [target]` | Any mode, plus a **review page** | After publish, a localhost page edits, accepts or skips each reply ([ui-mode.md](references/ui-mode.md)); combinable with `--deep` and `live` |
 
 Every thread is assessed on three axes:

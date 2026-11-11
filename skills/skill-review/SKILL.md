@@ -1,7 +1,7 @@
 ---
 name: skill-review
 description: 'Audits one skill (its SKILL.md and references/), or the skill, module, rule and claims files a pull request changes, against the code and the writing standard, folds in findings from an earlier code review, handoff or PR threads after re-checking each at the pinned ref, and writes a fix list ordered by what to apply first. Use for /skill-review, "review this skill", "review this skill PR", "audit the skill", "is this skill still right?", "fix list for the skill". Not for product code (use /code-review), claim drift alone (use /skill-drift), logged gaps (use /skill-gap) or a plan (use /plan --review).'
-argument-hint: "<skill folder | PR URL | !id> [--inputs <review|handoff>…] [--ref <sha|branch>] [/worktrees]"
+argument-hint: "<skill folder | PR URL | !id> [--inputs <review|handoff>…] [--ref <sha|branch>] [/wt]"
 ---
 
 # Skill: `/skill-review` — Skill Audit & Fix List

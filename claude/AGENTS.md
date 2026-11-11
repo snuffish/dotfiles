@@ -28,7 +28,7 @@ If no `.codegraph/` directory exists there or in any parent, skip CodeGraph enti
 
 ## Git & Branch Isolation
 
-- For multi-file bug investigations, flaky test repairs, or new features, prefer isolated git worktrees (`/worktrees`) to keep the primary checkout clean.
+- For multi-file bug investigations, flaky test repairs, or new features, prefer isolated git worktrees (`/wt`) to keep the primary checkout clean.
 - Before formulating a fix plan for a reported defect, check recent commits on active PR branches (`git log -n 5 --oneline origin/main..HEAD`) to verify the defect is not already resolved upstream.
 
 ## Git / PR workflow

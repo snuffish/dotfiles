@@ -1,6 +1,6 @@
 # git-worktrees
 
-One protocol for reading or changing a repository without touching the user's main checkout. Commands either isolate by default or opt in via the `/worktrees` token (*Modes*).
+One protocol for reading or changing a repository without touching the user's main checkout. Commands either isolate by default or opt in via the `/wt` token (*Modes*).
 
 ---
 
@@ -17,7 +17,7 @@ Artifacts live in `<artifact-dir>` (`artifact-protocol` › *Artifact directory*
 
 A Command that lists this Module in `## Modules` gets both rules below without restating them. Its `git-worktrees` line names only its default mode (`snapshot by default`, `workspace by default`, or nothing for "in place unless opted in").
 
-- **Isolation.** When the invocation contains `/worktrees` (*Modes* › *Opt-in token*), a `[worktree-context]` block was handed in, or the Command runs under `/implement-feature` (or a base profile with `Implementation mode: workspace`), a mutating Command runs in a **workspace** worktree (*Workspace Lifecycle*) and a read-only Command reads from a **snapshot** (*Snapshot Lifecycle*). `/no-worktrees` (*Modes* › *Opt-out token*) overrides the default and runs in place.
+- **Isolation.** When the invocation contains `/wt` (*Modes* › *Opt-in token*), a `[worktree-context]` block was handed in, or the Command runs under `/implement-feature` (or a base profile with `Implementation mode: workspace`), a mutating Command runs in a **workspace** worktree (*Workspace Lifecycle*) and a read-only Command reads from a **snapshot** (*Snapshot Lifecycle*). `/no-wt` (*Modes* › *Opt-out token*) overrides the default and runs in place.
 - **Repo root.** Use `repo-root` from an incoming `[worktree-context]` block, or an active linked worktree when the session started inside one (`claude --worktree` / `EnterWorktree`); otherwise discover the repo per *Repo Resolution*. Every `git` command and file path resolves under `repo-root`. If no block was handed in but `git -C <repo> worktree list --porcelain` shows a **locked** `claude-skill:` worktree for the same ticket or branch, stop and ask which tree is meant.
 
 ---
@@ -42,8 +42,8 @@ A Command that lists this Module in `## Modules` gets both rules below without r
 | **workspace** | Implement on a branch without touching the main checkout | `<repo>/.claude/worktrees/<slug>` (or active `claude --worktree` tree) | project branch convention | After the branch is pushed and clean; otherwise kept locked and reported |
 
 - **Default users**: `/code-review`, `/pr-feedback-review`, `/squash-code-review` → **snapshot**; `/implement-feature` → **workspace**. `clean`, `expressive`, `organize`, `refine`, `problem`, `pr-fix-pipeline`, `squash-ef-core-migrations`, `resolve-conflicts`, `proceed` → **workspace** when opted in, under `/implement-feature`, or when the base profile sets `Implementation mode: workspace`; otherwise in place. Other read-only Commands use **snapshot** when opted in.
-- **Opt-in token (`/worktrees`)**: only the exact token `/worktrees` opts a Command in; bare words `worktree` / `worktrees` are ordinary text (unless the user asks to "run this in a worktree", which triggers the [`worktrees`](../worktrees/SKILL.md) Command).
-- **Opt-out token (`/no-worktrees`)**: forces in-place execution even when the Command or profile defaults to snapshot/workspace. Never moves work that already lives in a kept worktree. If both `/worktrees` and `/no-worktrees` appear, ask.
+- **Opt-in token (`/wt`)**: only the exact token `/wt` opts a Command in; bare words `worktree` / `worktrees` are ordinary text (unless the user asks to "run this in a worktree", which triggers the [`wt`](../wt/SKILL.md) Command).
+- **Opt-out token (`/no-wt`)**: forces in-place execution even when the Command or profile defaults to snapshot/workspace. Never moves work that already lives in a kept worktree. If both `/wt` and `/no-wt` appear, ask.
 
 ---
 

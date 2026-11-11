@@ -1,11 +1,11 @@
 ---
-name: no-worktrees
-description: "Directs commands to run directly in the working checkout without worktree or snapshot isolation. Use for /no-worktrees, \"run this in place\", \"without a worktree\", \"in my current checkout\"."
+name: no-wt
+description: "Directs commands to run directly in the working checkout without worktree or snapshot isolation. Use for /no-wt, \"run this in place\", \"without a worktree\", \"in my current checkout\"."
 ---
 
-# Skill: `/no-worktrees` — Run a Request in Place
+# Skill: `/no-wt` — Run a Request in Place
 
-The in-place counterpart of [`/worktrees`](../worktrees/SKILL.md). It gives a plain prompt the `/no-worktrees` opt-out (`git-worktrees` › *Modes* › *Opt-out token*): no worktree, no snapshot, the work happens in the checkout the user is in.
+The in-place counterpart of [`/wt`](../wt/SKILL.md). It gives a plain prompt the `/no-wt` opt-out (`git-worktrees` › *Modes* › *Opt-out token*): no worktree, no snapshot, the work happens in the checkout the user is in.
 
 ---
 
@@ -25,9 +25,9 @@ Read these before step 1:
 
 ## 1. When *not* to use
 
-- **The prompt starts with another Command** (`/code-review 123 /no-worktrees`): that Command handles the token under `core` › *Worktree opt-in*; this skill is not involved.
+- **The prompt starts with another Command** (`/code-review 123 /no-wt`): that Command handles the token under `core` › *Worktree opt-in*; this skill is not involved.
 - **The work already lives in a kept worktree**: resume it there with [`/continue`](../continue/SKILL.md).
-- **The user wants the request isolated**: use [`/worktrees`](../worktrees/SKILL.md).
+- **The user wants the request isolated**: use [`/wt`](../wt/SKILL.md).
 
 ---
 
@@ -35,15 +35,15 @@ Read these before step 1:
 
 ### Step 1: Parse the prompt
 
-1. Remove every `/no-worktrees` token. What remains is the **request**.
-2. **Also `/worktrees` in the prompt:** the two contradict each other. Ask which one applies, then stop.
-3. **No request (bare `/no-worktrees`):** say in one line that the token runs the next request in place, for example `/implement-feature 1234 /no-worktrees`, then stop.
+1. Remove every `/no-wt` token. What remains is the **request**.
+2. **Also `/wt` in the prompt:** the two contradict each other. Ask which one applies, then stop.
+3. **No request (bare `/no-wt`):** say in one line that the token runs the next request in place, for example `/implement-feature 1234 /no-wt`, then stop.
 
 ### Step 2: Route
 
 | The request | Route |
 |---|---|
-| Names a registry Command or matches its trigger ("review PR 123" → `code-review`, "implement #1234" → `implement-feature`) | Invoke that Command with the request plus the token `/no-worktrees`. Report only that the request was routed. |
+| Names a registry Command or matches its trigger ("review PR 123" → `code-review`, "implement #1234" → `implement-feature`) | Invoke that Command with the request plus the token `/no-wt`. Report only that the request was routed. |
 | Matches several Commands in sequence | Route to the first. Say which Command picks up the rest. |
 | Matches no Command | Carry it out here, in the current checkout, under the rules above. After any change, run the project's verify commands (`core` › *Post-edit verification*). |
 

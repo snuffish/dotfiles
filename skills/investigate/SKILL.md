@@ -1,7 +1,7 @@
 ---
 name: investigate
 description: 'Read-only research before designing a change: traces symbols, maps call flows and blast radius, uncovers prior art and conventions, surfaces cross-layer constraints, weighs options and answers in chat with an evidence-backed confidence ledger. It includes the /what-am-I-missing blind-spot audit unless `--no-blindspot`, `--file` writes `<prefix>-investigation-<suffix>.md` for /plan, `--html` compiles rich standalone HTML and launches the browser, `--deep` runs the full protocol with the file, `--to-plan` writes the file and goes straight on to /plan; `--from <PR|work item>` frames it from a ticket, `--scope <path>` bounds it. Use for /investigate, "research this", "how does X work before we change it?", "what would it take to add Y?", "scope this out", "is this feasible?".'
-argument-hint: "[--deep] [--to-plan] [--no-blindspot] [--file] [--html] [--from <PR|work item>] [--scope <path>…] [/worktrees] <topic>"
+argument-hint: "[--deep] [--to-plan] [--no-blindspot] [--file] [--html] [--from <PR|work item>] [--scope <path>…] [/wt] <topic>"
 ---
 
 # Skill: `/investigate` — Pre-Plan Research & Discovery
@@ -25,7 +25,7 @@ Read these before step 1:
 Read these only when their flag is given:
 
 - `../_modules/pr-host.md` (`--from`): read-only, to resolve the PR or work item and its acceptance criteria
-- `../_modules/git-worktrees.md` (`/worktrees`): snapshot mode, per `core` › _Worktree opt-in_
+- `../_modules/git-worktrees.md` (`/wt`): snapshot mode, per `core` › _Worktree opt-in_
 
 On-demand references (`references/`):
 - [`references/artifact-template.md`](references/artifact-template.md) — template for `<prefix>-investigation-<suffix>.md` (`--file` / `--deep`)
@@ -77,7 +77,7 @@ On-demand references (`references/`):
 | `--to-plan`              | `--file`, then runs [`/plan`](../plan/SKILL.md) _Case B_ on the artifact in the same turn and presents only the plan (§3 _To plan_). Replaces the `/investigate` → `/what-am-I-missing` → `/plan` chain: Step 6 already is that audit. With `--no-blindspot` the plan's self-review is the only audit |
 | `--from <PR\|work item>` | Frames Step 0 from a PR or work item (URL, id, `#30342`). The topic becomes optional                                                                                                                   |
 | `--scope <path>…`        | Bounds Steps 2–4 to these paths (repo, directory or package); see Step 0                                                                                                                               |
-| `/worktrees`             | Reads a pinned snapshot instead of the live checkout (`git-worktrees` › _Snapshot Lifecycle_). With `--from <PR>`, the snapshot is the PR head, so the findings describe the PR, not your working tree |
+| `/wt`             | Reads a pinned snapshot instead of the live checkout (`git-worktrees` › _Snapshot Lifecycle_). With `--from <PR>`, the snapshot is the PR head, so the findings describe the PR, not your working tree |
 
 Flags combine and their order does not matter. An unknown `--flag` is a question, not a guess.
 
@@ -176,5 +176,5 @@ Per `core` › _Golden invariants_, keep chat output concise and high-signal; ev
 
 - [ ] Strictly read-only (no source edits, no implementation plan written) and explicit handoff presented without auto-proceeding.
 - [ ] Every factual claim carries `path:line`, and 🟡 Inferred / ❓ Unknown rows in the Confidence Ledger name their verification method or owner.
-- [ ] Flags honored (`--no-blindspot`, `--file` / `--deep`, `--scope`, `--from`, `/worktrees`), and Step 6 audited all 7 vectors from `../what-am-I-missing/references/vectors.md` unless `--no-blindspot`.
+- [ ] Flags honored (`--no-blindspot`, `--file` / `--deep`, `--scope`, `--from`, `/wt`), and Step 6 audited all 7 vectors from `../what-am-I-missing/references/vectors.md` unless `--no-blindspot`.
 - [ ] Visuals and artifact format follow [`references/visuals.md`](references/visuals.md), [`references/artifact-template.md`](references/artifact-template.md), and `artifact-protocol` › _Chat link block_.
