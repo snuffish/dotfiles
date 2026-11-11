@@ -19534,10 +19534,24 @@
       }
     },
     {
-      "id": "skills/wt/SKILL.md:33:doc_link:../no-wt/SKILL.md",
+      "id": "skills/wt/SKILL.md:33:cli_command:claude -w",
       "source": {
         "file": "skills/wt/SKILL.md",
         "line": 33
+      },
+      "kind": "cli_command",
+      "value": "claude -w <slug> --tmux",
+      "quote": "- **Starting a fresh single-task session**: launch `claude -w <slug>` (`--tmux` optional) instead; inside it `/wt` and `/wt` Commands reuse that tree (*Step 4*).",
+      "verify": {
+        "method": "manual",
+        "reason": "claude CLI flags -w/--worktree [name] and --tmux (requires --worktree); listed by `claude --help` on 2026-11-11"
+      }
+    },
+    {
+      "id": "skills/wt/SKILL.md:34:doc_link:../no-wt/SKILL.md",
+      "source": {
+        "file": "skills/wt/SKILL.md",
+        "line": 34
       },
       "kind": "doc_link",
       "value": "../no-wt/SKILL.md",
@@ -19549,10 +19563,10 @@
       }
     },
     {
-      "id": "skills/wt/SKILL.md:33:skill_ref:no-wt",
+      "id": "skills/wt/SKILL.md:34:skill_ref:no-wt",
       "source": {
         "file": "skills/wt/SKILL.md",
-        "line": 33
+        "line": 34
       },
       "kind": "skill_ref",
       "value": "no-wt",
@@ -19564,10 +19578,10 @@
       }
     },
     {
-      "id": "skills/wt/SKILL.md:43:doc_link:git-worktrees \u203a Repo Resolution",
+      "id": "skills/wt/SKILL.md:44:doc_link:git-worktrees \u203a Repo Resolution",
       "source": {
         "file": "skills/wt/SKILL.md",
-        "line": 43,
+        "line": 44,
         "also_lines": [
           56
         ]
@@ -19583,10 +19597,10 @@
       }
     },
     {
-      "id": "skills/wt/SKILL.md:49:skill_ref:clean",
+      "id": "skills/wt/SKILL.md:50:skill_ref:clean",
       "source": {
         "file": "skills/wt/SKILL.md",
-        "line": 49
+        "line": 50
       },
       "kind": "skill_ref",
       "value": "clean",
@@ -19598,10 +19612,10 @@
       }
     },
     {
-      "id": "skills/wt/SKILL.md:49:skill_ref:code-review",
+      "id": "skills/wt/SKILL.md:50:skill_ref:code-review",
       "source": {
         "file": "skills/wt/SKILL.md",
-        "line": 49
+        "line": 50
       },
       "kind": "skill_ref",
       "value": "code-review",
@@ -19613,10 +19627,10 @@
       }
     },
     {
-      "id": "skills/wt/SKILL.md:49:skill_ref:resolve-conflicts",
+      "id": "skills/wt/SKILL.md:50:skill_ref:resolve-conflicts",
       "source": {
         "file": "skills/wt/SKILL.md",
-        "line": 49
+        "line": 50
       },
       "kind": "skill_ref",
       "value": "resolve-conflicts",
@@ -19628,10 +19642,10 @@
       }
     },
     {
-      "id": "skills/wt/SKILL.md:64:doc_link:git-worktrees \u203a Snapshot Lifecycle",
+      "id": "skills/wt/SKILL.md:65:doc_link:git-worktrees \u203a Snapshot Lifecycle",
       "source": {
         "file": "skills/wt/SKILL.md",
-        "line": 64
+        "line": 65
       },
       "kind": "doc_link",
       "value": "git-worktrees \u203a Snapshot Lifecycle",
@@ -19644,10 +19658,10 @@
       }
     },
     {
-      "id": "skills/wt/SKILL.md:71:doc_link:core \u203a Post-edit verification",
+      "id": "skills/wt/SKILL.md:72:doc_link:core \u203a Post-edit verification",
       "source": {
         "file": "skills/wt/SKILL.md",
-        "line": 71
+        "line": 72
       },
       "kind": "doc_link",
       "value": "core \u203a Post-edit verification",
