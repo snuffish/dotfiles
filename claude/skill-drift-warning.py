@@ -14,6 +14,7 @@ It only ever adds context: it never blocks a session and exits 0 even when it fa
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -88,9 +89,24 @@ def drift() -> list[dict]:
     return results
 
 
+def open_gaps() -> int:
+    gap_dir = REPO / "skill-gaps"
+    if not gap_dir.is_dir():
+        return 0
+    return sum(
+        1
+        for f in gap_dir.glob("*.md")
+        if not re.search(r"^\W*Status:?\W*\s*fixed", f.read_text(encoding="utf-8"), re.I | re.M)
+    )
+
+
 def main() -> None:
+    gaps = open_gaps()
     results = drift()
     if not results:
+        if gaps:
+            note = f"{gaps} open skill gap(s) in ~/.terminal/skill-gaps (run /skill-gap)."
+            print(json.dumps({"systemMessage": note}, ensure_ascii=False))
         return
     fails = sum(r["status"] == "fail" for r in results)
     stale = len(results) - fails

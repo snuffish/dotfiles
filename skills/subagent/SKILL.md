@@ -1,7 +1,7 @@
 ---
 name: subagent
 description: "Launches one background sub-agent for a task, with a standing brief, a model pick, a parent-made worktree for edits, and BLOCKED handling. Use for /subagent, \"run this in a sub-agent\", \"start an agent for X\". User-only."
-argument-hint: "[--model <m>] [--wait] [@<agent-file>] <task | /skill args>"
+argument-hint: "[--model <opus|sonnet|haiku|fable>] [--wait] [@<agent-file>] <task | /skill args>"
 disable-model-invocation: true
 ---
 

@@ -11,24 +11,18 @@
       "Bash(grep:*)",
       "Bash(git diff:*)",
       "Bash(git status:*)",
-      "Bash(dotnet format:*)",
-      "Bash(dotnet build:*)",
-      "Bash(dotnet test:*)",
-      "Bash(npm run lint:*)",
-      "Bash(npm run build:*)",
-      "Az devops invoke",
-      "Bash(python3 -I .claude/skills/priis-local-env/scripts/db.py --yes *)",
-      "Bash(python3 -I .claude/skills/priis-local-env/scripts/api.py *--yes*)",
-      "Bash(python3 -I .claude/skills/priis-local-env/scripts/create_ticket.py *--yes*)",
-      "Bash(python3 -I .claude/skills/priis-local-env/scripts/advance_ticket.py *--yes*)",
+      "Bash(quiet dotnet format:*)",
+      "Bash(quiet dotnet build:*)",
+      "Bash(quiet dotnet test:*)",
+      "Bash(quiet npm run lint:*)",
+      "Bash(quiet npm run build:*)",
+      "Bash(quiet pwsh -NoProfile -File *backend/scripts/format-changed.ps1*)",
       "mcp__azure-devops__wit_work_item",
       "mcp__azure-devops__repo_pull_request",
       "mcp__azure-devops__repo_pull_request_thread"
     ],
     "defaultMode": "auto",
-    "additionalDirectories": [
-      "~/.cache/agent-artifacts"
-    ]
+    "additionalDirectories": ["~/.cache/agent-artifacts"]
   },
   "model": "opus",
   "skillOverrides": {
@@ -107,8 +101,6 @@
     "claude-mem:weekly-digests": "off",
     "claude-mem:what-the": "off",
     "claude-mem:wowerpoint": "off",
-    "claude-mem-cowork:agent-cost-report": "off",
-    "claude-mem-cowork:mem-search": "off",
     "mattpocock-skills:triage": "off",
     "mattpocock-skills:wayfinder": "off",
     "mattpocock-skills:wizard": "off",
@@ -204,7 +196,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "f=$(jq -r '.tool_input.file_path // empty'); [ -n \"$f\" ] || exit 0; case \"$(realpath \"$f\" 2>/dev/null || echo \"$f\")\" in \"$HOME\"/.terminal/skills/*.md) exit 0 ;; esac; npx prettier --write --ignore-unknown \"$f\""
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); [ -n \"$f\" ] || exit 0; case \"$(realpath \"$f\" 2>/dev/null || echo \"$f\")\" in \"$HOME\"/.terminal/skills/*) exit 0 ;; esac; npx prettier --find-config-path \"$f\" >/dev/null 2>&1 || exit 0; npx prettier --write --ignore-unknown \"$f\""
           },
           {
             "type": "command",

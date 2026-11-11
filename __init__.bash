@@ -150,5 +150,8 @@ printf "\n"
 # The private tmux popup (tmux/tmux.conf) starts on a clean screen
 [[ -n "$TMUX_POPUP" ]] && clear
 
+# Agent shells: zsh turns `=word` into a command lookup and aborts on unmatched globs
+[[ -n "$CLAUDECODE" && -n "$ZSH_VERSION" ]] && unsetopt equals nomatch
+
 unset init_utils init_envs init_modules init_failed init_count init_took init_start_ms init_clock_ms
 unset -f _initPrintGroup _initClock

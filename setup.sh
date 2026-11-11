@@ -52,6 +52,14 @@ else
   warn "cm-sync not cloned: git clone git@github.com:snuffish/cm-sync.git ~/Projects/cm-sync"
 fi
 
+echo "quiet"
+mkdir -p "$HOME/.local/bin"
+if [ -e "$HOME/.local/bin/quiet" ] && [ ! -L "$HOME/.local/bin/quiet" ]; then
+  bad "$HOME/.local/bin/quiet is a real file; move it away and rerun"
+else
+  ln -sfn "$TERMINAL/claude/quiet" "$HOME/.local/bin/quiet"
+fi
+
 echo "Links"
 points_into_terminal() { [ -L "$1" ] && case "$(readlink "$1")" in "$TERMINAL"/*|"$TERMINAL_REAL"/*|claude/*) return 0 ;; esac; return 1; }
 for link in ~/.claude/CLAUDE.md ~/.claude/settings.json ~/.claude/statusline.sh ~/.claude/agents \
@@ -61,6 +69,7 @@ done
 if [ -f "$CM_SYNC_SRC" ]; then
   if [ -L "$HOME/.local/bin/cm-sync" ]; then ok "~/.local/bin/cm-sync"; else bad "~/.local/bin/cm-sync missing"; fi
 fi
+if [ -L "$HOME/.local/bin/quiet" ]; then ok "~/.local/bin/quiet"; else bad "~/.local/bin/quiet missing"; fi
 skill_links=$(find "$HOME/.claude/skills" -maxdepth 1 -type l 2>/dev/null | wc -l)
 if [ "$skill_links" -ge 1 ]; then ok "~/.claude/skills: $skill_links links"; else bad "~/.claude/skills has no links"; fi
 
