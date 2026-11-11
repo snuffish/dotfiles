@@ -91,6 +91,9 @@ Gather the concrete facts from the active workspace and conversation history:
 **Worktree:** `<path-or-main>`
 **Created:** `<ISO-8601 timestamp>`
 **Suggested Skills:** `<skill-1>`, `<skill-2>`
+**Run-Status:** CONTINUE
+**Next-Phase:** <label> — <phase title>
+**Base:** `<PR target branch, or the parent branch of a stacked branch>`
 
 ---
 
@@ -119,12 +122,17 @@ Gather the concrete facts from the active workspace and conversation history:
 ## 6. Suggested Skills
 - `<skill>`: <why and when the fresh session should invoke it>
 
+## Open caveats
+- <caveat the next session must know, or `none`>
+
 ---
 
 > **Next Step Gate:** In a fresh or current agent session, run:
 > `/proceed <absolute-path-to-artifact>`
 > to authorize and execute the next steps listed above.
 ```
+
+**Run fields** (read by [`/proceed`](../proceed/SKILL.md) › *Runner mode* and `proceed/scripts/run-plan.sh`, which rewrites them after each phase): `Run-Status` is `CONTINUE`, `BLOCKED` or `DONE`; `Next-Phase` names the first unfinished phase of the plan; `Base` is the diff base for gates and reviews, the PR's target branch (a stacked branch's parent), never an assumed `origin/main`; `Open caveats` lists what a skipped gate, a decision or a deviation left open. Write `Run-Status: CONTINUE` unless the handoff stops on a blocker.
 
 ### Step 4: Emit Chat Response
 
