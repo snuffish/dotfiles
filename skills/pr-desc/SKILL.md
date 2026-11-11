@@ -27,7 +27,6 @@ Read these before step 1:
 - `../_modules/pr-host.md`
 - `../_modules/project-profile.md`: base profile only (`<project>-profile`); reads *Tracker*, *PR tooling*, *PR labels*, and *Report language*
 - `../_modules/outward-writes.md`
-- `../_modules/fan-out.md`: _Speed fan-out_ for the diff digests (Step 3)
 
 - Confirm `repo-root` (`git-worktrees` › *Using this Module from a Command*) before Step 1's `status`, `add`, `commit`, or `push`.
 
@@ -66,7 +65,7 @@ git -C <repo-root> rev-list --count @{u}..HEAD 2>/dev/null
 
 - **`--dry-run`**: never commit or push; note in chat that uncommitted or unpushed changes are included in the draft but not on the PR.
 - **Bare and `--draft`**: if uncommitted or unpushed work exists, list the files, a proposed commit subject and the unpushed commits per repo, and **ask once** with AskUserQuestion whether to commit and push before the description is written. On yes, follow [`/commit`](../commit/SKILL.md) Steps 2–5 (selective staging, repo commit convention + trailer rule, pre-commit gates, `git -C <repo-root> push` / `push -u origin HEAD`). On no, say the pending work is left out of the description. Never amend, rebase, or force-push.
-- **Overlap with the gates:** once the commit's files are staged, start its pre-commit gates with `run_in_background` and run Steps 2–3 meanwhile on `git -C <repo-root> diff --staged "$BASE"` plus the committed `"$BASE...HEAD"` range. After the push, compare `git -C <repo-root> diff --stat "$BASE...HEAD"` with what was digested; re-digest only the files that differ (a formatter changed them).
+- **Overlap with the gates:** once the commit's files are staged, start its pre-commit gates with `run_in_background` and run Steps 2–3 meanwhile on `git -C <repo-root> diff --staged "$BASE"` plus the committed `"$BASE...HEAD"` range. After the push, compare `git -C <repo-root> diff --stat "$BASE...HEAD"` with what was read; re-read only the files that differ (a formatter changed them).
 
 ---
 
@@ -83,10 +82,9 @@ Resolve the open PR (if any) and diff base `<base>` per `pr-host` › *Resolve t
 
 ## Step 3 — Gather context
 
-1. List changed files (`--name-status`, plus `--stat` for the totals) and skip machine-generated files (`*.gen.ts`, `*.g.cs`).
-2. **Small changes (< ~200 diff lines):** read the raw diff inline.
-3. **Larger changes:** split the changed files by area (for example backend, frontend, tests and config; at most 3 areas, merging the smallest) and spawn one digest sub-agent per area per `fan-out` › _Speed fan-out_ and [diff-digest.md](references/diff-digest.md). Compose from their digests and the `--stat`, re-opening at least one cited hunk per digest before relying on it.
-4. **In the same message as the digests** (or as parallel tool calls when inline), fetch the context: the repo PR template (`git ls-files | grep -iE '^(\.azuredevops/|\.vsts/|docs/|\.github/)?pull_request_template\.md$'`, first match wins), the work-item ID from the branch name, commit subjects or linked work items, the recent PR titles (Step 4.3), and outside `--dry-run` the counterpart PR (`pr-counterpart` › *Counterpart discovery*, reused in *Apply*).
+1. List changed files (`--name-status`, plus `--stat` for the totals) and skip machine-generated files (`*.gen.ts`, `*.g.cs`, `*.Designer.cs`, committed API snapshots such as `swagger.json`).
+2. **Read the diff inline, whatever its size; never start sub-agents in this Command.** Read it per area (`git -C <repo-root> diff "$BASE...HEAD" -- <paths>`), the files the `--stat` and commit bodies point at first. Digest agents re-read the whole diff to save context a PR description does not need saved (!19023, 2026-11-11: three agents for ~1,600 lines).
+3. **As parallel tool calls with the diff reads**, fetch the context: the repo PR template (`git ls-files | grep -iE '^(\.azuredevops/|\.vsts/|docs/|\.github/)?pull_request_template\.md$'`, first match wins), the work-item ID from the branch name, commit subjects or linked work items, the recent PR titles (Step 4.3), and outside `--dry-run` the counterpart PR (`pr-counterpart` › *Counterpart discovery*, reused in *Apply*).
 
 ---
 
@@ -132,7 +130,7 @@ Print:
 
 ## Apply
 
-1. **Locate the PR(s)**: reuse the PR from Step 2 and the counterpart from Step 3.4 (`pr-counterpart` › *Counterpart discovery* across repos). When a cross-repo counterpart exists, fill each PR's footer relation link (`This PR relates to: !<other-id>`) with the real counterpart ID before updating.
+1. **Locate the PR(s)**: reuse the PR from Step 2 and the counterpart from Step 3.3 (`pr-counterpart` › *Counterpart discovery* across repos). When a cross-repo counterpart exists, fill each PR's footer relation link (`This PR relates to: !<other-id>`) with the real counterpart ID before updating.
 2. **Read-back before overwrite**: fetch and display the current `title`, `description`/`body`, and (on Azure DevOps) `isDraft` (`az repos pr show --id <id> --org <org-url>` / `gh pr view <id> --json title,body`).
 3. **Write from scratchpad files**: the body from `<scratchpad>/pr-<id>/body.md`, and the title from `<scratchpad>/pr-<id>/title.txt` when replacing it. Never inline markdown in shell arguments; the shell would run the backticks.
    - **Azure DevOps**: prefer the MCP `repo_pull_request_write` with `action: update`, `repositoryId`, `pullRequestId`, `description` (the file's text), and `title` when replacing; leave `isDraft` out so the PR keeps its draft state. If the MCP is unavailable or denied, run `az repos pr update --id <id> --org <org-url> --description "$(cat <scratchpad>/pr-<id>/body.md)" --query "{id:pullRequestId,draft:isDraft}" -o json` (plus `--title "$(cat <scratchpad>/pr-<id>/title.txt)"` when replacing). If `draft` in the output differs from the read-back value, say so in the report.

@@ -5755,7 +5755,7 @@
       },
       "kind": "skill_ref",
       "value": "implement-feature",
-      "quote": "rification`, `explain`, `suggestion`, `verify-assumptions`, `implement-feature`, and the *Speed fan-out* steps of `investigate`, `plan`, `pr",
+      "quote": "rification`, `explain`, `suggestion`, `verify-assumptions`, `implement-feature`, and the *Speed fan-out* steps of `investigate`, `plan`, `",
       "verify": {
         "method": "skill_exists",
         "name": "implement-feature",
@@ -5894,7 +5894,7 @@
       },
       "kind": "skill_ref",
       "value": "investigate",
-      "quote": "ptions`, `implement-feature`, and the *Speed fan-out* steps of `investigate`, `plan`, `pr-desc`, `what-am-I-missing`, `manual-testing`, `pr-",
+      "quote": "ptions`, `implement-feature`, and the *Speed fan-out* steps of `investigate`, `plan`, `what-am-I-missing`, `manual-testing`, `pr-",
       "verify": {
         "method": "skill_exists",
         "name": "investigate",
@@ -5909,25 +5909,10 @@
       },
       "kind": "skill_ref",
       "value": "plan",
-      "quote": "mplement-feature`, and the *Speed fan-out* steps of `investigate`, `plan`, `pr-desc`, `what-am-I-missing`, `manual-testing`, `pr-fix-pipelin",
+      "quote": "mplement-feature`, and the *Speed fan-out* steps of `investigate`, `plan`, `what-am-I-missing`, `manual-testing`, `pr-fix-pipelin",
       "verify": {
         "method": "skill_exists",
         "name": "plan",
-        "base": "repo"
-      }
-    },
-    {
-      "id": "skills/_modules/fan-out.md:3:skill_ref:pr-desc",
-      "source": {
-        "file": "skills/_modules/fan-out.md",
-        "line": 3
-      },
-      "kind": "skill_ref",
-      "value": "pr-desc",
-      "quote": "*Speed fan-out* steps of `investigate`, `plan`, `pr-desc`, `what-am-I-missing`",
-      "verify": {
-        "method": "skill_exists",
-        "name": "pr-desc",
         "base": "repo"
       }
     },
@@ -15069,7 +15054,7 @@
       "id": "skills/pr-desc/SKILL.md:32:doc_link:git-worktrees \u203a Using this Module from a Command",
       "source": {
         "file": "skills/pr-desc/SKILL.md",
-        "line": 32
+        "line": 31
       },
       "kind": "doc_link",
       "value": "git-worktrees \u203a Using this Module from a Command",
@@ -15085,7 +15070,7 @@
       "id": "skills/pr-desc/SKILL.md:32:skill_ref:commit",
       "source": {
         "file": "skills/pr-desc/SKILL.md",
-        "line": 32,
+        "line": 31,
         "also_lines": [
           57
         ]
@@ -15103,7 +15088,7 @@
       "id": "skills/pr-desc/SKILL.md:40:doc_link:project-profile \u203a Discovery",
       "source": {
         "file": "skills/pr-desc/SKILL.md",
-        "line": 40
+        "line": 39
       },
       "kind": "doc_link",
       "value": "project-profile \u203a Discovery",
@@ -15119,7 +15104,7 @@
       "id": "skills/pr-desc/SKILL.md:68:doc_link:../commit/SKILL.md",
       "source": {
         "file": "skills/pr-desc/SKILL.md",
-        "line": 68
+        "line": 67
       },
       "kind": "doc_link",
       "value": "../commit/SKILL.md",
@@ -15134,7 +15119,7 @@
       "id": "skills/pr-desc/SKILL.md:75:doc_link:pr-host \u203a Resolve the PR from a branch",
       "source": {
         "file": "skills/pr-desc/SKILL.md",
-        "line": 75,
+        "line": 74,
         "also_lines": [
           98
         ]
@@ -15153,7 +15138,7 @@
       "id": "skills/pr-desc/SKILL.md:102:doc_link:references/pr-body-template.md",
       "source": {
         "file": "skills/pr-desc/SKILL.md",
-        "line": 102,
+        "line": 101,
         "also_lines": [
           87
         ]
@@ -15171,7 +15156,7 @@
       "id": "skills/pr-desc/SKILL.md:89:doc_link:pr-counterpart \u203a Counterpart discovery",
       "source": {
         "file": "skills/pr-desc/SKILL.md",
-        "line": 89
+        "line": 87
       },
       "kind": "doc_link",
       "value": "pr-counterpart \u203a Counterpart discovery",
@@ -15187,7 +15172,7 @@
       "id": "skills/pr-desc/SKILL.md:141:doc_link:outward-writes \u203a Read back",
       "source": {
         "file": "skills/pr-desc/SKILL.md",
-        "line": 141
+        "line": 139
       },
       "kind": "doc_link",
       "value": "outward-writes \u203a Read back",
@@ -15197,53 +15182,6 @@
         "target": "outward-writes",
         "heading": "Read back",
         "base": "repo"
-      }
-    },
-    {
-      "id": "skills/pr-desc/SKILL.md:30:path:../_modules/fan-out.md",
-      "source": {
-        "file": "skills/pr-desc/SKILL.md",
-        "line": 30
-      },
-      "kind": "path",
-      "value": "../_modules/fan-out.md",
-      "quote": "- `../_modules/fan-out.md`: _Speed fan-out_",
-      "verify": {
-        "method": "path_exists",
-        "path": "../_modules/fan-out.md",
-        "base": "file_dir",
-        "type": "file"
-      }
-    },
-    {
-      "id": "skills/pr-desc/SKILL.md:88:doc_link:fan-out \u203a Speed fan-out",
-      "source": {
-        "file": "skills/pr-desc/SKILL.md",
-        "line": 88
-      },
-      "kind": "doc_link",
-      "value": "fan-out \u203a Speed fan-out",
-      "quote": "spawn one digest sub-agent per area per `fan-out` \u203a _Speed fan-out_",
-      "verify": {
-        "method": "heading_pointer",
-        "target": "fan-out",
-        "heading": "Speed fan-out",
-        "base": "repo"
-      }
-    },
-    {
-      "id": "skills/pr-desc/SKILL.md:88:doc_link:references/diff-digest.md",
-      "source": {
-        "file": "skills/pr-desc/SKILL.md",
-        "line": 88
-      },
-      "kind": "doc_link",
-      "value": "references/diff-digest.md",
-      "quote": "[diff-digest.md](references/diff-digest.md)",
-      "verify": {
-        "method": "link_resolves",
-        "href": "references/diff-digest.md",
-        "base": "file_dir"
       }
     },
     {
@@ -19806,7 +19744,7 @@
       "id": "skills/pr-desc/SKILL.md:115:path:scripts/wrap_generics.py",
       "source": {
         "file": "skills/pr-desc/SKILL.md",
-        "line": 115
+        "line": 113
       },
       "kind": "path",
       "value": "scripts/wrap_generics.py",
@@ -23298,38 +23236,6 @@
         ],
         "base": "repo",
         "expect": "present"
-      }
-    },
-    {
-      "id": "skills/pr-desc/references/diff-digest.md:3:doc_link:fan-out \u203a Speed fan-out",
-      "source": {
-        "file": "skills/pr-desc/references/diff-digest.md",
-        "line": 3
-      },
-      "kind": "doc_link",
-      "value": "fan-out \u203a Speed fan-out",
-      "quote": "(`fan-out` \u203a _Speed fan-out_), at most 3",
-      "verify": {
-        "method": "heading_pointer",
-        "target": "fan-out",
-        "heading": "Speed fan-out",
-        "base": "repo"
-      }
-    },
-    {
-      "id": "skills/pr-desc/references/diff-digest.md:7:doc_link:fan-out \u203a Brief contract",
-      "source": {
-        "file": "skills/pr-desc/references/diff-digest.md",
-        "line": 7
-      },
-      "kind": "doc_link",
-      "value": "fan-out \u203a Brief contract",
-      "quote": "(`fan-out` \u203a _Brief contract_)",
-      "verify": {
-        "method": "heading_pointer",
-        "target": "fan-out",
-        "heading": "Brief contract",
-        "base": "repo"
       }
     },
     {
