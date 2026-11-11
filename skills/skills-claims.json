@@ -4350,7 +4350,7 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "neral (top level) | Command | 52 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `clean`, `code-documentation`, `code-review`,",
+      "quote": "neral (top level) | Command | 53 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `clean`, `code-documentation`, `code-review`,",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
@@ -4795,7 +4795,7 @@
       },
       "kind": "skill_ref",
       "value": "standup-recap",
-      "quote": "fication`, `squash-code-review`, `squash-ef-core-migrations`, `standup-recap`, `state`, `suggestion`, `sync-skills`, `verify-assumptions`, `",
+      "quote": "fication`, `squash-code-review`, `squash-ef-core-migrations`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `",
       "verify": {
         "method": "skill_exists",
         "name": "standup-recap",
@@ -4810,7 +4810,7 @@
       },
       "kind": "skill_ref",
       "value": "suggestion",
-      "quote": "-review`, `squash-ef-core-migrations`, `standup-recap`, `state`, `suggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing`, `wt",
+      "quote": "-review`, `squash-ef-core-migrations`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing`, `wt",
       "verify": {
         "method": "skill_exists",
         "name": "suggestion",
@@ -4828,7 +4828,7 @@
       },
       "kind": "skill_ref",
       "value": "sync-skills",
-      "quote": "`squash-ef-core-migrations`, `standup-recap`, `state`, `suggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing`, `wt` |",
+      "quote": "`squash-ef-core-migrations`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing`, `wt` |",
       "verify": {
         "method": "skill_exists",
         "name": "sync-skills",
@@ -4843,7 +4843,7 @@
       },
       "kind": "skill_ref",
       "value": "verify-assumptions",
-      "quote": "`squash-ef-core-migrations`, `standup-recap`, `state`, `suggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing`, `wt` |",
+      "quote": "`squash-ef-core-migrations`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing`, `wt` |",
       "verify": {
         "method": "skill_exists",
         "name": "verify-assumptions",
@@ -5087,12 +5087,12 @@
       },
       "kind": "count",
       "value": "53",
-      "quote": "58 skills total \u2014 53 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "59 skills total \u2014 54 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/*/SKILL.md",
         "base": "repo",
-        "expected": 53,
+        "expected": 54,
         "op": "eq"
       }
     },
@@ -5104,7 +5104,7 @@
       },
       "kind": "count",
       "value": "5 GR.PRIIS project skills",
-      "quote": "58 skills total \u2014 53 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "59 skills total \u2014 54 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/Projects/GR.PRIIS/*/SKILL.md",
@@ -5121,7 +5121,7 @@
       },
       "kind": "count",
       "value": "8 Modules",
-      "quote": "58 skills total \u2014 53 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "59 skills total \u2014 54 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/_modules/*.md",

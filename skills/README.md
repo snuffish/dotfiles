@@ -38,11 +38,11 @@ skills/
 
 ## Inventory
 
-58 skills total — 53 general + 5 under `Projects/GR.PRIIS/` — plus 8 Modules.
+59 skills total — 54 general + 5 under `Projects/GR.PRIIS/` — plus 8 Modules.
 
 | Group | Kind | Count | Entries |
 | --- | --- | :---: | --- |
-| General (top level) | Command | 52 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `fix-findings`, `grill-me`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `no-wt`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `push`, `refine`, `remember-this`, `resolve-conflicts`, `shape-idea`, `skill-drift`, `skill-gap`, `skill-review`, `simplify`, `simplify-branch`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `standup-recap`, `state`, `suggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing`, `wt` |
+| General (top level) | Command | 53 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `fix-findings`, `grill-me`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `no-wt`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `push`, `refine`, `remember-this`, `resolve-conflicts`, `shape-idea`, `skill-drift`, `skill-gap`, `skill-review`, `simplify`, `simplify-branch`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `what-am-I-missing`, `wt` |
 | General (top level) | Reference | 1 | `modern-csharp` |
 | `GR.PRIIS/priis-prod-*` | Command | 1 | `diagnose` (production diagnosis over remote desktop: read-only T-SQL rounds) |
 | `GR.PRIIS/priis-backend-*` | Reference | 1 | `dry` (the other PRIIS team skills ship in the repo's `.claude/skills/`, not here) |
