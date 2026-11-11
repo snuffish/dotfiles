@@ -20,7 +20,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 
 - `../_modules/core.md`
-- `../_modules/git-worktrees.md`: only when `/wt`, a `[worktree-context]` block, `/implement-feature`, or a base profile with `Implementation mode: workspace` applies (`core` › _Worktree opt-in_)
+- `../_modules/git-worktrees.md`: whenever the pending item implements a plan (Step 2 › _Plan implementation runs in a worktree_), and when `/wt`, a `[worktree-context]` block, `/implement-feature`, or a base profile with `Implementation mode: workspace` applies (`core` › _Worktree opt-in_). Skip it only under `/no-wt`
 
 Follow `core` › _The `/proceed` gate_ for all gate invariants; `disable-model-invocation` keeps the model from calling this Command itself.
 
@@ -65,6 +65,7 @@ Work inline: start no subagents unless the plan names one, or Step 2 qualifies f
 
 1. **Mark approved**: set the plan's `Status` to `Approved` (`core` › _The `/proceed` gate_).
 2. **Execute**: follow the plan's phases in order, staying inside its scope and applying the project's References and Profiles (`core` › _Precedence*). Honour an active `[worktree-context]`, `core` › _Worktree opt-in_, and the base profile's **Implementation mode** (`git-worktrees` › _Modes_).
+   - **Plan implementation runs in a worktree**: when the pending item implements a plan (the `plan`, `plan --review` and `implement-feature` rows, a handoff whose next steps are plan phases, or a fix routed through `/plan`), run it in a **workspace** worktree (`git-worktrees` › _Workspace Lifecycle_) as if `/wt` were given. Only `/no-wt` in the arguments runs it in place. A plan or handoff that names a kept worktree continues in that worktree, and the handoff's **Worktree:** line records its path.
    - **One phase per run**: when the pending item has several phases or numbered next steps (a plan, a handoff), do only the first unfinished one. Verify it (step 3), close out (step 4), then stop and wait; never start the next phase in the same turn. Edit lanes and a `/suggestion` option are one item, not phases.
    - **`/proceed all`** bypasses that halt: do every remaining phase in order in this run, with no stop and no handoff between phases, even when the source artifact's working rules say one phase per run. Verify once at the end (step 3) and close out once (step 4). `/proceed phases 3-4` does the same for the phases it names. Stop early only for a failed verification or a decision that is the user's.
    - **Edit lanes**: when the approved items are independent fixes (a review's findings, a fix list, a thread triage's resolutions) that meet the threshold in [`fan-out`](../_modules/fan-out.md) › _Edit lanes_, apply them as edit lanes per that section, then continue with step 3. Never for a plan whose phases build on each other, and never when resuming `implement-feature` (its Phase 3 forbids fan-out).
@@ -93,6 +94,7 @@ Next: <the single next action, usually a commit/push or ship command for the use
 
 - [ ] The pending item was resolved from this session, not guessed; ambiguity was asked about.
 - [ ] Only the authorized scope was changed; no commit, push, PR or tracker write happened without its own request, and no edit landed in a snapshot worktree.
+- [ ] A plan implementation ran in a workspace worktree, unless the arguments held `/no-wt`.
 - [ ] Verification commands ran and their results are reported faithfully.
 - [ ] With phases remaining: only one phase ran (unless `/proceed all` or a phase range widened it), the commit for it was offered before the handoff, and a handoff naming the next phase was written or updated.
 - [ ] Under `/proceed all`: every remaining phase ran without a halt or a handoff in between.

@@ -6079,7 +6079,7 @@
       },
       "kind": "skill_ref",
       "value": "clean",
-      "quote": "nt-feature` \u2192 **workspace**. `clean`, `expressive`, `organize`, `refine`, `problem`, `pr-fix-pipeline`, `squash-ef-core-migrations`, `resolve-conflict",
+      "quote": "ace** (`proceed` \u203a *Step 2*). `clean`, `expressive`, `organize`, `refine`, `prob",
       "verify": {
         "method": "skill_exists",
         "name": "clean",
@@ -6094,7 +6094,7 @@
       },
       "kind": "skill_ref",
       "value": "code-review",
-      "quote": "- **Default users**: `/code-review`, `/pr-feedback-review`, `/squash-code-review` \u2192 **snapshot**; `/implement-feature` \u2192 **workspace**. `clean`, `expr",
+      "quote": "- **Default users**: `/code-review`, `/pr-feedback-review`, `/squash-code-review",
       "verify": {
         "method": "skill_exists",
         "name": "code-review",
@@ -6109,7 +6109,7 @@
       },
       "kind": "skill_ref",
       "value": "expressive",
-      "quote": "e` \u2192 **workspace**. `clean`, `expressive`, `organize`, `refine`, `problem`, `pr-fix-pipeline`, `squash-ef-core-migrations`, `resolve-conflicts`, `proc",
+      "quote": "roceed` \u203a *Step 2*). `clean`, `expressive`, `organize`, `refine`, `problem`, `pr",
       "verify": {
         "method": "skill_exists",
         "name": "expressive",
@@ -6124,7 +6124,7 @@
       },
       "kind": "skill_ref",
       "value": "organize",
-      "quote": "ce**. `clean`, `expressive`, `organize`, `refine`, `problem`, `pr-fix-pipeline`, `squash-ef-core-migrations`, `resolve-conflicts`, `proceed` \u2192 **works",
+      "quote": "p 2*). `clean`, `expressive`, `organize`, `refine`, `problem`, `pr-fix-pipeline`",
       "verify": {
         "method": "skill_exists",
         "name": "organize",
@@ -6139,7 +6139,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-feedback-review",
-      "quote": "lt users**: `/code-review`, `/pr-feedback-review`, `/squash-code-review` \u2192 **snapshot**; `/implement-feature` \u2192 **workspace**. `clean`, `expressive`,",
+      "quote": "ault users**: `/code-review`, `/pr-feedback-review`, `/squash-code-review` \u2192 **s",
       "verify": {
         "method": "skill_exists",
         "name": "pr-feedback-review",
@@ -6154,7 +6154,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-fix-pipeline",
-      "quote": "anize`, `refine`, `problem`, `pr-fix-pipeline`, `squash-ef-core-migrations`, `resolve-conflicts`, `proceed` \u2192 **workspace** when opted in, under `/imp",
+      "quote": "ganize`, `refine`, `problem`, `pr-fix-pipeline`, `squash-ef-core-migrations`, `r",
       "verify": {
         "method": "skill_exists",
         "name": "pr-fix-pipeline",
@@ -6169,7 +6169,7 @@
       },
       "kind": "skill_ref",
       "value": "problem",
-      "quote": "sive`, `organize`, `refine`, `problem`, `pr-fix-pipeline`, `squash-ef-core-migrations`, `resolve-conflicts`, `proceed` \u2192 **workspace** when opted in,",
+      "quote": "ssive`, `organize`, `refine`, `problem`, `pr-fix-pipeline`, `squash-ef-core-migr",
       "verify": {
         "method": "skill_exists",
         "name": "problem",
@@ -6184,7 +6184,7 @@
       },
       "kind": "skill_ref",
       "value": "proceed",
-      "quote": "tions`, `resolve-conflicts`, `proceed` \u2192 **workspace** when opted in, under `/implement-feature`, or when the base profile sets `Implementation mode:",
+      "quote": "plementation \u2192 **workspace** (`proceed` \u203a *Step 2*). `clean`, `expressive`, `org",
       "verify": {
         "method": "skill_exists",
         "name": "proceed",
@@ -6199,7 +6199,7 @@
       },
       "kind": "skill_ref",
       "value": "refine",
-      "quote": "`, `expressive`, `organize`, `refine`, `problem`, `pr-fix-pipeline`, `squash-ef-core-migrations`, `resolve-conflicts`, `proceed` \u2192 **workspace** when",
+      "quote": "n`, `expressive`, `organize`, `refine`, `problem`, `pr-fix-pipeline`, `squash-ef",
       "verify": {
         "method": "skill_exists",
         "name": "refine",
@@ -6214,7 +6214,7 @@
       },
       "kind": "skill_ref",
       "value": "resolve-conflicts",
-      "quote": "`squash-ef-core-migrations`, `resolve-conflicts`, `proceed` \u2192 **workspace** when opted in, under `/implement-feature`, or when the base profile sets `",
+      "quote": " `squash-ef-core-migrations`, `resolve-conflicts`, `proceed` on other items \u2192 **",
       "verify": {
         "method": "skill_exists",
         "name": "resolve-conflicts",
@@ -6229,7 +6229,7 @@
       },
       "kind": "skill_ref",
       "value": "squash-code-review",
-      "quote": "ew`, `/pr-feedback-review`, `/squash-code-review` \u2192 **snapshot**; `/implement-feature` \u2192 **workspace**. `clean`, `expressive`, `organize`, `refine`, `",
+      "quote": "view`, `/pr-feedback-review`, `/squash-code-review` \u2192 **snapshot**; `/implement-",
       "verify": {
         "method": "skill_exists",
         "name": "squash-code-review",
@@ -6244,7 +6244,7 @@
       },
       "kind": "skill_ref",
       "value": "squash-ef-core-migrations",
-      "quote": "problem`, `pr-fix-pipeline`, `squash-ef-core-migrations`, `resolve-conflicts`, `proceed` \u2192 **workspace** when opted in, under `/implement-feature`, or",
+      "quote": "`problem`, `pr-fix-pipeline`, `squash-ef-core-migrations`, `resolve-conflicts`, ",
       "verify": {
         "method": "skill_exists",
         "name": "squash-ef-core-migrations",
@@ -19759,8 +19759,8 @@
         "line": 23
       },
       "kind": "other",
-      "value": "git-worktrees loads under /wt, [worktree-context], /implement-feature or Implementation mode: workspace",
-      "quote": "- `../_modules/git-worktrees.md`: only when `/wt`, a `[worktree-context]` block, `/implement-feature`, or a base profile with `Implementation mode: workspace` applies (`core` \u203a _Worktree opt-in_)",
+      "value": "git-worktrees loads for plan implementation, /wt, [worktree-context], /implement-feature or Implementation mode: workspace",
+      "quote": "- `../_modules/git-worktrees.md`: whenever the pending item implements a plan (Step 2 \u203a _Plan implementation runs in a worktree_), and when `/wt`, a `[worktree-context]` block, `/implement-feature`, or a base profile with `Implementation mode: workspace` applies (`core` \u203a _Worktree opt-in_). Skip it only under `/no-wt`",
       "verify": {
         "method": "grep",
         "pattern": "`/wt`.*`\\[worktree-context\\]`.*`/implement-feature`.*`Implementation mode: workspace`",
