@@ -15,7 +15,6 @@ import os
 import re
 import subprocess
 import sys
-import tempfile
 import zlib
 from pathlib import Path
 
@@ -139,7 +138,10 @@ def reset_args(pane):
 
 
 def run_tmux(args):
-    subprocess.run(["tmux", *args], capture_output=True, timeout=2)
+    # Detached and not awaited: waiting on the tmux client put the hook's p95 over 100 ms. No inherited
+    # stdout, so Claude Code reads the hook's output without waiting for tmux to exit
+    subprocess.Popen(["tmux", *args], stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                     stderr=subprocess.DEVNULL, start_new_session=True)
 
 
 def osc_title(text):
@@ -160,9 +162,9 @@ def load_record(sid):
 
 def save_record(sid, record):
     STATE.mkdir(parents=True, exist_ok=True)
-    fd, tmp = tempfile.mkstemp(dir=STATE, prefix=f".{sid}.")
-    with os.fdopen(fd, "w") as f:
-        json.dump(record, f, ensure_ascii=False)
+    # Per-process tmp name: parallel hooks of one session never share it, and rename is atomic
+    tmp = STATE / f".{sid}.{os.getpid()}.tmp"
+    tmp.write_text(json.dumps(record, ensure_ascii=False))
     os.replace(tmp, STATE / f"{sid}.json")
 
 
