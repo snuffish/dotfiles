@@ -2,7 +2,7 @@
 name: proceed
 description: "Authorizes and executes the next step of a gated read-only command."
 disable-model-invocation: true
-argument-hint: "[artifact | all | option | phase | step | extra instructions]"
+argument-hint: "[artifact | all | option | phase | step | --runner phase <N> state-dir <dir> | extra instructions]"
 model: sonnet
 effort: low
 ---
@@ -73,6 +73,16 @@ Work inline: start no subagents unless the plan names one, or Step 2 qualifies f
 4. **Close out**: update the plan's `Status` (`Completed` or `Approved` with remaining items per `core` › _The `/proceed` gate_) and, in the same edit, every status field the source artifact's Command declares (header `Status:`, summary matrix, per-item status, checklist); then `grep` for `⏸`, `Not addressed`, `uncommitted` and resolve every hit.
 5. **Hand off when the run stops with phases remaining** (not under `/proceed all`, unless context runs low): first offer the commit for the finished phase and wait for the answer, so each commit holds one phase and the handoff names final SHAs. Then run [`/handoff`](../handoff/SKILL.md) so a fresh session can do the next phase. Update the handoff this run started from in place when there is one, else write a new one. The output's `Next:` line is then `/proceed <handoff path>`.
 
+### Runner mode (`--runner phase <N> state-dir <dir>`)
+
+Set by [`scripts/run-plan.sh`](scripts/run-plan.sh), which runs one `claude -p` per phase and owns the gates, the commit and the handoff update. It differs from an interactive run:
+
+- Do exactly phase `<N>` of the handoff's plan, in the current directory (the runner's worktree; create none), then stop.
+- Ask nothing. A decision that is the user's, a missing input or a denied tool call ends the phase: put it in `caveats` of `<dir>/phase-<N>.json` and stop.
+- Skip Step 2 items 3–5: do not verify, commit, push, hand off or edit the handoff; the runner does all of it.
+- Write no memory or rule outside the repo (`~/.claude*`, `~/.terminal`, claude-mem `save_memory`, `work_state_write`); the runner blocks the whole run on any such write.
+- Finish by writing `<dir>/phase-<N>.json`: `{"commit_message": "<type>(<scope>): <subject>", "caveats": ["..."], "files": ["..."]}`. The message is a conventional commit that describes this phase only.
+
 ---
 
 ## 3. Output Format & Deliverables
@@ -99,3 +109,4 @@ Next: <the single next action, usually a commit/push or ship command for the use
 - [ ] With phases remaining: only one phase ran (unless `/proceed all` or a phase range widened it), the commit for it was offered before the handoff, and a handoff naming the next phase was written or updated.
 - [ ] Under `/proceed all`: every remaining phase ran without a halt or a handoff in between.
 - [ ] The plan's `Status` and every status field in any source review artifact match reality (Step 2.4).
+- [ ] Under `--runner`: one phase done, `phase-<N>.json` written with a conventional `commit_message`, nothing committed, no question asked, no memory written.
