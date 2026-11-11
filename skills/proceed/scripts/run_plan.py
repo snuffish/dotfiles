@@ -40,6 +40,9 @@ DEFAULT_GLOBAL = [HOME / ".claude" / n for n in ("CLAUDE.md", "settings.json", "
     HOME / ".terminal" / "claude", HOME / ".agents",
 ]
 SKIP_DIRS = {".git", "node_modules", "__pycache__", ".venv"}
+# Machine-written stores under the watched paths: background sync rewrites them during any session, so a change there
+# says nothing about the phase (claude-mem device sync, claude.ai skill sync; first real run, 30040, 2026-11-11).
+DEFAULT_SKIP_TREES = [HOME / ".claude-memory" / "claude-mem", HOME / ".claude" / "skills" / "synced"]
 
 
 class Blocked(Exception):
@@ -156,14 +159,19 @@ def global_paths():
     return [Path(p) for p in override.split(os.pathsep) if p] if override else DEFAULT_GLOBAL
 
 
+def skip_trees():
+    override = os.environ.get("RUN_PLAN_GLOBAL_SKIP")
+    return {str(Path(p)) for p in override.split(os.pathsep) if p} if override is not None else {str(p) for p in DEFAULT_SKIP_TREES}
+
+
 def snapshot():
-    """{path: sha256} of every file under the global rule paths."""
-    snap = {}
+    """{path: sha256} of every file under the global rule paths, the machine-written stores left out."""
+    snap, skipped = {}, skip_trees()
     for root in global_paths():
         files = [root] if root.is_file() else []
         if root.is_dir():
             for dirpath, dirs, names in os.walk(root):
-                dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
+                dirs[:] = [d for d in dirs if d not in SKIP_DIRS and os.path.join(dirpath, d) not in skipped]
                 files += [Path(dirpath) / n for n in names]
         for f in files:
             try:
@@ -177,16 +185,43 @@ def changed_paths(before, after):
     return sorted(p for p in before.keys() | after.keys() if before.get(p) != after.get(p))
 
 
+def transcript_tool_uses(session_id):
+    """[(tool name, input dict)] a session called, read from its transcript; None when no transcript is found."""
+    base = os.environ.get("RUN_PLAN_TRANSCRIPTS", str(HOME / ".claude" / "projects"))
+    paths = glob.glob(os.path.join(base, "*", f"{session_id}.jsonl"))
+    if not paths:
+        return None
+    uses = []
+    for path in paths:
+        for line in Path(path).read_text(errors="replace").splitlines():
+            try:
+                content = (json.loads(line).get("message") or {}).get("content")
+            except (ValueError, AttributeError):
+                continue
+            for item in content if isinstance(content, list) else []:
+                if isinstance(item, dict) and item.get("type") == "tool_use":
+                    uses.append((item.get("name", ""), item.get("input") or {}))
+    return uses
+
+
 def transcript_memory_writes(session_id):
     """Names of claude-mem write tools a session called, read from its transcript."""
-    base = os.environ.get("RUN_PLAN_TRANSCRIPTS", str(HOME / ".claude" / "projects"))
-    hits = []
-    for path in glob.glob(os.path.join(base, "*", f"{session_id}.jsonl")):
-        for line in Path(path).read_text(errors="replace").splitlines():
-            for name in MEMORY_TOOLS:
-                if f'"name":"{name}"' in line.replace(" ", "") and '"tool_use"' in line:
-                    hits.append(name.rsplit("__", 1)[-1])
-    return hits
+    return [name.rsplit("__", 1)[-1] for name, _ in transcript_tool_uses(session_id) or [] if name in MEMORY_TOOLS]
+
+
+def written_by(path, uses):
+    """True when a tool call in `uses` wrote `path`: a file tool naming it, or a Bash command naming it or its folder
+    (in full or ~ form). Folder-level on purpose: a phase command that names a global folder is suspect anyway."""
+    home, real = str(HOME), os.path.realpath(path)  # realpath: macOS /var is /private/var, and skills may be symlinks
+    names = {path, real, os.path.dirname(path), os.path.dirname(real)}
+    names |= {n.replace(home, "~", 1) for n in names if n.startswith(home)}
+    for name, args in uses:
+        target = args.get("file_path") or args.get("notebook_path")
+        if target and os.path.realpath(os.path.expanduser(target)) == real:
+            return True
+        if name == "Bash" and any(n in (args.get("command") or "") for n in names):
+            return True
+    return False
 
 
 # ── Runner ───────────────────────────────────────────────────────────────────────────────────────
@@ -324,8 +359,17 @@ class Runner:
         return {"ok": not failed, "text": data.get("result") if data else out, "raw": out, "cost": cost}
 
     # per-phase checks
-    def leaks(self, snap):
-        found = [f"changed: {p}" for p in changed_paths(snap, snapshot())]
+    def leaks(self, snap, caveats):
+        """Global writes by this phase's own sessions. A changed path no phase or fix transcript wrote came from
+        another session and becomes a caveat; with a transcript missing nothing can be ruled out, so every change counts."""
+        uses = [transcript_tool_uses(sid) for sid in self.sessions]
+        known = None if any(u is None for u in uses) else [use for u in uses for use in u]
+        found = []
+        for p in changed_paths(snap, snapshot()):
+            if known is None or written_by(p, known):
+                found.append(f"changed: {p}")
+            else:
+                caveats.add(f"global path changed outside the phase (another session?): {p}")
         for sid in self.sessions:
             found += [f"claude-mem write in the phase transcript: {w}" for w in transcript_memory_writes(sid)]
         return found
@@ -411,7 +455,7 @@ class Runner:
             raise Blocked("The phase invocation failed:\n" + tail(res["raw"], 40))
         retries = 0
         while True:
-            leaked = self.leaks(snap)
+            leaked = self.leaks(snap, caveats)
             if leaked:
                 raise Blocked("Global memory or rules changed during the phase (only you decide that):\n" + "\n".join(leaked))
             problem = self.check(ph, base, caveats)
@@ -448,17 +492,25 @@ class Runner:
         if status == "DONE":
             print("DONE already.")
             return 0
+        # A hand-written handoff without run fields may describe finished phases; guessing phase 1 would redo them.
+        nxt = re.match(r"\d+[a-z]?", (get_field(text, "Next-Phase") or "").lower())
+        if not nxt:
+            raise SystemExit(f"setup: {self.handoff} has no `**Next-Phase:** <label>` line; set it to the first unfinished "
+                             f"phase of {[p['label'] for p in self.phases]}")
         if self.a.dry_run:
-            nxt = re.match(r"\d+[a-z]?", get_field(text, "Next-Phase") or "")
-            print(f"plan: {self.plan}\nhandoff: {self.handoff}\nphases: {[p['label'] for p in self.phases]}\nnext: {nxt.group(0) if nxt else self.phases[0]['label']}")
+            print(f"plan: {self.plan}\nhandoff: {self.handoff}\nphases: {[p['label'] for p in self.phases]}\nnext: {nxt.group(0)}")
             return 0
         self.state.mkdir(parents=True, exist_ok=True)
         self.ensure_worktree()
+        # A commit stages the whole tree, so work from before the run would land in the wrong phase's commit.
+        dirty = self.git("status", "--porcelain")[1].strip()
+        if dirty and not self.a.resume:
+            raise SystemExit(f"setup: {self.wt} has uncommitted changes from before the run; commit them first, or re-run "
+                             f"with --resume to let phase {nxt.group(0)} take them over:\n{tail(dirty, 20)}")
         done = 0
         while True:
             text = self.read()
-            m = re.match(r"\d+[a-z]?", (get_field(text, "Next-Phase") or "").lower())
-            label = m.group(0) if m else self.phases[0]["label"]
+            label = re.match(r"\d+[a-z]?", (get_field(text, "Next-Phase") or "").lower()).group(0)
             idx = next((i for i, p in enumerate(self.phases) if p["label"] == label), None)
             if idx is None:
                 raise SystemExit(f"setup: Next-Phase {label!r} is not a phase of the plan")

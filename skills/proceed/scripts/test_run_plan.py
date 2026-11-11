@@ -32,6 +32,8 @@ class Sim:
         for d in (self.repo, self.art, self.glob, self.tmp / "transcripts"):
             d.mkdir()
         (self.glob / "rules.md").write_text("rule\n")
+        (self.glob / "sync").mkdir()
+        (self.glob / "sync" / "manifest.json").write_text("{}\n")
         self.git("init", "-q", "-b", "main")
         (self.repo / "README").write_text("x\n")
         self.git("add", "-A")
@@ -46,6 +48,7 @@ class Sim:
             "RUN_PLAN_CLAUDE": str(HERE / "fake_claude.py"), "RUN_PLAN_ARTIFACT_DIR": str(self.art),
             "RUN_PLAN_GLOBAL_PATHS": str(self.glob), "RUN_PLAN_TRANSCRIPTS": str(self.tmp / "transcripts"),
             "RUN_PLAN_PR_BASE_CMD": "false", "FAKE_LEAK_FILE": str(self.glob / "rules.md"),
+            "RUN_PLAN_GLOBAL_SKIP": str(self.glob / "sync"),
         }
 
     def git(self, *a):
@@ -111,6 +114,41 @@ class RunnerSim(unittest.TestCase):
         self.assertIn("changed:", self.sim.handoff)
         self.assertFalse([e for e in self.sim.events() if e.get("kind") == "fix"])
         self.assertEqual(self.sim.commits(), ["init"])
+
+    def test_background_sync_under_a_skipped_tree_is_no_leak(self):
+        r = self.sim.run(FAKE_OTHER_FILE=str(self.sim.glob / "sync" / "manifest.json"))
+        self.assertEqual(r.returncode, 0, r.stderr + r.stdout)
+        self.assertEqual(run_plan.get_field(self.sim.handoff, "Run-Status"), "DONE")
+        self.assertFalse([c for c in run_plan.get_caveats(self.sim.handoff) if "manifest.json" in c])
+
+    def test_global_change_by_another_session_is_a_caveat(self):
+        r = self.sim.run(FAKE_OTHER_FILE=str(self.sim.glob / "rules.md"))
+        self.assertEqual(r.returncode, 0, r.stderr + r.stdout)
+        self.assertTrue(any("changed outside the phase" in c for c in run_plan.get_caveats(self.sim.handoff)))
+
+    def test_global_change_without_a_transcript_blocks(self):
+        r = self.sim.run(FAKE_OTHER_FILE=str(self.sim.glob / "rules.md"), FAKE_NO_TRANSCRIPT="1")
+        self.assertEqual(r.returncode, 1, r.stderr + r.stdout)
+        self.assertIn("changed:", self.sim.handoff)
+
+    def test_handoff_without_next_phase_is_a_setup_error(self):
+        handoff = self.sim.art / "runner-handoff-sim.md"
+        handoff.write_text("# Handoff\n\n**Status:** Phases 1-2 done\n**Base:** `main`\n\n---\n")
+        r = self.sim.run()
+        self.assertEqual(r.returncode, 2, r.stderr + r.stdout)
+        self.assertIn("Next-Phase", r.stderr)
+        self.assertFalse((self.sim.art / "run-plan-sim" / "log.jsonl").exists())  # nothing ran
+
+    def test_uncommitted_work_from_before_the_run_is_a_setup_error(self):
+        self.sim.run("--max-phases", "1")  # commits phase 1, creates the worktree
+        wt = next((self.sim.repo / ".claude" / "worktrees").iterdir())
+        (wt / "earlier-work.txt").write_text("not this run's\n")
+        r = self.sim.run()
+        self.assertEqual(r.returncode, 2, r.stderr + r.stdout)
+        self.assertIn("uncommitted changes from before the run", r.stderr)
+        self.assertEqual(self.sim.commits()[0], "feat(sim): phase 1")
+        resumed = self.sim.run("--resume")
+        self.assertEqual(resumed.returncode, 0, resumed.stderr + resumed.stdout)
 
     def test_verifier_scope_creep_uses_the_fix_budget(self):
         creep = json.dumps({"missed_files": [], "scope_creep": [{"file": "x", "why": "unrelated", "needed_for_phase": False}],
