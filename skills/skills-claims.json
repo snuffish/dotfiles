@@ -4350,7 +4350,7 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "neral (top level) | Command | 51 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `clean`, `code-documentation`, `code-review`,",
+      "quote": "neral (top level) | Command | 52 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `clean`, `code-documentation`, `code-review`,",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
@@ -4645,7 +4645,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-post-comments",
-      "quote": "desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `refine`, `re",
+      "quote": "desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `push`, `refine`, `re",
       "verify": {
         "method": "skill_exists",
         "name": "pr-post-comments",
@@ -4660,7 +4660,7 @@
       },
       "kind": "skill_ref",
       "value": "problem",
-      "quote": "eline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-conflicts`, `shap",
+      "quote": "eline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `push`, `refine`, `remember-this`, `resolve-conflicts`, `shap",
       "verify": {
         "method": "skill_exists",
         "name": "problem",
@@ -4675,7 +4675,7 @@
       },
       "kind": "skill_ref",
       "value": "proceed",
-      "quote": "-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-conflicts`, `shape-idea`, `s",
+      "quote": "-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `push`, `refine`, `remember-this`, `resolve-conflicts`, `shape-idea`, `s",
       "verify": {
         "method": "skill_exists",
         "name": "proceed",
@@ -4690,7 +4690,7 @@
       },
       "kind": "skill_ref",
       "value": "refine",
-      "quote": "iples-interview`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-conflicts`, ",
+      "quote": "iples-interview`, `problem`, `proceed`, `push`, `refine`, `remember-this`, `resolve-conflicts`, ",
       "verify": {
         "method": "skill_exists",
         "name": "refine",
@@ -4705,7 +4705,7 @@
       },
       "kind": "skill_ref",
       "value": "remember-this",
-      "quote": "rview`, `problem`, `proceed`, `refine`, `remember-this`, `resolve-conflicts`, `shape-idea`, `sk",
+      "quote": "rview`, `problem`, `proceed`, `push`, `refine`, `remember-this`, `resolve-conflicts`, `shape-idea`, `sk",
       "verify": {
         "method": "skill_exists",
         "name": "remember-this",
@@ -4720,7 +4720,7 @@
       },
       "kind": "skill_ref",
       "value": "resolve-conflicts",
-      "quote": ", `proceed`, `refine`, `remember-this`, `resolve-conflicts`, `shape-idea`, `skill-drift`, `skill-ga",
+      "quote": ", `proceed`, `push`, `refine`, `remember-this`, `resolve-conflicts`, `shape-idea`, `skill-drift`, `skill-ga",
       "verify": {
         "method": "skill_exists",
         "name": "resolve-conflicts",
@@ -5080,19 +5080,19 @@
       }
     },
     {
-      "id": "skills/README.md:41:count:52",
+      "id": "skills/README.md:41:count:53",
       "source": {
         "file": "skills/README.md",
         "line": 41
       },
       "kind": "count",
-      "value": "52",
-      "quote": "57 skills total \u2014 52 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "value": "53",
+      "quote": "58 skills total \u2014 53 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/*/SKILL.md",
         "base": "repo",
-        "expected": 52,
+        "expected": 53,
         "op": "eq"
       }
     },
@@ -5104,7 +5104,7 @@
       },
       "kind": "count",
       "value": "5 GR.PRIIS project skills",
-      "quote": "57 skills total \u2014 52 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "58 skills total \u2014 53 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/Projects/GR.PRIIS/*/SKILL.md",
@@ -5121,7 +5121,7 @@
       },
       "kind": "count",
       "value": "8 Modules",
-      "quote": "57 skills total \u2014 52 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "58 skills total \u2014 53 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/_modules/*.md",
@@ -23621,7 +23621,7 @@
       },
       "kind": "skill_ref",
       "value": "principles-interview",
-      "quote": "view`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `refine`, `remember-this`, `resolve",
+      "quote": "view`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `push`, `refine`, `remember-this`, `resolve",
       "verify": {
         "method": "skill_exists",
         "name": "principles-interview",
@@ -23819,6 +23819,68 @@
         ],
         "base": "repo",
         "expect": "present"
+      }
+    },
+    {
+      "id": "skills/push/SKILL.md:20:path:../_modules/core.md",
+      "source": {
+        "file": "skills/push/SKILL.md",
+        "line": 20
+      },
+      "kind": "path",
+      "value": "../_modules/core.md",
+      "quote": "- `../_modules/core.md`",
+      "verify": {
+        "method": "path_exists",
+        "path": "../_modules/core.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/push/SKILL.md:21:path:../_modules/outward-writes.md",
+      "source": {
+        "file": "skills/push/SKILL.md",
+        "line": 21
+      },
+      "kind": "path",
+      "value": "../_modules/outward-writes.md",
+      "quote": "- `../_modules/outward-writes.md`",
+      "verify": {
+        "method": "path_exists",
+        "path": "../_modules/outward-writes.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/push/SKILL.md:33:skill_ref:commit",
+      "source": {
+        "file": "skills/push/SKILL.md",
+        "line": 33
+      },
+      "kind": "skill_ref",
+      "value": "commit",
+      "quote": "| Drift check, pre-commit gates or a PR-description update wanted | [`/commit`](../commit/SKILL.md) |",
+      "verify": {
+        "method": "skill_exists",
+        "name": "commit",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/push/SKILL.md:34:skill_ref:resolve-conflicts",
+      "source": {
+        "file": "skills/push/SKILL.md",
+        "line": 34
+      },
+      "kind": "skill_ref",
+      "value": "resolve-conflicts",
+      "quote": "| A merge, rebase or cherry-pick is in progress | [`/resolve-conflicts`](../resolve-conflicts/SKILL.md) |",
+      "verify": {
+        "method": "skill_exists",
+        "name": "resolve-conflicts",
+        "base": "repo"
       }
     }
   ]
