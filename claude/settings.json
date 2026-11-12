@@ -22,7 +22,9 @@
       "mcp__azure-devops__repo_pull_request_thread"
     ],
     "defaultMode": "auto",
-    "additionalDirectories": ["~/.cache/agent-artifacts"]
+    "additionalDirectories": [
+      "~/.cache/agent-artifacts"
+    ]
   },
   "model": "opus",
   "skillOverrides": {
