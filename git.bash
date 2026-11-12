@@ -350,9 +350,11 @@ function gb() {
 
 # gw rows, one per live worktree: "<label>\t<badges>\t<dir>\t<raw lock>\t<branch>". Prunable (deleted) worktrees are skipped
 function _gw_list() {
-  local stale
+  local stale classes
   stale=$(date -v-3d +%F 2>/dev/null || date -d '3 days ago' +%F)
-  git worktree list --porcelain | awk -v cur="$1" -v stale="$stale" '
+  # "<dir>\t<live>\t<class>" per linked worktree from wt-status (wt.bash); via the env, since awk -v rejects newlines
+  classes=$(wt-status "$1" 2>/dev/null | cut -f1,3,6)
+  git worktree list --porcelain | GW_CLASSES="$classes" awk -v cur="$1" -v stale="$stale" '
   function flush() {
     if (dir != "" && !prunable) {
       n++
@@ -400,8 +402,17 @@ function _gw_list() {
   /^branch /   { branch = substr($0, 8); sub(/^refs\/heads\//, "", branch); next }
   /^locked/    { lock = substr($0, 8); if (lock == "") lock = "locked"; next }
   /^prunable/  { prunable = 1; next }
+  # wt-status verdict: green "safe", gray "keep:<reason>", plus red "dead" for a locked tree no live session is in
+  function verdict(d,    out) {
+    if (!(d in w_class)) return ""
+    out = (w_class[d] == "safe" ? "\033[32msafe\033[0m" : "\033[90m" w_class[d] "\033[0m")
+    return out (w_live[d] == "dead" && w_lockof[d] != "" ? " \033[31mdead\033[0m" : "")
+  }
   END {
     flush()
+    k = split(ENVIRON["GW_CLASSES"], crow, "\n")
+    for (i = 1; i <= k; i++) { split(crow[i], c, "\t"); w_live[c[1]] = c[2]; w_class[c[1]] = c[3] }
+    for (i = 1; i <= n; i++) w_lockof[w_dir[i]] = w_lock[i]
     for (i = 1; i <= n; i++) {
       w_status[i] = status(w_dir[i]); w_plain[i] = length(plain)
       if (w_plain[i] > s_width) s_width = w_plain[i]
@@ -411,40 +422,38 @@ function _gw_list() {
       label = marker "\033[35m" sprintf("%-" width "s", w_label[i]) "\033[0m"
       badges = w_status[i]
       if (w_lock[i] != "") badges = badges sprintf("%" (s_width - w_plain[i] + (s_width > 0 ? 2 : 0)) "s", "") badge(w_lock[i])
+      v = verdict(w_dir[i]); if (v != "") badges = badges (badges != "" ? "  " : "") v
       printf "%s\t%s\t%s\t%s\t%s\n", label, badges, w_dir[i], w_lock[i], w_branch[i]
     }
   }
   '
 }
 
-# gw Ctrl-X: remove a worktree after confirmation, then offer to delete its branch (merged only);
-# refuses the current and locked ones, asks again before discarding changes
+# gw Ctrl-X: remove a worktree after confirmation through wt-rm (wt.bash), which refuses dirty, unpushed and live ones
+# and deletes a branch it made that has no commits; then offers to delete a remaining branch (merged only)
 function _gw_delete() {
-  local dir="$1" lock="$2" cur="$3" branch="$4" reply
+  local dir="$1" cur="$2" branch="$3" reply
   if [[ "$dir" == "$cur" ]]; then
     echo "gw: can't delete the worktree you're in"
-  elif [[ -n "$lock" ]]; then
-    [[ "$lock" == claude-skill:* ]] && echo "gw: an agent is working in this worktree"
-    echo "gw: worktree is locked — unlock first: git worktree unlock $dir"
   else
-    local -a force=()
-    if [[ -n "$(git -C "$dir" status --porcelain 2>/dev/null)" ]]; then
-      git -C "$dir" -c color.status=always status -s
-      printf '\nUncommitted changes will be lost. Force-delete %s? [y/N] ' "$dir"
-      force=(--force)
-    else
-      printf 'Delete worktree %s? [y/N] ' "$dir"
-    fi
+    printf 'Delete worktree %s? [y/N] ' "$dir"
     read -r reply </dev/tty
     [[ "$reply" == [yY] ]] || return 0
-    if git worktree remove "${force[@]}" -- "$dir"; then
-      [[ -n "$branch" ]] || return 0
+    if wt-rm "$dir"; then
+      [[ -n "$branch" ]] && git show-ref -q --verify "refs/heads/$branch" || return 0
       printf 'Also delete branch %s? [y/N] ' "$branch"
       read -r reply </dev/tty
       [[ "$reply" == [yY] ]] || return 0
       git branch -d -- "$branch" && return 0
     fi
   fi
+  printf 'Press any key…'
+  read -rsn1 </dev/tty
+}
+
+# gw Alt-C: remove every safe worktree of repo $1 (wt-sweep --apply), then pause to show what was kept
+function _gw_sweep() {
+  wt-sweep "$1" --apply
   printf 'Press any key…'
   read -rsn1 </dev/tty
 }
@@ -497,20 +506,22 @@ function gw() {
   preview_diff+=' git diff HEAD --color=always;'
   preview_diff+=' git ls-files -z --others --exclude-standard | xargs -0 -n1 git diff --no-index --color=always -- /dev/null 2>/dev/null; true'
 
-  # Ctrl-X / Ctrl-R run in a bash subshell (helpers use bash syntax), then reload the list;
-  # reloads go through fzf-pattern.sh, which keeps the Ctrl-F pattern-mode cache current
-  local self="$HOME/.terminal/git.bash" q_root
+  # Ctrl-X / Ctrl-R / Alt-C run in a bash subshell (helpers use bash syntax) that also sources the wt.bash verbs,
+  # then reload the list; reloads go through fzf-pattern.sh, which keeps the Ctrl-F pattern-mode cache current
+  local self="$HOME/.terminal/git.bash" wt="$HOME/.terminal/wt.bash" q_root
   q_root=$(printf %q "$current_root")
-  local delete_cmd="bash -c 'source \"$self\" && _gw_delete \"\$@\"' _ {3} {4} $q_root {5}"
-  local prune_cmd="bash -c 'source \"$self\" && _gw_prune'"
+  local src="source \"$self\" && source \"$wt\""
+  local delete_cmd="bash -c '$src && _gw_delete \"\$@\"' _ {3} $q_root {5}"
+  local prune_cmd="bash -c '$src && _gw_prune'"
+  local sweep_cmd="bash -c '$src && _gw_sweep \"\$1\"' _ $q_root"
   local fp="$HOME/.terminal/utils/fzf-pattern.sh"
-  local reload_cmd="bash -c 'source \"$self\" && _gw_list \"\$1\"' _ $q_root | bash $fp pipe 1"
+  local reload_cmd="bash -c '$src && _gw_list \"\$1\"' _ $q_root | bash $fp pipe 1"
 
   local cols="${COLUMNS:-$(tput cols 2>/dev/null || echo 100)}"
   local max_len=$(( cols * 50 / 100 - 4 ))
   [[ $max_len -lt 35 ]] && max_len=35
   local header
-  header=$(_git_fzf_wrap_header "$max_len" '[Enter] Switch · [Ctrl-D] Diff · [Ctrl-S] Status · [Ctrl-O] Open in Antigravity · [Ctrl-Y] Copy path · [Ctrl-X] Delete · [Ctrl-R] Prune · [Ctrl-F] Fuzzy/pattern · [Shift-↑/↓] Scroll preview')
+  header=$(_git_fzf_wrap_header "$max_len" '[Enter] Switch · [Ctrl-D] Diff · [Ctrl-S] Status · [Ctrl-O] Open in Antigravity · [Ctrl-Y] Copy path · [Ctrl-X] Delete · [Alt-C] Sweep safe · [Ctrl-R] Prune · [Ctrl-F] Fuzzy/pattern · [Shift-↑/↓] Scroll preview')
 
   local -x FZFP_DIR
   FZFP_DIR=$(mktemp -d) || return $?
@@ -527,6 +538,7 @@ function gw() {
     --bind "ctrl-s:change-preview-label( status )+change-preview:$preview_status" \
     --bind "ctrl-x:execute($delete_cmd)+reload($reload_cmd)" \
     --bind "ctrl-r:execute($prune_cmd)+reload($reload_cmd)" \
+    --bind "alt-c:execute($sweep_cmd)+reload($reload_cmd)" \
     --bind "ctrl-f:transform:bash $fp toggle 1" \
     --bind "change:transform:bash $fp change 1" \
     --bind "ctrl-o:execute-silent(antigravity-ide {3})+abort" \
