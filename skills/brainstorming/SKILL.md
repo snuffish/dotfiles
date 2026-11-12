@@ -295,22 +295,20 @@ superpowers:writing-plans and no other skill.
 
 ## Visual Companion
 
-A browser tab for showing mockups, diagrams, and prototypes. It's a
-tool, not a mode: accepting it doesn't send every question to the
-browser.
+A browser tab or terminal previews for showing mockups, diagrams, and
+prototypes. It's a tool, not a mode: accepting it doesn't send every
+question to it.
 
 **Offer it just-in-time.** Offer it the first time one of the moments
 above comes up, never upfront. The offer is its own message with nothing
 else in it:
 
-> "This might be easier if I show you. Want me to open a browser tab with some mockups?"
-
-If they decline, stay in text and don't offer again unless they raise it.
+Make the offer per `visual-companion` › *The offer* (browser, terminal or decline).
 
 **Per question, ask: would they understand this better by seeing it?**
-Mockups, layouts, diagrams, and side-by-side designs go in the browser.
+Mockups, layouts, diagrams, and side-by-side designs go in the companion.
 Requirements, scope, tradeoffs, and conceptual choices stay in text. A
 question about a UI topic isn't automatically a visual question.
 
-If they accept, read `visual-companion.md` in this directory before
-starting the server.
+If they accept, read [visual-companion](../visual-companion/SKILL.md)
+before starting; the offer is already answered, so don't ask again.
