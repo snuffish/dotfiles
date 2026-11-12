@@ -14,6 +14,7 @@ On-demand reference for [artifact-protocol.md](../artifact-protocol.md). Every a
 | `suggestion-<suffix>.md` | `/suggestion deep` | Ranked approaches with trade-offs, a recommendation and next steps |
 | `assumption_check-<suffix>.md` | `/verify-assumptions` | Claim-by-claim verification against primary sources, verdicts and the decisions they affect |
 | `what_am_i_missing-<suffix>.md` | `/what-am-I-missing`, `/implement-feature` | Blind spots, failure modes, invariant audits |
+| `parity_audit-<suffix>.md` | `/parity-audit` | Old-vs-new behavioural parity per unit and dimension, cross-unit overlap, runtime proof, comparison with earlier work |
 | `spec_verification-<suffix>.md` | `/spec-verification` | Requirement-by-requirement traceability against the work item, PR or plan |
 | `manual_test_plan-<suffix>.md` | `/manual-testing` | Runnable manual test plan: setup, logins, test data, risk-ordered scenarios, regression watchlist |
 | `conflict_resolution-<suffix>.md` | `/resolve-conflicts` | Per-hunk resolution record when a merge or rebase crosses the threshold for a written record |

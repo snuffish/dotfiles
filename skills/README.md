@@ -30,6 +30,7 @@ skills/
       priis-profile/               # base profile: facts every PRIIS Command profile shares
       implement-feature-priis-profile/
       code-review-priis-profile/
+      parity-audit-priis-profile/
 ```
 
 - **Top level** = general, project-agnostic skills.
@@ -38,15 +39,15 @@ skills/
 
 ## Inventory
 
-61 skills total — 56 general + 5 under `Projects/GR.PRIIS/` — plus 8 Modules.
+63 skills total — 57 general + 6 under `Projects/GR.PRIIS/` — plus 8 Modules.
 
 | Group | Kind | Count | Entries |
 | --- | --- | :---: | --- |
-| General (top level) | Command | 55 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `fix-findings`, `grill-me`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `no-wt`, `organize`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `push`, `refine`, `remember-this`, `resolve-conflicts`, `shape-idea`, `skill-drift`, `skill-gap`, `skill-review`, `simplify`, `simplify-branch`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `what-am-I-missing`, `wt` |
+| General (top level) | Command | 56 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `fix-findings`, `grill-me`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `no-wt`, `organize`, `parity-audit`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `push`, `refine`, `remember-this`, `resolve-conflicts`, `shape-idea`, `skill-drift`, `skill-gap`, `skill-review`, `simplify`, `simplify-branch`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `what-am-I-missing`, `wt` |
 | General (top level) | Reference | 1 | `modern-csharp` |
 | `GR.PRIIS/priis-prod-*` | Command | 1 | `diagnose` (production diagnosis over remote desktop: read-only T-SQL rounds) |
 | `GR.PRIIS/priis-backend-*` | Reference | 1 | `dry` (the other PRIIS team skills ship in the repo's `.claude/skills/`, not here) |
-| `GR.PRIIS/*-profile` | Profile | 3 | `priis-profile` (base), `implement-feature-priis-profile` (read by `implement-feature`), `code-review-priis-profile` (read by `code-review`) |
+| `GR.PRIIS/*-profile` | Profile | 4 | `priis-profile` (base), `implement-feature-priis-profile` (read by `implement-feature`), `code-review-priis-profile` (read by `code-review`), `parity-audit-priis-profile` (read by `parity-audit`) |
 | `_modules/` | Module | 8 | `core`, `artifact-protocol`, `git-worktrees`, `pr-counterpart`, `pr-host`, `project-profile`, `fan-out`, `outward-writes` |
 
 (Project skill names are the group prefix + the listed suffix — e.g. `priis-backend-dry`. The PRIIS team skills (`priis-backend-*`, `priis-frontend-*`, `priis-review`, `priis-ship`, …) live only in the GR.PRIIS repo's `.claude/skills/`; the registry keeps no copies.)
@@ -67,7 +68,7 @@ Read these before step 1:
 - `../_modules/pr-counterpart.md`
 ```
 
-A Command lists only the Modules it uses directly; a Module lists its own dependencies (for example, [`project-profile`](_modules/project-profile.md) is read by `implement-feature`, `code-review`, `plan`, `pr-feedback-review`, and `pr-desc`; [`pr-host`](_modules/pr-host.md) by every PR-reading Command). Sections inside a Module are referred to by name (`` `git-worktrees` › *Workspace* ``), never by number. **References** and **Profiles** carry no `## Modules` section and inherit the standards through [`core` › *Precedence*](_modules/core.md#precedence).
+A Command lists only the Modules it uses directly; a Module lists its own dependencies (for example, [`project-profile`](_modules/project-profile.md) is read by `implement-feature`, `code-review`, `parity-audit`, `plan`, `pr-feedback-review`, and `pr-desc`; [`pr-host`](_modules/pr-host.md) by every PR-reading Command). Sections inside a Module are referred to by name (`` `git-worktrees` › *Workspace* ``), never by number. **References** and **Profiles** carry no `## Modules` section and inherit the standards through [`core` › *Precedence*](_modules/core.md#precedence).
 
 ## Naming convention (inside `Projects/GR.PRIIS/`)
 
