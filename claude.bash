@@ -1,32 +1,20 @@
 #!/bin/bash
 
 
-# Remove the print-mode worktree on branch $1 (claude -p leaves it locked) when it is clean and every commit on the
-# branch is also on another branch or remote; otherwise keep it and print its path
-function _claude_worktree_cleanup() {
-  local branch=$1 dir
-  dir=$(git worktree list --porcelain | awk -v b="branch refs/heads/$branch" '/^worktree / { d = substr($0, 10) } $0 == b { print d; exit }')
-  [[ -n "$dir" ]] || return 0
-  if [[ -z "$(git -C "$dir" status --porcelain)" ]] &&
-    [[ "$(git rev-list --count "$branch" --not --exclude="$branch" --branches --remotes)" == 0 ]]; then
-    git worktree unlock "$dir" 2>/dev/null
-    git worktree remove "$dir" && git branch -q -D "$branch" && echo "claude-p: removed worktree $dir" >&2
-  else
-    echo "claude-p: kept worktree $dir (uncommitted or unpushed work on $branch)" >&2
-  fi
-}
-
 # claude -p with live progress: the session id and each tool call go to stderr as they start, the final answer to
-# stdout; args go to claude. With a named -w/--worktree that this run creates, the worktree is cleaned up after the run
-# (_claude_worktree_cleanup); an unnamed or pre-existing one is left alone, so other sessions' worktrees are never touched
+# stdout; args go to claude. With a named -w/--worktree that this run creates, the worktree is removed after the run
+# when wt-rm calls it safe; it is found by path, so a branch renamed mid-run still gets cleaned up. An unnamed or
+# pre-existing one is left alone, so other sessions' worktrees are never touched
 function claude-p() {
-  local arg prev="" name="" branch="" rc
+  local arg prev="" name="" dir="" main rc
   for arg in "$@"; do
-    case "$prev" in -w | --worktree) [[ "$arg" =~ ^[A-Za-z0-9._/-]+$ && "$arg" != -* ]] && name=$arg ;; esac
+    case "$prev" in -w | --worktree) [[ "$arg" =~ ^[A-Za-z0-9._-]+$ && "$arg" != -* ]] && name=$arg ;; esac
     [[ "$arg" == --worktree=* ]] && name=${arg#--worktree=}
     prev=$arg
   done
-  [[ -n "$name" ]] && ! git show-ref -q --verify "refs/heads/worktree-$name" 2>/dev/null && branch="worktree-$name"
+  if [[ -n "$name" ]] && main=$(_wt_main .); then
+    [[ -e "$main/.claude/worktrees/$name" ]] || dir="$main/.claude/worktrees/$name"
+  fi
   claude -p --output-format stream-json --verbose "$@" | jq --unbuffered -rj '
     if .type == "system" and .subtype == "init" then
       "\u001b[2msession \(.session_id)\u001b[0m\n" | stderr | empty
@@ -37,8 +25,58 @@ function claude-p() {
     elif .type == "result" then .result + "\n"
     else empty end'
   rc="${PIPESTATUS[0]:-${pipestatus[1]}}"
-  [[ -n "$branch" ]] && _claude_worktree_cleanup "$branch"
+  # claude has exited, so its registry entry is gone and doesn't count as live
+  if [[ -n "$dir" && -d "$dir" ]]; then
+    wt-rm "$dir" || echo "claude-p: kept worktree $dir" >&2
+    # Without the WorktreeCreate hook Claude names the branch worktree-<name>; drop it when no commit is only there
+    if [[ ! -d "$dir" ]] && git show-ref -q --verify "refs/heads/worktree-$name" &&
+      [[ "$(git rev-list --count "worktree-$name" --not --exclude="worktree-$name" --branches --remotes)" == 0 ]]; then
+      git branch -q -D "worktree-$name"
+    fi
+  fi
   return "$rc"
+}
+
+# claude -w in a new locked worktree of the current repo, named and branched by convention (WorktreeCreate hook → wt-new):
+# cw <id> <slug> → feature/<id>_<slug> (-t <type> swaps feature); cw pr<N> or cw '!<N>' → the PR's source branch;
+# cw <slug> → chore/<slug>; cw → a random name on chore/<name>. --tmux, --bg and other options go to claude
+function cw() {
+  local type=feature name branch base="" pr src
+  local -a pos=() opts=()
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -t) type=$2; shift 2 ;;
+      --) shift; opts+=("$@"); break ;;
+      # claude options that take a value keep it, or the value would land in pos as a ticket id or slug
+      --settings|--model|--agent|--add-dir|--permission-mode|--effort|--mcp-config|--append-system-prompt|-r|--resume)
+        opts+=("$1" "$2"); shift 2 ;;
+      -*) opts+=("$1"); shift ;;
+      *) pos+=("$1"); shift ;;
+    esac
+  done
+  git rev-parse --is-inside-work-tree >/dev/null 2>&1 || { echo "cw: not inside a git repository" >&2; return 1; }
+  set -- "${pos[@]}"
+  if [[ $# -ge 2 ]]; then
+    name="$1-$2" branch="$type/$1_$2"
+  elif [[ "$1" == '!'[0-9]* || "$1" == pr[0-9]* ]]; then
+    pr=${1#!} pr=${pr#pr} name="pr-$pr"
+    if [[ "$(git remote get-url origin 2>/dev/null)" == *github.com* ]]; then
+      src=$(gh pr view "$pr" --json headRefName -q .headRefName) || return 1
+    else
+      src=$(az repos pr show --id "$pr" --query sourceRefName -o tsv) || return 1
+      src=${src#refs/heads/}
+    fi
+    git fetch -q origin "$src" || return 1
+    branch=$src base="origin/$src"
+  elif [[ $# -eq 1 ]]; then
+    name=$1 branch="chore/$1"
+  else
+    name="$(printf '%s\n' calm bold keen warm quick brave quiet sharp | sed -n "$((RANDOM % 8 + 1))p")"
+    name+="-$(printf '%s\n' otter heron maple cedar falcon badger willow comet | sed -n "$((RANDOM % 8 + 1))p")"
+    name+="-$(printf %04x "$RANDOM")"
+    branch="chore/$name"
+  fi
+  (export CW_BRANCH="$branch" CW_BASE="$base"; claude -w "$name" "${opts[@]}")
 }
 
 # Follow a Claude Code session's transcript live: prompts and answers, plus each tool call dimmed. With no arg the

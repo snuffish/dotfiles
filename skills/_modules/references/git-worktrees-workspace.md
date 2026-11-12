@@ -14,7 +14,7 @@ git -C <repo> rev-parse --path-format=absolute --git-dir --git-common-dir   # pr
 
 When `<git-dir>` differs from `<common-dir>`:
 1. Do **not** create a nested worktree. Set `repo-root` to the output of `git -C <repo> rev-parse --show-toplevel` and `main-checkout` to the parent folder of `<common-dir>`.
-2. If the current branch matches `worktree-*`, rename it in place to the project's branch convention (`git -C <repo-root> branch -m <branch>`) and unset any accidental upstream to `origin/<default>` (`git -C <repo-root> branch --unset-upstream`; an error that no upstream is set is fine).
+2. A tree made by `cw` or the WorktreeCreate hook (`wt-new`) already carries the convention branch and lock: skip to step 3. If the current branch matches `worktree-*`, rename it in place to the project's branch convention (`git -C <repo-root> branch -m <branch>`) and unset any accidental upstream to `origin/<default>` (`git -C <repo-root> branch --unset-upstream`; an error that no upstream is set is fine).
 3. Lock the worktree with the standard `claude-skill:` reason if not already locked, emit the `[worktree-context]` block, and proceed directly to **Hydrate**.
 
 ## Base and branch
@@ -111,4 +111,4 @@ git -C <repo> worktree prune                 # drops admin entries whose directo
 ls <repo>/.claude/worktrees/                 # directories with no admin entry are orphans — list them, never delete silently
 ```
 
-A locked `claude-skill:` worktree from an earlier session is reported to the user with its reason; it is never removed as a side effect of a new run.
+A locked `claude-skill:` worktree from an earlier session is reported to the user with its reason; a new run's own steps never remove it. Only `wt-sweep` (`~/.terminal/wt.bash`; SessionEnd hook and `gw` Alt-C) removes one, when no running session's cwd is inside it and it is clean, pushed and its `.worktreeinclude` copies match the main checkout.
