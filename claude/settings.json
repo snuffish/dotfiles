@@ -317,6 +317,31 @@
             "type": "command",
             "command": "python3 -I ~/Projects/cm-sync/cm_sync.py sync --quiet || true",
             "timeout": 120
+          },
+          {
+            "type": "command",
+            "command": "bash ~/.terminal/claude/worktree-sweep.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "WorktreeCreate": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.terminal/claude/worktree-create.sh"
+          }
+        ]
+      }
+    ],
+    "WorktreeRemove": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.terminal/claude/worktree-remove.sh"
           }
         ]
       }

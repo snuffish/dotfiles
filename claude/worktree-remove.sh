@@ -1,5 +1,5 @@
 #!/bin/bash
-# WorktreeRemove hook: Claude calls it when the user picks "Remove" at exit (seen only for EnterWorktree trees), after
+# WorktreeRemove hook: Claude calls it when the user picks "Remove" at exit (cw and EnterWorktree trees), after
 # warning that unpushed commits may be lost. Force-removes the tree; a branch with commits is kept (wt-rm --discard).
 # stdin: {session_id, cwd, worktree_path}. Non-zero keeps the tree
 source "$(dirname "$0")/../wt.bash" || exit 1
