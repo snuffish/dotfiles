@@ -18,6 +18,7 @@ Personal dotfiles: modular Bash setup, Neovim (LazyVim), tmux, WezTerm, Ghostty 
 | `skills/`                 | Claude Code agent skills                                                                                                                                                      |
 | `claude/`                 | Claude Code config: `AGENTS.md`, `CLAUDE.md`, `settings.json`, `profiles/`, statusline, hooks, agents                                                                         |
 | `claude.bash`             | `cm-sync` shell function and `cm` (opens the claude-mem dashboard at `cm-sync url`) ([snuffish/cm-sync](https://github.com/snuffish/cm-sync), cloned at `~/Projects/cm-sync`) |
+| `wt.bash`                 | Worktree verbs `wt-new`, `wt-status`, `wt-rm`, `wt-sweep` behind `cw` (`claude.bash`), `gw`, `claude-p` and the WorktreeCreate/WorktreeRemove hooks |
 | `docs/`, `GLOSSARY.md`    | ADRs and agent docs                                                                                                                                                           |
 
 ## Setup

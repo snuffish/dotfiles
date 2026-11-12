@@ -29,7 +29,7 @@ A Command that lists this Module in `## Modules` gets both rules below without r
 3. **Hybrid host worktree support.** If the session was launched in a linked worktree (`claude --worktree` / `-w` or `EnterWorktree`, detected by `git rev-parse --git-dir` ≠ `--git-common-dir`), reuse that linked worktree as `repo-root` instead of creating a nested one (*Workspace Lifecycle* › *Reuse an active linked worktree*). Never use sub-agent `isolation: "worktree"` — sub-agents always work inside the parent's `repo-root`.
 4. **One worktree per repo in scope.** A two-repo change has two worktrees, two context blocks, and two removals.
 5. **Sub-agents never create, remove, lock, or unlock worktrees.** The orchestrating skill manages the lifecycle before spawning and after the last sub-agent returns.
-6. **Never delete a branch.** Removing a worktree keeps its branch; delete branches only on explicit user instruction.
+6. **Never delete a branch.** Removing a worktree keeps its branch; delete branches only on explicit user instruction. Exception: `wt-rm` (`~/.terminal/wt.bash`) deletes a branch that `wt-new` made (`made:1` in the lock reason) when it has no commit past its base.
 7. **`--force` removal only in snapshot mode.** Workspace worktrees are removed without `--force` only when landed, or on the user's explicit `"discard"`.
 
 ---
