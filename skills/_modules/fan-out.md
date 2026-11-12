@@ -1,6 +1,6 @@
 # fan-out
 
-Shared protocol for Commands that fan out across parallel read-only sub-agents (`code-review`, `pr-feedback-review`, `squash-code-review`, `spec-verification`, `explain`, `suggestion`, `verify-assumptions`, `implement-feature`, and the *Speed fan-out* steps of `investigate`, `plan`, `what-am-I-missing`, `manual-testing`, `pr-fix-pipeline`, bare `suggestion` Step 4, `code-review` Steps 5b and 6c and `pr-feedback-review` Step 3), plus the one Command that fans out edits (`proceed`, *Edit lanes*).
+Shared protocol for Commands that fan out across parallel read-only sub-agents (`code-review`, `pr-feedback-review`, `squash-code-review`, `spec-verification`, `parity-audit`, `explain`, `suggestion`, `verify-assumptions`, `implement-feature`, and the *Speed fan-out* steps of `investigate`, `plan`, `what-am-I-missing`, `manual-testing`, `pr-fix-pipeline`, bare `suggestion` Step 4, `code-review` Steps 5b and 6c and `pr-feedback-review` Step 3), plus the one Command that fans out edits (`proceed`, *Edit lanes*).
 
 ## Modules
 
