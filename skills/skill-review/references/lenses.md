@@ -28,9 +28,9 @@ On-demand reference for [`SKILL.md`](../SKILL.md) steps 2 and 4. Each lens has a
 
 ## 4. Size
 
-**Check:** the body is within the project's budget (the profile's `Skill-review checks`; the registry default is the drift script's `SIZE_BUDGET`). A table every run reads fails the branching test, so moving it behind a pointer saves nothing.
+**Check:** the body is within the budget the project profile's `Skill-review checks` names. The registry itself sets no budget: report the body size and judge it for sprawl. A table every run reads fails the branching test, so moving it behind a pointer saves nothing.
 
-**Evidence:** `wc -c` of the body (below the frontmatter) of `SKILL.md`, and the budget constant in the drift script.
+**Evidence:** `wc -c` of the body (below the frontmatter) of `SKILL.md`, and the budget the profile names, when one does.
 
 **Example:** a body 1.7 KB over budget after the fixes; the large table is used by every run, so the finding is "measure, then trim the maintainer rationale", not "move the table".
 
