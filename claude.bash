@@ -47,6 +47,9 @@ function cw() {
     case "$1" in
       -t) type=$2; shift 2 ;;
       --) shift; opts+=("$@"); break ;;
+      # claude options that take a value keep it, or the value would land in pos as a ticket id or slug
+      --settings|--model|--agent|--add-dir|--permission-mode|--effort|--mcp-config|--append-system-prompt|-r|--resume)
+        opts+=("$1" "$2"); shift 2 ;;
       -*) opts+=("$1"); shift ;;
       *) pos+=("$1"); shift ;;
     esac
