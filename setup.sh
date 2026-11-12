@@ -63,7 +63,8 @@ fi
 echo "Links"
 points_into_terminal() { [ -L "$1" ] && case "$(readlink "$1")" in "$TERMINAL"/*|"$TERMINAL_REAL"/*|claude/*) return 0 ;; esac; return 1; }
 for link in ~/.claude/CLAUDE.md ~/.claude/settings.json ~/.claude/statusline.sh ~/.claude/agents \
-            ~/.claude/session-title.sh ~/.gemini/GEMINI.md ~/.local/bin/sync-skills "$TERMINAL/AGENTS.md"; do
+            ~/.claude/session-title.sh ~/.gemini/GEMINI.md ~/.local/bin/sync-skills "$TERMINAL/AGENTS.md" \
+            ~/.config/ghostty/config; do
   if points_into_terminal "$link"; then ok "$link"; else bad "$link is not a link into ~/.terminal"; fi
 done
 if [ -f "$CM_SYNC_SRC" ]; then

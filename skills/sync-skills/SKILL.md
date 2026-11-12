@@ -39,6 +39,7 @@ Read these before step 1:
    | `claude/session-title.sh`                | `~/.claude/session-title.sh`                                         |
    | `claude/agents/`                         | `~/.claude/agents` (personal subagents)                              |
    | `skills/sync-skills/sync_skills.py`      | `~/.local/bin/sync-skills`                                           |
+   | `ghostty/config`                         | `~/.config/ghostty/config` (Ghostty reads it on macOS and Linux)     |
 
    A missing source adopts its legacy regular file or folder (root `AGENTS.md`, `~/.claude/settings.json`, `~/.claude/agents`): copied into the repo, removed only once its link is in place. A regular file or folder with the source's content is replaced by the link. A regular file or folder that differs is a **conflict**: reported under "left alone", never deleted and never pending, so merge it by hand. The report says which: a `.json` link whose every leaf is already in the source prints `source covers it` with the exact `ln -sf` to run after backing it up. A missing source with nothing to adopt is an error. Links are swapped in with `os.replace`, so a running session never sees the path missing. `claude/settings.json` is in a public repo: review its diff before every commit.
 

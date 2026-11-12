@@ -515,6 +515,7 @@ CONFIG_LINKS = (
     ('agents', 'claude/agents', ('~/.claude/agents',), '~/.claude/agents'),
     ('session-title', 'claude/session-title.sh', ('~/.claude/session-title.sh',), None),
     ('sync-skills', 'skills/sync-skills/sync_skills.py', ('~/.local/bin/sync-skills',), None),
+    ('ghostty', 'ghostty/config', ('~/.config/ghostty/config',), None),
 )
 
 
