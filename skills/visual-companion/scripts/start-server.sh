@@ -8,6 +8,8 @@
 # Options:
 #   --project-dir <path>  Store session files under <path>/.superpowers/brainstorm/
 #                         instead of /tmp. Files persist after server stops.
+#                         visual-companion passes the artifact dir, e.g.
+#                         ~/.cache/agent-artifacts/<repo>.
 #   --host <bind-host>    Host/interface to bind (default: 127.0.0.1).
 #                         Use 0.0.0.0 in remote/containerized environments.
 #   --url-host <host>     Hostname shown in returned URL JSON.
