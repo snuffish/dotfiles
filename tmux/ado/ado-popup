@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Opens the ADO overlay popup on client $1 (width $2 columns), right-aligned with its bottom edge on the status line.
+# A helper because display-popup does not expand formats in -w on tmux 3.5a; run-shell expands them in the arguments.
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+width=64
+(( $2 - 4 < width )) && width=$(( $2 - 4 ))
+exec tmux display-popup -c "$1" -B -E -x R -y S -h 16 -w "$width" "$here/ado-overlay.py"

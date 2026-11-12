@@ -333,7 +333,7 @@ copy_url() {
   printf %s "$1" | { wl-copy 2>/dev/null || xclip -selection clipboard 2>/dev/null || pbcopy 2>/dev/null || clip.exe; }
 }
 
-# Background refresh for the tmux badge (run by the agent every 10 minutes): fetches the PRs, threads and work items
+# Background refresh for the old tmux badge (no scheduler runs it since tmux/ado/ replaced it): fetches the PRs, threads and work items
 # fresh into the caches and rewrites the badge. A sign-in or az failure leaves a grey "ADO !" until the next good poll.
 poll() {
   local me
@@ -360,69 +360,7 @@ poll() {
   fi
 }
 
-# A unit template from utils/adopr-agent/ with this script, the PATH az and jq need and $HOME filled in
-render_unit() {
-  local tpl path d
-  tpl="$(cat "$(dirname "$self")/adopr-agent/$1")" || return 1
-  for d in "$(command -v az)" "$(command -v jq)"; do
-    [[ -n "$d" ]] || die "agent: az and jq must be on PATH to render the unit"
-    [[ ":$path" == *":${d%/*}:"* ]] || path+="${d%/*}:"
-  done
-  [[ ":$path" == *":/usr/bin:"* ]] || path+="/usr/bin:"
-  path+="/bin"
-  tpl="${tpl//@ADOPR@/"$self"}"
-  tpl="${tpl//@PATH@/"$path"}"
-  printf '%s\n' "${tpl//@HOME@/"$HOME"}"
-}
-
-# adopr.sh agent install|uninstall|status|render: the 10-minute `poll` as a launchd agent (macOS) or a systemd user
-# timer (Linux). `render` prints the units that install would write.
-agent() {
-  local os label=com.snuffish.adopr-poll plist unitdir
-  os="$(uname -s)"
-  plist="$HOME/Library/LaunchAgents/$label.plist"
-  unitdir="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user"
-  [[ "$os" == Darwin || "$os" == Linux ]] || die "agent: unsupported OS"
-  case "$1" in
-    render)
-      if [[ "$os" == Darwin ]]; then render_unit adopr-poll.plist
-      else render_unit adopr-poll.service; echo; render_unit adopr-poll.timer; fi ;;
-    install)
-      command mkdir -p -m 700 "$ADOPR_CACHE"
-      if [[ "$os" == Darwin ]]; then
-        command mkdir -p "${plist%/*}"
-        render_unit adopr-poll.plist >"$plist" || return 1
-        launchctl bootout "gui/$(id -u)/$label" 2>/dev/null
-        launchctl bootstrap "gui/$(id -u)" "$plist" || die "agent: launchctl bootstrap failed"
-      else
-        command mkdir -p "$unitdir"
-        render_unit adopr-poll.service >"$unitdir/adopr-poll.service" || return 1
-        command cp "$(dirname "$self")/adopr-agent/adopr-poll.timer" "$unitdir/adopr-poll.timer"
-        systemctl --user daemon-reload && systemctl --user enable --now adopr-poll.timer || die "agent: systemctl failed"
-      fi ;;
-    uninstall)
-      if [[ "$os" == Darwin ]]; then
-        launchctl bootout "gui/$(id -u)/$label" 2>/dev/null
-        command rm -f -- "$plist"
-      else
-        systemctl --user disable --now adopr-poll.timer 2>/dev/null
-        command rm -f -- "$unitdir/adopr-poll.service" "$unitdir/adopr-poll.timer"
-        systemctl --user daemon-reload
-      fi ;;
-    status)
-      if [[ "$os" == Darwin ]]; then launchctl print "gui/$(id -u)/$label" 2>&1 | grep -E 'state =|runs =|last exit code|^Could not' || true
-      else systemctl --user list-timers adopr-poll.timer --no-pager | head -n 2; fi
-      if [[ -e "$ADOPR_CACHE/badge" ]]; then
-        echo "badge updated $(date -r "$ADOPR_CACHE/badge" '+%F %T')"
-      else
-        echo "badge: not written yet"
-      fi ;;
-    *) die "usage: adopr.sh agent install|uninstall|status|render" ;;
-  esac
-}
-
 case "$1" in
-  agent) agent "$2"; exit ;;
   badge) badge; exit ;;
   poll) poll; exit ;;
   rows) rows; exit ;;
