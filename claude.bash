@@ -275,7 +275,20 @@ alias cms="claude-mem-search"
 alias omp='ollama launch omp'
 alias omp-new='omp session start'
 
-alias cc="claude"
+# cc <session-uuid> [args] resumes that session in its own directory, like claude-resume (a fork when it is still
+# open elsewhere); anything else passes through to claude
+function cc() {
+  local sid cwd pid
+  [[ "${1:-}" =~ ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$ ]] || { claude "$@"; return; }
+  sid=$1; shift
+  cwd="$(bash "$HOME/.terminal/claude/memory.sh" session "$sid")" || return
+  if pid="$(_claude_open_pid "$sid")"; then
+    echo "Session ${sid:0:8} is open in claude (pid $pid): focusing or resuming a fork of it" >&2
+    bash "$HOME/.terminal/utils/agent-focus.sh" "$pid" 2>/dev/null
+    set -- --fork-session "$@"
+  fi
+  (cd "$cwd" && claude --resume "$sid" "$@")
+}
 alias ccp="claude-p"
 alias ct="claude-tail"
 alias csend="claude-send"
