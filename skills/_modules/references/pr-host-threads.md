@@ -14,6 +14,8 @@ az devops invoke --org <org-url> --area git --resource pullRequestThreads \
   --api-version 7.1 -o json > <scratchpad>/threads.json
 ```
 
+In a worktree-isolated session the guard refuses this command (it reads `--area git` as a git call). Use the Azure DevOps MCP `repo_pull_request_thread` with `action: "list"`, `top: 200` and `fullResponse: true` (the trimmed default drops `isDeleted` and `commentType`), save only the JSON array between the untrusted-content banner lines, and wrap it as `{"value": <array>}` so `ado_threads.py` reads it.
+
 Then print the human comments with [ado_threads.py](../scripts/ado_threads.py) (it skips deleted threads, system comments and the test bot):
 
 ```bash

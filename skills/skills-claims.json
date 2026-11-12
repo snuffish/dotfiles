@@ -24520,6 +24520,63 @@
         "base": "project:GR.PRIIS",
         "expected": "present"
       }
+    },
+    {
+      "id": "skills/_modules/outward-writes.md:22:other:banned_phrase_scan declines non-English",
+      "source": {
+        "file": "skills/_modules/outward-writes.md",
+        "line": 22
+      },
+      "kind": "other",
+      "value": "banned_phrase_scan declines non-English",
+      "quote": "`banned_phrase_scan.py` and `structure_scan.py` decline non-English input",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"non_english\": True",
+        "paths": [
+          ".agents/skills/unslop/scripts/banned_phrase_scan.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/_modules/outward-writes.md:22:other:structure_scan declines non-English",
+      "source": {
+        "file": "skills/_modules/outward-writes.md",
+        "line": 22
+      },
+      "kind": "other",
+      "value": "structure_scan declines non-English",
+      "quote": "`banned_phrase_scan.py` and `structure_scan.py` decline non-English input",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"non_english\": True",
+        "paths": [
+          ".agents/skills/unslop/scripts/structure_scan.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/_modules/references/pr-host-threads.md:17:other:ado_threads reads value",
+      "source": {
+        "file": "skills/_modules/references/pr-host-threads.md",
+        "line": 17
+      },
+      "kind": "other",
+      "value": "ado_threads reads value",
+      "quote": "wrap it as `{\"value\": <array>}` so `ado_threads.py` reads it",
+      "verify": {
+        "method": "grep",
+        "pattern": "\\.get\\(\"value\"",
+        "paths": [
+          "skills/_modules/scripts/ado_threads.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
     }
   ]
 }

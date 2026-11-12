@@ -127,6 +127,8 @@ Skipped with `--no-proof` (see Step 5). The profile has the project recipes.
 
 ### Step 7: Report
 
+Before writing a *Needs action* row, re-fetch the PR head and read the PR description, its live threads and the PR's own doc and skill changes (`git diff <old> <new> -- '*.md'`). A finding they already state, or a later commit fixes, becomes a ✅ line under *Verdict*, not a row.
+
 Write the artifact from [`references/report-template.md`](references/report-template.md), then:
 
 1. Open the earlier artifacts listed in Step 1.6, `grep` them for the topics of your findings, and add *Compared with earlier work*: what they got right, what this audit contradicts (and why), and which findings are new. A decision recorded there (a product call, a resolved thread) beats your open question; say so instead of reopening it.

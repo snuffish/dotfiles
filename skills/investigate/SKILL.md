@@ -133,6 +133,8 @@ Read [`../what-am-I-missing/references/vectors.md`](../what-am-I-missing/referen
 
 Classify every key finding into ✅ **Verified** (`path:line`), 🟡 **Inferred** (with how to verify), or ❓ **Unknown** (with owner and whether it blocks planning) per `core` › _Codebase investigation_ › _Confidence Ledger_.
 
+Before a row is marked ❓ Unknown with a human owner, check the sources outside the checkout that could answer it: the tracker's wiki, pipeline variable groups (names and non-secret values only), branch policies, data files on a branch the investigation already cites, sibling repos of the project, and the live site when it is public. Name the sources tried in the row. A ❓ that a recommendation in Step 5 depends on must be chased before the recommendation is offered.
+
 ### To plan (`--to-plan` only)
 
 After Step 7, publish the §4 artifact, then run [`/plan`](../plan/SKILL.md) _Case B_ with the topic as its instructions. It finds this artifact and builds on it, so it does no research of its own. Skip this section's chat response (§5) and present only `/plan`'s, with the investigation's link added to its link block. Stop instead, and answer per §5 _Artifact response_, when an ❓ Unknown blocks planning or the recommendation in Step 5 is a tie the user must break.
