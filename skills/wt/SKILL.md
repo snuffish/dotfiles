@@ -30,7 +30,7 @@ On-demand references (`references/`):
 
 - **The prompt starts with another Command** (`/refine … /wt`): that Command handles the token under `core` › *Worktree opt-in*; this skill is not involved.
 - **Stepping into a kept worktree from an earlier run**: give the user the path and `EnterWorktree path:<dir>` (`git-worktrees` › *Workspace Lifecycle* › *Hand-off*).
-- **Starting a fresh single-task session**: launch `claude -w <slug>` (`--tmux` optional) instead; inside it `/wt` and `/wt` Commands reuse that tree (*Step 4*).
+- **Starting a fresh single-task session**: launch `cw <slug>` (`claude -w` with the convention branch and lock, `--tmux` optional; `claude.bash`) instead; inside it `/wt` and `/wt` Commands reuse that tree (*Step 4*).
 - **Running in the user's own checkout**: use [`/no-wt`](../no-wt/SKILL.md).
 - **Remote-only operations** (completing a PR on the host, editing a PR description): nothing to isolate; say so and run only on an explicit ask.
 
@@ -59,7 +59,7 @@ On-demand references (`references/`):
 ### Step 4: Base, branch and worktree (workspace mode)
 
 Follow `git-worktrees` › *Workspace Lifecycle* (`_modules/references/git-worktrees-workspace.md`) with `<skill>` = `wt`:
-1. **Detect existing worktree first:** for a single-repo workspace, if the session is already inside a `claude --worktree` or `EnterWorktree` checkout (`git rev-parse --git-dir` ≠ `git rev-parse --git-common-dir`), **reuse it** instead of creating a nested worktree — rename any `worktree-*` branch to the convention, lock with the `claude-skill:worktrees … session:<session-id>` reason, and hydrate if needed.
+1. **Detect existing worktree first:** for a single-repo workspace, if the session is already inside a `claude --worktree` or `EnterWorktree` checkout (`git rev-parse --git-dir` ≠ `git rev-parse --git-common-dir`), **reuse it** instead of creating a nested worktree. A tree from `cw` or the WorktreeCreate hook (`wt-new`) already has the convention branch and lock; only a `worktree-*` branch is renamed to the convention and locked with the `claude-skill:worktrees … session:<session-id>` reason. Hydrate if needed.
 2. **Otherwise create:** resolve base (`origin/<default>` unless specified) and branch (`<type>/<kebab-slug>`, never `worktree-<name>`), create and lock per *Workspace Lifecycle* › *Create* (`session:<session-id>` is mandatory for statusline detection), and hydrate when the request builds, tests, or runs the project.
 
 In snapshot mode, follow `git-worktrees` › *Snapshot Lifecycle* (`_modules/references/git-worktrees-snapshot.md`).

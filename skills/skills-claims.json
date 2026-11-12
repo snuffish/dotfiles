@@ -19487,20 +19487,6 @@
       }
     },
     {
-      "id": "skills/wt/SKILL.md:33:cli_command:claude -w",
-      "source": {
-        "file": "skills/wt/SKILL.md",
-        "line": 33
-      },
-      "kind": "cli_command",
-      "value": "claude -w <slug> --tmux",
-      "quote": "- **Starting a fresh single-task session**: launch `claude -w <slug>` (`--tmux` optional) instead; inside it `/wt` and `/wt` Commands reuse that tree (*Step 4*).",
-      "verify": {
-        "method": "manual",
-        "reason": "claude CLI flags -w/--worktree [name] and --tmux (requires --worktree); listed by `claude --help` on 2026-11-11"
-      }
-    },
-    {
       "id": "skills/wt/SKILL.md:34:doc_link:../no-wt/SKILL.md",
       "source": {
         "file": "skills/wt/SKILL.md",
@@ -24027,6 +24013,120 @@
         "method": "skill_exists",
         "name": "continue",
         "base": "repo"
+      }
+    },
+    {
+      "id": "skills/wt/SKILL.md:33:symbol:cw",
+      "source": {
+        "file": "skills/wt/SKILL.md",
+        "line": 33
+      },
+      "kind": "symbol",
+      "value": "cw",
+      "quote": "- **Starting a fresh single-task session**: launch `cw <slug>` (`claude -w` with the convention branch and lock, `--tmux` optional; `claude.bash`) ins",
+      "verify": {
+        "method": "grep",
+        "pattern": "^function cw\\(\\)",
+        "paths": [
+          "claude.bash"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/wt/SKILL.md:62:symbol:wt-new",
+      "source": {
+        "file": "skills/wt/SKILL.md",
+        "line": 62
+      },
+      "kind": "symbol",
+      "value": "wt-new",
+      "quote": "1. **Detect existing worktree first:** for a single-repo workspace, if the session is already inside a `claude --worktree` or `EnterWorktree` checkout",
+      "verify": {
+        "method": "grep",
+        "pattern": "^function wt-new\\(\\)",
+        "paths": [
+          "wt.bash"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/_modules/git-worktrees.md:32:symbol:wt-rm",
+      "source": {
+        "file": "skills/_modules/git-worktrees.md",
+        "line": 32
+      },
+      "kind": "symbol",
+      "value": "wt-rm",
+      "quote": "6. **Never delete a branch.** Removing a worktree keeps its branch; delete branches only on explicit user instruction. Exception: `wt-rm` (`~/.termina",
+      "verify": {
+        "method": "grep",
+        "pattern": "^function wt-rm\\(\\)",
+        "paths": [
+          "wt.bash"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/_modules/git-worktrees.md:32:symbol:made:1:2",
+      "source": {
+        "file": "skills/_modules/git-worktrees.md",
+        "line": 32
+      },
+      "kind": "symbol",
+      "value": "made:1",
+      "quote": "6. **Never delete a branch.** Removing a worktree keeps its branch; delete branches only on explicit user instruction. Exception: `wt-rm` (`~/.termina",
+      "verify": {
+        "method": "grep",
+        "pattern": "made:1",
+        "paths": [
+          "wt.bash"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/_modules/references/git-worktrees-workspace.md:114:symbol:wt-sweep",
+      "source": {
+        "file": "skills/_modules/references/git-worktrees-workspace.md",
+        "line": 114
+      },
+      "kind": "symbol",
+      "value": "wt-sweep",
+      "quote": "A locked `claude-skill:` worktree from an earlier session is reported to the user with its reason; a new run's own steps never remove it. Only `wt-swe",
+      "verify": {
+        "method": "grep",
+        "pattern": "^function wt-sweep\\(\\)",
+        "paths": [
+          "wt.bash"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/_modules/references/git-worktrees-workspace.md:114:symbol:alt-c:2",
+      "source": {
+        "file": "skills/_modules/references/git-worktrees-workspace.md",
+        "line": 114
+      },
+      "kind": "symbol",
+      "value": "alt-c",
+      "quote": "A locked `claude-skill:` worktree from an earlier session is reported to the user with its reason; a new run's own steps never remove it. Only `wt-swe",
+      "verify": {
+        "method": "grep",
+        "pattern": "alt-c:execute",
+        "paths": [
+          "git.bash"
+        ],
+        "base": "repo",
+        "expect": "present"
       }
     }
   ]
