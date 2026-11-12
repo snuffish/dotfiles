@@ -4350,10 +4350,25 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "neral (top level) | Command | 53 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `clean`, `code-documentation`, `code-review`,",
+      "quote": "el) | Command | 54 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `code-docume",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/README.md:45:skill_ref:bypass",
+      "source": {
+        "file": "skills/README.md",
+        "line": 45
+      },
+      "kind": "skill_ref",
+      "value": "bypass",
+      "quote": "personal-feedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `code-documentation`, `code-review`, `c",
+      "verify": {
+        "method": "skill_exists",
+        "name": "bypass",
         "base": "repo"
       }
     },
@@ -4365,7 +4380,7 @@
       },
       "kind": "skill_ref",
       "value": "clean",
-      "quote": "nalyze-personal-feedback`, `artifacts`, `brainstorming`, `clean`, `code-documentation`, `code-review`, `",
+      "quote": "eedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `code-documentation`, `code-review`, `commit`, `",
       "verify": {
         "method": "skill_exists",
         "name": "clean",
@@ -4380,7 +4395,7 @@
       },
       "kind": "skill_ref",
       "value": "code-documentation",
-      "quote": "analyze-personal-feedback`, `artifacts`, `brainstorming`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-pro",
+      "quote": " `artifacts`, `brainstorming`, `bypass`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-pro",
       "verify": {
         "method": "skill_exists",
         "name": "code-documentation",
@@ -4395,7 +4410,7 @@
       },
       "kind": "skill_ref",
       "value": "commit",
-      "quote": "g`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-skill`, `cr",
+      "quote": "s`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-skill`, `cr",
       "verify": {
         "method": "skill_exists",
         "name": "commit",
@@ -5087,12 +5102,12 @@
       },
       "kind": "count",
       "value": "53",
-      "quote": "59 skills total \u2014 54 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "60 skills total \u2014 55 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/*/SKILL.md",
         "base": "repo",
-        "expected": 54,
+        "expected": 55,
         "op": "eq"
       }
     },
@@ -5104,7 +5119,7 @@
       },
       "kind": "count",
       "value": "5 GR.PRIIS project skills",
-      "quote": "59 skills total \u2014 54 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "60 skills total \u2014 55 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/Projects/GR.PRIIS/*/SKILL.md",
@@ -5121,7 +5136,7 @@
       },
       "kind": "count",
       "value": "8 Modules",
-      "quote": "59 skills total \u2014 54 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "60 skills total \u2014 55 general + 5 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/_modules/*.md",
@@ -23911,6 +23926,106 @@
       "verify": {
         "method": "skill_exists",
         "name": "pr-fix-pipeline",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/bypass/SKILL.md:5:other:disable-model-invocation",
+      "source": {
+        "file": "skills/bypass/SKILL.md",
+        "line": 5
+      },
+      "kind": "other",
+      "value": "disable-model-invocation",
+      "quote": "disable-model-invocation: true",
+      "verify": {
+        "method": "grep",
+        "pattern": "^disable-model-invocation: true$",
+        "paths": [
+          "skills/bypass/SKILL.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/bypass/SKILL.md:10:skill_ref:push",
+      "source": {
+        "file": "skills/bypass/SKILL.md",
+        "line": 10,
+        "also_lines": [
+          37,
+          61
+        ]
+      },
+      "kind": "skill_ref",
+      "value": "push",
+      "quote": "The task-wide counterpart of [`/push`](../push/SKILL.md)",
+      "verify": {
+        "method": "skill_exists",
+        "name": "push",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/bypass/SKILL.md:19:path:skills/_modules/core.md",
+      "source": {
+        "file": "skills/bypass/SKILL.md",
+        "line": 19
+      },
+      "kind": "path",
+      "value": "skills/_modules/core.md",
+      "quote": "`../_modules/core.md`",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/core.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/bypass/SKILL.md:20:path:skills/_modules/outward-writes.md",
+      "source": {
+        "file": "skills/bypass/SKILL.md",
+        "line": 20
+      },
+      "kind": "path",
+      "value": "skills/_modules/outward-writes.md",
+      "quote": "`../_modules/outward-writes.md`",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/outward-writes.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/bypass/SKILL.md:38:skill_ref:proceed",
+      "source": {
+        "file": "skills/bypass/SKILL.md",
+        "line": 38
+      },
+      "kind": "skill_ref",
+      "value": "proceed",
+      "quote": "[`/proceed`](../proceed/SKILL.md)",
+      "verify": {
+        "method": "skill_exists",
+        "name": "proceed",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/bypass/SKILL.md:40:skill_ref:continue",
+      "source": {
+        "file": "skills/bypass/SKILL.md",
+        "line": 40
+      },
+      "kind": "skill_ref",
+      "value": "continue",
+      "quote": "[`/continue`](../continue/SKILL.md)",
+      "verify": {
+        "method": "skill_exists",
+        "name": "continue",
         "base": "repo"
       }
     }
