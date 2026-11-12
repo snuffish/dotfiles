@@ -1,0 +1,249 @@
+#!/usr/bin/env python3
+"""Fetch what others did on my Azure DevOps PRs and work items into the tmux-ado cache (read-only `az` calls).
+
+Scope comes from the tmux options @ado_org and @ado_projects (env ADO_ORG / ADO_PROJECTS win); default org is az's own and
+the project is PRIIS. Writes events.json, state and badge atomically. Run detached by ado-status; one fetch at a time (mkdir lock).
+"""
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import time
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timezone
+
+sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
+import seen as seen_mod  # noqa: E402
+
+LOCK_STALE_SECONDS = 300
+MAX_PRS = 15
+AUTH_HINTS = ("az login", "AADSTS", "expired", "Interactive authentication")
+VOTE = re.compile(r" voted ")
+
+
+def log(directory, message):
+    with open(os.path.join(directory, "fetch.log"), "a") as handle:
+        handle.write(f"{datetime.now():%F %T} {message}\n")
+
+
+class AzError(Exception):
+    def __init__(self, text):
+        super().__init__(text)
+        self.auth = any(hint in text for hint in AUTH_HINTS)
+
+
+def az(args):
+    """Run one read-only az call and return parsed JSON; AzError carries whether it was an auth problem."""
+    proc = subprocess.run(["az", *args, "--only-show-errors", "-o", "json"], capture_output=True, text=True, timeout=90)
+    if proc.returncode != 0:
+        raise AzError(proc.stderr.strip()[:300])
+    return json.loads(proc.stdout or "null")
+
+
+def current_user():
+    try:
+        with open(os.path.expanduser("~/.azure/azureProfile.json"), encoding="utf-8-sig") as handle:
+            profile = json.load(handle)
+    except (OSError, ValueError):
+        return None
+    for sub in profile.get("subscriptions", []):
+        if sub.get("isDefault"):
+            return sub.get("user", {}).get("name")
+    return None
+
+
+def tmux_option(name):
+    proc = subprocess.run(["tmux", "show", "-gqv", name], capture_output=True, text=True)
+    return proc.stdout.strip() if proc.returncode == 0 else ""
+
+
+def scope():
+    org = os.environ.get("ADO_ORG") or tmux_option("@ado_org")
+    projects = os.environ.get("ADO_PROJECTS") or tmux_option("@ado_projects") or "PRIIS"
+    return org, [p.strip() for p in projects.split(",") if p.strip()]
+
+
+def web_base(api_url):
+    host, _, path = api_url.removeprefix("https://").partition("/")
+    if host.endswith(".visualstudio.com"):
+        return "dev.azure.com/" + host.split(".")[0]
+    return f"{host}/{path.split('/')[0]}"
+
+
+def clean(text):
+    return re.sub(r"[\x00-\x08\x0b-\x1f\x7f]", " ", text or "")
+
+
+def normalise_threads(pr, threads, me, now):
+    """Comment and vote events by others on one PR. System comments other than votes are dropped (policy noise)."""
+    events = []
+    for thread in threads:
+        for comment in thread.get("comments", []):
+            if comment.get("isDeleted"):
+                continue
+            system = comment.get("commentType") == "system"
+            content = comment.get("content") or ""
+            if system and not VOTE.search(content):
+                continue
+            author = comment.get("author", {})
+            when = (comment.get("publishedDate") or "")[:19]
+            if not when or author.get("uniqueName") == me:
+                continue
+            event = {
+                "id": f"pr{pr['id']}-t{thread['id']}-c{comment['id']}",
+                "kind": "vote" if system else "comment",
+                "ref": f"!{pr['id']}",
+                "thread": str(thread["id"]),
+                "title": clean(pr["title"]),
+                "author": clean(author.get("displayName", "?")),
+                "text": clean(content),
+                "url": f"https://{pr['base']}/{pr['project']}/_git/{pr['repo']}/pullrequest/{pr['id']}?discussionId={thread['id']}",
+                "time": when + "Z",
+                "mine": False,
+            }
+            if seen_mod.in_window(event, now):
+                events.append(event)
+    return events
+
+
+def normalise_workitems(items, me, now, mentions):
+    events = []
+    for item in items:
+        fields = item["fields"]
+        changed_by = fields.get("System.ChangedBy") or {}
+        when = (fields.get("System.ChangedDate") or "")[:19]
+        assigned = (fields.get("System.AssignedTo") or {}).get("uniqueName") == me
+        if not when or changed_by.get("uniqueName") == me or not (assigned or item["id"] in mentions):
+            continue
+        event = {
+            "id": f"wi{item['id']}-{when}",
+            "kind": "workitem",
+            "ref": f"#{item['id']}",
+            "thread": "",
+            "title": clean(fields.get("System.Title")),
+            "author": clean(changed_by.get("displayName", "?")),
+            "text": clean(f"{fields.get('System.WorkItemType', '')} · {fields.get('System.State', '')}"),
+            "url": item["web"],
+            "time": when + "Z",
+            "mine": False,
+        }
+        if seen_mod.in_window(event, now):
+            events.append(event)
+    return events
+
+
+PR_QUERY = "[].{id:pullRequestId,title:title,created:creationDate,repo:repository.name,rid:repository.id,project:repository.project.name,apiUrl:url}"
+WIQL = (
+    "SELECT [System.Id] FROM WorkItems WHERE [System.Id] IN (@RecentMentions) OR "
+    "([System.AssignedTo] = @Me AND [System.ChangedDate] >= @Today - 7) ORDER BY [System.ChangedDate] DESC"
+)
+
+
+def fetch_events(me, org, projects, now, run=az):
+    org_args = ["--organization", org] if org else []
+    events = []
+    for project in projects:
+        prs = {}
+        for role in ("creator", "reviewer"):
+            listed = run(["repos", "pr", "list", f"--{role}", me, "--status", "active", "--top", "50",
+                          "--project", project, "--query", PR_QUERY, *org_args]) or []
+            for pr in listed:
+                prs[pr["id"]] = pr
+        newest = sorted(prs.values(), key=lambda pr: pr["created"], reverse=True)[:MAX_PRS]
+        for pr in newest:
+            pr["base"] = web_base(pr["apiUrl"])
+            pr["project"] = project
+
+        def threads(pr):
+            out = run(["devops", "invoke", "--area", "git", "--resource", "pullRequestThreads", "--route-parameters",
+                       f"project={project}", f"repositoryId={pr['rid']}", f"pullRequestId={pr['id']}",
+                       "--api-version", "7.1", *org_args])
+            return pr, out["value"]
+
+        with ThreadPoolExecutor(max_workers=6) as pool:
+            for pr, value in pool.map(threads, newest):
+                events += normalise_threads(pr, value, me, now)
+
+        ids = run(["boards", "query", "--wiql", WIQL, "--project", project, *org_args]) or []
+        mentions = {item["id"] for item in (run(["boards", "query", "--wiql",
+                    "SELECT [System.Id] FROM WorkItems WHERE [System.Id] IN (@RecentMentions)",
+                    "--project", project, *org_args]) or [])}
+        items = []
+        for item in ids[:50]:
+            web = f"https://{web_base(item['url'])}/{project}/_workitems/edit/{item['id']}"
+            items.append({"id": item["id"], "fields": item["fields"], "web": web})
+        events += normalise_workitems(items, me, now, mentions)
+    return sorted(events, key=lambda event: event["time"], reverse=True)
+
+
+def write_state(directory, status, ok=None, reason=""):
+    previous = read_state(directory)
+    ok = ok if ok is not None else previous.get("ok", "")
+    seen_mod.write_atomic(os.path.join(directory, "state"), f"status={status}\nok={ok}\nreason={clean(reason)[:200]}\n")
+
+
+def read_state(directory):
+    state = {}
+    try:
+        with open(os.path.join(directory, "state")) as handle:
+            for line in handle:
+                key, _, value = line.rstrip("\n").partition("=")
+                state[key] = value
+    except OSError:
+        pass
+    return state
+
+
+def take_lock(directory):
+    lock = os.path.join(directory, "fetch.lock")
+    try:
+        os.mkdir(lock)
+        return lock
+    except FileExistsError:
+        if time.time() - os.path.getmtime(lock) < LOCK_STALE_SECONDS:
+            return None
+        shutil.rmtree(lock, ignore_errors=True)
+        return take_lock(directory)
+
+
+def run_fetch(directory, run=az, now=None, me=None, have_az=None):
+    now = now or datetime.now(timezone.utc)
+    me = me if me is not None else current_user()
+    have_az = shutil.which("az") is not None if have_az is None else have_az
+    if not have_az or not me:
+        reason = "az is not installed" if not have_az else "not signed in to Azure"
+        if read_state(directory).get("status") != "disabled":
+            log(directory, f"disabled: {reason}")
+        write_state(directory, "disabled", reason=reason)
+        return "disabled"
+    org, projects = scope()
+    try:
+        events = fetch_events(me, org, projects, now, run)
+    except AzError as err:
+        status = "auth" if err.auth else "error"
+        log(directory, f"{status}: {err}")
+        write_state(directory, status, reason=str(err))
+        return status
+    seen = seen_mod.prune(seen_mod.load_seen(directory, now), events)
+    seen_mod.save_seen(directory, seen)
+    seen_mod.write_atomic(os.path.join(directory, "events.json"), json.dumps(events))
+    seen_mod.write_badge(directory, events, seen, now)
+    write_state(directory, "ok", ok=int(now.timestamp()))
+    return "ok"
+
+
+def main():
+    directory = seen_mod.cache_dir()
+    lock = take_lock(directory)
+    if lock is None:
+        return
+    try:
+        run_fetch(directory)
+    finally:
+        shutil.rmtree(lock, ignore_errors=True)
+
+
+if __name__ == "__main__":
+    main()

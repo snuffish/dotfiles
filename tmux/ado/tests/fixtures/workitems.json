@@ -1,0 +1,11 @@
+[
+  {"id": 42, "url": "https://org.visualstudio.com/guid/_apis/wit/workItems/42",
+   "fields": {"System.Title": "Fix login", "System.WorkItemType": "Bug", "System.State": "Active",
+              "System.ChangedDate": "2026-11-12T07:00:00Z",
+              "System.ChangedBy": {"displayName": "Ada", "uniqueName": "ada@example.com"},
+              "System.AssignedTo": {"displayName": "Me", "uniqueName": "me@example.com"}}},
+  {"id": 43, "url": "https://org.visualstudio.com/guid/_apis/wit/workItems/43",
+   "fields": {"System.Title": "Not mine", "System.WorkItemType": "Task", "System.State": "New",
+              "System.ChangedDate": "2026-11-12T07:00:00Z",
+              "System.ChangedBy": {"displayName": "Ada", "uniqueName": "ada@example.com"}}}
+]

@@ -1,0 +1,4 @@
+[
+  {"id": 100, "title": "Add feature", "created": "2026-11-10T08:00:00Z", "repo": "Repo", "rid": "rid-1", "project": "PRIIS",
+   "apiUrl": "https://org.visualstudio.com/guid/_apis/git/repositories/rid-1/pullRequests/100"}
+]

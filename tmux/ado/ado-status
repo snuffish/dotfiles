@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Status-bar entry for the ADO pill (#() in status-right, every status-interval). Reads the cache only; never calls az.
+# Starts ado-fetch detached when the last fetch is older than STALE seconds and none is running. `ado-status --why` explains the state.
+dir="${ADO_CACHE:-$HOME/.cache/tmux-ado}"
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+stale="${ADO_STALE:-600}"
+old="${ADO_OLD:-1800}"
+now="$(date +%s)"
+
+status=""; ok=""; reason=""
+if [[ -r "$dir/state" ]]; then
+  while IFS='=' read -r key value; do
+    case "$key" in
+      status) status="$value" ;;
+      ok) ok="$value" ;;
+      reason) reason="$value" ;;
+    esac
+  done <"$dir/state"
+fi
+
+if [[ "$1" == "--why" ]]; then
+  echo "status: ${status:-none yet}"
+  [[ -n "$ok" ]] && echo "last ok: $(date -r "$ok" '+%F %T')"
+  [[ -n "$reason" ]] && echo "reason: $reason"
+  [[ -r "$dir/fetch.log" ]] && tail -n 5 "$dir/fetch.log"
+  exit 0
+fi
+
+touched=0
+[[ -r "$dir/state" ]] && touched="$(date -r "$dir/state" +%s)"
+if (( now - touched > stale )) && [[ ! -d "$dir/fetch.lock" ]]; then
+  mkdir -p -m 700 "$dir"
+  ( "$here/ado-fetch" </dev/null >/dev/null 2>&1 & )
+fi
+
+case "$status" in
+  disabled | "") exit 0 ;;
+  auth) printf '#[fg=colour244] ADO ! #[default]'; exit 0 ;;
+esac
+
+body="$(cat "$dir/badge" 2>/dev/null)"
+[[ -n "$body" ]] || exit 0
+age=""
+if [[ "$ok" =~ ^[0-9]+$ ]] && (( now - ok > old )); then
+  secs=$(( now - ok ))
+  if (( secs >= 3600 )); then age=" #[nobold,fg=colour94]·$(( secs / 3600 ))h"; else age=" #[nobold,fg=colour94]·$(( secs / 60 ))m"; fi
+fi
+printf '#[fg=colour16,bg=colour179,bold] ADO %s%s #[default]' "$body" "$age"
