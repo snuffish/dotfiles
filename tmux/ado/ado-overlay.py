@@ -64,8 +64,8 @@ class Overlay(App):
         Binding("2", "tab('vote')", "✓"),
         Binding("3", "tab('workitem')", "#"),
         Binding("4", "tab('all')", "All"),
-        Binding("tab", "cycle_tab(1)", "next tab", priority=True),
-        Binding("shift+tab", "cycle_tab(-1)", "prev tab", priority=True),
+        Binding("tab,right", "cycle_tab(1)", "next tab", priority=True),
+        Binding("shift+tab,left", "cycle_tab(-1)", "prev tab", priority=True),
         Binding("r", "refresh_data", "refresh"),
         Binding("m", "mark_seen", "mark seen"),
     ]
