@@ -2,7 +2,7 @@
 name: proceed
 description: "Authorizes and executes the next step of a gated read-only command."
 disable-model-invocation: true
-argument-hint: "[artifact | all | option | phase | step | --runner phase <N> state-dir <dir> | extra instructions]"
+argument-hint: "[artifact | all | option | phase | step | run <plan | handoff> [runner options] | --runner phase <N> state-dir <dir> | extra instructions]"
 model: sonnet
 effort: low
 ---
@@ -52,6 +52,7 @@ Look back through this session for the most recent gated handoff that has not ye
 Then:
 
 - **Named artifact in arguments**: when the user provides an artifact (e.g. `/proceed <prefix>-handoff-<suffix>.md` or `/proceed <prefix>-implementation_plan-<suffix>.md`), resolve the pending item directly from the named artifact file on disk without requiring prior in-session transcript context. A bare filename resolves per `artifact-protocol` › *Artifact directory* (artifact dir first, then cwd).
+- **`run` as the first argument** → go to *Launch the runner* below instead of Step 2.
 - **Nothing pending** → say so in one line and stop. Do not invent work.
 - **More than one pending item** → list them (Command, artifact link, one line each) and ask which one. Do not guess.
 - **Verdict `NEEDS REVISION` or `BLOCKED`** → name the blocking findings in one line each and ask whether to proceed anyway, fix them first, or stop — unless the arguments already say.
@@ -82,6 +83,26 @@ Set by [`scripts/run-plan.sh`](scripts/run-plan.sh), which runs one `claude -p` 
 - Skip Step 2 items 3–5: do not verify, commit, push, hand off or edit the handoff; the runner does all of it.
 - Write no memory or rule outside the repo (`~/.claude*`, `~/.terminal`, claude-mem `save_memory`, `work_state_write`); the runner blocks the whole run on any such write.
 - Finish by writing `<dir>/phase-<N>.json`: `{"commit_message": "<type>(<scope>): <subject>", "caveats": ["..."], "files": ["..."]}`. The message is a conventional commit that describes this phase only.
+
+### Launch the runner (`/proceed run <plan | handoff> [runner options]`)
+
+Runs every remaining phase unattended through [`scripts/run-plan.sh`](scripts/run-plan.sh), one fresh `claude -p` per phase in *Runner mode*. This session only launches the run and reports on it; it does none of Step 2.
+
+1. **Resolve the inputs**: a plan path is the runner's `<plan.md>`. A handoff path becomes `--handoff <path>`, with the plan taken from its `**Plan:**` line. A bare filename resolves per `artifact-protocol` › *Artifact directory*. Pass the other arguments through unchanged (`--base`, `--max-phases`, `--gates`, `--resume`, the `--*-usd` budgets). Never add `--resume` unasked.
+2. **Check the repo**: the runner creates its worktree in the repo that holds the current directory, so `git rev-parse --show-toplevel` must be the plan's repo. If it is not, stop and name the repo to start the session in.
+3. **Pick the gates**: the default gate script is [`scripts/gates-priis.sh`](scripts/gates-priis.sh). Outside GR.PRIIS, when the arguments have no `--gates`, ask whether to run with `--gates none` or with a gate script of the repo's own.
+4. **Dry run**: run the command with `--dry-run` and show the phases it parsed and the next phase. Exit code 2 is a setup error: show its message and stop. When the message is that the handoff has no `**Next-Phase:**` line (a `/handoff` artifact has none), name the first phase the handoff does not mark done and offer to add `**Next-Phase:** <label>` to its header.
+5. **Launch** the same command without `--dry-run` through Bash with `run_in_background`, since a run takes hours and the foreground limit is 10 minutes. Name the log (`run-plan-<stem>/log.jsonl` next to the plan, or under `RUN_PLAN_ARTIFACT_DIR`), then end the turn without polling. While the run lasts, write nothing under the runner's global paths (`DEFAULT_GLOBAL` in `scripts/run_plan.py`): a change there becomes a caveat on the running phase.
+6. **Report** when the completion notification arrives, from the exit code and the handoff:
+
+| Exit | Meaning | Next |
+|---|---|---|
+| 0 | DONE | Review the phase commits, then `/commit` or `/push` |
+| 1 | BLOCKED | Show the handoff's `## Blocked` section; once it is fixed, `/proceed run <same arguments> --resume` |
+| 2 | Setup or usage error | Show the message |
+| 3 | `--max-phases` reached with phases left | `/proceed run <same arguments>` continues |
+
+List each `phase <N> committed <sha>: <subject>` line, the retro path and the handoff's *Open caveats*. The runner commits but never pushes, and this mode does not push either.
 
 ---
 
