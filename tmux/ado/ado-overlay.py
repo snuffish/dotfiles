@@ -64,6 +64,8 @@ class Overlay(App):
         Binding("2", "tab('vote')", "✓"),
         Binding("3", "tab('workitem')", "#"),
         Binding("4", "tab('all')", "All"),
+        Binding("tab", "cycle_tab(1)", "next tab", priority=True),
+        Binding("shift+tab", "cycle_tab(-1)", "prev tab", priority=True),
         Binding("r", "refresh_data", "refresh"),
         Binding("m", "mark_seen", "mark seen"),
     ]
@@ -202,6 +204,10 @@ class Overlay(App):
         self.tab = key
         self.shown_id = None
         await self.render_all()
+
+    async def action_cycle_tab(self, step):
+        i = TAB_ORDER.index(self.tab) if self.tab in TAB_ORDER else 0
+        await self.action_tab(TAB_ORDER[(i + step) % len(TAB_ORDER)])
 
     def action_open(self):
         event = self.current_event()
