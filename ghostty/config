@@ -73,9 +73,7 @@ selection-foreground = #011423
 cursor-style-blink = false
 shell-integration-features = no-cursor
 
-# Left Option sends Alt/Meta (tmux M-a opens the ADO overlay); right Option still types special characters
-macos-option-as-alt = left
- 
+
 #copy-on-select = true
  
 # Windows panes

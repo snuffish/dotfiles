@@ -56,7 +56,7 @@ class Overlay(App):
     #preview { height: 1fr; border-top: solid #45475a; padding: 0 1; }
     """
     BINDINGS = [
-        Binding("escape,q,alt+a", "close", "close"),
+        Binding("escape,q", "close", "close"),
         Binding("enter", "open", "open", priority=True),
         Binding("j", "move(1)", "down"),
         Binding("k", "move(-1)", "up"),
