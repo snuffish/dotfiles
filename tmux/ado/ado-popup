@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Opens the ADO overlay popup on client $1 at 80% of its size, right-aligned with its bottom edge on the status line.
+# Opens the ADO overlay popup on client $1 at 80% of its size, centred on the screen.
 # A helper so run-shell expands #{client_name} in the arguments.
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-exec tmux display-popup -c "$1" -B -E -x R -y S -h 80% -w 80% "$here/ado-overlay.py"
+exec tmux display-popup -c "$1" -B -E -x C -y C -h 80% -w 80% "$here/ado-overlay.py"

@@ -10,7 +10,7 @@ case "$current" in
   *) tmux set -g status-right "#[range=user|ado]#($here/ado-status)#[norange]$current" ;;
 esac
 
-# 80% of the client size, right-aligned, bottom edge on the status line (sizes in ado-popup)
+# 80% of the client size, centred (sizes in ado-popup)
 popup="run-shell -b \"'$here/ado-popup' '#{client_name}'\""
 tmux unbind -n M-a 2>/dev/null
 tmux bind a "$popup"
