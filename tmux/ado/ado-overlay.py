@@ -50,7 +50,7 @@ class Overlay(App):
     #status { width: 1fr; color: #a6adc8; padding: 0 1; }
     #close { color: #f38ba8; }
     #body { height: 1fr; }
-    #list { height: 1fr; min-height: 4; background: #1e1e2e; }
+    #list { height: 5; background: #1e1e2e; }
     #list > ListItem.-highlight { background: #45475a; }
     ListItem.seen Label { color: #6c7086; }
     #preview { height: 1fr; border-top: solid #45475a; padding: 0 1; }
