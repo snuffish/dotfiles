@@ -74,6 +74,7 @@ Read the target and what it connects to until you can say how it works today and
 
 - **Check every claim about the current state against the files before using it.** A gap claimed from memory ("X is not covered anywhere") is the most common wrong claim.
 - **Look for what already does part of the idea**: a rule, check or step the idea would duplicate.
+- **Survey ready-made options when the idea builds a capability** (a model, a parser, a detector, a scheduler): search for current libraries, models and services that already do it, and list each with licence, fit and what is unmeasured. An earlier decision to build it ourselves is an input to this survey, not a reason to skip it; when the survey finds a stronger option, say so before Step 3.
 - **Evidence:** a presence claim carries `path:line`; an absence claim carries the grep and its scope, searching every file of the target (its skill folder, rules and references, not one file).
 
 Done when each claim the design will rely on has its evidence.
