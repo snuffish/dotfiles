@@ -122,14 +122,62 @@ function ccmerge() {
   claude-p --worktree "ccmerge-$(date +%Y%m%d-%H%M%S)" "git merge $*"
 }
 
-# Adds the git-ignored claude/settings.private.json (autoMode environment) unless the caller passes its own --settings
+# Prints a temp file holding private settings $1 deep-merged with --settings value $2 (a file or a JSON string),
+# $2 winning on conflicts; fails when either side is not valid JSON
+function _claude_merge_settings() {
+  local private="$1" caller="$2" out
+  out="$(mktemp "${TMPDIR:-/tmp}/claude-settings.XXXXXX")" || return 1
+  if [[ -f "$caller" ]]; then
+    jq -s '.[0] * .[1]' "$private" "$caller" >"$out" 2>/dev/null
+  else
+    printf '%s' "$caller" | jq -s '.[0] * .[1]' "$private" - >"$out" 2>/dev/null
+  fi || { rm -f "$out"; return 1; }
+  printf '%s\n' "$out"
+}
+
+# Adds the git-ignored claude/settings.private.json (autoMode environment, TokenScope telemetry env) to every launch.
+# A caller's own --settings (claude-review's profile) is merged over it into a temp file, removed when claude exits
 function claude() {
   local private="$HOME/.terminal/claude/settings.private.json"
-  if [[ -f "$private" && " $* " != *" --settings "* ]]; then
-    command claude --settings "$private" "$@"
-  else
+  if [[ ! -f "$private" ]]; then
     command claude "$@"
+    return
   fi
+  local -a args=() temps=()
+  local arg merged rc found=0 want_value=0 options_done=0
+  for arg in "$@"; do
+    if (( want_value )); then
+      want_value=0
+      if merged="$(_claude_merge_settings "$private" "$arg")"; then
+        temps+=("$merged")
+        arg="$merged"
+      else
+        echo "claude: could not merge settings.private.json into --settings $arg; using it unmerged" >&2
+      fi
+    elif (( ! options_done )) && [[ "$arg" == --settings ]]; then
+      found=1
+      want_value=1
+    elif (( ! options_done )) && [[ "$arg" == --settings=* ]]; then
+      found=1
+      if merged="$(_claude_merge_settings "$private" "${arg#--settings=}")"; then
+        temps+=("$merged")
+        arg="--settings=$merged"
+      else
+        echo "claude: could not merge settings.private.json into $arg; using it unmerged" >&2
+      fi
+    elif [[ "$arg" == -- ]]; then
+      options_done=1
+    fi
+    args+=("$arg")
+  done
+  if (( found )); then
+    command claude "${args[@]}"
+  else
+    command claude --settings "$private" "${args[@]}"
+  fi
+  rc=$?
+  (( ${#temps[@]} )) && rm -f "${temps[@]}"
+  return $rc
 }
 
 # Claude Code for reviews: no claude-mem, auto-memory, MY-RULES or mattpocock-skills; args go to claude.
