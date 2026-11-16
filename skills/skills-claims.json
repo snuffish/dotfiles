@@ -4395,7 +4395,7 @@
       },
       "kind": "skill_ref",
       "value": "commit",
-      "quote": "s`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-skill`, `cr",
+      "quote": "torming`, `bypass`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-series-strip`, `create-skil",
       "verify": {
         "method": "skill_exists",
         "name": "commit",
@@ -4410,7 +4410,7 @@
       },
       "kind": "skill_ref",
       "value": "continue",
-      "quote": "`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-skill`, `create-ticket`",
+      "quote": "bypass`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-series-strip`, `create-skill`, `create",
       "verify": {
         "method": "skill_exists",
         "name": "continue",
@@ -4425,7 +4425,7 @@
       },
       "kind": "skill_ref",
       "value": "create-prompt",
-      "quote": "umentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-skill`, `create-ticket`, `explain`, `exp",
+      "quote": "`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-series-strip`, `create-skill`, `create-ticket`, `expl",
       "verify": {
         "method": "skill_exists",
         "name": "create-prompt",
@@ -4440,7 +4440,7 @@
       },
       "kind": "skill_ref",
       "value": "create-skill",
-      "quote": "e-review`, `commit`, `continue`, `create-prompt`, `create-skill`, `create-ticket`, `explain`, `export-file`, `expr",
+      "quote": "`commit`, `continue`, `create-prompt`, `create-series-strip`, `create-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `fix",
       "verify": {
         "method": "skill_exists",
         "name": "create-skill",
@@ -4455,7 +4455,7 @@
       },
       "kind": "skill_ref",
       "value": "explain",
-      "quote": "`create-prompt`, `create-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `fix-findings`, `gr",
+      "quote": "prompt`, `create-series-strip`, `create-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `fix-findings`, `grill-me`, `handof",
       "verify": {
         "method": "skill_exists",
         "name": "explain",
@@ -4470,7 +4470,7 @@
       },
       "kind": "skill_ref",
       "value": "export-file",
-      "quote": "mpt`, `create-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `fix-findings`, `grill-me`, `hando",
+      "quote": "ate-series-strip`, `create-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `fix-findings`, `grill-me`, `handoff`, `implemen",
       "verify": {
         "method": "skill_exists",
         "name": "export-file",
@@ -23834,7 +23834,7 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "neral (top level) | Command | 56 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `code-documentation`, `code",
+      "quote": "neral (top level) | Command | 57 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `code-documentation`, `code",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
@@ -23938,19 +23938,19 @@
       }
     },
     {
-      "id": "skills/README.md:42:count:57",
+      "id": "skills/README.md:42:count:58",
       "source": {
         "file": "skills/README.md",
         "line": 42
       },
       "kind": "count",
-      "value": "57",
-      "quote": "63 skills total \u2014 57 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "value": "58",
+      "quote": "64 skills total \u2014 58 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/*/SKILL.md",
         "base": "repo",
-        "expected": 57,
+        "expected": 58,
         "op": "eq"
       }
     },
@@ -23962,7 +23962,7 @@
       },
       "kind": "count",
       "value": "6 GR.PRIIS project skills",
-      "quote": "63 skills total \u2014 57 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "64 skills total \u2014 58 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/Projects/GR.PRIIS/*/SKILL.md",
@@ -23979,7 +23979,7 @@
       },
       "kind": "count",
       "value": "8 Modules",
-      "quote": "63 skills total \u2014 57 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "64 skills total \u2014 58 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/_modules/*.md",
@@ -24576,6 +24576,212 @@
         ],
         "base": "repo",
         "expect": "present"
+      }
+    },
+    {
+      "id": "skills/create-series-strip/SKILL.md:95:symbol:falling back to --offload",
+      "source": {
+        "file": "skills/create-series-strip/SKILL.md",
+        "line": 95
+      },
+      "kind": "symbol",
+      "value": "falling back to --offload",
+      "quote": "falls back to `--offload`",
+      "verify": {
+        "method": "grep",
+        "pattern": "falling back to --offload",
+        "paths": [
+          "scripts/render.py"
+        ],
+        "base": "file_dir",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/create-series-strip/SKILL.md:52:symbol:\"_clean\"",
+      "source": {
+        "file": "skills/create-series-strip/SKILL.md",
+        "line": 52
+      },
+      "kind": "symbol",
+      "value": "\"_clean\"",
+      "quote": "caches them in `refs/<name>/_clean/`",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"_clean\"",
+        "paths": [
+          "scripts/render.py"
+        ],
+        "base": "file_dir",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/create-series-strip/SKILL.md:107:symbol:\"--ip-scale\", type=float, default=0\\.6",
+      "source": {
+        "file": "skills/create-series-strip/SKILL.md",
+        "line": 107
+      },
+      "kind": "symbol",
+      "value": "\"--ip-scale\", type=float, default=0\\.6",
+      "quote": "Raise `--ip-scale` (default 0.6",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"--ip-scale\", type=float, default=0\\.6",
+        "paths": [
+          "scripts/render.py"
+        ],
+        "base": "file_dir",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/create-series-strip/SKILL.md:105:symbol:cut badly",
+      "source": {
+        "file": "skills/create-series-strip/SKILL.md",
+        "line": 105
+      },
+      "kind": "symbol",
+      "value": "cut badly",
+      "quote": "The render logged `actor N cut badly`",
+      "verify": {
+        "method": "grep",
+        "pattern": "cut badly",
+        "paths": [
+          "scripts/render.py"
+        ],
+        "base": "file_dir",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/create-series-strip/SKILL.md:104:symbol:recomposed on every run",
+      "source": {
+        "file": "skills/create-series-strip/SKILL.md",
+        "line": 104
+      },
+      "kind": "symbol",
+      "value": "recomposed on every run",
+      "quote": "actors are recomposed on every run",
+      "verify": {
+        "method": "grep",
+        "pattern": "recomposed on every run",
+        "paths": [
+          "scripts/render.py"
+        ],
+        "base": "file_dir",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/create-series-strip/references/strip-format.md:35:symbol:strip\\.get\\(\"seed\", 1234\\)",
+      "source": {
+        "file": "skills/create-series-strip/references/strip-format.md",
+        "line": 35
+      },
+      "kind": "symbol",
+      "value": "strip\\.get\\(\"seed\", 1234\\)",
+      "quote": "Base seed, default 1234",
+      "verify": {
+        "method": "grep",
+        "pattern": "strip\\.get\\(\"seed\", 1234\\)",
+        "paths": [
+          "../scripts/render.py"
+        ],
+        "base": "file_dir",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/create-series-strip/references/strip-format.md:37:symbol:\\{1: 1, 2: 2, 4: 2\\}",
+      "source": {
+        "file": "skills/create-series-strip/references/strip-format.md",
+        "line": 37
+      },
+      "kind": "symbol",
+      "value": "\\{1: 1, 2: 2, 4: 2\\}",
+      "quote": "4 lays out 2\u00d72, 3, 5 and 6 lay out three per row",
+      "verify": {
+        "method": "grep",
+        "pattern": "\\{1: 1, 2: 2, 4: 2\\}",
+        "paths": [
+          "../scripts/render.py"
+        ],
+        "base": "file_dir",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/create-series-strip/references/strip-format.md:47:symbol:seed \\+ 100 \\* k",
+      "source": {
+        "file": "skills/create-series-strip/references/strip-format.md",
+        "line": 47
+      },
+      "kind": "symbol",
+      "value": "seed \\+ 100 \\* k",
+      "quote": "Actor N uses `seed + 100\u00b7N`",
+      "verify": {
+        "method": "grep",
+        "pattern": "seed \\+ 100 \\* k",
+        "paths": [
+          "../scripts/render.py"
+        ],
+        "base": "file_dir",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/create-series-strip/references/strip-format.md:58:symbol:get\\(\"height\", 0\\.82\\)",
+      "source": {
+        "file": "skills/create-series-strip/references/strip-format.md",
+        "line": 58
+      },
+      "kind": "symbol",
+      "value": "get\\(\"height\", 0\\.82\\)",
+      "quote": "Share of the panel height, default `0.82`",
+      "verify": {
+        "method": "grep",
+        "pattern": "get\\(\"height\", 0\\.82\\)",
+        "paths": [
+          "../scripts/render.py"
+        ],
+        "base": "file_dir",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/create-series-strip/references/strip-format.md:69:symbol:FALLBACK_CHARSET = \"2192 2713 2665 2605\"",
+      "source": {
+        "file": "skills/create-series-strip/references/strip-format.md",
+        "line": 69
+      },
+      "kind": "symbol",
+      "value": "FALLBACK_CHARSET = \"2192 2713 2665 2605\"",
+      "quote": "fall back to DejaVu Sans Bold",
+      "verify": {
+        "method": "grep",
+        "pattern": "FALLBACK_CHARSET = \"2192 2713 2665 2605\"",
+        "paths": [
+          "../scripts/render.py"
+        ],
+        "base": "file_dir",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/create-series-strip/SKILL.md:59:path:../standup-recap/scripts/collect.py",
+      "source": {
+        "file": "skills/create-series-strip/SKILL.md",
+        "line": 59
+      },
+      "kind": "path",
+      "value": "../standup-recap/scripts/collect.py",
+      "quote": "python3 -I <skill-dir>/../standup-recap/scripts/collect.py",
+      "verify": {
+        "method": "path_exists",
+        "path": "../standup-recap/scripts/collect.py",
+        "base": "file_dir",
+        "type": "file"
       }
     }
   ]
