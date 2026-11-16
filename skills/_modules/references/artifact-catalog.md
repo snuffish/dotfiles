@@ -20,6 +20,7 @@ On-demand reference for [artifact-protocol.md](../artifact-protocol.md). Every a
 | `conflict_resolution-<suffix>.md` | `/resolve-conflicts` | Per-hunk resolution record when a merge or rebase crosses the threshold for a written record |
 | `expressive-<suffix>.md` | `/expressive` | Readability sweep findings and proposed declarative rewrites |
 | `standup_recap-<suffix>.md` | `/standup-recap --file` | Daily standup speaker notes (Yesterday / Today / Blockers); the suffix is the recapped day |
+| `series_strip-<suffix>/` | `/create-series-strip` | Folder with a work-recap comic strip: `strip.json`, painted and lettered panels, `strip.png`; the suffix is the window's first day |
 | `walkthrough-<suffix>.md` | `/implement-feature` | Verification results, screenshots, completed summary |
 | `organize_plan-<suffix>.md` | `/organize` | Directory/module structure refactoring proposal |
 | `clean_report-<suffix>.md` | `/clean` | Multi-file dead-code pruning & sanitation report |
