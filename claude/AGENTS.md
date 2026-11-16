@@ -23,7 +23,7 @@ If no `.codegraph/` directory exists there or in any parent, skip CodeGraph enti
 ## Commit workflow
 
 - When the user asks to commit or push, commit immediately. Do not wait on test runs unless the user asks for them. The repo's documented format gate still runs first. If tests are pending, say so in one line and continue.
-- Never create a git worktree unless explicitly asked; work on the current branch. Exception: `/proceed` on a plan defaults to `/wt`; `/no-wt` opts out.
+- Never create a git worktree unless explicitly asked; work on the current branch. Exceptions: `/proceed` on a plan defaults to `/wt` (`/no-wt` opts out); changes to `~/.terminal` hooks and skills go in a `/wt`, because that checkout is the live config.
 - Split unrelated changes into separate logical commits and push to the current branch's upstream.
 
 ## Git & Branch Isolation
