@@ -2,6 +2,7 @@
 name: plan
 description: 'Opens, inspects, creates, updates, previews or reviews the active implementation plan (<prefix>-implementation_plan-<suffix>.md). Bare /plan returns links; /plan <instructions> drafts or updates, then self-reviews before presenting; /plan preview reopens in the host preview panel; /plan --review [suffix] audits a plan or design proposal before any code is written (architecture and convention fit, edge cases, security and authorization, data and migration safety, test coverage) with a READY / NEEDS REVISION / BLOCKED verdict, read-only until /proceed. Use --review for "review this plan", "does this plan make sense?", "poke holes in this design".'
 argument-hint: "[--review [suffix] | preview [suffix] | suffix | instructions]"
+model: fable
 ---
 
 # Skill: `/plan` — Implementation Plan Manager
