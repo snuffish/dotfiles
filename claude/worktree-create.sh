@@ -1,6 +1,7 @@
 #!/bin/bash
 # WorktreeCreate hook: replaces Claude's own git worktree creation for -w, --tmux, --bg, EnterWorktree and isolation.
-# stdin: {session_id, cwd (the main checkout), name}. Branch = $CW_BRANCH (set by cw), else chore/<name>.
+# stdin: {session_id, cwd (the main checkout), name}. $CW_DETACH (set by cw) → no branch; else branch = $CW_BRANCH
+# (cw pr<N>), else chore/<name>.
 # wt-new prints its progress to stderr and the worktree path last on stdout, which Claude reads
 source "$(dirname "$0")/../wt.bash" || exit 1
 input=$(cat)
@@ -14,6 +15,11 @@ if [[ "$name" =~ ^[A-Za-z0-9._-]+$ ]] &&
   git -C "$main" worktree list --porcelain | grep -qxF "worktree $main/.claude/worktrees/$name"; then
   echo "$main/.claude/worktrees/$name"
   exit 0
+fi
+# CW_DETACH stays in the env of a cw session, so a later EnterWorktree there makes no branch either
+if [[ -n "$CW_DETACH" ]]; then
+  wt-new "$cwd" "$name" --detach ${session:+--session "$session"}
+  exit
 fi
 branch=${CW_BRANCH:-chore/$name}
 # CW_BRANCH stays in the env of a cw session, so a later EnterWorktree finds it checked out already

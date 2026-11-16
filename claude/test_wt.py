@@ -163,6 +163,27 @@ class New(Base):
         r = subprocess.run(["git", "-C", str(d), "rev-parse", "@{u}"], capture_output=True)
         self.assertNotEqual(r.returncode, 0)
 
+    def test_detach_makes_no_branch(self):
+        before = self.git(self.repo, "branch", "--list")
+        d = self.new("x", "--detach", "--session", "sid1")
+        self.assertEqual(self.git(d, "branch", "--show-current"), "")
+        self.assertEqual(self.git(d, "rev-parse", "HEAD"), self.git(self.repo, "rev-parse", "origin/main"))
+        self.assertEqual(self.git(self.repo, "branch", "--list"), before)
+        row = self.rows()["x"]
+        self.assertEqual((row[1], row[5]), ("(detached)", "safe"))
+        self.assertIn("session:sid1", row[6])
+        for part in ("branch:", "made:1"):
+            self.assertNotIn(part, row[6])
+        r = self.wt("wt-rm", str(d))
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertFalse(d.exists())
+
+    def test_detached_then_own_branch_is_kept(self):
+        d = self.new("x", "--detach")
+        self.git(d, "switch", "-q", "-c", "mine")
+        self.assertEqual(self.wt("wt-rm", str(d)).returncode, 0)
+        self.assertIn("mine", self.git(self.repo, "branch", "--list", "mine"))
+
     def test_bad_names_rejected(self):
         for name in ("../x", "a b", ".hidden", "a..b"):
             self.assertNotEqual(self.wt("wt-new", str(self.repo), name).returncode, 0, name)
@@ -248,6 +269,13 @@ class Hooks(Base):
         self.env["CW_BRANCH"] = "feature/7_x"
         r = self.hook("worktree-create.sh", {"session_id": "s1", "cwd": str(self.repo), "name": "h1"})
         self.assertEqual(self.git(Path(r.stdout.strip().splitlines()[-1]), "branch", "--show-current"), "feature/7_x")
+
+    def test_create_detaches_for_cw(self):
+        self.env["CW_DETACH"] = "1"
+        r = self.hook("worktree-create.sh", {"session_id": "s1", "cwd": str(self.repo), "name": "h1"})
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertEqual(self.git(Path(r.stdout.strip().splitlines()[-1]), "branch", "--show-current"), "")
+        self.assertEqual(self.git(self.repo, "branch", "--list", "chore/*"), "")
 
     def test_create_reuses_existing_tree(self):
         d = self.new("h1")

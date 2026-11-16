@@ -37,15 +37,15 @@ function claude-p() {
   return "$rc"
 }
 
-# claude -w in a new locked worktree of the current repo, named and branched by convention (WorktreeCreate hook → wt-new):
-# cw <id> <slug> → feature/<id>_<slug> (-t <type> swaps feature); cw pr<N> or cw '!<N>' → the PR's source branch;
-# cw <slug> → chore/<slug>; cw → a random name on chore/<name>. --tmux, --bg and other options go to claude
+# claude -w in a new locked worktree of the current repo (WorktreeCreate hook → wt-new), detached at origin's default
+# branch: cw makes no branch, switch to one inside the tree when needed. cw <id> <slug> → tree <id>-<slug>;
+# cw <slug> → tree <slug>; cw → a random name; cw pr<N> or cw '!<N>' → tree pr-<N> on the PR's source branch.
+# --tmux, --bg and other options go to claude
 function cw() {
-  local type=feature name branch base="" pr src
+  local name branch="" base="" detach=1 pr src
   local -a pos=() opts=()
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      -t) type=$2; shift 2 ;;
       --) shift; opts+=("$@"); break ;;
       # claude options that take a value keep it, or the value would land in pos as a ticket id or slug
       --settings|--model|--agent|--add-dir|--permission-mode|--effort|--mcp-config|--append-system-prompt|-r|--resume)
@@ -57,7 +57,7 @@ function cw() {
   git rev-parse --is-inside-work-tree >/dev/null 2>&1 || { echo "cw: not inside a git repository" >&2; return 1; }
   set -- "${pos[@]}"
   if [[ $# -ge 2 ]]; then
-    name="$1-$2" branch="$type/$1_$2"
+    name="$1-$2"
   elif [[ "$1" == '!'[0-9]* || "$1" == pr[0-9]* ]]; then
     pr=${1#!} pr=${pr#pr} name="pr-$pr"
     if [[ "$(git remote get-url origin 2>/dev/null)" == *github.com* ]]; then
@@ -67,16 +67,15 @@ function cw() {
       src=${src#refs/heads/}
     fi
     git fetch -q origin "$src" || return 1
-    branch=$src base="origin/$src"
+    branch=$src base="origin/$src" detach=""
   elif [[ $# -eq 1 ]]; then
-    name=$1 branch="chore/$1"
+    name=$1
   else
     name="$(printf '%s\n' calm bold keen warm quick brave quiet sharp | sed -n "$((RANDOM % 8 + 1))p")"
     name+="-$(printf '%s\n' otter heron maple cedar falcon badger willow comet | sed -n "$((RANDOM % 8 + 1))p")"
     name+="-$(printf %04x "$RANDOM")"
-    branch="chore/$name"
   fi
-  (export CW_BRANCH="$branch" CW_BASE="$base"; claude -w "$name" "${opts[@]}")
+  (export CW_BRANCH="$branch" CW_BASE="$base" CW_DETACH="$detach"; claude -w "$name" "${opts[@]}")
 }
 
 # Follow a Claude Code session's transcript live: prompts and answers, plus each tool call dimmed. With no arg the

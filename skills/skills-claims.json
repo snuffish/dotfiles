@@ -23720,7 +23720,7 @@
       },
       "kind": "symbol",
       "value": "cw",
-      "quote": "- **Starting a fresh single-task session**: launch `cw <slug>` (`claude -w` with the convention branch and lock, `--tmux` optional; `claude.bash`) ins",
+      "quote": "- **Starting a fresh single-task session**: launch `cw <slug>` (`claude -w` in a locked worktree detached at `origin/<default>`, no branch;",
       "verify": {
         "method": "grep",
         "pattern": "^function cw\\(\\)",

@@ -48,13 +48,15 @@ function wt-status() {
   main=$(_wt_main "$repo") || { echo "wt-status: not a git repository: $repo" >&2; return 1; }
   live_rows=$(_wt_live_sessions "$self") || reg_rc=$?
   git --no-optional-locks -C "$main" worktree list --porcelain | awk '
-    function flush() { if (dir != "" && !prunable) printf "%s\t%s\t%s\n", dir, branch, lock; dir = branch = lock = ""; prunable = 0 }
+    function flush() { if (dir != "" && !prunable) printf "%s\t%s\t%s\n", dir, (branch == "" ? "(detached)" : branch), lock; dir = branch = lock = ""; prunable = 0 }
     /^worktree / { flush(); dir = substr($0, 10); next }
     /^branch /   { branch = substr($0, 8); sub(/^refs\/heads\//, "", branch); next }
     /^locked/    { lock = substr($0, 8); if (lock == "") lock = "locked"; next }
     /^prunable/  { prunable = 1; next }
     END { flush() }' | while IFS=$'\t' read -r dir branch lock; do
     [[ "$dir" == "$main" ]] && continue
+    # awk fills a detached tree's branch in: read folds an empty tab field away, which put the lock in $branch
+    [[ "$branch" == "(detached)" ]] && branch=""
     live=dead class=""
     if [[ $reg_rc -ne 0 ]]; then live=unknown
     else
@@ -87,14 +89,16 @@ function wt-status() {
   done
 }
 
-# Create a locked worktree <main>/.claude/worktrees/<name> on a new or existing branch and copy .worktreeinclude files.
-# wt-new <repo> <name> [--branch b] [--base ref] [--session id] [--skill s]; progress to stderr, the path last on stdout
+# Create a locked worktree <main>/.claude/worktrees/<name> on a new or existing branch, or with --detach on no branch
+# (detached at the base), and copy .worktreeinclude files.
+# wt-new <repo> <name> [--branch b | --detach] [--base ref] [--session id] [--skill s]; progress to stderr, the path last on stdout
 function wt-new() {
-  local repo=$1 name=$2 branch="" base="" session="" skill=cw made=0 main dir reason base_sha ticket f
-  shift 2 2>/dev/null || { echo "usage: wt-new <repo> <name> [--branch b] [--base ref] [--session id]" >&2; return 2; }
+  local repo=$1 name=$2 branch="" base="" session="" skill=cw made=0 detach=0 main dir reason base_sha ticket f
+  shift 2 2>/dev/null || { echo "usage: wt-new <repo> <name> [--branch b | --detach] [--base ref] [--session id]" >&2; return 2; }
   while [[ $# -gt 0 ]]; do
     case "$1" in
       --branch) branch=$2; shift 2 ;;
+      --detach) detach=1; shift ;;
       --base) base=$2; shift 2 ;;
       --session) session=$2; shift 2 ;;
       --skill) skill=$2; shift 2 ;;
@@ -104,8 +108,12 @@ function wt-new() {
   if [[ ! "$name" =~ ^[A-Za-z0-9._-]+$ || "$name" == *..* || "$name" == .* ]]; then
     echo "wt-new: bad worktree name '$name'" >&2; return 2
   fi
-  branch=${branch:-chore/$name}
-  git check-ref-format --branch "$branch" >/dev/null 2>&1 || { echo "wt-new: bad branch name '$branch'" >&2; return 2; }
+  if [[ $detach -eq 1 ]]; then
+    branch=""
+  else
+    branch=${branch:-chore/$name}
+    git check-ref-format --branch "$branch" >/dev/null 2>&1 || { echo "wt-new: bad branch name '$branch'" >&2; return 2; }
+  fi
   main=$(_wt_main "$repo") || { echo "wt-new: not a git repository: $repo" >&2; return 1; }
   dir="$main/.claude/worktrees/$name"
   [[ -e "$dir" ]] && { echo "wt-new: $dir already exists" >&2; return 1; }
@@ -126,8 +134,10 @@ function wt-new() {
   base_sha=$(git -C "$main" rev-parse --short "$base^{commit}" 2>/dev/null) || { echo "wt-new: unknown base '$base'" >&2; return 1; }
 
   [[ "$branch" =~ ^[a-z]+/([0-9]+)_ ]] && ticket=${BASH_REMATCH[1]:-${match[1]}}
-  reason="claude-skill:$skill${ticket:+ ticket:$ticket} branch:$branch started:$(date +%F)${session:+ session:$session} base:$base_sha"
-  if git -C "$main" show-ref -q --verify "refs/heads/$branch"; then
+  reason="claude-skill:$skill${ticket:+ ticket:$ticket}${branch:+ branch:$branch} started:$(date +%F)${session:+ session:$session} base:$base_sha"
+  if [[ $detach -eq 1 ]]; then
+    git -C "$main" worktree add -q --lock --reason "$reason" --detach "$dir" "$base" >&2 || return 1
+  elif git -C "$main" show-ref -q --verify "refs/heads/$branch"; then
     git -C "$main" worktree add -q --lock --reason "$reason" "$dir" "$branch" >&2 || return 1
   else
     made=1

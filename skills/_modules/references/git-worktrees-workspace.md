@@ -14,7 +14,7 @@ git -C <repo> rev-parse --path-format=absolute --git-dir --git-common-dir   # pr
 
 When `<git-dir>` differs from `<common-dir>`:
 1. Do **not** create a nested worktree. Set `repo-root` to the output of `git -C <repo> rev-parse --show-toplevel` and `main-checkout` to the parent folder of `<common-dir>`.
-2. A tree made by `cw` or the WorktreeCreate hook (`wt-new`) already carries the convention branch and lock: skip to step 3. If the current branch matches `worktree-*`, rename it in place to the project's branch convention (`git -C <repo-root> branch -m <branch>`) and unset any accidental upstream to `origin/<default>` (`git -C <repo-root> branch --unset-upstream`; an error that no upstream is set is fine).
+2. A tree made by `cw` (detached, no branch: the user switches it to a branch themselves) or the WorktreeCreate hook (`wt-new`, convention branch) is already locked: skip to step 3. If the current branch matches `worktree-*`, rename it in place to the project's branch convention (`git -C <repo-root> branch -m <branch>`) and unset any accidental upstream to `origin/<default>` (`git -C <repo-root> branch --unset-upstream`; an error that no upstream is set is fine).
 3. Lock the worktree with the standard `claude-skill:` reason if not already locked, emit the `[worktree-context]` block, and proceed directly to **Hydrate**.
 
 ## Base and branch
