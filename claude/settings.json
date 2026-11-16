@@ -68,6 +68,14 @@
     "loop": "off",
     "run": "off",
     "simplify": "name-only",
+    "spec-verification": "off",
+    "implement-feature": "name-only",
+    "implement-feature-priis-profile": "name-only",
+    "manual-testing": "name-only",
+    "what-am-I-missing": "name-only",
+    "simplify-branch": "name-only",
+    "dry-refactoring": "name-only",
+    "priis-backend-dry": "name-only",
     "workflow-authoring": "name-only",
     "source-command-backend-migrate-to-tunit": "off",
     "source-command-backend-health-check": "off",
@@ -208,7 +216,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "f=$(jq -r '.tool_input.file_path // empty'); [ -n \"$f\" ] || exit 0; case \"$(realpath \"$f\" 2>/dev/null || echo \"$f\")\" in \"$HOME\"/.terminal/skills/*) exit 0 ;; esac; npx prettier --find-config-path \"$f\" >/dev/null 2>&1 || exit 0; npx prettier --write --ignore-unknown \"$f\""
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); [ -n \"$f\" ] || exit 0; case \"$(realpath \"$f\" 2>/dev/null || echo \"$f\")\" in \"$HOME\"/.terminal/skills/*) exit 0 ;; esac; npx prettier --find-config-path \"$f\" >/dev/null 2>&1 || exit 0; npx prettier --write --ignore-unknown \"$f\"",
+            "timeout": 30
           },
           {
             "type": "command",
@@ -231,7 +240,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "f=$(jq -r \".tool_input.file_path // empty\"); [ -n \"$f\" ] || exit 0; f=$(realpath -m \"$f\"); case \"$f\" in \"$HOME\"/.terminal/skills/*) out=$(sync-skills 2>&1) || { printf \"%s\\n\" \"$out\" | tail -20 >&2; exit 2; } ;; esac",
+            "command": "f=$(jq -r \".tool_input.file_path // empty\"); [ -n \"$f\" ] || exit 0; f=$(realpath \"$f\" 2>/dev/null || echo \"$f\"); case \"$f\" in \"$HOME\"/.terminal/skills/*) out=$(sync-skills 2>&1) || { printf \"%s\\n\" \"$out\" | tail -20 >&2; exit 2; } ;; esac",
             "timeout": 30
           }
         ]
@@ -283,10 +292,6 @@
     "UserPromptSubmit": [
       {
         "hooks": [
-          {
-            "type": "command",
-            "command": "codegraph prompt-hook"
-          },
           {
             "type": "command",
             "command": "python3 -I ~/.terminal/claude/session-lineage.py",
@@ -373,8 +378,8 @@
     "frontend-design@claude-plugins-official": false,
     "skill-creator@claude-plugins-official": true,
     "retro@netresearch-claude-code-marketplace": true,
-    "prompt-improver@severity1-marketplace": true,
-    "cmem-pro@thedotmack": true,
+    "prompt-improver@severity1-marketplace": false,
+    "cmem-pro@thedotmack": false,
     "only-cli@only-cli": true
   },
   "extraKnownMarketplaces": {

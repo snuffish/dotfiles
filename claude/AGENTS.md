@@ -22,7 +22,7 @@ If no `.codegraph/` directory exists there or in any parent, skip CodeGraph enti
 
 ## Commit workflow
 
-- When the user asks to commit or push, commit immediately. Do not wait on test runs or formatting unless the user asks for them. If tests or format are pending, say so in one line and continue.
+- When the user asks to commit or push, commit immediately. Do not wait on test runs unless the user asks for them. The repo's documented format gate still runs first. If tests are pending, say so in one line and continue.
 - Never create a git worktree unless explicitly asked; work on the current branch. Exception: `/proceed` on a plan defaults to `/wt`; `/no-wt` opts out.
 - Split unrelated changes into separate logical commits and push to the current branch's upstream.
 
@@ -43,6 +43,10 @@ If no `.codegraph/` directory exists there or in any parent, skip CodeGraph enti
 - Every handoff step ends by writing the next-step handoff document. Do this without being asked.
 - Handoff status lines must list every branch and PR involved (names + IDs). Re-read the status line before saving.
 - Verify claims against real data (live PR, real directory, CI run) before marking a step done. If you can't, say explicitly what was only unit-tested.
+
+## Subagents
+
+- Spawn Explore and lookup agents with `model: sonnet` unless the task needs more.
 
 ## Web pages
 

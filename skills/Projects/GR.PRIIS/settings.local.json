@@ -39,7 +39,20 @@
     ]
   },
   "skillOverrides": {
-    "find-skills": "on"
+    "priis-backend-fastendpoints": "name-only",
+    "priis-backend-modern-csharp": "name-only",
+    "priis-backend-scaffold": "name-only",
+    "priis-backend-signalr": "name-only",
+    "priis-backend-verify": "name-only",
+    "priis-backend-workflow": "name-only",
+    "priis-frontend-component-patterns": "name-only",
+    "priis-frontend-forms": "name-only",
+    "priis-frontend-routing": "name-only",
+    "priis-frontend-rtk-query": "name-only",
+    "priis-frontend-scaffold": "name-only",
+    "priis-frontend-verify": "name-only",
+    "priis-frontend-workflow": "name-only",
+    "priis-skill-gap": "name-only"
   },
   "enabledPlugins": {
     "mattpocock-skills@claude-plugins-official": true
