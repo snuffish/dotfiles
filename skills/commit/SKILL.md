@@ -136,7 +136,7 @@ Skip under `no-push` or when the push failed.
 3. **Warn when the base is behind main** (stacked only): `git -C <repo-root> rev-list --count origin/$TGT..origin/$DEF`. A count above 0 → `⚠️ <TGT> is <n> commits behind <DEF>`, and suggest rebasing the base first. Never rebase or merge here.
 4. **Regenerate the description from the commits:**
    - Read the commits the PR adds: `git -C <repo-root> log --reverse --format='%h %s%n%b' origin/$TGT..HEAD`, plus `git -C <repo-root> diff --stat origin/$TGT...HEAD` to check each claim against what changed.
-   - Read the current description first and save it to `<scratchpad>/pr-<id>/previous.md` so it can be restored (`pr-desc` › *Apply*, item 2).
+   - Read the current description first and save it to `<scratchpad>/pr-<id>/previous.md` so it can be restored (`pr-desc` › *Apply*, item 2). On Azure DevOps: `az repos pr show --id <id> --org <org-url> --query description -o tsv > <scratchpad>/pr-<id>/previous.md`. Continue only when the command exits 0; a failed read leaves an empty file.
    - **Rewrite only the generated block.** The text between `<!-- commit:auto:start -->` and `<!-- commit:auto:end -->` belongs to this skill. Everything outside the markers is hand-written (screenshots, reviewer notes) and stays byte for byte.
      - One marker pair → replace only what is between the markers.
      - No markers (first run) → the new description is the generated block, followed by `## Manual` and the old description verbatim (leave the section out when the old description is empty).
