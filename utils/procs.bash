@@ -24,6 +24,14 @@ case "$_PROCS_SELF" in /*) ;; *) _PROCS_SELF="$PWD/$_PROCS_SELF" ;; esac
 # Linux reads /proc; Darwin has none and gets the same data from ps, sysctl, vm_stat and lsof.
 _PROCS_OS=$(uname -s)
 
+# Terminal width. Not `$(tput cols)`: with stdout a pipe it reports 80 whatever the terminal is.
+_procs_cols() {
+  local c
+  c=$(stty size < /dev/tty 2>/dev/null) && c=${c##* }
+  case "$c" in '' | *[!0-9]*) c=${COLUMNS:-120} ;; esac
+  printf '%s\n' "$c"
+}
+
 # ------------------------------------------------------------------------------
 # Identity & protection
 # ------------------------------------------------------------------------------
@@ -137,16 +145,17 @@ _procs_feed() {
       print pid, f[20], f[18], c, f[12] + f[13], "" }'
 }
 
-# _procs_sample <statedir> <cpu|mem> <group 0|1> <mine 0|1> <n> <color 0|1>
-# One _procs_feed pass + one ps. Emits a header row, then rows
+# _procs_sample <statedir> <cpu|mem> <group 0|1> <mine 0|1> <n> <color 0|1> [width]
+# One _procs_feed pass + one ps. width > 0 cuts COMMAND so a row fits that many columns. Emits a header row, then rows
 #   id1 <TAB> id2 <TAB> display <TAB> spec
 # id1/id2 = pid/start (group mode: g:<comm> / 0); spec = "pid:start[,pid:start...]" (kill + preview target).
 # CPU% = jiffy delta against the previous sample kept in <statedir>/prev; samples < 1 s apart
 # reuse the last computed CPU values (a forced refresh would otherwise show 0.0 everywhere).
 _procs_sample() {
-  local st="$1" sortby="${2:-cpu}" group="${3:-0}" mine="${4:-0}" n="${5:-300}" color="${6:-0}"
-  local now prev_t dk dt keep tab hz memkb pscmd
+  local st="$1" sortby="${2:-cpu}" group="${3:-0}" mine="${4:-0}" n="${5:-300}" color="${6:-0}" width="${7:-0}"
+  local now prev_t dk dt keep tab hz memkb pscmd thrcol=1
   tab=$(printf '\t')
+  [ "$_PROCS_OS" = Darwin ] && thrcol=0   # ps has no thread count there: drop the THR column
   now=$(date +%s.%N)
   prev_t=$(command cat "$st/t" 2>/dev/null)
   [ -n "$prev_t" ] || prev_t=0
@@ -164,13 +173,15 @@ _procs_sample() {
   rm -f "$st/prev.new"
   {
     if [ "$color" = 1 ]; then printf '0\t0\t\033[1m'; else printf '0\t0\t'; fi
-    printf '%7s  %-10s %6s %6s %6s %4s  %-16s %s' PID USER 'CPU%' 'MEM%' RSS THR PROGRAM COMMAND
+    printf '%7s  %-10s %6s %6s %6s' PID USER 'CPU%' 'MEM%' RSS
+    if [ "$thrcol" = 1 ]; then printf ' %4s' THR; fi
+    printf '  %-16s %s' PROGRAM COMMAND
     if [ "$color" = 1 ]; then printf '\033[0m'; fi
     printf '\t0:0\n'
     _procs_feed |
       LC_NUMERIC=C awk -F'\t' -v prev="$st/prev" -v out="$st/prev.new" -v keep="$keep" -v dt="$dt" -v hz="$hz" \
         -v memkb="$memkb" -v me="${USER:-}" -v home="$HOME" -v mode="$sortby" -v grp="$group" \
-        -v mine="$mine" -v color="$color" -v cmd="$pscmd" '
+        -v mine="$mine" -v color="$color" -v cmd="$pscmd" -v thrcol="$thrcol" -v width="$width" '
         function hum(k) { return k >= 1048576 ? sprintf("%.1fG", k/1048576) : k >= 1024 ? sprintf("%dM", k/1024) : sprintf("%dK", k) }
         function heat(v, lo, mid, hi) { return !color ? "" : v < lo ? "\033[90m" : v < mid ? "" : v < hi ? "\033[33m" : "\033[1;31m" }
         function sgr(c) { return color ? "\033[" c "m" : "" }
@@ -179,10 +190,13 @@ _procs_sample() {
           while ((i = index(s, home)) > 0) s = substr(s, 1, i - 1) "~" substr(s, i + length(home))
           return s
         }
-        function fmt(pidtxt, usr, cpu, mem, rss, thr, prog, args, own) {
-          return sprintf("%s%7s%s  %s%-10.10s%s %s%6.1f%s %s%6.1f%s %6s %4s  %s%-16.16s%s %s%s%s",
+        function fmt(pidtxt, usr, cpu, mem, rss, thr, prog, args, own,   room) {
+          room = width - (thrcol ? 64 : 59)                         # columns left of COMMAND
+          if (width > 0 && length(args) > room) args = room > 1 ? substr(args, 1, room - 1) "…" : ""
+          return sprintf("%s%7s%s  %s%-10.10s%s %s%6.1f%s %s%6.1f%s %6s%s  %s%-16.16s%s %s%s%s",
             sgr(90), pidtxt, sgr(0), own ? "" : sgr(90), usr, sgr(0), heat(cpu, 5, 50, 100), cpu, sgr(0),
-            heat(mem, 1, 5, 15), mem, sgr(0), hum(rss), thr, own ? sgr("1;36") : sgr(36), prog, sgr(0), sgr(90), args, sgr(0))
+            heat(mem, 1, 5, 15), mem, sgr(0), hum(rss), thrcol ? sprintf(" %4s", thr) : "",
+            own ? sgr("1;36") : sgr(36), prog, sgr(0), sgr(90), args, sgr(0))
         }
         BEGIN {
           while ((getline l < prev) > 0) { split(l, a, " "); pj[a[1] " " a[2]] = a[3]; pc[a[1] " " a[2]] = a[4] }
@@ -264,6 +278,7 @@ _procs_toggle() {
 _procs_label() {
   local st="$1" run="⏵ 2s" scope="all users" kind=""
   [ -f "$st/paused" ] && run="⏸ paused"
+  [ -f "$st/live" ] || run="ctrl-r refresh"
   [ "$(_procs_state_get "$st" mine 0)" = 1 ] && scope="mine"
   [ "$(_procs_state_get "$st" group 0)" = 1 ] && kind=" · grouped"
   printf ' procs · %s cores · sort %s ▼%s · %s · %s ' "$(getconf _NPROCESSORS_ONLN)" "$(_procs_state_get "$st" mode cpu)" "$kind" "$scope" "$run"
@@ -352,8 +367,8 @@ _procs_info() {
   fi
   printf '\033[1;36m%s\033[0m  \033[90mpid %s · parent %s\033[0m\n\n' "$c" "$p" "$(_procs_stat_field "$p" 2)"
   case "$spec" in *,*)
-    printf '  \033[33mgroup of %s processes:\033[0m %s\n\n' "$(printf '%s\n' "$spec" | tr ',' '\n' | wc -l)" \
-      "$(printf '%s\n' "$spec" | tr ',' '\n' | sed 's/:.*//' | head -n 12 | paste -sd ' ')" ;;
+    printf '  \033[33mgroup of %s processes:\033[0m %s\n\n' "$(printf '%s\n' "$spec" | tr ',' '\n' | wc -l | tr -d ' ')" \
+      "$(printf '%s\n' "$spec" | tr ',' '\n' | sed 's/:.*//' | head -n 12 | paste -sd ' ' -)" ;;
   esac
   LC_ALL=C command ps -o "$fields" -p "$p" | awk -v thr="$thr" '{
     if (thr != "") { $11 = $10; $10 = thr }
@@ -390,12 +405,15 @@ _procs_tree() {
   fi
 }
 
+# _procs_keys [statedir]: the space line only when auto-refresh runs
 _procs_keys() {
   cat <<'EOF'
   enter       send TERM (confirm; KILL after 3s)
   ctrl-k      pick a signal: TERM INT HUP KILL STOP CONT
   tab         select / unselect row
-  space       pause / resume auto-refresh (2s)
+EOF
+  [ -f "${1:-}/live" ] && printf '  space       pause / resume auto-refresh (2s)\n'
+  cat <<'EOF'
   ctrl-r      refresh now
 
   ctrl-s      sort cpu ↔ mem
@@ -406,6 +424,7 @@ _procs_keys() {
   ctrl-p      toggle preview     shift-↑/↓ scroll preview
   esc         quit
 
+  filter is exact text; prefix a word with ' for fuzzy
   grey rows = other users (kill needs --sudo)
   selection follows pid + start time, never a reused pid
 EOF
@@ -493,23 +512,30 @@ _procs_lines_to_targets() {
 # Interactive
 # ------------------------------------------------------------------------------
 
-# 0 = this fzf knows every option/action the HUD uses (exit 2 = unsupported option)
+# 0 = this fzf accepts the given options (exit 2 = unsupported option)
+_procs_fzf_accepts() {
+  printf 'x\n' | fzf --filter x "$@" > /dev/null 2>&1
+  [ $? -ne 2 ]
+}
+
+# 0 = this fzf runs the HUD (fzf 0.65+); newer extras are probed in _procs_interactive_hud
 _procs_fzf_modern() {
-  local rc
   [ "${PROCS_FZF_FORCE_LEGACY:-0}" = 1 ] && return 1
-  printf 'x\n' | fzf --filter x --track --id-nth 1,2 --gutter ' ' --footer f --with-shell 'bash -c' \
+  _procs_fzf_accepts --track --footer f --with-shell 'bash -c' --no-hscroll --exact \
     --info inline-right --border-label-pos 3 --preview-window 'right,40%,border-rounded,wrap,hidden' \
-    --bind 'start:ignore,every(2):transform-header(true)+transform-border-label(true)+reload-sync(true),ctrl-t:change-preview-label(x)+change-preview(true)+show-preview' \
-    > /dev/null 2>&1
-  rc=$?
-  [ "$rc" -ne 2 ]
+    --bind 'start:transform-header(true)+transform-border-label(true)+reload-sync(true),ctrl-t:change-preview-label(x)+change-preview(true)+show-preview'
 }
 
 _procs_interactive_hud() {
-  local use_sudo="$1" assume_yes="$2" state sd
+  local use_sudo="$1" assume_yes="$2" state sd live=0 footer
+  local -a extra
   sd=$(mktemp -d "${TMPDIR:-/tmp}/procs.XXXXXX") || return 1
   state="$sd/s"; mkdir -p "$state"
   _procs_state_init "$state"
+  # fzf 0.73 every(N): auto-refresh; 0.71 --id-nth: cursor and selection follow pid+start across reloads; 0.66 --gutter
+  _procs_fzf_accepts --bind 'every(2):ignore' && { live=1; : > "$state/live"; }
+  _procs_fzf_accepts --id-nth 1,2 && extra+=(--id-nth '1,2')
+  _procs_fzf_accepts --gutter ' ' && extra+=(--gutter ' ')
   export PROCS_SELF="$_PROCS_SELF" PROCS_STATE="$state" PROCS_SUDO="$use_sudo" PROCS_YES="$assume_yes"
   # prime the CPU delta so the first screen already has values
   _procs_sample "$state" cpu 0 0 1 0 > /dev/null; sleep 0.4
@@ -519,9 +545,19 @@ _procs_interactive_hud() {
   local M="${src}_procs_meters \"\$PROCS_STATE\""
   local T="${src}_procs_toggle \"\$PROCS_STATE\""
   local pw='right,40%,border-rounded,wrap'
-  [ "$(tput cols 2>/dev/null || echo 120)" -lt 110 ] && pw="$pw,hidden"   # narrow: ctrl-p / ctrl-t / ctrl-o / ? bring it up
-  _procs_rows_cmd "$state" | fzf --ansi --multi --layout reverse --no-sort --track --id-nth 1,2 --header-lines 1 \
-    --delimiter '\t' --with-nth 3 --with-shell 'bash -c' --pointer '▌' --marker '●' --gutter ' ' \
+  [ "$(_procs_cols)" -lt 110 ] && pw="$pw,hidden"   # narrow: ctrl-p / ctrl-t / ctrl-o / ? bring it up
+  if [ "$live" = 1 ]; then
+    extra+=(--bind "start,every(2):transform-header($M)+transform-border-label($L)+reload-sync($R)")
+    extra+=(--bind "space:execute-silent($T pause)+transform-border-label($L)")
+    footer='enter kill · tab select · space pause · ctrl-k signal · ctrl-s sort · ctrl-g group · ctrl-u mine · ? keys'
+  else
+    extra+=(--bind "start:transform-header($M)+transform-border-label($L)+reload-sync($R)")
+    footer='enter kill · tab select · ctrl-r refresh · ctrl-k signal · ctrl-s sort · ctrl-g group · ctrl-u mine · ? keys'
+  fi
+  # --exact + --no-hscroll: long command lines are cut at the edge instead of scrolled to a scattered fuzzy match
+  _procs_rows_cmd "$state" | fzf --ansi --multi --layout reverse --no-sort --track --header-lines 1 \
+    --exact --no-hscroll --ellipsis '…' \
+    --delimiter '\t' --with-nth 3 --with-shell 'bash -c' --pointer '▌' --marker '●' "${extra[@]}" \
     --color 'border:8,label:6:bold,preview-border:8,preview-label:6:bold,header:-1,info:8,separator:8,scrollbar:8,footer:8' \
     --color 'prompt:6:bold,pointer:5,marker:5,hl:3:bold,hl+:3:bold,fg+:-1:bold,bg+:236,query:-1:bold' \
     --border rounded --border-label "$(_procs_label "$state")" --border-label-pos 3 \
@@ -529,16 +565,14 @@ _procs_interactive_hud() {
     --preview "${src}_procs_info {4}" --preview-label ' info ' \
     --preview-window "$pw" \
     --prompt '  filter › ' --info inline-right \
-    --footer 'enter kill · tab select · space pause · ctrl-k signal · ctrl-s sort · ctrl-g group · ctrl-u mine · ? keys' \
-    --bind "start,every(2):transform-header($M)+transform-border-label($L)+reload-sync($R)" \
-    --bind "space:execute-silent($T pause)+transform-border-label($L)" \
-    --bind "ctrl-r:reload-sync($R)" \
+    --footer "$footer" \
+    --bind "ctrl-r:transform-header($M)+reload-sync($R)" \
     --bind "ctrl-s:execute-silent($T sort)+transform-border-label($L)+reload-sync($R)" \
     --bind "ctrl-g:execute-silent($T group)+transform-border-label($L)+reload-sync($R)" \
     --bind "ctrl-u:execute-silent($T mine)+transform-border-label($L)+reload-sync($R)" \
     --bind "ctrl-t:change-preview-label( tree )+change-preview(${src}_procs_tree {4})+show-preview" \
     --bind "ctrl-o:change-preview-label( info )+change-preview(${src}_procs_info {4})+show-preview" \
-    --bind "?:change-preview-label( keys )+change-preview(${src}_procs_keys)+show-preview" \
+    --bind "?:change-preview-label( keys )+change-preview(${src}_procs_keys \"\$PROCS_STATE\")+show-preview" \
     --bind "enter:execute(${src}_procs_kill_ui TERM {+4})+reload-sync($R)" \
     --bind "ctrl-k:execute(${src}_procs_signal_pick {+4})+reload-sync($R)" \
     --bind 'tab:toggle+down' --bind 'ctrl-p:toggle-preview' --bind 'shift-up:preview-up,shift-down:preview-down' > /dev/null
@@ -557,7 +591,7 @@ _procs_interactive_legacy() {
   _procs_sample "$state" cpu 0 0 1 0 > /dev/null; sleep 0.4
   local rel='bash -c '"'"'. "$PROCS_SELF"; _procs_rows_cmd "$PROCS_STATE"'"'"
   local tog='bash -c '"'"'. "$PROCS_SELF"; _procs_toggle "$PROCS_STATE" '
-  picked=$(_procs_rows_cmd "$state" | fzf -m --ansi --reverse --header-lines=1 \
+  picked=$(_procs_rows_cmd "$state" | fzf -m --ansi --reverse --header-lines=1 --exact --no-hscroll \
     --delimiter="$(printf '\t')" --with-nth=3 --height=80% \
     --prompt="procs > " \
     --header="TAB/SPACE select · ENTER kill · ctrl-r refresh · ctrl-s cpu↔mem · ctrl-g group · ctrl-u mine/all" \
@@ -622,6 +656,7 @@ Safety: pid 1, kernel threads and your own shell chain are never killed;
 a PID reused since selection is skipped; other users' processes (grey) need --sudo.
 Interactive keys: enter kill · tab select · space pause · ctrl-k signal picker ·
   ctrl-s cpu↔mem · ctrl-g group · ctrl-u mine/all · ctrl-t tree · ctrl-o info · ctrl-p preview · ? keys
+Auto-refresh (2s, space pauses) needs fzf 0.73+; older fzf refreshes on ctrl-r.
 Env: PROCS_FZF_FORCE_LEGACY=1 static fzf flow · PROCS_ROWS (viewer rows, 1000)
 EOF
 }
@@ -641,11 +676,11 @@ procs() {
         esac
         shift
       done
-      local sd color=0
+      local sd color=0 width=0
       sd=$(mktemp -d "${TMPDIR:-/tmp}/procs.XXXXXX") || return 1
-      [ -t 1 ] && color=1
+      [ -t 1 ] && { color=1; width=$(_procs_cols); }
       _procs_sample "$sd" "$sortby" "$group" 0 1 0 > /dev/null; sleep 0.3
-      _procs_sample "$sd" "$sortby" "$group" 0 "$n" "$color" | awk -F'\t' '{print $3}'
+      _procs_sample "$sd" "$sortby" "$group" 0 "$n" "$color" "$width" | awk -F'\t' '{print $3}'
       rm -rf "$sd"
       ;;
     kill)
