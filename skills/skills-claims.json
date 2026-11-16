@@ -13073,17 +13073,17 @@
       }
     },
     {
-      "id": "skills/plan/SKILL.md:75:doc_link:~/.claude/CLAUDE.md \u203a Plan Mode",
+      "id": "skills/plan/SKILL.md:76:doc_link:../../claude/rules/plan-mode.md \u203a Plan Mode",
       "source": {
         "file": "skills/plan/SKILL.md",
-        "line": 75
+        "line": 76
       },
       "kind": "doc_link",
-      "value": "~/.claude/CLAUDE.md \u203a Plan Mode",
-      "quote": "`~/.claude/CLAUDE.md` \u203a _Plan Mode_",
+      "value": "../../claude/rules/plan-mode.md \u203a Plan Mode",
+      "quote": "[`~/.terminal/claude/rules/plan-mode.md`](../../claude/rules/plan-mode.md) \u203a _Plan Mode_",
       "verify": {
         "method": "heading_pointer",
-        "target": "~/.claude/CLAUDE.md",
+        "target": "claude/rules/plan-mode.md",
         "heading": "Plan Mode",
         "base": "repo"
       }
@@ -19357,10 +19357,10 @@
       }
     },
     {
-      "id": "claude/AGENTS.md:7:cli_command:codegraph",
+      "id": "claude/rules/codegraph.md:5:cli_command:codegraph",
       "source": {
-        "file": "claude/AGENTS.md",
-        "line": 7
+        "file": "claude/rules/codegraph.md",
+        "line": 5
       },
       "kind": "cli_command",
       "value": "codegraph",
@@ -19371,17 +19371,17 @@
       }
     },
     {
-      "id": "claude/AGENTS.md:16:path:claude/AGENTS.md",
+      "id": "claude/rules/plan-mode.md:1:path:claude/rules/plan-mode.md",
       "source": {
-        "file": "claude/AGENTS.md",
-        "line": 16
+        "file": "claude/rules/plan-mode.md",
+        "line": 1
       },
       "kind": "path",
-      "value": "claude/AGENTS.md",
-      "quote": "## Plan Mode",
+      "value": "claude/rules/plan-mode.md",
+      "quote": "# Plan Mode",
       "verify": {
         "method": "path_exists",
-        "path": "claude/AGENTS.md",
+        "path": "claude/rules/plan-mode.md",
         "base": "repo",
         "type": "file"
       }

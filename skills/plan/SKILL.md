@@ -73,7 +73,7 @@ A Command may add sections it needs (`/implement-feature` adds _User Review Requ
 
 ### Style
 
-The user's rule (`~/.claude/CLAUDE.md` › _Plan Mode_) applies: extremely concise, grammar sacrificed; end with **Steps**, then **Unresolved questions** (each with a recommendation, omitted when none).
+The user's rule ([`~/.terminal/claude/rules/plan-mode.md`](../../claude/rules/plan-mode.md) › _Plan Mode_) applies: extremely concise, grammar sacrificed; end with **Steps**, then **Unresolved questions** (each with a recommendation, omitted when none).
 
 Every plan writer applies it to the whole file **and to the chat response that presents the plan**:
 
