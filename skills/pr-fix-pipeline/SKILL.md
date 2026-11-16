@@ -101,7 +101,7 @@ Leave the loop when one of these holds:
 
 ### Step 6: Update the PR description and report
 
-1. Add or replace the `## CI fixes` section ([`references/remediation-loop.md`](references/remediation-loop.md) › _PR description section_), then read it back (`outward-writes` › _Read back_).
+1. Re-read the PR's `status` first: the PR may have been completed or abandoned while the loop ran. When it is not `active`, write nothing, print the section in chat and report `not written: PR <status>` in the summary. Otherwise add or replace the `## CI fixes` section ([`references/remediation-loop.md`](references/remediation-loop.md) › _PR description section_), then read it back (`outward-writes` › _Read back_).
 2. If ledger lines are still uncommitted (only re-runs followed them), leave them uncommitted in the working copy and say so: one more push would trigger CI again.
 3. End with the summary table (see Output).
 
