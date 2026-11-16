@@ -159,6 +159,16 @@
             "timeout": 5
           }
         ]
+      },
+      {
+        "matcher": "^(startup|resume|clear|compact|fork)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/snuffish/.claude/hooks/herdr-agent-state.sh' session",
+            "timeout": 10
+          }
+        ]
       }
     ],
     "PreToolUse": [
@@ -415,6 +425,9 @@
       "effortLevel": "high"
     },
     "qwen/qwen3.5-9b": {
+      "effortLevel": "high"
+    },
+    "claude-fable-5-2": {
       "effortLevel": "high"
     }
   },
