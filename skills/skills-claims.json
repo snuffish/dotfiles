@@ -23045,10 +23045,10 @@
       }
     },
     {
-      "id": "skills/analyze-personal-feedback/SKILL.md:90:doc_link:artifact-protocol \u203a Claim",
+      "id": "skills/analyze-personal-feedback/SKILL.md:92:doc_link:artifact-protocol \u203a Claim",
       "source": {
         "file": "skills/analyze-personal-feedback/SKILL.md",
-        "line": 90
+        "line": 92
       },
       "kind": "doc_link",
       "value": "artifact-protocol \u203a Claim",
@@ -23058,6 +23058,41 @@
         "target": "artifact-protocol",
         "heading": "Claim",
         "base": "repo"
+      }
+    },
+    {
+      "id": "skills/analyze-personal-feedback/SKILL.md:88:doc_link:artifact-protocol \u203a Claim",
+      "source": {
+        "file": "skills/analyze-personal-feedback/SKILL.md",
+        "line": 88
+      },
+      "kind": "doc_link",
+      "value": "artifact-protocol \u203a Claim",
+      "quote": "A second run in the same month gets the `-2` file name (`artifact-protocol` \u203a _Claim_)",
+      "verify": {
+        "method": "heading_pointer",
+        "target": "artifact-protocol",
+        "heading": "Claim",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/analyze-personal-feedback/SKILL.md:88:symbol:collision counter",
+      "source": {
+        "file": "skills/analyze-personal-feedback/SKILL.md",
+        "line": 88
+      },
+      "kind": "symbol",
+      "value": "collision counter",
+      "quote": "A second run in the same month gets the `-2` file name",
+      "verify": {
+        "method": "grep",
+        "pattern": "p=\"\\$base-\\$n\\.\\$ext\"",
+        "paths": [
+          "skills/_modules/scripts/publish_new_artifact.sh"
+        ],
+        "base": "repo",
+        "expect": "present"
       }
     },
     {
