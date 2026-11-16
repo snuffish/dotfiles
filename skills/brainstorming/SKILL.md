@@ -35,6 +35,9 @@ If nothing is open when you write your first message and there's one
 sensible way, steps 1 to 3 happen in that message (see Your First
 Message).
 
+Their pick in step 1 chooses an approach. Code, branches and config
+change after all four steps.
+
 Two things aren't implementing: a spike they said yes to (see Spike to
 feel things out), and doing what they asked once they've opted out of
 the questions.

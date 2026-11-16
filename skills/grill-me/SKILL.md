@@ -12,4 +12,5 @@ Interview me to surface my guiding principles and decision frameworks.
 - Put your recommended option first, labelled `(Recommended)`, with the reason in its description.
 - Build each round on my previous answers.
 - Keep going until I say stop or no open decision area is left, then list the principles I chose.
+- My answers are decisions to record. Files, branches and edits start on my `/proceed`.
 - Before the first round, look in the artifact directory, the work state, and the review threads of PRs that touched the topic's files (`git log -- <path>` names them) for a decision on the same topic. Do not ask what it already decided, and say so when an answer contradicts it.
