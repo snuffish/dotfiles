@@ -303,10 +303,10 @@ function gb() {
   local max_len=$(( cols * 45 / 100 - 4 ))
   [[ $max_len -lt 35 ]] && max_len=35
   local header
-  header=$(_git_fzf_wrap_header "$max_len" '[Enter] Checkout/Switch · [Ctrl-T] Local/All · [Ctrl-R] Fuzzy/pattern · [Ctrl-D] Diff · [Ctrl-S] Log · [Ctrl-Y] Copy')
+  header=$(_git_fzf_wrap_header "$max_len" '[Enter] Checkout/Switch · [Ctrl-T] Local/All · [Ctrl-R] Fuzzy/pattern · [Ctrl-D] Diff · [Ctrl-S] Log · [Ctrl-Y] Copy · [?] Keys')
 
   # Ctrl-R pattern mode (regex or glob on branch + subject) filters this cache of the full list
-  local fp="$HOME/.terminal/utils/fzf-pattern.sh"
+  local fp="$HOME/.terminal/utils/fzf-pattern.sh" fk="$HOME/.terminal/utils/fzf-keys.sh"
   local -x FZFP_DIR
   FZFP_DIR=$(mktemp -d) || return $?
   printf '%s\n' "$rows" > "$FZFP_DIR/rows"
@@ -325,6 +325,7 @@ function gb() {
     --bind="change:transform:bash $fp change 2,3" \
     --bind="ctrl-d:change-preview:$preview_diff" \
     --bind="ctrl-s:change-preview:$preview_log" \
+    --bind="?:transform:bash $fk bind gb" \
     --bind="ctrl-y:execute-silent(printf %s {4} | (wl-copy 2>/dev/null || xclip -selection clipboard 2>/dev/null || pbcopy 2>/dev/null))+abort" \
     --preview="$preview_log" \
     --preview-window 'right,55%,wrap' --height 60% --layout reverse)
@@ -514,14 +515,14 @@ function gw() {
   local delete_cmd="bash -c '$src && _gw_delete \"\$@\"' _ {3} $q_root {5}"
   local prune_cmd="bash -c '$src && _gw_prune'"
   local sweep_cmd="bash -c '$src && _gw_sweep \"\$1\"' _ $q_root"
-  local fp="$HOME/.terminal/utils/fzf-pattern.sh"
+  local fp="$HOME/.terminal/utils/fzf-pattern.sh" fk="$HOME/.terminal/utils/fzf-keys.sh"
   local reload_cmd="bash -c '$src && _gw_list \"\$1\"' _ $q_root | bash $fp pipe 1"
 
   local cols="${COLUMNS:-$(tput cols 2>/dev/null || echo 100)}"
   local max_len=$(( cols * 50 / 100 - 4 ))
   [[ $max_len -lt 35 ]] && max_len=35
   local header
-  header=$(_git_fzf_wrap_header "$max_len" '[Enter] Switch · [Ctrl-D] Diff · [Ctrl-S] Status · [Ctrl-O] Open in Antigravity · [Ctrl-Y] Copy path · [Ctrl-X] Delete · [Alt-C] Sweep safe · [Ctrl-R] Prune · [Ctrl-F] Fuzzy/pattern · [Shift-↑/↓] Scroll preview')
+  header=$(_git_fzf_wrap_header "$max_len" '[Enter] Switch · [Ctrl-D] Diff · [Ctrl-S] Status · [Ctrl-O] Open in Antigravity · [Ctrl-Y] Copy path · [Ctrl-X] Delete · [Alt-C] Sweep safe · [Ctrl-R] Prune · [Ctrl-F] Fuzzy/pattern · [Shift-↑/↓] Scroll preview · [?] Keys')
 
   local -x FZFP_DIR
   FZFP_DIR=$(mktemp -d) || return $?
@@ -541,6 +542,7 @@ function gw() {
     --bind "alt-c:execute($sweep_cmd)+reload($reload_cmd)" \
     --bind "ctrl-f:transform:bash $fp toggle 1" \
     --bind "change:transform:bash $fp change 1" \
+    --bind "?:transform:bash $fk bind gw" \
     --bind "ctrl-o:execute-silent(antigravity-ide {3})+abort" \
     --bind "ctrl-y:execute-silent(printf %s {3} | (wl-copy 2>/dev/null || xclip -selection clipboard 2>/dev/null || pbcopy 2>/dev/null))+abort" \
     --height 50% --layout reverse)

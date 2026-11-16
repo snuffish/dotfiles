@@ -110,7 +110,8 @@ antigravity-resume() {
     run_agent_session_picker \
       --driver "$driver" \
       --title "Resume Antigravity session" \
-      --header $'[Enter] Resume · [Ctrl-F] Fork · [Ctrl-S] Copy ID\n[Ctrl-T] This dir/All · [Ctrl-G] Titles/Text · [Ctrl-R] Pattern · [Ctrl-U] Subagents' \
+      --header $'[Enter] Resume · [Ctrl-F] Fork · [Ctrl-S] Copy ID\n[Ctrl-T] This dir/All · [Ctrl-G] Titles/Text · [Ctrl-R] Pattern · [Ctrl-U] Subagents · [?] Keys' \
+      --keys agr \
       --scope "$scope" \
       --prompt "$prompt" \
       --bind "ctrl-u:transform:bash $driver key subagent"
@@ -159,7 +160,8 @@ agent-resume() {
     run_agent_session_picker \
       --driver "$driver" \
       --title "Resume Agent session (Claude / Antigravity)" \
-      --header $'[Enter] Resume · [Ctrl-F] Fork · [Ctrl-X] Cross-fork · [Ctrl-L] Tail · [Ctrl-S] Copy ID\n[Ctrl-T] This dir/All · [Ctrl-G] Titles/Text · [Ctrl-R] Pattern · [Ctrl-A] All/Claude/Agy' \
+      --header $'[Enter] Resume · [Ctrl-F] Fork · [Ctrl-X] Cross-fork · [Ctrl-L] Tail · [Ctrl-S] Copy ID\n[Ctrl-T] This dir/All · [Ctrl-G] Titles/Text · [Ctrl-R] Pattern · [Ctrl-A] All/Claude/Agy · [?] Keys' \
+      --keys ar \
       --scope "$scope" \
       --prompt "$prompt" \
       --expect ctrl-l \

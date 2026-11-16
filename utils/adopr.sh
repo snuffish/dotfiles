@@ -447,7 +447,7 @@ fi
 save="execute-silent(bash $self save)"
 
 fzf --ansi \
-  --header $'[Enter] Open · [Ctrl-Y] Copy URL · [Ctrl-R] Refresh · [Ctrl-F] Pattern · [Ctrl-A] PRs/Activity' \
+  --header $'[Enter] Open · [Ctrl-Y] Copy URL · [Ctrl-R] Refresh · [Ctrl-F] Pattern · [Ctrl-A] PRs/Activity · [?] Keys' \
   --border rounded --border-label "$label" --preview-border rounded \
   --color 'border:8,label:6:bold,preview-border:8,preview-label:6:bold,info:8,separator:8,scrollbar:8' \
   --color 'prompt:6:bold,pointer:5,marker:5,hl:3:bold,hl+:3:bold,fg+:-1:bold,query:-1:bold' \
@@ -460,6 +460,7 @@ fzf --ansi \
   --bind="ctrl-f:transform:bash $self pattern toggle" \
   --bind="change:transform:bash $self pattern change" \
   --bind="ctrl-r:transform:bash $self refresh" \
+  --bind="?:transform:bash $(dirname "$self")/fzf-keys.sh bind adopr" \
   "${opts[@]}" \
   --preview="$preview" \
   --preview-window 'right,55%,wrap' --height 60% --layout reverse <"$input"

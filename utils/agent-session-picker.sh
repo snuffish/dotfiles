@@ -2,7 +2,7 @@
 # Shared fzf session picker for Claude Code, Antigravity, and Unified Agent sessions
 
 run_agent_session_picker() {
-  local driver="" title="" header="" scope="here" prompt="" extra_binds=() expect="ctrl-o,ctrl-f,ctrl-x"
+  local driver="" title="" header="" scope="here" prompt="" keys="" extra_binds=() expect="ctrl-o,ctrl-f,ctrl-x"
   local out key pick id cwd
 
   while [[ $# -gt 0 ]]; do
@@ -12,6 +12,8 @@ run_agent_session_picker() {
       --header) header="$2"; shift 2 ;;
       --scope) scope="$2"; shift 2 ;;
       --prompt) prompt="$2"; shift 2 ;;
+      # The utils/fzf-keys.sh card that "?" shows
+      --keys) keys="$2"; shift 2 ;;
       --bind) extra_binds+=("--bind=$2"); shift 2 ;;
       # Keys beyond the defaults that end the picker and come back as line 1, for the caller to act on
       --expect) expect+=",$2"; shift 2 ;;
@@ -24,6 +26,8 @@ run_agent_session_picker() {
   [[ -n "$prompt" ]] || {
     if [[ "$scope" == "all" ]]; then prompt="All> "; else prompt="This dir> "; fi
   }
+
+  [[ -n "$keys" ]] && extra_binds+=("--bind=?:transform:bash $HOME/.terminal/utils/fzf-keys.sh bind $keys")
 
   local header_args=()
   if [[ -n "$header" ]]; then

@@ -202,7 +202,8 @@ function claude-resume() {
     run_agent_session_picker \
       --driver "$sessions" \
       --title "Resume Claude session" \
-      --header $'[Enter] Resume · [Ctrl-O] Fork · [Ctrl-S] Copy ID\n[Ctrl-T] This dir/All · [Ctrl-G] Titles/Text · [Ctrl-R] Pattern' \
+      --header $'[Enter] Resume · [Ctrl-O] Fork · [Ctrl-S] Copy ID\n[Ctrl-T] This dir/All · [Ctrl-G] Titles/Text · [Ctrl-R] Pattern · [?] Keys' \
+      --keys cr \
       --scope "$scope" \
       --prompt "$prompt"
   )" || return
@@ -238,7 +239,7 @@ function claude-mem-search() {
   # Fields: age, type, ref, label (shown), then ref, Claude session id
   out="$(
     bash "$mem" list memories "$scope" | fzf --ansi \
-      --header $'[Enter] Print · [Ctrl-O] Resume · [Ctrl-Y] Copy Ref · [Ctrl-R] Reveal\n[Ctrl-S] Memories/Summaries/Prompts · [Ctrl-T] Scope · [Ctrl-G] Text' \
+      --header $'[Enter] Print · [Ctrl-O] Resume · [Ctrl-Y] Copy Ref · [Ctrl-R] Reveal\n[Ctrl-S] Memories/Summaries/Prompts · [Ctrl-T] Scope · [Ctrl-G] Text · [?] Keys' \
       --border rounded --border-label " Search claude-mem${project:+ · $project} " --preview-border rounded \
       --color 'border:8,label:6:bold,preview-border:8,preview-label:6:bold,info:8,separator:8,scrollbar:8' \
       --color 'prompt:6:bold,pointer:5,marker:5,hl:3:bold,hl+:3:bold,fg+:-1:bold,query:-1:bold' \
@@ -250,6 +251,7 @@ function claude-mem-search() {
       --bind="change:transform:bash $mem key change" \
       --bind="ctrl-y:execute-silent(printf %s {5} | (wl-copy 2>/dev/null || xclip -selection clipboard 2>/dev/null || pbcopy 2>/dev/null))+abort" \
       --bind="ctrl-r:change-preview(bash $mem preview {5} reveal)" \
+      --bind="?:transform:bash $HOME/.terminal/utils/fzf-keys.sh bind cms" \
       --preview="bash $mem preview {5}" \
       --preview-window 'right,55%,wrap' --height 60% --layout reverse
   )" || return
