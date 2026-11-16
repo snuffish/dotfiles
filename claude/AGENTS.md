@@ -1,48 +1,15 @@
-<!-- CODEGRAPH_START -->
+## Rules read on demand
 
-## CodeGraph
+Read the named file before the work it covers; it holds the full rules.
 
-In repositories indexed by CodeGraph (a `.codegraph/` directory exists in the working directory or any parent directory — e.g. a workspace root above several git repos), use its **lean commands** to locate code and trace call flows. They return about 1 KB each. `codegraph explore` returns about 25 KB per call, mostly source code; use it only when you want one fast overview and the token cost doesn't matter.
+- **CodeGraph:** before locating code or tracing a call flow in a repo with a `.codegraph/` directory at or above the working directory: `~/.terminal/claude/rules/codegraph.md`. With none, skip CodeGraph; indexing is the user's decision.
+- **Plans:** before writing a plan (plan mode, `/plan`): `~/.terminal/claude/rules/plan-mode.md`.
+- **Git:** before a commit, a push, a PR, or a fix plan for a reported defect: `~/.terminal/claude/rules/git.md`.
+- **Handoffs:** before writing a handoff or closing a `/proceed` step: `~/.terminal/claude/rules/handoffs.md`.
 
-1. **Map:** `codegraph context --no-code -n 10 "<symbols>"` returns entry points with file:line.
-2. **Walk:** `codegraph callees <sym> -f <file>` and `codegraph callers <sym> -f <file>` for each level (MCP: `codegraph_callers`), `codegraph query <name>` (MCP: `codegraph_search`), and `codegraph node -f <file> --symbols-only`.
-3. **Read:** only the line ranges you need, with `Read` offset/limit or `codegraph_node` with `file`, `offset` and `limit`.
+## Worktrees
 
-Use grep for what the graph doesn't connect: DI/startup wiring, implicit pipeline steps, enum-member usages and config files. A project CLAUDE.md may add repo-specific gaps.
-
-If no `.codegraph/` directory exists there or in any parent, skip CodeGraph entirely — indexing is the user's decision.
-<!-- CODEGRAPH_END -->
-
-## Plan Mode
-
-- Make the plan extremely concise. Sacrifice grammar for the sake of concision.
-- End every plan with these two blocks, in this order, so they are the last thing visible in the terminal:
-  1. **Steps:** a numbered list of concrete steps.
-  2. **Unresolved questions:** what I must decide, each with your recommendation. Leave this block out when there are none.
-
-## Commit workflow
-
-- When the user asks to commit or push, commit immediately. Do not wait on test runs unless the user asks for them. The repo's documented format gate still runs first. If tests are pending, say so in one line and continue.
 - Never create a git worktree unless explicitly asked; work on the current branch. Exceptions: `/proceed` on a plan defaults to `/wt` (`/no-wt` opts out); changes to `~/.terminal` hooks and skills go in a `/wt`, because that checkout is the live config.
-- Split unrelated changes into separate logical commits and push to the current branch's upstream.
-
-## Git & Branch Isolation
-
-- For multi-file bug investigations, flaky test repairs, or new features, prefer isolated git worktrees (`/wt`) to keep the primary checkout clean.
-- Before formulating a fix plan for a reported defect, check recent commits on active PR branches (`git log -n 5 --oneline origin/main..HEAD`) to verify the defect is not already resolved upstream.
-
-## Git / PR workflow
-
-- Cut new PRs from `main` unless I name another base, even when we are currently on a feature branch. Exception: work that builds on someone else's open PR stacks on that PR's branch (see memory `stack-on-others-pr-branches`).
-- When extracting or cherry-picking work into a standalone PR, take the latest version of the code, including later fix commits. Compare test counts before and after.
-- To retarget a PR, use the method in memory `az-pr-update-drops-draft` (MCP `repo_pull_request_write` with `targetRefName`). Check memory before stating any az CLI command.
-- After pushing to a branch with an open PR, update the PR description so it matches the actual commits.
-
-## Handoffs (/proceed workflow)
-
-- Every handoff step ends by writing the next-step handoff document. Do this without being asked.
-- Handoff status lines must list every branch and PR involved (names + IDs). Re-read the status line before saving.
-- Verify claims against real data (live PR, real directory, CI run) before marking a step done. If you can't, say explicitly what was only unit-tested.
 
 ## Subagents
 
