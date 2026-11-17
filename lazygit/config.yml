@@ -1,7 +1,17 @@
 git:
-  paging:
-    # Renders .md files with glow in the diff panel; other files get a normal colored diff.
-    externalDiffCommand: '"$HOME/.terminal/lazygit/md-diff.sh"'
+  # Ctrl-P cycles these in the diff panel: glow-rendered markdown (md-diff.sh), then git's plain diff.
+  diffRenderers:
+    - name: glow
+      type: extDiff
+      command: '"$HOME/.terminal/lazygit/md-diff.sh"'
+    - name: plain
+      type: rawGit
+      args: []
+keybinding:
+  universal:
+    # Ctrl-P is the custom patch menu by default; it moves to `|`, the key cycleDiffRenderers frees.
+    cycleDiffRenderers: <ctrl+p>
+    createPatchOptionsMenu: '|'
 customCommands:
   # Built-in `d` only passes a single --force, which git refuses for a locked worktree.
   - key: "D"
@@ -13,11 +23,6 @@ customCommands:
         body: "Force remove {{.SelectedWorktree.Path}}? Its lock and any uncommitted changes will be discarded."
     command: "git worktree remove --force --force {{.SelectedWorktree.Path | quote}}"
     loadingText: "Removing worktree..."
-  # Switches the diff panel between glow-rendered markdown and the plain diff (see md-diff.sh).
-  - key: "<c-p>"
-    context: "global"
-    description: "Toggle markdown preview (glow / diff)"
-    command: 'f="$HOME/.local/state/lazygit/md-raw"; if [ -e "$f" ]; then rm "$f"; else mkdir -p "${f%/*}" && touch "$f"; fi'
   # No plugin system in lazygit; open the selected markdown file full screen in glow (q to return).
   - key: "O"
     context: "files"
