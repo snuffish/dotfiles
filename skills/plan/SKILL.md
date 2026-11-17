@@ -2,7 +2,7 @@
 name: plan
 description: 'Opens, inspects, creates, updates, previews or reviews the active implementation plan (<prefix>-implementation_plan-<suffix>.md). Bare /plan returns links; /plan <instructions> drafts or updates, then self-reviews before presenting; /plan preview reopens in the host preview panel; `--model <fable|opus|sonnet|haiku>` (default fable) drafts or reviews on that model; /plan --review [suffix] audits a plan or design proposal before any code is written (architecture and convention fit, edge cases, security and authorization, data and migration safety, test coverage) with a READY / NEEDS REVISION / BLOCKED verdict, read-only until /proceed. Use --review for "review this plan", "does this plan make sense?", "poke holes in this design".'
 argument-hint: "[--model <fable|opus|sonnet|haiku>] [--review [suffix] | preview [suffix] | suffix | instructions]"
-model: fable
+model: claude-fable-5-2
 ---
 
 # Skill: `/plan` — Implementation Plan Manager
@@ -103,7 +103,7 @@ Strip `--model <value>` from the arguments first (_Model flag_ below), then pick
 
 ### Model flag (`--model <fable|opus|sonnet|haiku>`)
 
-Picks the model that drafts (Case B) or reviews (Case D). Cases A and C ignore it. Default `fable`: the frontmatter's `model: fable` runs a user-typed `/plan` on Fable. A Command that chains `/plan` runs on the session model (the frontmatter does not apply there) and passes no flag, so it plans inline.
+Picks the model that drafts (Case B) or reviews (Case D). Cases A and C ignore it. Default `fable`: the frontmatter's `model: claude-fable-5-2` runs a user-typed `/plan` on Fable 5.2. A Command that chains `/plan` runs on the session model (the frontmatter does not apply there) and passes no flag, so it plans inline.
 
 1. A value outside the four → stop and list them.
 2. Absent or `fable` → run the case inline.
