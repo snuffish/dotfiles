@@ -133,7 +133,7 @@ Record the reviewer's vote (`-5`, `-10`, etc.) in the **Vote** column rather tha
 
 ## Step 5 — Formulate Actionable Paths & Draft Replies
 
-For every non-trivial thread:
+First re-fetch the threads with the Step 2.1 command and compare each thread's comment count with `threads.json`: fold every comment posted during the run into the analysis, and draft each reply to answer the thread's latest comment, not its opening one. Then, for every non-trivial thread:
 1. **State the underlying motivation** (what risk or smell the reviewer is targeting).
 2. **Evaluate trade-offs** (pros vs. migration/rebase/contract risks).
 3. **Provide concrete decision options**:
