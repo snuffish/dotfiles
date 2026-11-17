@@ -170,6 +170,15 @@
         ]
       },
       {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.terminal/claude/session-env.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
         "matcher": "^(startup|resume|clear|compact|fork)$",
         "hooks": [
           {
