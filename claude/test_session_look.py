@@ -107,32 +107,13 @@ class Tmux(Base):
         pill = CONFIG["states"]["waiting"]["pill"]
         self.assertIn(f"#[bg={pill},fg=#11111b] ◆ WAIT #[default]", self.calls[-1])
 
-    def test_square_is_a_pane_option_framed_in_identity_and_filled_with_state(self):
+    def test_square_is_a_pane_option_in_the_state_colour(self):
         self.fire("UserPromptSubmit")
         args = self.calls[-1]
         i = args.index("@claude_square")
-        frame, fill = CONFIG["colors"]["blue"]["frame"], CONFIG["states"]["working"]["pill"]
-        square = f"#[push-default]#[fg={frame}]▐#[fg={fill},bg={frame}]■#[fg={frame},bg=default]▌#[pop-default]"
+        square = f"#[fg={CONFIG['states']['working']['pill']}]■#[fg=default]"
         self.assertEqual(args[i - 3:i + 2], ["-p", "-t", "%1", "@claude_square", square])
         self.assertNotIn("-w", args)
-
-    def test_color_command_in_transcript_recolours_frame_and_square(self):
-        transcript = Path(self.tmp.name) / "t.jsonl"
-        transcript.write_text('{"type":"agent-color","agentColor":"green","sessionId":"s1"}\n'
-                              '{"type":"user"}\n{"type":"agent-color","agentColor":"red","sessionId":"s1"}\n')
-        self.fire("UserPromptSubmit")
-        self.fire("PreToolUse", transcript_path=str(transcript))
-        red = CONFIG["colors"]["red"]["frame"]
-        self.assertIn(red, self.calls[-1])
-        self.assertIn(look.square(red, CONFIG["states"]["working"]["pill"]), self.calls[-1])
-        self.assertEqual(json.loads((look.STATE / "s1.json").read_text())["color"], "red")
-
-    def test_unknown_or_missing_transcript_keeps_the_rule_colour(self):
-        transcript = Path(self.tmp.name) / "t.jsonl"
-        transcript.write_text('{"type":"agent-color","agentColor":"default","sessionId":"s1"}\n')
-        self.fire("UserPromptSubmit", transcript_path=str(transcript))
-        self.fire("Stop", transcript_path=str(Path(self.tmp.name) / "missing.jsonl"))
-        self.assertIn(CONFIG["colors"]["blue"]["frame"], self.calls[-1])
 
     def test_pane_title_is_the_repo(self):
         self.fire("UserPromptSubmit")

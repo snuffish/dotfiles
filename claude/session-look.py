@@ -2,13 +2,11 @@
 """Session identity and state colours for Claude Code. One script for every hook event it listens to.
 
 Identity (which project) comes from claude/session-colors.json: ordered rules, first match wins, else a hash of
-the repo name. A /color typed in the session overrides it from the next event on (Claude Code records it in the
-transcript as an agent-color entry). State (what the session is doing) comes from the event: working, waiting,
-done, plan.
+the repo name. State (what the session is doing) comes from the event: working, waiting, done, plan.
 
-In tmux the pane carries its identity colour on its border (@claude_frame, read by the border styles in
-tmux.conf) and its state as a pill on the pane border (@claude_pill). The window tab lines up a square per
-Claude pane (@claude_square): framed in the identity colour, filled with the state colour. The pane background is
+In tmux the pane carries its identity colour (@claude_frame, read by the border styles in tmux.conf) and its
+state as a pill on the pane border (@claude_pill) and a coloured square (@claude_square); the window tab lines
+up the squares of all its Claude panes. The pane background is
 never touched. Every event also prints an OSC 2 title
 (terminalSequence) so a plain terminal shows the state too. statusline.sh reads the state file for its badge.
 Any error exits 0 without output: a hook bug must never block a prompt.
@@ -28,8 +26,6 @@ STATE = Path(os.environ.get("SESSION_LOOK_DIR") or Path.home() / ".claude" / "se
 # Notification types that mean the session needs the user; idle_prompt fires ~60 s after Stop and stays done
 WAITING_NOTIFICATIONS = {"permission_prompt", "elicitation_dialog", "elicitation_url_dialog", "agent_needs_input"}
 WORKTREE_MARK = "/.claude/worktrees/"
-# Claude Code re-appends the agent-color entry every few dozen lines, so the transcript's tail holds the latest
-TRANSCRIPT_TAIL = 512 * 1024
 
 
 def main():
@@ -61,12 +57,10 @@ def handle(data, config, tmux_pane, run=None):
     mode = data.get("permission_mode") or record["mode"]
     if mode == "plan" and state in ("working", "done"):
         state = "plan"
-    color = transcript_color(data.get("transcript_path"), config["colors"]) or record["color"]
-    look = config["colors"][color]
+    look = config["colors"][record["color"]]
     spec = config["states"][state]
-    changed = (record["state"], record["mode"], record["color"]) != (state, mode, color)
-    record |= {"color": color, "frame": look["frame"], "state": state, "mode": mode, "glyph": spec["glyph"],
-               "label": spec["label"], "sgr": look["sgr"]}
+    changed = (record["state"], record["mode"]) != (state, mode)
+    record |= {"state": state, "mode": mode, "glyph": spec["glyph"], "label": spec["label"], "sgr": look["sgr"]}
     save_record(sid, record)
     if tmux_pane and (changed or event == "SessionStart"):
         run(apply_args(tmux_pane, record["frame"], spec, repo_name(data.get("cwd") or "")))
@@ -88,20 +82,6 @@ def state_for(event, data):
     if event == "Stop":
         return "done"
     return None
-
-
-def transcript_color(path, colors):
-    """The colour of the session's last /color, or None when the transcript tail has none."""
-    if not path:
-        return None
-    try:
-        with open(path, "rb") as f:
-            f.seek(max(0, f.seek(0, os.SEEK_END) - TRANSCRIPT_TAIL))
-            tail = f.read().decode("utf-8", "replace")
-    except OSError:
-        return None
-    found = re.findall(r'"type":"agent-color","agentColor":"([a-z]+)"', tail)
-    return found[-1] if found and found[-1] in colors else None
 
 
 def pick_color(config, cwd):
@@ -144,15 +124,9 @@ def apply_args(pane, frame, spec, repo):
     return [
         "set-option", "-p", "-t", pane, "@claude_frame", frame, ";",
         "set-option", "-p", "-t", pane, "@claude_pill", pill, ";",
-        "set-option", "-p", "-t", pane, "@claude_square", square(frame, spec["pill"]), ";",
+        "set-option", "-p", "-t", pane, "@claude_square", f"#[fg={spec['pill']}]■#[fg=default]", ";",
         "select-pane", "-t", pane, "-T", repo,
     ]
-
-
-def square(frame, fill):
-    """A state-filled square framed in the identity colour: half blocks for the sides, the cell background for
-    top and bottom. push-default lets bg=default restore whatever background the tab format had set."""
-    return (f"#[push-default]#[fg={frame}]▐#[fg={fill},bg={frame}]■#[fg={frame},bg=default]▌#[pop-default]")
 
 
 def reset_args(pane):
