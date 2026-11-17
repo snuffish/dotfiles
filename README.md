@@ -10,6 +10,7 @@ Personal dotfiles: modular Bash setup, Neovim (LazyVim), tmux, WezTerm, Ghostty 
 | `utils/`, `installer/`    | Helper scripts and tool installers                                                                                                                                            |
 | `nvim/`                   | Neovim config based on LazyVim                                                                                                                                                |
 | `tmux/`                   | tmux config and plugins                                                                                                                                                       |
+| `lazygit/`                | lazygit config (LG_CONFIG_FILE in git.bash); md-diff.sh renders markdown with glow in the diff panel                                                                          |
 | `wezterm/`                | WezTerm config                                                                                                                                                                |
 | `ghostty.bash`            | Ghostty helpers                                                                                                                                                               |
 | `.ideavimrc`              | IdeaVim (JetBrains) config                                                                                                                                                    |

@@ -1,0 +1,26 @@
+git:
+  paging:
+    # Renders .md files with glow in the diff panel; other files get a normal colored diff.
+    externalDiffCommand: '"$HOME/.terminal/lazygit/md-diff.sh"'
+customCommands:
+  # Built-in `d` only passes a single --force, which git refuses for a locked worktree.
+  - key: "D"
+    context: "worktrees"
+    description: "Force remove worktree (even if locked or dirty)"
+    prompts:
+      - type: "confirm"
+        title: "Force remove worktree"
+        body: "Force remove {{.SelectedWorktree.Path}}? Its lock and any uncommitted changes will be discarded."
+    command: "git worktree remove --force --force {{.SelectedWorktree.Path | quote}}"
+    loadingText: "Removing worktree..."
+  # Switches the diff panel between glow-rendered markdown and the plain diff (see md-diff.sh).
+  - key: "<c-p>"
+    context: "global"
+    description: "Toggle markdown preview (glow / diff)"
+    command: 'f="$HOME/.local/state/lazygit/md-raw"; if [ -e "$f" ]; then rm "$f"; else mkdir -p "${f%/*}" && touch "$f"; fi'
+  # No plugin system in lazygit; open the selected markdown file full screen in glow (q to return).
+  - key: "O"
+    context: "files"
+    description: "Preview markdown file (glow)"
+    command: "if [ -f {{.SelectedPath | quote}} ]; then glow {{.SelectedPath | quote}}; else echo 'Select a file, not a folder.'; fi"
+    output: "terminal"

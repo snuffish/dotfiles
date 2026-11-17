@@ -4,6 +4,8 @@
 [[ $- == *i* ]] && ssh-add -q "$HOME/.ssh/id_rsa" 2>/dev/null
 
 # LazyGit
+# Same config on macOS and Linux, whatever lazygit's own config folder is.
+export LG_CONFIG_FILE="$HOME/.terminal/lazygit/config.yml"
 alias lg="lazygit"
 alias gs="lg status"
 alias lgl="lg log"
