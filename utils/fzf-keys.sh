@@ -24,6 +24,7 @@ session_keys() {
   ctrl-t      this dir ↔ all dirs
   ctrl-g      fuzzy over titles ↔ text in transcripts
   ctrl-r      pattern mode: regex or glob over the list
+  ctrl-p      show ↔ hide the preview
   esc         quit
 EOF
 }
