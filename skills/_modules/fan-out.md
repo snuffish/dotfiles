@@ -54,7 +54,7 @@ The only exception to *Read-only* in the *Brief contract*, and only where a Comm
 2. **Spawn in one message.** Launch all sub-agents in parallel in a single turn (cap at 5 per `MY-RULES.md`).
 3. **Read-only.** Every sub-agent brief states: *"Read-only. Make no file edits, commits, worktrees, or outward writes. Cite every claim as `path:line`."*
 4. **Paste `[worktree-context]` verbatim.** When a snapshot or workspace worktree is active (`git-worktrees` › *The `[worktree-context]` Block*), include the block in every brief and require paths mapped back to `workspace-path`.
-5. **Model.** Sub-agents run on Sonnet (in Claude Code pass `model: "sonnet"` to the Agent tool; elsewhere use the host's default) unless the Command names another. Verifiers and refute passes stay on the session model; *Review lenses* too.
+5. **Model.** Sub-agents run on Sonnet (in Claude Code pass `model: "sonnet"` to the Agent tool; elsewhere use the host's default) unless the Command names another; *Review lenses* too. Verifiers and refute passes stay on the session model.
 
 ## Aggregation
 
