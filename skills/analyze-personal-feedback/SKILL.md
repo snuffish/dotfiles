@@ -85,6 +85,8 @@ Rank by how often a theme recurs across PRs and people × how severe it is (bloc
 
 Open the newest earlier `*-personal_feedback-*.md` in the artifact dir, if one exists. For each of its top 3, say in one line whether this month's evidence shows it fading, steady or growing.
 
+Its title line holds its window (`# Personal feedback: <since> → <until>`). When that `until` falls inside this run's window, the items up to it were already counted there: judge fading, steady or growing only by the items dated after it, and say so in a `**Window overlap:**` header line. A second run in the same month gets the `-2` file name (`artifact-protocol` › _Claim_); that is expected.
+
 ### Step 6: Write the report
 
 Claim the artifact (`artifact-protocol` › _Claim_), append `appendix.md` under the last heading and link the file.
@@ -98,6 +100,7 @@ Claim the artifact (`artifact-protocol` › _Claim_), append `appendix.md` under
 
 **Sources read:** … **Not read:** … (from `notes[]`)
 **Who:** <name> <count> · …
+**Window overlap:** …   ← only when last month's window overlaps this one (Step 5)
 
 ## Top 3 ways to improve
 1. **<behaviour>.** <evidence with !PR citations and short quotes>. *Try:* <habit>.

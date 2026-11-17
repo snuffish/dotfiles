@@ -1,7 +1,8 @@
 ---
 name: plan
-description: 'Opens, inspects, creates, updates, previews or reviews the active implementation plan (<prefix>-implementation_plan-<suffix>.md). Bare /plan returns links; /plan <instructions> drafts or updates, then self-reviews before presenting; /plan preview reopens in the host preview panel; /plan --review [suffix] audits a plan or design proposal before any code is written (architecture and convention fit, edge cases, security and authorization, data and migration safety, test coverage) with a READY / NEEDS REVISION / BLOCKED verdict, read-only until /proceed. Use --review for "review this plan", "does this plan make sense?", "poke holes in this design".'
-argument-hint: "[--review [suffix] | preview [suffix] | suffix | instructions]"
+description: 'Opens, inspects, creates, updates, previews or reviews the active implementation plan (<prefix>-implementation_plan-<suffix>.md). Bare /plan returns links; /plan <instructions> drafts or updates, then self-reviews before presenting; /plan preview reopens in the host preview panel; `--model <fable|opus|sonnet|haiku>` (default fable) drafts or reviews on that model; /plan --review [suffix] audits a plan or design proposal before any code is written (architecture and convention fit, edge cases, security and authorization, data and migration safety, test coverage) with a READY / NEEDS REVISION / BLOCKED verdict, read-only until /proceed. Use --review for "review this plan", "does this plan make sense?", "poke holes in this design".'
+argument-hint: "[--model <fable|opus|sonnet|haiku>] [--review [suffix] | preview [suffix] | suffix | instructions]"
+model: fable
 ---
 
 # Skill: `/plan` — Implementation Plan Manager
@@ -72,7 +73,7 @@ A Command may add sections it needs (`/implement-feature` adds _User Review Requ
 
 ### Style
 
-The user's rule (`~/.claude/CLAUDE.md` › _Plan Mode_) applies: extremely concise, grammar sacrificed; end with **Steps**, then **Unresolved questions** (each with a recommendation, omitted when none).
+The user's rule ([`~/.terminal/claude/rules/plan-mode.md`](../../claude/rules/plan-mode.md) › _Plan Mode_) applies: extremely concise, grammar sacrificed; end with **Steps**, then **Unresolved questions** (each with a recommendation, omitted when none).
 
 Every plan writer applies it to the whole file **and to the chat response that presents the plan**:
 
@@ -91,7 +92,7 @@ Every chat response that presents a plan starts with the `artifact-protocol` ›
 
 ## 2. Core Behaviors
 
-Pick the case from the arguments, first match wins:
+Strip `--model <value>` from the arguments first (_Model flag_ below), then pick the case from the rest, first match wins:
 
 | Arguments            | Case               |
 | -------------------- | ------------------ |
@@ -99,6 +100,17 @@ Pick the case from the arguments, first match wins:
 | Start with `preview` | C: preview         |
 | None                 | A: bare            |
 | Anything else        | B: draft or update |
+
+### Model flag (`--model <fable|opus|sonnet|haiku>`)
+
+Picks the model that drafts (Case B) or reviews (Case D). Cases A and C ignore it. Default `fable`: the frontmatter's `model: fable` runs a user-typed `/plan` on Fable. A Command that chains `/plan` runs on the session model (the frontmatter does not apply there) and passes no flag, so it plans inline.
+
+1. A value outside the four → stop and list them.
+2. Absent or `fable` → run the case inline.
+3. Any other value → do not draft or review in the main context. Delegate:
+   - **Brief** (`<scratchpad>/plan-brief.md`): the case (B or D), the arguments without the flag, the resolved suffix, the user's decisions and constraints from this conversation, and the paths of any investigation, review or plan file. Leave out your own reasoning.
+   - **Spawn** one `general-purpose` sub-agent with `model: "<value>"`, told to read this SKILL.md and run that case from the brief. Case B: it writes the plan and returns its path and review verdict. Case D: it returns the report. It never waits at the gate or edits code.
+   - **Present** its result per Case B step 5 or Case D step 4, with `model: <value>` on the **Review:** or verdict line.
 
 ### Case A: Bare Command (`/plan` with no arguments or message)
 

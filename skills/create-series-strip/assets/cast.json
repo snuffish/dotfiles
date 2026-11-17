@@ -1,0 +1,24 @@
+{
+  "style": "vibrant comic book illustration, thick black ink outlines, cel shading, saturated neon colors, expressive cartoon faces, detailed cluttered background, sticker art, masterpiece, high detail",
+  "negative": "photo, photorealistic, realistic, 3d render, blurry, lowres, jpeg artifacts, text, letters, words, watermark, signature, logo text, lettering on clothing, writing on chest, signboard, speech bubble, deformed hands, extra fingers, extra limbs, bad anatomy, duplicate characters",
+  "cast": {
+    "tiger": "cartoon anthropomorphic white tiger with black stripes, bushy brown eyebrows, pink nose with freckles, small fangs, backwards red snapback cap with a tiny black crown, glowing hexagon earring, black spiked leather vest over a teal t-shirt, yellow grinning smiley pin, black and white striped arms",
+    "robot": "cute round robot mascot with a (glossy pitch black visor face)1.4 showing two orange arc happy eyes, cream white helmet with round ear pieces marked with an orange asterisk, black suit with orange stripes and an orange asterisk on the chest, white cartoon gloves",
+    "monster": "fluffy purple monster with curved golden horns, huge googly eyes, sharp teeth, tongue out, wearing headphones",
+    "monsters": "a gang of fluffy cartoon monsters in purple, lime green, blue and pink, with curved golden horns and sunglasses"
+  },
+  "avoid": {
+    "tiger": "tiger, cat, fur, stripes, animal ears, red cap",
+    "robot": "robot, helmet, visor, astronaut",
+    "monster": "monster, horns",
+    "monsters": "monsters, horns"
+  },
+  "settings": {
+    "desk": "dark gamer room at night lit by many neon monitors with glowing dashboards and progress bars, rgb keyboard, coffee mugs, green-clawed black energy drink cans, stacked books, colorful sticky notes everywhere",
+    "chaos": "dark room exploding with neon monitors, error lights, lightning sparks, crushed energy drink cans, pizza box, sticky notes flying",
+    "deploy": "big neon screen with a green checkmark, confetti, glowing green light",
+    "chill": "wooden terrace at sunset over a lake and pine forest, string lights, bean bags, bottles, relaxed vibe",
+    "meadow": "sunny flower meadow with blue sky, fluffy clouds and flying petals, jumping for joy",
+    "hug": "painterly orange and teal background with red hearts and motion lines, close-up warm hug"
+  }
+}

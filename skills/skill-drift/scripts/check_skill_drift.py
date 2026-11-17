@@ -597,6 +597,7 @@ def covered_markdown_files(repo: Repo, file_globs: list[str] | None, project: st
         for f in repo.files
         if (f.startswith("skills/") and f.endswith(".md") and not f.startswith("skills/flat-links/"))
         or f in ("claude/AGENTS.md", "claude/CLAUDE.md", "GLOSSARY.md")
+        or (f.startswith("claude/rules/") and f.endswith(".md"))
         or (f.startswith("docs/adr/") and f.endswith(".md"))
     ]
     if project:
