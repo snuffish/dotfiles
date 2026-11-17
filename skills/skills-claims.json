@@ -4747,7 +4747,7 @@
       },
       "kind": "skill_ref",
       "value": "verify-assumptions",
-      "quote": "s`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `what-am-I-missing`, `wt` |",
+      "quote": "s`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `what-am-I-missing`, `wt`, `wt-close-all` |",
       "verify": {
         "method": "skill_exists",
         "name": "verify-assumptions",
@@ -4762,7 +4762,7 @@
       },
       "kind": "skill_ref",
       "value": "visual-companion",
-      "quote": "`verify-assumptions`, `visual-companion`, `what-am-I-missing`, `wt` |",
+      "quote": "`verify-assumptions`, `visual-companion`, `what-am-I-missing`, `wt`, `wt-close-all` |",
       "verify": {
         "method": "skill_exists",
         "name": "visual-companion",
@@ -4777,7 +4777,7 @@
       },
       "kind": "skill_ref",
       "value": "what-am-I-missing",
-      "quote": "s`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `what-am-I-missing`, `wt` |",
+      "quote": "s`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `what-am-I-missing`, `wt`, `wt-close-all` |",
       "verify": {
         "method": "skill_exists",
         "name": "what-am-I-missing",
@@ -4792,7 +4792,7 @@
       },
       "kind": "skill_ref",
       "value": "wt",
-      "quote": "s`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `what-am-I-missing`, `wt` |",
+      "quote": "s`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `what-am-I-missing`, `wt`, `wt-close-all` |",
       "verify": {
         "method": "skill_exists",
         "name": "wt",
@@ -23869,7 +23869,7 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "neral (top level) | Command | 57 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `code-documentation`, `code",
+      "quote": "neral (top level) | Command | 58 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `code-documentation`, `code",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
@@ -23980,12 +23980,12 @@
       },
       "kind": "count",
       "value": "58",
-      "quote": "64 skills total \u2014 58 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "65 skills total \u2014 59 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/*/SKILL.md",
         "base": "repo",
-        "expected": 58,
+        "expected": 59,
         "op": "eq"
       }
     },
@@ -23997,7 +23997,7 @@
       },
       "kind": "count",
       "value": "6 GR.PRIIS project skills",
-      "quote": "64 skills total \u2014 58 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "65 skills total \u2014 59 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/Projects/GR.PRIIS/*/SKILL.md",
@@ -24014,7 +24014,7 @@
       },
       "kind": "count",
       "value": "8 Modules",
-      "quote": "64 skills total \u2014 58 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "65 skills total \u2014 59 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/_modules/*.md",
