@@ -27,7 +27,7 @@
       "~/.cache/agent-artifacts"
     ]
   },
-  "model": "opus[1m]",
+  "model": "opus",
   "skillOverrides": {
     "find-skills": "off",
     "problem": "off",
