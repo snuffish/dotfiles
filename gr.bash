@@ -1,6 +1,7 @@
 #!/bin/bash
 
 alias .gr="cd $HOME/Projects/GR/GR.PRIIS/"
+alias .grai="cd $HOME/Projects/GR/GR.PRIIS.AI/"
 alias .grfrontend=".gr && frontend/source/priis-web/"
 alias .grbackend=".gr && backend/source/GR.PRIIS.AppHost/"
 
