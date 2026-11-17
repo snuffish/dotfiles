@@ -4,7 +4,7 @@ Read the named file before the work it covers; it holds the full rules.
 
 - **CodeGraph:** before locating code or tracing a call flow in a repo with a `.codegraph/` directory at or above the working directory: `~/.terminal/claude/rules/codegraph.md`. With none, skip CodeGraph; indexing is the user's decision.
 - **Plans:** before writing a plan (plan mode, `/plan`): `~/.terminal/claude/rules/plan-mode.md`.
-- **Git:** before a commit, a push, a PR, or a fix plan for a reported defect: `~/.terminal/claude/rules/git.md`.
+- **Git:** before a commit, a push, a merge, a PR, or a fix plan for a reported defect: `~/.terminal/claude/rules/git.md`.
 - **Handoffs:** before writing a handoff or closing a `/proceed` step: `~/.terminal/claude/rules/handoffs.md`.
 
 ## Worktrees
