@@ -94,6 +94,11 @@ git -C <repo-root> rev-list --count @{u}..HEAD 2>/dev/null     # commits already
 - **Run independent gates at the same time**: when gates cover separate parts (backend and frontend, two repos), start the slowest with `run_in_background` and run the others meanwhile, keeping each part's own order (formatter before build or lint). Draft the Step 5 message while they run.
 - Re-stage only files already in the commit if a formatter modifies them; report any untouched files it modified.
 - **A failing gate or git hook stops the commit.** Fix mechanical formatting/lint issues inside the staged change; otherwise report the failure output and stop.
+- **`leak-guard` rejection** (the `pre-commit` hook names a file that "adds a string from .leak-denylist or .env*"; it does not name the string): fix it without asking, since `gcai` runs headless and cannot answer.
+  1. Find the string: `git -C <repo-root> grep -n -o -i -F -f <repo-root>/.leak-denylist -- <file>` (never print the denylist itself).
+  2. Replace each hit with the placeholder the file already uses for that kind of value (e.g. `<ado-org-url>`), or `<redacted>` when it has none. Edit only the added lines, then re-stage the file.
+  3. Retry the commit once. Name the replaced values as `Changed: <file>: <kind> → <placeholder>` in the output, never the value.
+  4. Still rejected, or the value is the point of the change (a private-only file in a public repo): stop and report the file and the kind. Never `--no-verify`.
 - If no pre-commit gates are documented, state `"no pre-commit gates documented"` and continue.
 
 ### Step 5: Write the message and commit
