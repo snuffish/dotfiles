@@ -9,6 +9,10 @@
 
 - Before formulating a fix plan for a reported defect, check recent commits on active PR branches (`git log -n 5 --oneline origin/main..HEAD`) to verify the defect is not already resolved upstream.
 
+## Merges
+
+- After merging a linked worktree's branch into its target (e.g. a `~/.terminal` branch into `main`) and pushing the target, remove the worktree with `~/.terminal/skills/wt-close-all/scripts/wt-close-all.sh rm none <dir>`, then delete the merged local branch with `git -C <main checkout> branch -d <branch>` (never `-D`). Skip both when this session's working directory is inside the tree. A `kept` line from `wt-rm` (another session uses it, dirty, a `.worktreeinclude` copy differs) leaves the tree and its branch; report the reason.
+
 ## Git / PR workflow
 
 - Cut new PRs from `main` unless I name another base, even when we are currently on a feature branch. Exception: work that builds on someone else's open PR stacks on that PR's branch (see memory `stack-on-others-pr-branches`).

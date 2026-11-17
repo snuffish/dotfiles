@@ -24,6 +24,7 @@ Read these before step 1:
 - Invoking `/commit` (or explicitly asking to commit/push in the current message) satisfies `outward-writes` › *Explicit request & draft mode* for this commit and push, and for the Step 7 description update of the branch's own open PR only (never its title, labels, draft state or any other PR).
 - **Never** `git add -A` / `git add .`, `--amend`, `--no-verify`, `--force` / `--force-with-lease`, `rebase`, `reset`, or `stash` here (unless the user explicitly asks for `--force-with-lease` in the current message). The one exception is Step 6 › *Behind upstream*: `git pull --rebase --autostash` of this branch's own unpushed commits onto `@{u}`.
 - Every command uses `git -C <repo-root> …` (`git-worktrees` › *Golden Invariants*).
+- `<wt>` is `../wt-close-all/scripts/wt-close-all.sh` in this skill's real folder (Step 8).
 
 ---
 
@@ -153,6 +154,12 @@ Skip under `no-push` or when the push failed.
    - Apply only the description per `pr-desc` › *Apply* item 3 (body from `<scratchpad>/pr-<id>/body.md`; on Azure DevOps always pass `--draft <isDraft>` from the read-back). Then read it back per `outward-writes` › *Read back*.
    - A denied or failed write → print the body and the exact command, then continue to the output.
 
+### Step 8: Remove the worktree
+
+Skip under `no-push`, when the push failed, or when `<repo-root>` is the main checkout (`git -C <repo-root> rev-parse --path-format=absolute --git-common-dir` is `<repo-root>/.git`). Also skip when this session's working directory is inside `<repo-root>` (`EnterWorktree`, `gcai` run from a shell in the tree): removing it pulls the directory out from under the session or shell. `/wt-close-all` removes those after `ExitWorktree`.
+
+Otherwise run `<wt> rm none <repo-root>`. `none` matches no session, so every running session counts as live, this one included: a tree that a `/proceed` or `/wt` run owns stays for that run's own *Remove* step. `wt-rm` removes the tree only when `wt-status` classes it `safe` and keeps its branch; a `kept` line names the reason (`keep:live`, `keep:dirty`, `keep:include`), so report it and leave the tree.
+
 ---
 
 ## 3. Output Format & Deliverables
@@ -167,11 +174,12 @@ Skip under `no-push` or when the push failed.
 - Stale: <n> manual-part lines contradict the change: "<quote>" → <now> (or: none)
 - Stack: `<branch>` → `<TGT>` !<id> → `main` (or: not stacked)
 - ⚠️ `<TGT>` is <n> commits behind `main`: rebase the base first (only when it is)
+- Worktree: removed `<repo-root>` (or: kept: <reason> · skipped: main checkout | session inside it)
 
 Next: <one action, e.g. rebasing the base or opening a PR>.
 ```
 
-Under `no-push`, state the commit is local and how many commits are unpushed, and leave out the PR and Stack lines.
+Under `no-push`, state the commit is local and how many commits are unpushed, and leave out the PR, Stack and Worktree lines.
 
 ---
 
@@ -179,5 +187,6 @@ Under `no-push`, state the commit is local and how many commits are unpushed, an
 
 - `git -C <repo-root> log -1 --format='%h %s'` and `show --stat HEAD` match the intended files and convention.
 - After pushing, `git -C <repo-root> rev-list --count @{u}..HEAD` is `0` and `@{u}` is `origin/<branch>`.
+- After Step 8, `git -C <main checkout> worktree list` no longer lists a removed `<repo-root>`.
 - After Step 7, the live PR description matches `<scratchpad>/pr-<id>/body.md`, everything outside the markers matches `previous.md`, and on Azure DevOps `isDraft` is unchanged.
 - `git -C <repo-root> status --short` holds only the excluded files named in chat; no amend, force-push, `--no-verify`, reset, or stash ran, and no rebase except Step 6 › *Behind upstream* (named in the output with the incoming commits).

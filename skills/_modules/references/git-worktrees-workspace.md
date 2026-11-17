@@ -123,4 +123,4 @@ git -C <repo> worktree prune                 # drops admin entries whose directo
 ls <repo>/.claude/worktrees/                 # directories with no admin entry are orphans — list them, never delete silently
 ```
 
-A locked `claude-skill:` worktree from an earlier session is reported to the user with its reason; a new run's own steps never remove it. Only `wt-sweep` (`~/.terminal/wt.bash`; SessionEnd hook and `gw` Alt-C) removes one, when no running session's cwd is inside it and it is clean, pushed and its `.worktreeinclude` copies match the main checkout.
+A locked `claude-skill:` worktree from an earlier session is reported to the user with its reason; a new run's own steps never remove it. Only `wt-sweep` (`~/.terminal/wt.bash`; SessionEnd hook and `gw` Alt-C) and `wt-rm` without `--self` (`commit` › *Step 8: Remove the worktree*, a merge per the merge rule in `~/.terminal/claude/rules/git.md`) remove one, when no running session's cwd is inside it and it is clean, pushed and its `.worktreeinclude` copies match the main checkout.
