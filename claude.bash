@@ -116,9 +116,22 @@ function gcai() {
   claude-p --model sonnet "/commit $*"
 }
 
-# Close every linked worktree of the current repo with Claude's /wt-close-all skill; args are passed to it
+# Close every linked worktree of the current repo (or the repo dir in $1) with Claude's /wt-close-all skill; args are
+# passed to it. Claude starts only when a tree on a branch is dirty or unpushed with no live session (the skill's commit
+# rows); otherwise wt-sweep removes the safe trees and lists the kept ones with their reason, at no model cost
 function gwtclear() {
-  claude-p "/wt-close-all $*"
+  local repo=. rows
+  [[ -d "$1" ]] && repo=$1
+  rows=$(wt-status "$repo") || return 1
+  if [[ -z "$rows" ]]; then
+    echo "gwtclear: no linked worktrees"
+    return 0
+  fi
+  if awk -F '\t' '$2 != "(detached)" && ($6 == "keep:dirty" || $6 == "keep:unpushed") { found = 1 } END { exit !found }' <<<"$rows"; then
+    claude-p "/wt-close-all $*"
+  else
+    wt-sweep --apply "$repo"
+  fi
 }
 
 # Merge with Claude in print mode, in a new git worktree so the checkout stays clean; args are appended to the prompt
