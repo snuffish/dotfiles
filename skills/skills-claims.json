@@ -4534,7 +4534,7 @@
       },
       "kind": "skill_ref",
       "value": "investigate",
-      "quote": "doff`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `no-wt`, `org",
+      "quote": "`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `modern-csharp`, ",
       "verify": {
         "method": "skill_exists",
         "name": "investigate",
@@ -4609,7 +4609,7 @@
       },
       "kind": "skill_ref",
       "value": "remember-this",
-      "quote": "rview`, `problem`, `proceed`, `push`, `refine`, `remember-this`, `resolve-conflicts`, `shape-idea`, `sk",
+      "quote": "w`, `problem`, `proceed`, `push`, `refine`, `remember-this`, `resolve-conflicts`, `shape-idea`, `ship`,",
       "verify": {
         "method": "skill_exists",
         "name": "remember-this",
@@ -4624,7 +4624,7 @@
       },
       "kind": "skill_ref",
       "value": "resolve-conflicts",
-      "quote": ", `proceed`, `push`, `refine`, `remember-this`, `resolve-conflicts`, `shape-idea`, `skill-drift`, `skill-ga",
+      "quote": "roceed`, `push`, `refine`, `remember-this`, `resolve-conflicts`, `shape-idea`, `ship`, `skill-drift`, `skil",
       "verify": {
         "method": "skill_exists",
         "name": "resolve-conflicts",
@@ -4639,7 +4639,7 @@
       },
       "kind": "skill_ref",
       "value": "skill-drift",
-      "quote": "is`, `resolve-conflicts`, `shape-idea`, `skill-drift`, `skill-gap`, `skill-review`, `simplify",
+      "quote": "solve-conflicts`, `shape-idea`, `ship`, `skill-drift`, `skill-gap`, `skill-review`, `simplify",
       "verify": {
         "method": "skill_exists",
         "name": "skill-drift",
@@ -4654,7 +4654,7 @@
       },
       "kind": "skill_ref",
       "value": "skill-gap",
-      "quote": "onflicts`, `shape-idea`, `skill-drift`, `skill-gap`, `skill-review`, `simplify`, `simplify-",
+      "quote": "`, `shape-idea`, `ship`, `skill-drift`, `skill-gap`, `skill-review`, `simplify`, `simplify-",
       "verify": {
         "method": "skill_exists",
         "name": "skill-gap",
@@ -5006,7 +5006,7 @@
       },
       "kind": "skill_ref",
       "value": "insights",
-      "quote": "ll-me`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `no-w",
+      "quote": "ll-me`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `mode",
       "verify": {
         "method": "skill_exists",
         "name": "insights",
@@ -23869,7 +23869,7 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "neral (top level) | Command | 58 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `code-documentation`, `code",
+      "quote": "neral (top level) | Command | 60 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `code-documentation`, `code",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
@@ -23884,7 +23884,7 @@
       },
       "kind": "skill_ref",
       "value": "manual-testing",
-      "quote": "`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `no-wt`, `organize`, `parity-audit`, `plan`, `pr-desc`, `pr-",
+      "quote": "`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `modern-csharp`, `no-wt`, `organize`, `parity-audit`, `plan`",
       "verify": {
         "method": "skill_exists",
         "name": "manual-testing",
@@ -23899,7 +23899,7 @@
       },
       "kind": "skill_ref",
       "value": "no-wt",
-      "quote": "`implement-feature`, `insights`, `investigate`, `manual-testing`, `no-wt`, `organize`, `parity-audit`, `plan`, `pr-desc`, `pr-feedback-revie",
+      "quote": "e`, `insights`, `investigate`, `manual-testing`, `modern-csharp`, `no-wt`, `organize`, `parity-audit`, `plan`, `pr-desc`, `pr-feedback-revie",
       "verify": {
         "method": "skill_exists",
         "name": "no-wt",
@@ -23914,7 +23914,7 @@
       },
       "kind": "skill_ref",
       "value": "organize",
-      "quote": "-feature`, `insights`, `investigate`, `manual-testing`, `no-wt`, `organize`, `parity-audit`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fi",
+      "quote": "hts`, `investigate`, `manual-testing`, `modern-csharp`, `no-wt`, `organize`, `parity-audit`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fi",
       "verify": {
         "method": "skill_exists",
         "name": "organize",
@@ -23932,7 +23932,7 @@
       },
       "kind": "skill_ref",
       "value": "plan",
-      "quote": "vestigate`, `manual-testing`, `no-wt`, `organize`, `parity-audit`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`,",
+      "quote": "l-testing`, `modern-csharp`, `no-wt`, `organize`, `parity-audit`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, ",
       "verify": {
         "method": "skill_exists",
         "name": "plan",
@@ -23950,7 +23950,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-feedback-review",
-      "quote": "g`, `no-wt`, `organize`, `parity-audit`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `princ",
+      "quote": "p`, `no-wt`, `organize`, `parity-audit`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `princ",
       "verify": {
         "method": "skill_exists",
         "name": "pr-feedback-review",
@@ -23980,12 +23980,12 @@
       },
       "kind": "count",
       "value": "58",
-      "quote": "65 skills total \u2014 59 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "66 skills total \u2014 60 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/*/SKILL.md",
         "base": "repo",
-        "expected": 59,
+        "expected": 60,
         "op": "eq"
       }
     },
@@ -23997,7 +23997,7 @@
       },
       "kind": "count",
       "value": "6 GR.PRIIS project skills",
-      "quote": "65 skills total \u2014 59 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "66 skills total \u2014 60 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/Projects/GR.PRIIS/*/SKILL.md",
@@ -24014,7 +24014,7 @@
       },
       "kind": "count",
       "value": "8 Modules",
-      "quote": "65 skills total \u2014 59 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "66 skills total \u2014 60 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/_modules/*.md",
@@ -24031,7 +24031,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-desc",
-      "quote": ", `manual-testing`, `no-wt`, `organize`, `parity-audit`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-c",
+      "quote": "`, `modern-csharp`, `no-wt`, `organize`, `parity-audit`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-c",
       "verify": {
         "method": "skill_exists",
         "name": "pr-desc",

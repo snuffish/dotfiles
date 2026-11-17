@@ -39,11 +39,11 @@ skills/
 
 ## Inventory
 
-65 skills total — 59 general + 6 under `Projects/GR.PRIIS/` — plus 8 Modules.
+66 skills total — 60 general + 6 under `Projects/GR.PRIIS/` — plus 8 Modules.
 
 | Group | Kind | Count | Entries |
 | --- | --- | :---: | --- |
-| General (top level) | Command | 58 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-series-strip`, `create-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `fix-findings`, `grill-me`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `no-wt`, `organize`, `parity-audit`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `push`, `refine`, `remember-this`, `resolve-conflicts`, `shape-idea`, `skill-drift`, `skill-gap`, `skill-review`, `simplify`, `simplify-branch`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `what-am-I-missing`, `wt`, `wt-close-all` |
+| General (top level) | Command | 60 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `code-documentation`, `code-review`, `commit`, `continue`, `create-prompt`, `create-series-strip`, `create-skill`, `create-ticket`, `explain`, `export-file`, `expressive`, `fix-findings`, `grill-me`, `handoff`, `implement-feature`, `insights`, `investigate`, `manual-testing`, `modern-csharp`, `no-wt`, `organize`, `parity-audit`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `push`, `refine`, `remember-this`, `resolve-conflicts`, `shape-idea`, `ship`, `skill-drift`, `skill-gap`, `skill-review`, `simplify`, `simplify-branch`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `what-am-I-missing`, `wt`, `wt-close-all` |
 | General (top level) | Reference | 1 | `modern-csharp` |
 | `GR.PRIIS/priis-prod-*` | Command | 1 | `diagnose` (production diagnosis over remote desktop: read-only T-SQL rounds) |
 | `GR.PRIIS/priis-backend-*` | Reference | 1 | `dry` (the other PRIIS team skills ship in the repo's `.claude/skills/`, not here) |
