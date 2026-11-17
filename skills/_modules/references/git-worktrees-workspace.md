@@ -17,6 +17,18 @@ When `<git-dir>` differs from `<common-dir>`:
 2. A tree made by `cw` (detached, no branch: the user switches it to a branch themselves) or the WorktreeCreate hook (`wt-new`, convention branch) is already locked: skip to step 3. If the current branch matches `worktree-*`, rename it in place to the project's branch convention (`git -C <repo-root> branch -m <branch>`) and unset any accidental upstream to `origin/<default>` (`git -C <repo-root> branch --unset-upstream`; an error that no upstream is set is fine).
 3. Lock the worktree with the standard `claude-skill:` reason if not already locked, emit the `[worktree-context]` block, and proceed directly to **Hydrate**.
 
+## Continue a kept worktree
+
+When a plan, handoff or work state names a kept worktree (locked `claude-skill:` reason) that this session did not create, continue in it instead of creating another, and re-own its lock first. The statusline shows `wt→<name>` only for the session named in the lock reason (*Create*), so a reused worktree whose reason still names the earlier session shows `no-wt`.
+
+```bash
+git -C <repo> worktree list --porcelain          # read the 'locked <reason>' line of <dir>
+git -C <repo> worktree unlock <dir>
+git -C <repo> worktree lock --reason "<the same reason with session:<old-id> replaced by session:<session-id>>" <dir>
+```
+
+Keep every other field of the reason (`claude-skill:`, `ticket:`, `branch:`, `started:`). Only one session owns a worktree: the earlier session, if still running, loses its `wt→` marker. Then emit the `[worktree-context]` block and go on to **Hydrate** when needed.
+
 ## Base and branch
 
 ```bash
