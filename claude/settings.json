@@ -11,6 +11,7 @@
       "Bash(grep:*)",
       "Bash(git diff:*)",
       "Bash(git status:*)",
+      "Bash(git -C /Users/snuffish/.terminal push)",
       "Bash(quiet dotnet format:*)",
       "Bash(quiet dotnet build:*)",
       "Bash(quiet dotnet test:*)",
