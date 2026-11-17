@@ -116,6 +116,11 @@ function gcai() {
   claude-p --model sonnet "/commit $*"
 }
 
+# Close every linked worktree of the current repo with Claude's /wt-close-all skill; args are passed to it
+function gwtclear() {
+  claude-p "/wt-close-all $*"
+}
+
 # Merge with Claude in print mode, in a new git worktree so the checkout stays clean; args are appended to the prompt
 # (e.g. a branch or PR to merge). The name keeps --worktree from taking the prompt as its name; claude-p cleans it up
 function ccmerge() {
