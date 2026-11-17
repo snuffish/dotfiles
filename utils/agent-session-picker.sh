@@ -76,6 +76,7 @@ print("\n".join(out_lines))
       --bind="ctrl-t:transform:bash $driver key scope" \
       --bind="ctrl-g:transform:bash $driver key mode" \
       --bind="ctrl-r:transform:bash $driver key pattern" \
+      --bind="ctrl-p:toggle-preview" \
       --bind="change:transform:bash $driver key change" \
       --bind="ctrl-s:execute-silent(printf %s {5} | (wl-copy 2>/dev/null || xclip -selection clipboard 2>/dev/null || pbcopy 2>/dev/null))+abort" \
       "${extra_binds[@]}" \
