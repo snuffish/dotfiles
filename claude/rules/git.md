@@ -11,7 +11,7 @@
 
 ## Merges
 
-- After merging a linked worktree's branch into its target (e.g. a `~/.terminal` branch into `main`) and pushing the target, remove the worktree with `~/.terminal/skills/wt-close-all/scripts/wt-close-all.sh rm none <dir>`, then delete the merged local branch with `git -C <main checkout> branch -d <branch>` (never `-D`). Skip both when this session's working directory is inside the tree. A `kept` line from `wt-rm` (another session uses it, dirty, a `.worktreeinclude` copy differs) leaves the tree and its branch; report the reason.
+- After merging a linked worktree's branch into its target (e.g. a `~/.terminal` branch into `main`) and pushing the target, remove the worktree with `~/.terminal/skills/wt-close-all/scripts/wt-close-all.sh rm <id> <dir>`, where `<id>` is this session's id when the tree's lock reason names it (`session:<id>`; with `none` its own run reads as live and the tree is kept as `keep:live`) and `none` otherwise, then delete the merged local branch with `git -C <main checkout> branch -d <branch>` (never `-D`). Skip both when this session's working directory is inside the tree. A `kept` line from `wt-rm` (another session uses it, dirty, a `.worktreeinclude` copy differs) leaves the tree and its branch; report the reason.
 
 ## Git / PR workflow
 

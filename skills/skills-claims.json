@@ -25712,6 +25712,154 @@
         "base": "repo",
         "expect": "present"
       }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:56:other:branch_scope.py emits unmapped_tests",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 56
+      },
+      "kind": "other",
+      "value": "branch_scope.py emits unmapped_tests",
+      "quote": "`unmapped_tests` lists the test files with no single match",
+      "verify": {
+        "method": "grep",
+        "pattern": "out\\[\"unmapped_tests\"\\]",
+        "paths": [
+          "skills/simplify-branch/scripts/branch_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-branch/SKILL.md:56:other:tests-only keys fold into a source key",
+      "source": {
+        "file": "skills/simplify-branch/SKILL.md",
+        "line": 56
+      },
+      "kind": "other",
+      "value": "tests-only keys fold into a source key",
+      "quote": "A tests-only key joins the one source key ending in the same folder",
+      "verify": {
+        "method": "grep",
+        "pattern": "def fold_test_only_groups\\(",
+        "paths": [
+          "skills/simplify-branch/scripts/branch_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/commit/SKILL.md:161:cli_command:wt-close-all.sh rm <session id>",
+      "source": {
+        "file": "skills/commit/SKILL.md",
+        "line": 161
+      },
+      "kind": "cli_command",
+      "value": "wt-close-all.sh rm <session id>",
+      "quote": "run `<wt> rm <this session's id> <repo-root>` instead",
+      "verify": {
+        "method": "grep",
+        "pattern": "rm <session id> <dir>",
+        "paths": [
+          "skills/wt-close-all/scripts/wt-close-all.sh"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "claude/rules/git.md:14:cli_command:wt-close-all.sh rm <id>",
+      "source": {
+        "file": "claude/rules/git.md",
+        "line": 14
+      },
+      "kind": "cli_command",
+      "value": "wt-close-all.sh rm <id>",
+      "quote": "wt-close-all.sh rm <id> <dir>`, where `<id>` is this session's id",
+      "verify": {
+        "method": "grep",
+        "pattern": "rm\\) wt-rm --self \"\\$2\" \"\\$3\"",
+        "paths": [
+          "skills/wt-close-all/scripts/wt-close-all.sh"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/_modules/references/git-worktrees-workspace.md:114:path:skills/wt-close-all/scripts/wt-close-all.sh",
+      "source": {
+        "file": "skills/_modules/references/git-worktrees-workspace.md",
+        "line": 114
+      },
+      "kind": "path",
+      "value": "skills/wt-close-all/scripts/wt-close-all.sh",
+      "quote": "remove it with `~/.terminal/skills/wt-close-all/scripts/wt-close-all.sh rm <this session's id> \"$DIR\"`",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/wt-close-all/scripts/wt-close-all.sh",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/code-review/SKILL.md:95:cli_command:git hash-object -t tree /dev/null",
+      "source": {
+        "file": "skills/code-review/SKILL.md",
+        "line": 95
+      },
+      "kind": "cli_command",
+      "value": "git hash-object -t tree /dev/null",
+      "quote": "base is the empty tree (`git hash-object -t tree /dev/null`)",
+      "verify": {
+        "method": "manual",
+        "reason": "prints the empty-tree id 4b825dc642cb6eb9a060e54bf8d69288fbee4904 (checked 2026-11-18)"
+      }
+    },
+    {
+      "id": "skills/subagent/SKILL.md:61:other:Agent tool effort input",
+      "source": {
+        "file": "skills/subagent/SKILL.md",
+        "line": 61
+      },
+      "kind": "other",
+      "value": "Agent tool effort input",
+      "quote": "`--effort` goes to the Agent tool's `effort` input",
+      "verify": {
+        "method": "manual",
+        "reason": "Claude Code Agent tool schema has an `effort` enum low|medium|high|xhigh|max (2026-11-18)"
+      }
+    },
+    {
+      "id": "skills/pr-desc/SKILL.md:136:other:MCP PR update without isDraft publishes a draft",
+      "source": {
+        "file": "skills/pr-desc/SKILL.md",
+        "line": 136
+      },
+      "kind": "other",
+      "value": "MCP PR update without isDraft publishes a draft",
+      "quote": "pass `isDraft` with the value from item 2's read-back",
+      "verify": {
+        "method": "manual",
+        "reason": "azure-devops MCP repo_pull_request_write update without isDraft returned isDraft false on draft !19126 (2026-11-18)"
+      }
+    },
+    {
+      "id": "skills/_modules/pr-host.md:97:cli_command:az login --allow-no-subscriptions",
+      "source": {
+        "file": "skills/_modules/pr-host.md",
+        "line": 97
+      },
+      "kind": "cli_command",
+      "value": "az login --allow-no-subscriptions",
+      "quote": "else `az login --allow-no-subscriptions`",
+      "verify": {
+        "method": "manual",
+        "reason": "az devops login reads a PAT from stdin; az login --allow-no-subscriptions worked for the GR guest account (gap 2026-11-17)"
+      }
     }
   ]
 }

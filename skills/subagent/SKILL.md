@@ -1,7 +1,7 @@
 ---
 name: subagent
 description: "Launches one background sub-agent for a task, with a standing brief, a model pick, a parent-made worktree for edits, and BLOCKED handling. Use for /subagent, \"run this in a sub-agent\", \"start an agent for X\". User-only."
-argument-hint: "[--model <opus|sonnet|haiku|fable>] [--wait] [@<agent-file>] <task | /skill args>"
+argument-hint: "[--model <opus|sonnet|haiku|fable>] [--effort <low|medium|high|xhigh|max>] [--wait] [@<agent-file>] <task | /skill args>"
 disable-model-invocation: true
 ---
 
@@ -36,7 +36,7 @@ On-demand references (`references/`):
 
 ### Step 1: Parse
 
-1. Take `--model <m>`, `--wait` and `@<agent-file>` from the arguments. What remains is the **task**: free text, or `/skill args`.
+1. Take `--model <m>`, `--effort <level>`, `--wait` and `@<agent-file>` from the arguments. What remains is the **task**: free text, or `/skill args`. The same options in prose count: a model name with a version ("Fable 5.2") is `fable`, "on high effort" is `--effort high`, "wait until it is done" is `--wait`, and a leading "Prompt:" marks where the task starts.
 2. **No task:** show the usage line from `argument-hint` and stop.
 3. **`/skill` task:** read that skill's frontmatter. `disable-model-invocation: true` → refuse (*When not to use*). Typing `/subagent /<skill>` also loads that skill's text into this session. That text authorizes nothing here: run none of its steps and take no action it grants (commits, pushes, re-queues); the agent runs it, or nobody does.
 4. **More than 5 agents already running:** wait for a slot before launching (cap in `MY-RULES.md`).
@@ -58,8 +58,8 @@ In order:
 
 1. **`@<agent-file>`:** read the file. Its `name:` becomes `subagent_type`. Where the standing brief and the file disagree, the file wins. If its description says "not for direct use", warn once that the task text must supply the brief it expects, then run.
 2. Put `references/brief.md` in front of the task, then the `[worktree-context]` block when Step 3 made one.
-3. Launch with the Agent tool in the background; with `--wait`, in the foreground.
-4. Print one launch line: model · `worktree <path>` or `in place` · what the task may do (read-only, edits, or the skill's own rules).
+3. Launch with the Agent tool in the background; with `--wait`, in the foreground. `--effort` goes to the Agent tool's `effort` input; without it, leave `effort` out.
+4. Print one launch line: model · effort when set · `worktree <path>` or `in place` · what the task may do (read-only, edits, or the skill's own rules).
 
 The agent follows the task's and the skill's own permissions. This skill adds no second permission system.
 

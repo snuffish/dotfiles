@@ -94,6 +94,6 @@ Read [references/pr-host-threads.md](references/pr-host-threads.md) for the Azur
 ## When a fetch fails
 
 Never guess a PR description or work item from a branch name:
-- **Authentication error**: give the user `az devops login --organization <org-url>` (or `gh auth login`), continue diff-only meanwhile, and say so. Try the alternate Azure DevOps org URL form only after login fails.
+- **Authentication error**: give the user the sign-in command: the profile's, else `az login --allow-no-subscriptions` (not `az devops login`: it reads a PAT from stdin and fails under `!`); on GitHub `gh auth login`. Continue diff-only meanwhile and say so. Try the alternate Azure DevOps org URL form only after login fails.
 - **CLI missing or fetch blocked**: say which tool is missing or blocked, offer to work diff-only, or ask the user to paste the description. Never treat a login-redirect HTML page from a web fetch as the PR.
 - **Offline fallback**: extract the work-item ID from `git -C <repo> rev-parse --abbrev-ref HEAD` and `git -C <repo> log --oneline <base>..HEAD` to cite the ID, and state explicitly that acceptance criteria were not fetched.

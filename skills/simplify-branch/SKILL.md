@@ -53,7 +53,7 @@ It prints JSON and resolves the base in this order: `--base`, then the target of
 - `committed`: `git diff --name-only --diff-filter=d <merge-base>...HEAD`
 - `working_tree`: uncommitted tracked changes and untracked files (empty with `--committed-only`)
 - `files`: both lists combined, minus `skipped_generated` (lockfiles, `*.Designer.cs`, `*ModelSnapshot.cs`, `Migrations/`, `*.gen.ts`, `swagger.json`, …) and `skipped_docs` (`*.md`, `*.html`, `*.txt`, `*.log`)
-- `churn`: `[added, deleted]` lines per file against the merge base; `groups`: files, added and deleted per parent folder, largest first; `namespaces`: the same per namespace-like key (`Library/DataAccess/Models`, `API/Features/Operations`, `web/routes/operations`; `--depth N` folders below the project, default 2), source files in `files`, their mirrored test files in `tests`, and a ready `simplify` line (`/simplify <paths>`)
+- `churn`: `[added, deleted]` lines per file against the merge base; `groups`: files, added and deleted per parent folder, largest first; `namespaces`: the same per namespace-like key (`Library/DataAccess/Models`, `API/Features/Operations`, `web/routes/operations`; `--depth N` folders below the project, default 2), source files in `files`, their mirrored test files in `tests`, and a ready `simplify` line (`/simplify <paths>`). A tests-only key joins the one source key ending in the same folder (`API/Features/MatchingTickets/Jobs` → `Library/Feature/Matching/Jobs`); `unmapped_tests` lists the test files with no single match, for the lead to place by hand
 
 Exit codes: `0` means there are files in scope. `1` means nothing is in scope: say so and stop. `2` means the script hit an error (detached HEAD, unknown base, or `origin/HEAD` unset): show the `error` and ask for `--base`.
 
@@ -65,7 +65,7 @@ Save `git rev-parse HEAD` and `git status --porcelain`, so Phase B can notice ch
 
 #### Step 3: Build the matrix
 
-1. **Rows.** Each row is one namespace group, so it can be run later as a manual `/simplify <paths>`. Take `namespaces` as the units; fold tiny ones (under ~20 changed lines) into the nearest parent key (`Library/DataAccess` into `Library/DataAccess/Models`) and keep tests with their source namespace. Never merge across projects or halves, and never regroup by feature area: a row's name is its namespace key. At most ~12 rows. Label rows `A`, `B`, `C`, … (shortcuts for `/proceed`; the namespace key is the stable name)
+1. **Rows.** Each row is one namespace group, so it can be run later as a manual `/simplify <paths>`. Take `namespaces` as the units; fold tiny ones (under ~20 changed lines) into the nearest parent key (`Library/DataAccess` into `Library/DataAccess/Models`) and keep tests with their source namespace (tests the script folded into a source key stay there; put each `unmapped_tests` file in the row of the source it covers). Never merge across projects or halves, and never regroup by feature area: a row's name is its namespace key. At most ~12 rows. Label rows `A`, `B`, `C`, … (shortcuts for `/proceed`; the namespace key is the stable name)
 2. **Skim.** For each row, read its diff (`git diff <merge-base> -- <files>`; read untracked files whole). This is a skim, not a review: note only the signals you can point at.
 3. **Cells.** For each of `/simplify`'s four angles, put `●` (clear candidate, with a `file:line` in the hint), `○` (possible) or `–` (nothing seen):
    - **Reuse**: new code that looks like an existing helper

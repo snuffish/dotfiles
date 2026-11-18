@@ -36,11 +36,18 @@ def pr_target(branch):
     except (OSError, subprocess.TimeoutExpired):
         return None, "az unavailable"
     if r.returncode != 0:
-        return None, "az failed"
+        return None, f"az failed: {(r.stderr.strip().splitlines() or ['no message'])[-1]}"
     targets = sorted(set(json.loads(r.stdout or "[]")))
     if len(targets) == 1:
         return targets[0].removeprefix("refs/heads/"), "pr"
-    return None, "no active PR" if not targets else f"several PR targets: {targets}"
+    if targets:
+        return None, f"several PR targets: {targets}"
+    try:
+        org = subprocess.run(["az", "devops", "configure", "--list"], capture_output=True, text=True, timeout=30).stdout
+    except (OSError, subprocess.TimeoutExpired):
+        org = ""
+    org = next((l.split("=", 1)[1].strip() for l in org.splitlines() if l.strip().startswith("organization")), "")
+    return None, f"no active PR for source branch '{branch}' in org '{org or 'unset (az devops configure)'}'"
 
 
 DOCS = ("*.md", "*.html", "*.txt", "*.log")
@@ -95,9 +102,30 @@ def namespace_groups(files, churn, depth):
         g["tests" if is_test else "files"].append(f)
         g["added"] += churn[f][0]
         g["deleted"] += churn[f][1]
+    unmapped = fold_test_only_groups(groups)
     for g in groups.values():
         g["simplify"] = "/simplify " + " ".join(g["files"] + g["tests"])
-    return dict(sorted(groups.items(), key=lambda kv: -(kv[1]["added"] + kv[1]["deleted"])))
+    return dict(sorted(groups.items(), key=lambda kv: -(kv[1]["added"] + kv[1]["deleted"]))), unmapped
+
+
+def fold_test_only_groups(groups):
+    """Moves each tests-only group into the one source group of the same project family whose key ends in the
+    same folder (API integration tests under `MatchingTickets/Jobs` cover `Library/Feature/Matching/Jobs`).
+    Returns the test files of tests-only groups with no single match, so the lead remaps them by hand."""
+    unmapped = []
+    for key in [k for k, g in groups.items() if g["tests"] and not g["files"]]:
+        leaf = key.rsplit("/", 1)[-1]
+        top = key.split("/", 1)[0]
+        matches = [k for k, g in groups.items()
+                   if g["files"] and k.rsplit("/", 1)[-1] == leaf and (k.split("/", 1)[0] == "web") == (top == "web")]
+        if len(matches) != 1:
+            unmapped += groups[key]["tests"]
+            continue
+        src, tests = groups[matches[0]], groups.pop(key)
+        src["tests"] += tests["tests"]
+        src["added"] += tests["added"]
+        src["deleted"] += tests["deleted"]
+    return sorted(unmapped)
 
 
 def main():
@@ -179,7 +207,7 @@ def main():
         g["added"] += out["churn"][f][0]
         g["deleted"] += out["churn"][f][1]
     out["groups"] = dict(sorted(groups.items(), key=lambda kv: -(kv[1]["added"] + kv[1]["deleted"])))
-    out["namespaces"] = namespace_groups(out["files"], out["churn"], a.depth)
+    out["namespaces"], out["unmapped_tests"] = namespace_groups(out["files"], out["churn"], a.depth)
     print(json.dumps(out, indent=2))
     return 0 if out["files"] else 1
 

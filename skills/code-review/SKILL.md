@@ -92,8 +92,9 @@ Resolve the scope and materialise the pinned head in a detached snapshot worktre
 | `frontend` / `backend` | Branch diff scoped to that directory |
 | PR URL or bare PR ID | Resolve via `pr-host`, then run `pr-counterpart` › *Counterpart discovery* |
 | Work item / issue ID (`#30342`) | Read the work item via `pr-host`, then find its PR or branch |
+| `repo` / `whole repo` / `first review` | Every tracked file at HEAD: base is the empty tree (`git hash-object -t tree /dev/null`); lane briefs skip data, lock and generated files |
 
-Confirm `<base>` resolves and the diff is non-empty before proceeding. Follow [Snapshot & Scope Mechanics](references/snapshot-and-scope.md) for snapshot head selection, PR/counterpart handling, and cross-repo contract reads.
+Confirm `<base>` resolves and the diff is non-empty before proceeding. An empty default diff on a clean default branch with no open PR: ask with AskUserQuestion, offering `whole repo` beside the latest merge. Follow [Snapshot & Scope Mechanics](references/snapshot-and-scope.md) for snapshot head selection, PR/counterpart handling, and cross-repo contract reads.
 
 ---
 

@@ -158,7 +158,7 @@ Skip under `no-push` or when the push failed.
 
 Skip under `no-push`, when the push failed, or when `<repo-root>` is the main checkout (`git -C <repo-root> rev-parse --path-format=absolute --git-common-dir` is `<repo-root>/.git`). Also skip when this session's working directory is inside `<repo-root>` (`EnterWorktree`, `gcai` run from a shell in the tree): removing it pulls the directory out from under the session or shell. `/wt-close-all` removes those after `ExitWorktree`.
 
-Otherwise run `<wt> rm none <repo-root>`. `none` matches no session, so every running session counts as live, this one included: a tree that a `/proceed` or `/wt` run owns stays for that run's own *Remove* step. `wt-rm` removes the tree only when `wt-status` classes it `safe` and keeps its branch; a `kept` line names the reason (`keep:live`, `keep:dirty`, `keep:include`), so report it and leave the tree.
+Otherwise run `<wt> rm none <repo-root>`. `none` matches no session, so every running session counts as live, this one included: a tree that a `/proceed` or `/wt` run owns stays for that run's own *Remove* step. When that run is this session (its id is the `session:` field of the tree's lock reason), run `<wt> rm <this session's id> <repo-root>` instead, so its own lock doesn't read as live. `wt-rm` removes the tree only when `wt-status` classes it `safe` and keeps its branch; a `kept` line names the reason (`keep:live`, `keep:dirty`, `keep:include`), so report it and leave the tree.
 
 ---
 

@@ -133,7 +133,7 @@ Print:
 1. **Locate the PR(s)**: reuse the PR from Step 2 and the counterpart from Step 3.3 (`pr-counterpart` › *Counterpart discovery* across repos). When a cross-repo counterpart exists, fill each PR's footer relation link (`This PR relates to: !<other-id>`) with the real counterpart ID before updating.
 2. **Read-back before overwrite**: fetch and display the current `title`, `description`/`body`, and (on Azure DevOps) `isDraft` (`az repos pr show --id <id> --org <org-url>` / `gh pr view <id> --json title,body`).
 3. **Write from scratchpad files**: the body from `<scratchpad>/pr-<id>/body.md`, and the title from `<scratchpad>/pr-<id>/title.txt` when replacing it. Never inline markdown in shell arguments; the shell would run the backticks.
-   - **Azure DevOps**: prefer the MCP `repo_pull_request_write` with `action: update`, `repositoryId`, `pullRequestId`, `description` (the file's text), and `title` when replacing; leave `isDraft` out so the PR keeps its draft state. If the MCP is unavailable or denied, run `az repos pr update --id <id> --org <org-url> --description "$(cat <scratchpad>/pr-<id>/body.md)" --query "{id:pullRequestId,draft:isDraft}" -o json` (plus `--title "$(cat <scratchpad>/pr-<id>/title.txt)"` when replacing). If `draft` in the output differs from the read-back value, say so in the report.
+   - **Azure DevOps**: prefer the MCP `repo_pull_request_write` with `action: update`, `repositoryId`, `pullRequestId`, `description` (the file's text), and `title` when replacing; pass `isDraft` with the value from item 2's read-back (left out, the update published draft !19126). If the MCP is unavailable or denied, run `az repos pr update --id <id> --org <org-url> --description "$(cat <scratchpad>/pr-<id>/body.md)" --draft <isDraft> --query "{id:pullRequestId,draft:isDraft}" -o json` (plus `--title "$(cat <scratchpad>/pr-<id>/title.txt)"` when replacing). If `isDraft` (MCP) or `draft` (`az`) in the output differs from the read-back value, say so in the report.
    - **GitHub**: `gh pr edit <id> --body-file <scratchpad>/pr-<id>/body.md` (plus `--title "$(cat <scratchpad>/pr-<id>/title.txt)"` when replacing).
 4. **Labels** (when the profile defines *PR labels*): read current labels, add any missing labels picked by the profile's rule (one call per label; **never remove existing labels**), and read back.
 5. **Verify (`outward-writes` › *Read back*)**: re-fetch the live description, title and labels, diff the description against the body file (`az repos pr show --id <id> --query description -o tsv | diff - <scratchpad>/pr-<id>/body.md`; a trailing-newline difference only is fine), and report the PR URL.
@@ -143,10 +143,10 @@ Print:
 If the call is denied, needs interactive login, or fails on auth or network, don't retry. Print the exact command, with the real id and absolute path filled in, for the user to run as `! <command>` from the repo root:
 
 ```bash
-az repos pr update --id 18897 --description "$(cat '/abs/path/pr-18897/body.md')" -o table
+az repos pr update --id 18897 --description "$(cat '/abs/path/pr-18897/body.md')" --draft true -o table
 ```
 
-If the error was auth, put `az login` (or `az devops login`) before it. Keep the body file; mention its absolute path.
+`--draft` carries the read-back value (`true` for a draft PR). If the error was auth, put the profile's sign-in command (else `az login --allow-no-subscriptions`) before it. Keep the body file; mention its absolute path.
 
 ---
 

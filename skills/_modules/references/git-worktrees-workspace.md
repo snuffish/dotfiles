@@ -45,7 +45,7 @@ git -C <repo> symbolic-ref --short refs/remotes/origin/HEAD   # <default>, e.g. 
 
 ## Create
 
-**Dirty main checkout first.** A new worktree starts from `<base>`, not from the files on disk, so uncommitted edits in `main-checkout` are absent from it, and merging the branch back later fails on any file changed on both sides. Before `worktree add`, run `git -C <repo> status --porcelain`. If it lists anything, stop and show the files, marking those the plan or handoff will also edit, and ask: commit them first (base the worktree on that commit), stash them, or go on without them. Never decide alone; the edits are the user's.
+**Dirty main checkout first.** A new worktree starts from `<base>`, not from the files on disk, so uncommitted edits in `main-checkout` are absent from it, and merging the branch back later fails on any file changed on both sides. Before `worktree add`, run `git -C <repo> status --porcelain`. When none of the listed files is one the change will edit or read, go on without them and name them in the hand-off line. When one overlaps the change, stop and show the files, marking those the plan or handoff will also edit, and ask: commit them first (base the worktree on that commit), stash them, or go on without them. Never decide that alone; the edits are the user's.
 
 ```bash
 SLUG=<ticket-id>-<kebab-slug>                                   # or the branch slug
@@ -108,6 +108,8 @@ git -C <repo> worktree unlock "$DIR"
 git -C <repo> worktree remove "$DIR"        # no --force
 git -C <repo> worktree prune
 ```
+
+*Landed by a merge:* the branch was merged into its target (the default branch of a trunk-only repo such as `~/.terminal`) and the target was pushed. It has no `origin/<branch>`, so the checks above fail; remove it with `~/.terminal/skills/wt-close-all/scripts/wt-close-all.sh rm <this session's id> "$DIR"`, which removes only a clean tree whose commits are on another branch or remote (merge rule in `~/.terminal/claude/rules/git.md`).
 
 *Not landed (keep):* the ship gate was declined, the run was interrupted, or any precondition fails → keep the worktree locked and report its path, branch, what is uncommitted or unpushed, and the resume command (`git -C <repo> worktree list`). Remove it only on the user's explicit **"discard"** — then `worktree unlock` + `worktree remove --force` + `prune`. Delete the branch only on a further explicit instruction.
 
