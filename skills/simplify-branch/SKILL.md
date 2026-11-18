@@ -18,6 +18,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 Read these before step 1:
 
 - `../_modules/core.md`: read-only until `/proceed`; after the gate it edits the current checkout in place (no worktree), never commits
+- `../_modules/artifact-protocol.md`: Phase B step 6 writes `<prefix>-simplify_review_brief-<suffix>.md`
 
 - **Scope is the file list**: after the gate, edits land only in the files step 1 prints. Reading other files is allowed to find an existing helper (the Reuse angle), but don't edit them and don't search unrelated code for examples. Only the read-only `--deep` angle agents (Step 3d) may search the whole codebase.
 - **No commit, no push**: stop at the summary. Committing is a separate request (`/commit`).
