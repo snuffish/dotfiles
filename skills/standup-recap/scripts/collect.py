@@ -29,7 +29,10 @@ VOTES = {"10": "approved", "5": "approved with suggestions", "0": "reset vote", 
          "-10": "rejected"}
 SKIP_DIRS = {"node_modules", ".git", "bin", "obj", "dist", "build", ".venv", "venv", "worktrees"}
 DONE_STATES = ("New", "Closed", "Done", "Removed", "Resolved", "To Do", "Proposed")
-CLAUDE_MEM_DB = Path.home() / ".claude-mem" / "claude-mem.db"
+HIGHLIGHT_CAP = 5
+HIGHLIGHT_MIN_COMMITS = 3
+HIGHLIGHT_ORDER = ("shipped", "needs review", "reviewed", "in progress")
+CLAUDE_MEM_DB =Path.home() / ".claude-mem" / "claude-mem.db"
 TRANSCRIPTS = Path.home() / ".claude" / "projects"
 
 NOTES = []
@@ -227,7 +230,8 @@ def mentioned_ids(text):
 
 
 def az_prs(me):
-    rows = run_json(["az", "repos", "pr", "list", "--creator", me, "--status", "all", "--top", "100", "--query",
+    # --detect false: otherwise az narrows to the repo of the cwd's git remote.
+    rows = run_json(["az", "repos", "pr", "list", "--detect", "false", "--creator", me, "--status", "all", "--top", "100", "--query",
                      "[].{id:pullRequestId,title:title,desc:description,status:status,draft:isDraft,created:creationDate,"
                      "closed:closedDate,closedBy:closedBy.uniqueName,branch:sourceRefName,repo:repository.name,"
                      "repoId:repository.id,reviewers:reviewers[].{name:displayName,email:uniqueName,vote:vote}}"])
@@ -238,7 +242,7 @@ def az_prs(me):
 
 
 def az_review_prs(me):
-    rows = run_json(["az", "repos", "pr", "list", "--reviewer", me, "--status", "all", "--top", "100", "--query",
+    rows = run_json(["az", "repos", "pr", "list", "--detect", "false", "--reviewer", me, "--status", "all", "--top", "100", "--query",
                      f"[?createdBy.uniqueName!='{me}'].{{id:pullRequestId,title:title,desc:description,status:status,"
                      "created:creationDate,closed:closedDate,branch:sourceRefName,repo:repository.name,"
                      "repoId:repository.id,author:createdBy.displayName,"
@@ -420,9 +424,15 @@ def merge(window, commits, prs, review_prs, threads, items, pipelines, gh_prs, s
     pr_index = {pr["id"]: pr for pr in prs + review_prs}
     merged_prs = set()
     for c in commits:
-        m = re.match(r"Merged PR (\d+):", c["subject"])
+        m = re.match(r"Merged PR (\d+):\s*(.*)", c["subject"])
         if m and int(m.group(1)) in pr_index:
             merged_prs.add(int(m.group(1)))
+            continue
+        if m and group_key(m.group(2)).startswith("wi:"):
+            # A squash merge of a PR outside the az PR list still ships its work item.
+            e = entry(group_key(m.group(2)), repo=c["repo"], branch=c["branch"])
+            e["prs"].append({"id": int(m.group(1)), "title": m.group(2), "events": ["completed"], "draft": False,
+                             "host": "azure"})
             continue
         e = entry(group_key(c["subject"], c["branch"], c["repo"]), repo=c["repo"], branch=c["branch"])
         e["commits"].append(re.sub(r"^#\d+:\s*", "", c["subject"]))
@@ -480,6 +490,48 @@ def merge(window, commits, prs, review_prs, threads, items, pipelines, gh_prs, s
         e["summary_source"], e["summary"] = next(((k, v) for k, v in candidates if v), (None, None))
         e["weight"] = len(e["commits"]) + 3 * len(e["prs"]) + 2 * len(e["states"]) + e["comments"] + 2 * len(e["votes"])
     return sorted(entries.values(), key=lambda e: -e["weight"])
+
+
+def highlight_reason(e):
+    """Why an entry is worth saying aloud, or None when it folds into "Also"."""
+    events = {ev for p in e["prs"] for ev in p["events"]}
+    last_state = e["states"][-1]["to"] if e["states"] else None
+    if last_state == "Removed" or events == {"abandoned"}:
+        return None
+    if e["kind"] == "chore" and len(e["commits"]) < HIGHLIGHT_MIN_COMMITS:
+        return None
+    if "completed" in events:
+        return "shipped"
+    if "opened" in events or last_state == "Pull Request":
+        return "needs review"
+    if e["kind"] == "review":
+        return "reviewed"
+    if len(e["commits"]) >= HIGHLIGHT_MIN_COMMITS or e["states"]:
+        return "in progress"
+    return None
+
+
+def highlights(yesterday):
+    """Up to HIGHLIGHT_CAP slots in HIGHLIGHT_ORDER, weight order within each; all reviews share one slot."""
+    picked, reviews = [], []
+    for i, e in enumerate(yesterday):
+        reason = highlight_reason(e)
+        if reason == "reviewed":
+            reviews.append(e["key"])
+        elif reason:
+            picked.append((HIGHLIGHT_ORDER.index(reason), i, {"key": e["key"], "reason": reason}))
+    if reviews:
+        picked.append((HIGHLIGHT_ORDER.index("reviewed"), 0, {"key": "reviews", "reason": "reviewed", "keys": reviews}))
+    return [h for _, _, h in sorted(picked, key=lambda p: p[:2])[:HIGHLIGHT_CAP]]
+
+
+def counts(yesterday, blocker_list):
+    return {
+        "commits": sum(len(e["commits"]) for e in yesterday),
+        "prs_completed": len({p["id"] for e in yesterday for p in e["prs"] if "completed" in p["events"]}),
+        "reviews": sum(1 for e in yesterday if e["kind"] == "review"),
+        "blockers": len(blocker_list),
+    }
 
 
 def today_state(prs, open_items, trees, wips, window):
@@ -584,6 +636,7 @@ def main():
                       items, pipelines, gh_prs, in_win_sessions)
     if not (yesterday or in_win_sessions):
         NOTES.append(f"nothing recorded between {window['start']} and {window['end']}")
+    blocker_list = blockers(prs, open_items, pipelines)
 
     out = {
         "window": {**{k: str(v) if isinstance(v, dt.date) else v for k, v in window.items()},
@@ -591,8 +644,10 @@ def main():
         "me": {"az": me, "org": org, "emails": sorted({e for r in repos for e in r["emails"]})},
         "notes": NOTES,
         "yesterday": yesterday,
+        "highlights": highlights(yesterday),
+        "counts": counts(yesterday, blocker_list),
         "today": today_state(prs, open_items, trees, wips, window),
-        "blockers": blockers(prs, open_items, pipelines),
+        "blockers": blocker_list,
         "sessions": in_win_sessions,
         "meta": {**META, "elapsed_s": round(time.monotonic() - began, 1),
                  "repos": [{"name": r["name"], "work": r["work"]} for r in repos]},

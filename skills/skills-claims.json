@@ -25582,6 +25582,136 @@
         "name": "simplify-repo",
         "base": "repo"
       }
+    },
+    {
+      "id": "skills/standup-recap/SKILL.md:109:path:scripts/render_page.py",
+      "source": {
+        "file": "skills/standup-recap/SKILL.md",
+        "line": 109
+      },
+      "kind": "path",
+      "value": "scripts/render_page.py",
+      "quote": "python3 -I <skill-dir>/scripts/render_page.py",
+      "verify": {
+        "method": "path_exists",
+        "path": "scripts/render_page.py",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/standup-recap/SKILL.md:62:other:highlight cap 5",
+      "source": {
+        "file": "skills/standup-recap/SKILL.md",
+        "line": 62
+      },
+      "kind": "other",
+      "value": "highlight cap 5",
+      "quote": "at most 5 slots",
+      "verify": {
+        "method": "grep",
+        "pattern": "^HIGHLIGHT_CAP = 5$",
+        "paths": [
+          "skills/standup-recap/scripts/collect.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/standup-recap/SKILL.md:62:other:highlight reason order",
+      "source": {
+        "file": "skills/standup-recap/SKILL.md",
+        "line": 62
+      },
+      "kind": "other",
+      "value": "highlight reason order",
+      "quote": "Slots go in that order",
+      "verify": {
+        "method": "grep",
+        "pattern": "^HIGHLIGHT_ORDER = \\(\"shipped\", \"needs review\", \"reviewed\", \"in progress\"\\)$",
+        "paths": [
+          "skills/standup-recap/scripts/collect.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/standup-recap/SKILL.md:62:other:chores under 3 commits skipped",
+      "source": {
+        "file": "skills/standup-recap/SKILL.md",
+        "line": 62
+      },
+      "kind": "other",
+      "value": "chores under 3 commits skipped",
+      "quote": "chores under 3 commits never qualify",
+      "verify": {
+        "method": "grep",
+        "pattern": "^HIGHLIGHT_MIN_COMMITS = 3$",
+        "paths": [
+          "skills/standup-recap/scripts/collect.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/standup-recap/SKILL.md:62:other:reviews share one slot",
+      "source": {
+        "file": "skills/standup-recap/SKILL.md",
+        "line": 62
+      },
+      "kind": "other",
+      "value": "reviews share one slot",
+      "quote": "all reviews share one slot",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"key\": \"reviews\", \"reason\": \"reviewed\", \"keys\": reviews",
+        "paths": [
+          "skills/standup-recap/scripts/collect.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/standup-recap/SKILL.md:59:cli_command:--detect false",
+      "source": {
+        "file": "skills/standup-recap/SKILL.md",
+        "line": 59
+      },
+      "kind": "cli_command",
+      "value": "--detect false",
+      "quote": "`--detect false` stops az narrowing",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"az\", \"repos\", \"pr\", \"list\", \"--detect\", \"false\", \"--reviewer\"",
+        "paths": [
+          "skills/standup-recap/scripts/collect.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/standup-recap/SKILL.md:109:other:renderer takes three paths",
+      "source": {
+        "file": "skills/standup-recap/SKILL.md",
+        "line": 109
+      },
+      "kind": "other",
+      "value": "renderer takes three paths",
+      "quote": "<scratchpad>/standup.json <scratchpad>/phrases.json",
+      "verify": {
+        "method": "grep",
+        "pattern": "^Usage: render_page\\.py <collector\\.json> <phrases\\.json> <out\\.html>$",
+        "paths": [
+          "skills/standup-recap/scripts/render_page.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
     }
   ]
 }
