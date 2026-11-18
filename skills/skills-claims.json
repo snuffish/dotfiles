@@ -4669,7 +4669,7 @@
       },
       "kind": "skill_ref",
       "value": "spec-verification",
-      "quote": "`, `skill-review`, `simplify`, `simplify-branch`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations",
+      "quote": "`, `skill-review`, `simplify`, `simplify-branch`, `simplify-repo`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations",
       "verify": {
         "method": "skill_exists",
         "name": "spec-verification",
@@ -4684,7 +4684,7 @@
       },
       "kind": "skill_ref",
       "value": "squash-code-review",
-      "quote": "implify`, `simplify-branch`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `standup-recap`, `s",
+      "quote": "implify`, `simplify-branch`, `simplify-repo`, `spec-verification`, `squash-code-review`, `squash-ef-core-migrations`, `standup-recap`, `s",
       "verify": {
         "method": "skill_exists",
         "name": "squash-code-review",
@@ -5021,7 +5021,7 @@
       },
       "kind": "skill_ref",
       "value": "simplify",
-      "quote": "ll-drift`, `skill-gap`, `skill-review`, `simplify`, `simplify-branch`, `spec-verification`",
+      "quote": "ll-drift`, `skill-gap`, `skill-review`, `simplify`, `simplify-branch`, `simplify-repo`, `spec-verification`",
       "verify": {
         "method": "skill_exists",
         "name": "simplify",
@@ -5051,7 +5051,7 @@
       },
       "kind": "skill_ref",
       "value": "simplify-branch",
-      "quote": "-drift`, `skill-gap`, `skill-review`, `simplify`, `simplify-branch`, `spec-verification`, `squash-code-review`, `squa",
+      "quote": "-drift`, `skill-gap`, `skill-review`, `simplify`, `simplify-branch`, `simplify-repo`, `spec-verification`, `squash-code-review`, `squa",
       "verify": {
         "method": "skill_exists",
         "name": "simplify-branch",
@@ -23869,7 +23869,7 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "neral (top level) | Command | 58 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `code-documentation`, `code",
+      "quote": "neral (top level) | Command | 59 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `code-documentation`, `code",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
@@ -23973,19 +23973,19 @@
       }
     },
     {
-      "id": "skills/README.md:42:count:58",
+      "id": "skills/README.md:42:count:60",
       "source": {
         "file": "skills/README.md",
         "line": 42
       },
       "kind": "count",
-      "value": "58",
-      "quote": "65 skills total \u2014 59 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "value": "60",
+      "quote": "66 skills total \u2014 60 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/*/SKILL.md",
         "base": "repo",
-        "expected": 59,
+        "expected": 60,
         "op": "eq"
       }
     },
@@ -23997,7 +23997,7 @@
       },
       "kind": "count",
       "value": "6 GR.PRIIS project skills",
-      "quote": "65 skills total \u2014 59 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "66 skills total \u2014 60 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/Projects/GR.PRIIS/*/SKILL.md",
@@ -24014,7 +24014,7 @@
       },
       "kind": "count",
       "value": "8 Modules",
-      "quote": "65 skills total \u2014 59 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "66 skills total \u2014 60 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/_modules/*.md",
@@ -24817,6 +24817,770 @@
         "path": "../standup-recap/scripts/collect.py",
         "base": "file_dir",
         "type": "file"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:20:path:../_modules/core.md",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 20
+      },
+      "kind": "path",
+      "value": "../_modules/core.md",
+      "quote": "`../_modules/core.md`: read-only until `/proceed`",
+      "verify": {
+        "method": "path_exists",
+        "path": "../_modules/core.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:21:path:../_modules/artifact-protocol.md",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 21
+      },
+      "kind": "path",
+      "value": "../_modules/artifact-protocol.md",
+      "quote": "`../_modules/artifact-protocol.md`: writes",
+      "verify": {
+        "method": "path_exists",
+        "path": "../_modules/artifact-protocol.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:22:path:../_modules/fan-out.md",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 22
+      },
+      "kind": "path",
+      "value": "../_modules/fan-out.md",
+      "quote": "`../_modules/fan-out.md`: only for the one review sub-agent",
+      "verify": {
+        "method": "path_exists",
+        "path": "../_modules/fan-out.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:23:path:../_modules/outward-writes.md",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 23
+      },
+      "kind": "path",
+      "value": "../_modules/outward-writes.md",
+      "quote": "`../_modules/outward-writes.md`: only with `--land`",
+      "verify": {
+        "method": "path_exists",
+        "path": "../_modules/outward-writes.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:41:skill_ref:simplify-branch",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 41
+      },
+      "kind": "skill_ref",
+      "value": "simplify-branch",
+      "quote": "[`/simplify-branch`](../simplify-branch/SKILL.md)",
+      "verify": {
+        "method": "skill_exists",
+        "name": "simplify-branch",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:42:skill_ref:simplify",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 42
+      },
+      "kind": "skill_ref",
+      "value": "simplify",
+      "quote": "[`/simplify`](../simplify/SKILL.md) with that target",
+      "verify": {
+        "method": "skill_exists",
+        "name": "simplify",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:43:skill_ref:code-review",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 43
+      },
+      "kind": "skill_ref",
+      "value": "code-review",
+      "quote": "[`/code-review`](../code-review/SKILL.md)",
+      "verify": {
+        "method": "skill_exists",
+        "name": "code-review",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:44:skill_ref:fix-findings",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 44
+      },
+      "kind": "skill_ref",
+      "value": "fix-findings",
+      "quote": "[`/fix-findings`](../fix-findings/SKILL.md)",
+      "verify": {
+        "method": "skill_exists",
+        "name": "fix-findings",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:45:skill_ref:clean",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 45
+      },
+      "kind": "skill_ref",
+      "value": "clean",
+      "quote": "[`/clean`](../clean/SKILL.md)",
+      "verify": {
+        "method": "skill_exists",
+        "name": "clean",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:129:skill_ref:commit",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 129
+      },
+      "kind": "skill_ref",
+      "value": "commit",
+      "quote": "stage by explicit path per `commit`",
+      "verify": {
+        "method": "skill_exists",
+        "name": "commit",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:127:other:/commit refuses default branches",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 127
+      },
+      "kind": "other",
+      "value": "/commit refuses default branches",
+      "quote": "`/commit`'s own refusal of default branches does not apply here",
+      "verify": {
+        "method": "grep",
+        "pattern": "\\*\\*Protected/default branch:\\*\\*",
+        "paths": [
+          "skills/commit/SKILL.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:105:other:remap exit code 1 means rows to read",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 105
+      },
+      "kind": "other",
+      "value": "remap exit code 1 means rows to read",
+      "quote": "Exit code `1` means rows to read, not a failure",
+      "verify": {
+        "method": "grep",
+        "pattern": "return 1 if total\\[\"check\"\\] else 0",
+        "paths": [
+          "skills/simplify-repo/scripts/remap_citations.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:105:other:--apply writes CHECK rows with the nearest line",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 105
+      },
+      "kind": "other",
+      "value": "--apply writes CHECK rows with the nearest line",
+      "quote": "`--apply` writes every row, `CHECK` rows included, with the nearest surviving line",
+      "verify": {
+        "method": "grep",
+        "pattern": "else:  # replaced or deleted: the nearest line of the new block",
+        "paths": [
+          "skills/simplify-repo/scripts/remap_citations.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:105:other:remap never rewrites a doc that differs from the base",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 105
+      },
+      "kind": "other",
+      "value": "remap never rewrites a doc that differs from the base",
+      "quote": "A doc that already differs from `HEAD` is never rewritten again",
+      "verify": {
+        "method": "grep",
+        "pattern": "if doc in changed:  # its numbers are no longer --base's: never rewrite it[\\s\\S]*?continue",
+        "paths": [
+          "skills/simplify-repo/scripts/remap_citations.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:105:other:remap reports already remapped and EDITED docs",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 105
+      },
+      "kind": "other",
+      "value": "remap reports already remapped and EDITED docs",
+      "quote": "only reports `docs already remapped` or `EDITED`",
+      "verify": {
+        "method": "grep",
+        "pattern": "print\\(f\"EDITED \\{doc\\}[\\s\\S]*docs already remapped: \\{already\\}",
+        "paths": [
+          "skills/simplify-repo/scripts/remap_citations.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:58:path:skills/simplify-repo/scripts/repo_scope.py",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 58
+      },
+      "kind": "path",
+      "value": "skills/simplify-repo/scripts/repo_scope.py",
+      "quote": "python3 -I <skill-dir>/scripts/repo_scope.py [<path> \u2026] [--protect <file> \u2026] [--no-touch <path> \u2026] [--repo <dir>]",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/simplify-repo/scripts/repo_scope.py",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:58:cli_command:--protect",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 58
+      },
+      "kind": "cli_command",
+      "value": "--protect",
+      "quote": "python3 -I <skill-dir>/scripts/repo_scope.py [<path> \u2026] [--protect <file> \u2026] [--no-touch <path> \u2026] [--repo <dir>]",
+      "verify": {
+        "method": "grep",
+        "pattern": "add_argument\\(\"--protect\"",
+        "paths": [
+          "skills/simplify-repo/scripts/repo_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:58:cli_command:repo_scope.py --repo",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 58
+      },
+      "kind": "cli_command",
+      "value": "repo_scope.py --repo",
+      "quote": "python3 -I <skill-dir>/scripts/repo_scope.py [<path> \u2026] [--protect <file> \u2026] [--no-touch <path> \u2026] [--repo <dir>]",
+      "verify": {
+        "method": "grep",
+        "pattern": "add_argument\\(\"--repo\"",
+        "paths": [
+          "skills/simplify-repo/scripts/repo_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:61:cli_command:repo_scope.py --no-touch",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 61
+      },
+      "kind": "cli_command",
+      "value": "repo_scope.py --no-touch",
+      "quote": "with everything under a `--no-touch` path left out of `files`, `rows` and `tests`",
+      "verify": {
+        "method": "grep",
+        "pattern": "add_argument\\(\"--no-touch\"[\\s\\S]*left_out = \\[f\":\\(exclude\\)\\{p\\}\" for p in a\\.no_touch\\]",
+        "paths": [
+          "skills/simplify-repo/scripts/repo_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:63:other:files are code files minus tests, with line counts",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 63
+      },
+      "kind": "other",
+      "value": "files are code files minus tests, with line counts",
+      "quote": "`files`: code files by extension, minus test files; `lines`: line count per file",
+      "verify": {
+        "method": "grep",
+        "pattern": "files = \\[f for f in code if not is_test\\(f\\)\\][\\s\\S]*lines = \\{f: read\\(f\\)\\.count\\(\"\\\\n\"\\) for f in files\\}",
+        "paths": [
+          "skills/simplify-repo/scripts/repo_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:64:other:rows per parent folder, largest first",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 64
+      },
+      "kind": "other",
+      "value": "rows per parent folder, largest first",
+      "quote": "`rows`: one per parent folder, largest first",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"rows\": dict\\(sorted\\(rows\\.items\\(\\), key=lambda kv: -kv\\[1\\]\\[\"lines\"\\]\\)\\)",
+        "paths": [
+          "skills/simplify-repo/scripts/repo_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:64:other:row tests come from the whole repo",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 64
+      },
+      "kind": "other",
+      "value": "row tests come from the whole repo",
+      "quote": "test files anywhere in the repo that name one of the row's files",
+      "verify": {
+        "method": "grep",
+        "pattern": "tests = \\[f for f in everything if[\\s\\S]*row\\[\"tests\"\\] = \\[t for t in tests if named\\.search",
+        "paths": [
+          "skills/simplify-repo/scripts/repo_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:65:other:skip patterns shared with branch_scope.py",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 65
+      },
+      "kind": "other",
+      "value": "skip patterns shared with branch_scope.py",
+      "quote": "`skipped_generated` and `skipped_docs` (the patterns of `/simplify-branch`'s `branch_scope.py`)",
+      "verify": {
+        "method": "grep",
+        "pattern": "from branch_scope import git, is_doc, is_generated",
+        "paths": [
+          "skills/simplify-repo/scripts/repo_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:65:path:skills/simplify-branch/scripts/branch_scope.py",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 65
+      },
+      "kind": "path",
+      "value": "skills/simplify-branch/scripts/branch_scope.py",
+      "quote": "`skipped_generated` and `skipped_docs` (the patterns of `/simplify-branch`'s `branch_scope.py`)",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/simplify-branch/scripts/branch_scope.py",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:65:config_key:skipped_other",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 65
+      },
+      "kind": "config_key",
+      "value": "skipped_other",
+      "quote": "`skipped_other`: a count per extension of every other file under the paths, which the script never opens",
+      "verify": {
+        "method": "grep",
+        "pattern": "other\\[ext or \"\\(none\\)\"\\] = other\\.get\\(ext or \"\\(none\\)\", 0\\) \\+ 1[\\s\\S]*\"skipped_other\":",
+        "paths": [
+          "skills/simplify-repo/scripts/repo_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:66:config_key:dirty",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 66
+      },
+      "kind": "config_key",
+      "value": "dirty",
+      "quote": "`dirty`: in-scope files with uncommitted changes",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"dirty\": sorted\\(dirty & set\\(files \\+ tests\\)\\)",
+        "paths": [
+          "skills/simplify-repo/scripts/repo_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:66:config_key:on_default",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 66
+      },
+      "kind": "config_key",
+      "value": "on_default",
+      "quote": "`on_default`: whether the current branch is `origin/HEAD`'s",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"symbolic-ref\", \"--short\", \"refs/remotes/origin/HEAD\"[\\s\\S]*\"on_default\": bool\\(default\\) and branch == default",
+        "paths": [
+          "skills/simplify-repo/scripts/repo_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:68:other:repo_scope exit codes 0/1/2",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 68
+      },
+      "kind": "other",
+      "value": "repo_scope exit codes 0/1/2",
+      "quote": "Exit codes: `0` files in scope, `1` nothing in scope",
+      "verify": {
+        "method": "grep",
+        "pattern": "return 2[\\s\\S]*return 0 if files else 1",
+        "paths": [
+          "skills/simplify-repo/scripts/repo_scope.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:80:path:skills/simplify-repo/scripts/remap_citations.py",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 80
+      },
+      "kind": "path",
+      "value": "skills/simplify-repo/scripts/remap_citations.py",
+      "quote": "python3 -I <skill-dir>/scripts/remap_citations.py [--repo <dir>]",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/simplify-repo/scripts/remap_citations.py",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:80:cli_command:remap_citations.py --repo",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 80
+      },
+      "kind": "cli_command",
+      "value": "remap_citations.py --repo",
+      "quote": "python3 -I <skill-dir>/scripts/remap_citations.py [--repo <dir>]",
+      "verify": {
+        "method": "grep",
+        "pattern": "add_argument\\(\"--repo\"",
+        "paths": [
+          "skills/simplify-repo/scripts/remap_citations.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:80:other:remap's last line starts with the reference count",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 80
+      },
+      "kind": "other",
+      "value": "remap's last line starts with the reference count",
+      "quote": "Its last line starts with how many `file:line` references to tracked files the docs hold",
+      "verify": {
+        "method": "grep",
+        "pattern": "print\\(f\"\\{total\\['found'\\]\\} reference\\(s\\) to tracked files; ",
+        "paths": [
+          "skills/simplify-repo/scripts/remap_citations.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:105:cli_command:--apply",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 105
+      },
+      "kind": "cli_command",
+      "value": "--apply",
+      "quote": "run `remap_citations.py` as a dry run, then with `--apply`",
+      "verify": {
+        "method": "grep",
+        "pattern": "add_argument\\(\"--apply\", action=\"store_true\"\\)[\\s\\S]*if a\\.apply and updated != text:",
+        "paths": [
+          "skills/simplify-repo/scripts/remap_citations.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:105:other:remap row marks CHECK, AMBIGUOUS, UNRESOLVED",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 105
+      },
+      "kind": "other",
+      "value": "remap row marks CHECK, AMBIGUOUS, UNRESOLVED",
+      "quote": "open each `CHECK`, `AMBIGUOUS` and `UNRESOLVED` row",
+      "verify": {
+        "method": "grep",
+        "pattern": "'UNRESOLVED' if path is None else 'AMBIGUOUS'[\\s\\S]*'ok   ' if exact else 'CHECK'",
+        "paths": [
+          "skills/simplify-repo/scripts/remap_citations.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:105:other:remap does not handle #L anchors",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 105
+      },
+      "kind": "other",
+      "value": "remap does not handle #L anchors",
+      "quote": "The script does not handle `#L<n>` link anchors",
+      "verify": {
+        "method": "grep",
+        "pattern": "#L",
+        "paths": [
+          "skills/simplify-repo/scripts/remap_citations.py"
+        ],
+        "base": "repo",
+        "expect": "absent"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:189:other:remap summary wording",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 189
+      },
+      "kind": "other",
+      "value": "remap summary wording",
+      "quote": "reports `0 citation(s) change, 0 to check`",
+      "verify": {
+        "method": "grep",
+        "pattern": "citation\\(s\\) change, \"\\s*f\"\\{total\\['check'\\]\\} to check; ",
+        "paths": [
+          "skills/simplify-repo/scripts/remap_citations.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:134:cli_command:/code-review --axes",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 134
+      },
+      "kind": "cli_command",
+      "value": "/code-review --axes",
+      "quote": "It runs `/code-review --axes correctness,standards,spec` on the range",
+      "verify": {
+        "method": "grep",
+        "pattern": "`--axes <list>`",
+        "paths": [
+          "skills/code-review/SKILL.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:103:other:/simplify gathers a diff and launches four agents by default",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 103
+      },
+      "kind": "other",
+      "value": "/simplify gathers a diff and launches four agents by default",
+      "quote": "The text overrides `/simplify`'s own diff gathering and its four agents",
+      "verify": {
+        "method": "grep",
+        "pattern": "^## Phase 1 \u2014 Review \\(4 cleanup agents in parallel\\)",
+        "paths": [
+          "skills/simplify/SKILL.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:103:other:/simplify takes a Review target argument",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 103
+      },
+      "kind": "other",
+      "value": "/simplify takes a Review target argument",
+      "quote": "then invoke `/simplify` once with the target text",
+      "verify": {
+        "method": "grep",
+        "pattern": "`Review target: <arg>`: the argument given to `/simplify`",
+        "paths": [
+          "skills/simplify/SKILL.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/references/prompts-and-brief.md:86:cli_command:/code-review --axes",
+      "source": {
+        "file": "skills/simplify-repo/references/prompts-and-brief.md",
+        "line": 86
+      },
+      "kind": "cli_command",
+      "value": "/code-review --axes",
+      "quote": "Run /code-review --axes correctness,standards,spec on the range",
+      "verify": {
+        "method": "grep",
+        "pattern": "`--axes <list>`",
+        "paths": [
+          "skills/code-review/SKILL.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/references/prompts-and-brief.md:88:other:/code-review has a Spec axis fed by a spec source",
+      "source": {
+        "file": "skills/simplify-repo/references/prompts-and-brief.md",
+        "line": 88
+      },
+      "kind": "other",
+      "value": "/code-review has a Spec axis fed by a spec source",
+      "quote": "source is the review brief at <absolute path of the brief>",
+      "verify": {
+        "method": "grep",
+        "pattern": "^## Step 2 \u2014 Identify the Spec Source",
+        "paths": [
+          "skills/code-review/SKILL.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/references/prompts-and-brief.md:94:other:missing coverage falls back to the Standards axis",
+      "source": {
+        "file": "skills/simplify-repo/references/prompts-and-brief.md",
+        "line": 94
+      },
+      "kind": "other",
+      "value": "missing coverage falls back to the Standards axis",
+      "quote": "A changed code path that no test runs is a finding on the Standards axis",
+      "verify": {
+        "method": "grep",
+        "pattern": "Tests \u2192 Standards \\(missing coverage\\)",
+        "paths": [
+          "skills/code-review/SKILL.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/README.md:46:skill_ref:simplify-repo",
+      "source": {
+        "file": "skills/README.md",
+        "line": 46
+      },
+      "kind": "skill_ref",
+      "value": "simplify-repo",
+      "quote": "`simplify`, `simplify-branch`, `simplify-repo`, `spec-verification`",
+      "verify": {
+        "method": "skill_exists",
+        "name": "simplify-repo",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/_modules/references/artifact-catalog.md:12:skill_ref:simplify-repo",
+      "source": {
+        "file": "skills/_modules/references/artifact-catalog.md",
+        "line": 12
+      },
+      "kind": "skill_ref",
+      "value": "simplify-repo",
+      "quote": "| `/simplify-branch`, `/simplify-repo` |",
+      "verify": {
+        "method": "skill_exists",
+        "name": "simplify-repo",
+        "base": "repo"
       }
     }
   ]
