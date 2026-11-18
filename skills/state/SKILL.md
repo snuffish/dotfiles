@@ -4,6 +4,6 @@ description: Manually-invoked skill that recaps what the current thread is doing
 disable-model-invocation: true
 ---
 
-in plain english remind me what we're doing in this thread, and what % we are done, and whats next
+in plain english remind me what we're doing in this thread, and what % we are done, and status, and eta, and whats next
 
-answer in short, in plain english. be extremely concise.
+be extremely concise.
