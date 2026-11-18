@@ -37,3 +37,9 @@ Default five roles (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-
 ### Domain docs
 
 Single-context: root `GLOSSARY.md`, `frontend/GLOSSARY.md`, `docs/adr/`.
+## Environment facts (don't rediscover)
+
+- Local test user Lena (`lena@priis.se`) has the CaseworkerGuided role, which lacks `SystemAction.ListOperations`, so `GET /operations` returns 403 for her (`backend/source/GR.PRIIS.Library/Common/Users/AccessRules/Roles/CaseworkerGuidedAccessRules.cs`). Say so immediately rather than retrying.
+- The container registry `indra3acr` is in a different tenant than GR; GR tokens fail with `unknown tenantId`. Local AcrPull is not needed for normal work: note it once and move on, never block on it or repeat "still blocked".
+- Before giving an `az` or shell command to copy, double-check the tenant IDs and that there are no trailing commas.
+- When I ask for a specific model (Sonnet/Opus) for a subagent or lens, pin the full model ID (e.g. `claude-sonnet-5-5`) and verify it ran on that model: count every `model` value in the agent's output, since the first one is the parent's.
