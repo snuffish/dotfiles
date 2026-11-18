@@ -24319,14 +24319,14 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/parity-audit-priis-profile/SKILL.md:17:count:14 cron jobs",
+      "id": "skills/Projects/GR.PRIIS/parity-audit-priis-profile/SKILL.md:17:count:15 cron jobs",
       "source": {
         "file": "skills/Projects/GR.PRIIS/parity-audit-priis-profile/SKILL.md",
         "line": 17
       },
       "kind": "count",
-      "value": "14 cron jobs",
-      "quote": "(14 when verified)",
+      "value": "15 cron jobs",
+      "quote": "(15 when verified)",
       "verify": {
         "method": "count",
         "pattern": "\\[CronTrigger\\(",
@@ -24334,7 +24334,7 @@
           "backend/source/GR.PRIIS.Library/**/*.cs"
         ],
         "base": "project:GR.PRIIS",
-        "expected": 14
+        "expected": 15
       }
     },
     {
@@ -24345,7 +24345,7 @@
       },
       "kind": "symbol",
       "value": "AddPriisQuartz",
-      "quote": "| **Shared wiring** | `<lib>/Setup.cs` `AddPriisQuartz` (`:387`): InstanceId `{MachineName}-{role}` `:397`, time zone `:408`, thread pool `:",
+      "quote": "| **Shared wiring** | `<lib>/Setup.cs` `AddPriisQuartz` (`:391`): InstanceId `{MachineName}-{role}-{ProcessId}` from `PriisScheduler.InstanceId`",
       "verify": {
         "method": "grep",
         "pattern": "public static IServiceCollection AddPriisQuartz\\(",
@@ -24357,19 +24357,19 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/parity-audit-priis-profile/SKILL.md:20:other:InstanceId {MachineName}-{role}",
+      "id": "skills/Projects/GR.PRIIS/parity-audit-priis-profile/SKILL.md:20:other:InstanceId {MachineName}-{role}-{ProcessId}",
       "source": {
         "file": "skills/Projects/GR.PRIIS/parity-audit-priis-profile/SKILL.md",
         "line": 20
       },
       "kind": "other",
-      "value": "InstanceId {MachineName}-{role}",
-      "quote": "InstanceId `{MachineName}-{role}` `:397`",
+      "value": "InstanceId {MachineName}-{role}-{ProcessId}",
+      "quote": "InstanceId `{MachineName}-{role}-{ProcessId}` from `PriisScheduler.InstanceId`",
       "verify": {
         "method": "grep",
-        "pattern": "var instanceId = \\$\\\"\\{Environment\\.MachineName\\}-\\{instanceRole\\}\\\";",
+        "pattern": "InstanceId\\(string role\\) => \\$\\\"\\{Environment\\.MachineName\\}-\\{role\\}-\\{Environment\\.ProcessId\\}\\\"",
         "paths": [
-          "backend/source/GR.PRIIS.Library/Setup.cs"
+          "backend/source/GR.PRIIS.Library/Common/Jobs/PriisScheduler.cs"
         ],
         "base": "project:GR.PRIIS",
         "expected": "present"
@@ -24383,7 +24383,7 @@
       },
       "kind": "symbol",
       "value": "BusinessEventJob",
-      "quote": "` (14 when verified). Event jobs: `git -C <repo> grep -n \") : BusinessEventJob<\" <new> -- backend/source/GR.PRIIS.Library` (32 when verified",
+      "quote": "` (15 when verified). Event jobs: `git -C <repo> grep -n \") : BusinessEventJob<\" <new> -- backend/source/GR.PRIIS.Library` (32 when verified",
       "verify": {
         "method": "path_exists",
         "path": "backend/source/GR.PRIIS.Library/Common/Events/BusinessEventJob.cs",
@@ -24408,17 +24408,17 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/parity-audit-priis-profile/SKILL.md:33:other:Dockerfile runtime image aspnet:10.0",
+      "id": "skills/Projects/GR.PRIIS/parity-audit-priis-profile/SKILL.md:33:other:Dockerfile runtime image aspnet:11.0",
       "source": {
         "file": "skills/Projects/GR.PRIIS/parity-audit-priis-profile/SKILL.md",
         "line": 33
       },
       "kind": "other",
-      "value": "Dockerfile runtime image aspnet:10.0",
+      "value": "Dockerfile runtime image aspnet:11.0",
       "quote": "Image: `backend/Dockerfile:53`.",
       "verify": {
         "method": "grep",
-        "pattern": "^FROM mcr\\.microsoft\\.com/dotnet/aspnet:10\\.0 AS runtime",
+        "pattern": "^FROM mcr\\.microsoft\\.com/dotnet/aspnet:11\\.0 AS runtime",
         "paths": [
           "backend/Dockerfile"
         ],
@@ -24472,7 +24472,7 @@
       },
       "kind": "other",
       "value": "CLI calls AddPriisQuartz with role cli",
-      "quote": "`backend/source/GR.PRIIS.CLI/Program.cs:53` (`cli`)",
+      "quote": "`backend/source/GR.PRIIS.CLI/Program.cs:52` (`cli`)",
       "verify": {
         "method": "grep",
         "pattern": "services\\.AddPriisQuartz\\(context\\.Configuration, instanceRole: \\\"cli\\\"\\)",
@@ -24545,7 +24545,7 @@
       },
       "kind": "other",
       "value": "AddDeclaredJobs registers cron jobs",
-      "quote": "cron registration `q.AddDeclaredJobs()` `:428`",
+      "quote": "cron registration `q.AddDeclaredJobs()` `:432`",
       "verify": {
         "method": "grep",
         "pattern": "q\\.AddDeclaredJobs\\(\\);",
