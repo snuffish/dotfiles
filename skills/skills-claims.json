@@ -25038,7 +25038,7 @@
       },
       "kind": "other",
       "value": "remap never rewrites a doc that differs from the base",
-      "quote": "A doc that already differs from `HEAD` is never rewritten again",
+      "quote": "A doc that already differs from the base (`HEAD` unless `--base` is given) is never rewritten again",
       "verify": {
         "method": "grep",
         "pattern": "if doc in changed:  # its numbers are no longer --base's: never rewrite it[\\s\\S]*?continue",
@@ -25356,6 +25356,44 @@
       "verify": {
         "method": "grep",
         "pattern": "print\\(f\"\\{total\\['found'\\]\\} reference\\(s\\) to tracked files; ",
+        "paths": [
+          "skills/simplify-repo/scripts/remap_citations.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:80:cli_command:remap_citations.py --base",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 80
+      },
+      "kind": "cli_command",
+      "value": "remap_citations.py --base",
+      "quote": "pass `--base <that commit>` here and in Step 4 item 4",
+      "verify": {
+        "method": "grep",
+        "pattern": "add_argument\\(\"--base\", default=\"HEAD\"",
+        "paths": [
+          "skills/simplify-repo/scripts/remap_citations.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/simplify-repo/SKILL.md:80:other:a doc edited since the base prints EDITED and is left alone",
+      "source": {
+        "file": "skills/simplify-repo/SKILL.md",
+        "line": 80
+      },
+      "kind": "other",
+      "value": "a doc edited since the base prints EDITED and is left alone",
+      "quote": "A doc edited since that commit prints `EDITED` and is left alone",
+      "verify": {
+        "method": "grep",
+        "pattern": "print\\(f\"EDITED \\{doc\\}: differs from \\{a\\.base\\} and from the remapped text; left alone\"\\)",
         "paths": [
           "skills/simplify-repo/scripts/remap_citations.py"
         ],
