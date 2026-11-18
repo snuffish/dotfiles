@@ -11,6 +11,7 @@ Interview me to surface my guiding principles and decision frameworks.
 - Label each option with what happens, in plain words; no coined shorthand. The label must make sense before its description is read, and the question must say what is unknown and why.
 - When a question picks a layout, row format or other visible output, give each option a `preview` mockup of the result.
 - Put your recommended option first, labelled `(Recommended)`, with the reason in its description.
+- Pick the recommended option by risk: name the main failure each option leaves open and recommend the one that closes the biggest. When one option contains another and the extra step is cheap, recommend the larger one. A prerequisite ("needs the machine first") goes in the description, not into the pick.
 - Build each round on my previous answers.
 - Keep going until I say stop or no open decision area is left, then list the principles I chose.
 - My answers are decisions to record. Files, branches and edits start on my `/proceed`.
