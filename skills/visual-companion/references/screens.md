@@ -72,6 +72,8 @@ The frame template provides these CSS classes for your content:
 </div>
 ```
 
+`.card-image` is a centred flex row with a 16/10 ratio (`scripts/frame-template.html`): give a block mockup `width:100%`, or override with `.card-image { display:block; aspect-ratio:auto }` for tall mockups with notes.
+
 ### Mockup container
 
 ```html

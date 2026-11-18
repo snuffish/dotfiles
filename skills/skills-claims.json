@@ -25860,6 +25860,26 @@
         "method": "manual",
         "reason": "az devops login reads a PAT from stdin; az login --allow-no-subscriptions worked for the GR guest account (gap 2026-11-17)"
       }
+    },
+    {
+      "id": "skills/visual-companion/references/screens.md:75:other:card-image flex 16/10",
+      "source": {
+        "file": "skills/visual-companion/references/screens.md",
+        "line": 75
+      },
+      "kind": "other",
+      "value": ".card-image is a centred flex row with a 16/10 ratio",
+      "quote": "`.card-image` is a centred flex row with a 16/10 ratio (`scripts/frame-template.html`)",
+      "context": " card mockups need width:100% or a display override",
+      "verify": {
+        "method": "grep",
+        "pattern": "\\.card-image \\{[^}]*aspect-ratio: 16/10;[^}]*display: flex;[^}]*justify-content: center",
+        "paths": [
+          "skills/visual-companion/scripts/frame-template.html"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
     }
   ]
 }
