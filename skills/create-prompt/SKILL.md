@@ -32,7 +32,7 @@ On-demand references (`references/`):
 The deliverable is the prompt. Running it is a separate decision the user makes after reading it.
 
 1. Stop at the printed prompt. Don't invoke the target skill, spawn agents or edit files. The read-only lookups in steps 2–3 are the only commands this skill runs.
-2. Only a user message that **starts with** `/proceed` runs the prompt (`/proceed N` picks variant N; a bare `/proceed` runs the recommended one). "Go ahead", "looks good", answering the unresolved questions or "use your recommendations" all mean _refine_, not _run_.
+2. Only a user message that **starts with** `/proceed` runs the prompt (`/proceed N` picks variant N; a bare `/proceed` runs the recommended one). "Go ahead", "looks good", answering the unresolved questions or "use your recommendations" all mean _refine_, not _run_. A target skill whose frontmatter has `disable-model-invocation: true` cannot be run this way: end the `Next:` line after the **Run with** flags so the user types the prompt.
 3. Follow-up input refines: apply it, reprint the one prompt block (the chosen or recommended variant), its **Run with** line and the `Next:` line, nothing else.
 
 ---
@@ -57,6 +57,7 @@ Follow [`references/skill-selection.md`](references/skill-selection.md):
 ### 3. Ground the scope (read-only, cheap)
 
 - Query git state: `git branch --show-current`, `git status -s`, and for PRs/branches `git merge-base origin/main HEAD` and `git diff --stat <base>...HEAD`.
+- Look for an earlier run of the target skill on the same scope: its artifacts in the artifact dir (`artifact-protocol`) and the work state. Build the prompt on what it decided and dropped, and name the earlier run in the `Scope:` line.
 - Inject concrete names and ranges into the prompt; use placeholders only when unknowable.
 - Resolve user-named areas across the repo (`git ls-files`, `find`).
 - For code changes, name the documented verification step (`CLAUDE.md` or a verify skill). For read-only tasks, `Done when` is the deliverable itself.
@@ -104,7 +105,6 @@ Output only this structure (plus opening rationale if triggered autonomously):
 
 Next: paste it into a session started with the **Run with** flags, or `/proceed` to run it here (on this session's model and effort).
 ````
-
 ---
 
 ## Options
