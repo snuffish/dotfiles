@@ -1,0 +1,59 @@
+# shellcheck shell=bash
+# Wraps just's own zsh completion so module recipes complete as `just <module> <recipe>`.
+# just offers them only as `module::recipe`, and after a module name it repeats every recipe, file and flag.
+
+if [[ -n "$ZSH_VERSION" ]] && command -v just >/dev/null 2>&1 && (( ${+functions[compdef]} )); then
+  source <(JUST_COMPLETE=zsh command just)
+
+  _just_with_modules() {
+    local -a names entries recipes mods
+    local -A docs
+    local line name rest prefix="" w i sep=$'\x1f'
+
+    # Flags and `module::recipe` paths: just's own completer handles them
+    if [[ $PREFIX == -* || $PREFIX == *::* ]]; then
+      _clap_dynamic_completer_just "$@"
+      return
+    fi
+
+    names=(${(z)"$(command just --summary 2>/dev/null)"})
+    (( ${#names} )) || return 1
+
+    # Walk the words before the cursor: module names extend the prefix, a recipe means its arguments follow
+    for (( i = 2; i < CURRENT; i++ )); do
+      w=${words[i]}
+      if [[ $w == -* ]]; then
+        _clap_dynamic_completer_just "$@"
+        return
+      fi
+      if (( ${names[(I)${(b)prefix}${(b)w}::*]} )); then
+        prefix+="$w::"
+      else
+        _files
+        return
+      fi
+    done
+
+    # Doc comments, from just's completer at the first argument (`name\:\:sub:doc` lines)
+    entries=("${(@f)$(_CLAP_IFS=$'\n' _CLAP_COMPLETE_INDEX=1 JUST_COMPLETE=zsh command just -- just '' 2>/dev/null)}")
+    for line in $entries; do
+      line=${line//\\:/$sep}
+      [[ $line == *:* ]] && docs[${${line%%:*}//$sep/:}]=${line#*:}
+    done
+
+    for name in ${(M)names:#${(b)prefix}*}; do
+      rest=${name#${(b)prefix}}
+      if [[ $rest == *::* ]]; then
+        mods+=("${rest%%::*}:module")
+      else
+        recipes+=("$rest${docs[$name]:+:${docs[$name]}}")
+      fi
+    done
+
+    mods=(${(u)mods})
+    _describe -t modules module mods
+    _describe -t recipes recipe recipes
+  }
+
+  compdef _just_with_modules just
+fi

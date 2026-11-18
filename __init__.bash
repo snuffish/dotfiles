@@ -106,6 +106,10 @@ if [[ -f "$SCRIPT_DIR/az.completion" ]]; then
   source "$SCRIPT_DIR/az.completion"
 fi
 
+if [[ -f "$SCRIPT_DIR/just.completion" ]]; then
+  source "$SCRIPT_DIR/just.completion"
+fi
+
 if [[ -f "$SCRIPT_DIR/tmux/init.bash" ]]; then
   source "$SCRIPT_DIR/tmux/init.bash"
 fi
