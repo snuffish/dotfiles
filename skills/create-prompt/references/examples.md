@@ -20,7 +20,9 @@ Rules: apply priis-backend-dry patterns.
 Done when: priis-verify passes; then stop — don't commit.
 ```
 
-Next: paste it, or `/proceed` to run it here.
+**Run with:** `claude --model fable --effort medium` — scoped edit, behaviour checked by priis-verify.
+
+Next: paste it into a session started with the **Run with** flags, or `/proceed` to run it here (on this session's model and effort).
 ````
 
 ---
@@ -41,9 +43,11 @@ Goal: remove dead symbols and unused imports; preserve runtime behavior
 Done when: ruff check passes; then stop — don't commit
 ```
 
+**Run with:** `claude --model sonnet --effort low` — one file, dead-code removal, ruff catches mistakes.
+
 **Unresolved questions:**
 
 - Target files — recommend: run on the currently edited file first
 
-Next: paste it, or `/proceed` to run it here.
+Next: paste it into a session started with the **Run with** flags, or `/proceed` to run it here (on this session's model and effort).
 ````

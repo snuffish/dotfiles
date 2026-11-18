@@ -33,7 +33,7 @@ The deliverable is the prompt. Running it is a separate decision the user makes 
 
 1. Stop at the printed prompt. Don't invoke the target skill, spawn agents or edit files. The read-only lookups in steps 2–3 are the only commands this skill runs.
 2. Only a user message that **starts with** `/proceed` runs the prompt (`/proceed N` picks variant N; a bare `/proceed` runs the recommended one). "Go ahead", "looks good", answering the unresolved questions or "use your recommendations" all mean _refine_, not _run_.
-3. Follow-up input refines: apply it, reprint the one prompt block (the chosen or recommended variant) and the `Next:` line, nothing else.
+3. Follow-up input refines: apply it, reprint the one prompt block (the chosen or recommended variant), its **Run with** line and the `Next:` line, nothing else.
 
 ---
 
@@ -76,7 +76,16 @@ Done when: <verify step>; then stop — <what not to do yet>
 
 Drop empty lines. Prune generic advice, politeness, target skill internal instructions, and conventions already covered by `CLAUDE.md`.
 
-### 5. Output
+### 5. Pick the model and effort
+
+Recommend how to start the session that runs the prompt (`claude --help`: `--model`, `--effort low|medium|high|xhigh|max`):
+
+- **Model:** the target skill's `model:` frontmatter, when the prompt starts with its `/<skill>` (it switches only when the user types the skill; invoked through the Skill tool it only relabels). Otherwise the model the user's own skill defaults and memories chose for this kind of work, never the model running this skill.
+- **Effort:** the target skill's `effort:` frontmatter, otherwise by risk: `low` for a lookup or read-only report, `medium` for a scoped edit with a verify step, `high` when it runs unattended, edits across files or decides what to fix, `xhigh` or `max` only for open-ended research where a miss costs more than the time.
+- Justify the pick with the risk it closes, not its cost.
+- `/proceed` keeps this session's model and effort; say so in `Next:` (step 6).
+
+### 6. Output
 
 Output only this structure (plus opening rationale if triggered autonomously):
 
@@ -87,11 +96,13 @@ Output only this structure (plus opening rationale if triggered autonomously):
 <the prompt>
 ```
 
+**Run with:** `claude --model <model> --effort <level>` — <the risk that sets the pick, ≤15 words>
+
 **Unresolved questions:** <what I must decide, each with your recommendation. Leave this block out when there are none.>
 
 - <question> — recommend: <answer>
 
-Next: paste it, or `/proceed` to run it here.
+Next: paste it into a session started with the **Run with** flags, or `/proceed` to run it here (on this session's model and effort).
 ````
 
 ---

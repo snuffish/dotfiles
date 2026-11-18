@@ -27,15 +27,19 @@ Replace the single-prompt output block with:
 <prompt>
 ```
 
+**Run with:** `claude --model <model> --effort <level>` — <the risk that sets the pick, ≤15 words>
+
 **2. <approach, 2–4 words>**: `/<skill>` — <when to pick it>
 
 ```text
 <prompt>
 ```
 
+**Run with:** `claude --model <model> --effort <level>` — <the risk that sets the pick, ≤15 words>
+
 **Unresolved questions:** <what I must decide, each with your recommendation. Leave this block out when there are none.>
 
 - <question> — recommend: <answer>
 
-Next: paste one, or `/proceed N` to run it here (bare `/proceed` runs 1).
+Next: paste one into a session started with its **Run with** flags, or `/proceed N` to run it here on this session's model and effort (bare `/proceed` runs 1).
 ````
