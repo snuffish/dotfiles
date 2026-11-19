@@ -931,7 +931,12 @@ _ds_clean_uv() {
     while IFS= read -r line; do
       printf "     %s%s%s\n" "$DS_DIM" "$(printf "%s" "$line" | cut -c1-110)" "$DS_RESET"
     done <<< "$users"
-    printf "   Stop them (e.g. quit Claude Code sessions that use claude-mem) and re-run.\n\n"
+    if [[ "$users" == *chroma-mcp* ]] && command -v claude-mem >/dev/null 2>&1; then
+      printf "   chroma-mcp is claude-mem's search server: run %sclaude-mem stop%s, re-run this,\n" "$DS_BOLD" "$DS_RESET"
+      printf "   then %sclaude-mem start%s. Any other process listed must exit too.\n\n" "$DS_BOLD" "$DS_RESET"
+    else
+      printf "   Stop them and re-run.\n\n"
+    fi
     return 0
   fi
   if command -v uv >/dev/null 2>&1; then
