@@ -912,8 +912,28 @@ _ds_clean_pip() {
   _ds_done "pip cache cleaned."
 }
 
+# "pid cmdline" of processes holding the uv cache: uv/uvx themselves and tools
+# that run from inside the cache (a long-lived `uvx` server such as chroma-mcp)
+_ds_uv_users() {
+  local dir
+  dir=$(_ds_uv_cache_dir)
+  { pgrep -a -x uv; pgrep -a -f "^$dir/"; } 2>/dev/null | sort -u
+}
+
 _ds_clean_uv() {
   _ds_step "Cleaning uv cache"
+  # uv cache clean waits for every user to exit, and --force would delete the
+  # environment a running uvx tool executes from, so skip while it is in use
+  local users line
+  users=$(_ds_uv_users)
+  if [[ -n "$users" ]]; then
+    printf "   %s⚠ Skipped: the uv cache is in use by:%s\n" "$DS_YELLOW" "$DS_RESET"
+    while IFS= read -r line; do
+      printf "     %s%s%s\n" "$DS_DIM" "$(printf "%s" "$line" | cut -c1-110)" "$DS_RESET"
+    done <<< "$users"
+    printf "   Stop them (e.g. quit Claude Code sessions that use claude-mem) and re-run.\n\n"
+    return 0
+  fi
   if command -v uv >/dev/null 2>&1; then
     uv cache clean
   else
