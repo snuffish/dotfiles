@@ -116,22 +116,75 @@ function gcai() {
   claude-p --model sonnet "/commit $*"
 }
 
-# Close every linked worktree of the current repo (or the repo dir in $1) with Claude's /wt-close-all skill; args are
-# passed to it. Claude starts only when a tree on a branch is dirty or unpushed with no live session (the skill's commit
-# rows); otherwise wt-sweep removes the safe trees and lists the kept ones with their reason, at no model cost
+# Close linked worktrees of the current repo (or the repo dir in $1) after you pick them. Each tree gets a planned
+# action: remove (safe), commit+push, remove (on a branch, dirty or unpushed, no live session) or keep:<reason>.
+# Two or more actionable trees: an fzf checklist, all marked (space toggles, enter runs, esc cancels), with a preview of
+# the focused tree's changed files and unpushed commits; one: those files and commits, then a y/N prompt.
+# Marked safe trees go through wt-rm; marked commit trees go to Claude's /wt-close-all (args passed to it) as the
+# approved list, standing in for the skill's own confirmation, which print mode can't ask
 function gwtclear() {
-  local repo=. rows
+  local repo=. rows lines menu kept picked n ans dir commits
   [[ -d "$1" ]] && repo=$1
   rows=$(wt-status "$repo") || return 1
   if [[ -z "$rows" ]]; then
     echo "gwtclear: no linked worktrees"
     return 0
   fi
-  if awk -F '\t' '$2 != "(detached)" && ($6 == "keep:dirty" || $6 == "keep:unpushed") { found = 1 } END { exit !found }' <<<"$rows"; then
-    claude-p "/wt-close-all $*"
-  else
-    wt-sweep --apply "$repo"
+  # "<dir>\t<remove|commit|keep|header>\t<aligned display>", header first
+  lines=$(awk -F '\t' '
+    {
+      if ($6 == "safe") a = "remove"
+      else if ($2 != "(detached)" && ($6 == "keep:dirty" || $6 == "keep:unpushed")) a = "commit+push, remove"
+      else { a = $6; sub(/^keep:/, "keep: ", a) }
+      m = split($1, p, "/")
+      r++; D[r] = $1; A[r] = a; N[r] = p[m]; B[r] = $2; X[r] = $4; U[r] = $5
+      K[r] = a == "remove" ? "remove" : (a ~ /^commit/ ? "commit" : "keep")
+      if (length(p[m]) > wn) wn = length(p[m]); if (length(a) > wa) wa = length(a); if (length($2) > wb) wb = length($2)
+    }
+    END {
+      f = "%s\t%s\t%-" wn "s  %-" wa "s  %-" wb "s  %s\n"
+      printf f, "-", "header", "WORKTREE", "ACTION", "BRANCH", "DIRTY/UNPUSHED"
+      for (i = 1; i <= r; i++) printf f, D[i], K[i], N[i], A[i], B[i], X[i] "/" U[i]
+    }' <<<"$rows")
+  menu=$(awk -F '\t' '$2 != "keep"' <<<"$lines")
+  kept=$(awk -F '\t' '$2 == "keep" { print $3 }' <<<"$lines")
+  n=$(( $(grep -c . <<<"$menu") - 1 ))
+  if (( n == 0 )); then
+    cut -f3 <<<"$lines"
+    echo "gwtclear: nothing to remove"
+    return 0
   fi
+  if (( n > 1 )) && command -v fzf >/dev/null; then
+    picked=$(fzf --multi --no-input --no-sort --layout=reverse --height=60% --delimiter=$'\t' --with-nth=3 \
+      --header-lines=1 --header="space: toggle · enter: run the marked trees · esc: cancel${kept:+
+$kept}" \
+      --marker='◉ ' --pointer='❯' --preview-window='right,50%,wrap' \
+      --preview='git -C {1} status --short; echo; echo "unpushed commits:"; git -C {1} log --oneline HEAD --not --exclude="$(git -C {1} branch --show-current)" --branches --remotes' \
+      --bind 'load:select-all,space:toggle,enter:transform:[ "$FZF_SELECT_COUNT" -gt 0 ] && echo accept || echo abort' \
+      <<<"$menu") || { echo "gwtclear: nothing done"; return 0; }
+  else
+    cut -f3 <<<"$lines"
+    awk -F '\t' '$2 == "commit" { print $1 }' <<<"$menu" | while IFS= read -r dir; do
+      printf '\n── %s\n' "${dir##*/}"
+      git -C "$dir" status --short
+      echo "unpushed commits:"
+      git -C "$dir" log --oneline HEAD --not --exclude="$(git -C "$dir" branch --show-current)" --branches --remotes
+    done
+    echo
+    printf 'gwtclear: run the %s action(s) above? [y/N] ' "$n"
+    read -r ans
+    [[ "$ans" == [yY] ]] || { echo "gwtclear: nothing done"; return 0; }
+    picked=$(awk -F '\t' '$2 != "header"' <<<"$menu")
+  fi
+  awk -F '\t' '$2 == "remove" { print $1 }' <<<"$picked" | while IFS= read -r dir; do
+    wt-rm "$dir"
+  done
+  commits=$(awk -F '\t' '$2 == "commit" { print $3 }' <<<"$picked")
+  [[ -n "$commits" ]] && claude-p "/wt-close-all $*
+The user approved this list in gwtclear; treat it as the Step 2 answer go. Act on these trees only, and leave every
+other tree as it is, safe ones included:
+$commits"
+  return 0
 }
 
 # Merge with Claude in print mode, in a new git worktree so the checkout stays clean; args are appended to the prompt
