@@ -1,21 +1,35 @@
 #!/usr/bin/env python3
-"""Render overview.json as the /pr-overview page (one HTML file, four tabs).
+"""Render a JSON file as one tabbed HTML page.
 
-Usage: render_overview.py <overview.json> <out.html>
+Usage: render_overview.py <page.json> <out.html>
 
-The model fills overview.json (schema: references/schema.md); this script validates it, escapes every
-string and writes the page. A missing or mistyped field prints one line per problem to stderr and
-exits 1, so a broken JSON never becomes a half-empty page.
+Two shapes, told apart by the top-level keys (schema: references/schema.md):
+- a PR overview (`pr`, `overview`, `architecture`, `spec`, `review`): the four fixed /pr-overview tabs;
+- a walkthrough (`page`, `tabs`): the tabs the JSON names, each a list of blocks, with collapsible
+  `details` blocks for depth (/walkthrough).
+
+The model fills the JSON; this script validates it, escapes every string and writes the page. A missing
+or mistyped field prints one line per problem to stderr and exits 1, so a broken JSON never becomes a
+half-empty page.
 """
 
 import html
 import json
+import re
 import sys
 
 MERMAID = "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs"
 STATUSES = {"Met": "ok", "Met in UI": "warn", "Met · PO open": "warn", "Partly": "warn",
             "Not met": "bad", "Out of scope": "mute"}
 TONES = {"ok", "warn", "bad", "mute"}
+# Walkthrough block types and the keys each may carry besides "type".
+BLOCK_KEYS = {"text": {"text", "ref"}, "heading": {"text"}, "command": {"text"}, "steps": {"items"}, "list": {"items"},
+              "table": {"head", "rows"}, "diagram": {"mermaid", "label"}, "note": {"text", "ref", "tone"},
+              "tiles": {"items"}, "cols": {"boxes"}, "details": {"summary", "blocks"}}
+TAB_ID = re.compile(r"[a-z][a-z0-9-]*")
+# Hashes claude.ai keeps for itself on a published page (plus any comment-*): a tab with one would never open.
+RESERVED = {"settings", "sidebar", "customize", "upgrade", "downloads"}
+INLINE = re.compile(r"`([^`]+)`|\*\*([^*]+)\*\*")
 e = html.escape
 
 CSS = """
@@ -80,6 +94,18 @@ CSS = """
   .first { background: var(--hi); border: 1px solid var(--accent); border-radius: 8px; padding: 14px 18px; margin-top: 18px; }
   .first a { color: var(--accent); }
   footer { margin-top: 32px; font-size: 12px; color: var(--muted); }
+  code { font-size: 13px; }
+  h3.sub { margin: 22px 0 8px; }
+  .wt > p, .wt > ol, .wt > ul { max-width: 78ch; }
+  .wt > .box, .wt > .cols, .wt > .tablewrap, .wt .note, details > .tablewrap { margin: 12px 0; }
+  ol.steps > li { margin: 8px 0; }
+  .ref { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  pre.cmd { margin: 10px 0; padding: 10px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+    font-family: var(--mono); font-size: 13px; overflow-x: auto; white-space: pre; }
+  details { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 0 16px; margin: 8px 0; }
+  details[open] { padding-bottom: 12px; }
+  summary { cursor: pointer; padding: 10px 0; font-weight: 600; }
+  details .tablewrap, details pre.cmd, details .box { background: var(--bg); }
 """
 
 JS = """
@@ -94,9 +120,13 @@ function vars() { const s = getComputedStyle(document.documentElement), g = n =>
 async function draw(scope) {
   if (!mm) return;
   mm.initialize({ startOnLoad: false, theme: 'base', securityLevel: 'strict', themeVariables: vars() });
-  const nodes = [...scope.querySelectorAll('pre.mermaid:not([data-processed])')];
+  // A diagram in a closed <details> has no size to lay out in: it is drawn when the section opens.
+  const nodes = [...scope.querySelectorAll('pre.mermaid:not([data-processed])')].filter(n => !n.closest('details:not([open])'));
   if (nodes.length) { try { await mm.run({ nodes }); } catch (err) { console.error(err); } }
 }
+// ?expand opens every collapsible section on load: check_diagrams.py uses it to draw the diagrams inside them.
+if (new URLSearchParams(location.search).has('expand')) document.querySelectorAll('details').forEach(d => { d.open = true; });
+document.addEventListener('toggle', ev => { if (ev.target.open) draw(ev.target); }, true);
 function show(id) {
   if (!panels.some(p => p.id === id)) id = panels[0].id;
   panels.forEach(p => p.classList.toggle('on', p.id === id));
@@ -162,6 +192,188 @@ def diagram(obj, path):
     return f"<p>{e(t)}</p>" if t else ""
 
 
+def tile(obj, path):
+    label, value = need(obj, "label", str, path), need(obj, "value", str, path)
+    tone = opt(obj, "tone", str, path) or "mute"
+    if tone not in TONES:
+        errors.append(f"{path}.tone: must be one of {sorted(TONES)}")
+    return f'<div class="tile {e(tone)}"><b>{e(value)}</b><span>{e(label)}</span></div>' if label and value else ""
+
+
+def shell(name, meta, h1, lead, nav, panels, footer):
+    """The page around the tabs: head, theme toggle, title block, tab bar, footer and script. Every argument is HTML."""
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{name}</title>
+<style>{CSS}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><p class="meta">{meta}</p>
+    <button class="theme" id="theme" type="button">Light / dark</button></div>
+  <h1>{h1}</h1>
+  {lead}
+  <nav class="tabs" aria-label="Sections">
+    {nav}
+  </nav>
+  {panels}
+  <footer>{footer}</footer>
+</div>
+<script type="module">
+const MERMAID_URL = {json.dumps(MERMAID)};
+{JS}
+</script>
+</body>
+</html>
+"""
+
+
+def inline(text):
+    """Escape a walkthrough string, then turn `code` and **bold** into tags: the only markup it may carry."""
+    return INLINE.sub(lambda m: f"<code>{m.group(1)}</code>" if m.group(1) is not None else f"<b>{m.group(2)}</b>", e(text))
+
+
+def known(obj, allowed, path):
+    """Record an error per key of `obj` outside `allowed`: a misspelt optional key (`refs`) would otherwise vanish."""
+    if isinstance(obj, dict):
+        for key in sorted(set(obj) - set(allowed)):
+            errors.append(f"{path}.{key}: unknown key (allowed: {sorted(allowed)})")
+
+
+def line(item, path, block=False):
+    """A string, or {"text", "ref"?}; ref is the path:line behind the sentence, shown after it in small type.
+    With `block`, item is a text or note block, whose keys blocks() has already checked."""
+    if isinstance(item, str) and item.strip():
+        return inline(item)
+    if not isinstance(item, dict):
+        errors.append(f"{path}: expected non-empty str or object with text")
+        return ""
+    if not block:
+        known(item, {"text", "ref"}, path)
+    text, ref = need(item, "text", str, path), opt(item, "ref", str, path)
+    if not text:
+        return ""
+    return inline(text) + (f' <span class="ref">{e(ref)}</span>' if ref else "")
+
+
+def table(b, p):
+    head, rows = str_list(b, "head", p), need(b, "rows", list, p) or []
+    if not rows:
+        errors.append(f"{p}.rows: needs at least one row")
+    trs = []
+    for j, row in enumerate(rows):
+        if not isinstance(row, list) or len(row) != len(head):
+            errors.append(f"{p}.rows[{j}]: expected {len(head)} cells")
+            continue
+        cells = "".join(f"<td>{line(c, f'{p}.rows[{j}][{k}]')}</td>" for k, c in enumerate(row))
+        trs.append(f"<tr>{cells}</tr>")
+    ths = "".join(f"<th>{e(h)}</th>" for h in head)
+    return f'<div class="tablewrap"><table><thead><tr>{ths}</tr></thead><tbody>{"".join(trs)}</tbody></table></div>'
+
+
+def blocks(items, path, inside=None):
+    """Render a list of walkthrough blocks. `inside` names the enclosing details or cols block, which hold no
+    details or cols of their own."""
+    if not isinstance(items, list) or not items:
+        errors.append(f"{path}: needs at least one block")
+        return ""
+    out = []
+    for i, b in enumerate(items):
+        p = f"{path}[{i}]"
+        kind = need(b, "type", str, p)
+        if kind is None:
+            continue
+        if kind not in BLOCK_KEYS:
+            errors.append(f"{p}.type: {kind!r} not in {sorted(BLOCK_KEYS)}")
+            continue
+        known(b, BLOCK_KEYS[kind] | {"type"}, p)
+        if kind in ("details", "cols") and inside:
+            errors.append(f"{p}: a {kind} block cannot sit inside a {inside} block")
+        elif kind == "text":
+            out.append(f"<p>{line(b, p, block=True)}</p>")
+        elif kind == "note":
+            tone = opt(b, "tone", str, p) or "warn"
+            if tone not in ("warn", "bad"):
+                errors.append(f"{p}.tone: must be warn or bad")
+            out.append(f'<div class="note{" bad" if tone == "bad" else ""}">{line(b, p, block=True)}</div>')
+        elif kind == "heading":
+            out.append(f'<h3 class="sub">{inline(need(b, "text", str, p) or "")}</h3>')
+        elif kind == "command":
+            out.append(f'<pre class="cmd">{e(need(b, "text", str, p) or "")}</pre>')
+        elif kind in ("steps", "list"):
+            rows = need(b, "items", list, p) or []
+            if not rows:
+                errors.append(f"{p}.items: needs at least one entry")
+            lis = "".join(f"<li>{line(x, f'{p}.items[{j}]')}</li>" for j, x in enumerate(rows))
+            out.append(f'<ol class="steps">{lis}</ol>' if kind == "steps" else f"<ul>{lis}</ul>")
+        elif kind == "table":
+            out.append(table(b, p))
+        elif kind == "diagram":
+            label = opt(b, "label", str, p)
+            head = f'<p class="label">{e(label)}</p>' if label else ""
+            out.append(f'<div class="box">{head}{diagram(b, p)}</div>')
+        elif kind == "tiles":
+            tiles = []
+            for j, t in enumerate(need(b, "items", list, p) or []):
+                known(t, {"label", "value", "tone"}, f"{p}.items[{j}]")
+                tiles.append(tile(t, f"{p}.items[{j}]"))
+            out.append(f'<div class="tiles">{"".join(tiles)}</div>')
+        elif kind == "cols":
+            boxes = []
+            for j, box in enumerate(need(b, "boxes", list, p) or []):
+                bp = f"{p}.boxes[{j}]"
+                known(box, {"label", "blocks"}, bp)
+                label = need(box, "label", str, bp)
+                body = blocks(box.get("blocks") if isinstance(box, dict) else None, f"{bp}.blocks", "cols")
+                boxes.append(f'<div class="box"><p class="label">{e(label or "")}</p>{body}</div>')
+            if len(boxes) < 2:
+                errors.append(f"{p}.boxes: needs at least two boxes")
+            out.append(f'<div class="cols">{"".join(boxes)}</div>')
+        else:  # details
+            summary = inline(need(b, "summary", str, p) or "")
+            out.append(f'<details><summary>{summary}</summary>{blocks(b.get("blocks"), f"{p}.blocks", "details")}</details>')
+    return "".join(out)
+
+
+def build_walkthrough(data):
+    page = need(data, "page", dict, "$")
+    tabs = need(data, "tabs", list, "$")
+    footer = need(data, "footer", str, "$")
+    if page is None or tabs is None:
+        return None
+    known(data, {"page", "tabs", "footer"}, "$")
+    known(page, {"name", "title", "summary", "source", "head", "date"}, "page")
+    name, title, summary = (need(page, k, str, "page") for k in ("name", "title", "summary"))
+    source, head, date = (need(page, k, str, "page") for k in ("source", "head", "date"))
+    if len(tabs) < 2:
+        errors.append("tabs: needs at least two tabs")
+    nav, panels, seen = [], [], set()
+    for i, t in enumerate(tabs):
+        p = f"tabs[{i}]"
+        if not isinstance(t, dict):
+            errors.append(f"{p}: expected object")
+            continue
+        known(t, {"id", "label", "title", "blocks"}, p)
+        tid, label, heading = (need(t, k, str, p) for k in ("id", "label", "title"))
+        if tid and (not TAB_ID.fullmatch(tid) or tid in RESERVED or tid.startswith("comment-")):
+            errors.append(f"{p}.id: {tid!r} must be lower-case letters, digits and dashes, and not one of "
+                          f"{sorted(RESERVED)} or comment-*")
+        if tid and tid in seen:
+            errors.append(f"{p}.id: {tid!r} is used by an earlier tab")
+        seen.add(tid)
+        body = blocks(t.get("blocks"), f"{p}.blocks")
+        if tid and label and heading:
+            nav.append(f'<a href="#{e(tid)}">{e(label)}</a>')
+            panels.append(f'<section class="panel wt{"" if panels else " on"}" id="{e(tid)}"><h2>{inline(heading)}</h2>{body}</section>')
+    if errors:
+        return None
+    return shell(e(name), f"{e(source)} · {e(head)} · {e(date)}", e(title), f"<p>{inline(summary)}</p>",
+                 "".join(nav), "\n  ".join(panels), e(footer))
+
+
 def build(data):
     pr = need(data, "pr", dict, "$")
     ov = need(data, "overview", dict, "$")
@@ -181,15 +393,7 @@ def build(data):
     before = diagram(need(problem, "before", dict, "overview.problem"), "overview.problem.before") if problem else ""
     after = diagram(need(problem, "after", dict, "overview.problem"), "overview.problem.after") if problem else ""
     psrc = opt(problem, "source", str, "overview.problem") if problem else None
-    tiles = []
-    for i, t in enumerate(need(ov, "tiles", list, "overview") or []):
-        p = f"overview.tiles[{i}]"
-        label, value = need(t, "label", str, p), need(t, "value", str, p)
-        tone = opt(t, "tone", str, p) or "mute"
-        if tone not in TONES:
-            errors.append(f"{p}.tone: must be one of {sorted(TONES)}")
-        if label and value:
-            tiles.append(f'<div class="tile {e(tone)}"><b>{e(value)}</b><span>{e(label)}</span></div>')
+    tiles = [tile(t, f"overview.tiles[{i}]") for i, t in enumerate(need(ov, "tiles", list, "overview") or [])]
     first = need(ov, "review_first", dict, "overview")
     first_html = ""
     if first:
@@ -265,24 +469,8 @@ def build(data):
     if errors:
         return None
 
-    return f"""<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PR !{e(pid)} overview</title>
-<style>{CSS}</style>
-</head>
-<body>
-<div class="wrap">
-  <div class="top"><p class="meta">{e(repo)} · PR !{e(pid)} · head {e(head)} · {e(date)}</p>
-    <button class="theme" id="theme" type="button">Light / dark</button></div>
-  <h1>{e(ptitle)}</h1>
-  <p>{e(summary)}</p><p class="meta">{e(size)}</p>
-  <nav class="tabs" aria-label="Sections">
-    <a href="#overview">Overview</a><a href="#architecture">Architecture</a><a href="#spec">Spec</a><a href="#review">Review</a>
-  </nav>
-  <section class="panel on" id="overview">
+    nav = '<a href="#overview">Overview</a><a href="#architecture">Architecture</a><a href="#spec">Spec</a><a href="#review">Review</a>'
+    panels = f"""<section class="panel on" id="overview">
     <h2>The problem it solves</h2>
     <div class="cols"><div class="box"><p class="label">Before</p>{before}</div>
       <div class="box"><p class="label">After</p>{after}</div></div>
@@ -297,16 +485,9 @@ def build(data):
     <div class="tablewrap"><table><thead><tr><th>ID</th><th>Decision</th><th>Status</th><th>Evidence</th></tr></thead>
     <tbody>{"".join(srows)}</tbody></table></div></section>
   <section class="panel" id="review"><h2>Still open</h2>
-    <div class="cols">{"".join(sections)}</div>{f'<p class="meta">Source: {e(rsrc)}</p>' if rsrc else ""}</section>
-  <footer>{e(footer)}</footer>
-</div>
-<script type="module">
-const MERMAID_URL = {json.dumps(MERMAID)};
-{JS}
-</script>
-</body>
-</html>
-"""
+    <div class="cols">{"".join(sections)}</div>{f'<p class="meta">Source: {e(rsrc)}</p>' if rsrc else ""}</section>"""
+    return shell(f"PR !{e(pid)} overview", f"{e(repo)} · PR !{e(pid)} · head {e(head)} · {e(date)}", e(ptitle),
+                 f'<p>{e(summary)}</p><p class="meta">{e(size)}</p>', nav, panels, e(footer))
 
 
 def main():
@@ -319,10 +500,11 @@ def main():
     except (OSError, json.JSONDecodeError) as err:
         print(f"{sys.argv[1]}: {err}", file=sys.stderr)
         return 1
-    page = build(data)
+    walkthrough = isinstance(data, dict) and "tabs" in data
+    page = build_walkthrough(data) if walkthrough else build(data)
     if errors or page is None:
-        for line in errors or ["overview.json is missing a top-level section"]:
-            print(f"error: {line}", file=sys.stderr)
+        for problem in errors or ["the JSON is missing a top-level section"]:
+            print(f"error: {problem}", file=sys.stderr)
         return 1
     with open(sys.argv[2], "w", encoding="utf-8") as fh:
         fh.write(page)

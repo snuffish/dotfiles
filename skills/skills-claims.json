@@ -4714,7 +4714,7 @@
       },
       "kind": "skill_ref",
       "value": "suggestion",
-      "quote": "uash-ef-core-migrations`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `what",
+      "quote": "uash-ef-core-migrations`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `walk",
       "verify": {
         "method": "skill_exists",
         "name": "suggestion",
@@ -4732,7 +4732,7 @@
       },
       "kind": "skill_ref",
       "value": "sync-skills",
-      "quote": "grations`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `what-am-I-missing`,",
+      "quote": "grations`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `walkthrough`, `what",
       "verify": {
         "method": "skill_exists",
         "name": "sync-skills",
@@ -4747,7 +4747,7 @@
       },
       "kind": "skill_ref",
       "value": "verify-assumptions",
-      "quote": "s`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `what-am-I-missing`, `wt`, `wt-close-all` |",
+      "quote": "p-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `walkthrough`, `what-am-I-missing`, `w",
       "verify": {
         "method": "skill_exists",
         "name": "verify-assumptions",
@@ -4762,7 +4762,7 @@
       },
       "kind": "skill_ref",
       "value": "visual-companion",
-      "quote": "`verify-assumptions`, `visual-companion`, `what-am-I-missing`, `wt`, `wt-close-all` |",
+      "quote": "subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `walkthrough`, `what-am-I-missing`, `wt`, `wt-close-all` |",
       "verify": {
         "method": "skill_exists",
         "name": "visual-companion",
@@ -4777,7 +4777,7 @@
       },
       "kind": "skill_ref",
       "value": "what-am-I-missing",
-      "quote": "s`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `what-am-I-missing`, `wt`, `wt-close-all` |",
+      "quote": "subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `walkthrough`, `what-am-I-missing`, `wt`, `wt-close-all` |",
       "verify": {
         "method": "skill_exists",
         "name": "what-am-I-missing",
@@ -4792,7 +4792,7 @@
       },
       "kind": "skill_ref",
       "value": "wt",
-      "quote": "s`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `what-am-I-missing`, `wt`, `wt-close-all` |",
+      "quote": "subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `walkthrough`, `what-am-I-missing`, `wt`, `wt-close-all` |",
       "verify": {
         "method": "skill_exists",
         "name": "wt",
@@ -23869,7 +23869,7 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "and | 61 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `c",
+      "quote": "neral (top level) | Command | 62 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `code-documentation`, `code",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
@@ -23973,19 +23973,19 @@
       }
     },
     {
-      "id": "skills/README.md:42:count:62",
+      "id": "skills/README.md:42:count:63",
       "source": {
         "file": "skills/README.md",
         "line": 42
       },
       "kind": "count",
-      "value": "62",
-      "quote": "68 skills total \u2014 62 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "value": "63",
+      "quote": "69 skills total \u2014 63 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/*/SKILL.md",
         "base": "repo",
-        "expected": 62,
+        "expected": 63,
         "op": "eq"
       }
     },
@@ -23997,7 +23997,7 @@
       },
       "kind": "count",
       "value": "6 GR.PRIIS project skills",
-      "quote": "68 skills total \u2014 62 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "69 skills total \u2014 63 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/Projects/GR.PRIIS/*/SKILL.md",
@@ -24014,7 +24014,7 @@
       },
       "kind": "count",
       "value": "8 Modules",
-      "quote": "68 skills total \u2014 62 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "69 skills total \u2014 63 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/_modules/*.md",
@@ -26715,6 +26715,708 @@
         "pattern": "ARTIFACT_ROOT / repo / \"on-snuffish-pc\" / run_id",
         "paths": [
           "skills/on-snuffish-pc/scripts/on_pc.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/pr-overview/SKILL.md:38:skill_ref:walkthrough",
+      "source": {
+        "file": "skills/pr-overview/SKILL.md",
+        "line": 38
+      },
+      "kind": "skill_ref",
+      "value": "walkthrough",
+      "quote": "| Explain how a flow or a set of commands works, with no PR | [`/walkthrough`](../walkthrough/SKILL.md) |",
+      "context": "not-for pointer",
+      "verify": {
+        "method": "skill_exists",
+        "name": "walkthrough",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/pr-overview/SKILL.md:58:path:skills/pr-overview/scripts/check_diagrams.py",
+      "source": {
+        "file": "skills/pr-overview/SKILL.md",
+        "line": 58
+      },
+      "kind": "path",
+      "value": "skills/pr-overview/scripts/check_diagrams.py",
+      "quote": "n macOS, `xdg-open <path>` on Linux). Done when `python3 -I <skill-dir>/scripts/check_diagrams.py <path>` exits 0 (every diagram drew; exit 2 means the machine has no Chrome, so say the diagrams were not checked) and the page opens.",
+      "context": "diagram checker",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/pr-overview/scripts/check_diagrams.py",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/pr-overview/references/schema.md:5:symbol:build_walkthrough",
+      "source": {
+        "file": "skills/pr-overview/references/schema.md",
+        "line": 5
+      },
+      "kind": "symbol",
+      "value": "build_walkthrough",
+      "quote": "A JSON with a top-level `tabs` key is a walkthrough instead (`build_walkthrough`): free tabs and collapsible sections, with its own schema in `../../walkthrough/references/schema.md`.",
+      "context": "walkthrough page builder",
+      "verify": {
+        "method": "grep",
+        "pattern": "^def build_walkthrough\\(",
+        "paths": [
+          "skills/pr-overview/scripts/render_overview.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/pr-overview/references/schema.md:5:path:skills/walkthrough/references/schema.md",
+      "source": {
+        "file": "skills/pr-overview/references/schema.md",
+        "line": 5
+      },
+      "kind": "path",
+      "value": "skills/walkthrough/references/schema.md",
+      "quote": "A JSON with a top-level `tabs` key is a walkthrough instead (`build_walkthrough`): free tabs and collapsible sections, with its own schema in `../../walkthrough/references/schema.md`.",
+      "context": "walkthrough schema",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/walkthrough/references/schema.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/_modules/references/artifact-catalog.md:15:skill_ref:pr-overview",
+      "source": {
+        "file": "skills/_modules/references/artifact-catalog.md",
+        "line": 15
+      },
+      "kind": "skill_ref",
+      "value": "pr-overview",
+      "quote": "| `pr_overview-<suffix>.html` | `/pr-overview` | One tabbed page explaining a PR and its spec: overview, architecture cards, spec matrix, open review items |",
+      "context": "artifact owner",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-overview",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/_modules/references/artifact-catalog.md:16:skill_ref:walkthrough",
+      "source": {
+        "file": "skills/_modules/references/artifact-catalog.md",
+        "line": 16
+      },
+      "kind": "skill_ref",
+      "value": "walkthrough",
+      "quote": "| `walkthrough_page-<suffix>.html` | `/walkthrough` | One tabbed page explaining how a flow or a set of commands works: purpose, one tab per part, collapsible detail |",
+      "context": "artifact owner",
+      "verify": {
+        "method": "skill_exists",
+        "name": "walkthrough",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/walkthrough/SKILL.md:10:symbol:build_walkthrough",
+      "source": {
+        "file": "skills/walkthrough/SKILL.md",
+        "line": 10
+      },
+      "kind": "symbol",
+      "value": "build_walkthrough",
+      "quote": "kthrough.json`; the `/pr-overview` renderer writes the page (`build_walkthrough` in `../pr-overview/scripts/render_overview.py`), so it looks like a `/pr-overview` page.",
+      "context": "walkthrough page builder",
+      "verify": {
+        "method": "grep",
+        "pattern": "^def build_walkthrough\\(",
+        "paths": [
+          "skills/pr-overview/scripts/render_overview.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/walkthrough/SKILL.md:10:path:skills/pr-overview/scripts/render_overview.py",
+      "source": {
+        "file": "skills/walkthrough/SKILL.md",
+        "line": 10
+      },
+      "kind": "path",
+      "value": "skills/pr-overview/scripts/render_overview.py",
+      "quote": "kthrough.json`; the `/pr-overview` renderer writes the page (`build_walkthrough` in `../pr-overview/scripts/render_overview.py`), so it looks like a `/pr-overview` page.",
+      "context": "renderer shared with pr-overview",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/pr-overview/scripts/render_overview.py",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/walkthrough/SKILL.md:20:path:skills/_modules/core.md",
+      "source": {
+        "file": "skills/walkthrough/SKILL.md",
+        "line": 20
+      },
+      "kind": "path",
+      "value": "skills/_modules/core.md",
+      "quote": "- `../_modules/core.md`",
+      "context": "Module the skill reads",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/core.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/walkthrough/SKILL.md:21:path:skills/_modules/artifact-protocol.md",
+      "source": {
+        "file": "skills/walkthrough/SKILL.md",
+        "line": 21
+      },
+      "kind": "path",
+      "value": "skills/_modules/artifact-protocol.md",
+      "quote": "- `../_modules/artifact-protocol.md`: the page is `<prefix>-walkthrough_page-<slug>.html`, claimed with `publish_new_artifact.sh` (extension `html`); `<artifact-dir>` is the one of the repo being explained, also when the session started in another repo",
+      "context": "Module the skill reads",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/artifact-protocol.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/walkthrough/SKILL.md:25:path:skills/walkthrough/references/schema.md",
+      "source": {
+        "file": "skills/walkthrough/SKILL.md",
+        "line": 25
+      },
+      "kind": "path",
+      "value": "skills/walkthrough/references/schema.md",
+      "quote": "- [`references/schema.md`](references/schema.md) \u2014 the JSON fields and the block types; read before step 5",
+      "context": "schema reference",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/walkthrough/references/schema.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/walkthrough/SKILL.md:38:skill_ref:pr-overview",
+      "source": {
+        "file": "skills/walkthrough/SKILL.md",
+        "line": 38
+      },
+      "kind": "skill_ref",
+      "value": "pr-overview",
+      "quote": "| A pull request and whether it meets its spec | [`/pr-overview`](../pr-overview/SKILL.md) |",
+      "context": "not-for pointer",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-overview",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/walkthrough/SKILL.md:39:skill_ref:explain",
+      "source": {
+        "file": "skills/walkthrough/SKILL.md",
+        "line": 39
+      },
+      "kind": "skill_ref",
+      "value": "explain",
+      "quote": "| One piece of code or one comment, answered in chat | [`/explain`](../explain/SKILL.md) |",
+      "context": "not-for pointer",
+      "verify": {
+        "method": "skill_exists",
+        "name": "explain",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/walkthrough/SKILL.md:40:skill_ref:investigate",
+      "source": {
+        "file": "skills/walkthrough/SKILL.md",
+        "line": 40
+      },
+      "kind": "skill_ref",
+      "value": "investigate",
+      "quote": "| Research before designing a change | [`/investigate`](../investigate/SKILL.md) |",
+      "context": "not-for pointer",
+      "verify": {
+        "method": "skill_exists",
+        "name": "investigate",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/walkthrough/SKILL.md:41:skill_ref:code-review",
+      "source": {
+        "file": "skills/walkthrough/SKILL.md",
+        "line": 41
+      },
+      "kind": "skill_ref",
+      "value": "code-review",
+      "quote": "| Find defects | [`/code-review`](../code-review/SKILL.md) |",
+      "context": "not-for pointer",
+      "verify": {
+        "method": "skill_exists",
+        "name": "code-review",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/walkthrough/SKILL.md:62:path:skills/pr-overview/scripts/check_diagrams.py",
+      "source": {
+        "file": "skills/walkthrough/SKILL.md",
+        "line": 62
+      },
+      "kind": "path",
+      "value": "skills/pr-overview/scripts/check_diagrams.py",
+      "quote": "python3 -I <registry>/pr-overview/scripts/check_diagrams.py <scratchpad>/walkthrough.html",
+      "context": "diagram checker",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/pr-overview/scripts/check_diagrams.py",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/walkthrough/SKILL.md:63:path:skills/_modules/scripts/publish_new_artifact.sh",
+      "source": {
+        "file": "skills/walkthrough/SKILL.md",
+        "line": 63
+      },
+      "kind": "path",
+      "value": "skills/_modules/scripts/publish_new_artifact.sh",
+      "quote": "bash <registry>/_modules/scripts/publish_new_artifact.sh <scratchpad>/walkthrough.html <artifact-dir>/<prefix>-walkthrough_page-<slug> html",
+      "context": "claim script",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/scripts/publish_new_artifact.sh",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/walkthrough/SKILL.md:66:other:renderer-prints-html-path",
+      "source": {
+        "file": "skills/walkthrough/SKILL.md",
+        "line": 66
+      },
+      "kind": "other",
+      "value": "renderer-prints-html-path",
+      "quote": "- The renderer prints the HTML path when the JSON is right. When it is wrong it exits 1 and prints one `error:` line per problem, a misspelt key included. Fix the JSON, never the page.",
+      "context": "the output path is printed on success",
+      "verify": {
+        "method": "grep",
+        "pattern": "^    print\\(sys\\.argv\\[2\\]\\)",
+        "paths": [
+          "skills/pr-overview/scripts/render_overview.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/walkthrough/SKILL.md:66:other:renderer-error-lines",
+      "source": {
+        "file": "skills/walkthrough/SKILL.md",
+        "line": 66
+      },
+      "kind": "other",
+      "value": "renderer-error-lines",
+      "quote": "- The renderer prints the HTML path when the JSON is right. When it is wrong it exits 1 and prints one `error:` line per problem, a misspelt key included. Fix the JSON, never the page.",
+      "context": "one error line per problem, exit 1",
+      "verify": {
+        "method": "grep",
+        "pattern": "print\\(f\"error: \\{problem\\}\"",
+        "paths": [
+          "skills/pr-overview/scripts/render_overview.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/walkthrough/SKILL.md:66:other:renderer-unknown-key",
+      "source": {
+        "file": "skills/walkthrough/SKILL.md",
+        "line": 66
+      },
+      "kind": "other",
+      "value": "renderer-unknown-key",
+      "quote": "- The renderer prints the HTML path when the JSON is right. When it is wrong it exits 1 and prints one `error:` line per problem, a misspelt key included. Fix the JSON, never the page.",
+      "context": "a misspelt key is an error",
+      "verify": {
+        "method": "grep",
+        "pattern": "unknown key \\(allowed:",
+        "paths": [
+          "skills/pr-overview/scripts/render_overview.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/walkthrough/SKILL.md:67:other:check-diagrams-tab-lines",
+      "source": {
+        "file": "skills/walkthrough/SKILL.md",
+        "line": 67
+      },
+      "kind": "other",
+      "value": "check-diagrams-tab-lines",
+      "quote": "- `check_diagrams.py` prints one line per tab (`<tab>: 2/2 drawn`, or `no diagram`). A line ending in `FAIL` is a diagram that did not draw: fix its Mermaid and render again. `no Chrome or Chromium found` (exit 2) means the diagrams were not checked, and the chat says so.",
+      "context": "one line per tab, FAIL on a diagram that did not draw",
+      "verify": {
+        "method": "grep",
+        "pattern": "drawn\" \\+ .*\"  FAIL\"",
+        "paths": [
+          "skills/pr-overview/scripts/check_diagrams.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/walkthrough/SKILL.md:67:other:check-diagrams-no-diagram",
+      "source": {
+        "file": "skills/walkthrough/SKILL.md",
+        "line": 67
+      },
+      "kind": "other",
+      "value": "check-diagrams-no-diagram",
+      "quote": "- `check_diagrams.py` prints one line per tab (`<tab>: 2/2 drawn`, or `no diagram`). A line ending in `FAIL` is a diagram that did not draw: fix its Mermaid and render again. `no Chrome or Chromium found` (exit 2) means the diagrams were not checked, and the chat says so.",
+      "context": "a tab with no diagram says so",
+      "verify": {
+        "method": "grep",
+        "pattern": "no diagram",
+        "paths": [
+          "skills/pr-overview/scripts/check_diagrams.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/walkthrough/SKILL.md:67:other:check-diagrams-no-chrome",
+      "source": {
+        "file": "skills/walkthrough/SKILL.md",
+        "line": 67
+      },
+      "kind": "other",
+      "value": "check-diagrams-no-chrome",
+      "quote": "- `check_diagrams.py` prints one line per tab (`<tab>: 2/2 drawn`, or `no diagram`). A line ending in `FAIL` is a diagram that did not draw: fix its Mermaid and render again. `no Chrome or Chromium found` (exit 2) means the diagrams were not checked, and the chat says so.",
+      "context": "exit 2 when no browser is found",
+      "verify": {
+        "method": "grep",
+        "pattern": "no Chrome or Chromium found",
+        "paths": [
+          "skills/pr-overview/scripts/check_diagrams.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/walkthrough/SKILL.md:94:other:details-toggle-draw",
+      "source": {
+        "file": "skills/walkthrough/SKILL.md",
+        "line": 94
+      },
+      "kind": "other",
+      "value": "details-toggle-draw",
+      "quote": "The page has no external CSS and no Tailwind, and tabs are plain JavaScript with a hash, so a link can point at one tab. A diagram inside a closed `details` block is drawn when the section opens (the `toggle` listener in `JS`, `../pr-overview/scripts/render_overview.py`).",
+      "context": "a diagram in a closed details block is drawn on open",
+      "verify": {
+        "method": "grep",
+        "pattern": "addEventListener\\('toggle'",
+        "paths": [
+          "skills/pr-overview/scripts/render_overview.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/walkthrough/SKILL.md:100:path:skills/pr-overview/tests/fixture-walkthrough.json",
+      "source": {
+        "file": "skills/walkthrough/SKILL.md",
+        "line": 100
+      },
+      "kind": "path",
+      "value": "skills/pr-overview/tests/fixture-walkthrough.json",
+      "quote": "- The renderer printed the HTML path and no `error:` line, and `check_diagrams.py` printed no `FAIL` line (`../pr-overview/tests/fixture-walkthrough.json` is the working example).",
+      "context": "fixture",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/pr-overview/tests/fixture-walkthrough.json",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/walkthrough/references/schema.md:3:symbol:build_walkthrough",
+      "source": {
+        "file": "skills/walkthrough/references/schema.md",
+        "line": 3
+      },
+      "kind": "symbol",
+      "value": "build_walkthrough",
+      "quote": "Checked by `../../pr-overview/scripts/render_overview.py` (`build_walkthrough`): a JSON with a top-level `tabs` key renders as a walkthrough. A missing, mistyped or unknown field f",
+      "context": "walkthrough page builder",
+      "verify": {
+        "method": "grep",
+        "pattern": "^def build_walkthrough\\(",
+        "paths": [
+          "skills/pr-overview/scripts/render_overview.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/walkthrough/references/schema.md:3:other:tabs-key-selects-walkthrough",
+      "source": {
+        "file": "skills/walkthrough/references/schema.md",
+        "line": 3
+      },
+      "kind": "other",
+      "value": "tabs-key-selects-walkthrough",
+      "quote": "Checked by `../../pr-overview/scripts/render_overview.py` (`build_walkthrough`): a JSON with a top-level `tabs` key renders as a walkthrough. A missing, mistyped or unknown field f",
+      "context": "a top-level tabs key picks the walkthrough builder",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"tabs\" in data",
+        "paths": [
+          "skills/pr-overview/scripts/render_overview.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/walkthrough/references/schema.md:3:symbol:known",
+      "source": {
+        "file": "skills/walkthrough/references/schema.md",
+        "line": 3
+      },
+      "kind": "symbol",
+      "value": "known",
+      "quote": "Checked by `../../pr-overview/scripts/render_overview.py` (`build_walkthrough`): a JSON with a top-level `tabs` key renders as a walkthrough. A missing, mistyped or unknown field f",
+      "context": "unknown keys fail the render",
+      "verify": {
+        "method": "grep",
+        "pattern": "^def known\\(",
+        "paths": [
+          "skills/pr-overview/scripts/render_overview.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/walkthrough/references/schema.md:3:path:skills/pr-overview/tests/fixture-walkthrough.json",
+      "source": {
+        "file": "skills/walkthrough/references/schema.md",
+        "line": 3
+      },
+      "kind": "path",
+      "value": "skills/pr-overview/tests/fixture-walkthrough.json",
+      "quote": "Checked by `../../pr-overview/scripts/render_overview.py` (`build_walkthrough`): a JSON with a top-level `tabs` key renders as a walkthrough. A missing, mistyped or unknown field f",
+      "context": "fixture",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/pr-overview/tests/fixture-walkthrough.json",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/walkthrough/references/schema.md:8:other:two-tabs-minimum",
+      "source": {
+        "file": "skills/walkthrough/references/schema.md",
+        "line": 8
+      },
+      "kind": "other",
+      "value": "two-tabs-minimum",
+      "quote": "\"tabs\": [ { \"id\", \"label\", \"title\", \"blocks\": [Block, ...] } ], # two tabs or more",
+      "context": "fewer than two tabs fails the render",
+      "verify": {
+        "method": "grep",
+        "pattern": "needs at least two tabs",
+        "paths": [
+          "skills/pr-overview/scripts/render_overview.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/walkthrough/references/schema.md:19:other:note-tones",
+      "source": {
+        "file": "skills/walkthrough/references/schema.md",
+        "line": 19
+      },
+      "kind": "other",
+      "value": "note-tones",
+      "quote": "| { \"type\": \"note\", \"text\", \"ref\"?, \"tone\"? } # tone: warn (default) | bad",
+      "context": "a note is warn or bad",
+      "verify": {
+        "method": "grep",
+        "pattern": "tone: must be warn or bad",
+        "paths": [
+          "skills/pr-overview/scripts/render_overview.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/walkthrough/references/schema.md:20:symbol:TONES",
+      "source": {
+        "file": "skills/walkthrough/references/schema.md",
+        "line": 20
+      },
+      "kind": "symbol",
+      "value": "TONES",
+      "quote": "| { \"type\": \"tiles\", \"items\": [ { \"label\", \"value\", \"tone\"? } ] } # tone: ok | warn | bad | mute",
+      "context": "tile tones",
+      "verify": {
+        "method": "grep",
+        "pattern": "^TONES = \\{\"ok\", \"warn\", \"bad\", \"mute\"\\}",
+        "paths": [
+          "skills/pr-overview/scripts/render_overview.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/walkthrough/references/schema.md:21:other:cols-two-boxes",
+      "source": {
+        "file": "skills/walkthrough/references/schema.md",
+        "line": 21
+      },
+      "kind": "other",
+      "value": "cols-two-boxes",
+      "quote": "| { \"type\": \"cols\", \"boxes\": [ { \"label\", \"blocks\": [Block] } ] } # two boxes or more, side by side",
+      "context": "fewer than two boxes fails the render",
+      "verify": {
+        "method": "grep",
+        "pattern": "needs at least two boxes",
+        "paths": [
+          "skills/pr-overview/scripts/render_overview.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/walkthrough/references/schema.md:22:other:block-types",
+      "source": {
+        "file": "skills/walkthrough/references/schema.md",
+        "line": 22
+      },
+      "kind": "other",
+      "value": "block-types",
+      "quote": "| { \"type\": \"details\", \"summary\", \"blocks\": [Block] } # collapsible, closed on load",
+      "context": "the block types the renderer accepts",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"details\": \\{\"summary\", \"blocks\"\\}",
+        "paths": [
+          "skills/pr-overview/scripts/render_overview.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/walkthrough/references/schema.md:28:symbol:RESERVED",
+      "source": {
+        "file": "skills/walkthrough/references/schema.md",
+        "line": 28
+      },
+      "kind": "symbol",
+      "value": "RESERVED",
+      "quote": "ettings`, `sidebar`, `customize`, `upgrade` and `downloads` are refused (`RESERVED`), and so is any id starting with `comment-`, because claude.ai keeps them on a published page.",
+      "context": "tab ids claude.ai keeps",
+      "verify": {
+        "method": "grep",
+        "pattern": "^RESERVED = \\{\"settings\", \"sidebar\", \"customize\", \"upgrade\", \"downloads\"\\}",
+        "paths": [
+          "skills/pr-overview/scripts/render_overview.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/walkthrough/references/schema.md:28:other:comment-ids-refused",
+      "source": {
+        "file": "skills/walkthrough/references/schema.md",
+        "line": 28
+      },
+      "kind": "other",
+      "value": "comment-ids-refused",
+      "quote": "e`, `upgrade` and `downloads` are refused (`RESERVED`), and so is any id starting with `comment-`, because claude.ai keeps them on a published page.",
+      "context": "a tab id starting with comment- fails the render",
+      "verify": {
+        "method": "grep",
+        "pattern": "startswith\\(\"comment-\"\\)",
+        "paths": [
+          "skills/pr-overview/scripts/render_overview.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/walkthrough/references/schema.md:29:symbol:INLINE",
+      "source": {
+        "file": "skills/walkthrough/references/schema.md",
+        "line": 29
+      },
+      "kind": "symbol",
+      "value": "INLINE",
+      "quote": "- Text is plain text and the renderer escapes it. Two marks are read (`INLINE`): `` `code` `` and `**bold**`. No HTML and no other Markdown. `command` text, table headers, tab labels, `page.title`, tiles and the labels of a `cols` box or a `diagram` take no marks.",
+      "context": "inline code and bold",
+      "verify": {
+        "method": "grep",
+        "pattern": "^INLINE = ",
+        "paths": [
+          "skills/pr-overview/scripts/render_overview.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/walkthrough/references/schema.md:32:other:no-nested-details-or-cols",
+      "source": {
+        "file": "skills/walkthrough/references/schema.md",
+        "line": 32
+      },
+      "kind": "other",
+      "value": "no-nested-details-or-cols",
+      "quote": "- A `details` or `cols` block holds no `details` or `cols` of its own.",
+      "context": "nesting fails the render",
+      "verify": {
+        "method": "grep",
+        "pattern": "cannot sit inside",
+        "paths": [
+          "skills/pr-overview/scripts/render_overview.py"
         ],
         "base": "repo",
         "expect": "present"

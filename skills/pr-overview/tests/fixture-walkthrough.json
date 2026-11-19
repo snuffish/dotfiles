@@ -1,0 +1,89 @@
+{
+  "page": {
+    "name": "Airgap run phases",
+    "title": "From labels.xlsx to a trained, checked detector",
+    "summary": "Two of the `run.sh` commands on the machine with no network: `import` and `split`. Each tab explains one of them. Open a \"More\" section for the detail.",
+    "source": "GR.PRIIS.AI · models/sensitive-comments/airgap/run.sh",
+    "head": "main 2b29f14",
+    "date": "2026-11-19"
+  },
+  "tabs": [
+    {
+      "id": "overview",
+      "label": "Overview",
+      "title": "What it is all for",
+      "blocks": [
+        { "type": "text", "text": "The detector flags PRIIS comments that touch a sensitive topic. The data protection officer has decided that real comments may be used to measure it, on a machine with no network.", "ref": "docs/how-to/airgap.md:7-8" },
+        { "type": "table", "head": ["Command", "Reads", "Writes", "In one sentence"], "rows": [
+          ["`import`", "The filled `labels.xlsx`", "`batch1.jsonl` + seal", "Checks every row of the spreadsheet and stores the rows in a locked file."],
+          ["`split`", "One or more batches", "`real-train.jsonl`, `real-holdout.jsonl` + seals", "Cuts the rows into a half the model learns from and a half it is tested on."]
+        ] },
+        { "type": "diagram", "label": "The whole flow", "mermaid": "flowchart LR\n  X[labels.xlsx<br/>filled by staff] --> I[import]\n  I --> B[batch1.jsonl<br/>sealed]\n  B --> S[split]\n  S --> T[real-train.jsonl<br/>sealed]\n  S --> H[real-holdout.jsonl<br/>sealed, scored once]" },
+        { "type": "tiles", "items": [
+          { "label": "of the rows go to the holdout", "value": "50%" },
+          { "label": "rows needed on each side", "value": "≥ 100", "tone": "ok" }
+        ] },
+        { "type": "heading", "text": "The promises behind it" },
+        { "type": "list", "items": [
+          "**No comment text leaves the machine.** Every command first checks that the network is off.",
+          { "text": "**The score can be trusted.** The model is tested on rows it never trained on.", "ref": "airgap.md:72-79" }
+        ] },
+        { "type": "note", "text": "The command list said `./run.sh trains`. There is no verb `trains`: the script prints its help text and exits with code 2.", "ref": "run.sh:173" },
+        { "type": "details", "summary": "More: what every command does before its own work", "blocks": [
+          { "type": "list", "items": [
+            { "text": "Files it writes are readable by the current user only (`umask 077`).", "ref": "run.sh:23" },
+            { "text": "It checks that the machine is offline: no default route and no working name lookup.", "ref": "run.sh:55-67" }
+          ] }
+        ] }
+      ]
+    },
+    {
+      "id": "import",
+      "label": "1 · import",
+      "title": "1 · import: from spreadsheet to a locked file",
+      "blocks": [
+        { "type": "command", "text": "bash run.sh import --xlsx ~/priis-work/real/labels.xlsx --name batch1" },
+        { "type": "text", "text": "**What it does.** It reads the spreadsheet staff have filled in, checks every row, and writes the rows to `batch1.jsonl` with a seal beside it." },
+        { "type": "text", "text": "**Why it exists.** The spreadsheet is filled in by hand. Import refuses the whole file when it finds a single problem, so only clean rows reach training." },
+        { "type": "cols", "boxes": [
+          { "label": "In", "blocks": [ { "type": "text", "text": "One `.xlsx` workbook. Each tab is a case type. Row 1 is the header: `id`, `text`, one column per topic, then `none`." } ] },
+          { "label": "Out", "blocks": [ { "type": "text", "text": "`real/batch1.jsonl`: one line per comment. `real/batch1.sha256`: its seal." } ] }
+        ] },
+        { "type": "heading", "text": "Step by step" },
+        { "type": "steps", "items": [
+          { "text": "Open the workbook as a zip file of XML, with Python's standard library.", "ref": "labels.py:110-139" },
+          { "text": "Skip the tabs `exempel`, `hjälp` and `kategorier`. Every other tab is a case type.", "ref": "labels.py:51, 169" },
+          { "text": "If anything is wrong, list every problem by tab, row and column, and write nothing.", "ref": "labels.py:209-210" }
+        ] },
+        { "type": "note", "tone": "bad", "text": "A name can be used once: a sealed file is never overwritten.", "ref": "labels.py:224-225" },
+        { "type": "details", "summary": "More: what one row looks like in `batch1.jsonl`", "blocks": [
+          { "type": "text", "text": "An invented example, not a real comment:" },
+          { "type": "command", "text": "{\"id\": \"A-1042\", \"text\": \"Eleven har kontakt med skolsköterskan.\", \"labels\": [\"health\"], \"slice\": \"real\"}" }
+        ] },
+        { "type": "details", "summary": "More: every check, and what the error names", "blocks": [
+          { "type": "table", "head": ["Check", "The error names", "Code"], "rows": [
+            ["The file is a real `.xlsx` workbook", "the file", "labels.py:115-122"],
+            ["The id is filled in and not used twice", "tab, row, and the other row", "labels.py:187-192"]
+          ] }
+        ] }
+      ]
+    },
+    {
+      "id": "split",
+      "label": "2 · split",
+      "title": "2 · split: one half to learn from, one half to test on",
+      "blocks": [
+        { "type": "command", "text": "bash run.sh split --name batch1\nbash run.sh split --name batch1 batch2     # several batches, split together" },
+        { "type": "text", "text": "**What it does.** It pools the imported batches and cuts them into two sealed files." },
+        { "type": "steps", "items": [
+          { "text": "Load each batch and check its seal.", "ref": "labels.py:244-249" },
+          { "text": "Group the rows that copy each other, so a whole group can go to one side.", "ref": "labels.py:257-274" }
+        ] },
+        { "type": "details", "summary": "More: how the rows are divided, as a diagram", "blocks": [
+          { "type": "diagram", "mermaid": "flowchart TB\n  A[batches pooled<br/>seals checked] --> G[group rows that<br/>copy each other]\n  G --> C[shuffle with seed 1<br/>first half to the holdout]\n  C --> E{100 rows or more<br/>on each side?}\n  E -->|yes| W[write real-train and<br/>real-holdout, sealed]\n  E -->|no| X[STOP: nothing written]" }
+        ] }
+      ]
+    }
+  ],
+  "footer": "Read at GR.PRIIS.AI main 2b29f14 on 2026-11-19. A shortened fixture of the airgap walkthrough: it uses every block type once, with a diagram inside a collapsible section."
+}
