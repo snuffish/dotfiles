@@ -84,9 +84,10 @@ git -C <repo-root> rev-list --count @{u}..HEAD 2>/dev/null     # commits already
 - **Already staged:** commit the staged set and name what stays unstaged.
 - **Otherwise:** stage only files belonging to this change. Unrelated concerns → separate commits; ask first, except in a trunk-only personal repo (Step 1): split without asking and name the split in chat.
 - **Always exclude and name in chat:** secrets/local config (`.env*`, `*.pem`, `*.key`, `appsettings.local.json`, `credentials*`), build/test output (`bin/`, `obj/`, `dist/`, `build/`, `test-results/`), ignored/generated files, editor settings, workspace-root artifacts (`<prefix>-<artifact>-<suffix>.md`), and scratch files.
-- **Secret check** on staged diff before proceeding (a hit stops the commit; mask the value and ask):
+- **Secret check** on staged diff before proceeding (a hit stops the commit; mask the value and ask). Two plain calls, no pipe: a session isolated with `EnterWorktree` (`/wt-close-all`) refuses a piped `git` command:
   ```bash
-  git -C <repo-root> diff --staged -U0 | grep -nE '(-----BEGIN [A-Z ]*PRIVATE KEY|AKIA[0-9A-Z]{16}|ghp_[0-9A-Za-z]{36}|xox[baprs]-|(password|secret|api[_-]?key|token)["'\'' ]*[:=] *["'\''][^"'\'' ]{8,})'
+  git -C <repo-root> diff --staged -U0 --output=<scratchpad>/staged.diff
+  grep -nE '(-----BEGIN [A-Z ]*PRIVATE KEY|AKIA[0-9A-Z]{16}|ghp_[0-9A-Za-z]{36}|xox[baprs]-|(password|secret|api[_-]?key|token)["'\'' ]*[:=] *["'\''][^"'\'' ]{8,})' <scratchpad>/staged.diff
   ```
 
 ### Step 4: Run the repo's pre-commit gates
