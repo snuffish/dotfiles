@@ -68,6 +68,8 @@ Read these before step 1:
 - `../_modules/pr-counterpart.md`
 ```
 
+A Command may list a Module under a separate "Read these only when their step runs" heading; the model then reads it when that step runs, not before step 1.
+
 A Command lists only the Modules it uses directly; a Module lists its own dependencies (for example, [`project-profile`](_modules/project-profile.md) is read by `implement-feature`, `code-review`, `parity-audit`, `plan`, `pr-feedback-review`, and `pr-desc`; [`pr-host`](_modules/pr-host.md) by every PR-reading Command). Sections inside a Module are referred to by name (`` `git-worktrees` › *Workspace* ``), never by number. **References** and **Profiles** carry no `## Modules` section and inherit the standards through [`core` › *Precedence*](_modules/core.md#precedence).
 
 ## Naming convention (inside `Projects/GR.PRIIS/`)

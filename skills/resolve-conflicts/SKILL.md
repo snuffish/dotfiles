@@ -134,7 +134,7 @@ When `commit` was passed (or `/commit` is concluding a resolved merge), `diff --
 
 | Operation | Conclude with | Then |
 |---|---|---|
-| `merge` | `git -C "$R" commit --no-edit --cleanup=strip` (plus trailer per [`/commit`](../commit/SKILL.md) › *Step 4: Write the message and commit*; `--cleanup=strip` drops `# Conflicts:` comment lines) | `git -C "$R" show --remerge-diff HEAD` |
+| `merge` | `git -C "$R" commit --no-edit --cleanup=strip` (plus trailer per [`/commit`](../commit/SKILL.md) › *Step 5: Write the message and commit*; `--cleanup=strip` drops `# Conflicts:` comment lines) | `git -C "$R" show --remerge-diff HEAD` |
 | `rebase` | `GIT_EDITOR=true git -C "$R" -c core.commentChar=';' rebase --continue` (keep user's commit message, add no trailer) | Repeat Steps 0–4 and Step 5's three git checks per stop; build and tests once at the end; then compare `git log --format=%s` with the original subjects |
 | `cherry-pick` / `revert` | `GIT_EDITOR=true git -C "$R" -c core.commentChar=';' cherry-pick --continue` / `revert --continue` | Repeat per stop |
 | `stash pop/apply` | Leave resolved changes in tree; never `stash drop` | Report that stash entry is kept |
