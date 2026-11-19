@@ -36,6 +36,7 @@ test:
     {{python}} claude/test_safety_guard.py
     {{python}} claude/test_session_look.py
     {{python}} claude/test_wt.py
+    {{python}} claude/test_plan_lint.py
     {{python}} skills/proceed/scripts/test_run_plan.py
     {{python}} skills/on-snuffish-pc/scripts/test_on_pc.py
 

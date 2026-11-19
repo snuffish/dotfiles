@@ -23475,6 +23475,25 @@
       }
     },
     {
+      "id": "skills/plan/SKILL.md:85:other:SESSION_PATH",
+      "source": {
+        "file": "skills/plan/SKILL.md",
+        "line": 85
+      },
+      "kind": "other",
+      "value": "SESSION_PATH",
+      "quote": "`plan-lint.py` flags a `<scratchpad>`, `/tmp/` or `/private/tmp/` path",
+      "verify": {
+        "method": "grep",
+        "pattern": "^SESSION_PATH = re.compile",
+        "paths": [
+          "claude/plan-lint.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
       "id": "skills/push/SKILL.md:20:path:../_modules/core.md",
       "source": {
         "file": "skills/push/SKILL.md",
