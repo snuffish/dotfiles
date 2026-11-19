@@ -56,5 +56,8 @@
   },
   "enabledPlugins": {
     "mattpocock-skills@claude-plugins-official": true
-  }
+  },
+  "enabledMcpjsonServers": [
+    "priis-local"
+  ]
 }
