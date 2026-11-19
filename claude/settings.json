@@ -27,7 +27,7 @@
       "~/.cache/agent-artifacts"
     ]
   },
-  "model": "opus",
+  "model": "fable",
   "skillOverrides": {
     "find-skills": "off",
     "problem": "off",
@@ -433,7 +433,7 @@
   "effortLevel": "high",
   "modelSettings": {
     "claude-opus-5-5": {
-      "effortLevel": "medium",
+      "effortLevel": "high",
       "autoCompactWindow": 400000
     },
     "claude-fable-5-1": {
