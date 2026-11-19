@@ -13,7 +13,7 @@ Read the named file before the work it covers; it holds the full rules.
 
 ## Subagents
 
-- Spawn Explore and lookup agents with `model: sonnet` unless the task needs more.
+- Every Agent call names a model: `sonnet` unless the task needs the session model.
 
 ## Web pages
 
