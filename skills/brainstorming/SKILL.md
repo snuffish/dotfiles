@@ -250,7 +250,7 @@ builder check.
 Otherwise, pick a sensible place and say where. Your human partner's
 preferences override both.
 
-**Builder check** (for a project): dispatch a fresh subagent with
+**Builder check** (for a project): dispatch a fresh subagent (`model: "sonnet"`) with
 `builder-check-prompt.md` in this directory. When you tell your human
 partner you're writing it up, say a reviewer will read it first and you
 may come back once with a few questions. Don't hand over the document

@@ -34,6 +34,7 @@ simplify-mirror *args:
 # Run the hook, worktree and /proceed runner tests
 test:
     {{python}} claude/test_safety_guard.py
+    {{python}} claude/test_agent_model_guard.py
     {{python}} claude/test_session_look.py
     {{python}} claude/test_wt.py
     {{python}} claude/test_plan_lint.py

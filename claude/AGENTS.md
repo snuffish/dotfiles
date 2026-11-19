@@ -6,6 +6,7 @@ Read the named file before the work it covers; it holds the full rules.
 - **Plans:** before writing a plan (plan mode, `/plan`): `~/.terminal/claude/rules/plan-mode.md`.
 - **Git:** before a commit, a push, a merge, a PR, or a fix plan for a reported defect: `~/.terminal/claude/rules/git.md`.
 - **Handoffs:** before writing a handoff or closing a `/proceed` step: `~/.terminal/claude/rules/handoffs.md`.
+- **claude-mem search:** before searching or saving to claude-mem: `~/.terminal/claude/rules/claude-mem-search.md`.
 
 ## Worktrees
 
@@ -13,7 +14,7 @@ Read the named file before the work it covers; it holds the full rules.
 
 ## Subagents
 
-- Spawn Explore and lookup agents with `model: sonnet` unless the task needs more.
+- Every Agent call names a model: `sonnet` unless the task needs the session model.
 
 ## Web pages
 

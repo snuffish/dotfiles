@@ -8687,14 +8687,14 @@
       }
     },
     {
-      "id": "skills/commit/SKILL.md:21:path:../_modules/pr-host.md",
+      "id": "skills/commit/SKILL.md:23:path:../_modules/pr-host.md",
       "source": {
         "file": "skills/commit/SKILL.md",
-        "line": 21
+        "line": 23
       },
       "kind": "path",
       "value": "../_modules/pr-host.md",
-      "quote": "- `../_modules/pr-host.md`: to resolve the PR, its target branch and the stack in Step 7",
+      "quote": "- `../_modules/pr-host.md`: for the Step 7 PR lookup",
       "verify": {
         "method": "path_exists",
         "path": "../_modules/pr-host.md",
@@ -8942,6 +8942,137 @@
         "path": ".claude/scripts/check_skill_drift.py",
         "base": "project:GR.PRIIS",
         "type": "file"
+      }
+    },
+    {
+      "id": "skills/commit/SKILL.md:77:path:references/resolved-merge.md",
+      "source": {
+        "file": "skills/commit/SKILL.md",
+        "line": 77
+      },
+      "kind": "path",
+      "value": "references/resolved-merge.md",
+      "quote": "   - **An operation is in progress:** `status` names a merge, rebase, cherry-pick or revert (`resolve-conflicts` \u203a *Step 0 \u2014 Detect the Operation, the Sides and the Repo*). Route to [`/resolve-conflicts`](../resolve-conflicts/SKILL.md), except a **resolved merge** (`All conflicts fixed but you are still merging`): conclude it per [references/resolved-merge.md](references/resolved-merge.md).",
+      "verify": {
+        "method": "path_exists",
+        "path": "references/resolved-merge.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/commit/SKILL.md:148:path:references/pr-description.md",
+      "source": {
+        "file": "skills/commit/SKILL.md",
+        "line": 148
+      },
+      "kind": "path",
+      "value": "references/pr-description.md",
+      "quote": "- One open PR \u2192 follow [references/pr-description.md](references/pr-description.md): the stack, the behind-`main` warning and the generated description block.",
+      "verify": {
+        "method": "path_exists",
+        "path": "references/pr-description.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/commit/SKILL.md:137:path:references/behind-upstream.md",
+      "source": {
+        "file": "skills/commit/SKILL.md",
+        "line": 137
+      },
+      "kind": "path",
+      "value": "references/behind-upstream.md",
+      "quote": "- **Behind upstream (non-fast-forward, `fetch first`):** integrate and push; do not stop to ask. `/commit` was the request to get the commit onto the remote. Follow [references/behind-upstream.md](references/behind-upstream.md).",
+      "verify": {
+        "method": "path_exists",
+        "path": "references/behind-upstream.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/commit/SKILL.md:114:path:references/leak-guard.md",
+      "source": {
+        "file": "skills/commit/SKILL.md",
+        "line": 114
+      },
+      "kind": "path",
+      "value": "references/leak-guard.md",
+      "quote": "- **`leak-guard` rejection** (the `pre-commit` hook names a file that \"adds a string from .leak-denylist or .env*\"): fix it without asking, per [references/leak-guard.md](references/leak-guard.md).",
+      "verify": {
+        "method": "path_exists",
+        "path": "references/leak-guard.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/commit/SKILL.md:154:path:references/worktree-removal.md",
+      "source": {
+        "file": "skills/commit/SKILL.md",
+        "line": 154
+      },
+      "kind": "path",
+      "value": "references/worktree-removal.md",
+      "quote": "Otherwise remove it per [references/worktree-removal.md](references/worktree-removal.md).",
+      "verify": {
+        "method": "path_exists",
+        "path": "references/worktree-removal.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/commit/SKILL.md:92:path:references/drift-fix.md",
+      "source": {
+        "file": "skills/commit/SKILL.md",
+        "line": 92
+      },
+      "kind": "path",
+      "value": "references/drift-fix.md",
+      "quote": "Run `python3 -I <repo-root>/<checker>` (full run, no `--file`). No STALE or FAIL row and no ORDER or MISPLACED section \u2192 go on. Otherwise fix it per [references/drift-fix.md](references/drift-fix.md) before Step 5, and stage the claim edits with the change that caused them.",
+      "verify": {
+        "method": "path_exists",
+        "path": "references/drift-fix.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/commit/SKILL.md:67:path:references/state-checks.md",
+      "source": {
+        "file": "skills/commit/SKILL.md",
+        "line": 67
+      },
+      "kind": "path",
+      "value": "references/state-checks.md",
+      "quote": "2. **Lookups** (read-only; they answer Steps 1, 2, 3, 5, 6 and 8). The state checks below read English `git status` phrases: when `status` is not in English or holds none of them, run [references/state-checks.md](references/state-checks.md) instead.",
+      "verify": {
+        "method": "path_exists",
+        "path": "references/state-checks.md",
+        "base": "file_dir",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/commit/SKILL.md:37:other:delegates to one sonnet sub-agent",
+      "source": {
+        "file": "skills/commit/SKILL.md",
+        "line": 37
+      },
+      "kind": "other",
+      "value": "the delegation block spawns one general-purpose sub-agent on Sonnet",
+      "quote": "1. Spawn one `general-purpose` sub-agent with `model: \"sonnet\"`, told to read this SKILL.md and run it. The brief carries the arguments (including `no-push`), `repo-root`, any `[worktree-context]` block, the session's working model for the trailer, the intent of the change, and this consent: \"the user asked to commit and push; the Step 7 description update is allowed\". It ends with: \"Do not delegate again. Never ask: stop and report instead.\"",
+      "verify": {
+        "method": "count",
+        "pattern": "^1\\. Spawn one `general-purpose` sub-agent with `model: \"sonnet\"`",
+        "paths": [
+          "skills/commit/SKILL.md"
+        ],
+        "base": "repo",
+        "expected": 1
       }
     },
     {
@@ -16226,18 +16357,18 @@
       }
     },
     {
-      "id": "skills/resolve-conflicts/SKILL.md:137:doc_link:../commit/SKILL.md \u203a Step 4: Write the message and commit",
+      "id": "skills/resolve-conflicts/SKILL.md:137:doc_link:../commit/SKILL.md \u203a Step 5: Write the message and commit",
       "source": {
         "file": "skills/resolve-conflicts/SKILL.md",
         "line": 137
       },
       "kind": "doc_link",
-      "value": "../commit/SKILL.md \u203a Step 4: Write the message and commit",
-      "quote": "[`/commit`](../commit/SKILL.md) \u203a *Step 4: Write the message and commit*",
+      "value": "../commit/SKILL.md \u203a Step 5: Write the message and commit",
+      "quote": "[`/commit`](../commit/SKILL.md) \u203a *Step 5: Write the message and commit*",
       "verify": {
         "method": "heading_pointer",
         "target": "../commit/SKILL.md",
-        "heading": "Step 4: Write the message and commit",
+        "heading": "Step 5: Write the message and commit",
         "base": "repo"
       }
     },
@@ -16249,7 +16380,7 @@
       },
       "kind": "skill_ref",
       "value": "commit",
-      "quote": "| `merge` | `git -C \"$R\" commit --no-edit --cleanup=strip` (plus trailer per [`/commit`](../commit/SKILL.md) \u203a *Step 4: Write the message and commit*;",
+      "quote": "| `merge` | `git -C \"$R\" commit --no-edit --cleanup=strip` (plus trailer per [`/commit`](../commit/SKILL.md) \u203a *Step 5: Write the message and commit*;",
       "verify": {
         "method": "skill_exists",
         "name": "commit",
@@ -25809,10 +25940,10 @@
       }
     },
     {
-      "id": "skills/commit/SKILL.md:161:cli_command:wt-close-all.sh rm <session id>",
+      "id": "skills/commit/references/worktree-removal.md:5:cli_command:wt-close-all.sh rm <session id>",
       "source": {
-        "file": "skills/commit/SKILL.md",
-        "line": 161
+        "file": "skills/commit/references/worktree-removal.md",
+        "line": 5
       },
       "kind": "cli_command",
       "value": "wt-close-all.sh rm <session id>",
