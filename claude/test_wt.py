@@ -93,6 +93,16 @@ class Status(Base):
         self.assertEqual(self.cls("t1"), "keep:dirty")
         self.assertEqual(self.cls("t2"), "keep:dirty")
 
+    def test_untracked_ds_store_is_not_dirty(self):
+        d = self.new("t1")
+        (d / "sub").mkdir()
+        (d / "sub/.DS_Store").write_text("x")
+        (d / ".DS_Store").write_text("x")
+        self.assertEqual(self.rows()["t1"][3], "0")
+        self.assertEqual(self.cls("t1"), "safe")
+        (d / "sub/other.txt").write_text("u\n")
+        self.assertEqual(self.cls("t1"), "keep:dirty")
+
     def test_committed_unpushed_keeps(self):
         self.commit(self.new("t1"))
         self.assertEqual(self.cls("t1"), "keep:unpushed")
@@ -209,6 +219,14 @@ class Remove(Base):
         self.session(self.new("live"))
         for name in ("dirty", "unpushed", "live"):
             self.assert_kept(name)
+
+    def test_removes_tree_with_only_ds_store(self):
+        d = self.new("ds")
+        (d / "sub").mkdir()
+        (d / "sub/.DS_Store").write_text("x")
+        r = self.wt("wt-rm", str(d))
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertFalse(d.exists())
 
     def test_self_removes_own_tree(self):
         d = self.new("own", "--session", "me")

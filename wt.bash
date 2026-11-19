@@ -68,7 +68,8 @@ function wt-status() {
         [[ -n "$owner" && "$sid" == "$owner" ]] && { live=alive; break; }
       done <<<"$live_rows"
     fi
-    dirty=$(git --no-optional-locks -C "$dir" status --porcelain 2>/dev/null | grep -c .)
+    # Untracked Finder .DS_Store files don't count; wt-rm deletes them before removing the tree
+    dirty=$(git --no-optional-locks -C "$dir" status --porcelain --untracked-files=all 2>/dev/null | grep -Evc '^\?\? (.*/)?\.DS_Store$')
     if [[ -n "$branch" ]]; then
       unpushed=$(git --no-optional-locks -C "$dir" rev-list --count HEAD --not --exclude="$branch" --branches --remotes 2>/dev/null)
     else
@@ -179,6 +180,9 @@ function wt-rm() {
   if [[ $discard -eq 1 ]]; then
     git -C "$main" worktree remove --force --force "$dir"
   else
+    # wt-status ignores untracked .DS_Store files, but the plain remove refuses while they exist
+    git -C "$dir" status --porcelain --untracked-files=all -z 2>/dev/null | tr '\0' '\n' |
+      sed -nE 's/^\?\? ((.*\/)?\.DS_Store)$/\1/p' | while IFS= read -r f; do rm -f "$dir/$f"; done
     git -C "$main" worktree remove "$dir"
   fi || {
     [[ -n "$lock" ]] && git -C "$main" worktree lock --reason "$lock" "$dir" 2>/dev/null
