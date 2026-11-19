@@ -12,6 +12,8 @@ alias .="cd ~"
 # Temp directory navigation with automatic fallback
 alias .tmp='cd /tmp 2>/dev/null || { mkdir -p "$HOME/.tmp" && cd "$HOME/.tmp"; }'
 
+alias j="just"
+
 # Unity projects navigation
 if [[ "$ENV_PROFILE" == "Windows" ]]; then
   alias .up='cd /mnt/d/UnityProjects 2>/dev/null || cd /d/UnityProjects 2>/dev/null || cd "$HOME/UnityProjects"'
