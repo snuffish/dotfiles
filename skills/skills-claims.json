@@ -9064,7 +9064,7 @@
       },
       "kind": "other",
       "value": "the delegation block spawns one general-purpose sub-agent on Sonnet",
-      "quote": "1. Spawn one `general-purpose` sub-agent with `model: \"sonnet\"`, told to read this SKILL.md and run it. The brief carries the absolute path of this SKILL.md (from the `realpath` step in *Modules*), the arguments (including `no-push`), `repo-root`, any `[worktree-context]` block, the session's working model for the trailer (the model named before the Skill call), the intent of the change, and this consent: \"the user asked to commit and push; the Step 7 description update is allowed\". It ends with: \"Do not delegate again. Never ask: stop and report instead.\"",
+      "quote": "1. Spawn one `general-purpose` sub-agent with `model: \"sonnet\"`, told to read this SKILL.md and run it. The brief carries this skill's base directory as printed when the skill loaded (the sub-agent runs the `realpath` step in *Modules* itself), the arguments (including `no-push`), `repo-root`, any `[worktree-context]` block, the session's working model for the trailer (the model named before the Skill call), the intent of the change, and this consent: \"the user asked to commit and push; the Step 7 description update is allowed\". It ends with: \"Do not delegate again. Never ask: stop and report instead.\"",
       "verify": {
         "method": "count",
         "pattern": "^1\\. Spawn one `general-purpose` sub-agent with `model: \"sonnet\"`",
