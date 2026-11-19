@@ -637,6 +637,9 @@ _ds_rows_kb() { awk -F'\t' '{ s += $1 } END { print s + 0 }'; }
 
 # Multi-select from pick-list rows on stdin; prints the chosen values.
 # fzf when available, else a numbered prompt read from the terminal.
+# Capture its output with $(...), never read it through < <(...): in an
+# interactive zsh a process substitution runs as a background job, so fzf
+# (or read </dev/tty) is stopped on its first terminal read and the shell hangs.
 _ds_pick() {
   local prompt="$1" menu line n choices choice kb label value
   menu=$(while IFS=$'\t' read -r kb label value; do
@@ -921,35 +924,38 @@ _ds_clean_uv() {
 
 _ds_clean_airgap() {
   _ds_step "Removing chosen PRIIS airgap build output"
-  local p
+  local picked p
+  picked=$(_ds_airgap_rows | _ds_pick "Airgap builds")
   while IFS= read -r p; do
     [[ -n "$p" && "$p" == "$HOME/.cache/priis-airgap"* ]] || continue
     printf "   %s- %s%s\n" "$DS_DIM" "$p" "$DS_RESET"
     rm -rf "$p" "$p.sha256"
-  done < <(_ds_airgap_rows | _ds_pick "Airgap builds")
+  done <<< "$picked"
   _ds_done "Airgap build output removed."
 }
 
 _ds_clean_ollama() {
   _ds_step "Removing chosen Ollama models"
-  local m
+  local picked m
+  picked=$(_ds_ollama_rows | _ds_pick "Ollama models")
   while IFS= read -r m; do
     [[ -n "$m" ]] || continue
     printf "   %s- %s%s\n" "$DS_DIM" "$m" "$DS_RESET"
     ollama rm "$m" >/dev/null
-  done < <(_ds_ollama_rows | _ds_pick "Ollama models")
+  done <<< "$picked"
   _ds_done "Ollama models removed (ollama pull restores them)."
 }
 
 _ds_clean_huggingface() {
   _ds_step "Removing chosen Hugging Face hub models"
-  local hub p
+  local hub picked p
   hub=$(_ds_hf_hub_dir)
+  picked=$(_ds_hf_rows | _ds_pick "Hugging Face models")
   while IFS= read -r p; do
     [[ -n "$p" && "$p" == "$hub"/* ]] || continue
     printf "   %s- %s%s\n" "$DS_DIM" "${p##*/}" "$DS_RESET"
     rm -rf "$p"
-  done < <(_ds_hf_rows | _ds_pick "Hugging Face models")
+  done <<< "$picked"
   _ds_done "Hugging Face models removed (re-downloaded on next use)."
 }
 
