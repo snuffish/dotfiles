@@ -30,6 +30,16 @@ A Module or `references/` file already in this session's context is not read aga
 - A denied push or PR write is final: stop, and never retry it through another tool or flag.
 - Every command uses `git -C <repo-root> …` (`git-worktrees` › *Golden Invariants*), one simple command per call.
 
+### Delegation (Skill-tool runs on a larger model)
+
+Applies only when this skill was invoked through the Skill tool and the session model is not Sonnet or Haiku. A typed `/commit` already runs on Sonnet through this skill's `model:`, and the `gcai` path is untouched, so neither delegates. Do not run Steps 1–8 yourself:
+
+1. Spawn one `general-purpose` sub-agent with `model: "sonnet"`, told to read this SKILL.md and run it. The brief carries the arguments (including `no-push`), `repo-root`, any `[worktree-context]` block, the session's working model for the trailer, the intent of the change, and this consent: "the user asked to commit and push; the Step 7 description update is allowed". It ends with: "Do not delegate again. Never ask: stop and report instead."
+2. After any report or failure, run `git -C <repo-root> status -sb`.
+3. Re-spawn only when the branch is still ahead of its upstream. When the report stopped on a question (a missing work-item ID, a mixed change), ask the user, then re-spawn with the answer.
+
+A sub-agent that is itself running as the delegate skips this section.
+
 ### Message plan
 
 Each message re-reads the whole session, so a run is a few full messages, never one lookup per message. Send every call of a row together; calls in one message run in the order sent.

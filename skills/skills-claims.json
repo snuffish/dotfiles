@@ -9057,6 +9057,25 @@
       }
     },
     {
+      "id": "skills/commit/SKILL.md:37:other:delegates to one sonnet sub-agent",
+      "source": {
+        "file": "skills/commit/SKILL.md",
+        "line": 37
+      },
+      "kind": "other",
+      "value": "the delegation block spawns one general-purpose sub-agent on Sonnet",
+      "quote": "1. Spawn one `general-purpose` sub-agent with `model: \"sonnet\"`, told to read this SKILL.md and run it. The brief carries the arguments (including `no-push`), `repo-root`, any `[worktree-context]` block, the session's working model for the trailer, the intent of the change, and this consent: \"the user asked to commit and push; the Step 7 description update is allowed\". It ends with: \"Do not delegate again. Never ask: stop and report instead.\"",
+      "verify": {
+        "method": "count",
+        "pattern": "^1\\. Spawn one `general-purpose` sub-agent with `model: \"sonnet\"`",
+        "paths": [
+          "skills/commit/SKILL.md"
+        ],
+        "base": "repo",
+        "expected": 1
+      }
+    },
+    {
       "id": "skills/continue/SKILL.md:19:path:../_modules/core.md",
       "source": {
         "file": "skills/continue/SKILL.md",
