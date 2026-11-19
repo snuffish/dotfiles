@@ -502,6 +502,7 @@ brew|regen|user|any|Homebrew downloads & stale formulae
 playwright|regen|user|any|Playwright browsers (re-downloaded on demand)
 gobuild|regen|user|any|Go build cache
 pip|regen|user|any|pip download cache
+uv|regen|user|any|uv cache
 gradle|regen|user|any|Gradle caches (~/.gradle/caches)
 maven|regen|user|any|Maven repository (~/.m2/repository)
 xcode|regen|user|mac|Xcode DerivedData
@@ -512,6 +513,9 @@ flatpak|regen|sudo|linux|Unused Flatpak runtimes
 snaprev|regen|sudo|linux|Disabled snap revisions
 snapdata|regen|user|linux|Obsolete user snap data (~/snap)
 journal|regen|sudo|linux|systemd journal (vacuum to 500M)
+airgap|state|user|linux|PRIIS airgap builds (~/.cache/priis-airgap*, pick which)
+ollama|state|user|any|Ollama models (pick which)
+huggingface|state|user|any|Hugging Face hub models (pick which)
 jetbrains|state|user|any|Old JetBrains IDE versions (settings, plugins, caches)
 nvm|state|user|any|Old nvm Node.js versions (global npm packages)'
 
@@ -541,31 +545,123 @@ _ds_snap_disabled() {
   snap list --all 2>/dev/null | awk 'NR > 1 && $NF ~ /(^|,)disabled(,|$)/ { print $1, $3 }'
 }
 
-# Directories in ~/snap/*/<rev> that correspond to disabled revisions and are not the current symlink
+# Active (not disabled) revision of an installed snap; empty when not installed
+_ds_snap_active_rev() {
+  snap list --all "$1" 2>/dev/null | awk 'NR > 1 && $NF !~ /(^|,)disabled(,|$)/ { print $3; exit }'
+}
+
+# Directories in ~/snap/<name>/<rev> other than the active revision of an
+# installed snap (disabled revisions and revisions snapd no longer lists).
+# The `current` symlink can lag behind a refresh (it still pointed at a
+# disabled revision while the active one's data was already copied), so it
+# only protects its target while the active revision has no data dir yet.
+# Snaps that are not installed at all are left alone.
 _ds_snap_user_stale() {
   [[ -d "$HOME/snap" ]] || return 0
   command -v snap >/dev/null 2>&1 || return 0
-  local disabled
-  disabled=" $(snap list --all 2>/dev/null | awk 'NR > 1 && $NF ~ /(^|,)disabled(,|$)/ { print $1 ":" $3 }' | tr '\n' ' ') "
-  [[ -z "${disabled// }" ]] && return 0
 
-  local app d rev cur_target app_name
-  for app in "$HOME/snap"/*; do
-    [[ -d "$app" ]] || continue
+  local app app_name active cur d rev
+  while IFS= read -r app; do
     app_name="${app##*/}"
-    cur_target=""
-    [[ -L "$app/current" ]] && cur_target=$(readlink "$app/current" 2>/dev/null)
-    cur_target="${cur_target##*/}"
+    active=$(_ds_snap_active_rev "$app_name")
+    [[ -n "$active" ]] || continue
+    cur=""
+    [[ -L "$app/current" ]] && cur=$(readlink "$app/current" 2>/dev/null)
+    cur="${cur##*/}"
 
-    for d in "$app"/[0-9]*; do
-      [[ -d "$d" ]] || continue
+    while IFS= read -r d; do
       rev="${d##*/}"
-      [[ "$rev" == "$cur_target" ]] && continue
-      if [[ "$disabled" == *" ${app_name}:${rev} "* ]]; then
-        echo "$d"
-      fi
-    done
-  done
+      [[ "$rev" == "$active" ]] && continue
+      [[ "$rev" == "$cur" && ! -d "$app/$active" ]] && continue
+      echo "$d"
+    done < <(find "$app" -mindepth 1 -maxdepth 1 -type d -regex '.*/[0-9]+' 2>/dev/null)
+  done < <(find "$HOME/snap" -mindepth 1 -maxdepth 1 -type d 2>/dev/null)
+}
+
+_ds_uv_cache_dir() {
+  local d=""
+  command -v uv >/dev/null 2>&1 && d=$(uv cache dir 2>/dev/null)
+  [[ -z "$d" ]] && d="${UV_CACHE_DIR:-$HOME/.cache/uv}"
+  echo "$d"
+}
+
+_ds_hf_hub_dir() { echo "${HF_HUB_CACHE:-${HF_HOME:-$HOME/.cache/huggingface}/hub}"; }
+
+# --- Pick lists ("<kb>\t<label>\t<value>" rows, largest first) -----------------
+
+# PRIIS airgap build output: every entry in ~/.cache/priis-airgap (the
+# .sha256 files go with their .tar) plus ~/.cache/priis-airgap-*. The build
+# whose priis-airgap-<id> entry was written last is marked "newest build".
+_ds_airgap_rows() {
+  local root="$HOME/.cache" newest p name label
+  newest=$(find "$root/priis-airgap" -mindepth 1 -maxdepth 1 -name 'priis-airgap-*' -printf '%T@ %f\n' 2>/dev/null |
+    sort -rn | sed -nE '1s/^[^ ]+ priis-airgap-([0-9a-f]+).*/\1/p')
+  {
+    find "$root/priis-airgap" -mindepth 1 -maxdepth 1 ! -name '*.sha256' 2>/dev/null
+    find "$root" -mindepth 1 -maxdepth 1 -name 'priis-airgap-*' 2>/dev/null
+  } | while IFS= read -r p; do
+    name="${p##*/}"
+    label="${p#"$root"/}"
+    [[ -n "$newest" && "$name" == *"$newest"* ]] && label+="  (newest build)"
+    [[ "$name" == "priis-airgap-wheels" ]] && label+="  (wheel download cache)"
+    printf "%s\t%s\t%s\n" "$(_ds_dir_kb "$p")" "$label" "$p"
+  done | sort -t$'\t' -k1,1rn
+}
+
+_ds_ollama_rows() {
+  command -v ollama >/dev/null 2>&1 || return 0
+  local name size
+  # Cloud models list "-" as their size and take no disk space
+  ollama list 2>/dev/null | awk 'NR > 1 && $3 ~ /^[0-9.]+$/ { print $1 "\t" $3 $4 }' |
+    while IFS=$'\t' read -r name size; do
+      printf "%s\t%s\t%s\n" "$(_ds_parse_size "$size" 1000)" "$name" "$name"
+    done | sort -t$'\t' -k1,1rn
+}
+
+# One row per repo in the hub cache (models--org--name → "model org/name")
+_ds_hf_rows() {
+  local hub p name kind repo
+  hub=$(_ds_hf_hub_dir)
+  [[ -d "$hub" ]] || return 0
+  find "$hub" -mindepth 1 -maxdepth 1 -type d \( -name 'models--*' -o -name 'datasets--*' -o -name 'spaces--*' \) 2>/dev/null |
+    while IFS= read -r p; do
+      name="${p##*/}"
+      kind="${name%%--*}"
+      repo="${name#*--}"
+      printf "%s\t%s\t%s\n" "$(_ds_dir_kb "$p")" "${kind%s} ${repo//--//}" "$p"
+    done | sort -t$'\t' -k1,1rn
+}
+
+# Sum of the kb column of pick-list rows on stdin
+_ds_rows_kb() { awk -F'\t' '{ s += $1 } END { print s + 0 }'; }
+
+# Multi-select from pick-list rows on stdin; prints the chosen values.
+# fzf when available, else a numbered prompt read from the terminal.
+_ds_pick() {
+  local prompt="$1" menu line n choices choice kb label value
+  menu=$(while IFS=$'\t' read -r kb label value; do
+      [[ -n "$value" ]] && printf "%8s  %s\t%s\n" "$(_ds_fmt_kb "$kb")" "$label" "$value"
+    done)
+  [[ -n "$menu" ]] || return 0
+
+  if command -v fzf >/dev/null 2>&1 && [[ -t 2 ]]; then
+    printf "%s\n" "$menu" | fzf -m --delimiter=$'\t' --with-nth=1 \
+      --header="TAB/SPACE to select, ENTER to delete the selection, ESC to skip" \
+      --prompt="$prompt > " --bind="space:toggle" --height=50% --reverse | cut -f2
+    return 0
+  fi
+
+  n=1
+  while IFS= read -r line; do
+    printf "  [%2d] %s\n" "$n" "${line%%$'\t'*}" >&2
+    n=$((n + 1))
+  done <<< "$menu"
+  printf "%s: numbers to delete (e.g. 1 3), Enter to skip: " "$prompt" >&2
+  read -r choices </dev/tty || return 0
+  while IFS= read -r choice; do
+    [[ "$choice" =~ ^[0-9]+$ ]] || continue
+    printf "%s\n" "$menu" | sed -n "${choice}p" | cut -f2
+  done < <(printf "%s\n" "$choices" | tr -s ' ,' '\n\n')
 }
 
 # Paths of JetBrains version dirs older than the newest one per product
@@ -632,6 +728,10 @@ _ds_probe_brew()       { _ds_dir_kb "$(_ds_brew_cache_dir)"; }
 _ds_probe_playwright() { _ds_dir_kb "$HOME/.cache/ms-playwright" "$HOME/Library/Caches/ms-playwright"; }
 _ds_probe_gobuild()    { _ds_dir_kb "$(_ds_go_cache_dir)"; }
 _ds_probe_pip()        { _ds_dir_kb "$HOME/.cache/pip" "$HOME/Library/Caches/pip"; }
+_ds_probe_uv()         { _ds_dir_kb "$(_ds_uv_cache_dir)"; }
+_ds_probe_airgap()     { _ds_airgap_rows | _ds_rows_kb; }
+_ds_probe_ollama()     { _ds_ollama_rows | _ds_rows_kb; }
+_ds_probe_huggingface() { _ds_hf_rows | _ds_rows_kb; }
 _ds_probe_gradle()     { _ds_dir_kb "$HOME/.gradle/caches"; }
 _ds_probe_maven()      { _ds_dir_kb "$HOME/.m2/repository"; }
 _ds_probe_xcode()      { _ds_dir_kb "$HOME/Library/Developer/Xcode/DerivedData"; }
@@ -809,6 +909,50 @@ _ds_clean_pip() {
   _ds_done "pip cache cleaned."
 }
 
+_ds_clean_uv() {
+  _ds_step "Cleaning uv cache"
+  if command -v uv >/dev/null 2>&1; then
+    uv cache clean
+  else
+    _ds_empty_dir "$(_ds_uv_cache_dir)"
+  fi
+  _ds_done "uv cache cleaned."
+}
+
+_ds_clean_airgap() {
+  _ds_step "Removing chosen PRIIS airgap build output"
+  local p
+  while IFS= read -r p; do
+    [[ -n "$p" && "$p" == "$HOME/.cache/priis-airgap"* ]] || continue
+    printf "   %s- %s%s\n" "$DS_DIM" "$p" "$DS_RESET"
+    rm -rf "$p" "$p.sha256"
+  done < <(_ds_airgap_rows | _ds_pick "Airgap builds")
+  _ds_done "Airgap build output removed."
+}
+
+_ds_clean_ollama() {
+  _ds_step "Removing chosen Ollama models"
+  local m
+  while IFS= read -r m; do
+    [[ -n "$m" ]] || continue
+    printf "   %s- %s%s\n" "$DS_DIM" "$m" "$DS_RESET"
+    ollama rm "$m" >/dev/null
+  done < <(_ds_ollama_rows | _ds_pick "Ollama models")
+  _ds_done "Ollama models removed (ollama pull restores them)."
+}
+
+_ds_clean_huggingface() {
+  _ds_step "Removing chosen Hugging Face hub models"
+  local hub p
+  hub=$(_ds_hf_hub_dir)
+  while IFS= read -r p; do
+    [[ -n "$p" && "$p" == "$hub"/* ]] || continue
+    printf "   %s- %s%s\n" "$DS_DIM" "${p##*/}" "$DS_RESET"
+    rm -rf "$p"
+  done < <(_ds_hf_rows | _ds_pick "Hugging Face models")
+  _ds_done "Hugging Face models removed (re-downloaded on next use)."
+}
+
 _ds_clean_gradle() {
   _ds_step "Cleaning Gradle caches"
   _ds_empty_dir "$HOME/.gradle/caches"
@@ -885,11 +1029,17 @@ _ds_clean_snaprev() {
 
 _ds_clean_snapdata() {
   _ds_step "Removing obsolete user snap data"
-  local d
+  local d app active
   while IFS= read -r d; do
     [[ -n "$d" ]] || continue
     printf "   %s- %s%s\n" "$DS_DIM" "$d" "$DS_RESET"
     rm -rf "$d"
+    # Repoint a `current` symlink that now dangles at the active revision
+    app="${d%/*}"
+    if [[ -L "$app/current" && ! -e "$app/current" ]]; then
+      active=$(_ds_snap_active_rev "${app##*/}")
+      [[ -n "$active" && -d "$app/$active" ]] && ln -sfn "$active" "$app/current"
+    fi
   done < <(_ds_snap_user_stale)
   _ds_done "Obsolete user snap data removed."
 }
@@ -951,7 +1101,7 @@ _diskspace_clean() {
         echo "  --dry-run   Preview all reclaimable space without deleting anything"
         echo "  --all       Clean all regenerable caches with a single confirmation prompt"
         echo "  --docker    Clean Docker unused images, stopped containers & build cache only"
-        echo "  --pkg       Clean npm, pnpm, yarn, NuGet, and AUR (yay/paru) package caches"
+        echo "  --pkg       Clean npm, pnpm, yarn, NuGet, uv, and AUR (yay/paru) package caches"
         echo "  --sudo      Also run 🔒 items (asks for your password once, up front)"
         echo "  --yes, -y   Skip the --all confirmation prompt"
         echo ""
@@ -1053,7 +1203,7 @@ _diskspace_clean() {
     pkg)
       for entry in "${items[@]}"; do
         _ds_parse_item "$entry"
-        [[ "$_it_id" =~ ^(npm|pnpm|yarn|nuget|aur)$ ]] && selected+=("$entry")
+        [[ "$_it_id" =~ ^(npm|pnpm|yarn|nuget|uv|aur)$ ]] && selected+=("$entry")
       done
       ;;
     all)
@@ -1222,7 +1372,7 @@ diskspace() {
       echo "  diskspace clean --dry-run     Size-sorted list of reclaimable space with totals"
       echo "  diskspace clean --all         Clean all regenerable caches (add --sudo, --yes as needed)"
       echo "  diskspace clean --docker      Clean Docker images, stopped containers and build cache only"
-      echo "  diskspace clean --pkg         Clean npm, pnpm, yarn, NuGet, and AUR (yay/paru) package caches"
+      echo "  diskspace clean --pkg         Clean npm, pnpm, yarn, NuGet, uv, and AUR (yay/paru) package caches"
       echo "  diskspace clean --help        All clean options and markers"
       echo "  diskspace help storage        How to move Docker/Ollama data to another disk"
       echo "  diskspace help                Show this help message"
