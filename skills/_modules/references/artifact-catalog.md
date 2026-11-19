@@ -8,6 +8,7 @@ On-demand reference for [artifact-protocol.md](../artifact-protocol.md). Every a
 | `code_review-<suffix>.md` | `/code-review` | Code quality audit, severity findings (Critical/Important/Minor), diffs |
 | `squashed_code_review-<suffix>.md` | `/squash-code-review` | Two or more code reviews of one change squashed into one verified review, with a reconciliation table and folded-in PR threads |
 | `pr_feedback_review-<suffix>.md` | `/pr-feedback-review` | PR comment triage matrix, technical resolutions, draft responses (`--ui`: sibling `.answers.json`) |
+| `agent_retro-<suffix>.md` | `/agent-retro` | Retro on a reviewed PR: pinned SHA, overview, verified findings the earlier reviews missed with their fate, causes of the misses, routing table with fix PRs and work items |
 | `pr_polish-<suffix>.md` | `/pr-polish` | PR-finishing run: verified findings with status, applied/reverted fix batches with build and test results, PR description and thread-reply drafts |
 | `simplify_review_brief-<suffix>.md` | `/simplify-branch`, `/simplify-repo` | Facts-only record of a simplify run (rows, outcomes, verification, known risks): the Spec input of the `/code-review` that follows |
 | `investigation-<suffix>.md` | `/investigate` | Pre-plan research: current-state map, prior art, constraints, options, confidence ledger |

@@ -23869,7 +23869,7 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "neral (top level) | Command | 60 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `code-documentation`, `code",
+      "quote": "l) | Command | 61 | `agent-retro`, `analyze-personal-feedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `code-documentation`, `code",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
@@ -23973,19 +23973,19 @@
       }
     },
     {
-      "id": "skills/README.md:42:count:61",
+      "id": "skills/README.md:42:count:62",
       "source": {
         "file": "skills/README.md",
         "line": 42
       },
       "kind": "count",
-      "value": "61",
-      "quote": "67 skills total \u2014 61 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "value": "62",
+      "quote": "68 skills total \u2014 62 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/*/SKILL.md",
         "base": "repo",
-        "expected": 61,
+        "expected": 62,
         "op": "eq"
       }
     },
@@ -23997,7 +23997,7 @@
       },
       "kind": "count",
       "value": "6 GR.PRIIS project skills",
-      "quote": "67 skills total \u2014 61 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "68 skills total \u2014 62 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/Projects/GR.PRIIS/*/SKILL.md",
@@ -24014,7 +24014,7 @@
       },
       "kind": "count",
       "value": "8 Modules",
-      "quote": "67 skills total \u2014 61 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "68 skills total \u2014 62 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/_modules/*.md",
@@ -26230,6 +26230,271 @@
         ],
         "base": "repo",
         "expect": "present"
+      }
+    },
+    {
+      "id": "skills/agent-retro/SKILL.md:19:path:skills/_modules/core.md",
+      "source": {
+        "file": "skills/agent-retro/SKILL.md",
+        "line": 19
+      },
+      "kind": "path",
+      "value": "skills/_modules/core.md",
+      "quote": "- `../_modules/core.md`: read-only until the write gates in Steps 5, 7 and 8; no `/proceed` gate line at the end",
+      "context": "Module the skill reads",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/core.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/agent-retro/SKILL.md:20:path:skills/_modules/artifact-protocol.md",
+      "source": {
+        "file": "skills/agent-retro/SKILL.md",
+        "line": 20
+      },
+      "kind": "path",
+      "value": "skills/_modules/artifact-protocol.md",
+      "quote": "- `../_modules/artifact-protocol.md`: writes `<prefix>-agent_retro-<suffix>.md`, suffix `<PR id>-<slug of the PR title>`",
+      "context": "Module the skill reads",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/artifact-protocol.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/agent-retro/SKILL.md:21:path:skills/_modules/git-worktrees.md",
+      "source": {
+        "file": "skills/agent-retro/SKILL.md",
+        "line": 21
+      },
+      "kind": "path",
+      "value": "skills/_modules/git-worktrees.md",
+      "quote": "- `../_modules/git-worktrees.md`: snapshot for Steps 2\u20136, workspace for each fix PR in Step 8",
+      "context": "Module the skill reads",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/git-worktrees.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/agent-retro/SKILL.md:22:path:skills/_modules/project-profile.md",
+      "source": {
+        "file": "skills/agent-retro/SKILL.md",
+        "line": 22
+      },
+      "kind": "path",
+      "value": "skills/_modules/project-profile.md",
+      "quote": "- `../_modules/project-profile.md`: the base profile and the rulebooks that name the review and posting rules",
+      "context": "Module the skill reads",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/project-profile.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/agent-retro/SKILL.md:23:path:skills/_modules/pr-host.md",
+      "source": {
+        "file": "skills/agent-retro/SKILL.md",
+        "line": 23
+      },
+      "kind": "path",
+      "value": "skills/_modules/pr-host.md",
+      "quote": "- `../_modules/pr-host.md`",
+      "context": "Module the skill reads",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/pr-host.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/agent-retro/SKILL.md:24:path:skills/_modules/fan-out.md",
+      "source": {
+        "file": "skills/agent-retro/SKILL.md",
+        "line": 24
+      },
+      "kind": "path",
+      "value": "skills/_modules/fan-out.md",
+      "quote": "- `../_modules/fan-out.md`: Step 3 lanes and the Step 6 retro variants",
+      "context": "Module the skill reads",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/fan-out.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/agent-retro/SKILL.md:25:path:skills/_modules/outward-writes.md",
+      "source": {
+        "file": "skills/agent-retro/SKILL.md",
+        "line": 25
+      },
+      "kind": "path",
+      "value": "skills/_modules/outward-writes.md",
+      "quote": "- `../_modules/outward-writes.md`",
+      "context": "Module the skill reads",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/outward-writes.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/agent-retro/SKILL.md:28:path:skills/agent-retro/references/hunt.md",
+      "source": {
+        "file": "skills/agent-retro/SKILL.md",
+        "line": 28
+      },
+      "kind": "path",
+      "value": "skills/agent-retro/references/hunt.md",
+      "quote": "- [`references/hunt.md`](references/hunt.md): Steps 3\u20134, where reviews miss issues and how to check them",
+      "context": "on-demand reference",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/agent-retro/references/hunt.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/agent-retro/SKILL.md:29:path:skills/agent-retro/references/routing.md",
+      "source": {
+        "file": "skills/agent-retro/SKILL.md",
+        "line": 29
+      },
+      "kind": "path",
+      "value": "skills/agent-retro/references/routing.md",
+      "quote": "- [`references/routing.md`](references/routing.md): Steps 6\u20138, the cause of a miss, a home for each fix, and opening the PRs",
+      "context": "on-demand reference",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/agent-retro/references/routing.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/agent-retro/SKILL.md:46:skill_ref:code-review",
+      "source": {
+        "file": "skills/agent-retro/SKILL.md",
+        "line": 46
+      },
+      "kind": "skill_ref",
+      "value": "code-review",
+      "quote": "| The PR has no review yet | [`/code-review`](../code-review/SKILL.md), or the review skill the project's rulebook names |",
+      "context": "sibling Command",
+      "verify": {
+        "method": "skill_exists",
+        "name": "code-review",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/agent-retro/SKILL.md:47:skill_ref:pr-feedback-review",
+      "source": {
+        "file": "skills/agent-retro/SKILL.md",
+        "line": 47
+      },
+      "kind": "skill_ref",
+      "value": "pr-feedback-review",
+      "quote": "| Triage what reviewers already wrote and draft replies | [`/pr-feedback-review`](../pr-feedback-review/SKILL.md) |",
+      "context": "sibling Command",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-feedback-review",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/agent-retro/SKILL.md:48:skill_ref:fix-findings",
+      "source": {
+        "file": "skills/agent-retro/SKILL.md",
+        "line": 48
+      },
+      "kind": "skill_ref",
+      "value": "fix-findings",
+      "quote": "| Fix review findings on the PR's own branch | [`/fix-findings`](../fix-findings/SKILL.md) |",
+      "context": "sibling Command",
+      "verify": {
+        "method": "skill_exists",
+        "name": "fix-findings",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/agent-retro/SKILL.md:49:skill_ref:pr-overview",
+      "source": {
+        "file": "skills/agent-retro/SKILL.md",
+        "line": 49
+      },
+      "kind": "skill_ref",
+      "value": "pr-overview",
+      "quote": "| Explain the PR, not find defects | [`/pr-overview`](../pr-overview/SKILL.md) |",
+      "context": "sibling Command",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-overview",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/agent-retro/SKILL.md:50:skill_ref:skill-gap",
+      "source": {
+        "file": "skills/agent-retro/SKILL.md",
+        "line": 50
+      },
+      "kind": "skill_ref",
+      "value": "skill-gap",
+      "quote": "| Work through skill gaps already logged | [`/skill-gap`](../skill-gap/SKILL.md) |",
+      "context": "sibling Command",
+      "verify": {
+        "method": "skill_exists",
+        "name": "skill-gap",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/agent-retro/SKILL.md:86:skill_ref:pr-post-comments",
+      "source": {
+        "file": "skills/agent-retro/SKILL.md",
+        "line": 86
+      },
+      "kind": "skill_ref",
+      "value": "pr-post-comments",
+      "quote": "1. Draft one thread per finding on the line it anchors to (a finding in two files: the first file's line, the second named in the body), in the PR's language, following the posting rules the rulebooks name (markers included), or [`/pr-post-comments`](../pr-post-comments/SKILL.md) when they name none. Run the *Voice pass*.",
+      "context": "sibling Command",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-post-comments",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/agent-retro/SKILL.md:102:skill_ref:commit",
+      "source": {
+        "file": "skills/agent-retro/SKILL.md",
+        "line": 102
+      },
+      "kind": "skill_ref",
+      "value": "commit",
+      "quote": "Per [`references/routing.md`](references/routing.md) \u203a *Open a fix PR*: one locked workspace worktree per new PR, the project's checks, commit through [`/commit`](../commit/SKILL.md), a draft PR from the repo template, the work item the project's PR rules require, and a read back of each.",
+      "context": "sibling Command",
+      "verify": {
+        "method": "skill_exists",
+        "name": "commit",
+        "base": "repo"
       }
     }
   ]
