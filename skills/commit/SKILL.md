@@ -43,7 +43,7 @@ A sub-agent that is itself running as the delegate skips this section.
 
 ### Message plan
 
-Each message re-reads the whole session, so a run is a few full messages, never one lookup per message. Send every call of a row together; calls in one message run in the order sent.
+Each message re-reads the whole session, so a run is a few full messages, never one lookup per message. Send every call of a row together, also when one call needs the one before it: the secret `grep` reads the file `diff --output` wrote, the read-backs follow `commit`, the `status` follows `push`. This host runs the calls of one message one at a time, in the order sent, so a row is one message; a row split in two is the cost this plan removes.
 
 | Message | Calls |
 |---|---|
