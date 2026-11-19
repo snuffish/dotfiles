@@ -1,6 +1,6 @@
 # commit: the PR's stack and its generated description block
 
-Read from `commit` Step 7 when the branch has exactly one open PR. Read the `outward-writes` Module first (path in `commit` › *Modules*) unless it is already in context. Only the description of this PR is written: never its title, labels, draft state or any other PR.
+Read from `commit` Step 7 when the branch has exactly one open PR. Read the `outward-writes` Module first (path in `commit` › *Modules*) unless it is already in context.
 
 1. **Find the stack:** take the PR's target branch `TGT` (strip `refs/heads/` per `pr-host` › *Branch names & Diff base*) and the default branch `DEF` (`git -C <repo-root> symbolic-ref --short refs/remotes/origin/HEAD`, minus `origin/`). Then `git -C <repo-root> fetch origin "$TGT" "$DEF"`.
    - `TGT` = `DEF` → not stacked.
