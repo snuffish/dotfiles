@@ -17,6 +17,8 @@ FRESH_SECONDS = 120
 MAX_BULLET_WORDS = 25
 MAX_PROSE_WORDS = 15
 SKIP_PREFIXES = ("#", "|", ">", "<!--", "**Status", "**Suffix", "**Inputs", "**Review")
+# Session-scoped locations a fresh `/proceed` session cannot read (/plan › §1 Style › Portable to a new session).
+SESSION_PATH = re.compile(r"<scratchpad>|(?<![\w.~-])(?:/private)?/tmp/")
 
 
 def candidate_paths(event):
@@ -49,6 +51,9 @@ def problems_in(text):
                 blocks[-1].append(line)
         problems += [f"question without a Rec: {block[0].strip()[:80]}" for block in blocks
                      if not re.search(r"\*\*rec|\brec:", " ".join(block), re.IGNORECASE)]
+
+    problems += [f"L{number}: session-scoped path, gone in a new session; copy it under <artifact-dir>/<suffix>/: "
+                 f"{line.strip()[:60]}" for number, line in enumerate(lines, start=1) if SESSION_PATH.search(line)]
 
     in_code = False
     for number, line in enumerate(lines, start=1):

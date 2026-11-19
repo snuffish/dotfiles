@@ -82,6 +82,7 @@ Every plan writer applies it to the whole file **and to the chat response that p
 - _Decisions_ and _Risks_ as tables.
 - Every open question carries **Rec:** with the recommended answer.
 - Nothing after _Open Questions_ in the file. If there are no unresolved questions, note "None" (or omit).
+- **Portable to a new session.** `/proceed <plan>` often runs in a fresh session, where this session's scratchpad and `/tmp` files are gone. Never cite them in the plan. Copy every input the plan depends on (a proposal, a script, a baseline, a fixture) to `<artifact-dir>/<suffix>/` and cite it there. `plan-lint.py` flags a `<scratchpad>`, `/tmp/` or `/private/tmp/` path.
 - **Steps** and **Unresolved questions** (the user's rule above) are chat-only: end the chat response with them, never write a **Steps** block into the plan file (`plan-lint.py` flags each numbered step as a question without a Rec). The file's _Proposed Changes_ holds the steps.
 
 ### Link block
