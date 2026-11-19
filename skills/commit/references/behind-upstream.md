@@ -1,6 +1,6 @@
 # commit: integrate when the branch is behind its upstream
 
-Read from `commit` Step 6 when the push is rejected as non-fast-forward (`fetch first`). Integrate and push; do not stop to ask. Run the same push mode: `/commit` was the request to get the commit onto the remote.
+Read from `commit` Step 6 when the push is rejected as non-fast-forward (`fetch first`). Push again in the same mode Step 6 chose.
 
 1. Note the incoming commits: `git -C <repo-root> fetch` then `git -C <repo-root> log --oneline HEAD..@{u}` (name them in the output).
 2. `git -C <repo-root> pull --rebase --autostash`. This only replays this branch's unpushed commits onto `@{u}`; nothing already pushed is rewritten.

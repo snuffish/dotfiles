@@ -4,7 +4,7 @@ Run these in place of reading the Step 1 `status` text when `status` is not in E
 
 ## Step 1: repo and state
 
-1. **Repo root:** `git rev-parse --show-toplevel` (in a multi-repo workspace, handle each changed repo separately; check for locked `claude-skill:` worktrees per `git-worktrees` › *Using this Module from a Command*).
+1. **Repo root:** `git rev-parse --show-toplevel`, then as in `commit` Step 1 item 1.
 2. **Stop and say why** when:
    - **Detached HEAD:** `git -C <repo-root> symbolic-ref -q HEAD` fails.
    - **An operation is in progress:** `MERGE_HEAD`, `CHERRY_PICK_HEAD`, `REVERT_HEAD`, or a `rebase-merge/` / `rebase-apply/` directory exists (`resolve-conflicts` › *Step 0 — Detect the Operation, the Sides and the Repo*). Route to [`/resolve-conflicts`](../../resolve-conflicts/SKILL.md), except a **resolved merge**: `MERGE_HEAD` exists and `git diff --name-only --diff-filter=U` is empty. Conclude it per [resolved-merge.md](resolved-merge.md).
@@ -16,6 +16,6 @@ Run each as its own Bash call:
 
 1. `git -C <repo-root> rev-parse --abbrev-ref HEAD` gives the branch `<BR>`.
 2. `git -C <repo-root> rev-parse --abbrev-ref --symbolic-full-name @{u}` gives the upstream. It fails when none is set.
-3. When the upstream is `origin/<BR>`, run `git -C <repo-root> push`. Otherwise, or when step 2 failed, run `git -C <repo-root> push -u origin HEAD`.
+3. Choose the push per `commit` Step 6 from those two answers; a failed step 2 means no upstream is set.
 
 After the push, read it back with `git -C <repo-root> rev-list --count @{u}..HEAD` (expect `0`) and `git -C <repo-root> rev-parse --abbrev-ref --symbolic-full-name @{u}` (expect `origin/<BR>`).

@@ -1,6 +1,6 @@
 ---
 name: commit
-description: "Runs the skill-drift check first and fixes STALE claims surgically, then stages changed files, runs documented pre-commit gates (formatters, linters, tests), formats commit messages matching repo conventions (Conventional Commits or branch work-item prefix), and pushes to upstream. After the push, finds the branch's open PR and the branch it is stacked on, warns when that base is behind main, and regenerates its marked description block in English from the commits, leaving hand-written parts untouched. Refuses commits on default branches or detached HEAD."
+description: "Commits the current change and pushes it, with the repo's drift check, pre-commit gates and commit-message convention, then updates the branch's open PR description from the commits. Refuses default branches and detached HEAD. Use for /commit, \"commit\", \"commit push\", \"commit and push\". Fast commit with no gates: /push."
 argument-hint: "[no-push] [message or intent] [paths…]"
 model: sonnet
 ---
@@ -32,11 +32,12 @@ A Module or `references/` file already in this session's context is not read aga
 
 ### Delegation (Skill-tool runs on a larger model)
 
-Applies only when this skill was invoked through the Skill tool and the session model is not Sonnet or Haiku. A typed `/commit` already runs on Sonnet through this skill's `model:`, and the `gcai` path is untouched, so neither delegates. Do not run Steps 1–8 yourself:
+Applies whenever this skill was invoked through the Skill tool. That call only relabels the run: the system then names this skill's `model:` while the session's own model keeps serving every message, so never judge by the model named after the call. A typed `/commit` really switches to Sonnet (`gcai` types it into a Sonnet session), so it does not delegate. Do not run Steps 1–8 yourself:
 
-1. Spawn one `general-purpose` sub-agent with `model: "sonnet"`, told to read this SKILL.md and run it. The brief carries the arguments (including `no-push`), `repo-root`, any `[worktree-context]` block, the session's working model for the trailer, the intent of the change, and this consent: "the user asked to commit and push; the Step 7 description update is allowed". It ends with: "Do not delegate again. Never ask: stop and report instead."
+1. Spawn one `general-purpose` sub-agent with `model: "sonnet"`, told to read this SKILL.md and run it. The brief carries the absolute path of this SKILL.md (from the `realpath` step in *Modules*), the arguments (including `no-push`), `repo-root`, any `[worktree-context]` block, the session's working model for the trailer (the model named before the Skill call), the intent of the change, and this consent: "the user asked to commit and push; the Step 7 description update is allowed". It ends with: "Do not delegate again. Never ask: stop and report instead."
 2. After any report or failure, run `git -C <repo-root> status -sb`.
-3. Re-spawn only when the branch is still ahead of its upstream. When the report stopped on a question (a missing work-item ID, a mixed change), ask the user, then re-spawn with the answer.
+3. Re-spawn once, only when a push was asked for and the branch is still ahead of its upstream. Under `no-push` the run is done when the report names the commit. When the report stopped on a question (a missing work-item ID, a mixed change), ask the user, then re-spawn with the answer.
+4. When another skill called `/commit` (for example `wt-close-all`), hand the report back to that skill instead: it decides what happens next, and this section neither asks nor re-spawns.
 
 A sub-agent that is itself running as the delegate skips this section.
 
@@ -135,7 +136,7 @@ From the Step 1 `status` and `diff --stat`:
   git -C <repo-root> log -1 --stat --format='%h %s%n%(trailers:key=Co-Authored-By,valueonly)'
   git -C <repo-root> log '--format=%h %(trailers:key=Co-Authored-By,valueonly)' '@{u}..HEAD'
   ```
-  The second read-back covers every commit this push sends (`<base>..HEAD` on a branch with no upstream). It must show the intended files, the convention and a trailer that follows the rule. A trailer that names this skill's own `model:` instead of the working model, on any of those commits: do not push; stop and report it, interactive and `gcai` alike (rewording needs `--amend`).
+  The second `log` lists every commit this push sends. On a branch with no upstream (Step 1 `status`), end it with `HEAD --not --remotes=origin` in place of `'@{u}..HEAD'`. Together the read-backs must show the intended files, the convention and a trailer that follows the rule. A trailer that names this skill's own `model:` instead of the working model, on any of those commits: do not push; stop and report it, interactive and `gcai` alike (rewording needs `--amend`).
 
 ### Step 6: Push
 
