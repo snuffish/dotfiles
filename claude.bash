@@ -121,9 +121,9 @@ function gcai() {
 # Two or more actionable trees: an fzf checklist, all marked (space toggles, enter runs, esc cancels), with a preview of
 # the focused tree's changed files and unpushed commits; one: those files and commits, then a y/N prompt.
 # Marked safe trees go through wt-rm; marked commit trees go to Claude's /wt-close-all (args passed to it) as the
-# approved list, standing in for the skill's own confirmation, which print mode can't ask
+# approved list, standing in for the skill's own confirmation, which print mode can't ask, plus an optional note you type
 function gwtclear() {
-  local repo=. rows lines menu kept picked n ans dir commits
+  local repo=. rows lines menu kept picked n ans dir commits note
   [[ -d "$1" ]] && repo=$1
   rows=$(wt-status "$repo") || return 1
   if [[ -z "$rows" ]]; then
@@ -180,10 +180,15 @@ $kept}" \
     wt-rm "$dir"
   done
   commits=$(awk -F '\t' '$2 == "commit" { print $3 }' <<<"$picked")
-  [[ -n "$commits" ]] && claude-p "/wt-close-all $*
+  [[ -n "$commits" ]] || return 0
+  printf 'gwtclear: note for Claude (optional, enter to skip): '
+  read -r note
+  claude-p "/wt-close-all $*
 The user approved this list in gwtclear; treat it as the Step 2 answer go. Act on these trees only, and leave every
 other tree as it is, safe ones included:
-$commits"
+$commits${note:+
+
+Note from the user: $note}"
   return 0
 }
 
