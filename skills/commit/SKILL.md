@@ -58,7 +58,7 @@ Runs before anything is staged, so claim fixes are grouped with the change that 
 | Checker | Claims file | Triage per |
 |---|---|---|
 | `skills/skill-drift/scripts/check_skill_drift.py` (the `~/.terminal` registry) | `skills/skills-claims.json` | [`/skill-drift`](../skill-drift/SKILL.md) |
-| `.claude/scripts/check_skill_drift.py` (a project repo) | `.claude/skills-claims.json` | that repo's drift skill |
+| `.claude/scripts/check_skill_drift.py` (a project repo) | `.claude/claims/` (one file per source; `.claude/skills-claims.json` on repos not yet split) | that repo's drift skill |
 
 No checker → state `"no skill-drift check"` and go to Step 3.
 
@@ -66,9 +66,10 @@ No checker → state `"no skill-drift check"` and go to Step 3.
 2. **STALE rows → fix now.** Re-extract each claim per `skill-drift` › *3. Re-extract claims after editing a skill*: update only that claim's `quote` / `source.line` (or drop and re-add it) with the Edit tool.
    - **Never** rewrite the claims file wholesale: no `json.dump(s)`/`jq`/script regeneration, no `--update-stale` (it also silently rewrites `count` claims), no formatter on it.
    - Keep the file canonical (`json.dumps(data, indent=2)` form: 2-space indent, ASCII-escaped, trailing newline); the checker fails a non-canonical file.
+   - When the repo's checker has `--format` (a claims directory), run it after the edits instead of keeping canonical form by hand; the checker fails the run with ORDER otherwise. The no-formatter rule above applies to the single-file layout only.
 3. **FAIL rows:** if the claim's `source.file` is in this change, triage and fix per `skill-drift` › *2. Triage a `FAIL`*. Otherwise leave it, name it in chat and in the output's `Left out` line, and continue.
-4. **Diff guard:** before editing, copy the claims file to the scratchpad. After, run `git -C <repo-root> diff --numstat -- <claims file>`: expect about 2 changed lines per fixed claim (more only for added or removed claims). Far more means it was reformatted: restore the copy and redo the edits by hand.
-5. **Re-run the checker:** `0 stale` and no FAIL from this change, else stop and report the rows.
+4. **Diff guard:** before editing, copy each claim file you will edit to the scratchpad. After (and after `--format`), run `git -C <repo-root> diff --numstat -- <claim files touched>`: expect about 2 changed lines per fixed claim (more only for added or removed claims). Far more means it was reformatted: restore the copy and redo the edits by hand.
+5. **Re-run the checker:** `0 stale`, no FAIL from this change and no ORDER or MISPLACED section, else stop and report the rows.
 6. Claim edits (and any skill text fixes) belong to the change that caused them: stage them with it in Step 3.
 
 ### Step 3: Choose what goes into the commit
