@@ -5,6 +5,7 @@ Usage: render_page.py <collector.json> <phrases.json> <out.html>
 
 phrases.json maps an entry key (`wi:31438`, `chore:<repo>:<branch>`, or `reviews` for the shared
 review card) to the one-line phrase the model wrote for it. An entry with no phrase shows its title only.
+The reserved key `_summary` holds the 1-2 sentence overview shown under the heading; without it the page has none.
 """
 
 import datetime as dt
@@ -38,6 +39,7 @@ CSS = """
   header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; }
   h1 { font-size: 26px; margin: 0; text-wrap: balance; }
   .meta { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .lede { margin: 10px 0 0; font-size: 16px; max-width: 70ch; text-wrap: pretty; }
   .counts { display: flex; flex-wrap: wrap; gap: 8px 28px; margin: 16px 0 24px; padding-block: 12px;
     border-block: 1px solid var(--line); font-variant-numeric: tabular-nums; }
   .counts div { display: flex; align-items: baseline; gap: 6px; }
@@ -69,6 +71,8 @@ CSS = """
   .rail ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
   .rail li { padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; display: flex; flex-direction: column; }
   .rail li small { color: var(--muted); font-size: 12px; }
+  .rail details { margin-top: 8px; }
+  .rail details ul { margin-top: 8px; padding-left: 0; color: var(--fg); }
   .none { color: var(--ship); font-weight: 700; margin: 0; }
   .empty { color: var(--muted); margin: 0; }
   footer { margin-top: 32px; font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 4px; }
@@ -175,9 +179,14 @@ def render(data, phrases):
         also = f"<details><summary>Also, {len(rest)} smaller item{'s' if len(rest) != 1 else ''}</summary><ul>{lines}</ul></details>"
 
     rows = today_rows(data["today"])
-    shown = "".join(f"<li>{e(t)}<small>{e(s)}</small></li>" for t, s in rows[:TODAY_CAP])
-    more = f"<li><small>+{len(rows) - TODAY_CAP} more</small></li>" if len(rows) > TODAY_CAP else ""
-    today_html = f"<ul>{shown}{more}</ul>" if rows else '<p class="empty">Nothing open.</p>'
+    def row_items(part):
+        return "".join(f"<li>{e(t)}<small>{e(s)}</small></li>" for t, s in part)
+
+    hidden = rows[TODAY_CAP:]
+    more = f"<details><summary>+{len(hidden)} more</summary><ul>{row_items(hidden)}</ul></details>" if hidden else ""
+    today_html = f"<ul>{row_items(rows[:TODAY_CAP])}</ul>{more}" if rows else '<p class="empty">Nothing open.</p>'
+    summary = phrases.get("_summary")
+    lede = f'<p class="lede">{e(summary)}</p>' if summary else ""
     blockers = data["blockers"]
     blockers_html = (f"<ul>{''.join(f'<li>{e(blocker_text(b))}</li>' for b in blockers)}</ul>" if blockers
                      else '<p class="none">None found</p>')
@@ -194,6 +203,7 @@ def render(data, phrases):
 <style>{CSS}</style>
 <div class="wrap">
   <header><h1>{e(heading)}</h1><div class="meta">window {e(window['start'])} · {e(repos)}</div></header>
+  {lede}
   <div class="counts">{count_bar}</div>
   <div class="grid">
     <section><h2>Say these</h2><div class="list">{cards}</div>{also}</section>

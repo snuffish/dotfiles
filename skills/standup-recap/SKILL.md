@@ -102,8 +102,8 @@ Chat, by default:
 
 Browser (`--artifact`): the page replaces the chat recap; chat gets the link and the `⚠` notes only.
 
-1. Write `<scratchpad>/phrases.json`: one phrase per `yesterday[]` key, plus `reviews` when a `reviews` slot exists, following the line 2 rule of *Step 2*.
-2. Render it. The page has a count bar, "Say these" (the first three highlights as large cards, the rest smaller), every other entry in an "Also" fold, and a Today / Blockers column:
+1. Write `<scratchpad>/phrases.json`: one phrase per `yesterday[]` key, plus `reviews` when a `reviews` slot exists, following the line 2 rule of *Step 2*; plus `_summary`, one or two plain sentences on the day's theme and outcome built only from the highlights and `counts` (`scripts/render_page.py:8`).
+2. Render it. The page has the `_summary` line under the heading, a count bar, "Say these" (the first three highlights as large cards, the rest smaller), every other entry in an "Also" fold, and a Today / Blockers column whose rows past the sixth sit in a "+N more" fold (`scripts/render_page.py:16`):
 
    ```bash
    python3 -I <skill-dir>/scripts/render_page.py <scratchpad>/standup.json <scratchpad>/phrases.json <scratchpad>/standup-<window.start>.html
