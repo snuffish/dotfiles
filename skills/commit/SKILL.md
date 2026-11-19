@@ -63,10 +63,9 @@ Runs before anything is staged, so claim fixes are grouped with the change that 
 No checker → state `"no skill-drift check"` and go to Step 3.
 
 1. **Run** `python3 -I <repo-root>/<checker>` (full run, no `--file`).
-2. **STALE rows → fix now.** Re-extract each claim per `skill-drift` › *3. Re-extract claims after editing a skill*: update only that claim's `quote` / `source.line` (or drop and re-add it) with the Edit tool.
-   - **Never** rewrite the claims file wholesale: no `json.dump(s)`/`jq`/script regeneration, no `--update-stale` (it also silently rewrites `count` claims), no formatter on it.
-   - Keep the file canonical (`json.dumps(data, indent=2)` form: 2-space indent, ASCII-escaped, trailing newline); the checker fails a non-canonical file.
-   - When the repo's checker has `--format` (a claims directory), run it after the edits instead of keeping canonical form by hand; the checker fails the run with ORDER otherwise. The no-formatter rule above applies to the single-file layout only.
+2. **STALE rows → fix now.** Re-extract each claim per `skill-drift` › *3. Re-extract claims after editing a skill*: update only that claim's `quote` / `source.line` (or drop and re-add it), with the script method that step's item 2 gives.
+   - Touch only the stale claims: no `jq` or prettier pass over the file, no `--update-stale` (it also silently rewrites `count` claims).
+   - When the repo's checker has `--format` (a claims directory), run it after the edits; the checker fails the run with ORDER otherwise.
 3. **FAIL rows:** if the claim's `source.file` is in this change, triage and fix per `skill-drift` › *2. Triage a `FAIL`*. Otherwise leave it, name it in chat and in the output's `Left out` line, and continue.
 4. **Diff guard:** before editing, copy each claim file you will edit to the scratchpad. After (and after `--format`), run `git -C <repo-root> diff --numstat -- <claim files touched>`: expect about 2 changed lines per fixed claim (more only for added or removed claims). Far more means it was reformatted: restore the copy and redo the edits by hand.
 5. **Re-run the checker:** `0 stale`, no FAIL from this change and no ORDER or MISPLACED section, else stop and report the rows.

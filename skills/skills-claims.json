@@ -22124,7 +22124,7 @@
       },
       "kind": "other",
       "value": "prettier PostToolUse hook",
-      "quote": "a PostToolUse `prettier --write` hook reformats the whole file",
+      "quote": "a project repo's prettier hook can reformat the whole file",
       "verify": {
         "method": "grep",
         "pattern": "npx prettier --write",
