@@ -4549,7 +4549,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-post-comments",
-      "quote": "desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `push`, `refine`, `re",
+      "quote": "back-review`, `pr-fix-pipeline`, `pr-overview`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `push`, `refine`, `re",
       "verify": {
         "method": "skill_exists",
         "name": "pr-post-comments",
@@ -4564,7 +4564,7 @@
       },
       "kind": "skill_ref",
       "value": "problem",
-      "quote": "eline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `push`, `refine`, `remember-this`, `resolve-conflicts`, `shap",
+      "quote": "rview`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `push`, `refine`, `remember-this`, `resolve-conflicts`, `shap",
       "verify": {
         "method": "skill_exists",
         "name": "problem",
@@ -23274,7 +23274,7 @@
       },
       "kind": "skill_ref",
       "value": "principles-interview",
-      "quote": "view`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `push`, `refine`, `remember-this`, `resolve",
+      "quote": "pipeline`, `pr-overview`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed`, `push`, `refine`, `remember-this`, `resolve",
       "verify": {
         "method": "skill_exists",
         "name": "principles-interview",
@@ -23869,7 +23869,7 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "neral (top level) | Command | 59 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `code-documentation`, `code",
+      "quote": "neral (top level) | Command | 60 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `code-documentation`, `code",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
@@ -23932,7 +23932,7 @@
       },
       "kind": "skill_ref",
       "value": "plan",
-      "quote": "vestigate`, `manual-testing`, `no-wt`, `organize`, `parity-audit`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`,",
+      "quote": "vestigate`, `manual-testing`, `no-wt`, `organize`, `parity-audit`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-overview",
       "verify": {
         "method": "skill_exists",
         "name": "plan",
@@ -23950,7 +23950,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-feedback-review",
-      "quote": "g`, `no-wt`, `organize`, `parity-audit`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `princ",
+      "quote": "g`, `no-wt`, `organize`, `parity-audit`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-overview`, `pr-polish`, `pr-post-co",
       "verify": {
         "method": "skill_exists",
         "name": "pr-feedback-review",
@@ -23965,7 +23965,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-fix-pipeline",
-      "quote": "e`, `parity-audit`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `pr",
+      "quote": "e`, `parity-audit`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-overview`, `pr-polish`, `pr-post-comments`, `principles-",
       "verify": {
         "method": "skill_exists",
         "name": "pr-fix-pipeline",
@@ -23973,19 +23973,19 @@
       }
     },
     {
-      "id": "skills/README.md:42:count:60",
+      "id": "skills/README.md:42:count:61",
       "source": {
         "file": "skills/README.md",
         "line": 42
       },
       "kind": "count",
-      "value": "60",
-      "quote": "66 skills total \u2014 60 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "value": "61",
+      "quote": "67 skills total \u2014 61 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/*/SKILL.md",
         "base": "repo",
-        "expected": 60,
+        "expected": 61,
         "op": "eq"
       }
     },
@@ -23997,7 +23997,7 @@
       },
       "kind": "count",
       "value": "6 GR.PRIIS project skills",
-      "quote": "66 skills total \u2014 60 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "67 skills total \u2014 61 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/Projects/GR.PRIIS/*/SKILL.md",
@@ -24014,7 +24014,7 @@
       },
       "kind": "count",
       "value": "8 Modules",
-      "quote": "66 skills total \u2014 60 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "67 skills total \u2014 61 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/_modules/*.md",
@@ -24031,7 +24031,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-desc",
-      "quote": ", `manual-testing`, `no-wt`, `organize`, `parity-audit`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-c",
+      "quote": ", `manual-testing`, `no-wt`, `organize`, `parity-audit`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-overview`, `pr-poli",
       "verify": {
         "method": "skill_exists",
         "name": "pr-desc",
@@ -24046,7 +24046,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-polish",
-      "quote": "t`, `plan`, `pr-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed",
+      "quote": "-desc`, `pr-feedback-review`, `pr-fix-pipeline`, `pr-overview`, `pr-polish`, `pr-post-comments`, `principles-interview`, `problem`, `proceed",
       "verify": {
         "method": "skill_exists",
         "name": "pr-polish",
@@ -25914,6 +25914,319 @@
         "pattern": "\\.card-image \\{[^}]*aspect-ratio: 16/10;[^}]*display: flex;[^}]*justify-content: center",
         "paths": [
           "skills/visual-companion/scripts/frame-template.html"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/pr-overview/SKILL.md:20:path:skills/_modules/core.md",
+      "source": {
+        "file": "skills/pr-overview/SKILL.md",
+        "line": 20
+      },
+      "kind": "path",
+      "value": "skills/_modules/core.md",
+      "quote": "- `../_modules/core.md`",
+      "context": "Module the skill reads",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/core.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/pr-overview/SKILL.md:21:path:skills/_modules/artifact-protocol.md",
+      "source": {
+        "file": "skills/pr-overview/SKILL.md",
+        "line": 21
+      },
+      "kind": "path",
+      "value": "skills/_modules/artifact-protocol.md",
+      "quote": "- `../_modules/artifact-protocol.md`: the page is `<prefix>-pr_overview-<id>-<slug>.html`, claimed with `publish_new_artifact.sh` (extension `html`)",
+      "context": "Module the skill reads",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/artifact-protocol.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/pr-overview/SKILL.md:22:path:skills/_modules/pr-host.md",
+      "source": {
+        "file": "skills/pr-overview/SKILL.md",
+        "line": 22
+      },
+      "kind": "path",
+      "value": "skills/_modules/pr-host.md",
+      "quote": "- `../_modules/pr-host.md`: resolve the PR, pin `lastMergeSourceCommit`, fetch work items and acceptance criteria",
+      "context": "Module the skill reads",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/pr-host.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/pr-overview/SKILL.md:23:path:skills/_modules/project-profile.md",
+      "source": {
+        "file": "skills/pr-overview/SKILL.md",
+        "line": 23
+      },
+      "kind": "path",
+      "value": "skills/_modules/project-profile.md",
+      "quote": "- `../_modules/project-profile.md`: where the spec lives (PRIIS: the User Story's decisions `D1\u2013Dn`, plus the wiki plan)",
+      "context": "Module the skill reads",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/project-profile.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/pr-overview/SKILL.md:26:path:skills/_modules/git-worktrees.md",
+      "source": {
+        "file": "skills/pr-overview/SKILL.md",
+        "line": 26
+      },
+      "kind": "path",
+      "value": "skills/_modules/git-worktrees.md",
+      "quote": "- Read the diff from a detached snapshot of the pinned head (`../_modules/git-worktrees.md` \u203a _Snapshot Lifecycle_), never from the user's checkout.",
+      "context": "Module the skill reads",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/git-worktrees.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/pr-overview/SKILL.md:54:path:skills/_modules/scripts/publish_new_artifact.sh",
+      "source": {
+        "file": "skills/pr-overview/SKILL.md",
+        "line": 54
+      },
+      "kind": "path",
+      "value": "skills/_modules/scripts/publish_new_artifact.sh",
+      "quote": "bash ~/.terminal/skills/_modules/scripts/publish_new_artifact.sh <scratchpad>/overview.html <artifact-dir>/<prefix>-pr_overview-<id>-<slug> html",
+      "context": "claim script",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/_modules/scripts/publish_new_artifact.sh",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/pr-overview/SKILL.md:10:path:skills/pr-overview/scripts/render_overview.py",
+      "source": {
+        "file": "skills/pr-overview/SKILL.md",
+        "line": 10
+      },
+      "kind": "path",
+      "value": "skills/pr-overview/scripts/render_overview.py",
+      "quote": "Explains what a PR does, why, and whether it meets its spec. The model gathers the facts and fills `overview.json`; `scripts/render_overview.py` writes the page, so layout and theme are identical on every run.",
+      "context": "renderer",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/pr-overview/scripts/render_overview.py",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/pr-overview/SKILL.md:47:path:skills/pr-overview/references/schema.md",
+      "source": {
+        "file": "skills/pr-overview/SKILL.md",
+        "line": 47
+      },
+      "kind": "path",
+      "value": "skills/pr-overview/references/schema.md",
+      "quote": "5. **Map spec to code**: start one `Explore` sub-agent on `claude-sonnet-5-5`. Its brief carries the snapshot path, the pinned head, the spec rows (id and text) and the status list in [references/schema.md](references/schema.md) \u203a *Spec status*; it returns one line per row: `id | status | path:line evidence`. Spot-check at least three of its rows yourself and say so in the footer. Done when every spec row has a status and evidence.",
+      "context": "schema",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/pr-overview/references/schema.md",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/pr-overview/SKILL.md:86:path:skills/pr-overview/tests/fixture-18930.json",
+      "source": {
+        "file": "skills/pr-overview/SKILL.md",
+        "line": 86
+      },
+      "kind": "path",
+      "value": "skills/pr-overview/tests/fixture-18930.json",
+      "quote": "- The renderer printed the HTML path and exited 0; a deliberately broken JSON exits 1 (`tests/fixture-18930.json` is the working example).",
+      "context": "fixture",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/pr-overview/tests/fixture-18930.json",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/pr-overview/SKILL.md:80:symbol:MERMAID",
+      "source": {
+        "file": "skills/pr-overview/SKILL.md",
+        "line": 80
+      },
+      "kind": "symbol",
+      "value": "MERMAID",
+      "quote": "The page has no external CSS and no Tailwind; Mermaid loads from a pinned jsdelivr URL (`MERMAID` in `scripts/render_overview.py`), and tabs are plain JavaScript with a hash so `#spec` links work. Without JavaScript every tab shows in one column and diagrams stay as source.",
+      "context": "pinned mermaid URL",
+      "verify": {
+        "method": "grep",
+        "pattern": "^MERMAID = ",
+        "paths": [
+          "skills/pr-overview/scripts/render_overview.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/pr-overview/SKILL.md:75:symbol:build",
+      "source": {
+        "file": "skills/pr-overview/SKILL.md",
+        "line": 75
+      },
+      "kind": "symbol",
+      "value": "build",
+      "quote": "| Overview | Problem before/after, tiles, \"review this first\" | `overview` (`scripts/render_overview.py`, `build`) |",
+      "context": "page builder",
+      "verify": {
+        "method": "grep",
+        "pattern": "^def build\\(",
+        "paths": [
+          "skills/pr-overview/scripts/render_overview.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/pr-overview/SKILL.md:34:skill_ref:code-review",
+      "source": {
+        "file": "skills/pr-overview/SKILL.md",
+        "line": 34
+      },
+      "kind": "skill_ref",
+      "value": "code-review",
+      "quote": "| Find defects in the diff                     | [`/code-review`](../code-review/SKILL.md)  |",
+      "context": "not-for pointer",
+      "verify": {
+        "method": "skill_exists",
+        "name": "code-review",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/pr-overview/SKILL.md:35:skill_ref:pr-feedback-review",
+      "source": {
+        "file": "skills/pr-overview/SKILL.md",
+        "line": 35
+      },
+      "kind": "skill_ref",
+      "value": "pr-feedback-review",
+      "quote": "| Triage what reviewers already said           | [`/pr-feedback-review`](../pr-feedback-review/SKILL.md) |",
+      "context": "not-for pointer",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-feedback-review",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/pr-overview/SKILL.md:36:skill_ref:pr-desc",
+      "source": {
+        "file": "skills/pr-overview/SKILL.md",
+        "line": 36
+      },
+      "kind": "skill_ref",
+      "value": "pr-desc",
+      "quote": "| Write the PR description                     | [`/pr-desc`](../pr-desc/SKILL.md)          |",
+      "context": "not-for pointer",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-desc",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/pr-overview/SKILL.md:37:skill_ref:explain",
+      "source": {
+        "file": "skills/pr-overview/SKILL.md",
+        "line": 37
+      },
+      "kind": "skill_ref",
+      "value": "explain",
+      "quote": "| Explain one piece of code or one comment     | [`/explain`](../explain/SKILL.md)          |",
+      "context": "not-for pointer",
+      "verify": {
+        "method": "skill_exists",
+        "name": "explain",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/pr-overview/SKILL.md:65:skill_ref:pr-post-comments",
+      "source": {
+        "file": "skills/pr-overview/SKILL.md",
+        "line": 65
+      },
+      "kind": "skill_ref",
+      "value": "pr-post-comments",
+      "quote": "- Posting the page to the PR is out of scope; `/pr-post-comments` does that on request.",
+      "context": "posting is out of scope",
+      "verify": {
+        "method": "skill_exists",
+        "name": "pr-post-comments",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/pr-overview/SKILL.md:22:symbol:lastMergeSourceCommit",
+      "source": {
+        "file": "skills/pr-overview/SKILL.md",
+        "line": 22
+      },
+      "kind": "symbol",
+      "value": "lastMergeSourceCommit",
+      "quote": "- `../_modules/pr-host.md`: resolve the PR, pin `lastMergeSourceCommit`, fetch work items and acceptance criteria",
+      "context": "pinned head",
+      "verify": {
+        "method": "grep",
+        "pattern": "lastMergeSourceCommit",
+        "paths": [
+          "skills/_modules/pr-host.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/pr-overview/SKILL.md:80:other:mermaid-pinned-jsdelivr",
+      "source": {
+        "file": "skills/pr-overview/SKILL.md",
+        "line": 80
+      },
+      "kind": "other",
+      "value": "mermaid-pinned-jsdelivr",
+      "quote": "The page has no external CSS and no Tailwind; Mermaid loads from a pinned jsdelivr URL (`MERMAID` in `scripts/render_overview.py`), and tabs are plain JavaScript with a hash so `#spec` links work. Without JavaScript every tab shows in one column and diagrams stay as source.",
+      "context": "exact version, no range",
+      "verify": {
+        "method": "grep",
+        "pattern": "cdn\\.jsdelivr\\.net/npm/mermaid@\\d+\\.\\d+\\.\\d+/",
+        "paths": [
+          "skills/pr-overview/scripts/render_overview.py"
         ],
         "base": "repo",
         "expect": "present"
