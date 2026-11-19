@@ -1,0 +1,222 @@
+{
+  "pr": {
+    "id": "18930",
+    "title": "Register tickets for new supplier and operation requests",
+    "repo": "GR.PRIIS",
+    "head": "c3d52c670",
+    "date": "2026-11-18",
+    "summary": "Stories #31426 (backend) and #31427 (frontend) for User Story 23071, decisions D1–D20.",
+    "size": "146 files changed, +18,570 / −966"
+  },
+  "overview": {
+    "problem": {
+      "before": {
+        "mermaid": "flowchart TB\n  M[Municipality needs a supplier] --> F[Supplier fills in<br/>Microsoft Forms]\n  F --> L[Item in Microsoft Lists]\n  L --> A[Amalia checks<br/>the requirements]\n  A -.re-types by hand.-> P[(PRIIS: supplier,<br/>operation)]\n  A -.separate step.-> C[(Control ticket)]"
+      },
+      "after": {
+        "mermaid": "flowchart TB\n  R[Faisal sends a request<br/>while logged in] --> T[Register ticket<br/>+ NewEntityRequest]\n  T --> D[Amalia saves a decision<br/>creates nothing]\n  D --> G{Close as Godkänd}\n  G --> X[[One transaction:<br/>supplier · operation Pausad ·<br/>control ticket · accounts]]\n  G -. any other reason .-> Z[Nothing created,<br/>permit file deleted]"
+      },
+      "source": "User Story 23071 description; D2, D20. The anonymous form stays in #29183."
+    },
+    "tiles": [
+      {"label": "Spec met", "value": "20 / 20", "tone": "ok"},
+      {"label": "Met in UI only", "value": "1", "tone": "warn"},
+      {"label": "Open review findings", "value": "12", "tone": "bad"},
+      {"label": "Follow-up items", "value": "3", "tone": "mute"}
+    ],
+    "review_first": {
+      "title": "The close seam (card 1)",
+      "text": "Every approval goes through it. It is where the one open correctness risk sits (a concurrent double create), and the next ticket category will plug in there too.",
+      "target": "close-seam"
+    }
+  },
+  "architecture": [
+    {
+      "id": "close-seam",
+      "title": "Closing a ticket gets a seam with two adapters",
+      "spec": ["D2", "D9"],
+      "tags": ["in-process"],
+      "files": [
+        "backend/source/GR.PRIIS.API/Features/RegisterTickets/Close/CloseRegisterTicketEndpoint.cs:77, :112–151",
+        "backend/source/GR.PRIIS.Library/Feature/Register/Apply/IRegisterTicketApplier.cs:12",
+        "backend/source/GR.PRIIS.Library/Feature/Register/Apply/RegisterChangeRequestApplier.cs:13",
+        "backend/source/GR.PRIIS.Library/Feature/Register/Apply/NewEntityRequestApplier.cs:19",
+        "backend/source/GR.PRIIS.Library/DataAccess/Models/Register/RegisterTicket.cs:421 (ValidateClose)"
+      ],
+      "before": {"text": "The close endpoint holds the change-request rules itself: a ChangeRequest is validated, applied and JSON-sniffed for new users in its own transaction; everything else is just Close + Save. A new ticket category meant another branch in the endpoint."},
+      "after": {
+        "mermaid": "flowchart TB\n  E[Close endpoint] --> V[ticket.ValidateClose]\n  V --> S{{IRegisterTicketApplier<br/>Handles · ValidateCloseAsync ·<br/>RequiresTransaction · ApplyAsync}}\n  S --> A1[RegisterChange-<br/>RequestApplier]\n  S --> A2[NewEntity-<br/>RequestApplier]\n  E --> P[after commit: provisioning mail,<br/>Geposit, events]"
+      },
+      "problem": "On main the close endpoint holds the change-request rules itself, so every category is a new branch there.",
+      "solution": "The endpoint validates, opens the transaction only when RequiresTransaction says so, and dispatches on Handles(category).",
+      "wins": [
+        "Two adapters make it a real seam",
+        "Locality: each category's close rules sit in one module",
+        "Validation happens before any write (:119–127)",
+        "Post-commit effects driven by RegisterTicketApplyOutcome"
+      ],
+      "risk": "Review finding 2 (Should fix, plausible): two concurrent closes as Godkänd can each pass validation and create the operation and control ticket twice (CloseRegisterTicketEndpoint.cs:51)."
+    },
+    {
+      "id": "creators",
+      "title": "Creating suppliers and operations moves into Library",
+      "spec": ["D2", "D10"],
+      "tags": ["in-process", "Follow-up #31429"],
+      "files": [
+        "backend/source/GR.PRIIS.Library/Feature/Operations/OperationCreator.cs:62, :81",
+        "backend/source/GR.PRIIS.Library/Feature/Suppliers/SupplierCreator.cs:30, :35",
+        "backend/source/GR.PRIIS.Library/Common/Users/PriisUserManager.cs:148 (CreateSupplierUsersAsync)",
+        "backend/source/GR.PRIIS.API/Features/Operations/Create/CreateOperationEndpoint.cs",
+        "backend/source/GR.PRIIS.API/Features/Suppliers/CreateSupplierEndpoint.cs"
+      ],
+      "before": {"text": "POST /operations and POST /suppliers each create the entity and provision its users inline. Six places choose internal vs external accounts themselves: both create endpoints, UpdateSupplierEndpoint:61, OperationContactPersonsEndpointBase:57, OperationFieldApplier:200 and SupplierFieldApplier:51 (on main)."},
+      "after": {
+        "mermaid": "flowchart LR\n  O[POST /operations] --> OC\n  S[POST /suppliers] --> SC\n  AP[NewEntityRequestApplier] --> OC & SC\n  OC[OperationCreator] --> U\n  SC[SupplierCreator] --> U\n  CP[contact-person endpoints,<br/>SupplierFieldApplier] --> U\n  U[PriisUserManager<br/>.CreateSupplierUsersAsync]"
+      },
+      "problem": "Approving a request has to create exactly what the create endpoints create, but on main that logic lives inside API endpoints.",
+      "solution": "One creator per entity in Library, called by the endpoint and by the applier; the account-type rule lives in one method.",
+      "wins": [
+        "Leverage: one interface, three call sites",
+        "Approval and create can't drift apart",
+        "Provisioning rule in one place (5 callers)"
+      ],
+      "risk": "SupplierCreator is a stopgap: #31429 moves it to BaseSupplier.AsyncMutations.CreateAsync (SupplierCreator.cs:28). POST /operations and POST /suppliers stay off ExtendedCreateEndpoint because provisioning needs a transaction scope (fastendpoints skill §7)."
+    },
+    {
+      "id": "entity",
+      "title": "RegisterTicketNewEntityRequest: a 1:1 detail on the ticket",
+      "spec": ["D5", "D6", "D7", "D20"],
+      "tags": ["new table"],
+      "files": [
+        "backend/source/GR.PRIIS.Library/DataAccess/Models/Register/RegisterTicketNewEntityRequest.cs:25, :100, :166",
+        "backend/source/GR.PRIIS.Library/DataAccess/Models/Register/NewEntityProposal.cs · NewEntityDecision.cs",
+        "backend/source/GR.PRIIS.Library/DataAccess/Migrations/20261113103748_AddRegisterTicketNewEntityRequests.cs:13–96"
+      ],
+      "after": {"text": "Lifecycle of the detail row. Submitted: ProposalJson plus typed columns (parent supplier or proposed org number, proposed category, IVO answer). Decided: DecisionJson, DecisionSavedOn, decided category and org number, DecidedPermitFileId. Converted (Godkänd): RecordConversion stores the created supplier, operation and control ticket ids and clears the permit file id, because the operation owns it now. Closed otherwise: ReleaseDecidedPermitFile deletes the file in the close's save."},
+      "problem": "The request has to be searched, filtered for protected data and checked for duplicates, but most of its fields are only read back.",
+      "solution": "Columns for what is queried, JSON for the rest (D6). CanBeApprovedExpression (:100) is shared by the profile and the list.",
+      "wins": [
+        "One predicate for \"Godkänd offered\"",
+        "One owner for the permit file",
+        "Temporal table, like the other register tables"
+      ],
+      "risk": "Review findings 3 and 5: Deserialize swallows a JsonException (NewEntityDecision.cs:41), and IsProtectedHousing claims to be the only definition while the filter SQL and ProtectedSubject restate it (RegisterTicketNewEntityRequest.cs:89)."
+    },
+    {
+      "id": "endpoints",
+      "title": "The API: four new endpoints, three new SystemActions",
+      "spec": ["D1", "D3", "D4", "D18"],
+      "tags": ["contract"],
+      "files": [
+        "…/RegisterTickets/NewEntityRequests/CreateNewOperationRequestEndpoint.cs:25",
+        "…/RegisterTickets/NewEntityRequests/CreateNewSupplierWithOperationRequestEndpoint.cs:24",
+        "…/RegisterTickets/NewEntityRequests/SaveNewEntityRequestDecisionEndpoint.cs:33",
+        "…/RegisterTickets/NewEntityRequests/GetNewEntityRequestPermitFileEndpoint.cs:22",
+        "backend/source/GR.PRIIS.Library/Common/Users/AccessRules/Actions/SystemAction.cs:281, :283, :291",
+        "…/Roles/OperationManagerAccessRules.cs:60–61 · RegisterAdministratorAccessRules.cs:100"
+      ],
+      "after": {
+        "mermaid": "sequenceDiagram\n  actor F as Faisal (OperationManager)\n  actor A as Amalia (RegisterAdministrator)\n  participant API\n  F->>API: POST /register-tickets/new-operation-requests (11021)\n  F->>API: POST /register-tickets/new-supplier-with-operation-requests (11022)\n  API-->>F: register ticket created\n  A->>API: PUT /register-tickets/{id}/new-entity-request/decision (11051, multipart)\n  A->>API: GET …/new-entity-request/permit-file (11051)\n  A->>API: PUT /register-tickets/{id}/close (Godkänd)\n  API-->>F: closed notification"
+      },
+      "problem": "Only operation managers may send a request (D4, D18), and only the register administrator may see the decision and its permit file.",
+      "solution": "Separate actions for request and decision. The permit-file endpoint reuses 11051 as its policy, and GET /files/{id} refuses decided permit files.",
+      "wins": [
+        "Contract traced across the halves: consistent",
+        "swagger.json regenerated against the branch"
+      ],
+      "risk": "Review finding 1 (Should fix, Security): the created supplier and operation show as links that the requester may not be allowed to open (NewEntityRequestDto.cs:61 ↔ new-entity-request-section.tsx:495). Finding 8: the PR description says the requester doesn't see the decision, but since 239b8e401 they do."
+    },
+    {
+      "id": "after-commit",
+      "title": "After the commit: accounts, mail and control-ticket events",
+      "spec": ["D10", "D15", "D16", "D19"],
+      "tags": ["events"],
+      "files": [
+        "backend/source/GR.PRIIS.API/Features/RegisterTickets/Close/CloseRegisterTicketEndpoint.cs:90–103",
+        "backend/source/GR.PRIIS.Library/Feature/Control/ControlTicketLifecycle.cs:19",
+        "…/Control/Notifications/ControlTicketSharedWithSupplierNotificationSender.cs",
+        "…/Register/Notifications/RegisterTicketClosedNotificationHandler.cs:89–93"
+      ],
+      "after": {
+        "mermaid": "flowchart TB\n  C[Commit: supplier, operation,<br/>control ticket and accounts saved] --> M[Provisioning mail to every<br/>account created during the apply]\n  C --> N[RegisterTicketClosedEvent to Faisal;<br/>control-ticket number only when shared]\n  C --> L[ControlTicketLifecycle.PublishCreatedAsync]"
+      },
+      "problem": "A mail or event sent before the commit would announce entities that a rollback could remove.",
+      "solution": "The applier returns an outcome, and the endpoint acts on it only after Complete(). ControlTicketLifecycle is also used by POST /control-tickets.",
+      "wins": [
+        "Nothing is announced before the commit",
+        "One lifecycle module, two callers"
+      ]
+    },
+    {
+      "id": "frontend",
+      "title": "Frontend: two wizards built from existing steps",
+      "spec": ["D8", "D12", "D13", "D14", "D17"],
+      "tags": ["#31427"],
+      "files": [
+        "frontend/source/priis-web/src/features/operation/create/index.ts:94, :109, :125, :144",
+        "…/features/register-ticket/request-new-entity/request-new-entity-modal.tsx:80–81",
+        "…/features/register-ticket/decide-new-entity-request/decide-new-entity-request-modal.tsx:81–82",
+        "…/decide-new-entity-request/steps/decision-supplier-step.tsx:3 · decision-control-step.tsx:5",
+        "…/features/register-ticket/close-register-ticket-modal.tsx:88, :110"
+      ],
+      "before": {"text": "Three wizards ask for nearly the same operation fields, each with its own rules for what is required."},
+      "after": {"text": "One set of operation steps in three modes (CreateOperationContext.mode): create (POST /operations), request (Faisal; IVO question only) and decide (Amalia; permit and file). The decision wizard reuses SupplierFormFields and ControlStartAndShareFields; supplier and operation default to Paused (schema.ts:126, :133)."},
+      "problem": "Three wizards ask for nearly the same operation fields with different rules for what is required.",
+      "solution": "One set of steps with request* / decide* variants. The mode decides what is asked and what is required. The close dialog offers Godkänd only when canBeApproved is true.",
+      "wins": [
+        "Locality: operation fields defined once",
+        "Approval gate mirrors the API rule"
+      ],
+      "risk": "Review findings 10–12: the \"no permit download\" e2e assertion can't fail (new-entity-request.spec.ts:223), several UI paths have no spec, and the decision transform uses `as` casts (schema.ts:235)."
+    }
+  ],
+  "spec": {
+    "note": "Each row was checked against the code at c3d52c670. B = backend/source/GR.PRIIS.API/Features/RegisterTickets, L = backend/source/GR.PRIIS.Library, FE = frontend/source/priis-web/src.",
+    "rows": [
+      {"id": "D1", "text": "Two variants for a logged-in operation manager", "status": "Met", "evidence": "B/NewEntityRequests/NewEntityRequestSubmission.cs:27, :59"},
+      {"id": "D2", "text": "Decision creates nothing; Godkänd creates everything in one transaction", "status": "Met", "evidence": "L/Feature/Register/Apply/NewEntityRequestApplier.cs:96–146; B/Close/CloseRegisterTicketEndpoint.cs:133–149"},
+      {"id": "D3", "text": "Fields starred in the form are required, the rest optional", "status": "Met", "evidence": "B/NewEntityRequests/NewEntityRequestJson.cs:23–33, :84–91 (Forms form itself not compared)"},
+      {"id": "D4 · D18", "text": "Only the operation manager role may submit", "status": "Met", "evidence": "L/Common/Users/AccessRules/Roles/OperationManagerAccessRules.cs:60–61"},
+      {"id": "D5", "text": "Target: A = the supplier; B = none, named after the proposed supplier", "status": "Met", "evidence": "L/DataAccess/Models/Register/RegisterTicket.cs:224, :248"},
+      {"id": "D6", "text": "Typed columns for what is searched or linked, JSON for the rest", "status": "Met", "evidence": "L/DataAccess/Migrations/20261113103748_AddRegisterTicketNewEntityRequests.cs:20–37"},
+      {"id": "D7", "text": "An existing org number blocks Godkänd; other open requests shown as info only", "status": "Met", "evidence": "NewEntityRequestApplier.cs:46, :175–178; FE/features/register-ticket/new-entity-duplicate-candidates-alert.tsx"},
+      {"id": "D8", "text": "Supplier and operation Pausad by default", "status": "Met in UI", "evidence": "FE/…/decide-new-entity-request/schema.ts:126, :133 (the API requires an explicit status; the default is only in the UI)"},
+      {"id": "D9", "text": "Godkänd only with a saved decision; a past start date becomes today", "status": "Met", "evidence": "RegisterTicketNewEntityRequest.cs:100–104; NewEntityRequestApplier.cs:135, :197–198"},
+      {"id": "D10", "text": "Provisioning mail; a variant of \"Kontroll påbörjad\"", "status": "Met", "evidence": "CloseRegisterTicketEndpoint.cs:90–91, :102–103 (no test for the mail, review finding 9)"},
+      {"id": "D11", "text": "Koncern removed from the request", "status": "Met", "evidence": "No such field in the request or decision files"},
+      {"id": "D12", "text": "IVO answer: Ja / Nej / Ej tillståndspliktig", "status": "Met · PO open", "evidence": "RegisterTicketNewEntityRequest.cs:313–321; FE/features/operation/create/steps/basic-info/basic-info.tsx:203–213"},
+      {"id": "D13", "text": "Visiting address optional", "status": "Met", "evidence": "NewEntityRequestJson.cs:28"},
+      {"id": "D14", "text": "County (län) required", "status": "Met", "evidence": "NewEntityRequestJson.cs:33, :86"},
+      {"id": "D15", "text": "Shared control ticket is linked in the closed notification", "status": "Met", "evidence": "L/Feature/Register/Notifications/RegisterTicketClosedNotificationHandler.cs:88–93, :173–177"},
+      {"id": "D16", "text": "Unshared control ticket: its number never reaches the requester", "status": "Met", "evidence": "RegisterTicketClosedNotificationHandler.cs:89–93; B/NewEntityRequests/NewEntityRequestDto.cs:153–164"},
+      {"id": "D17", "text": "Close dialog hides Godkänd when the org number exists", "status": "Met", "evidence": "FE/features/register-ticket/close-register-ticket-modal.tsx:88, :110"},
+      {"id": "D19", "text": "\"Ditt konto har skapats\" also when the ticket is not shared", "status": "Met", "evidence": "L/Feature/Control/ControlTicketLifecycle.cs:36–42"},
+      {"id": "D20", "text": "Only Amalia uploads the permit; on Godkänd the operation takes it over, otherwise it is deleted", "status": "Met", "evidence": "NewEntityRequestApplier.cs:82, :118, :184–190; RegisterTicketNewEntityRequest.cs:187"}
+    ]
+  },
+  "review": {
+    "findings": [
+      "Double create on a concurrent close",
+      "Links to entities the requester can't open",
+      "Decision tests use the machine's date, not Swedish today",
+      "Swallowed JsonException",
+      "PR description outdated on decision visibility",
+      "Test gaps in both halves"
+    ],
+    "po_questions": [
+      "Should the requester answer the IVO question at all? (D12)",
+      "Is the early e-mail collision check acceptable? (finding 7)"
+    ],
+    "merge": [
+      "Conflicts with main",
+      "Migration 20261113103748 sorts before newer migrations on main"
+    ],
+    "followups": [
+      "#29183 form for users who aren't logged in",
+      "#31429 supplier creation into BaseSupplier.AsyncMutations",
+      "#31432 new supplier under an existing supplier"
+    ],
+    "source": "claude-opus-5.5-priis_review-18930-new-entity-register-ticket-deep.md"
+  },
+  "footer": "Made from the code at c3d52c670 (the PR's lastMergeSourceCommit), User Story 23071 and the deep review of 2026-11-18. Wiki plan \"Utvecklingsplaner / 23071\" not read."
+}
