@@ -37,6 +37,7 @@ test:
     {{python}} claude/test_session_look.py
     {{python}} claude/test_wt.py
     {{python}} skills/proceed/scripts/test_run_plan.py
+    {{python}} skills/on-snuffish-pc/scripts/test_on_pc.py
 
 # Run the adopr badge tests; two of them call the real az and need an Azure DevOps sign-in and default organization
 test-adopr:
