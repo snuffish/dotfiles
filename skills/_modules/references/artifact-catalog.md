@@ -12,6 +12,8 @@ On-demand reference for [artifact-protocol.md](../artifact-protocol.md). Every a
 | `simplify_review_brief-<suffix>.md` | `/simplify-branch`, `/simplify-repo` | Facts-only record of a simplify run (rows, outcomes, verification, known risks): the Spec input of the `/code-review` that follows |
 | `investigation-<suffix>.md` | `/investigate` | Pre-plan research: current-state map, prior art, constraints, options, confidence ledger |
 | `explanation-<suffix>.md` | `/explain` | Deep architectural and code intent breakdown |
+| `pr_overview-<suffix>.html` | `/pr-overview` | One tabbed page explaining a PR and its spec: overview, architecture cards, spec matrix, open review items |
+| `walkthrough_page-<suffix>.html` | `/walkthrough` | One tabbed page explaining how a flow or a set of commands works: purpose, one tab per part, collapsible detail |
 | `suggestion-<suffix>.md` | `/suggestion deep` | Ranked approaches with trade-offs, a recommendation and next steps |
 | `assumption_check-<suffix>.md` | `/verify-assumptions` | Claim-by-claim verification against primary sources, verdicts and the decisions they affect |
 | `what_am_i_missing-<suffix>.md` | `/what-am-I-missing`, `/implement-feature` | Blind spots, failure modes, invariant audits |

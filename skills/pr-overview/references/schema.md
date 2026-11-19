@@ -2,6 +2,8 @@
 
 Checked by `scripts/render_overview.py`; a missing or mistyped field fails the render with one `error:` line per problem. Example: `tests/fixture-18930.json`. All text is plain text (the renderer escapes it): no HTML, no Markdown.
 
+A JSON with a top-level `tabs` key is a walkthrough instead (`build_walkthrough`): free tabs and collapsible sections, with its own schema in `../../walkthrough/references/schema.md`.
+
 ```text
 {
   "pr":       { "id", "title", "repo", "head", "date", "summary", "size" },           # all strings

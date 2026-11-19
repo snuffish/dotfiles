@@ -35,6 +35,7 @@ Read these before step 1:
 | Triage what reviewers already said           | [`/pr-feedback-review`](../pr-feedback-review/SKILL.md) |
 | Write the PR description                     | [`/pr-desc`](../pr-desc/SKILL.md)          |
 | Explain one piece of code or one comment     | [`/explain`](../explain/SKILL.md)          |
+| Explain how a flow or a set of commands works, with no PR | [`/walkthrough`](../walkthrough/SKILL.md) |
 
 ---
 
@@ -54,7 +55,7 @@ Read these before step 1:
    bash ~/.terminal/skills/_modules/scripts/publish_new_artifact.sh <scratchpad>/overview.html <artifact-dir>/<prefix>-pr_overview-<id>-<slug> html
    ```
 
-   The renderer exits 1 and prints one `error:` line per problem when the JSON is wrong. Fix the JSON, never the page. Then open the claimed path (`open <path>` on macOS, `xdg-open <path>` on Linux). Done when the page opens and every tab shows content.
+   The renderer exits 1 and prints one `error:` line per problem when the JSON is wrong. Fix the JSON, never the page. Then open the claimed path (`open <path>` on macOS, `xdg-open <path>` on Linux). Done when `python3 -I <skill-dir>/scripts/check_diagrams.py <path>` exits 0 (every diagram drew; exit 2 means the machine has no Chrome, so say the diagrams were not checked) and the page opens.
 9. **`--publish`**: publish the claimed file with the Artifact tool (`icon: "doc"` on a first publish; the renderer already follows the page contract, so skip the design pass) and attach the link to the work state as `work_product`.
 
 ### Rules
