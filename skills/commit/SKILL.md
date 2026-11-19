@@ -54,7 +54,7 @@ Each message re-reads the whole session, so a run is a few full messages, never 
 | 5 | the Step 6 `push` and read-back, the Step 7 PR lookup |
 | 6 | the report |
 
-A drift fix (Step 2) re-runs the Step 3 secret check on the final staged diff before Step 5. A Module that is missing is read in a message of its own after message 1 (`pr-host`: with message 4). A stop, a fix from a `references/` file, a PR description update and a worktree removal add messages; nothing else does.
+A drift fix (Step 2) re-runs the Step 3 secret check on the final staged diff before Step 5. A Module not yet in context is read in a message of its own after message 1, from the folder `realpath` printed (`pr-host`: with message 4). A stop, the `state-checks.md` commands on localised output, a fix from a `references/` file, a PR description update and a worktree removal add messages; nothing else does.
 
 ---
 
@@ -75,7 +75,7 @@ A drift fix (Step 2) re-runs the Step 3 secret check on the final staged diff be
 ### Step 1: Resolve the repo and check it can take a commit
 
 1. **Repo root:** use `repo-root` from an incoming `[worktree-context]` block, else the repo of the session's working directory (in a multi-repo workspace, handle each changed repo separately; check for locked `claude-skill:` worktrees per `git-worktrees` › *Using this Module from a Command*).
-2. **Lookups** (read-only; they answer Steps 1, 2, 3, 5, 6 and 8). The state checks below read English `git status` phrases: when `status` is not in English or holds none of them, run [references/state-checks.md](references/state-checks.md) instead.
+2. **Lookups** (read-only; they answer Steps 1, 2, 3, 5, 6 and 8). Item 3 and Step 6 match English `git status` phrases. English output has `On branch`, `HEAD detached`, `rebase in progress` or `Not currently on any branch` in its first line. A first line with none of them is localised output: read [references/state-checks.md](references/state-checks.md) and decide those checks from its commands, never from your translation of `status`.
    ```bash
    git -C <repo-root> rev-parse --show-toplevel --absolute-git-dir --path-format=absolute --git-common-dir
    git -C <repo-root> status -uall

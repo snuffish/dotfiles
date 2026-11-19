@@ -9044,11 +9044,11 @@
       "id": "skills/commit/SKILL.md:67:path:references/state-checks.md",
       "source": {
         "file": "skills/commit/SKILL.md",
-        "line": 67
+        "line": 78
       },
       "kind": "path",
       "value": "references/state-checks.md",
-      "quote": "2. **Lookups** (read-only; they answer Steps 1, 2, 3, 5, 6 and 8). The state checks below read English `git status` phrases: when `status` is not in English or holds none of them, run [references/state-checks.md](references/state-checks.md) instead.",
+      "quote": "2. **Lookups** (read-only; they answer Steps 1, 2, 3, 5, 6 and 8). Item 3 and Step 6 match English `git status` phrases. English output has `On branch`, `HEAD detached`, `rebase in progress` or `Not currently on any branch` in its first line. A first line with none of them is localised output: read [references/state-checks.md](references/state-checks.md) and decide those checks from its commands, never from your translation of `status`.",
       "verify": {
         "method": "path_exists",
         "path": "references/state-checks.md",

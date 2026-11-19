@@ -1,6 +1,6 @@
 # State checks without `git status` phrases
 
-Run these in place of reading the Step 1 `status` text when `status` is not in English or holds none of the phrases Step 1 and Step 6 look for. Each is one call.
+Run these in place of reading the Step 1 `status` text when `commit` Step 1 item 2 sends you here: the first line of `status` is not an English one. Each is one call.
 
 ## Step 1: repo and state
 
