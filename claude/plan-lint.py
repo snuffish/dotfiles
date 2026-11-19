@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""PostToolUse hook: checks a just-written implementation plan against /plan › §2 Style (~/.claude/CLAUDE.md › Plans).
+"""PostToolUse hook: checks a just-written implementation plan against /plan › §2 Style (~/.claude/CLAUDE.md › Plans),
+and a just-written handoff for session-scoped paths only (claude/rules/handoffs.md › Portable to a new session).
 
-Plans reach disk through Write/Edit, or through Bash when artifact-protocol › Claim publishes a scratchpad draft (the
-command names the target and prints the path it wrote). Only plans modified in the last two minutes are checked, so
-reading an old plan doesn't nag. On a breach it adds a reminder to the conversation; it never blocks and always exits 0.
+Both reach disk through Write/Edit, or through Bash when artifact-protocol › Claim publishes a scratchpad draft (the
+command names the target and prints the path it wrote). Only files modified in the last two minutes are checked, so
+reading an old one doesn't nag. On a breach it adds a reminder to the conversation; it never blocks and always exits 0.
 """
 
 import json
@@ -12,7 +13,7 @@ import re
 import sys
 import time
 
-PLAN_PATH = re.compile(r"[^\s'\"`()<>]*implementation_plan-[^\s'\"`()<>]*")
+PLAN_PATH = re.compile(r"[^\s'\"`()<>]*(?:implementation_plan|-handoff)-[^\s'\"`()<>]*")
 FRESH_SECONDS = 120
 MAX_BULLET_WORDS = 25
 MAX_PROSE_WORDS = 15
@@ -30,6 +31,15 @@ def candidate_paths(event):
     output = "\n".join(str(response.get(key) or "") for key in ("stdout", "stderr")) if isinstance(response, dict) else ""
     found = PLAN_PATH.findall(str(tool_input.get("command") or "") + "\n" + output)
     return [os.path.expanduser(path if path.endswith(".md") else path + ".md") for path in found]
+
+
+def session_path_problems(lines):
+    return [f"L{number}: session-scoped path, gone in a new session; copy it under <artifact-dir>/<suffix>/: "
+            f"{line.strip()[:60]}" for number, line in enumerate(lines, start=1) if SESSION_PATH.search(line)]
+
+
+def is_handoff(path):
+    return "implementation_plan-" not in os.path.basename(path)
 
 
 def problems_in(text):
@@ -52,8 +62,7 @@ def problems_in(text):
         problems += [f"question without a Rec: {block[0].strip()[:80]}" for block in blocks
                      if not re.search(r"\*\*rec|\brec:", " ".join(block), re.IGNORECASE)]
 
-    problems += [f"L{number}: session-scoped path, gone in a new session; copy it under <artifact-dir>/<suffix>/: "
-                 f"{line.strip()[:60]}" for number, line in enumerate(lines, start=1) if SESSION_PATH.search(line)]
+    problems += session_path_problems(lines)
 
     in_code = False
     for number, line in enumerate(lines, start=1):
@@ -76,15 +85,16 @@ def main():
     for path in dict.fromkeys(candidate_paths(event)):
         if not path.endswith(".md") or not os.path.isfile(path) or now - os.path.getmtime(path) > FRESH_SECONDS:
             continue
-        with open(path, encoding="utf-8") as plan:
-            problems = problems_in(plan.read())
+        with open(path, encoding="utf-8") as artifact:
+            text = artifact.read()
+        problems = session_path_problems(text.splitlines()) if is_handoff(path) else problems_in(text)
         if problems:
             shown = problems[:8] + ([f"… {len(problems) - 8} more"] if len(problems) > 8 else [])
             reports.append(f"{path}:\n- " + "\n- ".join(shown))
     if not reports:
         return
-    reminder = ("Plan style check (/plan › §2 Style, from ~/.claude/CLAUDE.md › Plans: extremely concise, questions "
-                "at the end). Fix these before presenting the plan:\n" + "\n".join(reports))
+    reminder = ("Plan and handoff check (/plan › §2 Style; claude/rules/handoffs.md: a fresh session must be able to "
+                "read every path). Fix these before presenting it:\n" + "\n".join(reports))
     print(json.dumps({"hookSpecificOutput": {"hookEventName": "PostToolUse", "additionalContext": reminder}},
                      ensure_ascii=False))
 
