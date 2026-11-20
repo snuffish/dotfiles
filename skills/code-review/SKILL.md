@@ -180,7 +180,7 @@ Before writing the artifact (in `deep` mode, after aggregation and the independe
 ### Step 6b — Fold In PR Feedback (`feedback` only)
 
 After Step 6, when a PR is in scope:
-1. Invoke [`/pr-feedback-review`](../pr-feedback-review/SKILL.md) with the same `--deep`/`live` modifiers and pass this run's `[worktree-context]` block per repo.
+1. Invoke [`/pr-feedback-review`](../pr-feedback-review/SKILL.md) with `--file` and the same `--deep`/`live` modifiers and pass this run's `[worktree-context]` block per repo.
 2. Match each human thread to findings by root cause:
    - **Covers finding N** (thread ⏸/◐) → attach dual thread link (`pr-host` › *Fetch discussion threads*) to finding N's *Where* line; if a team decision is recorded in the thread, quote it and lower to 🟢 unless the code contradicts the decision.
    - **Thread says ✅ Fixed, but Step 6 verified the defect at head** → keep finding N and note the thread's "fixed" state is stale.

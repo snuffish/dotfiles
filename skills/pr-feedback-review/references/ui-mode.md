@@ -1,6 +1,6 @@
 # `--ui` mode
 
-On-demand reference for [SKILL.md](../SKILL.md) › *Step 6*. Runs after the artifact is published and the snapshot removed, so it works with standard, `--deep` and `live`. It never posts to the PR.
+On-demand reference for [SKILL.md](../SKILL.md) › *Step 6*. Implies `--file`: it needs the artifact to merge answers into. Runs after the artifact is published and the snapshot removed, so it works with standard, `--deep` and `live`. It never posts to the PR.
 
 Script: [review_ui.py](../scripts/review_ui.py), stdlib only, always `python3 -I`. `<md>` is the published artifact path.
 

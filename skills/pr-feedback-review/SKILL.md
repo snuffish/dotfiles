@@ -1,7 +1,7 @@
 ---
 name: pr-feedback-review
-description: "Triages the discussion on a pull request: every reviewer thread, comment and vote, checked against the code at the PR head, with a triage category, its state at head, a recommendation and a ready-to-send reply per thread, in `<prefix>-pr_feedback_review-<suffix>.md`. Also triages the counterpart PR in a sibling repo, where a comment's fix often lands. `--deep` runs Verification, Merit and Impact as parallel sub-agents; `--ui` opens a localhost page to edit, accept or skip replies; reads from a detached snapshot (`live` opts out). Use for /pr-feedback-review, \"triage the PR comments\", \"what did the reviewers say?\", \"draft replies to the threads\"."
-argument-hint: "[--deep] [--ui] [live] [<target>]"
+description: "Triages the discussion on a pull request: every reviewer thread, comment and vote, checked against the code at the PR head, with a triage category, its state at head, a recommendation and a ready-to-send reply per thread, answered in chat. Also triages the counterpart PR in a sibling repo, where a comment's fix often lands. `--file` writes `<prefix>-pr_feedback_review-<suffix>.md`; `--deep` runs Verification, Merit and Impact as parallel sub-agents with the file; `--ui` opens a localhost page to edit, accept or skip replies, with the file; reads from a detached snapshot (`live` opts out). Use for /pr-feedback-review, \"triage the PR comments\", \"what did the reviewers say?\", \"draft replies to the threads\"."
+argument-hint: "[--file] [--deep] [--ui] [live] [<target>]"
 ---
 
 # PR Feedback Review Skill
@@ -12,8 +12,8 @@ Triages pull request reviewer comments, threads, and votes against the code at t
 
 ## Invariants
 
-1. **Artifact and summary:** every `/pr-feedback-review` writes `<prefix>-pr_feedback_review-<suffix>.md` in the artifact dir (`artifact-protocol`) and opens its chat response with the `artifact-protocol` › *Chat link block*. Never substitute `<prefix>-implementation_plan-<suffix>.md` for the feedback review artifact.
-2. **Read-only:** never edit code, stage commits, run migrations, post replies, or modify the main checkout; the only files written are the artifact and its `--ui` siblings (`core` › *The `/proceed` gate*, `git-worktrees` › *Snapshot Lifecycle*).
+1. **Chat by default, artifact on request:** a plain `/pr-feedback-review` answers in chat and writes no artifact. `--file`, `--deep` and `--ui` write `<prefix>-pr_feedback_review-<suffix>.md` in the artifact dir (`artifact-protocol`) and open the chat response with the `artifact-protocol` › *Chat link block*. Never substitute `<prefix>-implementation_plan-<suffix>.md` for the feedback review artifact.
+2. **Read-only:** never edit code, stage commits, run migrations, post replies, or modify the main checkout; the only files written are the artifact (under `--file`, `--deep` or `--ui`) and its `--ui` siblings, none on a plain run (`core` › *The `/proceed` gate*, `git-worktrees` › *Snapshot Lifecycle*).
 
 ---
 
@@ -23,7 +23,7 @@ Paths are relative to this skill's real folder. Run `realpath` on the skill's ba
 
 Read these before step 1:
 - `../_modules/core.md`: read-only until `/proceed`
-- `../_modules/artifact-protocol.md`: writes `<prefix>-pr_feedback_review-<suffix>.md`
+- `../_modules/artifact-protocol.md`: writes `<prefix>-pr_feedback_review-<suffix>.md` under `--file`, `--deep` or `--ui`; a plain run writes nothing
 - `../_modules/git-worktrees.md`: snapshot by default
 - `../_modules/pr-counterpart.md`
 - `../_modules/pr-host.md`
@@ -42,7 +42,7 @@ Load `<project>-profile` before Step 1 when the workspace matches its gate (`pro
 - **References per layer**, **Contract touchpoints**, and **Known drift** guide Step 3 technical evaluation.
 - **Report language** sets the language of the artifact and drafted replies.
 
-Record the loaded profile (or `none`) in the artifact header's **Profile** line.
+Record the loaded profile (or `none`) in the artifact header's **Profile** line (chat run: one line before the triage table).
 
 ---
 
@@ -50,17 +50,18 @@ Record the loaded profile (or `none`) in the artifact header's **Profile** line.
 
 | Invocation | Mode | How the axes run |
 |---|---|---|
-| `/pr-feedback-review [target]` | **Standard** (default) | Single pass covering Verification, Merit, and Impact (Steps 3–5) |
-| `/pr-feedback-review --deep [target]` | **Deep** | Verification, Merit, and Impact run in parallel sub-agents ([deep-mode.md](references/deep-mode.md)), then aggregate |
+| `/pr-feedback-review [target]` | **Standard** (default), **chat only** | Single pass covering Verification, Merit, and Impact (Steps 3–5); answers in chat, writes no artifact |
+| `/pr-feedback-review --file [target]` | Standard, plus the **artifact** | Same pass; also writes `<prefix>-pr_feedback_review-<suffix>.md` (Step 6), which `/pr-post-comments` reads |
+| `/pr-feedback-review --deep [target]` | **Deep**, implies `--file` | Verification, Merit, and Impact run in parallel sub-agents ([deep-mode.md](references/deep-mode.md)), then aggregate into the artifact |
 | `/pr-feedback-review live [target]` | Standard or deep, **no snapshot** | Reads the main checkout directly (same as `/no-wt`) |
-| `/pr-feedback-review --ui [target]` | Any mode, plus a **review page** | After publish, a localhost page edits, accepts or skips each reply ([ui-mode.md](references/ui-mode.md)); combinable with `--deep` and `live` |
+| `/pr-feedback-review --ui [target]` | Any mode, plus a **review page**, implies `--file` | After publish, a localhost page edits, accepts or skips each reply ([ui-mode.md](references/ui-mode.md)); combinable with `--deep` and `live` |
 
 Every thread is assessed on three axes:
 - **Verification**: what does the code at *head* do about this thread (addressed, partial, not addressed, superseded; commit, `path:line`, and test)?
 - **Merit**: is the reviewer right, and is their proposed fix sound against the code and framework semantics?
 - **Impact**: what else does acting on it touch (stacked branches, linked work items, cross-repo contracts, other callers, competing threads, prior decisions)?
 
-Suggest `--deep` (`fan-out` › *Bare vs deep*) when there are >10 active threads, threads anchored to older iterations, or complex alternative implementations proposed by reviewers.
+Suggest `--file` when the replies are to be posted with `/pr-post-comments` or kept for a new session. Suggest `--deep` (`fan-out` › *Bare vs deep*) when there are >10 active threads, threads anchored to older iterations, or complex alternative implementations proposed by reviewers.
 
 ### When *not* to use — pick the right neighbor
 
@@ -145,14 +146,16 @@ First re-fetch the threads with the Step 2.1 command and compare each thread's c
 
 ## Step 6 — Artifact Management & Output Format
 
+**Plain run (no `--file`, `--deep`, `--ui`):** remove the snapshot(s), then answer in chat, in this order: the reviewer votes; the triage table (thread, file, category, vote, *State at head* values as in 6.4, recommendation); the Step 5 analysis for each active or non-trivial thread; each draft reply (`Voice pass: done`); the closing gate line (`core` › *The `/proceed` gate*). Write no file. `/pr-post-comments` reads replies from an artifact, so offer `--file` for posting, or post a reply from chat only when the user asks for it.
+
+**With `--file`, `--deep` or `--ui`:**
 1. Publish `<prefix>-pr_feedback_review-<suffix>.md` in the artifact dir (`artifact-protocol`) via `artifact-protocol` › *Claim*, following the template in [artifact-template.md](references/artifact-template.md), then remove the snapshot(s).
 2. Begin the chat response with the `artifact-protocol` › *Chat link block*, followed by a concise summary of reviewer votes, blocking/open thread counts, and the closing gate line (`core` › *The `/proceed` gate*).
-
 3. **`--ui`**: after publish, follow [ui-mode.md](references/ui-mode.md) before the chat summary; the chat link block adds the `.answers.json` sibling.
 
 ### 6.4 — Status fields
 
-The artifact tracks thread progress across five **status fields** (`artifact-protocol` › *Rules* › rule 3 & rule 7):
+Applies only when an artifact exists. The artifact tracks thread progress across five **status fields** (`artifact-protocol` › *Rules* › rule 3 & rule 7):
 1. Header **Status:** line (votes, active/resolved counts);
 2. **Executive Summary** opening claim;
 3. Triage matrix **State at head** column (`✅ Fixed (<sha>)` · `🕓 Fixed, not pushed (<sha>)` · `◐ Partial` · `⏸ Not addressed` · `↩ Superseded` · `⚪ n/a`);
@@ -165,7 +168,7 @@ Update all five together whenever a later step (`/proceed`, push, `/pr-post-comm
 
 ## Deep Mode
 
-For `/pr-feedback-review --deep`, read [deep-mode.md](references/deep-mode.md) before spawning sub-agents.
+For `/pr-feedback-review --deep` (which writes the artifact), read [deep-mode.md](references/deep-mode.md) before spawning sub-agents.
 
 ---
 
