@@ -116,29 +116,43 @@ function gcai() {
   claude-p --model sonnet "/commit $*"
 }
 
+# True when worktree $1 has no changes and no commit missing from every other branch and remote
+function _gwtclear_landed() {
+  local b
+  b=$(git -C "$1" branch --show-current)
+  [[ -z "$(git -C "$1" status --porcelain)" ]] &&
+    [[ "$(git -C "$1" rev-list --count HEAD --not ${b:+--exclude="$b"} --branches --remotes)" == 0 ]]
+}
+
 # Close linked worktrees of the current repo (or the repo dir in $1) after you pick them. Each tree gets a planned
-# action: remove (safe), commit+push, remove (on a branch, dirty or unpushed, no live session) or keep:<reason>.
-# Two or more actionable trees: an fzf checklist, all marked (space toggles, enter runs, esc cancels), with a preview of
-# the focused tree's changed files and unpushed commits; one: those files and commits, then a y/N prompt.
+# action: remove (safe), commit+push, remove (on a branch, dirty or unpushed), either one with "(live)" when a running
+# session works in the tree, or keep:<reason> (detached with changes, unknown session state, differing include copies).
+# Two or more actionable trees: an fzf checklist, all marked except (live) ones (space toggles, enter runs, esc
+# cancels), with a preview of the focused tree's changed files and unpushed commits; one: those files and commits, then
+# a y/N prompt, and a separate y/N per (live) tree.
 # Marked safe trees go through wt-rm; marked commit trees go to Claude's /wt-close-all (args passed to it) as the
-# approved list, standing in for the skill's own confirmation, which print mode can't ask, plus an optional note you type
+# approved list, standing in for the skill's own confirmation, which print mode can't ask, plus an optional note you type.
+# A marked (live) tree is removed with wt-rm --discard despite its session, only once it is clean with nothing unpushed
 function gwtclear() {
-  local repo=. rows lines menu kept picked n ans dir commits note
+  local repo=. rows lines menu kept picked n ans dir commits note live bind p
   [[ -d "$1" ]] && repo=$1
   rows=$(wt-status "$repo") || return 1
   if [[ -z "$rows" ]]; then
     echo "gwtclear: no linked worktrees"
     return 0
   fi
-  # "<dir>\t<remove|commit|keep|header>\t<aligned display>", header first
+  # "<dir>\t<remove|commit|liveremove|livecommit|keep|header>\t<aligned display>", header first
   lines=$(awk -F '\t' '
     {
       if ($6 == "safe") a = "remove"
-      else if ($2 != "(detached)" && ($6 == "keep:dirty" || $6 == "keep:unpushed")) a = "commit+push, remove"
+      else if ($6 == "keep:live" && $4 == 0 && $5 == "0") a = "remove (live)"
+      else if ($2 != "(detached)" && ($6 == "keep:dirty" || $6 == "keep:unpushed" || $6 == "keep:live"))
+        a = "commit+push, remove" ($6 == "keep:live" ? " (live)" : "")
       else { a = $6; sub(/^keep:/, "keep: ", a) }
       m = split($1, p, "/")
       r++; D[r] = $1; A[r] = a; N[r] = p[m]; B[r] = $2; X[r] = $4; U[r] = $5
-      K[r] = a == "remove" ? "remove" : (a ~ /^commit/ ? "commit" : "keep")
+      K[r] = a ~ /^remove/ ? "remove" : (a ~ /^commit/ ? "commit" : "keep")
+      if (a ~ /\(live\)$/) K[r] = "live" K[r]
       if (length(p[m]) > wn) wn = length(p[m]); if (length(a) > wa) wa = length(a); if (length($2) > wb) wb = length($2)
     }
     END {
@@ -155,40 +169,78 @@ function gwtclear() {
     return 0
   fi
   if (( n > 1 )) && command -v fzf >/dev/null; then
+    # Mark every row, then unmark the (live) ones by their 1-based position under the header
+    bind='load:select-all'
+    for p in $(awk -F '\t' 'NR > 1 && $2 ~ /^live/ { print NR - 1 }' <<<"$menu"); do
+      bind+="+pos($p)+deselect"
+    done
+    bind+='+first'
     picked=$(fzf --multi --no-input --no-sort --layout=reverse --height=60% --delimiter=$'\t' --with-nth=3 \
-      --header-lines=1 --header="space: toggle · enter: run the marked trees · esc: cancel${kept:+
+      --header-lines=1 --header="space: toggle · enter: run the marked trees · esc: cancel
+(live) trees start unmarked: a running session works in them${kept:+
 $kept}" \
       --marker='◉ ' --pointer='❯' --preview-window='right,50%,wrap' \
       --preview='git -C {1} status --short; echo; echo "unpushed commits:"; git -C {1} log --oneline HEAD --not --exclude="$(git -C {1} branch --show-current)" --branches --remotes' \
-      --bind 'load:select-all,space:toggle,enter:transform:[ "$FZF_SELECT_COUNT" -gt 0 ] && echo accept || echo abort' \
+      --bind "$bind" \
+      --bind 'space:toggle,enter:transform:[ "$FZF_SELECT_COUNT" -gt 0 ] && echo accept || echo abort' \
       <<<"$menu") || { echo "gwtclear: nothing done"; return 0; }
   else
     cut -f3 <<<"$lines"
-    awk -F '\t' '$2 == "commit" { print $1 }' <<<"$menu" | while IFS= read -r dir; do
+    awk -F '\t' '$2 ~ /commit$/ { print $1 }' <<<"$menu" | while IFS= read -r dir; do
       printf '\n── %s\n' "${dir##*/}"
       git -C "$dir" status --short
       echo "unpushed commits:"
       git -C "$dir" log --oneline HEAD --not --exclude="$(git -C "$dir" branch --show-current)" --branches --remotes
     done
     echo
-    printf 'gwtclear: run the %s action(s) above? [y/N] ' "$n"
-    read -r ans
-    [[ "$ans" == [yY] ]] || { echo "gwtclear: nothing done"; return 0; }
-    picked=$(awk -F '\t' '$2 != "header"' <<<"$menu")
+    picked=""
+    p=$(awk -F '\t' '$2 == "remove" || $2 == "commit"' <<<"$menu" | grep -c .)
+    if (( p > 0 )); then
+      printf 'gwtclear: run the %s action(s) above? [y/N] ' "$p"
+      read -r ans
+      [[ "$ans" == [yY] ]] && picked=$(awk -F '\t' '$2 == "remove" || $2 == "commit"' <<<"$menu")
+    fi
+    while IFS=$'\t' read -r dir p live; do
+      [[ "$p" == live* ]] || continue
+      [[ "$p" == livecommit ]] && ans="commit, push and remove" || ans=remove
+      printf 'gwtclear: %s %s too? A running session works in it [y/N] ' "$ans" "${dir##*/}"
+      read -r ans </dev/tty
+      [[ "$ans" == [yY] ]] || continue
+      [[ -n "$picked" ]] && picked+=$'\n'
+      picked+="$dir"$'\t'"$p"$'\t'"$live"
+    done <<<"$menu"
+    [[ -n "$picked" ]] || { echo "gwtclear: nothing done"; return 0; }
   fi
   awk -F '\t' '$2 == "remove" { print $1 }' <<<"$picked" | while IFS= read -r dir; do
     wt-rm "$dir"
   done
-  commits=$(awk -F '\t' '$2 == "commit" { print $3 }' <<<"$picked")
+  # Clean when listed: re-check, then remove despite the session
+  awk -F '\t' '$2 == "liveremove" { print $1 }' <<<"$picked" | while IFS= read -r dir; do
+    if _gwtclear_landed "$dir"; then wt-rm --discard "$dir"
+    else echo "gwtclear: kept $dir (changed since the listing)" >&2
+    fi
+  done
+  commits=$(awk -F '\t' '$2 ~ /commit$/ { print $3 }' <<<"$picked")
   [[ -n "$commits" ]] || return 0
+  live=$(awk -F '\t' '$2 == "livecommit" { print $1 }' <<<"$picked")
   printf 'gwtclear: note for Claude (optional, enter to skip): '
   read -r note
   claude-p "/wt-close-all $*
 The user approved this list in gwtclear; treat it as the Step 2 answer go. Act on these trees only, and leave every
 other tree as it is, safe ones included:
-$commits${note:+
+$commits${live:+
+
+Rows marked (live) are approved for commit and push although wt-status classes them keep:live; commit them in Step 3
+like the others. Leave their removal to gwtclear: Step 4 keeps them, which is expected.}${note:+
 
 Note from the user: $note}"
+  # The session in a (live) tree still counts as live; remove it once its work has landed
+  [[ -n "$live" ]] || return 0
+  while IFS= read -r dir; do
+    if _gwtclear_landed "$dir"; then wt-rm --discard "$dir"
+    else echo "gwtclear: kept $dir (not clean or not pushed after the commit)" >&2
+    fi
+  done <<<"$live"
   return 0
 }
 
