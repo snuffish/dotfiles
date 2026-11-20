@@ -1,6 +1,6 @@
 # PR Feedback Review Artifact Template
 
-On-demand reference for [SKILL.md](../SKILL.md) › *Step 6 — Artifact Management & Output Format*.
+On-demand reference for [SKILL.md](../SKILL.md) › *Step 6 — Artifact Management & Output Format*. Used only under `--file`, `--deep` or `--ui`.
 
 ```markdown
 # PR Feedback Review: <PR Title>

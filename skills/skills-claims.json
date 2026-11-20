@@ -6438,7 +6438,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-feedback-review",
-      "quote": "| `pr_feedback_review-<suffix>.md` | `/pr-feedback-review` | PR comment triage matrix, technical resolutions, draft responses (`--ui`: sibli",
+      "quote": "| `pr_feedback_review-<suffix>.md` | `/pr-feedback-review` (`--file`, `--deep`, `--ui`) | PR comment triage matrix, technical resolutions, d",
       "verify": {
         "method": "skill_exists",
         "name": "pr-feedback-review",
@@ -13621,7 +13621,7 @@
       },
       "kind": "skill_ref",
       "value": "proceed",
-      "quote": "t; the only files written are the artifact and its `--ui` siblings (`core` \u203a *The `/proceed` gate*, `git-worktrees` \u203a *Snapshot Lifecycle*).",
+      "quote": "t; the only files written are the artifact (under `--file`, `--deep` or `--ui`) and its `--ui` siblings, none on a plain run (`core` \u203a *The ",
       "verify": {
         "method": "skill_exists",
         "name": "proceed",
@@ -17725,7 +17725,7 @@
       },
       "kind": "skill_ref",
       "value": "pr-feedback-review",
-      "quote": "ull thread triage** | Runs [`/pr-feedback-review`](../pr-feedback-review/SKILL.md) first, then squashes against its triage matrix |",
+      "quote": "ull thread triage** | Runs [`/pr-feedback-review --file`](../pr-feedback-review/SKILL.md) first, then squashes against its triage m",
       "verify": {
         "method": "skill_exists",
         "name": "pr-feedback-review",
