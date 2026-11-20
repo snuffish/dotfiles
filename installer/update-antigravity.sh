@@ -105,6 +105,12 @@ update_product() {
   if [ "$INSTALLED" = "$LATEST" ] && [ "$FORCE" -eq 0 ]; then
     info "Already on the latest build — refreshing links & desktop entry (use --force to reinstall)."
   else
+    # A running window keeps the old build's checksums in memory; swapping the
+    # tree under it makes it report "installation appears to be corrupt".
+    if pgrep -f "^$TARGET/" >/dev/null; then
+      die "$PRETTY is running from $TARGET — close it first, then re-run"
+    fi
+
     # --------------------------------------------------------------- download + verify
     TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' RETURN
     info "Downloading $PRETTY $LATEST…"
