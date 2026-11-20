@@ -4699,7 +4699,7 @@
       },
       "kind": "skill_ref",
       "value": "standup-recap",
-      "quote": "fication`, `squash-code-review`, `squash-ef-core-migrations`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `",
+      "quote": "fication`, `squash-code-review`, `squash-ef-core-migrations`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `tail`, `verify-assumptions`, `",
       "verify": {
         "method": "skill_exists",
         "name": "standup-recap",
@@ -4714,7 +4714,7 @@
       },
       "kind": "skill_ref",
       "value": "suggestion",
-      "quote": "uash-ef-core-migrations`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `walk",
+      "quote": "uash-ef-core-migrations`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `tail`, `verify-assumptions`, `visual-companion`, `walk",
       "verify": {
         "method": "skill_exists",
         "name": "suggestion",
@@ -4732,7 +4732,7 @@
       },
       "kind": "skill_ref",
       "value": "sync-skills",
-      "quote": "grations`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `walkthrough`, `what",
+      "quote": "grations`, `standup-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `tail`, `verify-assumptions`, `visual-companion`, `walkthrough`, `what",
       "verify": {
         "method": "skill_exists",
         "name": "sync-skills",
@@ -4747,7 +4747,7 @@
       },
       "kind": "skill_ref",
       "value": "verify-assumptions",
-      "quote": "p-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `walkthrough`, `what-am-I-missing`, `w",
+      "quote": "p-recap`, `state`, `subagent`, `suggestion`, `sync-skills`, `tail`, `verify-assumptions`, `visual-companion`, `walkthrough`, `what-am-I-missing`, `w",
       "verify": {
         "method": "skill_exists",
         "name": "verify-assumptions",
@@ -4762,7 +4762,7 @@
       },
       "kind": "skill_ref",
       "value": "visual-companion",
-      "quote": "subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `walkthrough`, `what-am-I-missing`, `wt`, `wt-close-all` |",
+      "quote": "subagent`, `suggestion`, `sync-skills`, `tail`, `verify-assumptions`, `visual-companion`, `walkthrough`, `what-am-I-missing`, `wt`, `wt-close-all` |",
       "verify": {
         "method": "skill_exists",
         "name": "visual-companion",
@@ -4777,7 +4777,7 @@
       },
       "kind": "skill_ref",
       "value": "what-am-I-missing",
-      "quote": "subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `walkthrough`, `what-am-I-missing`, `wt`, `wt-close-all` |",
+      "quote": "subagent`, `suggestion`, `sync-skills`, `tail`, `verify-assumptions`, `visual-companion`, `walkthrough`, `what-am-I-missing`, `wt`, `wt-close-all` |",
       "verify": {
         "method": "skill_exists",
         "name": "what-am-I-missing",
@@ -4792,7 +4792,7 @@
       },
       "kind": "skill_ref",
       "value": "wt",
-      "quote": "subagent`, `suggestion`, `sync-skills`, `verify-assumptions`, `visual-companion`, `walkthrough`, `what-am-I-missing`, `wt`, `wt-close-all` |",
+      "quote": "subagent`, `suggestion`, `sync-skills`, `tail`, `verify-assumptions`, `visual-companion`, `walkthrough`, `what-am-I-missing`, `wt`, `wt-close-all` |",
       "verify": {
         "method": "skill_exists",
         "name": "wt",
@@ -24019,7 +24019,7 @@
       },
       "kind": "skill_ref",
       "value": "artifacts",
-      "quote": "neral (top level) | Command | 62 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `code-documentation`, `code",
+      "quote": "neral (top level) | Command | 63 | `analyze-personal-feedback`, `artifacts`, `brainstorming`, `bypass`, `clean`, `code-documentation`, `code",
       "verify": {
         "method": "skill_exists",
         "name": "artifacts",
@@ -24123,19 +24123,19 @@
       }
     },
     {
-      "id": "skills/README.md:42:count:63",
+      "id": "skills/README.md:42:count:64",
       "source": {
         "file": "skills/README.md",
         "line": 42
       },
       "kind": "count",
-      "value": "63",
-      "quote": "69 skills total \u2014 63 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "value": "64",
+      "quote": "70 skills total \u2014 64 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/*/SKILL.md",
         "base": "repo",
-        "expected": 63,
+        "expected": 64,
         "op": "eq"
       }
     },
@@ -24147,7 +24147,7 @@
       },
       "kind": "count",
       "value": "6 GR.PRIIS project skills",
-      "quote": "69 skills total \u2014 63 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "70 skills total \u2014 64 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/Projects/GR.PRIIS/*/SKILL.md",
@@ -24164,7 +24164,7 @@
       },
       "kind": "count",
       "value": "8 Modules",
-      "quote": "69 skills total \u2014 63 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
+      "quote": "70 skills total \u2014 64 general + 6 under `Projects/GR.PRIIS/` \u2014 plus 8 Modules.",
       "verify": {
         "method": "count",
         "glob": "skills/_modules/*.md",
@@ -27567,6 +27567,335 @@
         "pattern": "cannot sit inside",
         "paths": [
           "skills/pr-overview/scripts/render_overview.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/tail/SKILL.md:9:path:skills/tail/scripts/tail_task.py",
+      "source": {
+        "file": "skills/tail/SKILL.md",
+        "line": 9
+      },
+      "kind": "path",
+      "value": "skills/tail/scripts/tail_task.py",
+      "quote": "through [`scripts/tail_task.py`](scripts/tail_task.py)",
+      "context": " the script",
+      "verify": {
+        "method": "path_exists",
+        "path": "skills/tail/scripts/tail_task.py",
+        "base": "repo",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/tail/SKILL.md:13:other:exit line",
+      "source": {
+        "file": "skills/tail/SKILL.md",
+        "line": 13
+      },
+      "kind": "other",
+      "value": "exit line",
+      "quote": "written as the command prints, ending with `[exited with code N]`",
+      "context": " bash done marker",
+      "verify": {
+        "method": "grep",
+        "pattern": "\\\\\\[exited with code \\(-\\?\\\\d\\+\\)\\\\\\]",
+        "paths": [
+          "skills/tail/scripts/tail_task.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/tail/SKILL.md:14:other:agent symlink",
+      "source": {
+        "file": "skills/tail/SKILL.md",
+        "line": 14
+      },
+      "kind": "other",
+      "value": "agent symlink",
+      "quote": "a symlink to the sub-agent's JSONL transcript",
+      "context": " agent kind = symlink",
+      "verify": {
+        "method": "grep",
+        "pattern": "return \"agent\" if path\\.is_symlink\\(\\) else \"bash\"",
+        "paths": [
+          "skills/tail/scripts/tail_task.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/tail/SKILL.md:14:other:meta.json finished",
+      "source": {
+        "file": "skills/tail/SKILL.md",
+        "line": 14
+      },
+      "kind": "other",
+      "value": "meta.json finished",
+      "quote": "holds `description` and `finished`",
+      "context": " agent state + label from meta",
+      "verify": {
+        "method": "grep",
+        "pattern": "agent_meta\\(path\\)\\.get\\(\"finished\"\\)[\\s\\S]*agent_meta\\(p\\)\\.get\\(\"description\"",
+        "paths": [
+          "skills/tail/scripts/tail_task.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/tail/SKILL.md:15:cli_command:on_pc.py tail",
+      "source": {
+        "file": "skills/tail/SKILL.md",
+        "line": 15
+      },
+      "kind": "cli_command",
+      "value": "on_pc.py tail",
+      "quote": "read by `on_pc.py tail`",
+      "context": " pc ids handed to on_pc.py tail",
+      "verify": {
+        "method": "grep",
+        "pattern": "str\\(ON_PC\\), \"tail\"",
+        "paths": [
+          "skills/tail/scripts/tail_task.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/tail/SKILL.md:15:other:log.txt",
+      "source": {
+        "file": "skills/tail/SKILL.md",
+        "line": 15
+      },
+      "kind": "other",
+      "value": "log.txt",
+      "quote": "read by `on_pc.py tail`",
+      "context": " PC output goes to log.txt",
+      "verify": {
+        "method": "grep",
+        "pattern": "> \"\\$RUN/log\\.txt\" 2>&1",
+        "paths": [
+          "skills/on-snuffish-pc/scripts/on_pc.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/tail/SKILL.md:17:env_var:CLAUDE_TASKS_ROOT",
+      "source": {
+        "file": "skills/tail/SKILL.md",
+        "line": 17
+      },
+      "kind": "env_var",
+      "value": "CLAUDE_TASKS_ROOT",
+      "quote": "`<root>` is `$CLAUDE_TASKS_ROOT`, else `/private/tmp/claude-<uid>` (macOS) or `/tmp/claude-<uid>`",
+      "context": " root resolution",
+      "verify": {
+        "method": "grep",
+        "pattern": "CLAUDE_TASKS_ROOT[\\s\\S]*Path\\(\"/private/tmp\"\\) / f\"claude-\\{os\\.getuid\\(\\)\\}\"[\\s\\S]*Path\\(\"/tmp\"\\)",
+        "paths": [
+          "skills/tail/scripts/tail_task.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/tail/SKILL.md:51:other:list default 6h",
+      "source": {
+        "file": "skills/tail/SKILL.md",
+        "line": 51
+      },
+      "kind": "other",
+      "value": "list default 6h",
+      "quote": "(default 6 h; rows oldest first",
+      "context": " --hours default",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"--hours\", type=float, default=6",
+        "paths": [
+          "skills/tail/scripts/tail_task.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/tail/SKILL.md:61:other:show default 40",
+      "source": {
+        "file": "skills/tail/SKILL.md",
+        "line": 61
+      },
+      "kind": "other",
+      "value": "show default 40",
+      "quote": "Default 40 lines.",
+      "context": " show -n default",
+      "verify": {
+        "method": "grep",
+        "pattern": "sh\\.add_argument\\(\"-n\", \"--lines\", type=int, default=40\\)",
+        "paths": [
+          "skills/tail/scripts/tail_task.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/tail/SKILL.md:61:symbol:render",
+      "source": {
+        "file": "skills/tail/SKILL.md",
+        "line": 61
+      },
+      "kind": "symbol",
+      "value": "render",
+      "quote": "Agent transcripts come out as `[role] text`",
+      "context": " agent rendering",
+      "verify": {
+        "method": "grep",
+        "pattern": "f\"\\[\\{role\\}\\] [\\s\\S]*f\"  -> \\{block\\.get\\(\\'name\\'\\)\\}[\\s\\S]*f\"  <- ",
+        "paths": [
+          "skills/tail/scripts/tail_task.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/tail/SKILL.md:73:other:split-window -d 30%",
+      "source": {
+        "file": "skills/tail/SKILL.md",
+        "line": 73
+      },
+      "kind": "other",
+      "value": "split-window -d 30%",
+      "quote": "It splits the tmux window (30% high, focus stays in this pane)",
+      "context": " pane size and focus",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"split-window\", \"-d\", \"-v\", \"-l\", \"30%\"",
+        "paths": [
+          "skills/tail/scripts/tail_task.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/tail/SKILL.md:73:other:remain-on-exit",
+      "source": {
+        "file": "skills/tail/SKILL.md",
+        "line": 73
+      },
+      "kind": "other",
+      "value": "remain-on-exit",
+      "quote": "then a final `=== <id> <state>` line; the pane stays open",
+      "context": " end line + pane kept",
+      "verify": {
+        "method": "grep",
+        "pattern": "f\"=== \\{args\\.id\\} \\{st\\}\"",
+        "paths": [
+          "skills/tail/scripts/tail_task.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/tail/SKILL.md:73:other:remain-on-exit on",
+      "source": {
+        "file": "skills/tail/SKILL.md",
+        "line": 73
+      },
+      "kind": "other",
+      "value": "remain-on-exit on",
+      "quote": "then a final `=== <id> <state>` line; the pane stays open",
+      "context": " pane kept",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"remain-on-exit\", \"on\"",
+        "paths": [
+          "skills/tail/scripts/tail_task.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/tail/SKILL.md:73:other:--pane needs tmux",
+      "source": {
+        "file": "skills/tail/SKILL.md",
+        "line": 73
+      },
+      "kind": "other",
+      "value": "--pane needs tmux",
+      "quote": "Outside tmux it exits 2 and prints the follow command",
+      "context": " no TMUX",
+      "verify": {
+        "method": "grep",
+        "pattern": "--pane needs tmux",
+        "paths": [
+          "skills/tail/scripts/tail_task.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/tail/SKILL.md:38:skill_ref:on-snuffish-pc",
+      "source": {
+        "file": "skills/tail/SKILL.md",
+        "line": 38
+      },
+      "kind": "skill_ref",
+      "value": "on-snuffish-pc",
+      "quote": "| Start work on the PC |",
+      "context": " sibling skill",
+      "verify": {
+        "method": "skill_exists",
+        "name": "on-snuffish-pc",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/on-snuffish-pc/SKILL.md:86:skill_ref:tail",
+      "source": {
+        "file": "skills/on-snuffish-pc/SKILL.md",
+        "line": 86
+      },
+      "kind": "skill_ref",
+      "value": "tail",
+      "quote": "`<script> tail [<id>] [-n N] [-f | --pane]`",
+      "context": " tail skill",
+      "verify": {
+        "method": "skill_exists",
+        "name": "tail",
+        "base": "repo"
+      }
+    },
+    {
+      "id": "skills/on-snuffish-pc/SKILL.md:86:cli_command:on_pc.py tail -f --pane",
+      "source": {
+        "file": "skills/on-snuffish-pc/SKILL.md",
+        "line": 86
+      },
+      "kind": "cli_command",
+      "value": "on_pc.py tail -f --pane",
+      "quote": "`<script> tail [<id>] [-n N] [-f | --pane]`",
+      "context": " tail flags",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"-f\", \"--follow\"[\\s\\S]*\"--pane\"",
+        "paths": [
+          "skills/on-snuffish-pc/scripts/on_pc.py"
         ],
         "base": "repo",
         "expect": "present"

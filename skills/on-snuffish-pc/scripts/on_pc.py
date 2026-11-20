@@ -7,6 +7,9 @@ Subcommands:
   wait <id>        poll until done, fetch, print the summary
   fetch <id>       copy log, exit, out/ and changes.patch back
   list             runs on the PC with their state
+  tail [id] [-n N] [-f | --pane]
+                   last N log lines; -f follows until the run ends; --pane follows in a
+                   new tmux pane here. No id = the newest running run, else the newest run.
 
 The host comes from ON_PC_HOST (default snuffish-pc). Exit 2 = setup error
 (host unreachable, bad arguments, unknown run id).
@@ -295,7 +298,8 @@ def cmd_wait(args: argparse.Namespace) -> int:
     return 0 if code == 0 else 1
 
 
-def cmd_list(_: argparse.Namespace) -> int:
+def remote_runs() -> list[str]:
+    """One "<id> <state...>" line per run dir on the PC, oldest first (ids start with a timestamp)."""
     cmd = (f"cd {REMOTE_ROOT} 2>/dev/null || exit 0; for d in */; do d=${{d%/}}; "
            f"if [ -f $d/exit ]; then echo \"$d done exit $(cat $d/exit)\"; "
            f"elif tmux has-session -t onpc-$d 2>/dev/null; then echo \"$d running\"; "
@@ -303,7 +307,59 @@ def cmd_list(_: argparse.Namespace) -> int:
     res = run(ssh_argv(cmd))
     if res.returncode != 0:
         raise SetupError(f"{host()} unreachable: {res.stderr.strip()}")
-    print(res.stdout.strip() or "no runs")
+    return sorted(line for line in res.stdout.splitlines() if line.strip())
+
+
+def cmd_list(_: argparse.Namespace) -> int:
+    print("\n".join(remote_runs()) or "no runs")
+    return 0
+
+
+def pick_run(run_id: str | None) -> str:
+    """The given id, else the newest running run, else the newest run."""
+    if run_id:
+        return run_id
+    lines = remote_runs()
+    if not lines:
+        raise SetupError(f"no runs on {host()}")
+    running = [line for line in lines if line.split()[1] == "running"]
+    return (running or lines)[-1].split()[0]
+
+
+def follow_cmd(run_id: str, lines: int) -> str:
+    """Remote shell: follow log.txt while the run's tmux session lives, then print how it ended."""
+    rdir = remote_dir(run_id)
+    return (f"tail -n {lines} -F {rdir}/log.txt & t=$!; "
+            f"while tmux has-session -t onpc-{run_id} 2>/dev/null; do sleep 5; done; "
+            f"sleep 1; kill $t 2>/dev/null; "
+            f"echo \"=== run {run_id} ended: exit $(cat {rdir}/exit 2>/dev/null || echo '? (died)')\"")
+
+
+def cmd_tail(args: argparse.Namespace) -> int:
+    run_id = pick_run(args.id)
+    rdir = remote_dir(run_id)
+    if args.pane:
+        if not os.environ.get("TMUX"):
+            raise SetupError("--pane needs tmux; run: python3 -I " + shlex.join([__file__, "tail", run_id, "-f"]))
+        inner = shlex.join([sys.executable, "-I", str(Path(__file__).resolve()), "tail", run_id,
+                            "-n", str(args.lines), "-f"])
+        res = run(["tmux", "split-window", "-d", "-v", "-l", "30%", "-P", "-F", "#{pane_id}", inner])
+        if res.returncode != 0:
+            raise SetupError(f"tmux split-window failed: {res.stderr.strip()}")
+        pane = res.stdout.strip()
+        run(["tmux", "set-option", "-p", "-t", pane, "remain-on-exit", "on"])
+        print(f"following run {run_id} in tmux pane {pane} (closes with: tmux kill-pane -t {pane})")
+        return 0
+    if args.follow:
+        tty = ["-t"] if sys.stdout.isatty() else []
+        print(f"following run {run_id} on {host()} (Ctrl-C stops the tail, not the run)", flush=True)
+        os.execvp("ssh", ["ssh", *tty, *SSH_OPTS, host(), follow_cmd(run_id, args.lines)])
+    res = run(ssh_argv(f"test -f {rdir}/log.txt && tail -n {args.lines} {rdir}/log.txt"))
+    if res.returncode != 0:
+        raise SetupError(f"no log for run {run_id} on {host()}" + (f": {res.stderr.strip()}" if res.stderr.strip() else ""))
+    st, code = state(run_id)
+    print(f"run {run_id}: {st}" + (f" (exit {code})" if code is not None else ""))
+    print(res.stdout.rstrip())
     return 0
 
 
@@ -326,6 +382,13 @@ def parser() -> argparse.ArgumentParser:
     w.add_argument("--poll", type=float, default=15)
     w.set_defaults(fn=cmd_wait)
     sub.add_parser("list").set_defaults(fn=cmd_list)
+    t = sub.add_parser("tail")
+    t.add_argument("id", nargs="?")
+    t.add_argument("-n", "--lines", type=int, default=40)
+    mode = t.add_mutually_exclusive_group()
+    mode.add_argument("-f", "--follow", action="store_true")
+    mode.add_argument("--pane", action="store_true")
+    t.set_defaults(fn=cmd_tail)
     return p
 
 

@@ -83,7 +83,7 @@ Run it with `run_in_background` and keep working; do not poll. It checks the run
 
 A sub-agent that gets no background notifications runs `wait` in the foreground with the Bash timeout at its 600000 ms maximum; when that runs out, it runs `wait` again (the run keeps going on the PC).
 
-By hand: `<script> status <id>` (running, done with its exit code, or died), `<script> fetch <id>` (copy back now), `<script> list` (every run on the PC).
+By hand: `<script> status <id>` (running, done with its exit code, or died), `<script> fetch <id>` (copy back now), `<script> list` (every run on the PC), `<script> tail [<id>] [-n N] [-f | --pane]` (the log so far; `-f` follows it until the run ends, `--pane` does that in a new tmux pane; [`/tail`](../tail/SKILL.md) wraps it).
 
 ### Step 6: Report
 
