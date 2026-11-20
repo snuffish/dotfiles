@@ -14,11 +14,10 @@
 
 projects="$HOME/.claude/projects"
 
-if [[ "$1" == preview && "$FZF_PROMPT" == *text* && -n "$FZF_QUERY" ]]; then
-  # Every message, thinking block or tool call that contains the query (skill bodies aside: they repeat the command
-  # line), the last 20 of them,
-  # each cut to a window around its first hit with every hit highlighted
-  jq -c --arg q "$FZF_QUERY" '
+# hits($q): the messages, thinking blocks and tool calls of one transcript record that contain $q (any case), skill
+# bodies, reminders and hook output aside. The text preview shows them and text-mode list keeps only sessions that
+# have one, so a session is listed only when its preview has something to show
+hits='def hits($q):
     ($q | ascii_downcase) as $lq
     | select((.type == "user" or .type == "assistant") and (.isMeta | not)) | .type as $role | .timestamp as $ts
     | .message.content | (if type == "array" then .[] else {type: "text", text: .} end)
@@ -31,7 +30,11 @@ if [[ "$1" == preview && "$FZF_PROMPT" == *text* && -n "$FZF_QUERY" ]]; then
               elif .type == "tool_use" then "\(.name) \(.input | tostring)"
               elif .type == "tool_result" then .content | if type == "array" then map(.text? // empty) | join("\n") else tostring end
               else empty end)}
-    | select((.text | type) == "string" and (.text | ascii_downcase | contains($lq)))' "$2" | tail -n 20 \
+    | select((.text | type) == "string" and (.text | ascii_downcase | contains($lq)));'
+
+if [[ "$1" == preview && "$FZF_PROMPT" == *text* && -n "$FZF_QUERY" ]]; then
+  # The last 20 hits, each cut to a window around its first match with every match highlighted
+  jq -c --arg q "$FZF_QUERY" "$hits"' hits($q)' "$2" | tail -n 20 \
   | jq -rn --arg q "$FZF_QUERY" '
     def style($code): "\u001b[\($code)m\(.)\u001b[0m";
     ($q | gsub("(?<c>[.*+?^${}()|\\[\\]\\\\/-])"; "\\\(.c)")) as $re
@@ -128,7 +131,15 @@ files=("${kept[@]}")
 
 if [[ -n "$3" ]]; then
   matched=()
-  while IFS= read -r f; do matched+=("$f"); done < <(search -l -F -i -e "$3" "${files[@]}")
+  # A file that contains the text anywhere is a candidate; hits() keeps it only when one of the matching lines is a
+  # message the preview shows (hook output such as claude-mem's startup timeline repeats the same text across many
+  # sessions). One jq per file, 8 at a time, stopping at the first hit: a common word matches over a gigabyte of
+  # lines, too much to parse in one stream
+  while IFS= read -r f; do matched+=("$f"); done < <(
+    search -l -F -i -e "$3" "${files[@]}" | tr '\n' '\0' \
+      | HITS="$hits" Q="$3" RG=$(command -v rg) xargs -0 -n 1 -P 8 bash -c '
+          if [[ -n "$RG" ]]; then rg --no-config -N --no-filename -F -i -e "$Q" "$1"; else grep -h -F -i -e "$Q" "$1"; fi \
+            | jq -nRr --arg q "$Q" --arg f "$1" "$HITS"" first(inputs | fromjson? // empty | select(any(hits(\$q); true))) | \$f"' _)
   files=("${matched[@]}")
   [[ -e "${files[0]}" ]] || exit 0
 fi
