@@ -142,18 +142,29 @@ def one_line(text):
     return " ".join((text or "").split())
 
 
+def cut(text, width):
+    return text if len(text) <= width else text[: max(0, width - 1)] + "…"
+
+
 def row_left(event, width):
-    """`!PR who “text…”` cut to width cells; the age is right-aligned by the caller."""
-    head = f"{event['ref']} {event['author']} "
+    """`!PR title · who “text…”` cut to width cells; the title gives way first, down to half the row.
+
+    The age is right-aligned by the caller."""
     body = one_line(event["text"])
     if event["kind"] == "vote":
         body = body.removeprefix(event["author"]).strip()  # "Grace voted 10" → "voted 10"
-    line = f"{head}“{body}”" if event["kind"] == "comment" else f"{head}{body}"
-    return line if len(line) <= width else line[: max(0, width - 1)] + "…"
+    action = f"{event['author']} “{body}”" if event["kind"] == "comment" else f"{event['author']} {body}"
+    head, sep = f"{event['ref']} ", " · "
+    title = one_line(event.get("title"))
+    room = width - len(head) - len(sep)
+    title_room = min(len(title), max(room // 2, room - len(action)))
+    if title_room < 4:
+        return cut(head + action, width)
+    return cut(f"{head}{cut(title, title_room)}{sep}{action}", width)
 
 
 def preview_markdown(event, now):
-    return f"**{event['author']}** · {event['ref']} · {age_text(event['time'], now)} ago\n\n_{event['title']}_\n\n{event['text']}"
+    return f"### {event['ref']} {event['title']}\n\n**{event['author']}** · {age_text(event['time'], now)} ago\n\n{event['text']}"
 
 
 def write_badge(directory, events, seen, now):

@@ -148,6 +148,13 @@ class View(unittest.TestCase):
         vote = {"kind": "vote", "ref": "!1", "author": "Grace", "text": "Grace voted 10"}
         self.assertEqual(seen.row_left(vote, 40), "!1 Grace voted 10")
 
+    def test_row_left_shows_title_and_cuts_it_first(self):
+        vote = {"kind": "vote", "ref": "!1", "author": "Grace", "text": "Grace voted 10", "title": "Fix the login page"}
+        self.assertEqual(seen.row_left(vote, 60), "!1 Fix the login page · Grace voted 10")
+        self.assertEqual(seen.row_left(vote, 36), "!1 Fix the login p… · Grace voted 10")
+        comment = {"kind": "comment", "ref": "!1", "author": "Ada", "text": "x" * 80, "title": "Fix the login page"}
+        self.assertEqual(seen.row_left(comment, 40), "!1 Fix the login pa… · Ada “xxxxxxxxxxx…")
+
 
 class RunFetch(TempCache):
     def run_ok(self):
