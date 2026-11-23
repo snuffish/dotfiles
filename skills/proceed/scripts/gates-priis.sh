@@ -62,8 +62,13 @@ case "$stage" in
     python3 -I backend/scripts/test-budget.py || exit 1
     ;;
   drift)
-    [ -f .claude/scripts/check_skill_drift.py ] || skip "drift: .claude/scripts/check_skill_drift.py is not on this branch"
-    python3 -I .claude/scripts/check_skill_drift.py --no-fix || exit 1
+    # GR.PRIIS from !19244 on runs drift through the tooling CLI; older branches still have the script.
+    if [ -f scripts/priis-tool.ps1 ] && ! [ -f .claude/scripts/check_skill_drift.py ]; then
+      pwsh -NoProfile -File scripts/priis-tool.ps1 skills drift || exit 1
+    else
+      [ -f .claude/scripts/check_skill_drift.py ] || skip "drift: no drift check on this branch"
+      python3 -I .claude/scripts/check_skill_drift.py --no-fix || exit 1
+    fi
     ;;
   *)
     echo "unknown stage: $stage" >&2

@@ -81,7 +81,7 @@ A drift fix (Step 2) re-runs the Step 3 secret check on the final staged diff be
    git -C <repo-root> status -uall
    git -C <repo-root> diff --stat HEAD
    git -C <repo-root> log --format=%s -20
-   git -C <repo-root> ls-files -- skills/skill-drift/scripts/check_skill_drift.py .claude/scripts/check_skill_drift.py
+   git -C <repo-root> ls-files -- skills/skill-drift/scripts/check_skill_drift.py scripts/priis-tool.ps1 .claude/scripts/check_skill_drift.py
    ```
 3. **Stop and say why** when:
    - **Detached HEAD:** `status` opens with `HEAD detached`.
@@ -93,14 +93,15 @@ A drift fix (Step 2) re-runs the Step 3 secret check on the final staged diff be
 
 Claim fixes are grouped with the change that caused them. The checker is the first that the Step 1 `ls-files` printed:
 
-| Checker | Claims file | Triage per |
-|---|---|---|
-| `skills/skill-drift/scripts/check_skill_drift.py` (the `~/.terminal` registry) | `skills/skills-claims.json` | [`/skill-drift`](../skill-drift/SKILL.md) |
-| `.claude/scripts/check_skill_drift.py` (a project repo) | `.claude/claims/` (one file per source; `.claude/skills-claims.json` on repos not yet split) | that repo's drift skill |
+| Checker | Run (full, no `--file`) | Claims file | Triage per |
+|---|---|---|---|
+| `skills/skill-drift/scripts/check_skill_drift.py` (the `~/.terminal` registry) | `python3 -I <repo-root>/<checker>` | `skills/skills-claims.json` | [`/skill-drift`](../skill-drift/SKILL.md) |
+| `scripts/priis-tool.ps1` (GR.PRIIS from !19244 on, which removed the script below) | `pwsh -NoProfile -File <repo-root>/scripts/priis-tool.ps1 skills drift` | `.claude/claims/` | `priis-skill-drift` |
+| `.claude/scripts/check_skill_drift.py` (a project repo) | `python3 -I <repo-root>/<checker>` | `.claude/claims/` (one file per source; `.claude/skills-claims.json` on repos not yet split) | that repo's drift skill |
 
 No checker → state `"no skill-drift check"` and go to Step 3.
 
-Run `python3 -I <repo-root>/<checker>` (full run, no `--file`). No STALE or FAIL row and no ORDER or MISPLACED section → go on. Otherwise fix it per [references/drift-fix.md](references/drift-fix.md) before Step 5, and stage the claim edits with the change that caused them.
+Run the row's command. No STALE or FAIL row and no ORDER or MISPLACED section → go on. Otherwise fix it per [references/drift-fix.md](references/drift-fix.md) before Step 5, and stage the claim edits with the change that caused them.
 
 ### Step 3: Choose what goes into the commit
 

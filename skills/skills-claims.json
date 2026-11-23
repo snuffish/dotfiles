@@ -3286,19 +3286,22 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md:72:path:.claude/skills/priis-local-stack/scripts/db.py",
+      "id": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md:72:other:local db --compact",
       "source": {
         "file": "skills/Projects/GR.PRIIS/priis-prod-diagnose/SKILL.md",
         "line": 72
       },
-      "kind": "path",
-      "value": ".claude/skills/priis-local-stack/scripts/db.py",
-      "quote": "skill's `db.py` (`python3 -I .claude/skills/priis-local-stack/scripts/db.py --compact < round.sql`). For the local run, swap the ticket numbers in ea",
+      "kind": "other",
+      "value": "local db --compact",
+      "quote": "`pwsh -NoProfile -File scripts/priis-tool.ps1 local db --compact < round.sql`",
       "verify": {
-        "method": "path_exists",
-        "path": ".claude/skills/priis-local-stack/scripts/db.py",
+        "method": "grep",
         "base": "project:GR.PRIIS",
-        "type": "file"
+        "paths": [
+          "tools/GR.PRIIS.Tooling/LocalStack/LocalDbCommand.cs"
+        ],
+        "pattern": "Option<bool>\\(\"--compact\"\\)",
+        "expect": "present"
       }
     },
     {
@@ -8885,11 +8888,11 @@
       "id": "skills/commit/SKILL.md:59:path:skills/skill-drift/scripts/check_skill_drift.py",
       "source": {
         "file": "skills/commit/SKILL.md",
-        "line": 59
+        "line": 98
       },
       "kind": "path",
       "value": "skills/skill-drift/scripts/check_skill_drift.py",
-      "quote": "| `skills/skill-drift/scripts/check_skill_drift.py` (the `~/.terminal` registry) | `skills/skills-claims.json` |",
+      "quote": "| `skills/skill-drift/scripts/check_skill_drift.py` (the `~/.terminal` registry) | `python3 -I <repo-root>/<checker>` |",
       "verify": {
         "method": "path_exists",
         "path": "skills/skill-drift/scripts/check_skill_drift.py",
@@ -8901,11 +8904,11 @@
       "id": "skills/commit/SKILL.md:59:path:skills/skills-claims.json",
       "source": {
         "file": "skills/commit/SKILL.md",
-        "line": 59
+        "line": 98
       },
       "kind": "path",
       "value": "skills/skills-claims.json",
-      "quote": "| `skills/skill-drift/scripts/check_skill_drift.py` (the `~/.terminal` registry) | `skills/skills-claims.json` |",
+      "quote": "| `skills/skill-drift/scripts/check_skill_drift.py` (the `~/.terminal` registry) | `python3 -I <repo-root>/<checker>` |",
       "verify": {
         "method": "path_exists",
         "path": "skills/skills-claims.json",
@@ -8917,11 +8920,11 @@
       "id": "skills/commit/SKILL.md:59:skill_ref:skill-drift",
       "source": {
         "file": "skills/commit/SKILL.md",
-        "line": 59
+        "line": 98
       },
       "kind": "skill_ref",
       "value": "skill-drift",
-      "quote": "| `skills/skill-drift/scripts/check_skill_drift.py` (the `~/.terminal` registry) | `skills/skills-claims.json` |",
+      "quote": "| `skills/skill-drift/scripts/check_skill_drift.py` (the `~/.terminal` registry) | `python3 -I <repo-root>/<checker>` |",
       "verify": {
         "method": "skill_exists",
         "name": "skill-drift",
@@ -8929,17 +8932,17 @@
       }
     },
     {
-      "id": "skills/commit/SKILL.md:60:path:.claude/scripts/check_skill_drift.py",
+      "id": "skills/commit/SKILL.md:99:path:scripts/priis-tool.ps1",
       "source": {
         "file": "skills/commit/SKILL.md",
-        "line": 60
+        "line": 99
       },
       "kind": "path",
-      "value": ".claude/scripts/check_skill_drift.py",
-      "quote": "| `.claude/scripts/check_skill_drift.py` (a project repo) |",
+      "value": "scripts/priis-tool.ps1",
+      "quote": "| `scripts/priis-tool.ps1` (GR.PRIIS from !19244 on, which removed the script below) |",
       "verify": {
         "method": "path_exists",
-        "path": ".claude/scripts/check_skill_drift.py",
+        "path": "scripts/priis-tool.ps1",
         "base": "project:GR.PRIIS",
         "type": "file"
       }
@@ -9028,11 +9031,11 @@
       "id": "skills/commit/SKILL.md:92:path:references/drift-fix.md",
       "source": {
         "file": "skills/commit/SKILL.md",
-        "line": 92
+        "line": 104
       },
       "kind": "path",
       "value": "references/drift-fix.md",
-      "quote": "Run `python3 -I <repo-root>/<checker>` (full run, no `--file`). No STALE or FAIL row and no ORDER or MISPLACED section \u2192 go on. Otherwise fix it per [references/drift-fix.md](references/drift-fix.md) before Step 5, and stage the claim edits with the change that caused them.",
+      "quote": "Run the row's command. No STALE or FAIL row and no ORDER or MISPLACED section \u2192 go on. Otherwise fix it per [references/drift-fix.md](references/drift-fix.md) before Step 5, and stage the claim edits with the change that caused them.",
       "verify": {
         "method": "path_exists",
         "path": "references/drift-fix.md",
@@ -27899,6 +27902,22 @@
         ],
         "base": "repo",
         "expect": "present"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md:28:path:tools/GR.PRIIS.Tooling/Skills/SkillDriftCommand.cs",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md",
+        "line": 28
+      },
+      "kind": "path",
+      "value": "tools/GR.PRIIS.Tooling/Skills/SkillDriftCommand.cs",
+      "quote": "Body budget 20,000 B (advisory; `tools/GR.PRIIS.Tooling/Skills/SkillDriftCommand.cs`",
+      "verify": {
+        "method": "path_exists",
+        "path": "tools/GR.PRIIS.Tooling/Skills/SkillDriftCommand.cs",
+        "base": "project:GR.PRIIS",
+        "type": "file"
       }
     }
   ]

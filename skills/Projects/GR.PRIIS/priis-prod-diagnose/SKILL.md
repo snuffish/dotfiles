@@ -69,7 +69,7 @@ Build one script from [`references/sql-recipes.md`](references/sql-recipes.md) t
   python3 -I <skill-dir>/scripts/lookup.py table <Entity or table>...
   python3 -I <skill-dir>/scripts/lookup.py enum <EnumName> --case <alias.Column>
   ```
-- **Dry-run it locally before handing it over** with the `priis-local-stack` skill's `db.py` (`python3 -I .claude/skills/priis-local-stack/scripts/db.py --compact < round.sql`). For the local run, swap the ticket numbers in each statement for a local record (`sed`); the rest runs unchanged. Also run each statement on its own, since the user may run them one at a time. A column or syntax error found here costs nothing; found in production it costs a round. When the local stack is down, say the script is unchecked.
+- **Dry-run it locally before handing it over** with the `priis-local-stack` skill's `local db` (`pwsh -NoProfile -File scripts/priis-tool.ps1 local db --compact < round.sql`; `python3 -I .claude/skills/priis-local-stack/scripts/db.py --compact < round.sql` on branches before !19244). For the local run, swap the ticket numbers in each statement for a local record (`sed`); the rest runs unchanged. Also run each statement on its own, since the user may run them one at a time. A column or syntax error found here costs nothing; found in production it costs a round. When the local stack is down, say the script is unchecked.
 
 ### Step 4: Read the results
 
