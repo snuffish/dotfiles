@@ -84,8 +84,22 @@ CSS = """
   .note { border-left: 3px solid var(--warn); background: var(--hi); padding: 8px 12px; border-radius: 4px; font-size: 14px; }
   .note.bad { border-left-color: var(--bad); }
   pre.mermaid { margin: 0; overflow-x: auto; font-family: var(--mono); font-size: 12px; white-space: pre; }
-  pre.mermaid[data-processed] { white-space: normal; }
+  pre.mermaid[data-processed] { white-space: normal; cursor: zoom-in; border-radius: 6px; padding: 6px;
+    transition: background .12s, outline-color .12s; outline: 1px solid transparent; }
+  pre.mermaid[data-processed]:hover, pre.mermaid[data-processed]:focus-visible { background: var(--hi); outline-color: var(--accent); }
   pre.mermaid svg { max-width: 100%; height: auto; }
+  dialog.dmodal { padding: 0; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--fg);
+    width: min(94vw, 1360px); max-width: 94vw; max-height: 92vh; overflow: hidden; }
+  dialog.dmodal::backdrop { background: rgba(1, 20, 35, .75); backdrop-filter: blur(2px); }
+  .dmodal-bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 14px;
+    background: var(--hi); border-bottom: 1px solid var(--line); }
+  .dmodal-title { font-size: 13px; font-weight: 600; color: var(--fg); }
+  .dmodal-actions { display: flex; gap: 6px; align-items: center; }
+  .dmodal-actions button { background: var(--panel); color: var(--fg); border: 1px solid var(--line); border-radius: 6px;
+    padding: 3px 9px; font: inherit; font-size: 12px; cursor: pointer; }
+  .dmodal-body { overflow: auto; max-height: calc(92vh - 50px); padding: 20px; display: flex; justify-content: center;
+    align-items: flex-start; background: var(--bg); }
+  .dmodal-body svg { max-width: none; height: auto; display: block; }
   .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
   table { border-collapse: collapse; width: 100%; font-size: 14px; }
   th, td { text-align: left; vertical-align: top; padding: 7px 10px; border-bottom: 1px solid var(--line); }
@@ -123,7 +137,58 @@ async function draw(scope) {
   // A diagram in a closed <details> has no size to lay out in: it is drawn when the section opens.
   const nodes = [...scope.querySelectorAll('pre.mermaid:not([data-processed])')].filter(n => !n.closest('details:not([open])'));
   if (nodes.length) { try { await mm.run({ nodes }); } catch (err) { console.error(err); } }
+  nodes.forEach(n => {
+    if (n.querySelector('svg:not([aria-roledescription="error"])')) {
+      n.tabIndex = 0; n.setAttribute('role', 'button'); n.title = 'Click to enlarge diagram';
+      n.setAttribute('aria-label', 'Enlarge diagram');
+    }
+  });
 }
+const dmodal = document.getElementById('diagram-modal');
+const dbody = dmodal.querySelector('.dmodal-body');
+const dtitle = dmodal.querySelector('.dmodal-title');
+let dbase = 0, dscale = 1, dfit = 1;
+function applyZoom(s) {
+  dscale = Math.min(4, Math.max(0.5, s));
+  const svg = dbody.querySelector('svg');
+  if (svg && dbase > 0) svg.style.width = Math.round(dbase * dscale) + 'px';
+}
+function openDiagram(pre) {
+  const svg = pre.querySelector('svg:not([aria-roledescription="error"])');
+  if (!svg) return;
+  const parts = [];
+  const card = pre.closest('.card, section.panel');
+  const h = card && card.querySelector('h3, h2');
+  if (h) parts.push(h.textContent.trim());
+  const box = pre.closest('.box');
+  const lbl = box && box.querySelector(':scope > .label');
+  if (lbl) parts.push(lbl.textContent.trim());
+  dtitle.textContent = parts.join(' — ') || 'Diagram';
+  const clone = svg.cloneNode(true);
+  clone.style.maxWidth = 'none';
+  clone.removeAttribute('height');
+  const vb = svg.viewBox && svg.viewBox.baseVal;
+  dbase = (vb && vb.width > 0) ? vb.width : svg.getBoundingClientRect().width || 600;
+  dbody.replaceChildren(clone);
+  dmodal.showModal();
+  dfit = Math.min(2.2, Math.max(1.2, (dbody.clientWidth - 40) / dbase));
+  applyZoom(dfit);
+}
+document.addEventListener('click', ev => {
+  const pre = ev.target.closest('pre.mermaid[data-processed]');
+  if (pre && !pre.closest('dialog')) openDiagram(pre);
+});
+document.addEventListener('keydown', ev => {
+  if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.matches('pre.mermaid[data-processed]')) {
+    ev.preventDefault(); openDiagram(ev.target);
+  }
+});
+dmodal.addEventListener('click', ev => { if (ev.target === dmodal) dmodal.close(); });
+dmodal.addEventListener('close', () => { dbody.replaceChildren(); });
+dmodal.querySelector('[data-zoom="in"]').addEventListener('click', () => applyZoom(dscale + 0.25));
+dmodal.querySelector('[data-zoom="out"]').addEventListener('click', () => applyZoom(dscale - 0.25));
+dmodal.querySelector('[data-zoom="fit"]').addEventListener('click', () => applyZoom(dfit));
+dmodal.querySelector('[data-close]').addEventListener('click', () => dmodal.close());
 // ?expand opens every collapsible section on load: check_diagrams.py uses it to draw the diagrams inside them.
 if (new URLSearchParams(location.search).has('expand')) document.querySelectorAll('details').forEach(d => { d.open = true; });
 document.addEventListener('toggle', ev => { if (ev.target.open) draw(ev.target); }, true);
@@ -222,6 +287,18 @@ def shell(name, meta, h1, lead, nav, panels, footer):
   {panels}
   <footer>{footer}</footer>
 </div>
+<dialog id="diagram-modal" class="dmodal" aria-label="Enlarged diagram">
+  <div class="dmodal-bar">
+    <span class="dmodal-title"></span>
+    <div class="dmodal-actions">
+      <button type="button" data-zoom="out" aria-label="Zoom out">&minus;</button>
+      <button type="button" data-zoom="fit">Fit</button>
+      <button type="button" data-zoom="in" aria-label="Zoom in">+</button>
+      <button type="button" data-close aria-label="Close">&times;</button>
+    </div>
+  </div>
+  <div class="dmodal-body"></div>
+</dialog>
 <script type="module">
 const MERMAID_URL = {json.dumps(MERMAID)};
 {JS}

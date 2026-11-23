@@ -555,6 +555,16 @@ class MarkdownRenderer:
       .leak {{ stroke: #dc2626; }}
       .deep-module {{ background: linear-gradient(135deg, #0f172a, #1e293b); }}
       pre.mermaid {{ background: transparent !important; }}
+      pre.mermaid:has(svg) {{ cursor: zoom-in; border-radius: 6px; padding: 6px; transition: background .12s, outline-color .12s; outline: 1px solid transparent; }}
+      pre.mermaid:has(svg):hover, pre.mermaid:has(svg):focus-visible {{ background: #f1f5f9 !important; outline-color: #059669; }}
+      dialog.dmodal {{ padding: 0; border: 1px solid #cbd5e1; border-radius: 10px; background: #ffffff; color: #0f172a; width: min(94vw, 1360px); max-width: 94vw; max-height: 92vh; overflow: hidden; }}
+      dialog.dmodal::backdrop {{ background: rgba(15, 23, 42, .7); backdrop-filter: blur(2px); }}
+      .dmodal-bar {{ display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 14px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }}
+      .dmodal-title {{ font-size: 13px; font-weight: 600; color: #0f172a; }}
+      .dmodal-actions {{ display: flex; gap: 6px; align-items: center; }}
+      .dmodal-actions button {{ background: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; border-radius: 6px; padding: 3px 9px; font-size: 12px; cursor: pointer; }}
+      .dmodal-body {{ overflow: auto; max-height: calc(92vh - 50px); padding: 20px; display: flex; justify-content: center; align-items: flex-start; background: #ffffff; }}
+      .dmodal-body svg {{ max-width: none; height: auto; display: block; }}
       /* Offline fallback styling */
       body {{ font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }}
       table {{ border-collapse: collapse; width: 100%; }}
@@ -571,7 +581,53 @@ class MarkdownRenderer:
 {content_body}
 {owner_banner}
     </main>
+    <dialog id="diagram-modal" class="dmodal" aria-label="Enlarged diagram">
+      <div class="dmodal-bar">
+        <span class="dmodal-title">Diagram</span>
+        <div class="dmodal-actions">
+          <button type="button" data-zoom="out" aria-label="Zoom out">&minus;</button>
+          <button type="button" data-zoom="fit">Fit</button>
+          <button type="button" data-zoom="in" aria-label="Zoom in">+</button>
+          <button type="button" data-close aria-label="Close">&times;</button>
+        </div>
+      </div>
+      <div class="dmodal-body"></div>
+    </dialog>
     <script>
+      // Click any rendered Mermaid diagram to inspect it enlarged in a modal.
+      (() => {{
+        const dlg = document.getElementById("diagram-modal");
+        const body = dlg.querySelector(".dmodal-body");
+        let base = 0, scale = 1, fit = 1;
+        const apply = (s) => {{
+          scale = Math.min(4, Math.max(0.5, s));
+          const svg = body.querySelector("svg");
+          if (svg && base > 0) svg.style.width = Math.round(base * scale) + "px";
+        }};
+        const open = (pre) => {{
+          const svg = pre.querySelector('svg:not([aria-roledescription="error"])');
+          if (!svg) return;
+          const clone = svg.cloneNode(true);
+          clone.style.maxWidth = "none";
+          clone.removeAttribute("height");
+          const vb = svg.viewBox && svg.viewBox.baseVal;
+          base = (vb && vb.width > 0) ? vb.width : svg.getBoundingClientRect().width || 600;
+          body.replaceChildren(clone);
+          dlg.showModal();
+          fit = Math.min(2.2, Math.max(1.2, (body.clientWidth - 40) / base));
+          apply(fit);
+        }};
+        document.addEventListener("click", (ev) => {{
+          const pre = ev.target.closest("pre.mermaid");
+          if (pre && !pre.closest("dialog")) open(pre);
+        }});
+        dlg.addEventListener("click", (ev) => {{ if (ev.target === dlg) dlg.close(); }});
+        dlg.addEventListener("close", () => {{ body.replaceChildren(); }});
+        dlg.querySelector('[data-zoom="in"]').addEventListener("click", () => apply(scale + 0.25));
+        dlg.querySelector('[data-zoom="out"]').addEventListener("click", () => apply(scale - 0.25));
+        dlg.querySelector('[data-zoom="fit"]').addEventListener("click", () => apply(fit));
+        dlg.querySelector("[data-close]").addEventListener("click", () => dlg.close());
+      }})();
       // Collapsible blocks: following a #link opens the block that holds the target,
       // and pages with several blocks get "Expand all / Collapse all" above the first one.
       (() => {{
