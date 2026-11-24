@@ -31,6 +31,10 @@ Read the named file before the work it covers; it holds the full rules.
 - Before giving a verdict, a suggestion or interview questions on a topic, search for earlier work on it: the repo's artifact directory (`~/.cache/agent-artifacts/<repo>/`), the work state and claude-mem.
 - Build on what was decided there, and say so when a new answer contradicts it.
 
+## Working Style
+
+- **Analysis-only requests:** when I ask for pros/cons, research, a recommendation, or a design review, do not create or edit files, not even scratch or benchmark files, unless asked. Answer in chat or in the requested artifact only.
+
 ## Friction becomes configuration
 
 - Treat every correction, rejection or "why did you do that?" from me as a missing instruction, not a one-off. Treat a fix that worked the same way: if it lives only in this conversation, it is lost.
