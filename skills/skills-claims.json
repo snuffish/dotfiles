@@ -27919,6 +27919,25 @@
         "base": "project:GR.PRIIS",
         "type": "file"
       }
+    },
+    {
+      "id": "skills/standup-recap/SKILL.md:54:other:weekend window reaches back to last weekday",
+      "source": {
+        "file": "skills/standup-recap/SKILL.md",
+        "line": 54
+      },
+      "kind": "other",
+      "value": "weekend window reaches back to last weekday",
+      "quote": "the window reaches back to the last active weekday before it",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"picked_by\": \"last working day \\+ weekend\"",
+        "paths": [
+          "skills/standup-recap/scripts/collect.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
     }
   ]
 }
