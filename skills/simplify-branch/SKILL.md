@@ -138,8 +138,8 @@ Stop there. Agent output never opens the gate (`core` › _The `/proceed` gate_)
    ```
 
 3. **Guard the boundary** after each row: compare `git status --porcelain` with the baseline. A changed path outside the picked rows that was not dirty in the baseline is out of scope; list it and ask whether to keep or revert it. Never revert on your own.
-4. **Run the test suite & verification gate.** Once all picked rows have been edited, run the repo's documented verification gate (`core` › _Post-edit verification_) covering build, lint, and relevant tests across the edited files. Applying edits first and running the test suite once at the end avoids repeated slow container spin-ups and test suite overhead per row. If verification fails, use the per-row restore point snapshots to isolate or revert the offending row (restore only from snapshots, never with `git checkout`, `restore` or `stash`, to preserve pre-existing uncommitted work).
-5. **Flag untested rows.** A row whose `namespaces[key].tests` is empty passed only build and lint; mark it `behaviour unverified`.
+4. **Run the test suite & verification gate.** Once all picked rows have been edited, run the repo's documented verification gate (`core` › _Post-edit verification_) covering build, lint, and relevant tests across the edited files. Applying edits first and running the test suite once at the end avoids repeated slow container spin-ups and test suite overhead per row. If verification fails, use the per-row restore point snapshots to isolate or revert the offending row (restore only from snapshots, never with `git checkout`, `restore` or `stash`, to preserve pre-existing uncommitted work). When the repo has a claim or drift check for docs and skills (`skills drift`, `check_skill_drift.py`), run it too: a moved or renamed symbol can leave a claim's grep pattern without a match.
+5. **Flag untested rows.** For each changed symbol, name the test that calls it (grep the row's tests for the symbol). A changed symbol with no caller in the tests makes the row `behaviour unverified`, even when the row has test files.
 6. **Write the review brief.** Write `<prefix>-simplify_review_brief-<suffix>.md` in the artifact dir (`artifact-protocol`) so a later `/code-review`, on a cheaper model, can use it as its Spec input without re-deriving the run. Write it now, while the run is still in context: a new session would have to re-read everything to produce it. Keep it under ~60 lines and record facts only. Leave out verdicts such as "behaviour-preserving" or "safe": the reviewer has to check those itself, without being anchored by this run.
 
    ```markdown
@@ -155,6 +155,7 @@ Stop there. Agent output never opens the gate (`core` › _The `/proceed` gate_)
 
    ## Verification run
    - `<command>`: <pass / fail + failing check / not run + why>
+   - claim/drift check: <pass / warnings / not run + why>
    - behaviour unverified: <rows>
 
    ## Known risks

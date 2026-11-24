@@ -69,6 +69,8 @@ def namespace_key(path, depth):
     backend/source/GR.PRIIS.Library/DataAccess/Models/X.cs -> Library/DataAccess/Models
     backend/tests/GR.PRIIS.Library.UnitTests/DataAccess/Models/X.cs -> Library/DataAccess/Models (is_test)
     frontend/source/priis-web/src/routes/operations/x.tsx -> web/routes/operations
+    tools/GR.PRIIS.Tooling.Tests/Hooks/X.cs -> tools/GR.PRIIS.Tooling/Hooks (is_test): a `.Tests`,
+    `.UnitTests` or `.IntegrationTests` project folder anywhere else joins its sibling source project.
     Anything else: its parent folder.
     """
     parts = path.split("/")
@@ -90,6 +92,11 @@ def namespace_key(path, depth):
         if rest[:1] == ["src"]:
             rest = rest[1:]
         return "/".join(["web", *rest[:depth]]), is_test
+    folders = parts[:-1]
+    for i, part in enumerate(folders):
+        for suffix in (".UnitTests", ".IntegrationTests", ".Tests"):
+            if part.endswith(suffix) and part != suffix:
+                return "/".join([*folders[:i], part.removesuffix(suffix), *folders[i + 1:]]), True
     return (path.rsplit("/", 1)[0] if "/" in path else "."), False
 
 

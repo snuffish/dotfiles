@@ -60,3 +60,5 @@ Say in chat that the snapshot of `<source-ref> @ <short-sha>` was removed, or wh
 ## When no snapshot is possible
 
 Files never committed, a directory that is not a repository, or a failing `worktree add` → read the main checkout live, record `live checkout` in the artifact, and warn that edits during the run invalidate line numbers.
+
+Repo not cloned locally (a PR in a repo with no checkout under the workspace) → `git clone git@ssh.dev.azure.com:v3/<org>/<project>/<repo> <scratchpad>/<skill>/<repo>`, fetch the source branch, `checkout --detach <head>`; remove the clone with the snapshot. Build the URL yourself: the `sshUrl` that `az repos show` returns (`vs-ssh.visualstudio.com`) fails.

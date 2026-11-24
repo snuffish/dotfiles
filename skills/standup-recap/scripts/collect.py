@@ -401,7 +401,12 @@ def pick_window(today, dates, since):
     prior = sorted(d for d in dates if d and today - dt.timedelta(days=LOOKBACK_DAYS) <= d < today)
     if not prior:
         return {"start": today - dt.timedelta(days=1), "end": today, "picked_by": "no activity in lookback"}
-    return {"start": prior[-1], "end": prior[-1] + dt.timedelta(days=1), "picked_by": "latest active day"}
+    end = prior[-1] + dt.timedelta(days=1)
+    # A weekend day with activity reaches back to the last active weekday, so Monday still shows Friday.
+    weekdays = [d for d in prior if d.weekday() < 5]
+    if prior[-1].weekday() >= 5 and weekdays:
+        return {"start": weekdays[-1], "end": end, "picked_by": "last working day + weekend"}
+    return {"start": prior[-1], "end": end, "picked_by": "latest active day"}
 
 
 def in_window(value, window):
