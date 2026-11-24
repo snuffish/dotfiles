@@ -42,7 +42,7 @@ Reads `skill-gaps/` next to the registry (both `- **Status:**` and legacy `Statu
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
 | `open`         | Status `open` (or a value core.md doesn't define, flagged in the reason) and none of the below                                              | Step 3  |
 | `likely-fixed` | A file the Proposed edit targets (else the skill's folder) has a commit since the gap's Found time, or an uncommitted change saved after it | Step 2  |
-| `stale`        | No skill of that name in the registry, or the text the Proposed edit says to `replace` is no longer in its file                             | Step 2  |
+| `stale`        | No skill or Module of that name and no existing file in the Proposed edit, or the text it says to `replace` is no longer in its file        | Step 2  |
 | `closed`       | Status `fixed` or `not a gap: …`                                                                                                            | Nothing |
 
 No gaps, or only `closed` ones: say so and stop.

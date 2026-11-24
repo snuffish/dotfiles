@@ -15,8 +15,8 @@ the working tree and its git history, not a remote ref. Both Status formats are 
 template and the older `Status: <value> · Command: …` line under the heading.
 
 - closed: Status is `fixed` or `not a gap: <reason>`.
-- stale: no skill of that name in the registry, or the text the Proposed edit says to replace (`replace `<old>``) is
-  no longer in the file it names.
+- stale: no skill or Module of that name in the registry and no existing file in the Proposed edit, or the text the
+  Proposed edit says to replace (`replace `<old>``) is no longer in the file it names.
 - likely-fixed: a file the gap names (the Proposed edit's paths, else the skill's folder) has a commit since the gap's
   Found time, or an uncommitted change saved after it (file mtime).
 - open: none of the above.
@@ -128,9 +128,14 @@ def classify(skills, gap):
         return "closed", f"Status: {gap['status']}"
     note = "" if status == "open" else f" (Status {gap['status']!r} is not a core.md value; treated as open)"
     folder = skills.get(gap["skill"] or "")
-    if folder is None:
-        return "stale", f"no skill {gap['skill']!r} in {REGISTRY}{note}"
-    paths = named_paths(folder, gap) or [folder.resolve()]
+    if folder is not None:
+        paths = named_paths(folder, gap) or [folder.resolve()]
+    else:
+        # Not a skill folder: a gap on a Module or a Module reference is judged by the file it names, else the Module.
+        module = REGISTRY / "_modules" / f"{gap['skill']}.md"
+        paths = named_paths(REGISTRY, gap) or ([module.resolve()] if gap["skill"] and module.is_file() else [])
+        if not paths:
+            return "stale", f"no skill, Module or named file for {gap['skill']!r} in {REGISTRY}{note}"
     gap["paths"] = [str(p) for p in paths]
     basis = f"since {gap['since']}" if gap["since"] else "(no Found time; uncommitted changes only)"
     commits = changes_since(gap, paths)
