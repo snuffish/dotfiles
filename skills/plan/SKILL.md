@@ -87,7 +87,7 @@ Every plan writer applies it to the whole file **and to the chat response that p
 
 ### Link block
 
-Every chat response that presents a plan starts with the `artifact-protocol` › _Chat link block_ (real line numbers from `grep -n '^#\{1,3\} ' <file>` after writing) linking `Context & Goal`, `Proposed Changes`, `Verification Plan` and `Open Questions`, followed by `**Status:** <value>`. A Command may append a one-line summary after each section link (`/plan --review` does).
+Every chat response that presents a plan starts with the `artifact-protocol` › _Chat link block_ (real line numbers from `grep -n '^#\{1,3\} ' <file>` after writing) linking `Context & Goal`, `Proposed Changes`, `Verification Plan` and `Open Questions`, followed by `**Status:** <value>`. A Command may append a one-line summary after each section link (`/plan --review` does). Under Antigravity, Case B step 5 skips this block and relies on the native Implementation Plan artifact card instead; Case A and Case D still emit it.
 
 ---
 
@@ -128,7 +128,8 @@ Picks the model that drafts (Case B) or reviews (Case D). Cases A and C ignore i
 3. **Write the plan** in the _§1 Skeleton_, in the artifact dir (`artifact-protocol`):
    - **New plan:** draft it in a session-private path, then publish it with _Claim_ (`artifact-protocol` › rule 4). If the base name is taken, Claim writes `…-2.md`; use the path it printed and say so in chat.
    - **Existing plan:** update it only if its owner marker names this session, or if the user named that file and asked for it to be updated (`artifact-protocol` › rule 3). Otherwise write a new revision through _Claim_, and link the one it supersedes in **Inputs**.
-   - Set `Status` to `Awaiting User Review` when it is complete. Under Antigravity, when writing a mirrored artifact copy inside `<appDataDir>/brain/<conversation-id>/`, set `UserFacing = true` and `RequestFeedback = true` in `ArtifactMetadata` (omit `ArtifactMetadata` on the artifact dir file).
+   - Set `Status` to `Awaiting User Review` when it is complete.
+   - **Antigravity native artifact:** always also write (or update) `<appDataDir>/brain/<conversation-id>/implementation_plan.md` (omitting the leading `<!-- artifact-owner: … -->` comment) with `ArtifactMetadata` set to `UserFacing = true`, `RequestFeedback = true`, and a concise `Summary` (omit `ArtifactMetadata` on the `<artifact-dir>` file). Keep this native copy in sync after folding self-review findings in step 4 so the native Implementation Plan card and **Proceed** button show the final plan.
 4. **Self-review before presenting:** read [`references/review.md`](references/review.md) and run _Case D_ steps 2–3 on the plan just written: step 2 in the main context, step 3 as `fan-out` › _Review lenses_ (inline below its threshold). Use its pillars and severities. Do not print its report or its gate: this is part of drafting, and the user reviews the folded plan.
    - Fold every finding into the plan before presenting:
 
@@ -142,14 +143,20 @@ Picks the model that drafts (Case B) or reviews (Case D). Cases A and C ignore i
    - Re-read the plan once for anything a fix contradicts (an earlier step, a test, a decision row), and fix it.
    - Run the review **once**. Fill the **Review:** header line with the verdict the folded plan would get.
    - Run it on every new plan, and on every update that changes _Proposed Changes_ or _Verification Plan_. Skip it for an update that only ticks the checklist or changes `Status`.
-5. **Present the plan:** the link block (_§1 Link block_), the review verdict and the findings that changed the design (one bullet each), the key decisions as fragment bullets, then the open questions last, each with its **Rec:** (_§1 Style_ applies to this chat text too: no paragraphs, no full sentences). When the host has a work-state or to-do tool, attach the plan file to its item there before presenting. Wait for the user to open the gate (`core` › _The `/proceed` gate_) before any code change.
+   - Under Antigravity, sync the folded plan to `<appDataDir>/brain/<conversation-id>/implementation_plan.md` with `ArtifactMetadata` (`UserFacing = true`, `RequestFeedback = true`).
+5. **Present the plan:**
+   - **Under Antigravity:** keep chat minimal — point to the native Implementation Plan card without re-summarizing its contents or emitting the chat link block, and list only open questions (each with **Rec:**) or decisions needing user input.
+   - **Other hosts:** the link block (_§1 Link block_), the review verdict and the findings that changed the design (one bullet each), the key decisions as fragment bullets, then the open questions last, each with its **Rec:** (_§1 Style_ applies to this chat text too: no paragraphs, no full sentences).
+   - When the host has a work-state or to-do tool, attach the plan file to its item there before presenting. Wait for the user to open the gate (`core` › _The `/proceed` gate_ or Antigravity's **Proceed** button) before any code change.
 
 ### Case C: Preview Command (`/plan preview [target]`)
 
-Shows an existing plan in the host's planning preview panel (using `ExitPlanMode` when available), so the user can read, comment on, and approve it interactively.
+Shows an existing plan in the host's planning preview panel (`implementation_plan.md` native artifact under Antigravity, or `ExitPlanMode` when available), so the user can read, comment on, and approve it interactively.
 
 1. **Resolve plan:** Use argument (path or suffix), the session's active plan file, or the latest plan family in the artifact dir (Case A).
-2. **Host capability check:** If the host lacks `ExitPlanMode` (such as Antigravity IDE), output the plan's link block (Case A) and explain that the host renders plans directly via markdown links.
+2. **Host capability check:**
+   - **Antigravity:** write the resolved plan into `<appDataDir>/brain/<conversation-id>/implementation_plan.md` (omitting the leading `<!-- artifact-owner: … -->` comment) with `ArtifactMetadata` (`UserFacing = true`, `RequestFeedback = true`, and a concise `Summary`), then point to the native Implementation Plan card and wait for approval (**Proceed** or `/proceed`). Stop here.
+   - **Other hosts lacking `ExitPlanMode`:** output the plan's link block (Case A) and explain that the host renders plans directly via markdown links. Stop here.
 3. **Enter plan mode & copy:** Call `EnterPlanMode`, read the host plan-file path from the system message, and copy the source plan into it (omitting the leading `<!-- artifact-owner: … -->` comment).
 4. **Open preview:** Call `ExitPlanMode`.
 5. **Handle decision:**
