@@ -60,6 +60,22 @@ else
   ln -sfn "$TERMINAL/claude/quiet" "$HOME/.local/bin/quiet"
 fi
 
+echo "lazygit"
+# The config is ~/.terminal/lazygit/config.yml, picked up through LG_CONFIG_FILE (git.bash); Ctrl-P cycles glow/plain diffs.
+case "$(uname -s)" in
+  Darwin) lg_install="brew install"; lg_default="$HOME/Library/Application Support/lazygit/config.yml" ;;
+  *)      lg_install="sudo pacman -S"; lg_default="${XDG_CONFIG_HOME:-$HOME/.config}/lazygit/config.yml" ;;
+esac
+for tool in lazygit glow; do
+  if command -v "$tool" >/dev/null; then ok "$tool"; else warn "$tool not installed: $lg_install $tool"; fi
+done
+if [ "${LG_CONFIG_FILE:-}" = "$TERMINAL/lazygit/config.yml" ]; then
+  ok "LG_CONFIG_FILE"
+  if [ -f "$lg_default" ] && [ ! -L "$lg_default" ]; then warn "$lg_default is ignored while LG_CONFIG_FILE is set; delete it"; fi
+else
+  warn "LG_CONFIG_FILE not set: source ~/.terminal/__init__.bash from ~/.zshrc, then open a new shell"
+fi
+
 echo "Links"
 points_into_terminal() { [ -L "$1" ] && case "$(readlink "$1")" in "$TERMINAL"/*|"$TERMINAL_REAL"/*|claude/*) return 0 ;; esac; return 1; }
 for link in ~/.claude/CLAUDE.md ~/.claude/settings.json ~/.claude/statusline.sh ~/.claude/agents \
