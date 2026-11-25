@@ -39,6 +39,7 @@ Every base profile answers these. A Command profile never restates them; it poin
 | **References per layer** *(Pattern skills per layer)* | Which Reference skills to load for endpoints, data access, UI, forms, data fetching, routing, tests, background jobs, realtime | The repo's rulebook sections on those topics |
 | **Sibling chain** | Ordered list of layers a feature passes through in each repo | Derive from one recent feature commit (`git log --stat`) |
 | **Contract touchpoints** | Shared surfaces across repos or consumers: generated API clients/snapshots, shared enums/permissions, hub/event names, locale rules | Workspace rulebook "contracts" section; else none known |
+| **Review rules** | The files that hold what reviewers flag, where to read them, and which changed paths each one covers | The rulebook's review or conventions sections; else none known |
 | **Known drift** | Documented places where docs or scaffolds lag the code | None known: trust the code |
 | **Report language** | Language of written output (artifacts, PR text, posted comments) and which domain terms stay verbatim | Language of recent PR descriptions |
 | **Worktree include list** | Gitignored local files a fresh worktree needs (`appsettings.local.json`, `.env.local`) | None |

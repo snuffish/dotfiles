@@ -49,12 +49,10 @@ Ignore `priis-review`'s Steps 1, 2, 3a, 4, 5 and 6, its _Usage_ and _Invariants_
 
 ## Step 3 — Review checklists
 
-Read per `project-profile` › _Upstream content_, from `GR.PRIIS`: the rule file of each side the diff touches, plus the seam rules when the diff touches the API surface or both halves.
+Read per `project-profile` › _Upstream content_, from `GR.PRIIS`: the rule files the base profile's **Review rules** field (`priis-profile` › _Profile fields_) selects for the diff. `review-seam.md` is the contract between the halves (Pass D).
 
 ```bash
-git -C <repo> show origin/main:.claude/rules/review-backend.md     # backend/
-git -C <repo> show origin/main:.claude/rules/review-frontend.md    # frontend/
-git -C <repo> show origin/main:.claude/rules/review-seam.md        # the contract between them (Pass D)
+git -C <repo> show origin/main:.claude/rules/review-<name>.md      # one per file the field selects
 git -C <repo> grep -h -A 8 "^### Pass E" origin/main -- .claude/skills/priis-review/SKILL.md   # Pass E section only; if the output does not end at "### Pass F", rerun with a larger -A
 ```
 

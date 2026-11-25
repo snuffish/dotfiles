@@ -46,7 +46,9 @@ restructurings beyond removing the duplicate.
 ## (D) Conventions
 
 ```text
-Lens: compliance with the repo's ADRs (<adr dirs from the profile or rulebook>), rulebook naming rules, and the
-repo's test patterns (base classes, factory helpers, required 401/403 or minimum-coverage tests, test naming).
-Every finding cites both the violated rule (file:line of the ADR/rulebook) and the code line.
+Lens: compliance with the review rules (<review rule files from the profile's Review rules, with how to read them>),
+the repo's ADRs (<adr dirs from the profile or rulebook>), rulebook naming rules, and the repo's test patterns (base
+classes, factory helpers, required 401/403 or minimum-coverage tests, test naming). Check every item of each review
+rule file against the changed lines it covers.
+Every finding cites both the violated rule (file:line of the review rule, ADR or rulebook) and the code line.
 ```

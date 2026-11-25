@@ -837,10 +837,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:118:doc_link:priis-profile \u203a Report language",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:116:doc_link:priis-profile \u203a Report language",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 118
+        "line": 116
       },
       "kind": "doc_link",
       "value": "priis-profile \u203a Report language",
@@ -853,10 +853,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:132:skill_ref:priis-backend-verify",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:130:skill_ref:priis-backend-verify",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 132
+        "line": 130
       },
       "kind": "skill_ref",
       "value": "priis-backend-verify",
@@ -868,10 +868,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:132:skill_ref:priis-frontend-verify",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:130:skill_ref:priis-frontend-verify",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 132
+        "line": 130
       },
       "kind": "skill_ref",
       "value": "priis-frontend-verify",
@@ -883,10 +883,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:133:skill_ref:manual-testing",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:131:skill_ref:manual-testing",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 133,
+        "line": 131,
         "also_lines": [
           142
         ]
@@ -901,10 +901,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:133:skill_ref:priis-review",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:131:skill_ref:priis-review",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 133,
+        "line": 131,
         "also_lines": [
           142
         ]
@@ -19589,10 +19589,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:90:doc_link:backend/AGENTS.md \u203a Cross-half contracts",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:doc_link:backend/AGENTS.md \u203a Cross-half contracts",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 90
+        "line": 88
       },
       "kind": "doc_link",
       "value": "backend/AGENTS.md \u203a Cross-half contracts",
@@ -19605,10 +19605,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:90:path:backend/CLAUDE.md",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:path:backend/CLAUDE.md",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 90
+        "line": 88
       },
       "kind": "path",
       "value": "backend/CLAUDE.md",
@@ -19621,10 +19621,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:90:path:frontend/CLAUDE.md",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:path:frontend/CLAUDE.md",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 90
+        "line": 88
       },
       "kind": "path",
       "value": "frontend/CLAUDE.md",
@@ -19637,10 +19637,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:90:path:backend/AGENTS.md",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:path:backend/AGENTS.md",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 90
+        "line": 88
       },
       "kind": "path",
       "value": "backend/AGENTS.md",
@@ -19653,10 +19653,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:90:path:frontend/AGENTS.md",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:88:path:frontend/AGENTS.md",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 90
+        "line": 88
       },
       "kind": "path",
       "value": "frontend/AGENTS.md",
@@ -22684,58 +22684,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:55:path:.claude/rules/review-backend.md",
-      "source": {
-        "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 55
-      },
-      "kind": "path",
-      "value": ".claude/rules/review-backend.md",
-      "quote": "git -C <repo> show origin/main:.claude/rules/review-backend.md     # backend/",
-      "verify": {
-        "method": "path_exists",
-        "path": ".claude/rules/review-backend.md",
-        "base": "project:GR.PRIIS",
-        "type": "file"
-      }
-    },
-    {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:56:path:.claude/rules/review-frontend.md",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:56:path:.claude/skills/priis-review/SKILL.md",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
         "line": 56
-      },
-      "kind": "path",
-      "value": ".claude/rules/review-frontend.md",
-      "quote": "git -C <repo> show origin/main:.claude/rules/review-frontend.md    # frontend/",
-      "verify": {
-        "method": "path_exists",
-        "path": ".claude/rules/review-frontend.md",
-        "base": "project:GR.PRIIS",
-        "type": "file"
-      }
-    },
-    {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:57:path:.claude/rules/review-seam.md",
-      "source": {
-        "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 57
-      },
-      "kind": "path",
-      "value": ".claude/rules/review-seam.md",
-      "quote": "git -C <repo> show origin/main:.claude/rules/review-seam.md        # the contract between them (Pass D)",
-      "verify": {
-        "method": "path_exists",
-        "path": ".claude/rules/review-seam.md",
-        "base": "project:GR.PRIIS",
-        "type": "file"
-      }
-    },
-    {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:58:path:.claude/skills/priis-review/SKILL.md",
-      "source": {
-        "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 58
       },
       "kind": "path",
       "value": ".claude/skills/priis-review/SKILL.md",
@@ -22748,10 +22700,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:78:path:.claude/skills/priis-review/references/lessons-backend.md",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:76:path:.claude/skills/priis-review/references/lessons-backend.md",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 78
+        "line": 76
       },
       "kind": "path",
       "value": ".claude/skills/priis-review/references/lessons-backend.md",
@@ -22764,10 +22716,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:78:path:.claude/skills/priis-review/references/lessons-frontend.md",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:76:path:.claude/skills/priis-review/references/lessons-frontend.md",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 78
+        "line": 76
       },
       "kind": "path",
       "value": ".claude/skills/priis-review/references/lessons-frontend.md",
@@ -22780,10 +22732,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:65:doc_link:.claude/rules/review-backend.md \u203a Reuse before you add (Pass A \u00b7 Standards)",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:63:doc_link:.claude/rules/review-backend.md \u203a Reuse before you add (Pass A \u00b7 Standards)",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 65
+        "line": 63
       },
       "kind": "doc_link",
       "value": ".claude/rules/review-backend.md \u203a Reuse before you add (Pass A \u00b7 Standards)",
@@ -22796,10 +22748,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:65:doc_link:.claude/rules/review-frontend.md \u203a Reuse before you add (Pass A \u00b7 Standards)",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:63:doc_link:.claude/rules/review-frontend.md \u203a Reuse before you add (Pass A \u00b7 Standards)",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 65
+        "line": 63
       },
       "kind": "doc_link",
       "value": ".claude/rules/review-frontend.md \u203a Reuse before you add (Pass A \u00b7 Standards)",
@@ -22812,10 +22764,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:66:doc_link:.claude/rules/review-backend.md \u203a Domain correctness (Pass B)",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:64:doc_link:.claude/rules/review-backend.md \u203a Domain correctness (Pass B)",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 66
+        "line": 64
       },
       "kind": "doc_link",
       "value": ".claude/rules/review-backend.md \u203a Domain correctness (Pass B)",
@@ -22828,10 +22780,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:67:doc_link:.claude/rules/review-frontend.md \u203a Behaviour and state (Pass B)",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:65:doc_link:.claude/rules/review-frontend.md \u203a Behaviour and state (Pass B)",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 67
+        "line": 65
       },
       "kind": "doc_link",
       "value": ".claude/rules/review-frontend.md \u203a Behaviour and state (Pass B)",
@@ -22844,10 +22796,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:68:doc_link:.claude/rules/review-backend.md \u203a Tests (Pass C \u00b7 Tests)",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:66:doc_link:.claude/rules/review-backend.md \u203a Tests (Pass C \u00b7 Tests)",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 68
+        "line": 66
       },
       "kind": "doc_link",
       "value": ".claude/rules/review-backend.md \u203a Tests (Pass C \u00b7 Tests)",
@@ -22860,10 +22812,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:68:doc_link:.claude/rules/review-frontend.md \u203a Tests (Pass C \u00b7 Tests)",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:66:doc_link:.claude/rules/review-frontend.md \u203a Tests (Pass C \u00b7 Tests)",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 68
+        "line": 66
       },
       "kind": "doc_link",
       "value": ".claude/rules/review-frontend.md \u203a Tests (Pass C \u00b7 Tests)",
@@ -22876,10 +22828,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:69:doc_link:.claude/rules/review-seam.md \u203a Across the boundary (Pass D)",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:67:doc_link:.claude/rules/review-seam.md \u203a Across the boundary (Pass D)",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 69
+        "line": 67
       },
       "kind": "doc_link",
       "value": ".claude/rules/review-seam.md \u203a Across the boundary (Pass D)",
@@ -22892,10 +22844,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:69:doc_link:.claude/rules/review-seam.md \u203a Also check",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:67:doc_link:.claude/rules/review-seam.md \u203a Also check",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 69
+        "line": 67
       },
       "kind": "doc_link",
       "value": ".claude/rules/review-seam.md \u203a Also check",
@@ -22908,10 +22860,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:70:doc_link:.claude/skills/priis-review/SKILL.md \u203a Pass E \u2014 Spec and text that drifts from the code",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:68:doc_link:.claude/skills/priis-review/SKILL.md \u203a Pass E \u2014 Spec and text that drifts from the code",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 70
+        "line": 68
       },
       "kind": "doc_link",
       "value": ".claude/skills/priis-review/SKILL.md \u203a Pass E \u2014 Spec and text that drifts from the code",
@@ -22924,10 +22876,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:71:doc_link:.claude/rules/review-backend.md \u203a Conventions and modern idioms (Pass G)",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:69:doc_link:.claude/rules/review-backend.md \u203a Conventions and modern idioms (Pass G)",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 71
+        "line": 69
       },
       "kind": "doc_link",
       "value": ".claude/rules/review-backend.md \u203a Conventions and modern idioms (Pass G)",
@@ -22940,10 +22892,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:71:doc_link:.claude/rules/review-frontend.md \u203a Conventions and modern idioms (Pass G)",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:69:doc_link:.claude/rules/review-frontend.md \u203a Conventions and modern idioms (Pass G)",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 71
+        "line": 69
       },
       "kind": "doc_link",
       "value": ".claude/rules/review-frontend.md \u203a Conventions and modern idioms (Pass G)",
@@ -22956,10 +22908,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:73:doc_link:.claude/skills/priis-review/SKILL.md \u203a Pass F \u2014 Click through the running app (unless `--no-browser`)",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:71:doc_link:.claude/skills/priis-review/SKILL.md \u203a Pass F \u2014 Click through the running app (unless `--no-browser`)",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 73
+        "line": 71
       },
       "kind": "doc_link",
       "value": ".claude/skills/priis-review/SKILL.md \u203a Pass F \u2014 Click through the running app (unless `--no-browser`)",
@@ -22972,10 +22924,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:83:doc_link:.claude/skills/priis-review/references/lessons-backend.md \u203a 8. Scope and product decisions surfaced in review",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:81:doc_link:.claude/skills/priis-review/references/lessons-backend.md \u203a 8. Scope and product decisions surfaced in review",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 83
+        "line": 81
       },
       "kind": "doc_link",
       "value": ".claude/skills/priis-review/references/lessons-backend.md \u203a 8. Scope and product decisions surfaced in review",
@@ -22988,10 +22940,10 @@
       }
     },
     {
-      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:84:doc_link:.claude/skills/priis-review/references/lessons-frontend.md \u203a 7. Decisions recorded in threads (do not re-raise)",
+      "id": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md:82:doc_link:.claude/skills/priis-review/references/lessons-frontend.md \u203a 7. Decisions recorded in threads (do not re-raise)",
       "source": {
         "file": "skills/Projects/GR.PRIIS/code-review-priis-profile/SKILL.md",
-        "line": 84
+        "line": 82
       },
       "kind": "doc_link",
       "value": ".claude/skills/priis-review/references/lessons-frontend.md \u203a 7. Decisions recorded in threads (do not re-raise)",
@@ -27955,6 +27907,146 @@
           "skills/standup-recap/scripts/collect.py"
         ],
         "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md:26:path:.claude/rules/review-backend.md",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md",
+        "line": 26
+      },
+      "kind": "path",
+      "value": ".claude/rules/review-backend.md",
+      "quote": "`.claude/rules/review-{backend,frontend,seam,tooling}.md`, read from `origin/main`",
+      "verify": {
+        "method": "path_exists",
+        "path": ".claude/rules/review-backend.md",
+        "base": "project:GR.PRIIS",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md:26:path:.claude/rules/review-frontend.md",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md",
+        "line": 26
+      },
+      "kind": "path",
+      "value": ".claude/rules/review-frontend.md",
+      "quote": "`.claude/rules/review-{backend,frontend,seam,tooling}.md`, read from `origin/main`",
+      "verify": {
+        "method": "path_exists",
+        "path": ".claude/rules/review-frontend.md",
+        "base": "project:GR.PRIIS",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md:26:path:.claude/rules/review-seam.md",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md",
+        "line": 26
+      },
+      "kind": "path",
+      "value": ".claude/rules/review-seam.md",
+      "quote": "`.claude/rules/review-{backend,frontend,seam,tooling}.md`, read from `origin/main`",
+      "verify": {
+        "method": "path_exists",
+        "path": ".claude/rules/review-seam.md",
+        "base": "project:GR.PRIIS",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md:26:path:.claude/rules/review-tooling.md",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md",
+        "line": 26
+      },
+      "kind": "path",
+      "value": ".claude/rules/review-tooling.md",
+      "quote": "`.claude/rules/review-{backend,frontend,seam,tooling}.md`, read from `origin/main`",
+      "verify": {
+        "method": "path_exists",
+        "path": ".claude/rules/review-tooling.md",
+        "base": "project:GR.PRIIS",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md:26:other:review-backend paths frontmatter",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md",
+        "line": 26
+      },
+      "kind": "other",
+      "value": "review-backend.md paths frontmatter",
+      "quote": "Each file's `paths:` frontmatter lists the paths it covers",
+      "verify": {
+        "method": "grep",
+        "pattern": "^\\s*- \"backend/\\*\\*\"",
+        "paths": [
+          ".claude/rules/review-backend.md"
+        ],
+        "base": "project:GR.PRIIS",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md:26:other:review-frontend paths frontmatter",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md",
+        "line": 26
+      },
+      "kind": "other",
+      "value": "review-frontend.md paths frontmatter",
+      "quote": "Each file's `paths:` frontmatter lists the paths it covers",
+      "verify": {
+        "method": "grep",
+        "pattern": "^\\s*- \"frontend/\\*\\*\"",
+        "paths": [
+          ".claude/rules/review-frontend.md"
+        ],
+        "base": "project:GR.PRIIS",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md:26:other:review-seam paths frontmatter",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md",
+        "line": 26
+      },
+      "kind": "other",
+      "value": "review-seam.md paths frontmatter",
+      "quote": "Each file's `paths:` frontmatter lists the paths it covers",
+      "verify": {
+        "method": "grep",
+        "pattern": "^\\s*- \"frontend/source/priis-web/openapi/\\*\\*\"",
+        "paths": [
+          ".claude/rules/review-seam.md"
+        ],
+        "base": "project:GR.PRIIS",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md:26:other:review-tooling paths frontmatter",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md",
+        "line": 26
+      },
+      "kind": "other",
+      "value": "review-tooling.md paths frontmatter",
+      "quote": "Each file's `paths:` frontmatter lists the paths it covers",
+      "verify": {
+        "method": "grep",
+        "pattern": "^\\s*- \"\\.claude/hooks/\\*\\*\"",
+        "paths": [
+          ".claude/rules/review-tooling.md"
+        ],
+        "base": "project:GR.PRIIS",
         "expect": "present"
       }
     }
