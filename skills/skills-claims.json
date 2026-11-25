@@ -28266,6 +28266,140 @@
         "base": "repo",
         "expect": "present"
       }
+    },
+    {
+      "id": "skills/proceed/SKILL.md:63:other:plan Open Questions section",
+      "source": {
+        "file": "skills/proceed/SKILL.md",
+        "line": 63
+      },
+      "kind": "other",
+      "value": "a plan has an Open Questions section that reads \"None\" when empty",
+      "quote": "**Open questions first**: when the plan's _Open Questions_ holds anything but \"None\", settle them before Step 2, and before the dry run of _Launch the runner_.",
+      "verify": {
+        "method": "grep",
+        "pattern": "^## 7\\. Open Questions",
+        "paths": [
+          "skills/plan/SKILL.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/proceed/SKILL.md:63:other:plan Open Questions None",
+      "source": {
+        "file": "skills/proceed/SKILL.md",
+        "line": 63
+      },
+      "kind": "other",
+      "value": "a plan with no unresolved questions notes \"None\" in Open Questions",
+      "quote": "**Open questions first**: when the plan's _Open Questions_ holds anything but \"None\", settle them before Step 2, and before the dry run of _Launch the runner_.",
+      "verify": {
+        "method": "grep",
+        "pattern": "no unresolved questions, note \"None\"",
+        "paths": [
+          "skills/plan/SKILL.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/proceed/SKILL.md:65:skill_ref:grill-me",
+      "source": {
+        "file": "skills/proceed/SKILL.md",
+        "line": 65,
+        "also_lines": [
+          136
+        ]
+      },
+      "kind": "skill_ref",
+      "value": "grill-me",
+      "quote": "- Run [`/grill-me`](../grill-me/SKILL.md) rounds on them. The model cannot invoke that skill, so read its file and ask as it says.",
+      "verify": {
+        "method": "skill_exists",
+        "name": "grill-me"
+      }
+    },
+    {
+      "id": "skills/proceed/SKILL.md:65:other:grill-me is user-invoked only",
+      "source": {
+        "file": "skills/proceed/SKILL.md",
+        "line": 65
+      },
+      "kind": "other",
+      "value": "grill-me has disable-model-invocation: true",
+      "quote": "- Run [`/grill-me`](../grill-me/SKILL.md) rounds on them. The model cannot invoke that skill, so read its file and ask as it says.",
+      "verify": {
+        "method": "grep",
+        "pattern": "^disable-model-invocation: true$",
+        "paths": [
+          "skills/grill-me/SKILL.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/proceed/SKILL.md:66:other:handoff Key Decisions & Rationale",
+      "source": {
+        "file": "skills/proceed/SKILL.md",
+        "line": 66,
+        "also_lines": [
+          68
+        ]
+      },
+      "kind": "other",
+      "value": "a handoff has a Key Decisions & Rationale section",
+      "quote": "- Skip a question that the arguments, the handoff's _Key Decisions & Rationale_ or an earlier answer settles.",
+      "verify": {
+        "method": "grep",
+        "pattern": "^## 4\\. Key Decisions & Rationale",
+        "paths": [
+          "skills/handoff/SKILL.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/proceed/SKILL.md:68:other:plan Decisions section",
+      "source": {
+        "file": "skills/proceed/SKILL.md",
+        "line": 68
+      },
+      "kind": "other",
+      "value": "a plan has a Decisions section",
+      "quote": "- Record each answer under the plan's _Decisions_ and remove the question (\"None\" after the last one) when this session owns the plan (`artifact-protocol`, rule 3 _Ownership_).",
+      "verify": {
+        "method": "grep",
+        "pattern": "^## 2\\. Decisions",
+        "paths": [
+          "skills/plan/SKILL.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/proceed/SKILL.md:68:other:artifact-protocol rule 3 Ownership",
+      "source": {
+        "file": "skills/proceed/SKILL.md",
+        "line": 68
+      },
+      "kind": "other",
+      "value": "artifact-protocol rule 3 is the ownership rule",
+      "quote": "- Record each answer under the plan's _Decisions_ and remove the question (\"None\" after the last one) when this session owns the plan (`artifact-protocol`, rule 3 _Ownership_).",
+      "verify": {
+        "method": "grep",
+        "pattern": "^3\\. \\*\\*Ownership \\(No-Overwrite Invariant\\)\\*\\*",
+        "paths": [
+          "skills/_modules/artifact-protocol.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
     }
   ]
 }
