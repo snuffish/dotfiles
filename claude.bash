@@ -124,6 +124,30 @@ function _gwtclear_landed() {
     [[ "$(git -C "$1" rev-list --count HEAD --not ${b:+--exclude="$b"} --branches --remotes)" == 0 ]]
 }
 
+# In repo $1, delete local branch $2 when no worktree has it checked out and the remote's default branch (origin/HEAD)
+# holds every commit on it. The branch on the remote stays
+function _gwtclear_rm_branch() {
+  local main=$1 b=$2 def
+  [[ -n "$b" ]] && git -C "$main" show-ref --verify -q "refs/heads/$b" || return 0
+  git -C "$main" worktree list --porcelain | grep -qxF "branch refs/heads/$b" && return 0
+  def=$(git -C "$main" symbolic-ref -q --short refs/remotes/origin/HEAD) || return 0
+  [[ "$b" != "${def#origin/}" ]] || return 0
+  if git -C "$main" merge-base --is-ancestor "refs/heads/$b" "$def"; then
+    git -C "$main" branch -q -D -- "$b" && echo "gwtclear: deleted branch $b (merged into $def)" >&2
+  fi
+  return 0
+}
+
+# Remove worktree $1 with wt-rm (the other args passed to it), then its local branch through _gwtclear_rm_branch
+function _gwtclear_rm() {
+  local dir=$1 main b
+  shift
+  main=$(_wt_main "$dir") || return 1
+  b=$(git -C "$dir" branch --show-current)
+  wt-rm "$@" "$dir" || return 1
+  _gwtclear_rm_branch "$main" "$b"
+}
+
 # Close linked worktrees of the current repo (or the repo dir in $1) after you pick them. Each tree gets a planned
 # action: remove (safe), commit+push, remove (on a branch, dirty or unpushed), either one with "(live)" when a running
 # session works in the tree, or keep:<reason> (detached with changes, unknown session state, differing include copies).
@@ -132,9 +156,10 @@ function _gwtclear_landed() {
 # a y/N prompt, and a separate y/N per (live) tree.
 # Marked safe trees go through wt-rm; marked commit trees go to Claude's /wt-close-all (args passed to it) as the
 # approved list, standing in for the skill's own confirmation, which print mode can't ask, plus an optional note you type.
-# A marked (live) tree is removed with wt-rm --discard despite its session, only once it is clean with nothing unpushed
+# A marked (live) tree is removed with wt-rm --discard despite its session, only once it is clean with nothing unpushed.
+# After a removal, the tree's local branch is deleted too once origin's default branch holds all its commits
 function gwtclear() {
-  local repo=. rows lines menu kept picked n ans dir commits note live bind p
+  local repo=. rows lines menu kept picked n ans dir commits note live bind p main branches b
   [[ -d "$1" ]] && repo=$1
   rows=$(wt-status "$repo") || return 1
   if [[ -z "$rows" ]]; then
@@ -212,17 +237,22 @@ $kept}" \
     [[ -n "$picked" ]] || { echo "gwtclear: nothing done"; return 0; }
   fi
   awk -F '\t' '$2 == "remove" { print $1 }' <<<"$picked" | while IFS= read -r dir; do
-    wt-rm "$dir"
+    _gwtclear_rm "$dir"
   done
   # Clean when listed: re-check, then remove despite the session
   awk -F '\t' '$2 == "liveremove" { print $1 }' <<<"$picked" | while IFS= read -r dir; do
-    if _gwtclear_landed "$dir"; then wt-rm --discard "$dir"
+    if _gwtclear_landed "$dir"; then _gwtclear_rm "$dir" --discard
     else echo "gwtclear: kept $dir (changed since the listing)" >&2
     fi
   done
   commits=$(awk -F '\t' '$2 ~ /commit$/ { print $3 }' <<<"$picked")
   [[ -n "$commits" ]] || return 0
   live=$(awk -F '\t' '$2 == "livecommit" { print $1 }' <<<"$picked")
+  # /wt-close-all removes the other commit trees itself; note their branches now to delete them after it
+  main=$(_wt_main "$repo")
+  branches=$(awk -F '\t' '$2 == "commit" { print $1 }' <<<"$picked" | while IFS= read -r dir; do
+    git -C "$dir" branch --show-current
+  done)
   printf 'gwtclear: note for Claude (optional, enter to skip): '
   read -r note
   claude-p "/wt-close-all $*
@@ -235,12 +265,14 @@ like the others. Leave their removal to gwtclear: Step 4 keeps them, which is ex
 
 Note from the user: $note}"
   # The session in a (live) tree still counts as live; remove it once its work has landed
-  [[ -n "$live" ]] || return 0
-  while IFS= read -r dir; do
-    if _gwtclear_landed "$dir"; then wt-rm --discard "$dir"
+  [[ -n "$live" ]] && while IFS= read -r dir; do
+    if _gwtclear_landed "$dir"; then _gwtclear_rm "$dir" --discard
     else echo "gwtclear: kept $dir (not clean or not pushed after the commit)" >&2
     fi
   done <<<"$live"
+  [[ -n "$main" && -n "$branches" ]] && while IFS= read -r b; do
+    _gwtclear_rm_branch "$main" "$b"
+  done <<<"$branches"
   return 0
 }
 
