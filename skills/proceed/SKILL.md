@@ -52,13 +52,21 @@ Look back through this session for the most recent gated handoff that has not ye
 Then:
 
 - **Named artifact in arguments**: when the user provides an artifact (e.g. `/proceed <prefix>-handoff-<suffix>.md` or `/proceed <prefix>-implementation_plan-<suffix>.md`), resolve the pending item directly from the named artifact file on disk without requiring prior in-session transcript context. A bare filename resolves per `artifact-protocol` › *Artifact directory* (artifact dir first, then cwd).
-- **`run` as the first argument** → go to *Launch the runner* below instead of Step 2.
+- **`run` as the first argument** → settle _Open questions first_ (below), then go to *Launch the runner* instead of Step 2.
 - **Nothing pending** → say so in one line and stop. Do not invent work.
 - **More than one pending item** → list them (Command, artifact link, one line each) and ask which one. Do not guess.
 - **Verdict `NEEDS REVISION` or `BLOCKED`** → name the blocking findings in one line each and ask whether to proceed anyway, fix them first, or stop — unless the arguments already say.
 - **Arguments** (`option 2`, `phase 1 only`, `skip the refactor`, extra constraints) narrow or pick the scope. If they conflict with the plan, ask.
 
 Re-read the plan artifact from disk before acting; the user may have edited it after the gate closed.
+
+**Open questions first**: when the plan's _Open Questions_ holds anything but "None", settle them before Step 2, and before the dry run of _Launch the runner_. A **Rec:** is a proposal: `/proceed` never takes it as the answer.
+
+- Run [`/grill-me`](../grill-me/SKILL.md) rounds on them. The model cannot invoke that skill, so read its file and ask as it says. Start with the questions the phase about to run depends on, then the rest; each question's **Rec:** is its first option. Done when every question is answered or deferred. A host without AskUserQuestion: put them as the reply's last lines and stop.
+- Skip a question that the arguments, the handoff's _Key Decisions & Rationale_ or an earlier answer settles. The plan, its inputs and the handoff satisfy `/grill-me`'s earlier-work lookup.
+- A question the user defers stays open: record it with the phase it blocks, in the same place as the answers. Ask it again only when that phase is next, and never start that phase while it is open.
+- Record each answer under the plan's _Decisions_ and remove the question ("None" after the last one) when this session owns the plan (`artifact-protocol`, rule 3 _Ownership_). Otherwise record it under the handoff's _Key Decisions & Rationale_.
+- Under `--runner`, ask nothing: an open question the phase depends on ends the phase (_Runner mode_).
 
 Work inline: start no subagents unless the plan names one, or Step 2 qualifies for *Edit lanes*.
 
@@ -125,6 +133,7 @@ Next: <the single next action, usually a commit/push or ship command for the use
 ## 4. Verification & Validation
 
 - [ ] The pending item was resolved from this session, not guessed; ambiguity was asked about.
+- [ ] Every open question of the plan was answered in a `/grill-me` round or left open with its phase blocked; no **Rec:** was taken as an answer.
 - [ ] Only the authorized scope was changed; no commit, push, PR or tracker write happened without its own request, and no edit landed in a snapshot worktree.
 - [ ] A plan implementation ran in a workspace worktree, unless the arguments held `/no-wt`.
 - [ ] Verification commands ran and their results are reported faithfully.
