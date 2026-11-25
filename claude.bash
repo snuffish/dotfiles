@@ -340,6 +340,19 @@ function claude() {
   return $rc
 }
 
+# Runs claude in <dir> as a direct child of this shell, then returns to the old cwd.
+# Not "(cd dir && claude)": that subshell stays the foreground process, so tmux sees zsh as the pane's command
+# and tmux.conf hides the session-look square (it only shows while #{pane_current_command} is claude)
+function _claude_in() {
+  local dir="$1" back="$PWD" rc
+  shift
+  builtin cd -- "$dir" || return
+  claude "$@"
+  rc=$?
+  builtin cd -- "$back"
+  return $rc
+}
+
 # Claude Code for reviews: no claude-mem, auto-memory, MY-RULES or mattpocock-skills; args go to claude.
 # Resume such a session with claude-review --resume <id> (claude-resume starts plain claude, which loads them again)
 function claude-review() {
@@ -423,7 +436,7 @@ function claude-resume() {
     bash "$focus_script" "$pid" 2>/dev/null
     key=fork
   fi
-  (cd "$(cut -f7 <<< "$pick")" && claude --resume "$id" ${key:+--fork-session} "$@")
+  _claude_in "$(cut -f7 <<< "$pick")" --resume "$id" ${key:+--fork-session} "$@"
 }
 
 # Open the claude-mem dashboard in the browser
@@ -475,7 +488,7 @@ function claude-mem-search() {
     echo "Session ${sid:0:8} is open in claude (pid $pid): resuming a fork of it" >&2
     set -- --fork-session "$@"
   fi
-  (cd "$cwd" && claude --resume "$sid" "$@")
+  _claude_in "$cwd" --resume "$sid" "$@"
 }
 
 alias cr="claude-resume"
@@ -496,7 +509,7 @@ function cc() {
     bash "$HOME/.terminal/utils/agent-focus.sh" "$pid" 2>/dev/null
     set -- --fork-session "$@"
   fi
-  (cd "$cwd" && claude --resume "$sid" "$@")
+  _claude_in "$cwd" --resume "$sid" "$@"
 }
 alias ccp="claude-p"
 alias ct="claude-tail"

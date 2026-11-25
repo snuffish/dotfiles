@@ -190,12 +190,12 @@ agent-resume() {
         echo "Forking Antigravity session ${id:0:8} -> Claude..." >&2
         local new_id
         new_id="$(python3 "$fork_script" --from agy --to claude --id "$id" --cwd "${cwd:-$PWD}")" || return 1
-        (cd "${cwd:-$PWD}" && claude --resume "$new_id" "$@")
+        _claude_in "${cwd:-$PWD}" --resume "$new_id" "$@"
       fi
       ;;
     ctrl-f)
       if [[ "$agent" == "claude" ]]; then
-        (cd "${cwd:-$PWD}" && claude --resume "$id" --fork-session "$@")
+        _claude_in "${cwd:-$PWD}" --resume "$id" --fork-session "$@"
       else
         echo "Forking Antigravity session ${id:0:8}..." >&2
         local new_id
@@ -218,7 +218,7 @@ agent-resume() {
           bash "$focus_script" "$pid"
           key=fork
         fi
-        (cd "${cwd:-$PWD}" && claude --resume "$id" ${key:+--fork-session} "$@")
+        _claude_in "${cwd:-$PWD}" --resume "$id" ${key:+--fork-session} "$@"
       fi
       ;;
   esac
