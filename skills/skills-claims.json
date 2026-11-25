@@ -14072,14 +14072,14 @@
       }
     },
     {
-      "id": "skills/pr-feedback-review/SKILL.md:162:skill_ref:pr-post-comments",
+      "id": "skills/pr-feedback-review/SKILL.md:174:skill_ref:pr-post-comments",
       "source": {
         "file": "skills/pr-feedback-review/SKILL.md",
-        "line": 162
+        "line": 174
       },
       "kind": "skill_ref",
       "value": "pr-post-comments",
-      "quote": "ter step (`/proceed`, push, `/pr-post-comments`) changes thread state. Preserve historical *Technical Analysis* by appending a dated `Update <date>:`",
+      "quote": "**Otherwise** post with [`/pr-post-comments`](../pr-post-comments/SKILL.md), which reads the artifact",
       "verify": {
         "method": "skill_exists",
         "name": "pr-post-comments",
@@ -22201,12 +22201,12 @@
       },
       "kind": "symbol",
       "value": "Ready-to-Send Reply",
-      "quote": "`/pr-post-comments` posts only *Ready-to-Send Reply* blocks",
+      "quote": "*Step 7* posts only *Ready-to-Send Reply* blocks",
       "verify": {
         "method": "grep",
-        "pattern": "\"the replies\"[^\\n]*Ready-to-Send Reply",
+        "pattern": "artifact's \\*Ready-to-Send Reply\\* blocks",
         "paths": [
-          "skills/pr-post-comments/SKILL.md"
+          "skills/pr-feedback-review/SKILL.md"
         ],
         "base": "repo",
         "expect": "present"
@@ -28047,6 +28047,128 @@
           ".claude/rules/review-tooling.md"
         ],
         "base": "project:GR.PRIIS",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md:22:path:.claude/skills/_shared/review-posting.md",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md",
+        "line": 22
+      },
+      "kind": "path",
+      "value": ".claude/skills/_shared/review-posting.md",
+      "quote": "Follow the team's `.claude/skills/_shared/review-posting.md` on `origin/main`",
+      "verify": {
+        "method": "path_exists",
+        "path": ".claude/skills/_shared/review-posting.md",
+        "base": "project:GR.PRIIS",
+        "type": "file"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md:22:other:priis-review Step 6 follows review-posting",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md",
+        "line": 22
+      },
+      "kind": "other",
+      "value": "priis-review --comment Step 6 follows review-posting.md",
+      "quote": "the procedure `/priis-review --comment` runs in its Step 6",
+      "verify": {
+        "method": "grep",
+        "pattern": "With `--comment`, only after the user explicitly approves the threads: follow \\[_shared/review-posting.md\\]",
+        "paths": [
+          ".claude/skills/priis-review/SKILL.md"
+        ],
+        "base": "project:GR.PRIIS",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md:22:other:review-posting step 6 no resolve no vote",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md",
+        "line": 22
+      },
+      "kind": "other",
+      "value": "review-posting.md step 6 leaves status and votes to people",
+      "quote": "step 6's status and vote rule (no resolve, no vote)",
+      "verify": {
+        "method": "grep",
+        "pattern": "^6\\. Leave thread status, votes and replies to the people",
+        "paths": [
+          ".claude/skills/_shared/review-posting.md"
+        ],
+        "base": "project:GR.PRIIS",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md:22:skill_ref:priis-review",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md",
+        "line": 22
+      },
+      "kind": "skill_ref",
+      "value": "priis-review",
+      "quote": "Do not invoke `/priis-review` for this",
+      "verify": {
+        "method": "skill_exists",
+        "name": "priis-review",
+        "base": "project:GR.PRIIS"
+      }
+    },
+    {
+      "id": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md:22:mcp_tool:mcp__azure-devops__repo_pull_request_thread_write",
+      "source": {
+        "file": "skills/Projects/GR.PRIIS/priis-profile/SKILL.md",
+        "line": 22
+      },
+      "kind": "mcp_tool",
+      "value": "mcp__azure-devops__repo_pull_request_thread_write",
+      "quote": "with `repo_pull_request_thread_write` `reply`",
+      "verify": {
+        "method": "mcp_tool",
+        "server": "azure-devops",
+        "tool": "repo_pull_request_thread_write"
+      }
+    },
+    {
+      "id": "skills/pr-feedback-review/SKILL.md:173:other:Reply posting field in priis-profile",
+      "source": {
+        "file": "skills/pr-feedback-review/SKILL.md",
+        "line": 173
+      },
+      "kind": "other",
+      "value": "Reply posting profile field",
+      "quote": "When the profile sets **Reply posting**, follow it",
+      "verify": {
+        "method": "grep",
+        "pattern": "\\| \\*\\*Reply posting\\*\\* \\| Read by `/pr-feedback-review`",
+        "paths": [
+          "skills/Projects/GR.PRIIS/priis-profile/SKILL.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/pr-feedback-review/references/artifact-template.md:62:symbol:Ready-to-Send Reply",
+      "source": {
+        "file": "skills/pr-feedback-review/references/artifact-template.md",
+        "line": 62
+      },
+      "kind": "symbol",
+      "value": "Ready-to-Send Reply",
+      "quote": "(and `/pr-post-comments`) only posts *Ready-to-Send Reply* blocks",
+      "verify": {
+        "method": "grep",
+        "pattern": "\"the replies\"[^\\n]*Ready-to-Send Reply",
+        "paths": [
+          "skills/pr-post-comments/SKILL.md"
+        ],
+        "base": "repo",
         "expect": "present"
       }
     }

@@ -27,7 +27,7 @@ Read these before step 1:
 - `../_modules/git-worktrees.md`: snapshot by default
 - `../_modules/pr-counterpart.md`
 - `../_modules/pr-host.md`
-- `../_modules/project-profile.md`: base profile only (`<project>-profile`); reads *Tracker*, *PR tooling*, *References per layer*, *Contract touchpoints*, *Report language*, and *Known drift*
+- `../_modules/project-profile.md`: base profile only (`<project>-profile`); reads *Tracker*, *PR tooling*, *References per layer*, *Contract touchpoints*, *Report language*, *Known drift*, and the optional *Reply posting*
 - `../_modules/fan-out.md`
 - `../_modules/outward-writes.md`: *Voice pass* only for drafted replies
 
@@ -41,6 +41,7 @@ Load `<project>-profile` before Step 1 when the workspace matches its gate (`pro
 - **Tracker** and **PR tooling** select `<org-url>`, repo IDs, and the thread-fetch tool.
 - **References per layer**, **Contract touchpoints**, and **Known drift** guide Step 3 technical evaluation.
 - **Report language** sets the language of the artifact and drafted replies.
+- **Reply posting** (optional) names how replies reach the PR (*Step 7*).
 
 Record the loaded profile (or `none`) in the artifact header's **Profile** line (chat run: one line before the triage table).
 
@@ -61,7 +62,7 @@ Every thread is assessed on three axes:
 - **Merit**: is the reviewer right, and is their proposed fix sound against the code and framework semantics?
 - **Impact**: what else does acting on it touch (stacked branches, linked work items, cross-repo contracts, other callers, competing threads, prior decisions)?
 
-Suggest `--file` when the replies are to be posted with `/pr-post-comments` or kept for a new session. Suggest `--deep` (`fan-out` › *Bare vs deep*) when there are >10 active threads, threads anchored to older iterations, or complex alternative implementations proposed by reviewers.
+Suggest `--file` when the replies are to be posted with `/pr-post-comments` (*Step 7*) or kept for a new session. Suggest `--deep` (`fan-out` › *Bare vs deep*) when there are >10 active threads, threads anchored to older iterations, or complex alternative implementations proposed by reviewers.
 
 ### When *not* to use — pick the right neighbor
 
@@ -146,7 +147,7 @@ First re-fetch the threads with the Step 2.1 command and compare each thread's c
 
 ## Step 6 — Artifact Management & Output Format
 
-**Plain run (no `--file`, `--deep`, `--ui`):** remove the snapshot(s), then answer in chat, in this order: the reviewer votes; the triage table (thread, file, category, vote, *State at head* values as in 6.4, recommendation); the Step 5 analysis for each active or non-trivial thread; each draft reply (`Voice pass: done`); the closing gate line (`core` › *The `/proceed` gate*). Write no file. `/pr-post-comments` reads replies from an artifact, so offer `--file` for posting, or post a reply from chat only when the user asks for it.
+**Plain run (no `--file`, `--deep`, `--ui`):** remove the snapshot(s), then answer in chat, in this order: the reviewer votes; the triage table (thread, file, category, vote, *State at head* values as in 6.4, recommendation); the Step 5 analysis for each active or non-trivial thread; each draft reply (`Voice pass: done`); the closing gate line (`core` › *The `/proceed` gate*). Write no file. Post a reply only when the user asks for it (*Step 7*).
 
 **With `--file`, `--deep` or `--ui`:**
 1. Publish `<prefix>-pr_feedback_review-<suffix>.md` in the artifact dir (`artifact-protocol`) via `artifact-protocol` › *Claim*, following the template in [artifact-template.md](references/artifact-template.md), then remove the snapshot(s).
@@ -162,7 +163,16 @@ Applies only when an artifact exists. The artifact tracks thread progress across
 4. Each thread's **Status:** line;
 5. **Action Checklist** items.
 
-Update all five together whenever a later step (`/proceed`, push, `/pr-post-comments`) changes thread state. Preserve historical *Technical Analysis* by appending a dated `Update <date>:` line under *State at head (iteration <n>)*.
+Update all five together whenever a later step (`/proceed`, push, *Step 7*) changes thread state. Preserve historical *Technical Analysis* by appending a dated `Update <date>:` line under *State at head (iteration <n>)*.
+
+---
+
+## Step 7 — Posting the Replies (on request)
+
+Runs only when the user asks to post (`outward-writes` › *Explicit request & draft mode*), for the replies they name, from the chat drafts or the artifact's *Ready-to-Send Reply* blocks (never a skipped or not-yet-rewritten `--ui` reply):
+1. **Profile route first.** When the profile sets **Reply posting**, follow it: it names the procedure, the marker, and the tool. It replaces 2.
+2. **Otherwise** post with [`/pr-post-comments`](../pr-post-comments/SKILL.md), which reads the artifact: on a plain run, first write the artifact from this run's drafts (Step 6, *With `--file`*).
+3. **Either way**, before posting re-fetch the threads with the Step 2.1 command, compare the PR's `lastMergeSourceCommit` with the reviewed head (Step 2.3), and redraft any reply whose thread or code moved; run the *Voice pass* on any reply without `Voice pass: done`; post each as a reply in its own thread; never resolve a thread or vote unless the user asks; then read back the posted comment IDs (`outward-writes` › *Read back*) and, with an artifact, update the status fields (6.4).
 
 ---
 
