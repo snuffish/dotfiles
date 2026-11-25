@@ -20704,10 +20704,10 @@
       }
     },
     {
-      "id": "skills/pr-polish/SKILL.md:94:skill_ref:pr-desc",
+      "id": "skills/pr-polish/SKILL.md:95:skill_ref:pr-desc",
       "source": {
         "file": "skills/pr-polish/SKILL.md",
-        "line": 94
+        "line": 95
       },
       "kind": "skill_ref",
       "value": "pr-desc",
@@ -20719,10 +20719,10 @@
       }
     },
     {
-      "id": "skills/pr-polish/SKILL.md:100:skill_ref:pr-post-comments",
+      "id": "skills/pr-polish/SKILL.md:101:skill_ref:pr-post-comments",
       "source": {
         "file": "skills/pr-polish/SKILL.md",
-        "line": 100
+        "line": 101
       },
       "kind": "skill_ref",
       "value": "pr-post-comments",
@@ -20830,14 +20830,33 @@
       }
     },
     {
-      "id": "skills/pr-polish/SKILL.md:55:path:simplify-branch/scripts/branch_scope.py",
+      "id": "skills/pr-polish/SKILL.md:55:other:pr-host fetches headRefName on GitHub",
       "source": {
         "file": "skills/pr-polish/SKILL.md",
         "line": 55
       },
+      "kind": "other",
+      "value": "pr-host fetches headRefName on GitHub",
+      "quote": "strip `refs/heads/` from its source branch (`pr-host` \u203a _Branch names & Diff base_; `headRefName` on GitHub)",
+      "verify": {
+        "method": "grep",
+        "pattern": "gh pr view <n> --json [^\\n]*headRefName",
+        "paths": [
+          "skills/_modules/pr-host.md"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/pr-polish/SKILL.md:56:path:simplify-branch/scripts/branch_scope.py",
+      "source": {
+        "file": "skills/pr-polish/SKILL.md",
+        "line": 56
+      },
       "kind": "path",
       "value": "simplify-branch/scripts/branch_scope.py",
-      "quote": "1. Run `python3 -I <registry>/simplify-branch/scripts/branch_scope.py [--base <branch>]` from the repo root a",
+      "quote": "2. Run `python3 -I <registry>/simplify-branch/scripts/branch_scope.py [--base <branch>]` from the repo root and handle its exit codes as [`/",
       "verify": {
         "method": "path_exists",
         "path": "skills/simplify-branch/scripts/branch_scope.py",
@@ -20846,10 +20865,10 @@
       }
     },
     {
-      "id": "skills/pr-polish/SKILL.md:58:other:branch_scope skips Migrations/",
+      "id": "skills/pr-polish/SKILL.md:59:other:branch_scope skips Migrations/",
       "source": {
         "file": "skills/pr-polish/SKILL.md",
-        "line": 58
+        "line": 59
       },
       "kind": "other",
       "value": "branch_scope skips Migrations/",
@@ -20865,10 +20884,10 @@
       }
     },
     {
-      "id": "skills/pr-polish/SKILL.md:75:other:branch_scope namespaces carry tests",
+      "id": "skills/pr-polish/SKILL.md:76:other:branch_scope namespaces carry tests",
       "source": {
         "file": "skills/pr-polish/SKILL.md",
-        "line": 75
+        "line": 76
       },
       "kind": "other",
       "value": "branch_scope namespaces carry tests",
@@ -20884,10 +20903,10 @@
       }
     },
     {
-      "id": "skills/pr-polish/SKILL.md:94:other:pr-desc --dry-run is default",
+      "id": "skills/pr-polish/SKILL.md:95:other:pr-desc --dry-run mode exists",
       "source": {
         "file": "skills/pr-polish/SKILL.md",
-        "line": 94
+        "line": 95
       },
       "kind": "other",
       "value": "pr-desc --dry-run mode exists",
@@ -20903,10 +20922,10 @@
       }
     },
     {
-      "id": "skills/pr-polish/SKILL.md:100:cli_command:pr-desc",
+      "id": "skills/pr-polish/SKILL.md:101:cli_command:pr-desc",
       "source": {
         "file": "skills/pr-polish/SKILL.md",
-        "line": 100
+        "line": 101
       },
       "kind": "cli_command",
       "value": "pr-desc",
@@ -20922,10 +20941,10 @@
       }
     },
     {
-      "id": "skills/pr-polish/SKILL.md:94:path:docs/pull_request_template.md",
+      "id": "skills/pr-polish/SKILL.md:95:path:docs/pull_request_template.md",
       "source": {
         "file": "skills/pr-polish/SKILL.md",
-        "line": 94
+        "line": 95
       },
       "kind": "path",
       "value": "docs/pull_request_template.md",
