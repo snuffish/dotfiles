@@ -52,10 +52,11 @@ On-demand references (`references/`):
 
 ### Step 1: Resolve scope and baseline
 
-1. Run `python3 -I <registry>/simplify-branch/scripts/branch_scope.py [--base <branch>]` from the repo root and handle its exit codes as [`/simplify-branch`](../simplify-branch/SKILL.md) › _Step 1: Resolve the scope_ does. Keep `base`, `merge_base`, `files` and `namespaces`.
-2. Resolve the PR (`pr-host` › _Resolve the PR from a branch_) and load the base and Command profiles (`project-profile` › _Resolution order_). Restate the fields you use: build and test commands per half, PR template path, PR tooling, _Report language_.
-3. Save the baseline: `git rev-parse HEAD`, `git status --porcelain`. Files already dirty are the user's work: list them in the artifact, and keep every edit to them minimal.
-4. Note `migrations`: the changed files under any `Migrations/` folder (`branch_scope.py` skips them from `files`, so take them from `git diff --name-only <merge-base>...HEAD`).
+1. **A PR argument must be the checked-out branch.** Everything after this step reviews and edits the checked-out branch, so a PR id or URL for another branch would get the description and replies of one PR and the fixes of another. When one was given, fetch the PR (`pr-host` › _Fetch the PR, its work items and acceptance criteria_), strip `refs/heads/` from its source branch (`pr-host` › _Branch names & Diff base_; `headRefName` on GitHub) and compare it with `git rev-parse --abbrev-ref HEAD`. If they differ, stop before any review or edit: name the PR, its branch and the checked-out branch, and give `git -C <repo> switch <branch>` to run. Leave the switch to the user; the checkout is theirs.
+2. Run `python3 -I <registry>/simplify-branch/scripts/branch_scope.py [--base <branch>]` from the repo root and handle its exit codes as [`/simplify-branch`](../simplify-branch/SKILL.md) › _Step 1: Resolve the scope_ does. Keep `base`, `merge_base`, `files` and `namespaces`.
+3. Use the PR from the argument, else resolve it from the branch (`pr-host` › _Resolve the PR from a branch_), and load the base and Command profiles (`project-profile` › _Resolution order_). Restate the fields you use: build and test commands per half, PR template path, PR tooling, _Report language_.
+4. Save the baseline: `git rev-parse HEAD`, `git status --porcelain`. Files already dirty are the user's work: list them in the artifact, and keep every edit to them minimal.
+5. Note `migrations`: the changed files under any `Migrations/` folder (`branch_scope.py` skips them from `files`, so take them from `git diff --name-only <merge-base>...HEAD`).
 
 ### Step 2: Fan out four reviewers
 
