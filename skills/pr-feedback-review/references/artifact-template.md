@@ -59,7 +59,7 @@ On-demand reference for [SKILL.md](../SKILL.md) › *Step 6 — Artifact Managem
 #### Ready-to-Send Reply (in the PR's language)
 > <Draft reply ready to copy-paste directly into the PR thread>
 
-A reply skipped in `--ui` has the heading `#### Reply (skipped in --ui — not posted)`, and one waiting for a rewrite from notes `#### Reply (rewrite from --ui notes — not posted yet)`; `/pr-post-comments` only posts *Ready-to-Send Reply* blocks, so it is not posted. An own reply loses its `Voice pass: done` mark.
+A reply skipped in `--ui` has the heading `#### Reply (skipped in --ui — not posted)`, and one waiting for a rewrite from notes `#### Reply (rewrite from --ui notes — not posted yet)`; SKILL.md › *Step 7* (and `/pr-post-comments`) only posts *Ready-to-Send Reply* blocks, so it is not posted. An own reply loses its `Voice pass: done` mark.
 
 ---
 
