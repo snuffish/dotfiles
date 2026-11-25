@@ -232,5 +232,100 @@ class TestStateAndSummary(Base):
         self.assertIn("unknown run id", err)
 
 
+class TestPushArtifacts(Base):
+    def setUp(self) -> None:
+        super().setUp()
+        self.art = self.root / "art"
+        repo = self.art / "Repo"
+        (repo / "sfx" / "sub").mkdir(parents=True)
+        home = str(Path.home())
+        (repo / "x-plan-sfx.md").write_text(f"see `{home}/.cache/a.md` and {home}.\n")
+        (repo / "x-handoff-sfx.md").write_text(f"/proceed {home}/.cache/x-handoff-sfx.md\n")
+        (repo / "x-handoff-sfx-2.md").write_text("copy\n")
+        (repo / "x-plan-other-sfx-old.md").write_text("no\n")
+        (repo / "x-plan-sfxy.md").write_text("no\n")
+        (repo / "sfx" / "sub" / "cases.md").write_text("c\n")
+        (repo / "sfx" / "blob.bin").write_bytes(b"\0" + home.encode())
+        patcher = mock.patch.object(on_pc, "ARTIFACT_ROOT", self.art)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def test_family_matches_suffix_collisions_and_folder_only(self) -> None:
+        names = [str(p.relative_to(self.art / "Repo")) for p in on_pc.artifact_family(self.art / "Repo", "sfx")]
+        self.assertEqual(names, ["x-handoff-sfx-2.md", "x-handoff-sfx.md", "x-plan-sfx.md",
+                                 "sfx/blob.bin", "sfx/sub/cases.md"])
+
+    def test_family_rejects_missing_and_bad_suffix(self) -> None:
+        for suffix in ("nope", "../x", ""):
+            with self.assertRaises(on_pc.SetupError):
+                on_pc.artifact_family(self.art / "Repo", suffix)
+
+    def test_rewrite_home_text_only_and_not_prefix_of_longer_name(self) -> None:
+        data, changed = on_pc.rewrite_home(b"/Users/me/a /Users/meX /Users/me.bak /Users/me.",
+                                           "/Users/me", "/home/me")
+        self.assertEqual(data, b"/home/me/a /Users/meX /Users/me.bak /home/me.")
+        self.assertTrue(changed)
+        self.assertEqual(on_pc.rewrite_home(b"\0/Users/me", "/Users/me", "/home/me"), (b"\0/Users/me", False))
+
+    def fake_ssh(self, existing: str = ""):
+        calls: list[str] = []
+
+        def fake_run(argv, **kw):
+            cmd = argv[-1]
+            calls.append(cmd)
+            if cmd.startswith("printf"):
+                return done("/home/pc")
+            if "for f in" in cmd:
+                return done(existing)
+            if "rev-parse --abbrev-ref" in cmd:
+                return done("other-branch\n")
+            if argv[:2] == ["git", "rev-parse"]:
+                return done(f"{Path.home()}/Projects/Repo/.git\n")
+            return done()
+        return calls, fake_run
+
+    def test_push_stages_rewritten_files_and_prints_proceed(self) -> None:
+        calls, fake_run = self.fake_ssh()
+        staged: dict[str, bytes] = {}
+
+        def fake_tar(local, remote_cmd, stdin=None):
+            stage = Path(local[2])
+            staged.update({str(p.relative_to(stage)): p.read_bytes() for p in stage.rglob("*") if p.is_file()})
+            self.assertEqual(remote_cmd, "mkdir -p .cache/agent-artifacts/Repo && tar -C .cache/agent-artifacts/Repo -xf -")
+
+        with mock.patch.object(on_pc, "run", side_effect=fake_run), \
+                mock.patch.object(on_pc, "pipe_tar", side_effect=fake_tar):
+            rc, out, err = self.call("push-artifacts", "sfx")
+        self.assertEqual(rc, 0, err)
+        self.assertEqual(staged["x-plan-sfx.md"], b"see `/home/pc/.cache/a.md` and /home/pc.\n")
+        self.assertEqual(staged["sfx/blob.bin"], b"\0" + str(Path.home()).encode())
+        self.assertIn("pushed 5 files to pc-test:/home/pc/.cache/agent-artifacts/Repo/", out)
+        self.assertIn("in 2)", out)
+        self.assertIn("pc checkout ~/Projects/Repo on other-branch", out)
+        self.assertIn("continue on the PC: /proceed /home/pc/.cache/agent-artifacts/Repo/x-handoff-sfx.md", out)
+        self.assertIn("continue on the PC: /proceed /home/pc/.cache/agent-artifacts/Repo/x-handoff-sfx-2.md", out)
+
+    def test_existing_files_refused_without_force(self) -> None:
+        _, fake_run = self.fake_ssh(existing="x-plan-sfx.md\n")
+        with mock.patch.object(on_pc, "run", side_effect=fake_run), \
+                mock.patch.object(on_pc, "pipe_tar") as tar:
+            rc, _, err = self.call("push-artifacts", "sfx")
+            self.assertEqual(rc, 2)
+            self.assertIn("already on pc-test", err)
+            tar.assert_not_called()
+            rc, out, _ = self.call("push-artifacts", "sfx", "--force")
+        self.assertEqual(rc, 0)
+        self.assertIn("x-plan-sfx.md  (overwritten)", out)
+
+    def test_dry_run_copies_nothing(self) -> None:
+        _, fake_run = self.fake_ssh()
+        with mock.patch.object(on_pc, "run", side_effect=fake_run), \
+                mock.patch.object(on_pc, "pipe_tar") as tar:
+            rc, out, _ = self.call("push-artifacts", "sfx", "--dry-run")
+        self.assertEqual(rc, 0)
+        self.assertIn("would push 5 files", out)
+        tar.assert_not_called()
+
+
 if __name__ == "__main__":
     unittest.main()

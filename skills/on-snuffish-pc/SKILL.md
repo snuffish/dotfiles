@@ -1,12 +1,12 @@
 ---
 name: on-snuffish-pc
-description: "Sends one task to Snuffish-PC (Linux, GPU) and runs it there in a detached tmux session while this session keeps working: a shell command as-is, or free text or `/skill args` through headless `claude -p`. Copies this repo's working tree over only when the task needs it, then brings back the log, output files and a patch that is never applied unasked. Use for /on-snuffish-pc, \"run this on the PC\", \"on snuffish-pc\", and for training, scoring or other long or GPU runs that must not run on the Mac. Not for quick commands that are fine on the Mac, or for a sub-agent on this Mac (the Agent tool; /subagent when the user types it)."
-argument-hint: "[--model <opus|sonnet|haiku|fable>] [--sync] <shell command | free text | /skill args>"
+description: "Sends one task to Snuffish-PC (Linux, GPU) and runs it there in a detached tmux session while this session keeps working: a shell command as-is, or free text or `/skill args` through headless `claude -p`. Copies this repo's working tree over only when the task needs it, then brings back the log, output files and a patch that is never applied unasked. Also hands work over: copies an artifact family (design, plan, handoff) to the PC's artifact dir so the user continues there with /proceed. Use for /on-snuffish-pc, \"run this on the PC\", \"on snuffish-pc\", \"send this to the PC so I can continue there\", and for training, scoring or other long or GPU runs that must not run on the Mac. Not for quick commands that are fine on the Mac, or for a sub-agent on this Mac (the Agent tool; /subagent when the user types it)."
+argument-hint: "[--model <opus|sonnet|haiku|fable>] [--sync] <shell command | free text | /skill args> | hand over <suffix>"
 ---
 
 # Skill: `/on-snuffish-pc` — Run One Task on Snuffish-PC
 
-Starts one task on Snuffish-PC through [`scripts/on_pc.py`](scripts/on_pc.py), waits for it in the background and reports what came back. Each step is one simple command; the script hides the ssh, tar and tmux chains.
+Starts one task on Snuffish-PC through [`scripts/on_pc.py`](scripts/on_pc.py), waits for it in the background and reports what came back, or hands planned work over for a session on the PC (*Hand work over*). Each step is one simple command; the script hides the ssh, tar and tmux chains.
 
 ---
 
@@ -44,12 +44,13 @@ Rules:
 
 ### Step 1: Parse and classify
 
-1. Take `--model <m>` and a bare `--sync` from the arguments; the rest is the **task**. No task → show the `argument-hint` usage line and stop.
-2. **Agent-started and Mac-safe** (you chose to send it, and it fits a *When not to use* row): run it here instead and stop. A task the user asked to run on the PC always goes to the PC.
-3. **Kind:**
+1. **Hand-over** (the user wants to continue planned work on the PC, not run a task there): go to *Hand work over* below and stop here.
+2. Take `--model <m>` and a bare `--sync` from the arguments; the rest is the **task**. No task → show the `argument-hint` usage line and stop.
+3. **Agent-started and Mac-safe** (you chose to send it, and it fits a *When not to use* row): run it here instead and stop. A task the user asked to run on the PC always goes to the PC.
+4. **Kind:**
    - `shell`: the task is a command line (starts with an executable or path, such as `nvidia-smi`, `uv run train.py`, `just …`).
    - `claude`: free text, or `/skill args`. For `/skill args`, read that skill's frontmatter: `disable-model-invocation: true` → refuse with "`/<skill>` is user-only, so a headless PC session cannot run it; start it in an interactive session on the PC." and stop.
-4. **Model** (Claude tasks only): pick it by [`/subagent`](../subagent/SKILL.md) › *Step 2: Pick the model*.
+5. **Model** (Claude tasks only): pick it by [`/subagent`](../subagent/SKILL.md) › *Step 2: Pick the model*.
 
 ### Step 2: Decide what to copy
 
@@ -89,6 +90,22 @@ By hand: `<script> status <id>` (running, done with its exit code, or died), `<s
 
 The `wait` summary carries the exit code, the results folder, the log path, the `out/` file names, the patch path with its check command (`git -C <repo> apply --check <patch>`) when the repo was synced, and the last log lines: 15 on success, 30 on failure. Relay them in the format below; open `log.txt` only when those lines do not answer the task.
 
+### Hand work over
+
+`/proceed` and other user-only skills cannot run headless, so a hand-over copies the files and the user starts the session on the PC. The suffix is the handoff's **Suffix:** field.
+
+First check that the handoff's branch is pushed (`git -C <repo> status -sb` shows no `ahead`): the PC gets code only from origin. Unpushed commits → say so and ask before going on.
+
+```bash
+<script> push-artifacts <suffix> [--repo <artifact-dir name>] [--dry-run] [--force]
+```
+
+- Copies `<artifact-dir>/<repo>/*-<suffix>.md` (Claim's `-N` copies too) and the `<suffix>/` folder to the same place under the PC home. `--repo` defaults to this repo's main checkout name.
+- Rewrites this machine's home path to the PC's in text files, so `/proceed <path>` lines work there.
+- Refuses with exit 2 when a file is already on the PC; `--force` overwrites only after the user says so. `--dry-run` lists the files and which exist.
+- Prints the PC checkout at the same home-relative path and its branch, when one exists; when that is not the handoff's branch, tell the user to fetch and `/wt` from the handoff's branch there.
+- Relay the printed `/proceed <PC path>` line (one per handoff copied) as the last line of the reply.
+
 ---
 
 ## 3. Output Format & Deliverables
@@ -111,3 +128,4 @@ No Markdown artifact. When the run starts, one line: `Started on Snuffish-PC: ru
 - [ ] A user-only `/skill` task was refused, not sent.
 - [ ] `wait` ran in the background; the summary came from its output.
 - [ ] No patch was applied unasked; nothing was committed or pushed.
+- [ ] A hand-over overwrote no PC file without the user's go (`--force`).

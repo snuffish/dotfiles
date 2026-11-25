@@ -10,6 +10,10 @@ Subcommands:
   tail [id] [-n N] [-f | --pane]
                    last N log lines; -f follows until the run ends; --pane follows in a
                    new tmux pane here. No id = the newest running run, else the newest run.
+  push-artifacts <suffix> [--repo name] [--force] [--dry-run]
+                   copy one artifact family (*-<suffix>.md and the <suffix>/ folder) to the
+                   PC's artifact dir, local home paths rewritten to the PC home, so the
+                   work continues there (e.g. /proceed <handoff>). Never overwrites unless --force.
 
 The host comes from ON_PC_HOST (default snuffish-pc). Exit 2 = setup error
 (host unreachable, bad arguments, unknown run id).
@@ -21,6 +25,7 @@ import argparse
 import json
 import os
 import random
+import re
 import shlex
 import string
 import subprocess
@@ -35,6 +40,7 @@ PC_RULES = SKILL_DIR / "references" / "pc-rules.md"
 REMOTE_ROOT = ".cache/on-snuffish-pc"  # relative to the PC home directory
 LOCAL_ROOT = Path.home() / ".cache" / "on-snuffish-pc" / "runs"
 ARTIFACT_ROOT = Path.home() / ".cache" / "agent-artifacts"
+REMOTE_ARTIFACT_ROOT = ".cache/agent-artifacts"  # relative to the PC home directory
 SSH_OPTS = ["-o", "BatchMode=yes", "-o", "ConnectTimeout=5"]
 TAIL_LINES = 30      # log lines in the summary of a failed run
 TAIL_LINES_OK = 15   # log lines in the summary of a successful run
@@ -82,11 +88,16 @@ def sync_files(repo: Path) -> list[str]:
     return [n for n in names if (repo / n).is_file() or (repo / n).is_symlink()]
 
 
-def default_dest(run_id: str) -> Path:
-    # The main checkout's name, also from inside a linked worktree (<repo>/.git → <repo>).
+def main_checkout() -> Path | None:
+    """The main checkout, also from inside a linked worktree (<repo>/.git → <repo>)."""
     res = run(["git", "rev-parse", "--path-format=absolute", "--git-common-dir"])
     out = res.stdout.strip()
-    repo = Path(out).parent.name if res.returncode == 0 and out else "misc"
+    return Path(out).parent if res.returncode == 0 and out else None
+
+
+def default_dest(run_id: str) -> Path:
+    checkout = main_checkout()
+    repo = checkout.name if checkout else "misc"
     return ARTIFACT_ROOT / repo / "on-snuffish-pc" / run_id
 
 
@@ -363,6 +374,106 @@ def cmd_tail(args: argparse.Namespace) -> int:
     return 0
 
 
+def artifact_family(repo_dir: Path, suffix: str) -> list[Path]:
+    """<prefix>-<kind>-<suffix>.md (and Claim's -N collision copies) plus every file under <suffix>/."""
+    if not suffix or "/" in suffix or suffix.startswith("."):
+        raise SetupError(f"bad suffix {suffix!r}")
+    if not repo_dir.is_dir():
+        raise SetupError(f"no artifact dir {repo_dir}")
+    pattern = re.compile(rf"-{re.escape(suffix)}(-\d+)?\.md$")
+    files = [p for p in sorted(repo_dir.iterdir()) if p.is_file() and pattern.search(p.name)]
+    folder = repo_dir / suffix
+    if folder.is_dir():
+        files += sorted(p for p in folder.rglob("*")
+                        if p.is_file() and not p.is_symlink() and p.name != ".DS_Store")
+    if not files:
+        raise SetupError(f"no artifacts for suffix {suffix!r} in {repo_dir}")
+    return files
+
+
+def rewrite_home(data: bytes, local_home: str, remote_home: str) -> tuple[bytes, bool]:
+    """Local home paths → PC home paths in a UTF-8 text file; binaries come back unchanged."""
+    if b"\0" in data or local_home == remote_home:
+        return data, False
+    try:
+        text = data.decode("utf-8")
+    except UnicodeDecodeError:
+        return data, False
+    # Not a prefix of a longer name (/Users/meX, /Users/me.bak); a sentence-ending dot is fine.
+    new = re.sub(re.escape(local_home) + r"(?![\w-]|\.\w)", lambda _: remote_home, text)
+    return new.encode("utf-8"), new != text
+
+
+def remote_home() -> str:
+    res = run(ssh_argv('printf %s "$HOME"'))
+    home = res.stdout.strip()
+    if res.returncode != 0 or not home.startswith("/"):
+        raise SetupError(f"{host()} unreachable or no $HOME: {res.stderr.strip()}")
+    return home
+
+
+def remote_existing(rel_dir: str, names: list[str]) -> list[str]:
+    checks = " ".join(shlex.quote(n) for n in names)
+    cmd = (f"cd {shlex.quote(rel_dir)} 2>/dev/null || exit 0; "
+           f"for f in {checks}; do [ -e \"$f\" ] && printf '%s\\n' \"$f\"; done; exit 0")
+    res = run(ssh_argv(cmd))
+    if res.returncode != 0:
+        raise SetupError(f"{host()} unreachable: {res.stderr.strip()}")
+    return [line for line in res.stdout.splitlines() if line]
+
+
+def pc_checkout_branch(checkout: Path | None) -> str | None:
+    """'~/<rel> on <branch>' for the PC checkout at the same home-relative path, if any."""
+    if checkout is None:
+        return None
+    try:
+        rel = checkout.relative_to(Path.home())
+    except ValueError:
+        return None
+    res = run(ssh_argv(f"git -C {shlex.quote(str(rel))} rev-parse --abbrev-ref HEAD 2>/dev/null"))
+    branch = res.stdout.strip()
+    return f"~/{rel} on {branch}" if res.returncode == 0 and branch else None
+
+
+def cmd_push_artifacts(args: argparse.Namespace) -> int:
+    checkout = main_checkout()
+    repo = args.repo or (checkout.name if checkout else None)
+    if not repo:
+        raise SetupError("not in a git repo; pass --repo <artifact-dir name>")
+    repo_dir = ARTIFACT_ROOT / repo
+    files = artifact_family(repo_dir, args.suffix)
+    names = [str(p.relative_to(repo_dir)) for p in files]
+    probe()
+    home = remote_home()
+    rel_dir = f"{REMOTE_ARTIFACT_ROOT}/{repo}"
+    existing = remote_existing(rel_dir, names)
+    if existing and not args.force and not args.dry_run:
+        raise SetupError(f"already on {host()} (pass --force to overwrite): {', '.join(existing)}")
+    rewritten = 0
+    with tempfile.TemporaryDirectory() as tmp:
+        stage = Path(tmp)
+        for src, name in zip(files, names):
+            data, changed = rewrite_home(src.read_bytes(), str(Path.home()), home)
+            rewritten += changed
+            (stage / name).parent.mkdir(parents=True, exist_ok=True)
+            (stage / name).write_bytes(data)
+        if not args.dry_run:
+            pipe_tar(["tar", "-C", str(stage), "-cf", "-", "."],
+                     f"mkdir -p {shlex.quote(rel_dir)} && tar -C {shlex.quote(rel_dir)} -xf -")
+    verb = "would push" if args.dry_run else "pushed"
+    print(f"{verb} {len(files)} files to {host()}:{home}/{rel_dir}/ "
+          f"({Path.home()} -> {home} in {rewritten})")
+    mark = "  (exists on PC)" if args.dry_run else "  (overwritten)"
+    for name in names:
+        print(f"  {name}" + (mark if name in existing else ""))
+    where = pc_checkout_branch(checkout)
+    if where:
+        print(f"pc checkout {where}")
+    for handoff in (n for n in names if "-handoff-" in n and "/" not in n):
+        print(f"continue on the PC: /proceed {home}/{rel_dir}/{handoff}")
+    return 0
+
+
 def parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -389,6 +500,12 @@ def parser() -> argparse.ArgumentParser:
     mode.add_argument("-f", "--follow", action="store_true")
     mode.add_argument("--pane", action="store_true")
     t.set_defaults(fn=cmd_tail)
+    a = sub.add_parser("push-artifacts")
+    a.add_argument("suffix")
+    a.add_argument("--repo", help="artifact-dir name (default: this repo's main checkout name)")
+    a.add_argument("--force", action="store_true", help="overwrite files already on the PC")
+    a.add_argument("--dry-run", action="store_true", help="list what would be copied, copy nothing")
+    a.set_defaults(fn=cmd_push_artifacts)
     return p
 
 

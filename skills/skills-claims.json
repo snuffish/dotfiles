@@ -28171,6 +28171,101 @@
         "base": "repo",
         "expect": "present"
       }
+    },
+    {
+      "id": "skills/on-snuffish-pc/SKILL.md:98:cli_command:push-artifacts --repo --dry-run --force",
+      "source": {
+        "file": "skills/on-snuffish-pc/SKILL.md",
+        "line": 98
+      },
+      "kind": "cli_command",
+      "value": "push-artifacts --repo --dry-run --force",
+      "quote": "<script> push-artifacts <suffix> [--repo <artifact-dir name>] [--dry-run] [--force]",
+      "verify": {
+        "method": "grep",
+        "pattern": "add_parser\\(\"push-artifacts\"\\)[\\s\\S]*\"--repo\"[\\s\\S]*\"--force\"[\\s\\S]*\"--dry-run\"",
+        "paths": [
+          "skills/on-snuffish-pc/scripts/on_pc.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/on-snuffish-pc/SKILL.md:101:other:family glob with Claim -N copies and suffix folder",
+      "source": {
+        "file": "skills/on-snuffish-pc/SKILL.md",
+        "line": 101
+      },
+      "kind": "other",
+      "value": "family glob with Claim -N copies and suffix folder",
+      "quote": "(Claim's `-N` copies too) and the `<suffix>/` folder",
+      "verify": {
+        "method": "grep",
+        "pattern": "-\\{re\\.escape\\(suffix\\)\\}\\(-\\\\d\\+\\)\\?\\\\\\.md\\$[\\s\\S]*folder = repo_dir / suffix",
+        "paths": [
+          "skills/on-snuffish-pc/scripts/on_pc.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/on-snuffish-pc/SKILL.md:102:other:home path rewritten in text files",
+      "source": {
+        "file": "skills/on-snuffish-pc/SKILL.md",
+        "line": 102
+      },
+      "kind": "other",
+      "value": "home path rewritten in text files",
+      "quote": "Rewrites this machine's home path to the PC's in text files",
+      "verify": {
+        "method": "grep",
+        "pattern": "def rewrite_home\\(data: bytes, local_home: str, remote_home: str\\)",
+        "paths": [
+          "skills/on-snuffish-pc/scripts/on_pc.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/on-snuffish-pc/SKILL.md:103:other:push-artifacts refuses existing files without --force",
+      "source": {
+        "file": "skills/on-snuffish-pc/SKILL.md",
+        "line": 103
+      },
+      "kind": "other",
+      "value": "push-artifacts refuses existing files without --force",
+      "quote": "Refuses with exit 2 when a file is already on the PC",
+      "verify": {
+        "method": "grep",
+        "pattern": "if existing and not args\\.force and not args\\.dry_run:\\s*raise SetupError",
+        "paths": [
+          "skills/on-snuffish-pc/scripts/on_pc.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
+      "id": "skills/on-snuffish-pc/SKILL.md:104:other:push-artifacts prints the PC checkout branch",
+      "source": {
+        "file": "skills/on-snuffish-pc/SKILL.md",
+        "line": 104
+      },
+      "kind": "other",
+      "value": "push-artifacts prints the PC checkout branch",
+      "quote": "Prints the PC checkout at the same home-relative path and its branch",
+      "verify": {
+        "method": "grep",
+        "pattern": "print\\(f\"pc checkout \\{where\\}\"\\)",
+        "paths": [
+          "skills/on-snuffish-pc/scripts/on_pc.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
     }
   ]
 }
