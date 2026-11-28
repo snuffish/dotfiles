@@ -27584,6 +27584,26 @@
       }
     },
     {
+      "id": "skills/tail/SKILL.md:13:other:killed line",
+      "source": {
+        "file": "skills/tail/SKILL.md",
+        "line": 13
+      },
+      "kind": "other",
+      "value": "killed line",
+      "quote": "or `[killed]` (state `killed`)",
+      "context": " bash killed marker",
+      "verify": {
+        "method": "grep",
+        "pattern": "return \"killed\" if KILLED_LINE.search",
+        "paths": [
+          "skills/tail/scripts/tail_task.py"
+        ],
+        "base": "repo",
+        "expect": "present"
+      }
+    },
+    {
       "id": "skills/tail/SKILL.md:14:other:agent symlink",
       "source": {
         "file": "skills/tail/SKILL.md",
