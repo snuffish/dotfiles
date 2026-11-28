@@ -11,6 +11,8 @@ unalias diskspace 2>/dev/null || true
 
 # Items smaller than this (in KB) are hidden from the clean menus (default 10 MB)
 : "${DS_MIN_KB:=10240}"
+# Smallest file `diskspace top` lists next to the folders (find -size syntax)
+: "${DS_TOP_FILE_MIN:=100M}"
 # Space-separated device paths to never report as idle (e.g. "/dev/sdb1")
 : "${DS_IGNORE_DEVICES:=}"
 
@@ -87,9 +89,10 @@ _ds_parse_size() {
   }'
 }
 
-# Used KB across the filesystems holding / and $HOME (for the "Freed" delta)
+# Used KB across the filesystems holding /, $HOME and any extra paths given
+# (for the "Freed" delta)
 _ds_used_kb() {
-  df -kP / "$HOME" 2>/dev/null | awk 'NR > 1 && !seen[$1]++ { s += $3 } END { print s + 0 }'
+  df -kP / "$HOME" "$@" 2>/dev/null | awk 'NR > 1 && !seen[$1]++ { s += $3 } END { print s + 0 }'
 }
 
 # ------------------------------------------------------------------------------
@@ -309,15 +312,15 @@ _diskspace_status() {
     printf "%s%s🚨 WARNING: Disk is critically full (%s%% capacity)!%s\n" "$DS_BOLD" "$DS_RED" "$data_cap" "$DS_RESET"
     printf "   • Run %sdiskspace clean%s to free up caches & unused Docker containers/images\n" "$DS_BOLD" "$DS_RESET"
     printf "   • Run %sdiskspace clean --dry-run%s to preview reclaimable space\n" "$DS_BOLD" "$DS_RESET"
-    printf "   • Run %sdiskspace top%s to locate large folders in %s\n" "$DS_BOLD" "$DS_RESET" "$HOME"
+    printf "   • Run %sdiskspace top%s to pick large folders and files in %s to delete\n" "$DS_BOLD" "$DS_RESET" "$HOME"
     printf "   • Run %sdiskspace limits%s to stop caches and logs from growing back\n\n" "$DS_BOLD" "$DS_RESET"
   elif [[ $data_cap -ge 75 ]]; then
     printf "%s%s⚠️  NOTICE: Disk space is getting low (%s%% capacity).%s\n" "$DS_BOLD" "$DS_YELLOW" "$data_cap" "$DS_RESET"
     printf "   • Run %sdiskspace clean%s to interactively reclaim space\n" "$DS_BOLD" "$DS_RESET"
-    printf "   • Run %sdiskspace top%s to find large folders\n" "$DS_BOLD" "$DS_RESET"
+    printf "   • Run %sdiskspace top%s to find and delete large folders and files\n" "$DS_BOLD" "$DS_RESET"
     printf "   • Run %sdiskspace limits%s to stop caches and logs from growing back\n\n" "$DS_BOLD" "$DS_RESET"
   else
-    printf "%s💡 Tip:%s Use %sdiskspace clean%s to clean caches or %sdiskspace top%s to scan large folders.\n\n" \
+    printf "%s💡 Tip:%s Use %sdiskspace clean%s to clean caches or %sdiskspace top%s to scan large folders and files.\n\n" \
       "$DS_DIM" "$DS_RESET" "$DS_BOLD" "$DS_RESET" "$DS_BOLD" "$DS_RESET"
   fi
 }
@@ -411,10 +414,118 @@ _diskspace_limits() {
 }
 
 # ------------------------------------------------------------------------------
-# Subcommand: top — Scan Largest Directories
+# Helper: show scan results ($4: "<kb>\t<path>" rows, largest first).
+# On a terminal they open in the same multi-select picker as `diskspace clean`
+# (_ds_pick) and the picked paths are deleted after a y/N confirmation; ESC or
+# an empty pick prints the plain table instead. Off a terminal (piped,
+# redirected) only the table is printed. Folders are shown with a trailing /.
+#   $1 = picker prompt, $2 = scanned root (picked paths must sit under it),
+#   $3 = table column title. Rows come as an argument, not on stdin, so the
+#   terminal check below sees the caller's stdin.
+# ------------------------------------------------------------------------------
+_ds_scan_pick() {
+  local pick_prompt="$1" root="$2" title="$3" rows picked sel kb p confirm
+  rows=$(awk -F'\t' 'NF >= 2 && $1 ~ /^[0-9]+$/' <<< "$4")
+  if [[ -z "$rows" ]]; then
+    printf "Nothing found.\n\n"
+    return 0
+  fi
+
+  if [[ -t 0 && -t 1 ]]; then
+    # Command substitution, never < <(...): see the _ds_pick comment
+    picked=$(while IFS=$'\t' read -r kb p; do
+        printf "%s\t%s%s\t%s\n" "$kb" "$(_ds_tilde "$p")" "$([[ -d "$p" ]] && printf /)" "$p"
+      done <<< "$rows" | _ds_pick "$pick_prompt")
+  fi
+
+  # Keep only picked paths that came from this scan and sit below the root
+  [[ -n "$picked" ]] && sel=$(DS_PICKED="$picked" DS_ROOT="${root%/}/" awk -F'\t' '
+    BEGIN { n = split(ENVIRON["DS_PICKED"], a, "\n"); for (i = 1; i <= n; i++) want[a[i]] = 1 }
+    ($2 in want) && index($2, ENVIRON["DS_ROOT"]) == 1 && length($2) > length(ENVIRON["DS_ROOT"])' <<< "$rows")
+  # A picked file inside a picked folder goes with the folder: drop it so the
+  # total is not counted twice
+  [[ -n "$sel" ]] && sel=$(awk -F'\t' '{ row[NR] = $0; path[NR] = $2 }
+    END {
+      for (i = 1; i <= NR; i++) {
+        inside = 0
+        for (j = 1; j <= NR; j++) if (j != i && index(path[i], path[j] "/") == 1) inside = 1
+        if (!inside) print row[i]
+      }
+    }' <<< "$sel")
+
+  if [[ -z "$sel" ]]; then
+    printf "%-10s %s\n" "SIZE" "$title"
+    printf "%s\n" "--------------------------------------------------------"
+    while IFS=$'\t' read -r kb p; do
+      printf "%-10s %s%s\n" "$(_ds_fmt_kb "$kb")" "$p" "$([[ -d "$p" ]] && printf /)"
+    done <<< "$rows"
+    printf "\n"
+    [[ -t 0 && -t 1 ]] && printf "%sNothing selected — nothing deleted.%s\n\n" "$DS_DIM" "$DS_RESET"
+    return 0
+  fi
+
+  printf "%sDelete these permanently:%s\n" "$DS_BOLD$DS_YELLOW" "$DS_RESET"
+  while IFS=$'\t' read -r kb p; do
+    printf "  %8s  %s\n" "$(_ds_fmt_kb "$kb")" "$p"
+  done <<< "$sel"
+  printf "  %s%8s  Total%s\n\n" "$DS_BOLD" "$(_ds_fmt_kb "$(_ds_rows_kb <<< "$sel")")" "$DS_RESET"
+  printf "%sProceed?%s (y/N): " "$DS_BOLD$DS_YELLOW" "$DS_RESET"
+  read -r confirm </dev/tty || confirm=""
+  if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+    printf "Aborted — nothing deleted.\n\n"
+    return 0
+  fi
+
+  local used_before freed
+  used_before=$(_ds_used_kb "$root")
+  while IFS=$'\t' read -r kb p; do
+    if rm -rf -- "$p" 2>/dev/null && [[ ! -e "$p" ]]; then
+      printf "   %s- %s%s\n" "$DS_DIM" "$p" "$DS_RESET"
+    else
+      printf "   %s✖ Could not fully remove %s (permissions?)%s\n" "$DS_RED" "$p" "$DS_RESET"
+    fi
+  done <<< "$sel"
+  freed=$(( used_before - $(_ds_used_kb "$root") ))
+  [[ $freed -lt 0 ]] && freed=0
+  printf "\n%sDone — freed %s.%s\n\n" "$DS_BOLD$DS_GREEN" "$(_ds_fmt_kb $freed)" "$DS_RESET"
+}
+
+# $HOME/x → ~/x for display
+_ds_tilde() {
+  if [[ "$1" == "$HOME" || "$1" == "$HOME"/* ]]; then
+    printf "~%s" "${1#"$HOME"}"
+  else
+    printf "%s" "$1"
+  fi
+}
+
+# ------------------------------------------------------------------------------
+# Subcommand: top — Scan Largest Directories and Files
+#   Folders one level down plus files at any depth (DS_TOP_FILE_MIN and up),
+#   sorted together; --dirs shows the folders only.
 # ------------------------------------------------------------------------------
 _diskspace_top() {
   _ds_setup_colors
+  local dirs_only=0 arg
+  local -a pos=()
+  for arg in "$@"; do
+    case "$arg" in
+      --dirs|-d) dirs_only=1 ;;
+      --help|-h)
+        echo "Usage: diskspace top [path] [n] [--dirs]"
+        echo "  Pick from the [n] largest folders (one level down) and files (any depth,"
+        echo "  ${DS_TOP_FILE_MIN} and up) in [path] to delete. Defaults: \$HOME, 10."
+        echo "  --dirs, -d   Folders only"
+        return 0
+        ;;
+      -*)
+        echo "Unknown option: $arg (run 'diskspace top --help' for options)" >&2
+        return 1
+        ;;
+      *) pos+=("$arg") ;;
+    esac
+  done
+  set -- "${pos[@]}"
   local target_dir="${1:-$HOME}"
   local count="${2:-10}"
 
@@ -433,21 +544,24 @@ _diskspace_top() {
     return 1
   fi
 
-  printf "%s%sScanning top %s largest directories in: %s%s%s\n\n" \
-    "$DS_BOLD" "$DS_CYAN" "$count" "$DS_RESET$DS_BOLD" "$target_dir" "$DS_RESET"
+  local what="directories and files" title="PATH" prompt_label="Largest"
+  [[ $dirs_only -eq 1 ]] && { what="directories"; title="DIRECTORY"; prompt_label="Directories"; }
+  printf "%s%sScanning top %s largest %s in: %s%s%s\n\n" \
+    "$DS_BOLD" "$DS_CYAN" "$count" "$what" "$DS_RESET$DS_BOLD" "$target_dir" "$DS_RESET"
 
-  printf "%-10s %s\n" "SIZE" "DIRECTORY"
-  printf "%s\n" "--------------------------------------------------------"
+  # -d 1 and -x (stay on one filesystem) are supported by both BSD and GNU du.
+  # du lists the scanned directory itself too: that row is the total.
+  local scan total rows
+  scan=$(du -x -d 1 -k "$target_dir" 2>/dev/null)
+  total=$(DS_T="$target_dir" awk -F'\t' '$2 == ENVIRON["DS_T"] { print $1; exit }' <<< "$scan")
+  rows=$(DS_T="$target_dir" awk -F'\t' '$2 != ENVIRON["DS_T"]' <<< "$scan")
+  # du without -a lists folders only; find adds the big files at any depth
+  [[ $dirs_only -eq 0 ]] &&
+    rows+=$'\n'$(find "$target_dir" -xdev -type f -size +"$DS_TOP_FILE_MIN" -exec du -k {} + 2>/dev/null)
+  rows=$(sort -t$'\t' -k1,1rn <<< "$rows" | head -n "$count")
 
-  # -d 1 and -x (stay on one filesystem) are supported by both BSD and GNU du
-  du -x -d 1 -h "$target_dir" 2>/dev/null | sort -hr | head -n "$((count + 1))" | while IFS=$'\t' read -r sz dir; do
-    if [[ "$dir" == "$target_dir" ]]; then
-      printf "%s%-10s %s (Total)%s\n" "$DS_BOLD$DS_BLUE" "$sz" "$dir" "$DS_RESET"
-    else
-      printf "%-10s %s\n" "$sz" "$dir"
-    fi
-  done
-  printf "\n"
+  printf "%s%8s  %s (Total)%s\n\n" "$DS_BOLD$DS_BLUE" "$(_ds_fmt_kb "${total:-0}")" "$target_dir" "$DS_RESET"
+  _ds_scan_pick "$prompt_label" "$target_dir" "$title" "$rows"
 }
 
 # ------------------------------------------------------------------------------
@@ -476,14 +590,11 @@ _diskspace_large() {
   printf "%s%sScanning for files larger than %s in: %s%s%s\n\n" \
     "$DS_BOLD" "$DS_CYAN" "$min_size" "$DS_RESET$DS_BOLD" "$target_dir" "$DS_RESET"
 
-  printf "%-10s %s\n" "SIZE" "FILE"
-  printf "%s\n" "--------------------------------------------------------"
+  local rows
+  rows=$(find "$target_dir" -xdev -type f -size +"$min_size" -exec du -k {} + 2>/dev/null |
+    sort -t$'\t' -k1,1rn | head -n "$count")
 
-  find "$target_dir" -xdev -type f -size +"$min_size" -exec du -h {} + 2>/dev/null |
-    sort -hr | head -n "$count" | while IFS=$'\t' read -r sz file; do
-      printf "%-10s %s\n" "$sz" "$file"
-    done
-  printf "\n"
+  _ds_scan_pick "Files" "$target_dir" "FILE" "$rows"
 }
 
 # ------------------------------------------------------------------------------
@@ -1396,8 +1507,9 @@ diskspace() {
       printf "%sUsage:%s\n" "$DS_BOLD" "$DS_RESET"
       echo "  diskspace                     Show disk usage, capacity bars, and storage layout warnings"
       echo "  diskspace status              Explicit status overview (same as bare diskspace)"
-      echo "  diskspace top [path] [n]      Show top [n] largest directories in [path] (default: \$HOME, 10)"
-      echo "  diskspace large [path] [size] Show largest files exceeding [size] (default: \$HOME, 500M)"
+      echo "  diskspace top [path] [n]      Pick from the top [n] largest folders and files in [path] to delete (default: \$HOME, 10)"
+      echo "  diskspace top --dirs          Same, folders only (see diskspace top --help)"
+      echo "  diskspace large [path] [size] Pick from the largest files exceeding [size] to delete (default: \$HOME, 500M)"
       echo "  diskspace limits              Check that journal/pacman/snap/Docker caches are capped"
       echo "  diskspace clean               Interactive multi-select cleanup menu"
       echo "  diskspace clean --dry-run     Size-sorted list of reclaimable space with totals"
