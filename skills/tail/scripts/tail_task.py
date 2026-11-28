@@ -4,7 +4,8 @@
 Three kinds of task:
   bash   a Bash call with run_in_background (or moved to the background):
          <root>/<project>/<session>/tasks/<id>.output, written as the command prints and
-         ending with "[exited with code N]"; no such line = running (or killed with its session)
+         ending with "[exited with code N]" or "[killed]"; neither line = running (or killed
+         with its session)
   agent  a background sub-agent: tasks/<id>.output links to its JSONL transcript; the
          sibling <id>.meta.json holds the description and "finished"
   pc     an /on-snuffish-pc run (id YYYYMMDD-HHMMSS-xxxx); handed to on_pc.py tail
@@ -34,6 +35,7 @@ from pathlib import Path
 ON_PC = Path(__file__).resolve().parent.parent.parent / "on-snuffish-pc" / "scripts" / "on_pc.py"
 PC_ID = re.compile(r"^\d{8}-\d{6}-[a-z0-9]{4}$")
 EXIT_LINE = re.compile(r"^\[exited with code (-?\d+)\]$", re.M)
+KILLED_LINE = re.compile(r"^\[killed\]$", re.M)  # stopped with TaskStop or a killed shell
 # "Command running in background with ID: X" (run_in_background) or "moved to the background (ID: X)".
 BG_ID = re.compile(r"background (?:with ID: |\(ID: )(\w+)")
 TEXT_MAX = 300  # characters kept from one rendered agent message
@@ -83,7 +85,9 @@ def bash_state(path: Path) -> str:
     except OSError:
         return "gone"
     m = EXIT_LINE.search(tail)
-    return f"done exit {m.group(1)}" if m else "running"
+    if m:
+        return f"done exit {m.group(1)}"
+    return "killed" if KILLED_LINE.search(tail) else "running"
 
 
 def state(path: Path) -> str:

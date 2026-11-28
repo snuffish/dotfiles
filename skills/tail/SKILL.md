@@ -10,7 +10,7 @@ Shows what a session's background work is doing through [`scripts/tail_task.py`]
 
 | Kind | Id | Where the output is |
 |---|---|---|
-| `bash` | `b…` (9 characters) | `<root>/<project>/<session>/tasks/<id>.output`, written as the command prints, ending with `[exited with code N]`; no exit line means `running`, also for a task killed with its session |
+| `bash` | `b…` (9 characters) | `<root>/<project>/<session>/tasks/<id>.output`, written as the command prints, ending with `[exited with code N]` (state `done exit N`) or `[killed]` (state `killed`); neither line means `running`, also for a task killed with its session |
 | `agent` | `a…` (17 characters) | the same path, a symlink to the sub-agent's JSONL transcript; `agent-<id>.meta.json` beside the transcript holds `description` and `finished` |
 | `pc` | `YYYYMMDD-HHMMSS-xxxx` | `~/.cache/on-snuffish-pc/<id>/log.txt` on the PC, read by `on_pc.py tail` ([`/on-snuffish-pc`](../on-snuffish-pc/SKILL.md)) |
 
@@ -81,7 +81,7 @@ Done when a pane id is printed, or the skip reason is stated.
 No artifact.
 
 ```markdown
-**<id>** (<bash | agent | pc>, <project>/<session> | Snuffish-PC): <running | done exit N | done | died>
+**<id>** (<bash | agent | pc>, <project>/<session> | Snuffish-PC): <running | done exit N | killed | done | died>
 <the last lines in a code block>
 - Live: tmux pane `<pane-id>` (close: `tmux kill-pane -t <pane-id>`) | `<follow command>` | not opened (<ended | --no-pane>)
 ```
